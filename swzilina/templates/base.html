@@ -6,12 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block page_title %}SW Žilina - Domov{% endblock %}</title>
+    <title>{% block title %}{% endblock title %}</title>
 
-    <link rel="stylesheet" href="{% static 'base.css' %}">
-    {% block styles %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    {% block style %}{% endblock style %}
 </head>
+
 <body>
-    {% block content %}{% endblock %}
+    {% block content %}{% endblock content %}
 </body>
 </html>

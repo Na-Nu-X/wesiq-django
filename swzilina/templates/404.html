@@ -1,22 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block page_title %}Stránka sa nenašla{% endblock %}
-
-{% block styles %}
-    <link rel="stylesheet" href="{% static 'blog/index.css' %}">
-{% endblock %}
+{% block title %}Street Workout Žilina - Stránka sa nenašla{% endblock title %}
 
 {% block content %}
-    <header>
-        <h1>Stránka sa nenašla.</h1>
-    </header>
-
-    <main>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis commodi, suscipit dignissimos, exercitationem perspiciatis illum sapiente eveniet totam, optio animi aperiam in quas? Cum dolorum, nesciunt animi magnam fugiat illo.</p>
-    </main>
-
-    <footer>
-    
-    </footer>
-{% endblock %}
+    <h1>Chyba 404</h1>
+    <p>Je nám to ľúto, ale hladaná stránka sa nenašla.</p>
+    <a href="{% url 'homepage_url' %}">Späť na hlavnú stránku<a>
+{% endblock content %}
