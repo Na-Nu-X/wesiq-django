@@ -13,11 +13,17 @@
             </ul>
         </nav>
 
-        <h1>Street Workout Žilina - Blog</h1>
+        <h1>Street Workout Žilina - {{ identified_theme.theme }}</h1>
     </header>
 
     <main>
-        
+        {% if identified_theme.page == "frontlever.html" %}
+            {% include "./includes/frontlever.html" %}
+
+        {% elif identified_theme.page == "handstand.html" %}
+            {% include "./includes/handstand.html" %}
+
+        {% endif %}
     </main>
 
     <footer>
