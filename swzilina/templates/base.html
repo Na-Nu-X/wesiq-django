@@ -7,12 +7,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}"> <!-- https://www.flaticon.com/free-icon/street_10060229 -->
 
     <link rel="stylesheet" href="{% static 'style.css' %}">
     {% block style %}{% endblock style %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet"> <!-- Bungee Font -->
 </head>
 
 <body>
-    {% block content %}{% endblock content %}
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'homepage_url' %}">DOMOV</a></li>
+                <li><a href="#">BLOG</a></li>
+                <li><a href="#">KONTAKT</a></li>
+            </ul>
+        </nav>
+
+        <h1>{% block heading %}{% endblock heading %}</h1>
+        {% block buttons %}{% endblock buttons %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock content %}
+    </main>
+
+    <footer>
+        <div>
+            <p>SLEDUJTE NÁS</p>
+            <a href="https://www.instagram.com/" title="Instagram" target="_blank"><img src="{% static 'images/instagram_logo.png' %}" alt="Instagram"></a> <!-- https://www.flaticon.com/free-icon/instagram_174855 -->
+            <a href="https://www.facebook.com/" title="Facebook" target="_blank"><img src="{% static 'images/facebook_logo.png' %}" alt="Facebook"></a> <!-- https://www.flaticon.com/free-icon/facebook_733547 -->
+        </div>
+        
+        <div>
+            <p>KONTAKT</p>
+            <p><span>E-mail: </span><a href="mailto:behulpatrik@gmail.com" title="Napísať...">behulpatrik@gmail.com</a></p>
+            <p><span>Tel.č.: </span><a href="tel:+421940322633" title="Zavolať...">+421 940 322 633</a></p>
+        </div>
+        
+        <p class="copywrite">&copy; Street Workout Žilina 2025</p>
+    </footer>
 </body>
 </html>
