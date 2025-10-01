@@ -12,16 +12,6 @@ body {
  Header Styles
 **************/
 
-header {
-    height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("images/background.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    border-bottom: 1px solid #000;
-}
-
 /* Navigation Bar */
 
 header nav {
@@ -45,6 +35,7 @@ header nav ul li a:visited {
     display: inline-block;
     margin: 20px 10px;
     text-decoration: none;
+    font-size: 18px;
     color: #fff;
     transition: transform 0.3s ease;
 }
@@ -54,34 +45,38 @@ header nav ul li a:active {
     transform: scale(1.1);
 }
 
-/* Heading */
-
-header h1 {
-    font-family: "Bungee", sans-serif;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    font-size: 50px;
-    color: #fff;
-}
-
 /************
  Main Styles
 ************/
 
 main {
-    font-family: "Poppins", sans-serif;
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 10px 20px;
-    border: 1px solid #000;
-    border-radius: 5px;
-    text-align: justify;
+    min-height: 100vh;
+    padding-bottom: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), #000000cc), url("images/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
 }
 
-main h2 {
+.header_container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header_container h1 {
+    font-family: "Bungee", sans-serif;
+    text-align: center;
+    font-size: 50px;
+    color: #fff;
+}
+
+.content h2 {
+    font-size: 30px;
     text-align: center;
 }
 
