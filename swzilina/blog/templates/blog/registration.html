@@ -1,1 +1,13 @@
 {% extends "base.html" %}
+
+{% block title %}Street Workout Žilina - Registrácia{% endblock title %}
+
+{% block heading %}Registrácia{% endblock heading %}
+
+{% block content %}
+    <form class="registration_form" action="registration.html" method="POST">
+        {% csrf_token %}
+        {{ registration_form }}
+        <input type="submit" name="registration_form_submit" value="Vytvoriť účet">
+    </form>
+{% endblock content %}

@@ -25,13 +25,17 @@
                 <li><a href="#">KONTAKT</a></li>
             </ul>
         </nav>
-
-        <h1>{% block heading %}{% endblock heading %}</h1>
-        {% block buttons %}{% endblock buttons %}
     </header>
 
     <main>
-        {% block content %}{% endblock content %}
+        <section class="header_container">
+            <h1>{% block heading %}{% endblock heading %}</h1>
+            {% block buttons %}{% endblock buttons %}
+        </section>
+
+        <section class="content">
+            {% block content %}{% endblock content %}
+        </section>
     </main>
 
     <footer>

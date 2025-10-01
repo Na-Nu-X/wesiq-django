@@ -1,1 +1,13 @@
 {% extends "base.html" %}
+
+{% block title %}Street Workout Žilina - Prihlásenie{% endblock title %}
+
+{% block heading %}Prihlásenie{% endblock heading %}
+
+{% block content %}
+    <form class="login_form" action="login.html" method="POST">
+        {% csrf_token %}
+        {{ login_form }}
+        <input type="submit" name="login_form_submit" value="Prihlásiť sa">
+    </form>
+{% endblock content %}

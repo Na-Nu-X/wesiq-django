@@ -21,4 +21,10 @@
     Assumenda dolores dolor incidunt porro alias cupiditate rerum rem, corporis veniam facere vero possimus? Voluptatibus voluptatem similique nihil, assumenda ab atque quasi, molestias harum optio eaque reiciendis, saepe inventore maxime.
     Reprehenderit, a temporibus dolore dicta, perferendis amet magni eius accusantium eum libero vel explicabo? Laboriosam vero debitis nam! Fugit nihil corrupti laboriosam illum quas delectus exercitationem magni alias quos provident?
     Natus nam, iure sequi, ex est dolorum laboriosam tempora animi totam suscipit odio sint nesciunt qui tempore tenetur. Nam perferendis explicabo ipsa ratione harum in deserunt quae, praesentium suscipit qui?</p>
+    
+    <form class="contact_form" action="homepage.html" method="POST">
+        {% csrf_token %}
+        {{ contact_form }}
+        <input type="submit" name="contact_form_submit" value="Odoslať správu">
+    </form>
 {% endblock content %}
