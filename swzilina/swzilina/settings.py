@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'swzilina.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'swzilina',
+        'USER': 'swzilina_admin',
+        'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
