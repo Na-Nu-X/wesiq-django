@@ -7,7 +7,13 @@
 {% block content %}
     <form class="login_form" action="login.html" method="POST">
         {% csrf_token %}
+        <h2><a href="{% url 'login_url' %}" target="_self">Prihlásenie</a></h2>
         {{ login_form }}
+        <p class="form_report">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="login_form_submit" value="Prihlásiť sa">
+
+        <div class="form_questions">
+            <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
+        </div>
     </form>
 {% endblock content %}
