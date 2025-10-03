@@ -7,7 +7,16 @@
 {% block content %}
     <form class="registration_form" action="registration.html" method="POST">
         {% csrf_token %}
+        <h2><a href="{% url 'registration_url' %}" target="_self">Registrácia</a></h2>
         {{ registration_form }}
+        <p class="form_report">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="registration_form_submit" value="Vytvoriť účet">
+
+        {% comment %} <label for="privacy_policy_consent">Súhlasim s podmienkami</label> {% endcomment %}
+        {% comment %} <input type="checkbox" id="privacy_policy_consent"> {% endcomment %}
+
+        <div class="form_questions">
+            <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
+        </div>
     </form>
 {% endblock content %}
