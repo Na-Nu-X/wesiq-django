@@ -80,9 +80,10 @@ main {
 /* Forms */
 
 form {
+    position: relative;
     max-width: 500px;
     margin: 0px auto;
-    padding: 50px;
+    padding: 30px 50px 50px;
     text-align: center;
     backdrop-filter: blur(5px);
     border: 2px solid #fff;
@@ -90,7 +91,7 @@ form {
 }
 
 form h2 {
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     font-size: 40px !important;
     transition: letter-spacing 0.3s ease;
 }
@@ -105,7 +106,7 @@ form h2 a {
     color: #fff;
 }
 
-form input[type="text"], form input[type="email"], form input[type="password"] {
+form input[type="text"], form input[type="email"], form input[type="password"], form select {
     width: 90%;
     height: 50px;
     margin-bottom: 10px;
@@ -119,9 +120,28 @@ form input[type="text"], form input[type="email"], form input[type="password"] {
     transition: width 0.3s ease;
 }
 
-form input[type="text"]:hover, form input[type="email"]:hover, form input[type="password"]:hover,
-form input[type="text"]:focus, form input[type="email"]:focus, form input[type="password"]:focus {
+form input[type="text"]:hover, form input[type="email"]:hover, form input[type="password"]:hover, form textarea:hover,
+form input[type="text"]:focus, form input[type="email"]:focus, form input[type="password"]:focus, form textarea:focus {
     width: 100%;
+}
+
+form select:hover, form select:focus {
+    width: 100%;
+    cursor: pointer;
+}
+
+form textarea {
+    width: 90%;
+    height: 100px;
+    padding: 10px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 15px;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    transition: width 0.3s ease;
 }
 
 form input::placeholder {

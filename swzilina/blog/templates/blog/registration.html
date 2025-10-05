@@ -5,15 +5,16 @@
 {% block heading %}Registrácia{% endblock heading %}
 
 {% block content %}
-    <form class="registration_form" action="registration.html" method="POST">
+    {% if registration_successful %}
+        <p>Účet bol úspešne vytvorený</p>
+    {% endif %}
+
+    <form class="registration_form" action="{% url 'registration_url' %}" method="POST">
         {% csrf_token %}
         <h2><a href="{% url 'registration_url' %}" target="_self">Registrácia</a></h2>
         {{ registration_form }}
         <p class="form_report">Lorem ipsum dolor sit amet.</p>
-        <input type="submit" name="registration_form_submit" value="Vytvoriť účet">
-
-        {% comment %} <label for="privacy_policy_consent">Súhlasim s podmienkami</label> {% endcomment %}
-        {% comment %} <input type="checkbox" id="privacy_policy_consent"> {% endcomment %}
+        <input type="submit" value="Vytvoriť účet">
 
         <div class="form_questions">
             <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
