@@ -1,3 +1,31 @@
+.account .user_name:link,
+.account .user_name:visited {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.account .user_name:hover,
+.account .user_name:active {
+    text-decoration: underline;
+}
+
+.account .profile_picture {
+    position: absolute;
+    top: 74px;
+    right: 130px;
+    padding: 2px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.account .profile_picture:hover {
+    transform: scale(1.1);
+}
+
 .buttons a {
     display: inline-block;
     width: 220px;

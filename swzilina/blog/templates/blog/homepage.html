@@ -5,6 +5,17 @@
 
 {% block style %}<link rel="stylesheet" href="{% static 'blog/homepage.css' %}">{% endblock style %}
 
+{% block account %}
+    {% if request.session.logged_in_user_id %}
+        <a href="#" title="Môj účet" target="_self"><img class="profile_picture" src="{% static 'images/profile_picture.png' %}"></a>
+        <a class="user_name" href="#" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+
+    {% else %}
+        <p>Neprihlásený</p>
+
+    {% endif %}
+{% endblock account %}
+
 {% block heading %}Street&nbsp;Workout<br>Žilina{% endblock heading %}
 {% block buttons %}
     <div class="buttons">
@@ -30,7 +41,7 @@
         {% csrf_token %}
         <h2>Kontaktujte nás</h2>
         {{ contact_form }}
-        <p class="form_report">Lorem ipsum dolor sit amet.</p>
+        <p class="form_report" style="bottom: 113px;">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="contact_form_submit" value="Odoslať správu">
     </form>
 {% endblock content %}

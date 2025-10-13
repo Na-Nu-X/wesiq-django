@@ -3,13 +3,41 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, loginForm, registrationForm
 from blog.models import Users
+from django.contrib.auth import authenticate, login
 
 def homepage(request):
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        user = Users.objects.get(id=logged_in_user_id)
+
+        return render(request, "blog/homepage.html", {
+            "contact_form": contactForm,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email_address": user.email_address,
+            "phone_number": user.phone_number,
+            "role": user.role,
+        })
+
     return render(request, "blog/homepage.html", {
         "contact_form": contactForm,
     })
 
 def login(request):
+    if request.method == "POST":
+        email_address = request.POST.get("email_address")
+        password = request.POST.get("password")
+
+        try:
+            user = Users.objects.get(email_address=email_address, password=password)
+            request.session["logged_in_user_id"] = user.id
+            return HttpResponseRedirect(reverse("homepage_url"))
+        
+        except Users.DoesNotExist:
+            print("Nesprávne prihlasovacie údaje!")
+            return HttpResponseRedirect(reverse("homepage_url"))
+
     return render(request, "blog/login.html", {
         "login_form": loginForm,
     })
@@ -37,3 +65,7 @@ def registration(request):
     return render(request, "blog/registration.html", {
         "registration_form": registrationForm,
     })
+
+def logout(request):
+    request.session.flush()
+    return HttpResponseRedirect(reverse("homepage_url"))

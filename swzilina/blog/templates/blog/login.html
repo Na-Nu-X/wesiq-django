@@ -1,19 +1,36 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Street Workout Žilina - Prihlásenie{% endblock title %}
+
+{% block style %}<link rel="stylesheet" href="{% static 'blog/login.css' %}">{% endblock style %}
 
 {% block heading %}Prihlásenie{% endblock heading %}
 
 {% block content %}
-    <form class="login_form" action="login.html" method="POST">
+    <form class="login_form" action="{% url 'login_url' %}" method="POST">
         {% csrf_token %}
         <h2><a href="{% url 'login_url' %}" target="_self">Prihlásenie</a></h2>
         {{ login_form }}
-        <p class="form_report">Lorem ipsum dolor sit amet.</p>
+        <p class="form_report" style="bottom: 287px;">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="login_form_submit" value="Prihlásiť sa">
 
+        <div class="login_methods">
+            <div>
+                <a href="#"><img src="{% static 'images/google_logo.png' %}">Google prihlásenie</a>
+            </div>
+
+            <div>
+                <a href="#"><img src="{% static 'images/facebook_logo_2.png' %}">Facebook prihlásenie</a>
+            </div>
+        </div>
+
         <div class="form_questions">
+            <p>Zabudli ste heslo? <a href="" title="Poslať overovací kód">Zmeniť heslo</a></p>
             <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
         </div>
     </form>
 {% endblock content %}
+
+<!-- https://www.flaticon.com/free-icon/search_281764 -->
+<!-- https://www.flaticon.com/free-icon/facebook_5968764 -->
