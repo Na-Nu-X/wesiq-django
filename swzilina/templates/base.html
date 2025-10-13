@@ -28,6 +28,10 @@
     </header>
 
     <main>
+        <section class="account">
+            {% block account %}{% endblock account %}
+        </section>
+        
         <section class="header_container">
             <h1>{% block heading %}{% endblock heading %}</h1>
             {% block buttons %}{% endblock buttons %}
