@@ -6,13 +6,33 @@ from blog.models import Users
 from django.contrib.auth import authenticate, login
 
 def homepage(request):
+    # if request.method == "POST":
+    #     message = request.POST.get("message")
+
+    #     filled_contact_form = contactForm(initial={
+    #         "message": message
+    #     })
+
+    #     return render(request, "blog/homepage.html", {
+    #         "contact_form": filled_contact_form,
+    #     })
+
     if "logged_in_user_id" in request.session:
+        # Find Logged In User In DB From His ID
         logged_in_user_id = request.session.get("logged_in_user_id")
 
         user = Users.objects.get(id=logged_in_user_id)
 
+        # Automatically Set Values Into Contact Form When User Is Logged In
+        filled_contact_form = contactForm(initial={
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email_address": user.email_address,
+        })
+
+        # Render Homepage With Filled Contact Form And User Data
         return render(request, "blog/homepage.html", {
-            "contact_form": contactForm,
+            "contact_form": filled_contact_form,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email_address": user.email_address,
