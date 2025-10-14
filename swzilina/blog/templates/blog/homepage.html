@@ -37,7 +37,7 @@
     Reprehenderit, a temporibus dolore dicta, perferendis amet magni eius accusantium eum libero vel explicabo? Laboriosam vero debitis nam! Fugit nihil corrupti laboriosam illum quas delectus exercitationem magni alias quos provident?
     Natus nam, iure sequi, ex est dolorum laboriosam tempora animi totam suscipit odio sint nesciunt qui tempore tenetur. Nam perferendis explicabo ipsa ratione harum in deserunt quae, praesentium suscipit qui?</p>
     
-    <form class="contact_form" action="homepage.html" method="POST">
+    <form class="contact_form" action="{% url 'homepage_url' %}" method="POST">
         {% csrf_token %}
         <h2>Kontaktujte nás</h2>
         {{ contact_form }}

@@ -15,7 +15,7 @@
 .account .profile_picture {
     position: absolute;
     top: 74px;
-    right: 130px;
+    right: 125px;
     padding: 2px;
     border: 1px solid #fff;
     border-radius: 50%;
@@ -55,4 +55,27 @@
     border: 2px solid #fff;
     border-radius: 5px;
     text-align: justify;
+}
+
+form {
+    margin: 50px auto;
+}
+
+form textarea {
+    width: 90%;
+    height: 100px;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    transition: width 0.3s ease;
+}
+
+form textarea:hover, form textarea:focus {
+    width: 100%;
 }
