@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from .forms import contactForm, loginForm, registrationForm
+from .forms import contactForm, loginForm, registrationForm, editAccountForm
 from blog.models import Users
 from django.contrib.auth import authenticate, login
 
@@ -89,3 +89,19 @@ def registration(request):
 def logout(request):
     request.session.flush()
     return HttpResponseRedirect(reverse("homepage_url"))
+
+def edit_account(request):
+    logged_in_user_id = request.session.get("logged_in_user_id")
+
+    user = Users.objects.get(id=logged_in_user_id)
+
+    filled_edit_account_form = editAccountForm(initial={
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email_address": user.email_address,
+        "phone_number": user.phone_number,
+    })
+
+    return render(request, "blog/edit_account.html", {
+        "edit_account_form": filled_edit_account_form,
+    })

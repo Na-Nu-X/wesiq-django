@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Street Workout Žilina - Môj účet{% endblock title %}
+
+{% block style %}<link rel="stylesheet" href="{% static 'blog/edit_account.css' %}">{% endblock style %}
+
+{% block heading %}Môj&nbsp;účet{% endblock heading %}
+
+{% block content %}
+    {% if request.session.logged_in_user_id %}
+        <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST">
+            {% csrf_token %}
+            <h2><a href="{% url 'edit_account_url' %}" target="_self">Môj&nbsp;účet</a></h2>
+            {{ edit_account_form }}
+            <p class="form_report" style="bottom: 145px;">Lorem ipsum dolor sit amet.</p>
+            <input type="submit" value="Uložiť zmeny">
+
+            <div class="form_questions">
+                <p>Zabudli ste heslo? <a href="#" title="Poslať overovací kód">Zmeniť heslo</a></p>
+            </div>
+        </form>
+
+    {% else %}
+        <div class="no_logged_in">
+            <p>Pre vykonávanie zmien vo vašom účte sa musíte najprv <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">prihlásiť</a> alebo <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">zaregistrovať</a>.</p>
+        </div>
+
+    {% endif %}
+{% endblock content %}

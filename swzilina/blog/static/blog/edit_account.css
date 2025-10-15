@@ -1,0 +1,15 @@
+.no_logged_in p {
+    text-align: center;
+}
+
+.no_logged_in a:link,
+.no_logged_in a:visited {
+    text-decoration: none;
+    font-style: italic;
+    color: #fff;
+}
+
+.no_logged_in a:hover,
+.no_logged_in a:active {
+    text-decoration: underline;
+}

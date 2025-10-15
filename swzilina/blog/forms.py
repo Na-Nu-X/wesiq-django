@@ -142,3 +142,69 @@ class registrationForm(forms.Form):
             "required": "Znovu zadajte heslo",
         },
     )
+
+class editAccountForm(forms.Form):
+    first_name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Zmeniť meno"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadané meno je príliš dlhé",
+            "required": "Zadajte vaše meno",
+        },
+    )
+
+    last_name = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Zmeniť priezvisko"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadané priezvisko je príliš dlhé",
+            "required": "Zadajte vaše priezvisko",
+        },
+    )
+
+    email_address = forms.EmailField(
+        widget=forms.EmailInput(attrs={"placeholder": "Zmeniť e-mail"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný e-mail je príliš dlhý",
+            "required": "Zadajte váš e-mail",
+        },
+    )
+
+    phone_number = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Zmeniť telefónne číslo"}),
+        label=False,
+        max_length=20,
+        required=False,
+        error_messages={
+            "max_length": "Zadané telefónne číslo je príliš dlhé",
+        },
+    )
+
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Zadajte vaše heslo"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadané heslo je príliš dlhé",
+            "required": "Vytvorte heslo",
+        },
+    )
+
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Vytvorte nové heslo"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadané heslo je príliš dlhé",
+            "required": "Vytvorte heslo",
+        },
+    )
