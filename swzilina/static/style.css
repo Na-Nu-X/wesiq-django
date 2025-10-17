@@ -178,6 +178,68 @@ form input[type="submit"]:hover, form input[type="submit"]:focus {
     text-decoration: underline;
 }
 
+/* Password */
+
+.password_container, .password_check_container {
+    position: relative;
+}
+
+.password, .password_check {
+    padding-right: 28px !important;
+}
+
+.password {
+    -webkit-text-security: disc;
+}
+
+.password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
+{
+    left: -16px;
+}
+
+.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
+.password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
+{
+    right: 0px;
+}
+
+.password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
+{
+    right: -19px;
+}
+
+.password_container .fa-eye, .password_container .fa-eye-slash, .password_container .fa-key, .password_container .fa-copy, .password_check_container .fa-copy {
+    display: block;
+    color: #949494;
+    position: absolute;
+    bottom: 26px;
+}
+
+.password_container .fa-eye, .password_container .fa-eye-slash {
+    right: 20px;
+    transition: right 0.3s ease;
+}
+
+.password_container .fa-key {
+    left: 3px;
+    transition: left 0.3s ease;
+}
+
+.password_container .fa-copy, .password_check_container .fa-copy {
+    right: 1px;
+    transition: right 0.3s ease;
+}
+
+.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover, .password_container .fa-key:hover, .password_container .fa-copy:hover, .password_check_container .fa-copy:hover {
+    color: #aaaaaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.password_container .fa-eye {
+    display: none;
+}
+
 /**************
  Footer Styles
 **************/

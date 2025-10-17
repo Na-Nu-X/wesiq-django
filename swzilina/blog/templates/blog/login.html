@@ -3,7 +3,9 @@
 
 {% block title %}Street Workout Žilina - Prihlásenie{% endblock title %}
 
-{% block style %}<link rel="stylesheet" href="{% static 'blog/login.css' %}">{% endblock style %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/login.css' %}">
+{% endblock style %}
 
 {% block heading %}Prihlásenie{% endblock heading %}
 
@@ -11,17 +13,25 @@
     <form class="login_form" action="{% url 'login_url' %}" method="POST">
         {% csrf_token %}
         <h2><a href="{% url 'login_url' %}" target="_self">Prihlásenie</a></h2>
-        {{ login_form }}
+
+        {{ login_form.email_address }}
+        
+        <div class="password_container">
+            {{ login_form.password }}
+            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
+            <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+        </div>
+
         <p class="form_report" style="bottom: 287px;">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="login_form_submit" value="Prihlásiť sa">
 
         <div class="login_methods">
             <div>
-                <a href="#"><img src="{% static 'images/google_logo.png' %}">Google prihlásenie</a>
+                <a href="#"><img src="{% static 'images/google_logo.png' %}">Google prihlásenie</a> <!-- https://www.flaticon.com/free-icon/search_281764 -->
             </div>
 
             <div>
-                <a href="#"><img src="{% static 'images/facebook_logo_2.png' %}">Facebook prihlásenie</a>
+                <a href="#"><img src="{% static 'images/facebook_logo_2.png' %}">Facebook prihlásenie</a> <!-- https://www.flaticon.com/free-icon/facebook_5968764 -->
             </div>
         </div>
 
@@ -32,5 +42,6 @@
     </form>
 {% endblock content %}
 
-<!-- https://www.flaticon.com/free-icon/search_281764 -->
-<!-- https://www.flaticon.com/free-icon/facebook_5968764 -->
+{% block script %}
+    <script src="{% static 'blog/js/password.js' %}" defer></script>
+{% endblock script %}
