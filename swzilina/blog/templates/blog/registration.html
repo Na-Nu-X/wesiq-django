@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Street Workout Žilina - Registrácia{% endblock title %}
 
@@ -12,7 +13,25 @@
     <form class="registration_form" action="{% url 'registration_url' %}" method="POST">
         {% csrf_token %}
         <h2><a href="{% url 'registration_url' %}" target="_self">Registrácia</a></h2>
-        {{ registration_form }}
+
+        {{ registration_form.first_name }}
+        {{ registration_form.last_name }}
+        {{ registration_form.email_address }}
+        {{ registration_form.phone_number }}
+        
+        <div class="password_container">
+            <i class="fa-solid fa-key" title="Navrhnúť heslo"></i> <!-- https://fontawesome.com/icons/key -->
+            {{ registration_form.password }}
+            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
+            <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+            <i class="fa-solid fa-copy copy_password" title="Skopírovať"></i> <!-- https://fontawesome.com/icons/copy -->
+        </div>
+
+        <div class="password_check_container">
+            {{ registration_form.password_check }}
+            <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
+        </div>
+
         <p class="form_report" style="bottom: 145px;">Lorem ipsum dolor sit amet.</p>
         <input type="submit" value="Vytvoriť účet">
 
@@ -21,3 +40,7 @@
         </div>
     </form>
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'blog/js/password.js' %}" defer></script>
+{% endblock script %}

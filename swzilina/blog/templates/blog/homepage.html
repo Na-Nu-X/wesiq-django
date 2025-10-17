@@ -3,7 +3,9 @@
 
 {% block title %}Street Workout Žilina - Hlavná stránka{% endblock title %}
 
-{% block style %}<link rel="stylesheet" href="{% static 'blog/homepage.css' %}">{% endblock style %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/homepage.css' %}">
+{% endblock style %}
 
 {% block account %}
     {% if request.session.logged_in_user_id %}

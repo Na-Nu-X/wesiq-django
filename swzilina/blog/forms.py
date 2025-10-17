@@ -67,13 +67,13 @@ class loginForm(forms.Form):
     )
 
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Vytvorte heslo"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Zadajte vaše heslo"}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
             "max_length": "Zadané heslo je príliš dlhé",
-            "required": "Vytvorte heslo",
+            "required": "Zadajte vaše heslo",
         },
     )
 
@@ -122,7 +122,7 @@ class registrationForm(forms.Form):
     )
 
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Vytvorte heslo"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo"}),
         label=False,
         max_length=50,
         required=True,
@@ -133,7 +133,7 @@ class registrationForm(forms.Form):
     )
 
     password_check = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Znovu zadajte heslo"}),
+        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Znovu zadajte heslo"}),
         label=False,
         max_length=50,
         required=True,
