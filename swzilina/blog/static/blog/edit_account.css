@@ -13,3 +13,43 @@
 .no_logged_in a:active {
     text-decoration: underline;
 }
+
+.profile_picture_container {
+    position: relative;
+    height: 38px;
+}
+
+.profile_picture_container img {
+    margin: 0px 2.5px;
+}
+
+.profile_picture_container .profile_picture {
+    padding: 2px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.profile_picture_container .profile_picture:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.profile_picture_container .delete_profile_picture {
+    position: relative;
+    bottom: 3px;
+    opacity: 0.8;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.profile_picture_container .delete_profile_picture:hover, .delete_account:hover {
+    transform: scale(1.1);
+    opacity: 1;
+    cursor: pointer;
+}
+
+.delete_account {
+    margin-top: 10px;
+    opacity: 0.8;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
