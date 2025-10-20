@@ -14,13 +14,21 @@
         <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST">
             {% csrf_token %}
             <h2><a href="{% url 'edit_account_url' %}" target="_self">Môj&nbsp;účet</a></h2>
+
+            <div class="profile_picture_container">
+                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}" title="Nahrať obrázok"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                <img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="Vymazať obrázok"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+            </div>
+
             {{ edit_account_form }}
-            <p class="form_report" style="bottom: 145px;">Lorem ipsum dolor sit amet.</p>
+            <p class="form_report" style="bottom: 194px;">Lorem ipsum dolor sit amet.</p>
             <input type="submit" value="Uložiť zmeny">
 
             <div class="form_questions">
                 <p>Zabudli ste heslo? <a href="#" title="Poslať overovací kód">Zmeniť heslo</a></p>
             </div>
+
+            <img class="delete_account" src="{% static 'images/delete_account.png' %}" title="Vymazať účet"> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
         </form>
 
     {% else %}
