@@ -11,16 +11,37 @@
 
 {% block content %}
     {% if request.session.logged_in_user_id %}
-        <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST">
+        <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <h2><a href="{% url 'edit_account_url' %}" target="_self">Môj&nbsp;účet</a></h2>
 
             <div class="profile_picture_container">
-                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}" title="Nahrať obrázok"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                <label for="select_profile_picture">
+                    <img 
+                        class="profile_picture" 
+                        src="
+                            {% if profile_picture_name %}
+                                media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %}
+                            
+                            {% endif %}
+                        "
+                        title="Nahrať obrázok"
+                    >
+                    <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                </label>
+                {{ edit_account_form.select_profile_picture }}
+
                 <img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="Vymazať obrázok"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
             </div>
 
-            {{ edit_account_form }}
+            {{ edit_account_form.first_name }}
+            {{ edit_account_form.last_name }}
+            {{ edit_account_form.email_address }}
+            {{ edit_account_form.phone_number }}
+
             <p class="form_report" style="bottom: 194px;">Lorem ipsum dolor sit amet.</p>
             <input type="submit" value="Uložiť zmeny">
 

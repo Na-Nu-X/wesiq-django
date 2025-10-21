@@ -11,6 +11,7 @@ class Users(models.Model):
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
     password = models.CharField(verbose_name="Password", max_length=255, null=False)
     role = models.CharField(verbose_name="Role", choices=role_choices, default="user", null=False)
+    profile_picture_name = models.CharField(verbose_name="profile_picture_name", max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"

@@ -35,6 +35,10 @@
     cursor: pointer;
 }
 
+#select_profile_picture {
+    display: none;
+}
+
 .profile_picture_container .delete_profile_picture {
     position: relative;
     bottom: 3px;
