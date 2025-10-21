@@ -32,12 +32,25 @@
     {% endif %}
 
     <h2>Lorem ipsum dolor sit amet.</h2>
-
     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nisi quod dolor repellendus magni eveniet iusto, velit excepturi quam, accusamus ex in asperiores maxime modi dignissimos culpa sapiente assumenda. Officia, recusandae!
     Soluta, ipsam pariatur cupiditate iure necessitatibus dolorum est earum! Soluta, nulla velit. Ea ex sed soluta quam doloribus ducimus architecto quasi voluptate, eaque cupiditate laudantium nobis earum facere, sapiente adipisci.
     Assumenda dolores dolor incidunt porro alias cupiditate rerum rem, corporis veniam facere vero possimus? Voluptatibus voluptatem similique nihil, assumenda ab atque quasi, molestias harum optio eaque reiciendis, saepe inventore maxime.
     Reprehenderit, a temporibus dolore dicta, perferendis amet magni eius accusantium eum libero vel explicabo? Laboriosam vero debitis nam! Fugit nihil corrupti laboriosam illum quas delectus exercitationem magni alias quos provident?
     Natus nam, iure sequi, ex est dolorum laboriosam tempora animi totam suscipit odio sint nesciunt qui tempore tenetur. Nam perferendis explicabo ipsa ratione harum in deserunt quae, praesentium suscipit qui?</p>
+
+    <div class="reviews">
+        <h2>Hodnotenie</h2>
+        <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
+            {% csrf_token %}
+            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            {{ review_form }}
+            <input type="submit" name="write_review_form_submit" value="Zverejniť hodnotenie">
+        </form>
+    </div>
     
     <form class="contact_form" action="{% url 'homepage_url' %}" method="POST">
         {% csrf_token %}
