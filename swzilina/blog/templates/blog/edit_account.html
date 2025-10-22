@@ -24,13 +24,12 @@
                                 media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                             {% else %}
-                                {% static 'images/profile_picture.png' %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                             
                             {% endif %}
                         "
                         title="Nahrať obrázok"
                     >
-                    <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                 </label>
                 {{ edit_account_form.select_profile_picture }}
 

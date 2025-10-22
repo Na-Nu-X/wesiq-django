@@ -13,6 +13,8 @@
 }
 
 .account .profile_picture {
+    width: 38px;
+    height: 38px;
     position: absolute;
     top: 74px;
     right: 125px;

@@ -43,6 +43,7 @@ def homepage(request):
             "email_address": user.email_address,
             "phone_number": user.phone_number,
             "role": user.role,
+            "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
         })
 
@@ -108,6 +109,11 @@ def edit_account(request):
             if edit_account_form.is_valid():
                 profile_picture_file = request.FILES.get("select_profile_picture")
                 if profile_picture_file:
+                    current_profile_picture_name = logged_in_user.profile_picture_name
+                    if current_profile_picture_name != "":
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                        os.remove(f"{path}/{current_profile_picture_name}")
+
                     new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
 
                     image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
