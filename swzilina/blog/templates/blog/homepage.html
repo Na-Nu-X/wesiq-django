@@ -55,12 +55,36 @@
         <h2>Hodnotenie</h2>
         <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
             {% csrf_token %}
-            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-            <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-            <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-            {{ review_form }}
+
+            <div class="reviewer">
+                <img 
+                    class="profile_picture" 
+                    src="
+                        {% if profile_picture_name %}
+                            media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+
+                <p class="full_name">{{ first_name }} {{ last_name }}</p>
+            </div>
+
+            <div class="review">
+                <div class="rating">
+                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                </div>
+
+                {{ review_form }}
+            </div>
+
             <input type="submit" name="write_review_form_submit" value="Zverejniť hodnotenie">
         </form>
     </div>

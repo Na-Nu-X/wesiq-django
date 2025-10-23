@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+
 class Users(models.Model):
     role_choices = [
         ("user", "user"),
@@ -15,3 +17,9 @@ class Users(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
+
+class Reviews(models.Model):
+    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.CASCADE, related_name="review", null=False)
+    rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
+    review = models.TextField(verbose_name="Review", max_length=200, null=True)
+    creation_time = models.DateTimeField(default=timezone.now, null=False)
