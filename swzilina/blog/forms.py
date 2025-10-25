@@ -57,7 +57,7 @@ class contactForm(forms.Form):
 
 class reviewForm(forms.Form):
     rating = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "rating", "value": "0"}),
+        widget=forms.TextInput(attrs={"value": "0"}),
         label=False,
         max_length=1,
         required=False,

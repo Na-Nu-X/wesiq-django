@@ -75,18 +75,68 @@
 
             <div class="review">
                 <div class="rating">
-                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    <div class="stars">
+                        {% for _ in "12345" %}
+                            <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                            
+                        {% endfor %}
+                    </div>
+
+                    {{ review_form.rating }}
                 </div>
 
-                {{ review_form }}
+                {{ review_form.review }}
             </div>
 
-            <input type="submit" name="write_review_form_submit" value="Zverejniť hodnotenie">
+            <input type="submit" name="write_review_form_submit" value="Zverejniť">
         </form>
+
+        <div class="all_reviews">
+            {% for one_review in reviews %}
+                <div class="one_review">
+                    <div class="reviewer">
+                        <img 
+                            class="profile_picture" 
+                            src="
+                                {% if one_review.user.profile_picture_name %}
+                                    media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
+
+                        <p class="full_name">{{ one_review.user.first_name }} {{ one_review.user.last_name }}<span class="date"> - {{ one_review.creation_time|date:"d.m. Y" }}</span></p>
+                    </div>
+
+                    <div class="review">
+                        <div class="rating">
+                            <div class="stars">
+                                {% for _ in "12345" %}
+                                    {% if forloop.counter <= one_review.rating %}
+                                        <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                                    {% else %}
+                                        <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                    
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <p>{{ one_review.review }}</p>
+                        
+                        {% if one_review.user.id == request.session.logged_in_user_id %}
+                            <a class="edit_review" href="#" title="Upraviť recenziu">Upraviť</a>
+                        
+                        {% endif %}
+                    </div>
+                </div>
+            
+            {% endfor %}
+        </div>
     </div>
     
     <form class="contact_form" action="{% url 'homepage_url' %}" method="POST">
@@ -97,3 +147,7 @@
         <input type="submit" name="contact_form_submit" value="Odoslať správu">
     </form>
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'blog/js/reviews.js' %}" defer></script>
+{% endblock script %}

@@ -59,11 +59,11 @@
     text-align: justify;
 }
 
-form {
-    margin: 50px auto;
+.contact_form {
+    margin: 50px auto 40px;
 }
 
-form textarea {
+.contact_form textarea {
     width: 90%;
     height: 100px;
     margin-top: 10px;
@@ -78,19 +78,27 @@ form textarea {
     transition: width 0.3s ease;
 }
 
-form textarea:hover, form textarea:focus {
+.contact_form textarea:hover, .contact_form textarea:focus {
     width: 100%;
 }
 
 /* Reviews */
 
-.write_review_form .reviewer {
+.write_review_form {
+    max-width: 100%;
+    padding: 0px 30px;
+    text-align: left;
+    backdrop-filter: none;
+    border: none;
+}
+
+.write_review_form .reviewer, .all_reviews .reviewer {
     position: relative;
     height: 38px;
     text-align: left;
 }
 
-.write_review_form .reviewer .profile_picture {
+.write_review_form .reviewer .profile_picture, .all_reviews .reviewer .profile_picture {
     width: 38px;
     height: 38px;
     padding: 2px;
@@ -99,10 +107,95 @@ form textarea:hover, form textarea:focus {
     cursor: pointer;
 }
 
-.write_review_form .reviewer .full_name {
+.write_review_form .reviewer .full_name, .all_reviews .reviewer .full_name {
     position: absolute;
     display: inline-block;
     top: 50%;
     transform: translateY(-50%);
     left: 48px;
+}
+
+.write_review_form .review {
+    height: 142px;
+}
+
+.write_review_form .review .rating, .all_reviews .review .rating {
+    height: 32px;
+    margin-top: 10px;
+}
+
+.write_review_form .review .rating img:hover, .all_reviews .review .rating img:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.write_review_form .review .rating input {
+    display: none;
+}
+
+.write_review_form .review textarea {
+    width: 100%;
+    height: 100px;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: transparent;
+    color: #fff;
+    backdrop-filter: blur(5px);
+    border: 1px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+}
+
+.write_review_form input[type="submit"] {
+    width: 178px;
+    margin-top: 10px;
+    background-color: #4dc91c;
+    color: #000;
+    border: 1px solid #000;
+    border-radius: 10px;
+}
+
+.write_review_form input[type="submit"]:hover, .write_review_form input[type="submit"]:focus {
+    background-color: #55eb19;
+    letter-spacing: 0px;
+}
+
+.all_reviews {
+    margin: 0px 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.all_reviews .one_review {
+    width: 325px;
+    margin-top: 50px;
+    padding: 10px;
+    backdrop-filter: blur(5px);
+    border: 1px solid #fff;
+    border-radius: 10px;
+}
+
+.all_reviews .reviewer .date {
+    color: #949494;
+}
+
+.all_reviews .review p {
+    margin-top: 10px;
+}
+
+.all_reviews .review .edit_review:link,
+.all_reviews .review .edit_review:visited {
+    text-decoration: none;
+    font-size: 14px;
+    color: #949494;
+}
+
+.all_reviews .review .edit_review:hover,
+.all_reviews .review .edit_review:active {
+    text-decoration: underline;
 }

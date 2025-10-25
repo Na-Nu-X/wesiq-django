@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, registrationForm, editAccountForm
-from blog.models import Users
+from blog.models import Users, Reviews
 from django.contrib.auth import authenticate, login
 import secrets
 from pathlib import Path
@@ -11,21 +11,24 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 def homepage(request):
-    # if request.method == "POST":
-    #     message = request.POST.get("message")
-
-    #     filled_contact_form = contactForm(initial={
-    #         "message": message
-    #     })
-
-    #     return render(request, "blog/homepage.html", {
-    #         "contact_form": filled_contact_form,
-    #     })
+    reviews = Reviews.objects.all()
 
     if "logged_in_user_id" in request.session:
-        # Find Logged In User In DB From His ID
         logged_in_user_id = request.session.get("logged_in_user_id")
 
+        if request.method == "POST" and request.POST.get("write_review_form_submit"):
+            review_form = reviewForm(request.POST)
+            if review_form.is_valid():
+                new_review = Reviews(
+                    user_id = logged_in_user_id,
+                    rating = int(review_form.cleaned_data["rating"]),
+                    review = review_form.cleaned_data["review"],
+                )
+                new_review.save()
+
+                return HttpResponseRedirect(reverse("homepage_url"))
+
+        # Find Logged In User In DB From His ID
         user = Users.objects.get(id=logged_in_user_id)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
@@ -45,11 +48,13 @@ def homepage(request):
             "role": user.role,
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
+            "reviews": reviews,
         })
 
     return render(request, "blog/homepage.html", {
         "contact_form": contactForm,
         "review_form": reviewForm,
+        "reviews": reviews,
     })
 
 def login(request):
@@ -82,11 +87,6 @@ def registration(request):
                 password = registration_form.cleaned_data["password"],
             )
             new_user.save()
-
-            # return render(request, "blog/registration.html", {
-            #     "registration_form": registrationForm,
-            #     "registration_successful": True,
-            # })
 
             return HttpResponseRedirect(reverse("homepage_url"))
         
