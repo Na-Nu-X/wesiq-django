@@ -69,6 +69,10 @@ main {
     font-family: "Bungee", sans-serif;
     text-align: center;
     font-size: 50px;
+}
+
+.header_container h1 a {
+    text-decoration: none;
     color: #fff;
 }
 
