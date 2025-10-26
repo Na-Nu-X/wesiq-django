@@ -9,8 +9,7 @@
 
 {% block account %}
     {% if request.session.logged_in_user_id %}
-        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
-            <img 
+        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self"><img 
                 class="profile_picture" 
                 src="
                     {% if profile_picture_name %}
@@ -21,8 +20,7 @@
                     
                     {% endif %}
                 "
-            >
-        </a>
+            ></a>
         <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
 
     {% else %}
