@@ -32,8 +32,11 @@
                     >
                 </label>
                 {{ edit_account_form.select_profile_picture }}
-
-                <img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="Vymazať obrázok"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                
+                <label for="delete_profile_picture">
+                    <img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="Odstrániť obrázok"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                </label>
+                {{ edit_account_form.delete_profile_picture }}
             </div>
 
             {{ edit_account_form.first_name }}
@@ -48,7 +51,10 @@
                 <p>Zabudli ste heslo? <a href="#" title="Poslať overovací kód">Zmeniť heslo</a></p>
             </div>
 
-            <img class="delete_account" src="{% static 'images/delete_account.png' %}" title="Vymazať účet"> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
+            <label for="delete_account">
+                <img class="delete_account" src="{% static 'images/delete_account.png' %}" title="Odstrániť účet"> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
+            </label>
+            {{ edit_account_form.delete_account }}
         </form>
 
     {% else %}
@@ -58,3 +64,41 @@
 
     {% endif %}
 {% endblock content %}
+
+{% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Delete Profile Picture Warning
+
+            const delete_profile_picture_checkbox = document.querySelector("#delete_profile_picture")
+            const delete_profile_picture_image = document.querySelector(".delete_profile_picture")
+
+            delete_profile_picture_checkbox.addEventListener("click", function() {
+                if(delete_profile_picture_checkbox.checked) {
+                    delete_profile_picture_image.style.opacity = 1
+                }
+
+                else {
+                    delete_profile_picture_image.style.opacity = 0.6
+                }
+            })
+
+            // Delete Account Warning
+
+            const delete_account_checkbox = document.querySelector("#delete_account")
+            const delete_account_image = document.querySelector(".delete_account")
+
+            delete_account_checkbox.addEventListener("click", function() {
+                if(delete_account_checkbox.checked) {
+                    delete_account_image.style.opacity = 1
+                }
+
+                else {
+                    delete_account_image.style.opacity = 0.6
+                }
+            })
+        })
+    </script>
+{% endblock script %}

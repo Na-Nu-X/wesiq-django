@@ -37,14 +37,14 @@
     cursor: pointer;
 }
 
-#select_profile_picture {
+#select_profile_picture, #delete_profile_picture, #delete_account {
     display: none;
 }
 
 .profile_picture_container .delete_profile_picture {
     position: relative;
     bottom: 3px;
-    opacity: 0.8;
+    opacity: 0.6;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
@@ -56,6 +56,6 @@
 
 .delete_account {
     margin-top: 10px;
-    opacity: 0.8;
+    opacity: 0.6;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }

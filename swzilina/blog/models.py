@@ -14,6 +14,8 @@ class Users(models.Model):
     password = models.CharField(verbose_name="Password", max_length=255, null=False)
     role = models.CharField(verbose_name="Role", choices=role_choices, default="user", null=False)
     profile_picture_name = models.CharField(verbose_name="profile_picture_name", max_length=50, null=True, blank=True)
+    # last_edit = models.DateTimeField(default=timezone.now, null=True)
+    # creation_time = models.DateTimeField(default=timezone.now, null=False)
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
