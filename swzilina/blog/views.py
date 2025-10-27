@@ -11,24 +11,34 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 def homepage(request):
+    # Get All Reviews From DB
     reviews = Reviews.objects.all()
 
     if "logged_in_user_id" in request.session:
+        # Get Logged In User ID From Session
         logged_in_user_id = request.session.get("logged_in_user_id")
 
+        # Write Review Form
         if request.method == "POST" and request.POST.get("write_review_form_submit"):
             review_form = reviewForm(request.POST)
             if review_form.is_valid():
-                new_review = Reviews(
-                    user_id = logged_in_user_id,
-                    rating = int(review_form.cleaned_data["rating"]),
-                    review = review_form.cleaned_data["review"],
-                )
-                new_review.save()
+                # Checks If User Has Already Written A Review
+                existing_review = Reviews.objects.filter(user_id=logged_in_user_id)
+                if existing_review:
+                    print("Už ste napísali recenziu. Skúste ju upraviť.")
+
+                # Saves New Review To DB
+                else:
+                    new_review = Reviews(
+                        user_id = logged_in_user_id,
+                        rating = int(review_form.cleaned_data["rating"]),
+                        review = review_form.cleaned_data["review"],
+                    )
+                    new_review.save()
 
                 return HttpResponseRedirect(reverse("homepage_url"))
 
-        # Find Logged In User In DB From His ID
+        # Get Logged In User From DB
         user = Users.objects.get(id=logged_in_user_id)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
@@ -38,7 +48,7 @@ def homepage(request):
             "email_address": user.email_address,
         })
 
-        # Render Homepage With Filled Contact Form And User Data
+        # Renders Homepage With Filled Contact Form, User Data And Reviews
         return render(request, "blog/homepage.html", {
             "contact_form": filled_contact_form,
             "first_name": user.first_name,
@@ -51,6 +61,7 @@ def homepage(request):
             "reviews": reviews,
         })
 
+    # Renders Homepage With Reviews
     return render(request, "blog/homepage.html", {
         "contact_form": contactForm,
         "review_form": reviewForm,
@@ -120,12 +131,48 @@ def edit_account(request):
                     image_save_location.save(new_image_name, profile_picture_file)
 
                     logged_in_user.profile_picture_name = new_image_name
-                    logged_in_user.save()
 
-                    return HttpResponseRedirect(reverse("homepage_url"))
+                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
+                if delete_profile_picture:
+                    current_profile_picture_name = logged_in_user.profile_picture_name
+                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                    os.remove(f"{path}/{current_profile_picture_name}")
+
+                    logged_in_user.profile_picture_name = ""
+
+                if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
+                    logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+
+                if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
+                    logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+
+                if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
+                    logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+
+                if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
+                    logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+
+                logged_in_user.save()
+
+                delete_account = edit_account_form.cleaned_data["delete_account"]
+                if delete_account:
+                    current_profile_picture_name = logged_in_user.profile_picture_name
+                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                    os.remove(f"{path}/{current_profile_picture_name}")
+
+                    logged_in_user.delete()
+
+                return HttpResponseRedirect(reverse("homepage_url"))
+
+        filled_edit_account_form = editAccountForm(initial={
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "email_address": logged_in_user.email_address,
+            "phone_number": logged_in_user.phone_number,
+        })
 
         return render(request, "blog/edit_account.html", {
-            "edit_account_form": editAccountForm,
+            "edit_account_form": filled_edit_account_form,
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
             "email_address": logged_in_user.email_address,

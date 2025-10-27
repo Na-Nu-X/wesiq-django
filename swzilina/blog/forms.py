@@ -229,3 +229,13 @@ class editAccountForm(forms.Form):
         label=False,
         required=False,
     )
+
+    delete_profile_picture = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"id": "delete_profile_picture"}),
+        required=False,
+    )
+
+    delete_account = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"id": "delete_account"}),
+        required=False,
+    )
