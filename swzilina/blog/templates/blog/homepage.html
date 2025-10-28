@@ -42,6 +42,13 @@
         <p>Účet bol úspešne vytvorený</p>
     {% endif %}
 
+    {% if messages %}
+        {% for one_message in messages %}
+            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
+        
+        {% endfor %}
+    {% endif %}
+
     <h2>Lorem ipsum dolor sit amet.</h2>
     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nisi quod dolor repellendus magni eveniet iusto, velit excepturi quam, accusamus ex in asperiores maxime modi dignissimos culpa sapiente assumenda. Officia, recusandae!
     Soluta, ipsam pariatur cupiditate iure necessitatibus dolorum est earum! Soluta, nulla velit. Ea ex sed soluta quam doloribus ducimus architecto quasi voluptate, eaque cupiditate laudantium nobis earum facere, sapiente adipisci.

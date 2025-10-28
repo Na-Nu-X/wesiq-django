@@ -46,6 +46,25 @@ header nav ul li a:active {
  Main Styles
 ************/
 
+/* Messages */
+
+.message {
+    visibility: hidden;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fade_out_animation 5s ease;
+}
+
+.message.success {
+    color: #55eb19;
+}
+
+.message.error {
+    color: #e73737;
+}
+
 main {
     min-height: 100vh;
     padding-bottom: 100vh;
@@ -297,4 +316,23 @@ footer div p a:active {
     font-size: 12px;
     line-height: 12px;
     color: #505050;
+}
+
+/***********
+ Key Frames
+***********/
+
+@keyframes fade_out_animation
+{
+    0%
+    {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    100%
+    {
+        opacity: 0;
+        top: 50%;
+    }
 }
