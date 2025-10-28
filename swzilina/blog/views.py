@@ -9,6 +9,7 @@ from pathlib import Path
 import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.contrib import messages
 
 def homepage(request):
     # Get All Reviews From DB
@@ -76,10 +77,14 @@ def login(request):
         try:
             user = Users.objects.get(email_address=email_address, password=password)
             request.session["logged_in_user_id"] = user.id
+
+            messages.add_message(request, messages.SUCCESS, f"Úspešne prihlásený ako {user.first_name + " " + user.last_name}")
+
             return HttpResponseRedirect(reverse("homepage_url"))
         
         except Users.DoesNotExist:
-            print("Nesprávne prihlasovacie údaje!")
+            messages.add_message(request, messages.ERROR, "Nepodarilo sa prihlásiť")
+
             return HttpResponseRedirect(reverse("homepage_url"))
 
     return render(request, "blog/login.html", {
@@ -162,7 +167,9 @@ def edit_account(request):
 
                     logged_in_user.delete()
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+            messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
+
+            return HttpResponseRedirect(reverse("homepage_url"))
 
         filled_edit_account_form = editAccountForm(initial={
             "first_name": logged_in_user.first_name,
