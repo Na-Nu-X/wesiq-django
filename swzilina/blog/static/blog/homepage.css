@@ -5,7 +5,18 @@
     height: 38px;
 }
 
-.account a:nth-child(1) {
+.account .login:link,
+.account .login:visited {
+    text-decoration: none;
+    color: #fff;
+}
+
+.account .login:hover,
+.account .login:active {
+    text-decoration: underline;
+}
+
+.account a:has(.profile_picture) {
     display: inline-block;
     width: 38px;
     height: 38px;
@@ -25,8 +36,14 @@
     transform: scale(1.1);
 }
 
+.account .user_name {
+    margin-right: 6px;
+}
+
 .account .user_name:link,
-.account .user_name:visited {
+.account .user_name:visited,
+.account .logout:link,
+.account .logout:visited {
     position: relative;
     top: -13px;
     text-decoration: none;
@@ -34,7 +51,9 @@
 }
 
 .account .user_name:hover,
-.account .user_name:active {
+.account .user_name:active,
+.account .logout:hover,
+.account .logout:active {
     text-decoration: underline;
 }
 
