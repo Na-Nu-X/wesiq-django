@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, registrationForm, editAccountForm
 from blog.models import Users, Reviews
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 import secrets
 from pathlib import Path
 import os
@@ -11,7 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib import messages
 
-def homepage(request):
+def homepage_view(request):
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
 
@@ -69,7 +69,7 @@ def homepage(request):
         "reviews": reviews,
     })
 
-def login(request):
+def login_view(request):
     if request.method == "POST":
         email_address = request.POST.get("email_address")
         password = request.POST.get("password")
@@ -91,7 +91,14 @@ def login(request):
         "login_form": loginForm,
     })
 
-def registration(request):
+def logout_view(request):
+    logout(request)
+
+    messages.add_message(request, messages.ERROR, "Boli ste odhlásený")
+
+    return HttpResponseRedirect(reverse("homepage_url"))
+
+def registration_view(request):
     if request.method == "POST":
         registration_form = registrationForm(request.POST)
         if registration_form.is_valid():
@@ -110,11 +117,7 @@ def registration(request):
         "registration_form": registrationForm,
     })
 
-def logout(request):
-    request.session.flush()
-    return HttpResponseRedirect(reverse("homepage_url"))
-
-def edit_account(request):
+def edit_account_view(request):
     logged_in_user_id = request.session.get("logged_in_user_id")
 
     if logged_in_user_id:

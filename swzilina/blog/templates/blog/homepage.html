@@ -9,7 +9,8 @@
 
 {% block account %}
     {% if request.session.logged_in_user_id %}
-        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self"><img 
+        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+            <img 
                 class="profile_picture" 
                 src="
                     {% if profile_picture_name %}
@@ -20,11 +21,15 @@
                     
                     {% endif %}
                 "
-            ></a>
+            >
+        </a>
+
         <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
 
+        <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+
     {% else %}
-        <p>Neprihlásený</p>
+        <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
 
     {% endif %}
 {% endblock account %}
