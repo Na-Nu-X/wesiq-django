@@ -139,7 +139,7 @@
                         <p>{{ one_review.review }}</p>
                         
                         {% if one_review.user.id == request.session.logged_in_user_id %}
-                            <a class="edit_review" href="#" title="Upraviť recenziu">Upraviť</a>
+                            <a class="edit_review" href="{% url 'edit_review_url' %}" title="Upraviť recenziu">Upraviť</a>
                         
                         {% endif %}
                     </div>

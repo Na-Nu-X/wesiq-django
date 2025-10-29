@@ -72,6 +72,11 @@ class reviewForm(forms.Form):
             "max_length": "Vaša recenzia je príliš dlhá",
         },
     )
+
+    delete_review = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"id": "delete_review"}),
+        required=False,
+    )
 class loginForm(forms.Form):
     email_address = forms.EmailField(
         widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),

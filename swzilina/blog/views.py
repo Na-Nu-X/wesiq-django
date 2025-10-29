@@ -189,3 +189,25 @@ def edit_account_view(request):
             "phone_number": logged_in_user.phone_number,
             "profile_picture_name": logged_in_user.profile_picture_name,
         })
+    
+def edit_review_view(request):
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        review = Reviews.objects.get(user_id=logged_in_user_id)
+
+        if request.method == "POST":
+            review_form = reviewForm(request.POST)
+            if review_form.is_valid():
+                pass
+        
+        filled_review_form = reviewForm(initial={
+            "review": review.review,
+        })
+
+        return render(request, "blog/edit_review.html", {
+            "review_form": filled_review_form,
+            "review": review,
+        })
+    
+    return render(request, "blog/edit_review.html")
