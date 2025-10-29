@@ -137,8 +137,8 @@
 }
 
 .write_review_form .reviewer .full_name, .all_reviews .reviewer .full_name {
-    position: absolute;
     display: inline-block;
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     left: 48px;

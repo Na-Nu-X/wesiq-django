@@ -1,0 +1,88 @@
+.no_logged_in p {
+    text-align: center;
+}
+
+.no_logged_in a:link,
+.no_logged_in a:visited {
+    text-decoration: none;
+    font-style: italic;
+    color: #fff;
+}
+
+.no_logged_in a:hover,
+.no_logged_in a:active {
+    text-decoration: underline;
+}
+
+.edit_review_form {
+    text-align: center;
+}
+
+.reviewer {
+    position: relative;
+    height: 38px;
+    margin-left: 5%;
+    text-align: left;
+}
+
+.profile_picture {
+    width: 38px;
+    height: 38px;
+    padding: 2px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.full_name {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 48px;
+}
+
+.rating {
+    height: 32px;
+    margin: 10px 0px 0px 5%;
+    text-align: left;
+}
+
+.rating input, #delete_review {
+    display: none;
+}
+
+textarea {
+    width: 90%;
+    height: 162px;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    transition: width 0.3s ease;
+}
+
+textarea:hover, textarea:focus {
+    width: 100%;
+}
+
+textarea:hover, textarea:focus {
+    width: 100%;
+}
+
+.delete_review {
+    margin-top: 10px;
+    opacity: 0.6;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.delete_review:hover {
+    transform: scale(1.1);
+    opacity: 1;
+    cursor: pointer;
+}

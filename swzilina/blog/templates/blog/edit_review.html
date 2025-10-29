@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Street Workout Žilina - Moje hodnotenie{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/edit_review.css' %}">
+{% endblock style %}
+
+{% block heading %}Moje&nbsp;hodnotenie{% endblock heading %}
+
+{% block content %}
+    {% if request.session.logged_in_user_id %}
+        <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
+            {% csrf_token %}
+            <h2><a href="{% url 'edit_review_url' %}" target="_self">Moje&nbsp;hodnotenie</a></h2>
+
+            <div class="reviewer">
+                <img 
+                    class="profile_picture" 
+                    src="
+                        {% if review.user.profile_picture_name %}
+                            media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+
+                <p class="full_name">{{ review.user.first_name }} {{ review.user.last_name }}<span class="date"> - {{ review.creation_time|date:"d.m. Y" }}</span></p>
+            </div>
+
+            <div class="review">
+                <div class="rating">
+                    <div class="stars">
+                        {% for _ in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                            {% else %}
+                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                            
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {{ review_form.rating }}
+                </div>
+
+                {{ review_form.review }}
+                <!-- <p>{{ review.review }}</p> -->
+            </div>
+
+            <p class="form_report" style="bottom: 162px;">Lorem ipsum dolor sit amet.</p>
+            <input type="submit" value="Uložiť zmeny">
+
+            <div>
+                <label for="delete_review">
+                    <img class="delete_review" src="{% static 'images/delete.png' %}" title="Odstrániť recenziu"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                </label>
+                {{ review_form.delete_review }}
+            </div>
+        </form>
+
+    {% else %}
+        <div class="no_logged_in">
+            <p>Pre vykonávanie zmien vašej recenzie sa musíte najprv <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">prihlásiť</a> alebo <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">zaregistrovať</a>.</p>
+        </div>
+
+    {% endif %}
+{% endblock content %}
+
+{% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Delete Review Warning
+
+            const delete_review_checkbox = document.querySelector("#delete_review")
+            const delete_review_image = document.querySelector(".delete_review")
+
+            delete_review_checkbox.addEventListener("click", function() {
+                if(delete_review_checkbox.checked) {
+                    delete_review_image.style.opacity = 1
+                }
+
+                else {
+                    delete_review_image.style.opacity = 0.6
+                }
+            })
+        })
+    </script>
+{% endblock script %}
