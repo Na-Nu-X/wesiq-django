@@ -177,7 +177,7 @@ form input[type="submit"] {
 }
 
 form input[type="submit"]:hover, form input[type="submit"]:focus {
-    background-color: #ffffffcc;
+    background-color: #ffffffe6;
     color: #000;
     border: 1px solid #000;
     transform: scale(1.1);

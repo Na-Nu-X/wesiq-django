@@ -10,6 +10,8 @@ import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
 
 def homepage_view(request):
     # Get All Reviews From DB
@@ -126,58 +128,68 @@ def edit_account_view(request):
         logged_in_user = Users.objects.get(id=logged_in_user_id)
 
         if request.method == "POST":
-            edit_account_form = editAccountForm(request.POST, request.FILES)
-            if edit_account_form.is_valid():
-                profile_picture_file = request.FILES.get("select_profile_picture")
-                print(profile_picture_file)
-                print(logged_in_user.profile_picture_name)
-                if profile_picture_file:
-                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+            if timezone.now() - logged_in_user.last_edit >= timedelta(days=30) or logged_in_user.last_edit == None:
+                edit_account_form = editAccountForm(request.POST, request.FILES)
+                if edit_account_form.is_valid():
+                    profile_picture_file = request.FILES.get("select_profile_picture")
+                    if profile_picture_file:
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
 
-                    current_profile_picture_name = logged_in_user.profile_picture_name
-                    if current_profile_picture_name != "" and current_profile_picture_name != None:
+                        current_profile_picture_name = logged_in_user.profile_picture_name
+                        if current_profile_picture_name != "" and current_profile_picture_name != None:
+                            os.remove(f"{path}/{current_profile_picture_name}")
+
+                        new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+
+                        image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                        image_save_location.save(new_image_name, profile_picture_file)
+
+                        logged_in_user.profile_picture_name = new_image_name
+
+                        logged_in_user.last_edit = timezone.now()
+
+                    delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
+                    if delete_profile_picture:
+                        current_profile_picture_name = logged_in_user.profile_picture_name
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
                         os.remove(f"{path}/{current_profile_picture_name}")
 
-                    new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+                        logged_in_user.profile_picture_name = ""
 
-                    image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                    image_save_location.save(new_image_name, profile_picture_file)
+                        logged_in_user.last_edit = timezone.now()
 
-                    logged_in_user.profile_picture_name = new_image_name
+                    if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
+                        logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+                        logged_in_user.last_edit = timezone.now()
 
-                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
-                if delete_profile_picture:
-                    current_profile_picture_name = logged_in_user.profile_picture_name
-                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                    os.remove(f"{path}/{current_profile_picture_name}")
+                    if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
+                        logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+                        logged_in_user.last_edit = timezone.now()
 
-                    logged_in_user.profile_picture_name = ""
+                    if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
+                        logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+                        logged_in_user.last_edit = timezone.now()
 
-                if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
-                    logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+                    if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
+                        logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+                        logged_in_user.last_edit = timezone.now()
 
-                if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
-                    logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+                    logged_in_user.save()
 
-                if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
-                    logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+                    delete_account = edit_account_form.cleaned_data["delete_account"]
+                    if delete_account:
+                        current_profile_picture_name = logged_in_user.profile_picture_name
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                        os.remove(f"{path}/{current_profile_picture_name}")
 
-                if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
-                    logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+                        logged_in_user.delete()
 
-                logged_in_user.save()
+                messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
 
-                delete_account = edit_account_form.cleaned_data["delete_account"]
-                if delete_account:
-                    current_profile_picture_name = logged_in_user.profile_picture_name
-                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                    os.remove(f"{path}/{current_profile_picture_name}")
+                return HttpResponseRedirect(reverse("homepage_url"))
 
-                    logged_in_user.delete()
-
-            messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
-
-            return HttpResponseRedirect(reverse("homepage_url"))
+            else:
+                messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
 
         filled_edit_account_form = editAccountForm(initial={
             "first_name": logged_in_user.first_name,
@@ -202,27 +214,33 @@ def edit_review_view(request):
         review = Reviews.objects.get(user_id=logged_in_user_id)
 
         if request.method == "POST":
-            review_form = reviewForm(request.POST)
-            if review_form.is_valid():
-                if review.rating != int(review_form.cleaned_data["rating"]):
-                    review.rating = int(review_form.cleaned_data["rating"])
+            if timezone.now() - review.last_edit >= timedelta(days=10) or review.last_edit == None:
+                review_form = reviewForm(request.POST)
+                if review_form.is_valid():
+                    if review.rating != int(review_form.cleaned_data["rating"]):
+                        review.rating = int(review_form.cleaned_data["rating"])
+                        review.last_edit = timezone.now()
 
-                if review.review != review_form.cleaned_data["review"]:
-                    review.review = review_form.cleaned_data["review"]
+                    if review.review != review_form.cleaned_data["review"]:
+                        review.review = review_form.cleaned_data["review"]
+                        review.last_edit = timezone.now()
 
-                review.save()
+                    review.save()
 
-                delete_review = review_form.cleaned_data["delete_review"]
-                if delete_review:
-                    review.delete()
+                    delete_review = review_form.cleaned_data["delete_review"]
+                    if delete_review:
+                        review.delete()
 
-                    messages.add_message(request, messages.ERROR, "Vaše hodnotenie bolo odstránené")
+                        messages.add_message(request, messages.ERROR, "Vaše hodnotenie bolo odstránené")
 
-                    return HttpResponseRedirect(reverse("homepage_url"))
-                
-            messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
+                        return HttpResponseRedirect(reverse("homepage_url"))
+                    
+                messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
 
-            return HttpResponseRedirect(reverse("homepage_url"))
+                return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else:
+                messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(review.last_edit + timedelta(days=10)).strftime('%d.%m. %Y')}")
         
         filled_review_form = reviewForm(initial={
             "rating": review.rating,
