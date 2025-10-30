@@ -129,10 +129,13 @@ def edit_account_view(request):
             edit_account_form = editAccountForm(request.POST, request.FILES)
             if edit_account_form.is_valid():
                 profile_picture_file = request.FILES.get("select_profile_picture")
+                print(profile_picture_file)
+                print(logged_in_user.profile_picture_name)
                 if profile_picture_file:
+                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+
                     current_profile_picture_name = logged_in_user.profile_picture_name
-                    if current_profile_picture_name != "":
-                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                    if current_profile_picture_name != "" and current_profile_picture_name != None:
                         os.remove(f"{path}/{current_profile_picture_name}")
 
                     new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
