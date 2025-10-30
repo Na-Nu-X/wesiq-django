@@ -26,7 +26,7 @@ def homepage_view(request):
                 # Checks If User Has Already Written A Review
                 existing_review = Reviews.objects.filter(user_id=logged_in_user_id)
                 if existing_review:
-                    print("Už ste napísali recenziu. Skúste ju upraviť.")
+                    messages.add_message(request, messages.ERROR, "Skúste upraviť aktuálne hodnotenie")
 
                 # Saves New Review To DB
                 else:
@@ -36,6 +36,8 @@ def homepage_view(request):
                         review = review_form.cleaned_data["review"],
                     )
                     new_review.save()
+
+                    messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -199,9 +201,28 @@ def edit_review_view(request):
         if request.method == "POST":
             review_form = reviewForm(request.POST)
             if review_form.is_valid():
-                pass
+                if review.rating != int(review_form.cleaned_data["rating"]):
+                    review.rating = int(review_form.cleaned_data["rating"])
+
+                if review.review != review_form.cleaned_data["review"]:
+                    review.review = review_form.cleaned_data["review"]
+
+                review.save()
+
+                delete_review = review_form.cleaned_data["delete_review"]
+                if delete_review:
+                    review.delete()
+
+                    messages.add_message(request, messages.ERROR, "Vaše hodnotenie bolo odstránené")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+            messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
+
+            return HttpResponseRedirect(reverse("homepage_url"))
         
         filled_review_form = reviewForm(initial={
+            "rating": review.rating,
             "review": review.review,
         })
 
