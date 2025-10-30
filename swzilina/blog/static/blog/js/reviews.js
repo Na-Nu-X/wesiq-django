@@ -3,9 +3,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Write Review
 
-    const stars = document.querySelectorAll(".write_review_form .stars img")
-    const rating = document.querySelector(".write_review_form .rating input")
-    let selected_rating = 0
+    const stars = document.querySelectorAll(".write_review_form .stars img, .edit_review_form .stars img")
+    const rating = document.querySelector(".write_review_form .rating input, .edit_review_form .rating input")
+    let selected_rating = parseInt(rating.value) || 0
 
     function updateStars(hover_value = 0) {
         stars.forEach(function(star, index) {
@@ -48,4 +48,6 @@ document.addEventListener("DOMContentLoaded", function() {
             updateStars()
         })
     })
+
+    updateStars()
 })
