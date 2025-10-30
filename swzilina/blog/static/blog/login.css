@@ -5,7 +5,7 @@
     height: 50px;
     line-height: 50px;
     margin: 10px auto;
-    background-color: #ffffffcc;
+    background-color: #ffffffe6;
     border: 1px solid #000;
     border-radius: 25px;
     font-size: 16px;
@@ -13,7 +13,7 @@
 }
 
 .login_methods div:hover {
-    background-color: #1e1e1ecc;
+    background-color: #00000099;
     border: 1px solid #fff;
     transform: scale(1.1);
     letter-spacing: 1px;

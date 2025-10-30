@@ -10,6 +10,13 @@
 {% block heading %}Moje&nbsp;hodnotenie{% endblock heading %}
 
 {% block content %}
+    {% if messages %}
+        {% for one_message in messages %}
+            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
+        
+        {% endfor %}
+    {% endif %}
+
     {% if request.session.logged_in_user_id %}
         <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
             {% csrf_token %}

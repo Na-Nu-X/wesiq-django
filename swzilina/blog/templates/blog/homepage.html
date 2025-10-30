@@ -118,7 +118,22 @@
                             "
                         >
 
-                        <p class="full_name">{{ one_review.user.first_name }} {{ one_review.user.last_name }}<span class="date"> - {{ one_review.creation_time|date:"d.m. Y" }}</span></p>
+                        <p class="full_name">
+                            {% if one_review.user == None %}
+                                Neexistujúci účet
+
+                            {% else %}
+                                {{ one_review.user.first_name }} {{ one_review.user.last_name }}
+
+                            {% endif %}
+                            <span class="date">
+                                - {{ one_review.creation_time|date:"d.m. Y" }} 
+                                {% if one_review.last_edit != None %}
+                                    (upravené)
+
+                                {% endif %}
+                            </span>
+                        </p>
                     </div>
 
                     <div class="review">
