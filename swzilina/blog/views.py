@@ -12,10 +12,15 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Avg
 
 def homepage_view(request):
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
+
+    # Info About Reviews
+    avg_rating = reviews.aggregate(Avg("rating"))
+    num_reviews = reviews.count()
 
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
@@ -64,6 +69,8 @@ def homepage_view(request):
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
             "reviews": reviews,
+            "avg_rating": avg_rating,
+            "num_reviews": num_reviews,
         })
 
     # Renders Homepage With Reviews
@@ -71,6 +78,8 @@ def homepage_view(request):
         "contact_form": contactForm,
         "review_form": reviewForm,
         "reviews": reviews,
+        "avg_rating": avg_rating,
+        "num_reviews": num_reviews,
     })
 
 def login_view(request):
