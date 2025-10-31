@@ -34,12 +34,13 @@ header nav ul li a:visited {
     text-decoration: none;
     font-size: 18px;
     color: #fff;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 header nav ul li a:hover,
 header nav ul li a:active {
     transform: scale(1.1);
+    color: #e73737;
 }
 
 /************
@@ -77,7 +78,7 @@ main {
 }
 
 .header_container {
-    height: 100vh;
+    height: calc(100vh - 125px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -87,7 +88,7 @@ main {
 .header_container h1 {
     font-family: "Bungee", sans-serif;
     text-align: center;
-    font-size: 50px;
+    font-size: 60px;
 }
 
 .header_container h1 a {

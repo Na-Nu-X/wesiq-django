@@ -20,11 +20,11 @@
 
 <body>
     <header>
-        <nav>
+        <nav class="navigation_bar">
             <ul>
                 <li><a href="{% url 'homepage_url' %}" target="_self">DOMOV</a></li>
                 <li><a href="#" target="_self">BLOG</a></li>
-                <li><a href="#" target="_self">KONTAKT</a></li>
+                {% block navigation_bar_items %}{% endblock navigation_bar_items %}
             </ul>
         </nav>
     </header>
@@ -60,6 +60,7 @@
         <p class="copywrite">&copy; Street Workout Žilina 2025</p>
     </footer>
 
+    <script src="{% static 'js/navigation.js' %}" defer></script>
     {% block script %}{% endblock script %}
 </body>
 </html>
