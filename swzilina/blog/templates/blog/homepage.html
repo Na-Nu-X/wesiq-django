@@ -7,32 +7,50 @@
     <link rel="stylesheet" href="{% static 'blog/homepage.css' %}">
 {% endblock style %}
 
-{% block account %}
+{% block banner %}
     {% if request.session.logged_in_user_id %}
-        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
-            <img 
-                class="profile_picture" 
-                src="
-                    {% if profile_picture_name %}
-                        media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+        <div class="account">
+            <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                <img 
+                    class="profile_picture" 
+                    src="
+                        {% if profile_picture_name %}
+                            media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
-                    {% else %}
-                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                    
-                    {% endif %}
-                "
-            >
-        </a>
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+            </a>
 
-        <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+            <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
 
-        <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+            <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+        </div>
 
     {% else %}
-        <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+        <div class="account">
+            <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+        </div>
 
     {% endif %}
-{% endblock account %}
+
+    <div class="reviews_info" title="Na základe {{ num_reviews }} recenzií">
+        <p>{{ avg_rating.rating__avg }}</p>
+
+        {% for _ in "12345" %}
+            {% if forloop.counter <= avg_rating.rating__avg|floatformat:0|add:0 %}
+                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+            {% else %}
+                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+        
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock banner %}
 
 {% block heading %}Street&nbsp;Workout<br>Žilina{% endblock heading %}
 {% block buttons %}
