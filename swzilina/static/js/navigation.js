@@ -4,31 +4,30 @@ document.addEventListener("DOMContentLoaded", function() {
     // Disappearing Navigation Bar
 
     const navigation_bar = document.querySelector(".navigation_bar")
-    
+
     function handleScroll() {
-        if (window.innerWidth <= 800) {
+        if(window.innerWidth <= 800) {
             navigation_bar.style.opacity = 1
+            return
         }
 
-        if (window.scrollY > window.innerHeight - navigation_bar.offsetHeight) {
+        if(window.scrollY > window.innerHeight - navigation_bar.offsetHeight) {
             navigation_bar.style.opacity = 0
-        } 
-        
-        else {
+        } else {
             navigation_bar.style.opacity = 1
             navigation_bar.style.transition = "0.5s"
         }
     }
 
     function handleMouseOver() {
-        if (window.innerWidth > 800) {
+        if(window.innerWidth > 800) {
             navigation_bar.style.opacity = 1
             navigation_bar.style.transition = "1s"
         }
     }
 
     function handleMouseOut() {
-        if (window.innerWidth > 800 && window.scrollY > window.innerHeight - navigation_bar.offsetHeight) {
+        if(window.innerWidth > 800 && window.scrollY > window.innerHeight - navigation_bar.offsetHeight) {
             navigation_bar.style.opacity = 0
         }
     }
@@ -40,28 +39,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Navigation Bar Icons
 
-    // const navigation_icon = document.querySelector(".navigation_icon")
-    // const navigation_bar_item = document.querySelectorAll(".navigation_bar_item")
+    const navigation_icon = document.querySelector(".navigation_icon")
+    const navigation_bar_item = document.querySelectorAll(".navigation_bar ul li")
 
-    // navigation_icon.addEventListener("click", function(event) {
-    //     if(document.querySelector(".fa-solid").classList[1] === "fa-bars") {
-    //         document.querySelector(".fa-solid").classList.remove("fa-bars")
-    //         document.querySelector(".fa-solid").classList.add("fa-xmark")
+    navigation_icon.addEventListener("click", function(event) {
+        if(document.querySelector(".fa-solid").classList[1] === "fa-bars") {
+            document.querySelector(".fa-solid").classList.remove("fa-bars")
+            document.querySelector(".fa-solid").classList.add("fa-xmark")
 
-    //         navigation_bar_item.forEach(function(one_item) {
-    //             one_item.style.display = "block"
-    //         })
-    //     }
+            navigation_bar_item.forEach(function(one_item) {
+                one_item.style.display = "block"
+            })
+        }
 
-    //     else if(document.querySelector(".fa-solid").classList[1] === "fa-xmark") {
-    //         document.querySelector(".fa-solid").classList.remove("fa-xmark")
-    //         document.querySelector(".fa-solid").classList.add("fa-bars")
+        else if(document.querySelector(".fa-solid").classList[1] === "fa-xmark") {
+            document.querySelector(".fa-solid").classList.remove("fa-xmark")
+            document.querySelector(".fa-solid").classList.add("fa-bars")
 
-    //         navigation_bar_item.forEach(function(one_item) {
-    //             one_item.style.display = "none"
-    //         })
-    //     }
-    // })
+            navigation_bar_item.forEach(function(one_item) {
+                one_item.style.display = "none"
+            })
+        }
+    })
 
     // Auto Scroll Buttons
 
@@ -79,7 +78,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const scroll_contact = document.querySelector(".scroll_contact")
     const contact = document.querySelector(".contact_form")
 
+    const scroll_reviews = document.querySelector(".reviews_info")
+    const reviews = document.querySelector(".reviews")
+
     if(scroll_contact && contact) {
         autoScrollButtons(scroll_contact, contact)
+    }
+
+    if(scroll_reviews && reviews) {
+        autoScrollButtons(scroll_reviews, reviews)
     }
 })

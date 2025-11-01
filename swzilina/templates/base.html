@@ -25,6 +25,11 @@
                 <li><a href="{% url 'homepage_url' %}" target="_self">DOMOV</a></li>
                 <li><a href="#" target="_self">BLOG</a></li>
                 {% block navigation_bar_items %}{% endblock navigation_bar_items %}
+
+                <div class="navigation_icon">
+                    <i class="fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
+                    <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+                </div>
             </ul>
         </nav>
     </header>

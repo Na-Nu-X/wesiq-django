@@ -11,25 +11,26 @@
 
 /* Navigation Bar */
 
-header nav {
+.navigation_bar {
     position: fixed;
     width: 100%;
     background-color: #000000cc;
     border-bottom: 1px solid #fff;
+    opacity: 1;
     z-index: 100;
 }
 
-header nav ul {
+.navigation_bar ul {
     text-align: center;
 }
 
-header nav ul li {
+.navigation_bar ul li {
     display: inline-block;
 }
 
-header nav ul li a:link,
-header nav ul li a:visited {
-    display: inline-block;
+.navigation_bar ul li a:link,
+.navigation_bar ul li a:visited {
+    display: block;
     margin: 20px 10px;
     text-decoration: none;
     font-size: 18px;
@@ -37,10 +38,23 @@ header nav ul li a:visited {
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-header nav ul li a:hover,
-header nav ul li a:active {
+.navigation_bar ul li a:hover,
+.navigation_bar ul li a:active {
     transform: scale(1.1);
     color: #e73737;
+}
+
+.navigation_bar .fa-bars, .navigation_bar .fa-xmark {
+    display: none;
+    margin: 10px 0px;
+    color: #fff;
+    font-size: 30px;
+    transition: transform 0.3s ease;
+}
+
+.navigation_bar .fa-bars:hover, .navigation_bar .fa-xmark:hover {
+    transform: scale(1.1);
+    cursor: pointer;
 }
 
 /************
@@ -78,7 +92,7 @@ main {
 }
 
 .header_container {
-    height: calc(100vh - 125px);
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -335,5 +349,34 @@ footer div p a:active {
     {
         opacity: 0;
         top: 50%;
+    }
+}
+
+/**************
+ Media Queries
+**************/
+
+@media only screen and (min-width: 801px) {
+    .navigation_bar ul li {
+        display: inline-block !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .navigation_bar ul li {
+        display: none;
+    }
+
+    .navigation_bar ul li a:link,
+    .navigation_bar ul li a:visited {
+        display: block;
+        margin: 10px 0px;
+    }
+
+    .navigation_bar .fa-bars, .navigation_bar .fa-xmark {
+        display: block;
+        color: #fff;
+        font-size: 30px;
+        transition: transform 0.3s ease;
     }
 }
