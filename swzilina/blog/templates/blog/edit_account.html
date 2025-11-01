@@ -20,7 +20,10 @@
     {% if request.session.logged_in_user_id %}
         <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
             <h2><a href="{% url 'edit_account_url' %}" target="_self">Môj&nbsp;účet</a></h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
 
             <div class="profile_picture_container">
                 <label for="select_profile_picture">

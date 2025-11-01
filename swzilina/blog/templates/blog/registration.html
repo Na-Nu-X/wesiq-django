@@ -12,7 +12,10 @@
 
     <form class="registration_form" action="{% url 'registration_url' %}" method="POST">
         {% csrf_token %}
+
         <h2><a href="{% url 'registration_url' %}" target="_self">Registrácia</a></h2>
+
+        <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
 
         {{ registration_form.first_name }}
         {{ registration_form.last_name }}

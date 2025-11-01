@@ -112,6 +112,17 @@ main {
 }
 
 /* Forms */
+.back {
+  position: absolute;
+  top: 44px;
+  left: 50px;
+}
+
+.back img:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
 form {
   position: relative;
   max-width: 500px;

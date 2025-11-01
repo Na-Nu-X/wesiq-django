@@ -11,14 +11,21 @@
     height: 38px;
 }
 
-.account .login:link,
-.account .login:visited {
+.no_account {
+    position: absolute;
+    top: 83.5px;
+    right: 10px;
+    height: 25px;
+}
+
+.no_account .login:link,
+.no_account .login:visited {
     text-decoration: none;
     color: #fff;
 }
 
-.account .login:hover,
-.account .login:active {
+.no_account .login:hover,
+.no_account .login:active {
     text-decoration: underline;
 }
 
@@ -406,7 +413,7 @@
         top: 61px;
     }
 
-    .reviews_info {
+    .no_account, .reviews_info {
         top: 67.5px;
     }
 
