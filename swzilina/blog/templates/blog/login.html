@@ -12,7 +12,10 @@
 {% block content %}
     <form class="login_form" action="{% url 'login_url' %}" method="POST">
         {% csrf_token %}
+
         <h2><a href="{% url 'login_url' %}" target="_self">Prihlásenie</a></h2>
+
+        <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
 
         {{ login_form.email_address }}
         
