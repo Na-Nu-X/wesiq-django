@@ -58,9 +58,47 @@
 
 {% block heading %}Street&nbsp;Workout<br>Žilina{% endblock heading %}
 {% block buttons %}
-    <div class="buttons">
+    {% comment %} <div class="buttons">
         <a href="{% url 'login_url' %}" target="_self">Prihlásiť</a>
         <a href="{% url 'registration_url' %}" target="_self">Zaregistrovať</a>
+    </div> {% endcomment %}
+
+    <div class="buttons"> <!-- https://codepen.io/hilwat/pen/BeemVX -->
+        <a class="blob-btn login_button" href="{% url 'login_url' %}" target="_self">
+            Prihlásiť
+            <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+            </span>
+            </span>
+        </a>
+
+        <a class="blob-btn registration_button" href="{% url 'registration_url' %}" target="_self">
+            Zaregistrovať
+            <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+            </span>
+            </span>
+        </a>
+
+        <br/>
+
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <defs>
+                <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+                <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+                </filter>
+            </defs>
+        </svg>
     </div>
 {% endblock buttons %}
 
