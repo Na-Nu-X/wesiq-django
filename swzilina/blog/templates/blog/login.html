@@ -10,6 +10,13 @@
 {% block heading %}Prihlásenie{% endblock heading %}
 
 {% block content %}
+    {% if messages %}
+        {% for one_message in messages %}
+            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
+        
+        {% endfor %}
+    {% endif %}
+
     <form class="login_form" action="{% url 'login_url' %}" method="POST">
         {% csrf_token %}
 

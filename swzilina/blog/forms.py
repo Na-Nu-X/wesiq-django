@@ -36,9 +36,9 @@ class contactForm(forms.Form):
 
     subject = forms.ChoiceField(
         choices = {
-            "1": "Otázka",
-            "2": "Návrh na zlepšenie",
-            "3": "Nahlásenie chyby",
+            "Otázka": "Otázka",
+            "Návrh na zlepšenie": "Návrh na zlepšenie",
+            "Nahlásenie chyby": "Nahlásenie chyby",
         },
         label=False,
         required=False,
