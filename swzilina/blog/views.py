@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, registrationForm, editAccountForm
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm
 from blog.models import Users, Reviews
 from django.contrib.auth import authenticate, login, logout
 import secrets
@@ -14,6 +14,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Avg
 from django.core.mail import send_mail
+import random
 
 def homepage_view(request):
     # Get All Reviews From DB
@@ -64,7 +65,7 @@ def homepage_view(request):
                 # Send Mail
                 send_mail(
                     f"SW Žilina - {subject}", # Title
-                    message, # Message
+                    f"{first_name} {last_name} - {email_address}\n\n{message}", # Message
                     "settings.EMAIL_HOST_USER", # Sender
                     [email_address], # Receiver
                     fail_silently=False
@@ -124,8 +125,36 @@ def login_view(request):
         except Users.DoesNotExist:
             messages.add_message(request, messages.ERROR, "Nepodarilo sa prihlásiť")
 
+    if request.GET.get("password-reset"):
+        email_address = request.COOKIES.get("email_address")
+
+        # Generate Random 6-Digit Code
+        code = ""
+
+        for one_number in range(6):
+            one_number = random.randint(0, 9)
+            code += str(one_number)
+        
+        # Send Mail
+        send_mail(
+            "SW Žilina - Obnova hesla", # Title
+            f"Váš overovací kód: {code}", # Message
+            "settings.EMAIL_HOST_USER", # Sender
+            [email_address], # Receiver
+            fail_silently=False
+        )
+
+        # Set 10 Minute Cookie With Random 6-Digit Code
+        response = HttpResponse("Cookie Has Been Set")
+        response.set_cookie("password_reset_code", code, max_age=60*10, secure=True)
+
     return render(request, "blog/login.html", {
         "login_form": loginForm,
+    })
+
+def password_reset_view(request):
+    return render(request, "blog/password_reset.html", {
+        "password_reset_form": passwordResetForm,
     })
 
 def logout_view(request):
