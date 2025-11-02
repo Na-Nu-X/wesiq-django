@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Avg
+from django.core.mail import send_mail
 
 def homepage_view(request):
     # Get All Reviews From DB
@@ -47,6 +48,31 @@ def homepage_view(request):
                     messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
+        
+        # Contact Form
+        if request.method == "POST" and request.POST.get("contact_form_submit"):
+            contact_form = contactForm(request.POST)
+            if contact_form.is_valid():
+                # Get Form Data
+                first_name = contact_form.cleaned_data["first_name"]
+                last_name = contact_form.cleaned_data["last_name"]
+                email_address = contact_form.cleaned_data["email_address"]
+                subject = contact_form.cleaned_data["subject"]
+                message = contact_form.cleaned_data["message"]
+                print(first_name, last_name, email_address, subject, message)
+
+                # Send Mail
+                send_mail(
+                    f"SW Žilina - {subject}", # Title
+                    message, # Message
+                    "settings.EMAIL_HOST_USER", # Sender
+                    [email_address], # Receiver
+                    fail_silently=False
+                )
+
+                messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+
+            return HttpResponseRedirect(reverse("homepage_url"))
 
         # Get Logged In User From DB
         user = Users.objects.get(id=logged_in_user_id)
@@ -97,8 +123,6 @@ def login_view(request):
         
         except Users.DoesNotExist:
             messages.add_message(request, messages.ERROR, "Nepodarilo sa prihlásiť")
-
-            return HttpResponseRedirect(reverse("homepage_url"))
 
     return render(request, "blog/login.html", {
         "login_form": loginForm,
