@@ -32,7 +32,7 @@
             <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
         </div>
 
-        <p class="form_report" style="bottom: 287px;">Lorem ipsum dolor sit amet.</p>
+        <p class="form_report" style="bottom: 287px;"></p>
         <input type="submit" name="login_form_submit" value="Prihlásiť sa">
 
         <div class="login_methods">
@@ -46,12 +46,39 @@
         </div>
 
         <div class="form_questions">
-            <p>Zabudli ste heslo? <a href="" title="Poslať overovací kód">Zmeniť heslo</a></p>
+            <p>Zabudli ste heslo? <a class="password_reset" href="?password-reset=true" title="Poslať overovací kód">Zmeniť heslo</a></p>
             <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
         </div>
     </form>
 {% endblock content %}
 
 {% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Password Reset
+
+            const password_reset = document.querySelector(".password_reset")
+            const email_address = document.querySelector(".email_address")
+            const form_report = document.querySelector(".form_report")
+
+            password_reset.addEventListener("click", function() {
+                if(email_address.value !== "" && email_address.value.includes("@") && email_address.value.includes(".")) {
+                    form_report.textContent = ""
+
+                    document.cookie = `email_address=${email_address.value}; max-age=` + 60 * 10 + "; path=/"; // 10 Minutes Timed Cookie With User's Email Address
+                }
+
+                else {
+                    event.preventDefault()
+
+                    form_report.textContent = "Zadajte váš e-mail."
+                    form_report.classList.add("invalid")
+                }
+            })
+        })
+    </script>
+
     <script src="{% static 'blog/js/password.js' %}" defer></script>
 {% endblock script %}

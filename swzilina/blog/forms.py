@@ -79,7 +79,7 @@ class reviewForm(forms.Form):
     )
 class loginForm(forms.Form):
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "Zadajte váš e-mail"}),
         label=False,
         max_length=50,
         required=True,
@@ -97,6 +97,29 @@ class loginForm(forms.Form):
         error_messages={
             "max_length": "Zadané heslo je príliš dlhé",
             "required": "Zadajte vaše heslo",
+        },
+    )
+
+class passwordResetForm(forms.Form):
+    password_reset_code = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Zadajte 6-miestny overovací kód"}),
+        label=False,
+        max_length=6,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný kód je príliš dlhý",
+            "required": "Zadajte 6-miestny overovací kód",
+        },
+    )
+
+    password = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadané heslo je príliš dlhé",
+            "required": "Vytvorte heslo",
         },
     )
 
