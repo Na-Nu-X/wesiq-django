@@ -123,9 +123,17 @@ main {
   font-size: 60px;
 }
 
-.header_container h1 a {
+.header_container h1 a:link,
+.header_container h1 a:visited {
   text-decoration: none;
   color: #fff;
+  animation: fade_in_animation 2s ease-out;
+  transition: letter-spacing 0.3s ease;
+}
+
+.header_container h1 a:hover,
+.header_container h1 a:active {
+  letter-spacing: 0.5px;
 }
 
 .content h2 {
@@ -372,6 +380,16 @@ footer div p a:active {
 /***********
  Key Frames
 ***********/
+@keyframes fade_in_animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 @keyframes fade_out_animation {
   0% {
     opacity: 1;
