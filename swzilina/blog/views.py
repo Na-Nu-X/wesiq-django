@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Avg
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 import random
 
 def homepage_view(request):
@@ -54,22 +54,21 @@ def homepage_view(request):
         if request.method == "POST" and request.POST.get("contact_form_submit"):
             contact_form = contactForm(request.POST)
             if contact_form.is_valid():
-                # Get Form Data
-                first_name = contact_form.cleaned_data["first_name"]
-                last_name = contact_form.cleaned_data["last_name"]
-                email_address = contact_form.cleaned_data["email_address"]
-                subject = contact_form.cleaned_data["subject"]
-                message = contact_form.cleaned_data["message"]
-                print(first_name, last_name, email_address, subject, message)
-
                 # Send Mail
-                send_mail(
-                    f"SW Žilina - {subject}", # Title
-                    f"{first_name} {last_name} - {email_address}\n\n{message}", # Message
-                    "settings.EMAIL_HOST_USER", # Sender
-                    [email_address], # Receiver
-                    fail_silently=False
-                )
+                subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
+                text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
+                sender = contact_form.cleaned_data["email_address"]
+                receiver = [settings.EMAIL_HOST_USER]
+                html_content = f"""
+                    <p>
+                        <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
+                        {contact_form.cleaned_data["message"]}
+                    </p>
+                """
+
+                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                mail_message.attach_alternative(html_content, "text/html")
+                mail_message.send()
 
                 messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
 
@@ -134,25 +133,58 @@ def login_view(request):
         for one_number in range(6):
             one_number = random.randint(0, 9)
             code += str(one_number)
-        
+
         # Send Mail
-        send_mail(
-            "SW Žilina - Obnova hesla", # Title
-            f"Váš overovací kód: {code}", # Message
-            "settings.EMAIL_HOST_USER", # Sender
-            [email_address], # Receiver
-            fail_silently=False
-        )
+        subject = "SW Žilina - Obnova hesla"
+        text_content = f"Dobrý deň,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, použite nasledujúci odkaz a zadajte overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
+        sender = settings.EMAIL_HOST_USER
+        receiver = [email_address]
+        html_content = f"""
+            <p>
+                Dobrý deň,<br>
+                dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, použite nasledujúci odkaz a zadajte overovací kód.<br><br>
+                <a href="http://127.0.0.1:8000/obnova-hesla">Obnoviť heslo</a> - <b>{code}</b><br><br>
+                Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.<br>
+                Tím Street Workout Žilina.
+            </p>
+        """
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+        mail_message.send()
+
+        messages.add_message(request, messages.SUCCESS, f"Overovací kód bol odoslaný na adresu\n{email_address}")
 
         # Set 10 Minute Cookie With Random 6-Digit Code
-        response = HttpResponse("Cookie Has Been Set")
-        response.set_cookie("password_reset_code", code, max_age=60*10, secure=True)
+        response = HttpResponseRedirect(reverse("password_reset_url"))
+        response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True)
+        return response
 
     return render(request, "blog/login.html", {
         "login_form": loginForm,
     })
 
 def password_reset_view(request):
+    if request.COOKIES.get("password_reset_code") and request.COOKIES.get("email_address"):
+        if request.method == "POST":
+            password_reset_form = passwordResetForm(request.POST)
+            if password_reset_form.is_valid():
+                password_reset_code = password_reset_form.cleaned_data["password_reset_code"]
+                new_password = password_reset_form.cleaned_data["new_password"]
+
+                if password_reset_code == request.COOKIES.get("password_reset_code"):
+                    user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
+
+                    user.password = new_password
+                    user.save()
+
+                    messages.add_message(request, messages.SUCCESS, "Heslo bolo úspešne zmenené")
+
+                    return HttpResponseRedirect(reverse("login_url"))
+                
+                else:
+                    messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
+
     return render(request, "blog/password_reset.html", {
         "password_reset_form": passwordResetForm,
     })
@@ -268,6 +300,8 @@ def edit_account_view(request):
             "phone_number": logged_in_user.phone_number,
             "profile_picture_name": logged_in_user.profile_picture_name,
         })
+    
+    return render(request, "blog/edit_account.html")
     
 def edit_review_view(request):
     if "logged_in_user_id" in request.session:
