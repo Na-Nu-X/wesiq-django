@@ -90,7 +90,7 @@ class loginForm(forms.Form):
     )
 
     password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Zadajte vaše heslo"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Zadajte vaše heslo", "autocomplete": "off"}),
         label=False,
         max_length=50,
         required=True,
@@ -102,7 +102,7 @@ class loginForm(forms.Form):
 
 class passwordResetForm(forms.Form):
     password_reset_code = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte 6-miestny overovací kód"}),
+        widget=forms.TextInput(attrs={"placeholder": "Zadajte 6-miestny overovací kód", "autocomplete": "off"}),
         label=False,
         max_length=6,
         required=True,
@@ -112,8 +112,8 @@ class passwordResetForm(forms.Form):
         },
     )
 
-    password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo"}),
+    new_password = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
         label=False,
         max_length=50,
         required=True,
@@ -168,7 +168,7 @@ class registrationForm(forms.Form):
     )
 
     password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
         label=False,
         max_length=50,
         required=True,
@@ -179,7 +179,7 @@ class registrationForm(forms.Form):
     )
 
     password_check = forms.CharField(
-        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Znovu zadajte heslo"}),
+        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Znovu zadajte heslo", "autocomplete": "off"}),
         label=False,
         max_length=50,
         required=True,

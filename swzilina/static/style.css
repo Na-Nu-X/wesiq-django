@@ -65,7 +65,9 @@
   top: 75%;
   left: 50%;
   transform: translate(-50%, -50%);
+  text-align: center;
   animation: fade_out_animation 5s ease;
+  z-index: 200;
 }
 
 .message.success {
@@ -74,6 +76,26 @@
 
 .message.error {
   color: #e73737;
+}
+
+.no_logged_in p, .code_expired p {
+  text-align: center;
+}
+
+.no_logged_in a:link,
+.no_logged_in a:visited,
+.code_expired a:link,
+.code_expired a:visited {
+  text-decoration: none;
+  font-style: italic;
+  color: #fff;
+}
+
+.no_logged_in a:hover,
+.no_logged_in a:active,
+.code_expired a:hover,
+.code_expired a:active {
+  text-decoration: underline;
 }
 
 main {
@@ -188,6 +210,14 @@ form input::placeholder {
   left: 50%;
   transform: translateX(-50%);
   font-size: 14px;
+}
+
+.form_report.success {
+  color: #55eb19;
+}
+
+.form_report.error {
+  color: #e73737;
 }
 
 form input[type=submit] {
