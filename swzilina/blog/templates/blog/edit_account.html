@@ -54,7 +54,7 @@
             {{ edit_account_form.email_address }}
             {{ edit_account_form.phone_number }}
 
-            <p class="form_report" style="bottom: 194px;">Lorem ipsum dolor sit amet.</p>
+            <p class="form_report" style="bottom: 194px;"></p>
             <input type="submit" value="Uložiť zmeny">
 
             <div class="form_questions">
@@ -84,14 +84,18 @@
 
             const delete_profile_picture_checkbox = document.querySelector("#delete_profile_picture")
             const delete_profile_picture_image = document.querySelector(".delete_profile_picture")
+            const form_report = document.querySelector(".form_report")
 
             delete_profile_picture_checkbox.addEventListener("click", function() {
                 if(delete_profile_picture_checkbox.checked) {
                     delete_profile_picture_image.style.opacity = 1
+                    form_report.textContent = "Profilový obrázok bude odstránený"
+                    form_report.classList.add("error")
                 }
 
                 else {
                     delete_profile_picture_image.style.opacity = 0.6
+                    form_report.textContent = ""
                 }
             })
 
@@ -103,10 +107,13 @@
             delete_account_checkbox.addEventListener("click", function() {
                 if(delete_account_checkbox.checked) {
                     delete_account_image.style.opacity = 1
+                    form_report.textContent = "Váš úcet bude odstránený"
+                    form_report.classList.add("error")
                 }
 
                 else {
                     delete_account_image.style.opacity = 0.6
+                    form_report.textContent = ""
                 }
             })
         })

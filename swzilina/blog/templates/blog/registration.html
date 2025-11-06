@@ -35,7 +35,7 @@
             <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
-        <p class="form_report" style="bottom: 145px;">Lorem ipsum dolor sit amet.</p>
+        <p class="form_report" style="bottom: 145px;"></p>
         <input type="submit" value="Vytvoriť účet">
 
         <div class="form_questions">
@@ -45,5 +45,35 @@
 {% endblock content %}
 
 {% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Password Verification
+
+            const password = document.querySelector(".password")
+            const password_check = document.querySelector(".password_check")
+            const form_report = document.querySelector(".form_report")
+            
+            document.addEventListener("input", function() {
+                if(password.value == password_check.value && password.value != "") {
+                    form_report.textContent = "Heslá sa zhodujú"
+                    form_report.classList.remove("error")
+                    form_report.classList.add("success")
+                }
+
+                else if(password.value != password_check.value) {
+                    form_report.textContent = "Heslá sa nezhodujú"
+                    form_report.classList.remove("success")
+                    form_report.classList.add("error")
+                }
+
+                else {
+                    form_report.textContent = ""
+                }
+            })
+        })
+    </script>
+
     <script src="{% static 'blog/js/password.js' %}" defer></script>
 {% endblock script %}
