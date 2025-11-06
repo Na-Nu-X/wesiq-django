@@ -181,7 +181,11 @@ def password_reset_view(request):
 
                     messages.add_message(request, messages.SUCCESS, "Heslo bolo úspešne zmenené")
 
-                    return HttpResponseRedirect(reverse("login_url"))
+                    # Redirect After Changing Password
+                    response = HttpResponseRedirect(reverse("login_url"))
+                    response.delete_cookie("password_reset_code") # Delete Cookie With Code
+                    response.delete_cookie("email_address") # Delete Cookie With Email Address
+                    return response
                 
                 else:
                     messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
