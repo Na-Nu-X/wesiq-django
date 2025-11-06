@@ -136,14 +136,14 @@ def login_view(request):
 
         # Send Mail
         subject = "SW Žilina - Obnova hesla"
-        text_content = f"Dobrý deň,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, použite nasledujúci odkaz a zadajte overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
+        text_content = f"Dobrý deň,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code={code} - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
         sender = settings.EMAIL_HOST_USER
         receiver = [email_address]
         html_content = f"""
             <p>
                 Dobrý deň,<br>
-                dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, použite nasledujúci odkaz a zadajte overovací kód.<br><br>
-                <a href="http://127.0.0.1:8000/obnova-hesla">Obnoviť heslo</a> - <b>{code}</b><br><br>
+                dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.<br><br>
+                <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code={code}">Obnoviť heslo</a> - <b>{code}</b><br><br>
                 Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.<br>
                 Tím Street Workout Žilina.
             </p>
@@ -155,9 +155,10 @@ def login_view(request):
 
         messages.add_message(request, messages.SUCCESS, f"Overovací kód bol odoslaný na adresu\n{email_address}")
 
-        # Set 10 Minute Cookie With Random 6-Digit Code
+        # Redirect After Sending Mail
         response = HttpResponseRedirect(reverse("password_reset_url"))
-        response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True)
+        response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True) # Set 10 Minute Cookie With Random 6-Digit Code
+        response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
         return response
 
     return render(request, "blog/login.html", {
@@ -184,6 +185,15 @@ def password_reset_view(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
+
+        if request.method == "GET" and request.GET.get("password-reset-code"):
+            filled_password_reset_form = passwordResetForm(initial={
+                "password_reset_code": request.GET.get("password-reset-code")
+            })
+
+            return render(request, "blog/password_reset.html", {
+                "password_reset_form": filled_password_reset_form,
+            })
 
     return render(request, "blog/password_reset.html", {
         "password_reset_form": passwordResetForm,
