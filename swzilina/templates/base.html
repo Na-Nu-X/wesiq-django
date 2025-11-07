@@ -35,6 +35,16 @@
     </header>
 
     <main>
+        {% if not request.COOKIES.privacy_policy or request.COOKIES.privacy_policy != "true" %}
+            <section class="privacy_policy">
+                <img src="{% static 'images/cookie.png' %}" alt="Cookie">
+                <h2>Zásady ochrany osobných údajov</h2>
+                <p>Táto stránka používa súbory cookies.</p>
+                <button class="privacy_policy_accept">Súhlasím</button>
+            </section>
+
+        {% endif %}
+
         <section class="banner">
             {% block banner %}{% endblock banner %}
         </section>
@@ -72,6 +82,16 @@
             // Secret Message
 
             console.log("%cStreet Workout Žilina by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)")
+
+            // Privacy Policy
+            
+            const privacy_policy_accept = document.querySelector(".privacy_policy_accept")
+
+            privacy_policy_accept.addEventListener("click", function() {
+                document.cookie = `privacy_policy=true; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
+
+                window.location.reload()
+            })
         })
     </script>
 
