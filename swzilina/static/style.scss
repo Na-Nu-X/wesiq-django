@@ -117,45 +117,78 @@ main {
 
 .privacy_policy {
     position: fixed;
-    bottom: 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 800px;
     width: 100%;
-    height: 125px;
-    background-color: #ffffffcc;
-    color: #1f1f1f;
-    border-top: 1px solid #fff;
+    padding: 30px 50px 50px;
     text-align: center;
+    background-color: #0000001a;
+    backdrop-filter: blur(8px);
+    border: 2px solid #fff;
+    border-radius: 25px;
     z-index: 100;
 }
 
-.privacy_policy img {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 37.5px;
-    width: 50px;
-    height: 50px;
+.privacy_policy h2 {
+    margin-bottom: 30px;
+    font-size: 35px;
 }
 
-.privacy_policy button {
-    width: 178px;
+.privacy_policy img {
+    display: none;
+    width: 32px;
+    height: 32px;
+}
+
+.privacy_policy_buttons {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0px auto;
+}
+
+.privacy_policy_accept, .privacy_policy_reject {
+    width: 100%;
     height: 50px;
-    background-color: #4dc91c;
+    margin-top: 40px;
     color: #000;
     border: 1px solid #000;
+    // color: #fff;
+    // border: 1px solid #fff;
     border-radius: 10px;
     font-size: 16px;
     transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
 
-.privacy_policy button:hover, .privacy_policy button:focus {
-    background-color: #55eb19;
+.privacy_policy_accept:hover, .privacy_policy_accept:focus,
+.privacy_policy_reject:hover, .privacy_policy_reject:focus {
     transform: scale(1.1);
     letter-spacing: 1px;
     cursor: pointer;
+}
+
+.privacy_policy_accept {
+    margin-right: 10px;
+    background-color: #4dc91c;
+}
+
+.privacy_policy_accept:hover, .privacy_policy_accept:focus {
+    background-color: #55eb19;
+}
+
+.privacy_policy_reject {
+    background-color: #eb4343;
+}
+
+.privacy_policy_reject:hover, .privacy_policy_reject:focus {
+    background-color: #e73737;
+}
+
+.privacy_policy_reject {
+    margin-left: 10px;
 }
 
 .header_container {
@@ -192,17 +225,6 @@ main {
 
 /* Forms */
 
-.back {
-    position: absolute;
-    top: 44px;
-    left: 50px;
-}
-
-.back img:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
-
 form {
     position: relative;
     max-width: 500px;
@@ -212,6 +234,17 @@ form {
     backdrop-filter: blur(5px);
     border: 2px solid #fff;
     border-radius: 25px;
+}
+
+.back {
+    position: absolute;
+    top: 44px;
+    left: 50px;
+}
+
+.back img:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
 }
 
 form h2 {
@@ -491,10 +524,5 @@ footer div p a:active {
         color: #fff;
         font-size: 30px;
         transition: transform 0.3s ease;
-    }
-
-    .privacy_policy img {
-        top: 92px;
-        left: 8px;
     }
 }
