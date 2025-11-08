@@ -11,12 +11,18 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
 import random
 
-def homepage_view(request):
+# Functions
+def captureError(message):
+    with open(f"{settings.BASE_DIR}/error.log", mode="a", encoding="utf-8") as file:
+        # timezone.LocalTimezone
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+
+def homepageView(request):
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
 
@@ -108,7 +114,7 @@ def homepage_view(request):
         "num_reviews": num_reviews,
     })
 
-def login_view(request):
+def loginView(request):
     if request.method == "POST":
         email_address = request.POST.get("email_address")
         password = request.POST.get("password")
@@ -123,6 +129,7 @@ def login_view(request):
         
         except Users.DoesNotExist:
             messages.add_message(request, messages.ERROR, "Nepodarilo sa prihlásiť")
+            captureError("Nepodarilo sa prihlásiť")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -165,7 +172,7 @@ def login_view(request):
         "login_form": loginForm,
     })
 
-def password_reset_view(request):
+def passwordResetView(request):
     if request.COOKIES.get("password_reset_code") and request.COOKIES.get("email_address"):
         if request.method == "POST":
             password_reset_form = passwordResetForm(request.POST)
@@ -189,6 +196,7 @@ def password_reset_view(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
+                    captureError("Overovací kód sa nezhoduje")
 
         if request.method == "GET" and request.GET.get("password-reset-code"):
             filled_password_reset_form = passwordResetForm(initial={
@@ -203,14 +211,14 @@ def password_reset_view(request):
         "password_reset_form": passwordResetForm,
     })
 
-def logout_view(request):
+def logoutView(request):
     logout(request)
 
     messages.add_message(request, messages.ERROR, "Boli ste odhlásený")
 
     return HttpResponseRedirect(reverse("homepage_url"))
 
-def registration_view(request):
+def registrationView(request):
     if request.method == "POST":
         registration_form = registrationForm(request.POST)
         if registration_form.is_valid():
@@ -229,7 +237,7 @@ def registration_view(request):
         "registration_form": registrationForm,
     })
 
-def edit_account_view(request):
+def editAccountView(request):
     logged_in_user_id = request.session.get("logged_in_user_id")
 
     if logged_in_user_id:
@@ -317,7 +325,7 @@ def edit_account_view(request):
     
     return render(request, "blog/edit_account.html")
     
-def edit_review_view(request):
+def editReviewView(request):
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id")
 
