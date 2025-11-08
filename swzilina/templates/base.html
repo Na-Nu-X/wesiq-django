@@ -37,10 +37,12 @@
     <main>
         {% if not request.COOKIES.privacy_policy or request.COOKIES.privacy_policy != "true" %}
             <section class="privacy_policy">
-                <img src="{% static 'images/cookie.png' %}" alt="Cookie">
-                <h2>Zásady ochrany osobných údajov</h2>
-                <p>Táto stránka používa súbory cookies.</p>
-                <button class="privacy_policy_accept">Súhlasím</button>
+                <h2><img src="{% static 'images/cookie.png' %}" alt="Cookie">Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
+                <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
+                <div class="privacy_policy_buttons">
+                    <button class="privacy_policy_accept">Potvrdiť všetky</button>
+                    <button class="privacy_policy_reject">Iba nevyhnutné</button>
+                </div>
             </section>
 
         {% endif %}
@@ -86,8 +88,17 @@
             // Privacy Policy
             
             const privacy_policy_accept = document.querySelector(".privacy_policy_accept")
+            const privacy_policy_reject = document.querySelector(".privacy_policy_reject")
 
             privacy_policy_accept.addEventListener("click", function() {
+                document.cookie = `privacy_policy=true; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
+
+                window.location.reload()
+
+                // Setup Google Analytics
+            })
+
+            privacy_policy_reject.addEventListener("click", function() {
                 document.cookie = `privacy_policy=true; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
 
                 window.location.reload()
