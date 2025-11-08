@@ -404,12 +404,17 @@ form input[type=submit]:hover, form input[type=submit]:focus {
 footer {
   text-align: center;
   padding: 10px;
-  background-color: #1f1f1f;
+  background: #0F0F0F;
+  background: radial-gradient(circle, rgb(30, 30, 30) 0%, rgb(0, 0, 0) 100%);
   border-top: 1px solid #fff;
 }
 
 footer div {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.follow_us p {
+  margin-bottom: 5px;
 }
 
 footer div p {
