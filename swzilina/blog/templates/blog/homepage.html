@@ -217,10 +217,29 @@
         </div>
     </div>
     
-    <form class="contact_form" action="{% url 'homepage_url' %}" method="POST">
+    <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+
         <h2>Kontaktujte nás</h2>
-        {{ contact_form }}
+
+        {{ contact_form.first_name }}
+        {{ contact_form.last_name }}
+        {{ contact_form.email_address }}
+        {{ contact_form.subject }}
+
+        <div class="message_container">
+            {{ contact_form.message }}
+
+            <div class="attachment">
+                <p>Nie je vybraný žiaden súbor.</p>
+                
+                <label for="select_attachment">
+                    <i class="fa-solid fa-paperclip" title="Vybrať prílohu"></i> <!-- https://fontawesome.com/icons/paperclip -->
+                </label>
+                {{ contact_form.select_attachment }}
+            </div>
+        </div>
+
         <p class="form_report" style="bottom: 113px;">Lorem ipsum dolor sit amet.</p>
         <input type="submit" name="contact_form_submit" value="Odoslať správu">
     </form>

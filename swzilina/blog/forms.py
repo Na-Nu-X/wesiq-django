@@ -55,6 +55,12 @@ class contactForm(forms.Form):
         },
     )
 
+    select_attachment = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={"id": "select_attachment", "accept": "image/*, video/*"}),
+        label=False,
+        required=False,
+    )
+
 class reviewForm(forms.Form):
     rating = forms.CharField(
         widget=forms.TextInput(attrs={"value": "0"}),
@@ -253,7 +259,7 @@ class editAccountForm(forms.Form):
     # )
 
     select_profile_picture = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"id": "select_profile_picture"}),
+        widget=forms.ClearableFileInput(attrs={"id": "select_profile_picture", "accept": "image/*"}),
         label=False,
         required=False,
     )

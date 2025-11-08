@@ -243,7 +243,42 @@
   margin: 50px auto 40px;
 }
 
-.contact_form textarea {
+.message_container {
+  position: relative;
+}
+
+.attachment {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 25px;
+  border-radius: 0px 0px 10px 10px;
+  transition: width 0.3s ease;
+}
+
+.attachment p {
+  font-size: 12px;
+  line-height: 25px;
+  color: #949494;
+}
+
+.attachment i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4.5px;
+  color: #949494;
+}
+
+#select_attachment {
+  display: none;
+}
+
+.message_container textarea {
   width: 90%;
   height: 100px;
   margin-top: 10px;
@@ -258,8 +293,18 @@
   transition: width 0.3s ease;
 }
 
-.contact_form textarea:hover, .contact_form textarea:focus {
+.message_container textarea:hover, .message_container textarea:focus {
   width: 100%;
+}
+
+.message_container:has(textarea:hover) .attachment, .message_container:has(textarea:focus) .attachment {
+  width: 100%;
+}
+
+.attachment i:hover {
+  color: #aaaaaa;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 /* Reviews */
