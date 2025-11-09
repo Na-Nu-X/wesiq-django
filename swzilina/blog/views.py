@@ -58,7 +58,7 @@ def homepageView(request):
         
         # Contact Form
         if request.method == "POST" and request.POST.get("contact_form_submit"):
-            contact_form = contactForm(request.POST)
+            contact_form = contactForm(request.POST, request.FILES)
             if contact_form.is_valid():
                 # Send Mail
                 subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
@@ -74,9 +74,24 @@ def homepageView(request):
 
                 mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
                 mail_message.attach_alternative(html_content, "text/html")
-                mail_message.send()
 
-                messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+                attachment_file = request.FILES.get("select_attachment")
+                if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
+                    if attachment_file.size < 25000000:
+                        mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+
+                        mail_message.send()
+
+                        messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+
+                    else:
+                        messages.add_message(request, messages.ERROR, "Príloha je príliš veľká")
+                        captureError("Príloha je príliš veľká")
+
+                else: # Sends Mail Without An Attachment
+                    mail_message.send()
+
+                    messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
