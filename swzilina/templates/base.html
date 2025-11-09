@@ -16,6 +16,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet"> <!-- Bungee Font -->
 
     <script src="https://kit.fontawesome.com/069c0938a1.js" crossorigin="anonymous"></script> <!-- Icons -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9KMPP7FWKD"></script> <!-- Google Analytics -->
+
+    {% if request.COOKIES.privacy_policy == "all_cookies" %}
+        <!-- Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-L62G1B08VS"></script>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-9KMPP7FWKD');
+        </script>
+
+    {% endif %}
 </head>
 
 <body>
@@ -35,7 +50,7 @@
     </header>
 
     <main>
-        {% if not request.COOKIES.privacy_policy or request.COOKIES.privacy_policy != "true" %}
+        {% if not request.COOKIES.privacy_policy or request.COOKIES.privacy_policy != "all_cookies" and request.COOKIES.privacy_policy != "essential_cookies" %}
             <section class="privacy_policy">
                 <h2><img src="{% static 'images/cookie.png' %}" alt="Cookie">Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
                 <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
@@ -68,7 +83,7 @@
 
             <a href="https://www.facebook.com/" title="Facebook" target="_blank"><img src="{% static 'images/facebook_logo.png' %}" alt="Facebook"></a> <!-- https://www.flaticon.com/free-icon/facebook_733547 -->
 
-            <a><img src="{% static 'images/tiktok_logo.png' %}"></a> <!-- https://www.flaticon.com/free-icon/tik-tok_3046121 -->
+            <a href="https://www.tiktok.com/" title="TikTok" target="_blank"><img src="{% static 'images/tiktok_logo.png' %}" alt="TikTok"></a> <!-- https://www.flaticon.com/free-icon/tik-tok_3046121 -->
         </div>
         
         <div class="contact">
@@ -95,15 +110,13 @@
             const privacy_policy_reject = document.querySelector(".privacy_policy_reject")
 
             privacy_policy_accept.addEventListener("click", function() {
-                document.cookie = `privacy_policy=true; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
+                document.cookie = `privacy_policy=all_cookies; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
 
                 window.location.reload()
-
-                // Setup Google Analytics
             })
 
             privacy_policy_reject.addEventListener("click", function() {
-                document.cookie = `privacy_policy=true; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
+                document.cookie = `privacy_policy=essential_cookies; max-age=` + 60 * 60 * 24 * 365 + "; path=/"; // 1 Year Timed Cookie
 
                 window.location.reload()
             })
