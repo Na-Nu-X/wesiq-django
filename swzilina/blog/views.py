@@ -15,6 +15,7 @@ from datetime import timedelta, datetime
 from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
 import random
+import requests
 
 # Functions
 def captureError(message):
@@ -235,18 +236,36 @@ def logoutView(request):
 
 def registrationView(request):
     if request.method == "POST":
-        registration_form = registrationForm(request.POST)
-        if registration_form.is_valid():
-            new_user = Users(
-                first_name = registration_form.cleaned_data["first_name"],
-                last_name = registration_form.cleaned_data["last_name"],
-                email_address = registration_form.cleaned_data["email_address"],
-                phone_number = registration_form.cleaned_data["phone_number"],
-                password = registration_form.cleaned_data["password"],
-            )
-            new_user.save()
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
 
-            return HttpResponseRedirect(reverse("homepage_url"))
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, "Overenie reCaptcha zlyhalo")
+            captureError("Overenie reCaptcha zlyhalo")
+
+            return HttpResponseRedirect(reverse("registration_url"))
+
+        else:
+            registration_form = registrationForm(request.POST)
+            if registration_form.is_valid():
+                new_user = Users(
+                    first_name = registration_form.cleaned_data["first_name"],
+                    last_name = registration_form.cleaned_data["last_name"],
+                    email_address = registration_form.cleaned_data["email_address"],
+                    phone_number = registration_form.cleaned_data["phone_number"],
+                    password = registration_form.cleaned_data["password"],
+                )
+                new_user.save()
+
+                return HttpResponseRedirect(reverse("homepage_url"))
         
     return render(request, "blog/registration.html", {
         "registration_form": registrationForm,
@@ -259,7 +278,7 @@ def editAccountView(request):
         logged_in_user = Users.objects.get(id=logged_in_user_id)
 
         if request.method == "POST":
-            if timezone.now() - logged_in_user.last_edit >= timedelta(days=30) or logged_in_user.last_edit == None:
+            if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
                 edit_account_form = editAccountForm(request.POST, request.FILES)
                 if edit_account_form.is_valid():
                     profile_picture_file = request.FILES.get("select_profile_picture")

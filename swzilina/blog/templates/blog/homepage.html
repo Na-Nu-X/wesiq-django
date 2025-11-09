@@ -98,10 +98,6 @@
 {% endblock buttons %}
 
 {% block content %}
-    {% if registration_successful %}
-        <p>Účet bol úspešne vytvorený</p>
-    {% endif %}
-
     {% if messages %}
         {% for one_message in messages %}
             <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
