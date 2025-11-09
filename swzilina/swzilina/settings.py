@@ -143,3 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Google reCAPTCHA V3
+RECAPTCHA_SITE_KEY = "6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"
+RECAPTCHA_SECRET_KEY = "6LffOQcsAAAAADR5L5rz42G_B9aNmxsq0PotYn4N"

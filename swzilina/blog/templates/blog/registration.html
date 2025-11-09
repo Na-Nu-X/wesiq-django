@@ -3,11 +3,40 @@
 
 {% block title %}Street Workout Žilina - Registrácia{% endblock title %}
 
+{% block recaptcha %}
+    <!-- Google reCAPTCHA V3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-&badge=inline"></script>
+    
+    <script>
+        grecaptcha.ready(function() {
+            const grecaptcha_badge = document.querySelector(".grecaptcha-badge")
+            const grecaptcha_badge_container = document.querySelector(".grecaptcha_badge_container")
+
+            grecaptcha_badge_container.appendChild(grecaptcha_badge)
+            grecaptcha_badge.style.margin = "35px auto 0px"
+            grecaptcha_badge.style.background = "#1e1e1e"
+            grecaptcha_badge.style.opacity = "0.8"
+
+            document.querySelector(".registration_form").addEventListener("submit", function(event) {
+                event.preventDefault()
+
+                grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "submit"}).then(function(token) {
+                    document.querySelector("#g-recaptcha-response").value = token
+                    event.target.submit()
+                })
+            })
+        })
+    </script>
+{% endblock recaptcha %}
+
 {% block heading %}Registrácia{% endblock heading %}
 
 {% block content %}
-    {% if registration_successful %}
-        <p>Účet bol úspešne vytvorený</p>
+    {% if messages %}
+        {% for one_message in messages %}
+            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
+        
+        {% endfor %}
     {% endif %}
 
     <form class="registration_form" action="{% url 'registration_url' %}" method="POST">
@@ -35,12 +64,16 @@
             <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
-        <p class="form_report" style="bottom: 145px;"></p>
+        <p class="form_report" style="bottom: 241px;"></p>
         <input type="submit" value="Vytvoriť účet">
 
         <div class="form_questions">
             <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
         </div>
+
+        <!-- Google reCAPTCHA V3 -->
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+        <div class="grecaptcha_badge_container"></div>
     </form>
 {% endblock content %}
 
