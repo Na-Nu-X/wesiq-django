@@ -39,7 +39,18 @@
                     "
                 >
 
-                <p class="full_name">{{ review.user.first_name }} {{ review.user.last_name }}<span class="date"> - {{ review.creation_time|date:"d.m. Y" }}</span></p>
+                <p class="full_name">
+                    {{ review.user.first_name }} {{ review.user.last_name }}
+
+                    <span class="date">
+                        - {{ review.creation_time|date:"d.m. Y" }}
+
+                        {% if review.last_edit != None %}
+                            (upravené)
+
+                        {% endif %}
+                    </span>
+                </p>
             </div>
 
             <div class="review">
