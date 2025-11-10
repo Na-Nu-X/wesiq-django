@@ -24,6 +24,45 @@ def captureError(message):
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 def homepageView(request):
+    # Contact Form
+    if request.method == "POST" and request.POST.get("contact_form_submit"):
+        contact_form = contactForm(request.POST, request.FILES)
+        if contact_form.is_valid():
+            # Send Mail
+            subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
+            text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
+            sender = contact_form.cleaned_data["email_address"]
+            receiver = [settings.EMAIL_HOST_USER]
+            html_content = f"""
+                <p>
+                    <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
+                    {contact_form.cleaned_data["message"]}
+                </p>
+            """
+
+            mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+            mail_message.attach_alternative(html_content, "text/html")
+
+            attachment_file = request.FILES.get("select_attachment")
+            if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
+                if attachment_file.size < 25000000:
+                    mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+
+                    mail_message.send()
+
+                    messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+
+                else:
+                    messages.add_message(request, messages.ERROR, "Príloha je príliš veľká")
+                    captureError("Príloha je príliš veľká")
+
+            else: # Sends Mail Without An Attachment
+                mail_message.send()
+
+                messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+
+        return HttpResponseRedirect(reverse("homepage_url"))
+    
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
 
@@ -59,45 +98,6 @@ def homepageView(request):
                     messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
-        
-        # Contact Form
-        if request.method == "POST" and request.POST.get("contact_form_submit"):
-            contact_form = contactForm(request.POST, request.FILES)
-            if contact_form.is_valid():
-                # Send Mail
-                subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
-                text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
-                sender = contact_form.cleaned_data["email_address"]
-                receiver = [settings.EMAIL_HOST_USER]
-                html_content = f"""
-                    <p>
-                        <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
-                        {contact_form.cleaned_data["message"]}
-                    </p>
-                """
-
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
-
-                attachment_file = request.FILES.get("select_attachment")
-                if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
-                    if attachment_file.size < 25000000:
-                        mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
-
-                        mail_message.send()
-
-                        messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
-
-                    else:
-                        messages.add_message(request, messages.ERROR, "Príloha je príliš veľká")
-                        captureError("Príloha je príliš veľká")
-
-                else: # Sends Mail Without An Attachment
-                    mail_message.send()
-
-                    messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
-
-            return HttpResponseRedirect(reverse("homepage_url"))
 
         # Get Logged In User From DB
         user = Users.objects.get(id=logged_in_user_id)
@@ -130,10 +130,6 @@ def homepageView(request):
             messages.add_message(request, messages.ERROR, "Pred napísaním hodnotenia sa prihláste")
 
             return HttpResponseRedirect(reverse("login_url"))
-        
-        # Contact Form
-        if request.method == "POST" and request.POST.get("contact_form_submit"):
-            print("Neprihlásený")
 
     # Renders Homepage With Reviews
     return render(request, "blog/homepage.html", {
@@ -387,7 +383,7 @@ def editReviewView(request):
         review = Reviews.objects.get(user_id=logged_in_user_id)
 
         if request.method == "POST":
-            if timezone.now() - review.last_edit >= timedelta(days=10) or review.last_edit == None:
+            if timezone.now() - review.last_edit >= timedelta(days=30) or review.last_edit == None:
                 review_form = reviewForm(request.POST)
                 if review_form.is_valid():
                     if review.rating != int(review_form.cleaned_data["rating"]):
@@ -413,7 +409,7 @@ def editReviewView(request):
                 return HttpResponseRedirect(reverse("homepage_url"))
             
             else:
-                messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(review.last_edit + timedelta(days=10)).strftime('%d.%m. %Y')}")
+                messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(review.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
         
         filled_review_form = reviewForm(initial={
             "rating": review.rating,
