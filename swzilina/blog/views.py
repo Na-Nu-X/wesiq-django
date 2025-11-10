@@ -265,6 +265,13 @@ def registrationView(request):
                 )
                 new_user.save()
 
+                # Deletes Previous User ID Session If Was Logged In
+                if "logged_in_user_id" in request.session:
+                    del request.session["logged_in_user_id"]
+
+                # Sets User ID Session For New Registered User For Login or Switch Account
+                request.session["logged_in_user_id"] = new_user.id
+
                 return HttpResponseRedirect(reverse("homepage_url"))
         
     return render(request, "blog/registration.html", {
