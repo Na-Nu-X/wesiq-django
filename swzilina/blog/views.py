@@ -31,6 +31,7 @@ def homepageView(request):
     avg_rating = reviews.aggregate(Avg("rating"))
     num_reviews = reviews.count()
 
+    # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
         logged_in_user_id = request.session.get("logged_in_user_id")
@@ -43,6 +44,8 @@ def homepageView(request):
                 existing_review = Reviews.objects.filter(user_id=logged_in_user_id)
                 if existing_review:
                     messages.add_message(request, messages.ERROR, "Skúste upraviť aktuálne hodnotenie")
+
+                    return HttpResponseRedirect(reverse("edit_review_url"))
 
                 # Saves New Review To DB
                 else:
@@ -120,6 +123,17 @@ def homepageView(request):
             "avg_rating": avg_rating,
             "num_reviews": num_reviews,
         })
+    
+    else:
+        # Write Review Form
+        if request.method == "POST" and request.POST.get("write_review_form_submit"):
+            messages.add_message(request, messages.ERROR, "Pred napísaním hodnotenia sa prihláste")
+
+            return HttpResponseRedirect(reverse("login_url"))
+        
+        # Contact Form
+        if request.method == "POST" and request.POST.get("contact_form_submit"):
+            print("Neprihlásený")
 
     # Renders Homepage With Reviews
     return render(request, "blog/homepage.html", {

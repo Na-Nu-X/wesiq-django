@@ -129,7 +129,15 @@
                     "
                 >
 
-                <p class="full_name">{{ first_name }} {{ last_name }}</p>
+                <p class="full_name">
+                    {% if request.session.logged_in_user_id %}
+                        {{ first_name }} {{ last_name }}
+
+                    {% else %}
+                        Anonymný užívateľ
+
+                    {% endif %}
+                </p>
             </div>
 
             <div class="review">
@@ -176,7 +184,8 @@
 
                             {% endif %}
                             <span class="date">
-                                - {{ one_review.creation_time|date:"d.m. Y" }} 
+                                - {{ one_review.creation_time|date:"d.m. Y" }}
+                                 
                                 {% if one_review.last_edit != None %}
                                     (upravené)
 
