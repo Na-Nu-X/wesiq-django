@@ -24,44 +24,62 @@ def captureError(message):
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 def homepageView(request):
-    # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
-        contact_form = contactForm(request.POST, request.FILES)
-        if contact_form.is_valid():
-            # Send Mail
-            subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
-            text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
-            sender = contact_form.cleaned_data["email_address"]
-            receiver = [settings.EMAIL_HOST_USER]
-            html_content = f"""
-                <p>
-                    <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
-                    {contact_form.cleaned_data["message"]}
-                </p>
-            """
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
 
-            mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-            mail_message.attach_alternative(html_content, "text/html")
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
-            attachment_file = request.FILES.get("select_attachment")
-            if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
-                if attachment_file.size < 25000000:
-                    mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, "Overenie reCaptcha zlyhalo")
+            captureError("Overenie reCaptcha zlyhalo")
 
+            return HttpResponseRedirect(reverse("homepage_url"))
+
+        # Contact Form
+        else:
+            contact_form = contactForm(request.POST, request.FILES)
+            if contact_form.is_valid():
+                # Send Mail
+                subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
+                text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
+                sender = contact_form.cleaned_data["email_address"]
+                receiver = [settings.EMAIL_HOST_USER]
+                html_content = f"""
+                    <p>
+                        <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
+                        {contact_form.cleaned_data["message"]}
+                    </p>
+                """
+
+                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                mail_message.attach_alternative(html_content, "text/html")
+
+                attachment_file = request.FILES.get("select_attachment")
+                if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
+                    if attachment_file.size < 25000000:
+                        mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+
+                        mail_message.send()
+
+                        messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+
+                    else:
+                        messages.add_message(request, messages.ERROR, "Príloha je príliš veľká")
+                        captureError("Príloha je príliš veľká")
+
+                else: # Sends Mail Without An Attachment
                     mail_message.send()
 
                     messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
 
-                else:
-                    messages.add_message(request, messages.ERROR, "Príloha je príliš veľká")
-                    captureError("Príloha je príliš veľká")
-
-            else: # Sends Mail Without An Attachment
-                mail_message.send()
-
-                messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
-
-        return HttpResponseRedirect(reverse("homepage_url"))
+            return HttpResponseRedirect(reverse("homepage_url"))
     
     # Get All Reviews From DB
     reviews = Reviews.objects.all()

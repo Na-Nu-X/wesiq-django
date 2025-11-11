@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="{% static 'blog/homepage.css' %}">
 {% endblock style %}
 
+{% block recaptcha %}
+    <!-- Google reCAPTCHA V3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-&badge=inline"></script>
+    
+    <script>
+        grecaptcha.ready(function() {
+            const grecaptcha_badge = document.querySelector(".grecaptcha-badge")
+            const grecaptcha_badge_container = document.querySelector(".grecaptcha_badge_container")
+
+            grecaptcha_badge_container.appendChild(grecaptcha_badge)
+            grecaptcha_badge.style.margin = "50px auto 0px"
+            grecaptcha_badge.style.background = "#1e1e1e"
+            grecaptcha_badge.style.opacity = "0.8"
+
+            document.querySelector(".contact_form").addEventListener("submit", function(event) {
+                event.preventDefault()
+
+                grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "submit"}).then(function(token) {
+                    document.querySelector("#g-recaptcha-response").value = token
+                    event.target.submit()
+                })
+            })
+        })
+    </script>
+{% endblock recaptcha %}
+
 {% block navigation_bar_items %}
     <li><a class="scroll_contact" href="#" target="_self">KONTAKT</a></li>
 {% endblock navigation_bar_items %}
@@ -245,8 +271,13 @@
             </div>
         </div>
 
-        <p class="form_report" style="bottom: 113px;">Lorem ipsum dolor sit amet.</p>
-        <input type="submit" name="contact_form_submit" value="Odoslať správu">
+        <p class="form_report" style="bottom: 223px;">Lorem ipsum dolor sit amet.</p>
+        <input type="hidden" name="contact_form_submit" value="contact_form_submit">
+        <input type="submit" value="Odoslať správu">
+
+        <!-- Google reCAPTCHA V3 -->
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+        <div class="grecaptcha_badge_container"></div>
     </form>
 {% endblock content %}
 
