@@ -161,7 +161,7 @@ def loginView(request):
         email_address = request.COOKIES.get("email_address")
         user = Users.objects.get(email_address=email_address)
 
-        # Generate Random 6-Digit Code
+        # Generates Random 6-Digit Code
         code = ""
 
         for one_number in range(6):
@@ -265,23 +265,36 @@ def registrationView(request):
         else:
             registration_form = registrationForm(request.POST)
             if registration_form.is_valid():
-                new_user = Users(
-                    first_name = registration_form.cleaned_data["first_name"],
-                    last_name = registration_form.cleaned_data["last_name"],
-                    email_address = registration_form.cleaned_data["email_address"],
-                    phone_number = registration_form.cleaned_data["phone_number"],
-                    password = registration_form.cleaned_data["password"],
-                )
-                new_user.save()
+                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                    messages.add_message(request, messages.ERROR, "Tento e-mail už je zaregistrovaný")
+                    captureError("Tento e-mail už je zaregistrovaný")
 
-                # Deletes Previous User ID Session If Was Logged In
-                if "logged_in_user_id" in request.session:
-                    del request.session["logged_in_user_id"]
+                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                    messages.add_message(request, messages.ERROR, "Heslá sa nezhodujú")
 
-                # Sets User ID Session For New Registered User For Login or Switch Account
-                request.session["logged_in_user_id"] = new_user.id
+                elif len(registration_form.cleaned_data["password"]) < 8:
+                    messages.add_message(request, messages.ERROR, "Heslo je príliš krátke")
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+                else:
+                    new_user = Users(
+                        first_name = registration_form.cleaned_data["first_name"],
+                        last_name = registration_form.cleaned_data["last_name"],
+                        email_address = registration_form.cleaned_data["email_address"],
+                        phone_number = registration_form.cleaned_data["phone_number"],
+                        password = registration_form.cleaned_data["password"],
+                    )
+                    new_user.save()
+
+                    # Deletes Previous User ID Session If Was Logged In
+                    if "logged_in_user_id" in request.session:
+                        del request.session["logged_in_user_id"]
+
+                    # Sets User ID Session For New Registered User For Login or Switch Account
+                    request.session["logged_in_user_id"] = new_user.id
+
+                    messages.add_message(request, messages.SUCCESS, f"Úspešne prihlásený ako {new_user.first_name + " " + new_user.last_name}")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
         
     return render(request, "blog/registration.html", {
         "registration_form": registrationForm,
