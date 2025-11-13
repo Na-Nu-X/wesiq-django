@@ -1,3 +1,5 @@
+// General Styles
+
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +11,7 @@
  Header Styles
 **************/
 
-/* Navigation Bar */
+// Navigation Bar
 
 .navigation_bar {
     position: fixed;
@@ -18,50 +20,49 @@
     border-bottom: 1px solid #fff;
     opacity: 1;
     z-index: 100;
-}
 
-.navigation_bar ul {
-    text-align: center;
-}
+    ul {
+        text-align: center;
 
-.navigation_bar ul li {
-    display: inline-block;
-}
+        li {
+            display: inline-block;
 
-.navigation_bar ul li a:link,
-.navigation_bar ul li a:visited {
-    display: block;
-    margin: 20px 10px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #fff;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
+            a {
+                display: block;
+                margin: 20px 10px;
+                text-decoration: none;
+                font-size: 18px;
+                color: #fff;
+                transition: transform 0.3s ease, color 0.3s ease;
 
-.navigation_bar ul li a:hover,
-.navigation_bar ul li a:active {
-    transform: scale(1.1);
-    color: #e73737;
-}
+                &:hover,
+                &:active {
+                    transform: scale(1.1);
+                    color: #e73737;
+                }
+            }
+        }
 
-.navigation_bar .fa-bars, .navigation_bar .fa-xmark {
-    display: none;
-    margin: 10px 0px;
-    color: #fff;
-    font-size: 30px;
-    transition: transform 0.3s ease;
-}
+        .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
+            display: none;
+            margin: 10px 0px;
+            color: #fff;
+            font-size: 30px;
+            transition: transform 0.3s ease;
 
-.navigation_bar .fa-bars:hover, .navigation_bar .fa-xmark:hover {
-    transform: scale(1.1);
-    cursor: pointer;
+            &:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+    }
 }
 
 /************
  Main Styles
 ************/
 
-/* Messages */
+// Messages
 
 .message {
     visibility: hidden;
@@ -72,34 +73,29 @@
     text-align: center;
     animation: fade_out_animation 5s ease;
     z-index: 200;
+
+    &.success {
+        color: #55eb19;
+    }
+
+    &.error {
+        color: #e73737;
+    }
 }
 
-.message.success {
-    color: #55eb19;
-}
-
-.message.error {
-    color: #e73737;
-}
-
-.no_logged_in p, .code_expired p {
+.no_logged_in p, .code_expired p { // Move
     text-align: center;
-}
 
-.no_logged_in a:link,
-.no_logged_in a:visited,
-.code_expired a:link,
-.code_expired a:visited {
-    text-decoration: none;
-    font-style: italic;
-    color: #fff;
-}
+    a {
+        text-decoration: none;
+        font-style: italic;
+        color: #fff;
 
-.no_logged_in a:hover,
-.no_logged_in a:active,
-.code_expired a:hover,
-.code_expired a:active {
-    text-decoration: underline;
+        &:hover,
+        &:active {
+            text-decoration: underline;
+        }
+    }
 }
 
 main {
@@ -113,7 +109,7 @@ main {
     color: #fff;
 }
 
-// Privacy Policy
+// Privacy Policy Bar
 
 .privacy_policy {
     position: fixed;
@@ -130,71 +126,62 @@ main {
     border-radius: 25px;
     z-index: 100;
     transition: opacity 0.5s ease, visibility 0.5s ease;
-}
 
-.privacy_policy.hide {
-    opacity: 0;
-    visibility: hidden;
-}
+    &.hide {
+        opacity: 0;
+        visibility: hidden;
+    }
 
-.privacy_policy h2 {
-    margin-bottom: 30px;
-    font-size: 35px;
-}
+    h2 {
+        margin-bottom: 30px;
+        font-size: 35px;
+    }
 
-.privacy_policy img {
-    display: none;
-    width: 32px;
-    height: 32px;
-}
+    .privacy_policy_buttons {
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0px auto;
 
-.privacy_policy_buttons {
-    width: 90%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 0px auto;
-}
+        .privacy_policy_accept, .privacy_policy_reject {
+            width: 100%;
+            height: 50px;
+            margin-top: 40px;
+            color: #000;
+            border: 1px solid #000;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
-.privacy_policy_accept, .privacy_policy_reject {
-    width: 100%;
-    height: 50px;
-    margin-top: 40px;
-    color: #000;
-    border: 1px solid #000;
-    // color: #fff;
-    // border: 1px solid #fff;
-    border-radius: 10px;
-    font-size: 16px;
-    transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-}
+            &:hover,
+            &:focus {
+                transform: scale(1.1);
+                letter-spacing: 1px;
+                cursor: pointer;
+            }
+        }
 
-.privacy_policy_accept:hover, .privacy_policy_accept:focus,
-.privacy_policy_reject:hover, .privacy_policy_reject:focus {
-    transform: scale(1.1);
-    letter-spacing: 1px;
-    cursor: pointer;
-}
+        .privacy_policy_accept {
+            margin-right: 10px;
+            background-color: #4dc91c;
 
-.privacy_policy_accept {
-    margin-right: 10px;
-    background-color: #4dc91c;
-}
+            &:hover,
+            &:focus {
+                background-color: #55eb19;
+            }
+        }
 
-.privacy_policy_accept:hover, .privacy_policy_accept:focus {
-    background-color: #55eb19;
-}
+        .privacy_policy_reject {
+            margin-left: 10px;
+            background-color: #eb4343;
 
-.privacy_policy_reject {
-    background-color: #eb4343;
-}
-
-.privacy_policy_reject:hover, .privacy_policy_reject:focus {
-    background-color: #e73737;
-}
-
-.privacy_policy_reject {
-    margin-left: 10px;
+            &:hover,
+            &:focus {
+                background-color: #e73737;
+            }
+        }
+    }
 }
 
 .header_container {
@@ -203,25 +190,24 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
 
-.header_container h1 {
-    font-family: "Bungee", sans-serif;
-    text-align: center;
-    font-size: 60px;
-}
+    h1 {
+        font-family: "Bungee", sans-serif;
+        text-align: center;
+        font-size: 60px;
 
-.header_container h1 a:link,
-.header_container h1 a:visited {
-    text-decoration: none;
-    color: #fff;
-    animation: fade_in_animation 2s ease-out;
-    transition: letter-spacing 0.3s ease;
-}
+        a {
+            text-decoration: none;
+            color: #fff;
+            animation: fade_in_animation 2s ease-out;
+            transition: letter-spacing 0.3s ease;
 
-.header_container h1 a:hover,
-.header_container h1 a:active {
-    letter-spacing: 0.5px;
+            &:hover,
+            &:active {
+                letter-spacing: 0.5px;
+            }
+        }
+    }
 }
 
 .content h2 {
@@ -229,7 +215,7 @@ main {
     text-align: center;
 }
 
-/* Forms */
+// Forms
 
 form {
     position: relative;
@@ -240,175 +226,192 @@ form {
     backdrop-filter: blur(5px);
     border: 2px solid #fff;
     border-radius: 25px;
-}
 
-.back {
-    position: absolute;
-    top: 44px;
-    left: 50px;
-}
+    h2 {
+        margin-bottom: 30px;
+        font-size: 40px !important;
+        transition: letter-spacing 0.3s ease;
 
-.back img:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
+        &:hover {
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
 
-form h2 {
-    margin-bottom: 30px;
-    font-size: 40px !important;
-    transition: letter-spacing 0.3s ease;
-}
+        a {
+            text-decoration: none;
+            color: #fff;
+        }
+    }
 
-form h2:hover {
-    letter-spacing: 1px;
-    cursor: pointer;
-}
+    .back {
+        position: absolute;
+        top: 44px;
+        left: 50px;
 
-form h2 a {
-    text-decoration: none;
-    color: #fff;
-}
+        img:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+    }
 
-form input[type="text"], form input[type="email"], form input[type="password"], form select {
-    width: 90%;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 0px 10px;
-    background: transparent;
-    color: #fff;
-    border: none;
-    border-bottom: 1px solid #fff;
-    outline: none;
-    font-size: 16px;
-    transition: width 0.3s ease;
-}
+    input[type="text"], input[type="email"], input[type="password"], select {
+        width: 90%;
+        height: 50px;
+        margin-bottom: 10px;
+        padding: 0px 10px;
+        background: transparent;
+        color: #fff;
+        border: none;
+        border-bottom: 1px solid #fff;
+        outline: none;
+        font-size: 16px;
+        transition: width 0.3s ease;
 
-form input[type="text"]:hover, form input[type="email"]:hover, form input[type="password"]:hover,
-form input[type="text"]:focus, form input[type="email"]:focus, form input[type="password"]:focus {
-    width: 100%;
-}
+        &:hover,
+        &:focus {
+            width: 100%;
+        }
+    }
 
-form select:hover, form select:focus {
-    width: 100%;
-    cursor: pointer;
-}
+    input::placeholder, textarea::placeholder {
+        color: #949494;
+    }
 
-form input::placeholder {
-    color: #949494;
-}
+    select:hover, select:focus {
+        cursor: pointer;
+    }
 
-.form_report {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-}
+    .password_container {
+        position: relative;
 
-.form_report.success {
-    color: #55eb19;
-}
+        .password {
+            padding-right: 28px !important;
+            -webkit-text-security: disc;
+        }
 
-.form_report.error {
-    color: #e73737;
-}
+        .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
+            display: block;
+            color: #949494;
+            position: absolute;
+            bottom: 26px;
 
-form input[type="submit"] {
-    width: 90%;
-    height: 50px;
-    margin-top: 40px;
-    background-color: #000000cc;
-    color: #fff;
-    border: 1px solid #fff;
-    border-radius: 25px;
-    font-size: 16px;
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-}
+            &:hover {
+                color: #aaaaaa;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+        }
 
-form input[type="submit"]:hover, form input[type="submit"]:focus {
-    background-color: #ffffffe6;
-    color: #000;
-    border: 1px solid #000;
-    transform: scale(1.1);
-    letter-spacing: 1px;
-    cursor: pointer;
-}
+        .fa-eye {
+            display: none;
+        }
 
-.form_questions {
-    margin-top: 10px;
-    font-size: 14px;
-}
+        .fa-eye, .fa-eye-slash {
+            right: 20px;
+            transition: right 0.3s ease;
+        }
 
-.form_questions a:link,
-.form_questions a:visited {
-    color: #fff;
-    text-decoration: none;
-}
+        .fa-key {
+            left: 3px;
+            transition: left 0.3s ease;
+        }
 
-.form_questions a:hover,
-.form_questions a:active {
-    text-decoration: underline;
-}
+        .fa-copy {
+            right: 1px;
+            transition: right 0.3s ease;
+        }
+    }
 
-/* Password */
+    .password_check_container { // Move
+        position: relative;
 
-.password_container, .password_check_container {
-    position: relative;
-}
+        .password_check {
+            padding-right: 28px !important;
+        }
 
-.password, .password_check {
-    padding-right: 28px !important;
-}
+        .fa-copy {
+            display: block;
+            color: #949494;
+            position: absolute;
+            bottom: 26px;
+            right: 1px;
+            transition: right 0.3s ease;
 
-.password {
-    -webkit-text-security: disc;
-}
+            &:hover {
+                color: #aaaaaa;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+        }
+    }
 
-.password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
-{
-    left: -16px;
-}
+    .password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
+    {
+        left: -16px;
+    }
 
-.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
-.password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
-{
-    right: 0px;
-}
+    .password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
+    .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
+    {
+        right: 0px;
+    }
 
-.password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
-{
-    right: -19px;
-}
+    .password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
+    {
+        right: -19px;
+    }
 
-.password_container .fa-eye, .password_container .fa-eye-slash, .password_container .fa-key, .password_container .fa-copy, .password_check_container .fa-copy {
-    display: block;
-    color: #949494;
-    position: absolute;
-    bottom: 26px;
-}
+    .form_report {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
 
-.password_container .fa-eye, .password_container .fa-eye-slash {
-    right: 20px;
-    transition: right 0.3s ease;
-}
+        &.success {
+            color: #55eb19;
+        }
 
-.password_container .fa-key {
-    left: 3px;
-    transition: left 0.3s ease;
-}
+        &.error {
+            color: #e73737;
+        }
+    }
 
-.password_container .fa-copy, .password_check_container .fa-copy {
-    right: 1px;
-    transition: right 0.3s ease;
-}
+    input[type="submit"] {
+        width: 90%;
+        height: 50px;
+        margin-top: 40px;
+        background-color: #000000cc;
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 25px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
-.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover, .password_container .fa-key:hover, .password_container .fa-copy:hover, .password_check_container .fa-copy:hover {
-    color: #aaaaaa;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
+        &:hover,
+        &:focus {
+            background-color: #ffffffe6;
+            color: #000;
+            border: 1px solid #000;
+            transform: scale(1.1);
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+    }
 
-.password_container .fa-eye {
-    display: none;
+    .form_questions {
+        margin-top: 10px;
+        font-size: 14px;
+
+        a {
+            color: #fff;
+            text-decoration: none;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
 }
 
 /**************
@@ -421,89 +424,80 @@ footer {
     background: #0F0F0F;
     background: radial-gradient(circle, rgba(30, 30, 30, 1) 0%, rgba(0, 0, 0, 1) 100%);
     border-top: 1px solid #fff;
-}
 
-footer div {
-    margin-bottom: 20px;
-}
+    .follow_us, .contact {
+        margin-bottom: 20px;
 
-.follow_us p {
-    margin-bottom: 5px;
-}
+        p {
+            color: #fff;
+        }
 
-footer div p {
-    color: #fff;
-}
+        p:nth-child(1) {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    }
 
-footer div p:nth-child(1) {
-    font-weight: bold;
-    text-transform: uppercase;
-}
+    .follow_us {
+        p {
+            margin-bottom: 5px;
+        }
 
-footer div a img {
-    margin: 0px 5px;
-    opacity: 0.8;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
+        a img {
+            margin: 0px 5px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, transform 0.3s ease;
 
-footer div a img:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
+            &:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+    }
 
-footer div p span {
-    font-weight: bold;
-}
+    .contact p a {
+        text-decoration: none;
+        font-size: 14px;
+        font-style: italic;
+        color: #949494;
 
-footer div p a:link,
-footer div p a:visited {
-    text-decoration: none;
-    font-size: 14px;
-    font-style: italic;
-    color: #949494;
-}
+        &:hover,
+        &:active {
+            text-decoration: underline;
+        }
+    }
 
-footer div p a:hover,
-footer div p a:active {
-    text-decoration: underline;
-}
-
-.copywrite {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 12px;
-    line-height: 12px;
-    color: #949494;
+    .copywrite {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 12px;
+        line-height: 12px;
+        color: #949494;
+    }
 }
 
 /***********
  Key Frames
 ***********/
 
-@keyframes fade_in_animation
-{
-    0%
-    {
+@keyframes fade_in_animation {
+    0% {
         opacity: 0;
         transform: scale(0.8);
     }
 
-    100%
-    {
+    100% {
         opacity: 1;
         transform: scale(1);
     }
 }
 
-@keyframes fade_out_animation
-{
-    0%
-    {
+@keyframes fade_out_animation {
+    0% {
         opacity: 1;
         visibility: visible;
     }
 
-    100%
-    {
+    100% {
         opacity: 0;
         top: 50%;
     }
@@ -513,27 +507,28 @@ footer div p a:active {
  Media Queries
 **************/
 
-@media only screen and (min-width: 801px) {
+@media (min-width: 801px) {
     .navigation_bar ul li {
         display: inline-block !important;
     }
 }
 
-@media only screen and (max-width: 800px) {
-    .navigation_bar ul li {
-        display: none;
-    }
+@media (max-width: 800px) {
+    .navigation_bar ul {
+        li {
+            display: none;
 
-    .navigation_bar ul li a:link,
-    .navigation_bar ul li a:visited {
-        display: block;
-        margin: 10px 0px;
-    }
+            a {
+                display: block;
+                margin: 10px 0px;
+            }
+        }
 
-    .navigation_bar .fa-bars, .navigation_bar .fa-xmark {
-        display: block;
-        color: #fff;
-        font-size: 30px;
-        transition: transform 0.3s ease;
+        .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
+            display: block !important;
+            color: #fff;
+            font-size: 30px;
+            transition: transform 0.3s ease;
+        }
     }
 }
