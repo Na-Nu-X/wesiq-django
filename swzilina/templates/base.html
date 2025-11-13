@@ -53,8 +53,10 @@
 
     <main>
         <section class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
-            <h2><img src="{% static 'images/cookie.png' %}" alt="Cookie">Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
+            <h2>Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
+
             <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
+
             <div class="privacy_policy_buttons">
                 <button class="privacy_policy_accept">Potvrdiť všetky</button>
                 <button class="privacy_policy_reject">Iba nevyhnutné</button>
