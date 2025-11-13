@@ -9,7 +9,7 @@
  Header Styles
 **************/
 
-/* Navigation Bar */
+// Navigation Bar
 
 .navigation_bar {
     position: fixed;
@@ -18,43 +18,43 @@
     border-bottom: 1px solid #fff;
     opacity: 1;
     z-index: 100;
-}
 
-.navigation_bar ul {
-    text-align: center;
-}
+    ul {
+        text-align: center;
 
-.navigation_bar ul li {
-    display: inline-block;
-}
+        li {
+            display: inline-block;
 
-.navigation_bar ul li a:link,
-.navigation_bar ul li a:visited {
-    display: block;
-    margin: 20px 10px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #fff;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
+            a:link,
+            a:visited {
+                display: block;
+                margin: 20px 10px;
+                text-decoration: none;
+                font-size: 18px;
+                color: #fff;
+                transition: transform 0.3s ease, color 0.3s ease;
+            }
 
-.navigation_bar ul li a:hover,
-.navigation_bar ul li a:active {
-    transform: scale(1.1);
-    color: #e73737;
-}
+            a:hover,
+            a:active {
+                transform: scale(1.1);
+                color: #e73737;
+            }
+        }
 
-.navigation_bar .fa-bars, .navigation_bar .fa-xmark {
-    display: none;
-    margin: 10px 0px;
-    color: #fff;
-    font-size: 30px;
-    transition: transform 0.3s ease;
-}
+        .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
+            display: none;
+            margin: 10px 0px;
+            color: #fff;
+            font-size: 30px;
+            transition: transform 0.3s ease;
+        }
 
-.navigation_bar .fa-bars:hover, .navigation_bar .fa-xmark:hover {
-    transform: scale(1.1);
-    cursor: pointer;
+        .navigation_icon .fa-bars:hover, .navigation_icon .fa-xmark:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
 }
 
 /************
@@ -162,8 +162,6 @@ main {
     margin-top: 40px;
     color: #000;
     border: 1px solid #000;
-    // color: #fff;
-    // border: 1px solid #fff;
     border-radius: 10px;
     font-size: 16px;
     transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
@@ -240,175 +238,195 @@ form {
     backdrop-filter: blur(5px);
     border: 2px solid #fff;
     border-radius: 25px;
-}
 
-.back {
-    position: absolute;
-    top: 44px;
-    left: 50px;
-}
+    h2 {
+        margin-bottom: 30px;
+        font-size: 40px !important;
+        transition: letter-spacing 0.3s ease;
 
-.back img:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
+        a {
+            text-decoration: none;
+            color: #fff;
+        }
+    }
 
-form h2 {
-    margin-bottom: 30px;
-    font-size: 40px !important;
-    transition: letter-spacing 0.3s ease;
-}
+    h2:hover {
+        letter-spacing: 1px;
+        cursor: pointer;
+    }
 
-form h2:hover {
-    letter-spacing: 1px;
-    cursor: pointer;
-}
+    .back {
+        position: absolute;
+        top: 44px;
+        left: 50px;
 
-form h2 a {
-    text-decoration: none;
-    color: #fff;
-}
+        img:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+    }
 
-form input[type="text"], form input[type="email"], form input[type="password"], form select {
-    width: 90%;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 0px 10px;
-    background: transparent;
-    color: #fff;
-    border: none;
-    border-bottom: 1px solid #fff;
-    outline: none;
-    font-size: 16px;
-    transition: width 0.3s ease;
-}
+    input[type="text"], input[type="email"], input[type="password"], select {
+        width: 90%;
+        height: 50px;
+        margin-bottom: 10px;
+        padding: 0px 10px;
+        background: transparent;
+        color: #fff;
+        border: none;
+        border-bottom: 1px solid #fff;
+        outline: none;
+        font-size: 16px;
+        transition: width 0.3s ease;
+    }
 
-form input[type="text"]:hover, form input[type="email"]:hover, form input[type="password"]:hover,
-form input[type="text"]:focus, form input[type="email"]:focus, form input[type="password"]:focus {
-    width: 100%;
-}
+    input[type="text"]:hover, input[type="email"]:hover, input[type="password"]:hover, select:hover,
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+        width: 100%;
+    }
 
-form select:hover, form select:focus {
-    width: 100%;
-    cursor: pointer;
-}
+    input::placeholder, textarea::placeholder {
+        color: #949494;
+    }
 
-form input::placeholder {
-    color: #949494;
-}
+    select:hover, select:focus {
+        cursor: pointer;
+    }
 
-.form_report {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-}
+    .password_container {
+        position: relative;
 
-.form_report.success {
-    color: #55eb19;
-}
+        .password {
+            padding-right: 28px !important;
+            -webkit-text-security: disc;
+        }
 
-.form_report.error {
-    color: #e73737;
-}
+        .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
+            display: block;
+            color: #949494;
+            position: absolute;
+            bottom: 26px;
+        }
 
-form input[type="submit"] {
-    width: 90%;
-    height: 50px;
-    margin-top: 40px;
-    background-color: #000000cc;
-    color: #fff;
-    border: 1px solid #fff;
-    border-radius: 25px;
-    font-size: 16px;
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-}
+        .fa-eye, .fa-eye-slash {
+            right: 20px;
+            transition: right 0.3s ease;
+        }
 
-form input[type="submit"]:hover, form input[type="submit"]:focus {
-    background-color: #ffffffe6;
-    color: #000;
-    border: 1px solid #000;
-    transform: scale(1.1);
-    letter-spacing: 1px;
-    cursor: pointer;
-}
+        .fa-key {
+            left: 3px;
+            transition: left 0.3s ease;
+        }
 
-.form_questions {
-    margin-top: 10px;
-    font-size: 14px;
-}
+        .fa-copy {
+            right: 1px;
+            transition: right 0.3s ease;
+        }
 
-.form_questions a:link,
-.form_questions a:visited {
-    color: #fff;
-    text-decoration: none;
-}
+        .fa-eye:hover, .fa-eye-slash:hover, .fa-key:hover, .fa-copy:hover {
+            color: #aaaaaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
 
-.form_questions a:hover,
-.form_questions a:active {
-    text-decoration: underline;
-}
+        .fa-eye {
+            display: none;
+        }
+    }
 
-/* Password */
+    .password_check_container {
+        position: relative;
 
-.password_container, .password_check_container {
-    position: relative;
-}
+        .password_check {
+            padding-right: 28px !important;
+        }
 
-.password, .password_check {
-    padding-right: 28px !important;
-}
+        .fa-copy {
+            display: block;
+            color: #949494;
+            position: absolute;
+            bottom: 26px;
+        }
 
-.password {
-    -webkit-text-security: disc;
-}
+        .fa-copy {
+            right: 1px;
+            transition: right 0.3s ease;
+        }
 
-.password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
-{
-    left: -16px;
-}
+        .fa-copy:hover {
+            color: #aaaaaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+    }
 
-.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
-.password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
-{
-    right: 0px;
-}
+    .password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
+    {
+        left: -16px;
+    }
 
-.password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
-{
-    right: -19px;
-}
+    .password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
+    .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
+    {
+        right: 0px;
+    }
 
-.password_container .fa-eye, .password_container .fa-eye-slash, .password_container .fa-key, .password_container .fa-copy, .password_check_container .fa-copy {
-    display: block;
-    color: #949494;
-    position: absolute;
-    bottom: 26px;
-}
+    .password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
+    {
+        right: -19px;
+    }
 
-.password_container .fa-eye, .password_container .fa-eye-slash {
-    right: 20px;
-    transition: right 0.3s ease;
-}
+    .form_report {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+    }
 
-.password_container .fa-key {
-    left: 3px;
-    transition: left 0.3s ease;
-}
+    .form_report.success {
+        color: #55eb19;
+    }
 
-.password_container .fa-copy, .password_check_container .fa-copy {
-    right: 1px;
-    transition: right 0.3s ease;
-}
+    .form_report.error {
+        color: #e73737;
+    }
 
-.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover, .password_container .fa-key:hover, .password_container .fa-copy:hover, .password_check_container .fa-copy:hover {
-    color: #aaaaaa;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
+    input[type="submit"] {
+        width: 90%;
+        height: 50px;
+        margin-top: 40px;
+        background-color: #000000cc;
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 25px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+    }
 
-.password_container .fa-eye {
-    display: none;
+    input[type="submit"]:hover, input[type="submit"]:focus {
+        background-color: #ffffffe6;
+        color: #000;
+        border: 1px solid #000;
+        transform: scale(1.1);
+        letter-spacing: 1px;
+        cursor: pointer;
+    }
+
+    .form_questions {
+        margin-top: 10px;
+        font-size: 14px;
+
+        a:link,
+        a:visited {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:hover,
+        a:active {
+            text-decoration: underline;
+        }
+    }
 }
 
 /**************
