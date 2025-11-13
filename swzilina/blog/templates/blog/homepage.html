@@ -5,32 +5,18 @@
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/homepage.css' %}">
+
+    <style>
+        .grecaptcha-badge {
+            background: #1e1e1e !important;
+            opacity: 0.8 !important;
+        }
+    </style>
 {% endblock style %}
 
 {% block recaptcha %}
     <!-- Google reCAPTCHA V3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-&badge=inline"></script>
-    
-    <script>
-        grecaptcha.ready(function() {
-            const grecaptcha_badge = document.querySelector(".grecaptcha-badge")
-            const grecaptcha_badge_container = document.querySelector(".grecaptcha_badge_container")
-
-            grecaptcha_badge_container.appendChild(grecaptcha_badge)
-            grecaptcha_badge.style.margin = "50px auto 0px"
-            grecaptcha_badge.style.background = "#1e1e1e"
-            grecaptcha_badge.style.opacity = "0.8"
-
-            document.querySelector(".contact_form").addEventListener("submit", function(event) {
-                event.preventDefault()
-
-                grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "submit"}).then(function(token) {
-                    document.querySelector("#g-recaptcha-response").value = token
-                    event.target.submit()
-                })
-            })
-        })
-    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"></script>
 {% endblock recaptcha %}
 
 {% block navigation_bar_items %}
@@ -137,7 +123,24 @@
     Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti similique cum nesciunt minus optio nostrum.</p>
 
     <div class="reviews">
-        <!-- <h2>Hodnotenie</h2> -->
+        <!-- Google reCAPTCHA V3 -->
+        <script>
+            grecaptcha.ready(function() {
+                // Write Review Form
+
+                const write_review_form = document.querySelector(".write_review_form");
+                if(write_review_form) {
+                    write_review_form.addEventListener("submit", function(event) {
+                        event.preventDefault()
+                        grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "write_review_form"}).then(function(token) {
+                            document.getElementById("write_review_form_recaptcha").value = token
+                            write_review_form.submit()
+                        })
+                    })
+                }
+            })
+        </script>
+
         <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
             {% csrf_token %}
 
@@ -181,7 +184,11 @@
                 {{ review_form.review }}
             </div>
 
-            <input type="submit" name="write_review_form_submit" value="Zverejniť">
+            <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
+            <input type="submit" value="Zverejniť">
+
+            <!-- Google reCAPTCHA V3 -->
+            <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
         </form>
 
         <div class="all_reviews">
@@ -247,6 +254,24 @@
             {% endfor %}
         </div>
     </div>
+
+    <!-- Google reCAPTCHA V3 -->
+    <script>
+        grecaptcha.ready(function() {
+            // Contact Form
+
+            const contact_form = document.querySelector(".contact_form")
+            if(contact_form) {
+                contact_form.addEventListener("submit", function(event) {
+                    event.preventDefault()
+                    grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "contact_form"}).then(function(token) {
+                        document.getElementById("contact_form_recaptcha").value = token
+                        contact_form.submit()
+                    })
+                })
+            }
+        })
+    </script>
     
     <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -271,13 +296,12 @@
             </div>
         </div>
 
-        <p class="form_report" style="bottom: 223px;">Lorem ipsum dolor sit amet.</p>
+        <p class="form_report" style="bottom: 113px;"></p>
         <input type="hidden" name="contact_form_submit" value="contact_form_submit">
         <input type="submit" value="Odoslať správu">
 
         <!-- Google reCAPTCHA V3 -->
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-        <div class="grecaptcha_badge_container"></div>
+        <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
     </form>
 {% endblock content %}
 

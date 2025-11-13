@@ -24,6 +24,7 @@ def captureError(message):
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 def homepageView(request):
+    # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
         # Loads Data From reCaptcha In Registration Page
         recaptcha_response = request.POST.get("g-recaptcha-response")
@@ -42,7 +43,6 @@ def homepageView(request):
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
-        # Contact Form
         else:
             contact_form = contactForm(request.POST, request.FILES)
             if contact_form.is_valid():
@@ -66,7 +66,7 @@ def homepageView(request):
                     if attachment_file.size < 25000000:
                         mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
 
-                        mail_message.send()
+                        # mail_message.send()
 
                         messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
 
@@ -75,12 +75,12 @@ def homepageView(request):
                         captureError("Príloha je príliš veľká")
 
                 else: # Sends Mail Without An Attachment
-                    mail_message.send()
+                    # mail_message.send()
 
                     messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
 
-            return HttpResponseRedirect(reverse("homepage_url"))
-    
+                return HttpResponseRedirect(reverse("homepage_url"))
+            
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
 
@@ -95,27 +95,50 @@ def homepageView(request):
 
         # Write Review Form
         if request.method == "POST" and request.POST.get("write_review_form_submit"):
-            review_form = reviewForm(request.POST)
-            if review_form.is_valid():
-                # Checks If User Has Already Written A Review
-                existing_review = Reviews.objects.filter(user_id=logged_in_user_id)
-                if existing_review:
-                    messages.add_message(request, messages.ERROR, "Skúste upraviť aktuálne hodnotenie")
+            # Loads Data From reCaptcha In Registration Page
+            recaptcha_response = request.POST.get("g-recaptcha-response")
+            recaptcha_data = {
+                "secret": settings.RECAPTCHA_SECRET_KEY,
+                "response": recaptcha_response
+            }
 
-                    return HttpResponseRedirect(reverse("edit_review_url"))
+            # Loads reCaptcha API
+            recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
-                # Saves New Review To DB
-                else:
-                    new_review = Reviews(
-                        user_id = logged_in_user_id,
-                        rating = int(review_form.cleaned_data["rating"]),
-                        review = review_form.cleaned_data["review"],
-                    )
-                    new_review.save()
-
-                    messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
+            # Checks Validity Of reCaptcha Response
+            if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+                messages.add_message(request, messages.ERROR, "Overenie reCaptcha zlyhalo")
+                captureError("Overenie reCaptcha zlyhalo")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else:
+                review_form = reviewForm(request.POST)
+                if review_form.is_valid():
+                    # Checks If User Has Already Written A Review
+                    if Reviews.objects.filter(user_id=logged_in_user_id).exists():
+                        messages.add_message(request, messages.ERROR, "Skúste upraviť aktuálne hodnotenie")
+
+                        return HttpResponseRedirect(reverse("edit_review_url"))
+
+                    # Saves New Review To DB
+                    else:
+                        if int(review_form.cleaned_data["rating"]) == 0:
+                            messages.add_message(request, messages.ERROR, "Ukážte nám vašu spokojnosť")
+
+                            return HttpResponseRedirect(reverse("homepage_url"))
+
+                        else:
+                            new_review = Reviews(
+                                user_id = logged_in_user_id,
+                                rating = int(review_form.cleaned_data["rating"]),
+                                review = review_form.cleaned_data["review"],
+                            )
+                            new_review.save()
+
+                            messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
+
+                            return HttpResponseRedirect(reverse("homepage_url"))
 
         # Get Logged In User From DB
         user = Users.objects.get(id=logged_in_user_id)
@@ -413,7 +436,7 @@ def editReviewView(request):
         review = Reviews.objects.get(user_id=logged_in_user_id)
 
         if request.method == "POST":
-            if timezone.now() - review.last_edit >= timedelta(days=30) or review.last_edit == None:
+            if review.last_edit == None or timezone.now() - review.last_edit >= timedelta(days=30):
                 review_form = reviewForm(request.POST)
                 if review_form.is_valid():
                     if review.rating != int(review_form.cleaned_data["rating"]):
