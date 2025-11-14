@@ -1,0 +1,27 @@
+.password_check_container {
+    position: relative;
+
+    &:has(.password_check:hover) .fa-copy, 
+    &:has(.password_check:focus) .fa-copy {
+        right: -19px;
+    }
+
+    .password_check {
+        padding-right: 28px !important;
+    }
+
+    .fa-copy {
+        display: block;
+        color: #949494;
+        position: absolute;
+        bottom: 26px;
+        right: 1px;
+        transition: right 0.3s ease;
+
+        &:hover {
+            color: #aaaaaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+    }
+}

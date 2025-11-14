@@ -5,6 +5,12 @@
     padding: 0;
     box-sizing: border-box;
     font-family: Poppins, Arial, sans-serif;
+
+    &:before, &:after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 }
 
 /**************
@@ -83,7 +89,7 @@
     }
 }
 
-.no_logged_in p, .code_expired p { // Move
+.no_logged_in p, .code_expired p {
     text-align: center;
 
     a {
@@ -102,10 +108,12 @@ main {
     min-height: 100vh;
     padding-bottom: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.2), #000000cc), url("images/background.jpg"); // https://kengurupro.eu/wp-content/uploads/2022/10/2-1-1-2.jpg
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background: {
+        size: cover;
+        position: center;
+        repeat: no-repeat;
+        attachment: fixed;
+    }
     color: #fff;
 }
 
@@ -322,29 +330,6 @@ form {
         }
     }
 
-    .password_check_container { // Move
-        position: relative;
-
-        .password_check {
-            padding-right: 28px !important;
-        }
-
-        .fa-copy {
-            display: block;
-            color: #949494;
-            position: absolute;
-            bottom: 26px;
-            right: 1px;
-            transition: right 0.3s ease;
-
-            &:hover {
-                color: #aaaaaa;
-                cursor: pointer;
-                transition: color 0.3s ease;
-            }
-        }
-    }
-
     .password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
     {
         left: -16px;
@@ -356,8 +341,7 @@ form {
         right: 0px;
     }
 
-    .password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy, .password_check_container:has(.password_check:hover) .fa-copy, .password_check_container:has(.password_check:focus) .fa-copy
-    {
+    .password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy {
         right: -19px;
     }
 
