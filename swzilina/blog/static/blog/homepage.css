@@ -1,43 +1,25 @@
+/************
+ Main Styles
+************/
 .banner {
   height: 125px;
   background-color: rgba(255, 255, 255, 0.1019607843);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
 }
-
-.account {
+.banner .account {
   position: absolute;
   top: 77px;
   right: 10px;
   height: 38px;
 }
-
-.no_account {
-  position: absolute;
-  top: 83.5px;
-  right: 10px;
-  height: 25px;
-}
-
-.no_account .login:link,
-.no_account .login:visited {
-  text-decoration: none;
-  color: #fff;
-}
-
-.no_account .login:hover,
-.no_account .login:active {
-  text-decoration: underline;
-}
-
-.account a:has(.profile_picture) {
+.banner .account a:has(.profile_picture) {
   display: inline-block;
   width: 38px;
   height: 38px;
   margin-right: 6px;
 }
-
-.account .profile_picture {
+.banner .account a .profile_picture {
   width: 38px;
   height: 38px;
   padding: 2px;
@@ -45,45 +27,52 @@
   border-radius: 50%;
   transition: transform 0.3s ease;
 }
-
-.account .profile_picture:hover {
+.banner .account a .profile_picture:hover {
   transform: scale(1.1);
 }
-
-.account .user_name {
+.banner .account .user_name {
   margin-right: 6px;
-}
-
-.account .user_name:link,
-.account .user_name:visited,
-.account .logout:link,
-.account .logout:visited {
   position: relative;
   top: -13px;
   text-decoration: none;
   color: #fff;
 }
-
-.account .user_name:hover,
-.account .user_name:active,
-.account .logout:hover,
-.account .logout:active {
+.banner .account .user_name:hover, .banner .account .user_name:active {
   text-decoration: underline;
 }
-
-.reviews_info {
+.banner .account .logout {
+  position: relative;
+  top: -13px;
+  text-decoration: none;
+  color: #fff;
+}
+.banner .account .logout:hover, .banner .account .logout:active {
+  text-decoration: underline;
+}
+.banner .no_account {
+  position: absolute;
+  top: 83.5px;
+  right: 10px;
+  height: 25px;
+}
+.banner .no_account .login {
+  text-decoration: none;
+  color: #fff;
+}
+.banner .no_account .login:hover, .banner .no_account .login:active {
+  text-decoration: underline;
+}
+.banner .reviews_info {
   position: absolute;
   top: 83.5px;
   left: 10px;
   height: 25px;
   cursor: pointer;
 }
-
-.reviews_info p {
+.banner .reviews_info p {
   display: inline-block;
 }
-
-.reviews_info img {
+.banner .reviews_info img {
   width: 12px;
   height: 12px;
 }
@@ -108,12 +97,6 @@
 .blob-btn.registration_button {
   background-color: rgba(0, 0, 0, 0.2);
   color: rgb(255, 255, 255);
-}
-
-*:before, *:after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 .blob-btn {
@@ -239,80 +222,10 @@
   text-align: justify;
 }
 
-.contact_form {
-  margin: 30px auto 40px;
-}
-
-.message_container {
-  position: relative;
-}
-
-.attachment {
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.2);
-  position: absolute;
-  bottom: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 25px;
-  border-radius: 0px 0px 10px 10px;
-  transition: width 0.3s ease;
-}
-
-.attachment p {
-  font-size: 12px;
-  line-height: 25px;
-  color: #949494;
-}
-
-.attachment i {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 4.5px;
-  color: #949494;
-}
-
-#select_attachment {
-  display: none;
-}
-
-.message_container textarea {
-  width: 90%;
-  height: 100px;
-  margin-top: 10px;
-  padding: 5px 10px;
-  background: transparent;
-  color: #fff;
-  border: 1px solid #fff;
-  border-radius: 10px;
-  outline: none;
-  resize: none;
-  font-size: 16px;
-  transition: width 0.3s ease;
-}
-
-.message_container textarea:hover, .message_container textarea:focus {
-  width: 100%;
-}
-
-.message_container:has(textarea:hover) .attachment, .message_container:has(textarea:focus) .attachment {
-  width: 100%;
-}
-
-.attachment i:hover {
-  color: #aaaaaa;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-/* Reviews */
 .reviews {
   margin-top: 50px;
 }
-
-.write_review_form {
+.reviews .write_review_form {
   max-width: 100%;
   margin-bottom: 50px;
   padding: 0px 0px;
@@ -321,50 +234,13 @@
           backdrop-filter: none;
   border: none;
 }
-
-.write_review_form .reviewer, .all_reviews .reviewer {
-  position: relative;
-  height: 38px;
-  text-align: left;
-}
-
-.write_review_form .reviewer .profile_picture, .all_reviews .reviewer .profile_picture {
-  width: 38px;
-  height: 38px;
-  padding: 2px;
-  border: 1px solid #fff;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.write_review_form .reviewer .full_name, .all_reviews .reviewer .full_name {
-  display: inline-block;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 48px;
-}
-
-.write_review_form .review {
+.reviews .write_review_form .review {
   height: 142px;
 }
-
-.write_review_form .review .rating, .all_reviews .review .rating {
-  height: 32px;
-  margin-top: 10px;
-}
-
-.write_review_form .review .rating img:hover, .all_reviews .review .rating img:hover {
-  transform: scale(1.1);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.write_review_form .review .rating input {
+.reviews .write_review_form .review .rating input {
   display: none;
 }
-
-.write_review_form .review textarea {
+.reviews .write_review_form .review textarea {
   width: 100%;
   height: 100px;
   margin-top: 10px;
@@ -379,8 +255,7 @@
   resize: none;
   font-size: 16px;
 }
-
-.write_review_form input[type=submit] {
+.reviews .write_review_form input[type=submit] {
   width: 178px;
   margin-top: 10px;
   background-color: #4dc91c;
@@ -388,21 +263,18 @@
   border: 1px solid #000;
   border-radius: 10px;
 }
-
-.write_review_form input[type=submit]:hover, .write_review_form input[type=submit]:focus {
+.reviews .write_review_form input[type=submit]:hover, .reviews .write_review_form input[type=submit]:focus {
   background-color: #55eb19;
   letter-spacing: 0px;
 }
-
-.all_reviews {
+.reviews .all_reviews {
   margin: 0px 0px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-
-.all_reviews .one_review {
+.reviews .all_reviews .one_review {
   width: 370px;
   margin-bottom: 20px;
   padding: 10px;
@@ -414,59 +286,136 @@
   box-shadow: 5px 5px 10px #505050;
   transition: transform 0.3s ease;
 }
-
-.all_reviews .one_review:hover {
+.reviews .all_reviews .one_review:hover {
   transform: scale(1.05);
 }
-
-.all_reviews .reviewer .date {
+.reviews .all_reviews .one_review .reviewer .date {
   font-style: italic;
   color: #949494;
 }
-
-.all_reviews .review p {
+.reviews .all_reviews .one_review .review p {
   margin-top: 10px;
 }
-
-.all_reviews .review .edit_review:link,
-.all_reviews .review .edit_review:visited {
+.reviews .all_reviews .one_review .review .edit_review {
   text-decoration: none;
   font-size: 14px;
   color: #949494;
 }
-
-.all_reviews .review .edit_review:hover,
-.all_reviews .review .edit_review:active {
+.reviews .all_reviews .one_review .review .edit_review:hover, .reviews .all_reviews .one_review .review .edit_review:active {
   text-decoration: underline;
+}
+.reviews .write_review_form .reviewer, .reviews .all_reviews .reviewer {
+  position: relative;
+  height: 38px;
+  text-align: left;
+}
+.reviews .write_review_form .reviewer .profile_picture, .reviews .all_reviews .reviewer .profile_picture {
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.reviews .write_review_form .reviewer .full_name, .reviews .all_reviews .reviewer .full_name {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 48px;
+}
+.reviews .write_review_form .review .rating, .reviews .all_reviews .review .rating {
+  height: 32px;
+  margin-top: 10px;
+}
+.reviews .write_review_form .review .rating img:hover, .reviews .all_reviews .review .rating img:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.contact_form {
+  margin: 30px auto 40px;
+}
+.contact_form .message_container {
+  position: relative;
+}
+.contact_form .message_container textarea {
+  width: 90%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  outline: none;
+  resize: none;
+  font-size: 16px;
+  transition: width 0.3s ease;
+}
+.contact_form .message_container textarea:hover, .contact_form .message_container textarea:focus {
+  width: 100%;
+}
+.contact_form .message_container .attachment {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 25px;
+  border-radius: 0px 0px 10px 10px;
+  transition: width 0.3s ease;
+}
+.contact_form .message_container .attachment p {
+  font-size: 12px;
+  line-height: 25px;
+  color: #949494;
+}
+.contact_form .message_container .attachment i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4.5px;
+  color: #949494;
+}
+.contact_form .message_container .attachment i:hover {
+  color: #aaaaaa;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.contact_form .message_container .attachment #select_attachment {
+  display: none;
+}
+.contact_form .message_container:has(textarea:hover) .attachment, .contact_form .message_container:has(textarea:focus) .attachment {
+  width: 100%;
 }
 
 /**************
  Media Queries
 **************/
-@media only screen and (max-width: 820px) {
+@media (max-width: 820px) {
   .all_reviews .one_review {
-    width: 100%;
-    margin-top: 20px;
-  }
-  .write_review_form {
-    margin-bottom: 30px;
+    width: 100% !important;
   }
 }
-@media only screen and (max-width: 800px) {
+@media (max-width: 800px) {
   .banner {
     height: 109px;
   }
-  .account {
+  .banner .account {
     top: 61px;
   }
-  .no_account, .reviews_info {
+  .banner .no_account, .banner .reviews_info {
     top: 67.5px;
   }
   .header_container {
     height: calc(100vh - 109px);
   }
 }
-@media only screen and (max-width: 600px) {
+@media (max-width: 600px) {
   .blob-btn {
     width: 80% !important;
     margin: 10px 0px !important;

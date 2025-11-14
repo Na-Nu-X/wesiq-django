@@ -4,6 +4,11 @@
   box-sizing: border-box;
   font-family: Poppins, Arial, sans-serif;
 }
+*:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 /**************
  Header Styles
@@ -269,25 +274,6 @@ form .password_container .fa-copy {
   right: 1px;
   transition: right 0.3s ease;
 }
-form .password_check_container {
-  position: relative;
-}
-form .password_check_container .password_check {
-  padding-right: 28px !important;
-}
-form .password_check_container .fa-copy {
-  display: block;
-  color: #949494;
-  position: absolute;
-  bottom: 26px;
-  right: 1px;
-  transition: right 0.3s ease;
-}
-form .password_check_container .fa-copy:hover {
-  color: #aaaaaa;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
 form .password_container:has(.password:hover) .fa-key, form .password_container:has(.password:focus) .fa-key {
   left: -16px;
 }
@@ -295,7 +281,7 @@ form .password_container:has(.password:hover) .fa-eye, form .password_container:
 form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
   right: 0px;
 }
-form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy, form .password_check_container:has(.password_check:hover) .fa-copy, form .password_check_container:has(.password_check:focus) .fa-copy {
+form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy {
   right: -19px;
 }
 form .form_report {
