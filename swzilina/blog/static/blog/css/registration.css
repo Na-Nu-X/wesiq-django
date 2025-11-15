@@ -9,14 +9,14 @@
 }
 .password_check_container .fa-copy {
   display: block;
-  color: #949494;
+  color: #999999;
   position: absolute;
   bottom: 26px;
   right: 1px;
   transition: right 0.3s ease;
 }
 .password_check_container .fa-copy:hover {
-  color: #aaaaaa;
+  color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }/*# sourceMappingURL=registration.css.map */

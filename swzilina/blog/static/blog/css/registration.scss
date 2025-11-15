@@ -1,3 +1,5 @@
+@import "../../../../static/css/partials/variables";
+
 .password_check_container {
     position: relative;
 
@@ -12,14 +14,14 @@
 
     .fa-copy {
         display: block;
-        color: #949494;
+        color: darken($secondary-color, 40%);
         position: absolute;
         bottom: 26px;
         right: 1px;
         transition: right 0.3s ease;
 
         &:hover {
-            color: #aaaaaa;
+            color: darken($secondary-color, 20%);
             cursor: pointer;
             transition: color 0.3s ease;
         }
