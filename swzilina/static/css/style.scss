@@ -1,3 +1,5 @@
+@import "partials/variables";
+
 // General Styles
 
 * {
@@ -22,8 +24,8 @@
 .navigation_bar {
     position: fixed;
     width: 100%;
-    background-color: #000000cc;
-    border-bottom: 1px solid #fff;
+    background-color: transparentize($main-color, 0.2);
+    border-bottom: 1px solid $secondary-color;
     opacity: 1;
     z-index: 100;
 
@@ -38,13 +40,13 @@
                 margin: 20px 10px;
                 text-decoration: none;
                 font-size: 18px;
-                color: #fff;
+                color: $secondary-color;
                 transition: transform 0.3s ease, color 0.3s ease;
 
                 &:hover,
                 &:active {
                     transform: scale(1.1);
-                    color: #e73737;
+                    color: $error-color;
                 }
             }
         }
@@ -52,7 +54,7 @@
         .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
             display: none;
             margin: 10px 0px;
-            color: #fff;
+            color: $secondary-color;
             font-size: 30px;
             transition: transform 0.3s ease;
 
@@ -81,11 +83,11 @@
     z-index: 200;
 
     &.success {
-        color: #55eb19;
+        color: $success-color;
     }
 
     &.error {
-        color: #e73737;
+        color: $error-color;
     }
 }
 
@@ -95,7 +97,7 @@
     a {
         text-decoration: none;
         font-style: italic;
-        color: #fff;
+        color: $secondary-color;
 
         &:hover,
         &:active {
@@ -107,14 +109,14 @@
 main {
     min-height: 100vh;
     padding-bottom: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), #000000cc), url("../images/background.jpg"); // https://kengurupro.eu/wp-content/uploads/2022/10/2-1-1-2.jpg
+    background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/background.jpg"); // https://kengurupro.eu/wp-content/uploads/2022/10/2-1-1-2.jpg
     background: {
         size: cover;
         position: center;
         repeat: no-repeat;
         attachment: fixed;
     }
-    color: #fff;
+    color: $secondary-color;
 }
 
 // Privacy Policy Bar
@@ -128,9 +130,9 @@ main {
     width: 100%;
     padding: 30px 50px 50px;
     text-align: center;
-    background-color: #0000001a;
+    background-color: transparentize($main-color, 0.9);
     backdrop-filter: blur(8px);
-    border: 2px solid #fff;
+    border: 2px solid $secondary-color;
     border-radius: 25px;
     z-index: 100;
     transition: opacity 0.5s ease, visibility 0.5s ease;
@@ -156,8 +158,8 @@ main {
             width: 100%;
             height: 50px;
             margin-top: 40px;
-            color: #000;
-            border: 1px solid #000;
+            color: $main-color;
+            border: 1px solid $main-color;
             border-radius: 10px;
             font-size: 16px;
             transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
@@ -172,21 +174,21 @@ main {
 
         .privacy_policy_accept {
             margin-right: 10px;
-            background-color: #4dc91c;
+            background-color: $success-color;
 
             &:hover,
             &:focus {
-                background-color: #55eb19;
+                background-color: lighten($success-color, 5%);
             }
         }
 
         .privacy_policy_reject {
             margin-left: 10px;
-            background-color: #eb4343;
+            background-color: $error-color;
 
             &:hover,
             &:focus {
-                background-color: #e73737;
+                background-color: lighten($error-color, 5%);
             }
         }
     }
@@ -206,7 +208,7 @@ main {
 
         a {
             text-decoration: none;
-            color: #fff;
+            color: $secondary-color;
             animation: fade_in_animation 2s ease-out;
             transition: letter-spacing 0.3s ease;
 
@@ -232,7 +234,7 @@ form {
     padding: 30px 50px 50px;
     text-align: center;
     backdrop-filter: blur(5px);
-    border: 2px solid #fff;
+    border: 2px solid $secondary-color;
     border-radius: 25px;
 
     h2 {
@@ -247,7 +249,7 @@ form {
 
         a {
             text-decoration: none;
-            color: #fff;
+            color: $secondary-color;
         }
     }
 
@@ -268,9 +270,9 @@ form {
         margin-bottom: 10px;
         padding: 0px 10px;
         background: transparent;
-        color: #fff;
+        color: $secondary-color;
         border: none;
-        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid $secondary-color;
         outline: none;
         font-size: 16px;
         transition: width 0.3s ease;
@@ -282,14 +284,14 @@ form {
     }
 
     input::placeholder, textarea::placeholder {
-        color: #949494;
+        color: darken($secondary-color, 40%);
     }
 
     select:hover, select:focus {
         cursor: pointer;
     }
 
-    .password_container {
+    .password_container { // Move
         position: relative;
 
         .password {
@@ -299,12 +301,12 @@ form {
 
         .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
             display: block;
-            color: #949494;
+            color: darken($secondary-color, 40%);
             position: absolute;
             bottom: 26px;
 
             &:hover {
-                color: #aaaaaa;
+                color: darken($secondary-color, 20%);
                 cursor: pointer;
                 transition: color 0.3s ease;
             }
@@ -352,11 +354,11 @@ form {
         font-size: 14px;
 
         &.success {
-            color: #55eb19;
+            color: $success-color;
         }
 
         &.error {
-            color: #e73737;
+            color: $error-color;
         }
     }
 
@@ -364,18 +366,18 @@ form {
         width: 90%;
         height: 50px;
         margin-top: 40px;
-        background-color: #000000cc;
-        color: #fff;
-        border: 1px solid #fff;
+        background-color: transparentize($main-color, 0.2);
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
         border-radius: 25px;
         font-size: 16px;
         transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
         &:hover,
         &:focus {
-            background-color: #ffffffe6;
-            color: #000;
-            border: 1px solid #000;
+            background-color: transparentize($secondary-color, 0.1);
+            color: $main-color;
+            border: 1px solid $main-color;
             transform: scale(1.1);
             letter-spacing: 1px;
             cursor: pointer;
@@ -387,7 +389,7 @@ form {
         font-size: 14px;
 
         a {
-            color: #fff;
+            color: $secondary-color;
             text-decoration: none;
 
             &:hover,
@@ -405,15 +407,15 @@ form {
 footer {
     text-align: center;
     padding: 10px;
-    background: #0F0F0F;
-    background: radial-gradient(circle, rgba(30, 30, 30, 1) 0%, rgba(0, 0, 0, 1) 100%);
-    border-top: 1px solid #fff;
+    background: $main-color;
+    background: radial-gradient(circle, lighten($main-color, 5%) 0%, $main-color 100%);
+    border-top: 1px solid $secondary-color;
 
     .follow_us, .contact {
         margin-bottom: 20px;
 
         p {
-            color: #fff;
+            color: $secondary-color;
         }
 
         p:nth-child(1) {
@@ -443,7 +445,7 @@ footer {
         text-decoration: none;
         font-size: 14px;
         font-style: italic;
-        color: #949494;
+        color: darken($secondary-color, 40%);
 
         &:hover,
         &:active {
@@ -455,7 +457,7 @@ footer {
         font-family: 'Courier New', Courier, monospace;
         font-size: 12px;
         line-height: 12px;
-        color: #949494;
+        color: darken($secondary-color, 40%);
     }
 }
 
@@ -510,7 +512,7 @@ footer {
 
         .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
             display: block !important;
-            color: #fff;
+            color: $secondary-color;
             font-size: 30px;
             transition: transform 0.3s ease;
         }

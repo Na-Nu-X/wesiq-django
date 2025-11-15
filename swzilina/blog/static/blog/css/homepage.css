@@ -1,5 +1,4 @@
 .grecaptcha-badge {
-  background: #1e1e1e !important;
   opacity: 0.8 !important;
 }
 
@@ -8,7 +7,7 @@
 ************/
 .banner {
   height: 125px;
-  background-color: rgba(255, 255, 255, 0.1019607843);
+  background-color: rgba(255, 255, 255, 0.1);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
 }
@@ -96,12 +95,12 @@
 
 .blob-btn.login_button {
   background-color: rgba(255, 255, 255, 0.8);
-  color: rgb(0, 0, 0);
+  color: #000;
 }
 
 .blob-btn.registration_button {
   background-color: rgba(0, 0, 0, 0.2);
-  color: rgb(255, 255, 255);
+  color: #fff;
 }
 
 .blob-btn {
@@ -131,7 +130,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  border: 1px solid rgb(0, 0, 0);
+  border: 1px solid #000;
   border-radius: 30px;
 }
 .blob-btn:after {
@@ -146,7 +145,7 @@
   border-radius: 30px;
 }
 .blob-btn:hover {
-  color: rgb(255, 255, 255);
+  color: #fff;
   border-radius: 30px;
 }
 .blob-btn:hover:after {
@@ -221,8 +220,8 @@
   max-width: 800px;
   margin: 0px auto;
   padding: 10px 20px;
-  background-color: rgba(0, 0, 0, 0.1019607843);
-  border: 1px solid #949494;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid #999999;
   border-radius: 5px;
   text-align: justify;
 }
@@ -263,13 +262,13 @@
 .reviews .write_review_form input[type=submit] {
   width: 178px;
   margin-top: 10px;
-  background-color: #4dc91c;
+  background-color: #52cf20;
   color: #000;
   border: 1px solid #000;
   border-radius: 10px;
 }
 .reviews .write_review_form input[type=submit]:hover, .reviews .write_review_form input[type=submit]:focus {
-  background-color: #55eb19;
+  background-color: rgb(93.730125523, 222.129707113, 42.370292887);
   letter-spacing: 0px;
 }
 .reviews .all_reviews {
@@ -283,12 +282,12 @@
   width: 370px;
   margin-bottom: 20px;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.1019607843);
+  background-color: rgba(255, 255, 255, 0.1);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 1px solid #fff;
   border-radius: 10px;
-  box-shadow: 5px 5px 10px #505050;
+  box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease;
 }
 .reviews .all_reviews .one_review:hover {
@@ -296,7 +295,7 @@
 }
 .reviews .all_reviews .one_review .reviewer .date {
   font-style: italic;
-  color: #949494;
+  color: #999999;
 }
 .reviews .all_reviews .one_review .review p {
   margin-top: 10px;
@@ -304,7 +303,7 @@
 .reviews .all_reviews .one_review .review .edit_review {
   text-decoration: none;
   font-size: 14px;
-  color: #949494;
+  color: #999999;
 }
 .reviews .all_reviews .one_review .review .edit_review:hover, .reviews .all_reviews .one_review .review .edit_review:active {
   text-decoration: underline;
@@ -377,17 +376,17 @@
 .contact_form .message_container .attachment p {
   font-size: 12px;
   line-height: 25px;
-  color: #949494;
+  color: #999999;
 }
 .contact_form .message_container .attachment i {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: 4.5px;
-  color: #949494;
+  color: #999999;
 }
 .contact_form .message_container .attachment i:hover {
-  color: #aaaaaa;
+  color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }

@@ -37,7 +37,7 @@
 }
 .navigation_bar ul li a:hover, .navigation_bar ul li a:active {
   transform: scale(1.1);
-  color: #e73737;
+  color: #df3535;
 }
 .navigation_bar ul .navigation_icon .fa-bars, .navigation_bar ul .navigation_icon .fa-xmark {
   display: none;
@@ -65,10 +65,10 @@
   z-index: 200;
 }
 .message.success {
-  color: #55eb19;
+  color: #52cf20;
 }
 .message.error {
-  color: #e73737;
+  color: #df3535;
 }
 
 .no_logged_in p, .code_expired p {
@@ -103,7 +103,7 @@ main {
   width: 100%;
   padding: 30px 50px 50px;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.1019607843);
+  background-color: rgba(0, 0, 0, 0.1);
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
   border: 2px solid #fff;
@@ -143,17 +143,17 @@ main {
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_accept {
   margin-right: 10px;
-  background-color: #4dc91c;
+  background-color: #52cf20;
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_accept:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_accept:focus {
-  background-color: #55eb19;
+  background-color: rgb(93.730125523, 222.129707113, 42.370292887);
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_reject {
   margin-left: 10px;
-  background-color: #eb4343;
+  background-color: #df3535;
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_reject:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_reject:focus {
-  background-color: #e73737;
+  background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
 }
 
 .header_container {
@@ -233,10 +233,10 @@ form input[type=text]:hover, form input[type=text]:focus, form input[type=email]
   width: 100%;
 }
 form input::-moz-placeholder, form textarea::-moz-placeholder {
-  color: #949494;
+  color: #999999;
 }
 form input::placeholder, form textarea::placeholder {
-  color: #949494;
+  color: #999999;
 }
 form select:hover, form select:focus {
   cursor: pointer;
@@ -250,12 +250,12 @@ form .password_container .password {
 }
 form .password_container .fa-eye, form .password_container .fa-eye-slash, form .password_container .fa-key, form .password_container .fa-copy {
   display: block;
-  color: #949494;
+  color: #999999;
   position: absolute;
   bottom: 26px;
 }
 form .password_container .fa-eye:hover, form .password_container .fa-eye-slash:hover, form .password_container .fa-key:hover, form .password_container .fa-copy:hover {
-  color: #aaaaaa;
+  color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
@@ -291,10 +291,10 @@ form .form_report {
   font-size: 14px;
 }
 form .form_report.success {
-  color: #55eb19;
+  color: #52cf20;
 }
 form .form_report.error {
-  color: #e73737;
+  color: #df3535;
 }
 form input[type=submit] {
   width: 90%;
@@ -308,7 +308,7 @@ form input[type=submit] {
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
 form input[type=submit]:hover, form input[type=submit]:focus {
-  background-color: rgba(255, 255, 255, 0.9019607843);
+  background-color: rgba(255, 255, 255, 0.9);
   color: #000;
   border: 1px solid #000;
   transform: scale(1.1);
@@ -333,8 +333,8 @@ form .form_questions a:hover, form .form_questions a:active {
 footer {
   text-align: center;
   padding: 10px;
-  background: #0F0F0F;
-  background: radial-gradient(circle, rgb(30, 30, 30) 0%, rgb(0, 0, 0) 100%);
+  background: #000;
+  background: radial-gradient(circle, rgb(12.75, 12.75, 12.75) 0%, #000 100%);
   border-top: 1px solid #fff;
 }
 footer .follow_us, footer .contact {
@@ -363,7 +363,7 @@ footer .contact p a {
   text-decoration: none;
   font-size: 14px;
   font-style: italic;
-  color: #949494;
+  color: #999999;
 }
 footer .contact p a:hover, footer .contact p a:active {
   text-decoration: underline;
@@ -372,7 +372,7 @@ footer .copywrite {
   font-family: "Courier New", Courier, monospace;
   font-size: 12px;
   line-height: 12px;
-  color: #949494;
+  color: #999999;
 }
 
 /***********

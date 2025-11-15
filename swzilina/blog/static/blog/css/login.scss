@@ -1,3 +1,5 @@
+@import "../../../../static/css/partials/variables";
+
 .login_methods div {
     position: relative;
     display: block;
@@ -5,15 +7,15 @@
     height: 50px;
     line-height: 50px;
     margin: 10px auto;
-    background-color: #ffffffe6;
-    border: 1px solid #000;
+    background-color: transparentize($secondary-color, 0.1);
+    border: 1px solid $main-color;
     border-radius: 25px;
     font-size: 16px;
     transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
     &:hover {
-        background-color: #00000099;
-        border: 1px solid #fff;
+        background-color: transparentize($main-color, 0.5);
+        border: 1px solid $secondary-color;
         transform: scale(1.1);
         letter-spacing: 1px;
         cursor: pointer;
@@ -21,13 +23,13 @@
 
     a {
         display: block;
-        color: #000;
+        color: $main-color;
         text-decoration: none;
         width: 100%;
         height: 100%;
 
         &:hover, &:active {
-            color: #fff;
+            color: $secondary-color;
         }
 
         img {
