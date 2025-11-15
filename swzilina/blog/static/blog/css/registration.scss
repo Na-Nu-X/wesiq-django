@@ -27,3 +27,13 @@
         }
     }
 }
+
+/**************
+ Media Queries
+**************/
+
+@media (max-width: 600px) {
+    .password_check_container .fa-copy {
+        right: -19px !important;
+    }
+}

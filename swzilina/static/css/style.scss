@@ -283,7 +283,7 @@ form {
         }
     }
 
-    input::placeholder, textarea::placeholder {
+    input::placeholder {
         color: darken($secondary-color, 40%);
     }
 
@@ -516,5 +516,26 @@ footer {
             font-size: 30px;
             transition: transform 0.3s ease;
         }
+    }
+}
+
+@media (max-width: 600px) {
+    input[type="text"], input[type="email"], input[type="password"], select, input[type="submit"] {
+        width: 100% !important;
+    }
+
+    .password_container .fa-key
+    {
+        left: -16px !important;
+    }
+
+    .password_container .fa-eye,
+    .password_container .fa-eye-slash
+    {
+        right: 0px !important;
+    }
+
+    .password_container .fa-copy {
+        right: -19px !important;
     }
 }

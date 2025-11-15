@@ -232,10 +232,10 @@ form input[type=text], form input[type=email], form input[type=password], form s
 form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus, form input[type=password]:hover, form input[type=password]:focus, form select:hover, form select:focus {
   width: 100%;
 }
-form input::-moz-placeholder, form textarea::-moz-placeholder {
+form input::-moz-placeholder {
   color: #999999;
 }
-form input::placeholder, form textarea::placeholder {
+form input::placeholder {
   color: #999999;
 }
 form select:hover, form select:focus {
@@ -419,5 +419,20 @@ footer .copywrite {
     color: #fff;
     font-size: 30px;
     transition: transform 0.3s ease;
+  }
+}
+@media (max-width: 600px) {
+  input[type=text], input[type=email], input[type=password], select, input[type=submit] {
+    width: 100% !important;
+  }
+  .password_container .fa-key {
+    left: -16px !important;
+  }
+  .password_container .fa-eye,
+  .password_container .fa-eye-slash {
+    right: 0px !important;
+  }
+  .password_container .fa-copy {
+    right: -19px !important;
   }
 }/*# sourceMappingURL=style.css.map */
