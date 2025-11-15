@@ -361,6 +361,12 @@
 .contact_form .message_container textarea:hover, .contact_form .message_container textarea:focus {
   width: 100%;
 }
+.contact_form .message_container textarea::-moz-placeholder {
+  color: #999999;
+}
+.contact_form .message_container textarea::placeholder {
+  color: #999999;
+}
 .contact_form .message_container .attachment {
   position: relative;
   background-color: rgba(0, 0, 0, 0.2);
@@ -423,5 +429,14 @@
   .blob-btn {
     width: 80% !important;
     margin: 10px 0px !important;
+  }
+  .write_review_form input[type=submit] {
+    width: 178px !important;
+  }
+  textarea {
+    width: 100% !important;
+  }
+  .attachment {
+    width: 100% !important;
   }
 }/*# sourceMappingURL=homepage.css.map */
