@@ -280,7 +280,7 @@
             {{ contact_form.message }}
 
             <div class="attachment">
-                <p>Nie je vybraný žiaden súbor.</p>
+                <p class="attachment_report">Nie je vybraný žiaden súbor.</p>
                 
                 <label for="select_attachment">
                     <i class="fa-solid fa-paperclip" title="Vybrať prílohu"></i> <!-- https://fontawesome.com/icons/paperclip -->
@@ -299,5 +299,33 @@
 {% endblock content %}
 
 {% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Selected Attachment
+                
+            const attachment = document.querySelector("#select_attachment")
+            const attachment_report = document.querySelector(".attachment_report")
+
+            attachment.addEventListener("change", function(event) {
+                const attachment_name = event.target.files[0].name
+                const attachment_size = event.target.files[0].size
+
+                if(attachment_size <= 25000000) {
+                    attachment_report.textContent = `Vybraný súbor: ${attachment_name}`
+                }
+
+                else if(attachment_size > 25000000) {
+                    attachment_report.textContent = "Vybraný súbor je príliš veľký."
+                }
+
+                else {
+                    attachment_report.textContent = "Nie je vybraný žiaden súbor."
+                }
+            })
+        })
+    </script>
+
     <script src="{% static 'blog/js/reviews.js' %}" defer></script>
 {% endblock script %}
