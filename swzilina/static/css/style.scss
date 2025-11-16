@@ -6,7 +6,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Poppins, Arial, sans-serif;
+    font-family: $main-font;
+    font-size: $default-font-size;
 
     &:before, &:after {
         box-sizing: border-box;
@@ -39,7 +40,7 @@
                 display: block;
                 margin: 20px 10px;
                 text-decoration: none;
-                font-size: 18px;
+                font-size: 1.2em;
                 color: $secondary-color;
                 transition: transform 0.3s ease, color 0.3s ease;
 
@@ -55,7 +56,7 @@
             display: none;
             margin: 10px 0px;
             color: $secondary-color;
-            font-size: 30px;
+            font-size: 2em;
             transition: transform 0.3s ease;
 
             &:hover {
@@ -144,7 +145,7 @@ main {
 
     h2 {
         margin-bottom: 30px;
-        font-size: 35px;
+        font-size: 2.5em;
     }
 
     .privacy_policy_buttons {
@@ -161,7 +162,6 @@ main {
             color: $main-color;
             border: 1px solid $main-color;
             border-radius: 10px;
-            font-size: 16px;
             transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
             &:hover,
@@ -202,13 +202,13 @@ main {
     align-items: center;
 
     h1 {
-        font-family: "Bungee", sans-serif;
         text-align: center;
-        font-size: 60px;
 
         a {
             text-decoration: none;
             color: $secondary-color;
+            font-family: $heading-font;
+            font-size: 4em;
             animation: fade_in_animation 2s ease-out;
             transition: letter-spacing 0.3s ease;
 
@@ -221,7 +221,7 @@ main {
 }
 
 .content h2 {
-    font-size: 30px;
+    font-size: 2.5em;
     text-align: center;
 }
 
@@ -239,7 +239,6 @@ form {
 
     h2 {
         margin-bottom: 30px;
-        font-size: 40px !important;
         transition: letter-spacing 0.3s ease;
 
         &:hover {
@@ -248,6 +247,7 @@ form {
         }
 
         a {
+            font-size: 1em;
             text-decoration: none;
             color: $secondary-color;
         }
@@ -255,12 +255,19 @@ form {
 
     .back {
         position: absolute;
-        top: 44px;
+        top: 42px;
         left: 50px;
+        width: 32px;
+        height: 32px;
 
-        img:hover {
-            transform: scale(1.1);
-            transition: transform 0.3s ease;
+        img {
+            width: 32px;
+            height: 32px;
+
+            &:hover {
+                transform: scale(1.1);
+                transition: transform 0.3s ease;
+            }
         }
     }
 
@@ -274,7 +281,6 @@ form {
         border: none;
         border-bottom: 1px solid $secondary-color;
         outline: none;
-        font-size: 16px;
         transition: width 0.3s ease;
 
         &:hover,
@@ -351,7 +357,7 @@ form {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 14px;
+        font-size: 0.9em;
 
         &.success {
             color: $success-color;
@@ -370,7 +376,6 @@ form {
         color: $secondary-color;
         border: 1px solid $secondary-color;
         border-radius: 25px;
-        font-size: 16px;
         transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
         &:hover,
@@ -386,7 +391,6 @@ form {
 
     .form_questions {
         margin-top: 10px;
-        font-size: 14px;
 
         a {
             color: $secondary-color;
@@ -411,7 +415,7 @@ footer {
     background: radial-gradient(circle, lighten($main-color, 5%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
 
-    .follow_us, .contact {
+    .follow_us, .contact_us {
         margin-bottom: 20px;
 
         p {
@@ -441,22 +445,23 @@ footer {
         }
     }
 
-    .contact p a {
+    .contact_us p a {
         text-decoration: none;
-        font-size: 14px;
+        font-size: 0.9em;
         font-style: italic;
         color: darken($secondary-color, 40%);
 
         &:hover,
         &:active {
             text-decoration: underline;
+            cursor: pointer;
         }
     }
 
     .copywrite {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 12px;
-        line-height: 12px;
+        font-family: $copywrite-font;
+        font-size: 0.8em;
+        line-height: 0.8em;
         color: darken($secondary-color, 40%);
     }
 }
@@ -513,9 +518,13 @@ footer {
         .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
             display: block !important;
             color: $secondary-color;
-            font-size: 30px;
+            font-size: 2em;
             transition: transform 0.3s ease;
         }
+    }
+
+    .header_container h1 a {
+        font-size: 3em;
     }
 }
 

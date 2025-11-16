@@ -112,7 +112,6 @@
   padding: 20px 46px;
   margin: 0px 20px;
   text-align: center;
-  font-size: 15px;
   font-weight: bold;
   background-color: transparent;
   outline: none;
@@ -216,8 +215,8 @@
 }
 
 .content {
-  font-family: "Poppins", sans-serif;
-  max-width: 800px;
+  font-family: Poppins, Arial, sans-serif;
+  max-width: 900px;
   margin: 0px auto;
   padding: 10px 20px;
   background-color: rgba(0, 0, 0, 0.1);
@@ -257,7 +256,6 @@
   border-radius: 10px;
   outline: none;
   resize: none;
-  font-size: 16px;
 }
 .reviews .write_review_form input[type=submit] {
   width: 178px;
@@ -279,7 +277,7 @@
   justify-content: space-between;
 }
 .reviews .all_reviews .one_review {
-  width: 370px;
+  width: 420px;
   margin-bottom: 20px;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -302,7 +300,7 @@
 }
 .reviews .all_reviews .one_review .review .edit_review {
   text-decoration: none;
-  font-size: 14px;
+  font-size: 0.9em;
   color: #999999;
 }
 .reviews .all_reviews .one_review .review .edit_review:hover, .reviews .all_reviews .one_review .review .edit_review:active {
@@ -355,7 +353,6 @@
   border-radius: 10px;
   outline: none;
   resize: none;
-  font-size: 16px;
   transition: width 0.3s ease;
 }
 .contact_form .message_container textarea:hover, .contact_form .message_container textarea:focus {
@@ -380,7 +377,7 @@
   transition: width 0.3s ease;
 }
 .contact_form .message_container .attachment p {
-  font-size: 12px;
+  font-size: 0.8em;
   line-height: 25px;
   color: #999999;
 }
@@ -406,7 +403,7 @@
 /**************
  Media Queries
 **************/
-@media (max-width: 820px) {
+@media (max-width: 920px) {
   .all_reviews .one_review {
     width: 100% !important;
   }
