@@ -4,9 +4,7 @@ from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm
 from blog.models import Users, Reviews
 from django.contrib.auth import authenticate, login, logout
-import secrets
 from pathlib import Path
-import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib import messages
@@ -14,8 +12,7 @@ from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
-import random
-import requests
+import random, requests, os, secrets
 
 # Functions
 def captureError(message):
@@ -40,8 +37,6 @@ def homepageView(request):
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, "Overenie reCaptcha zlyhalo")
             captureError("Overenie reCaptcha zlyhalo")
-
-            return HttpResponseRedirect(reverse("homepage_url"))
 
         else:
             contact_form = contactForm(request.POST, request.FILES)
@@ -78,8 +73,12 @@ def homepageView(request):
                     # mail_message.send()
 
                     messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+            
+            else:
+                messages.add_message(request, messages.ERROR, "Správu sa nepodarilo odoslať")
+                captureError("Správu sa nepodarilo odoslať")
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+        return HttpResponseRedirect(reverse("homepage_url"))
             
     # Get All Reviews From DB
     reviews = Reviews.objects.all()
@@ -126,8 +125,6 @@ def homepageView(request):
                         if int(review_form.cleaned_data["rating"]) == 0:
                             messages.add_message(request, messages.ERROR, "Ukážte nám vašu spokojnosť")
 
-                            return HttpResponseRedirect(reverse("homepage_url"))
-
                         else:
                             new_review = Reviews(
                                 user_id = logged_in_user_id,
@@ -137,8 +134,12 @@ def homepageView(request):
                             new_review.save()
 
                             messages.add_message(request, messages.SUCCESS, "Ďakujeme za vaše hodnotenie")
+                        
+                else:
+                    messages.add_message(request, messages.ERROR, "Hodnotenie sa nepodarilo zverejniť")
+                    captureError("Hodnotenie sa nepodarilo zverejniť")
 
-                            return HttpResponseRedirect(reverse("homepage_url"))
+            return HttpResponseRedirect(reverse("homepage_url"))
 
         # Get Logged In User From DB
         user = Users.objects.get(id=logged_in_user_id)
@@ -264,6 +265,12 @@ def passwordResetView(request):
                     messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
                     captureError("Overovací kód sa nezhoduje")
 
+            else:
+                messages.add_message(request, messages.ERROR, "Overenie zlyhalo")
+                captureError("Overenie zlyhalo")
+
+            return HttpResponseRedirect(reverse("password_reset_url"))
+
         if request.method == "GET" and request.GET.get("password-reset-code"):
             filled_password_reset_form = passwordResetForm(initial={
                 "password_reset_code": request.GET.get("password-reset-code")
@@ -336,6 +343,12 @@ def registrationView(request):
                     messages.add_message(request, messages.SUCCESS, f"Úspešne prihlásený ako {new_user.first_name + " " + new_user.last_name}")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
+                
+            else:
+                messages.add_message(request, messages.ERROR, "Registrácia zlyhala")
+                captureError("Registrácia zlyhala")
+
+            return HttpResponseRedirect(reverse("registration_url"))
         
     return render(request, "blog/registration.html", {
         "registration_form": registrationForm,
@@ -404,9 +417,15 @@ def editAccountView(request):
 
                         logged_in_user.delete()
 
-                messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
+                    messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else:
+                    messages.add_message(request, messages.ERROR, "Zmeny sa nepodarilo vykonať")
+                    captureError("Zmeny sa nepodarilo vykonať")
+
+                return HttpResponseRedirect(reverse("edit_account_url"))
 
             else:
                 messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
@@ -457,9 +476,15 @@ def editReviewView(request):
 
                         return HttpResponseRedirect(reverse("homepage_url"))
                     
-                messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
+                    messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else:
+                    messages.add_message(request, messages.ERROR, "Zmeny sa nepodarilo vykonať")
+                    captureError("Zmeny sa nepodarilo vykonať")
+
+                return HttpResponseRedirect(reverse("edit_review_url"))
             
             else:
                 messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(review.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
