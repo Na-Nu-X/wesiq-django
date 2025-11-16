@@ -13,6 +13,7 @@ from datetime import timedelta, datetime
 from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
 import random, requests, os, secrets
+from django.contrib.auth.hashers import make_password, check_password
 
 # Functions
 def captureError(message):
@@ -188,16 +189,21 @@ def loginView(request):
         password = request.POST.get("password")
 
         try:
-            user = Users.objects.get(email_address=email_address, password=password)
-            request.session["logged_in_user_id"] = user.id
+            user = Users.objects.get(email_address=email_address)
+            if check_password(password, user.password):
+                request.session["logged_in_user_id"] = user.id
 
-            messages.add_message(request, messages.SUCCESS, f"Úspešne prihlásený ako {user.first_name + " " + user.last_name}")
+                messages.add_message(request, messages.SUCCESS, f"Úspešne prihlásený ako {user.first_name + " " + user.last_name}")
 
-            return HttpResponseRedirect(reverse("homepage_url"))
+                return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else: # Wrong Password
+                messages.add_message(request, messages.ERROR, "Nesprávne prihlasovacie údaje")
+                captureError("Nesprávne prihlasovacie údaje")
         
-        except Users.DoesNotExist:
-            messages.add_message(request, messages.ERROR, "Nepodarilo sa prihlásiť")
-            captureError("Nepodarilo sa prihlásiť")
+        except Users.DoesNotExist: # Wrong E-mail Address
+            messages.add_message(request, messages.ERROR, "Nesprávne prihlasovacie údaje")
+            captureError("Nesprávne prihlasovacie údaje")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -250,16 +256,20 @@ def passwordResetView(request):
                 if password_reset_code == request.COOKIES.get("password_reset_code"):
                     user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
 
-                    user.password = new_password
-                    user.save()
+                    if len(new_password) < 8:
+                        messages.add_message(request, messages.ERROR, "Heslo je príliš krátke")
 
-                    messages.add_message(request, messages.SUCCESS, "Heslo bolo úspešne zmenené")
+                    else:
+                        user.password = make_password(new_password)
+                        user.save()
 
-                    # Redirect After Changing Password
-                    response = HttpResponseRedirect(reverse("login_url"))
-                    response.delete_cookie("password_reset_code") # Delete Cookie With Code
-                    response.delete_cookie("email_address") # Delete Cookie With Email Address
-                    return response
+                        messages.add_message(request, messages.SUCCESS, "Heslo bolo úspešne zmenené")
+
+                        # Redirect After Changing Password
+                        response = HttpResponseRedirect(reverse("login_url"))
+                        response.delete_cookie("password_reset_code") # Delete Cookie With Code
+                        response.delete_cookie("email_address") # Delete Cookie With Email Address
+                        return response
                 
                 else:
                     messages.add_message(request, messages.ERROR, "Overovací kód sa nezhoduje")
@@ -268,8 +278,6 @@ def passwordResetView(request):
             else:
                 messages.add_message(request, messages.ERROR, "Overenie zlyhalo")
                 captureError("Overenie zlyhalo")
-
-            return HttpResponseRedirect(reverse("password_reset_url"))
 
         if request.method == "GET" and request.GET.get("password-reset-code"):
             filled_password_reset_form = passwordResetForm(initial={
@@ -329,7 +337,7 @@ def registrationView(request):
                         last_name = registration_form.cleaned_data["last_name"],
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = registration_form.cleaned_data["phone_number"],
-                        password = registration_form.cleaned_data["password"],
+                        password = make_password(registration_form.cleaned_data["password"]),
                     )
                     new_user.save()
 
