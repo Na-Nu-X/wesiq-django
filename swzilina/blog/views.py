@@ -279,6 +279,42 @@ def passwordResetView(request):
                 messages.add_message(request, messages.ERROR, "Overenie zlyhalo")
                 captureError("Overenie zlyhalo")
 
+        if request.GET.get("password-reset"):
+            email_address = request.COOKIES.get("email_address")
+            user = Users.objects.get(email_address=email_address)
+
+            # Generates Random 6-Digit Code
+            code = ""
+
+            for one_number in range(6):
+                one_number = random.randint(0, 9)
+                code += str(one_number)
+
+            # Send Mail
+            subject = "SW Žilina - Obnova hesla"
+            text_content = f"Dobrý deň {user.first_name} {user.last_name},\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code={code} - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
+            sender = settings.EMAIL_HOST_USER
+            receiver = [email_address]
+            html_content = f"""
+                <h1>Dobrý deň {user.first_name} {user.last_name},</h1>
+                <p>dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code={code}" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.<p>
+                <h1>{code}</h1>
+                <p>Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.<br>
+                Tím Street Workout Žilina.</p>
+            """
+
+            mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+            mail_message.attach_alternative(html_content, "text/html")
+            mail_message.send()
+
+            messages.add_message(request, messages.SUCCESS, f"Overovací kód bol odoslaný na adresu\n{email_address}")
+
+            # Redirect After Sending Mail
+            response = HttpResponseRedirect(reverse("password_reset_url"))
+            response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True) # Set 10 Minute Cookie With Random 6-Digit Code
+            response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+            return response
+
         if request.method == "GET" and request.GET.get("password-reset-code"):
             filled_password_reset_form = passwordResetForm(initial={
                 "password_reset_code": request.GET.get("password-reset-code")
