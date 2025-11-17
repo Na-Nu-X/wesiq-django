@@ -98,10 +98,8 @@ class loginForm(forms.Form):
     password = forms.CharField(
         widget=forms.TextInput(attrs={"class": "password", "placeholder": "Zadajte vaše heslo", "autocomplete": "off"}),
         label=False,
-        max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadané heslo je príliš dlhé",
             "required": "Zadajte vaše heslo",
         },
     )
@@ -121,9 +119,11 @@ class passwordResetForm(forms.Form):
     new_password = forms.CharField(
         widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
         label=False,
+        min_length=8,
         max_length=50,
         required=True,
         error_messages={
+            "min_length": "Zadané heslo je príliš krátke",
             "max_length": "Zadané heslo je príliš dlhé",
             "required": "Vytvorte heslo",
         },
@@ -176,9 +176,11 @@ class registrationForm(forms.Form):
     password = forms.CharField(
         widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
         label=False,
+        min_length=8,
         max_length=50,
         required=True,
         error_messages={
+            "min_length": "Zadané heslo je príliš krátke",
             "max_length": "Zadané heslo je príliš dlhé",
             "required": "Vytvorte heslo",
         },
@@ -187,9 +189,11 @@ class registrationForm(forms.Form):
     password_check = forms.CharField(
         widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Znovu zadajte heslo", "autocomplete": "off"}),
         label=False,
+        min_length=8,
         max_length=50,
         required=True,
         error_messages={
+            "min_length": "Zadané heslo je príliš krátke",
             "max_length": "Zadané heslo je príliš dlhé",
             "required": "Znovu zadajte heslo",
         },
