@@ -369,9 +369,26 @@ def editAccountView(request):
         logged_in_user = Users.objects.get(id=logged_in_user_id)
 
         if request.method == "POST":
-            if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
-                edit_account_form = editAccountForm(request.POST, request.FILES)
-                if edit_account_form.is_valid():
+            edit_account_form = editAccountForm(request.POST, request.FILES)
+            if edit_account_form.is_valid():
+                delete_account = edit_account_form.cleaned_data["delete_account"]
+                if delete_account:
+                    current_profile_picture_name = logged_in_user.profile_picture_name
+                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                    if current_profile_picture_name != "" and current_profile_picture_name != None:
+                        os.remove(f"{path}/{current_profile_picture_name}")
+
+                    messages.add_message(request, messages.ERROR, f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
+                    captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
+
+                    logged_in_user.delete()
+
+                    # Deletes Previous User ID Session If Was Logged In
+                    del request.session["logged_in_user_id"]
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+
+                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
                     profile_picture_file = request.FILES.get("select_profile_picture")
                     if profile_picture_file:
                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
@@ -417,26 +434,18 @@ def editAccountView(request):
 
                     logged_in_user.save()
 
-                    delete_account = edit_account_form.cleaned_data["delete_account"]
-                    if delete_account:
-                        current_profile_picture_name = logged_in_user.profile_picture_name
-                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                        os.remove(f"{path}/{current_profile_picture_name}")
-
-                        logged_in_user.delete()
-
                     messages.add_message(request, messages.SUCCESS, "Zmeny boli uložené")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
-                
+
                 else:
-                    messages.add_message(request, messages.ERROR, "Zmeny sa nepodarilo vykonať")
-                    captureError("Zmeny sa nepodarilo vykonať")
-
-                return HttpResponseRedirect(reverse("edit_account_url"))
-
+                    messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
+            
             else:
-                messages.add_message(request, messages.ERROR, f"Ďalšie úpravy budú možné {(logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
+                messages.add_message(request, messages.ERROR, "Zmeny sa nepodarilo vykonať")
+                captureError("Zmeny sa nepodarilo vykonať")
+
+            return HttpResponseRedirect(reverse("edit_account_url"))
 
         filled_edit_account_form = editAccountForm(initial={
             "first_name": logged_in_user.first_name,
