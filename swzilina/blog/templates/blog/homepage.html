@@ -17,6 +17,25 @@
 {% endblock navigation_bar_items %}
 
 {% block banner %}
+    <div class="reviews_info" title="Na základe {{ num_reviews }} recenzií">
+        <p>{{ avg_rating.rating__avg }}</p>
+
+        {% for _ in "12345" %}
+            {% if forloop.counter <= avg_rating.rating__avg|floatformat:0|add:0 %}
+                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+            {% else %}
+                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+        
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <div class="search_bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Vyhľadať" autocomplete="off">
+    </div>
+
     {% if request.session.logged_in_user_id %}
         <div class="account">
             <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
@@ -45,20 +64,6 @@
         </div>
 
     {% endif %}
-    
-    <div class="reviews_info" title="Na základe {{ num_reviews }} recenzií">
-        <p>{{ avg_rating.rating__avg }}</p>
-
-        {% for _ in "12345" %}
-            {% if forloop.counter <= avg_rating.rating__avg|floatformat:0|add:0 %}
-                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-
-            {% else %}
-                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-        
-            {% endif %}
-        {% endfor %}
-    </div>
 {% endblock banner %}
 
 {% block heading %}Street&nbsp;Workout Žilina{% endblock heading %}
