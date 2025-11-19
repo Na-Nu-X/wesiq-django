@@ -88,11 +88,11 @@ main {
   min-height: 100vh;
   padding-bottom: 100vh;
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/background.jpg");
+  color: #fff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  color: #fff;
 }
 
 .privacy_policy {
@@ -127,33 +127,39 @@ main {
   justify-content: space-between;
   margin: 0px auto;
 }
-.privacy_policy .privacy_policy_buttons .privacy_policy_accept, .privacy_policy .privacy_policy_buttons .privacy_policy_reject {
+.privacy_policy .privacy_policy_buttons .privacy_policy_accept {
   width: 100%;
   height: 50px;
-  margin-top: 40px;
   color: #000;
+  background-color: #52cf20;
   border: 1px solid #000;
   border-radius: 10px;
   transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+  margin-top: 40px;
+  margin-right: 10px;
 }
-.privacy_policy .privacy_policy_buttons .privacy_policy_accept:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_accept:focus, .privacy_policy .privacy_policy_buttons .privacy_policy_reject:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_reject:focus {
+.privacy_policy .privacy_policy_buttons .privacy_policy_accept:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_accept:focus {
+  background-color: rgb(93.730125523, 222.129707113, 42.370292887);
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
 }
-.privacy_policy .privacy_policy_buttons .privacy_policy_accept {
-  margin-right: 10px;
-  background-color: #52cf20;
-}
-.privacy_policy .privacy_policy_buttons .privacy_policy_accept:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_accept:focus {
-  background-color: rgb(93.730125523, 222.129707113, 42.370292887);
-}
 .privacy_policy .privacy_policy_buttons .privacy_policy_reject {
-  margin-left: 10px;
+  width: 100%;
+  height: 50px;
+  color: #000;
   background-color: #df3535;
+  border: 1px solid #000;
+  border-radius: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_reject:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_reject:focus {
   background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
 }
 
 .header_container {
@@ -169,10 +175,10 @@ main {
 .header_container h1 a {
   text-decoration: none;
   color: #fff;
-  font-family: "Bungee", sans-serif;
-  font-size: 4em;
   animation: fade_in_animation 2s ease-out;
   transition: letter-spacing 0.3s ease;
+  font-family: "Bungee", sans-serif;
+  font-size: 4em;
 }
 .header_container h1 a:hover, .header_container h1 a:active {
   letter-spacing: 0.5px;
@@ -249,6 +255,15 @@ form select:hover, form select:focus {
 form .password_container {
   position: relative;
 }
+form .password_container:has(.password:hover) .fa-key, form .password_container:has(.password:focus) .fa-key {
+  left: -16px;
+}
+form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye, form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
+  right: 0px;
+}
+form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy {
+  right: -19px;
+}
 form .password_container .password {
   padding-right: 28px !important;
   -webkit-text-security: disc;
@@ -278,16 +293,6 @@ form .password_container .fa-key {
 form .password_container .fa-copy {
   right: 1px;
   transition: right 0.3s ease;
-}
-form .password_container:has(.password:hover) .fa-key, form .password_container:has(.password:focus) .fa-key {
-  left: -16px;
-}
-form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye,
-form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
-  right: 0px;
-}
-form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy {
-  right: -19px;
 }
 form .form_report {
   position: absolute;
@@ -336,22 +341,19 @@ form .form_questions a:hover, form .form_questions a:active {
 footer {
   text-align: center;
   padding: 10px;
-  background: #000;
-  background: radial-gradient(circle, rgb(12.75, 12.75, 12.75) 0%, #000 100%);
+  background: radial-gradient(circle, rgb(25.5, 25.5, 25.5) 0%, #000 100%);
   border-top: 1px solid #fff;
 }
-footer .follow_us, footer .contact_us {
+footer .follow_us {
   margin-bottom: 20px;
-}
-footer .follow_us p, footer .contact_us p {
-  color: #fff;
-}
-footer .follow_us p:nth-child(1), footer .contact_us p:nth-child(1) {
-  font-weight: bold;
-  text-transform: uppercase;
 }
 footer .follow_us p {
   margin-bottom: 5px;
+  color: #fff;
+}
+footer .follow_us p:nth-child(1) {
+  font-weight: bold;
+  text-transform: uppercase;
 }
 footer .follow_us a img {
   margin: 0px 5px;
@@ -362,21 +364,31 @@ footer .follow_us a img:hover {
   opacity: 1;
   transform: scale(1.1);
 }
+footer .contact_us {
+  margin-bottom: 20px;
+}
+footer .contact_us p {
+  color: #fff;
+}
+footer .contact_us p:nth-child(1) {
+  font-weight: bold;
+  text-transform: uppercase;
+}
 footer .contact_us p a {
   text-decoration: none;
+  color: #999999;
   font-size: 0.9em;
   font-style: italic;
-  color: #999999;
 }
 footer .contact_us p a:hover, footer .contact_us p a:active {
   text-decoration: underline;
   cursor: pointer;
 }
 footer .copywrite {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.8em;
   line-height: 0.8em;
   color: #999999;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.8em;
 }
 
 /***********
