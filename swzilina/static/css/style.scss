@@ -6,8 +6,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: $main-font;
-    font-size: $default-font-size;
+
+    font: {
+        family: $main-font;
+        size: $default-font-size;
+    }
 
     &:before, &:after {
         box-sizing: border-box;
@@ -92,7 +95,7 @@
     }
 }
 
-.no_logged_in p, .code_expired p {
+.no_logged_in p, .code_expired p { // Move
     text-align: center;
 
     a {
@@ -111,13 +114,14 @@ main {
     min-height: 100vh;
     padding-bottom: 100vh;
     background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/background.jpg"); // https://kengurupro.eu/wp-content/uploads/2022/10/2-1-1-2.jpg
+    color: $secondary-color;
+
     background: {
         size: cover;
         position: center;
         repeat: no-repeat;
         attachment: fixed;
     }
-    color: $secondary-color;
 }
 
 // Privacy Policy Bar
@@ -155,40 +159,49 @@ main {
         justify-content: space-between;
         margin: 0px auto;
 
-        .privacy_policy_accept, .privacy_policy_reject {
+        .privacy_policy_accept { // Mixin
             width: 100%;
             height: 50px;
-            margin-top: 40px;
             color: $main-color;
+            background-color: $success-color;
             border: 1px solid $main-color;
             border-radius: 10px;
             transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
+            margin: {
+                top: 40px;
+                right: 10px;
+            }
+
             &:hover,
             &:focus {
+                background-color: lighten($success-color, 5%);
                 transform: scale(1.1);
                 letter-spacing: 1px;
                 cursor: pointer;
             }
         }
 
-        .privacy_policy_accept {
-            margin-right: 10px;
-            background-color: $success-color;
-
-            &:hover,
-            &:focus {
-                background-color: lighten($success-color, 5%);
-            }
-        }
-
         .privacy_policy_reject {
-            margin-left: 10px;
+            width: 100%;
+            height: 50px;
+            color: $main-color;
             background-color: $error-color;
+            border: 1px solid $main-color;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+            margin: {
+                top: 40px;
+                left: 10px;
+            }
 
             &:hover,
             &:focus {
                 background-color: lighten($error-color, 5%);
+                transform: scale(1.1);
+                letter-spacing: 1px;
+                cursor: pointer;
             }
         }
     }
@@ -207,10 +220,13 @@ main {
         a {
             text-decoration: none;
             color: $secondary-color;
-            font-family: $heading-font;
-            font-size: 4em;
             animation: fade_in_animation 2s ease-out;
             transition: letter-spacing 0.3s ease;
+
+            font: {
+                family: $heading-font;
+                size: 4em;
+            }
 
             &:hover,
             &:active {
@@ -300,6 +316,19 @@ form {
     .password_container { // Move
         position: relative;
 
+        &:has(.password:hover) .fa-key, &:has(.password:focus) .fa-key {
+            left: -16px;
+        }
+
+        &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
+        &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
+            right: 0px;
+        }
+
+        &:has(.password:hover) .fa-copy, &:has(.password:focus) .fa-copy {
+            right: -19px;
+        }
+
         .password {
             padding-right: 28px !important;
             -webkit-text-security: disc;
@@ -336,21 +365,6 @@ form {
             right: 1px;
             transition: right 0.3s ease;
         }
-    }
-
-    .password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key
-    {
-        left: -16px;
-    }
-
-    .password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye,
-    .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash
-    {
-        right: 0px;
-    }
-
-    .password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy {
-        right: -19px;
     }
 
     .form_report {
@@ -408,29 +422,23 @@ form {
  Footer Styles
 **************/
 
-footer {
+footer { // Minix
     text-align: center;
     padding: 10px;
-    background: $main-color;
-    background: radial-gradient(circle, lighten($main-color, 5%) 0%, $main-color 100%);
+    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
 
-    .follow_us, .contact_us {
+    .follow_us {
         margin-bottom: 20px;
 
         p {
-            color: $secondary-color;
-        }
-
-        p:nth-child(1) {
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-    }
-
-    .follow_us {
-        p {
             margin-bottom: 5px;
+            color: $secondary-color;
+
+            &:nth-child(1) {
+                font-weight: bold;
+                text-transform: uppercase;
+            }
         }
 
         a img {
@@ -445,24 +453,43 @@ footer {
         }
     }
 
-    .contact_us p a {
-        text-decoration: none;
-        font-size: 0.9em;
-        font-style: italic;
-        color: darken($secondary-color, 40%);
+    .contact_us {
+        margin-bottom: 20px;
 
-        &:hover,
-        &:active {
-            text-decoration: underline;
-            cursor: pointer;
+        p {
+            color: $secondary-color;
+
+            &:nth-child(1) {
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            a {
+                text-decoration: none;
+                color: darken($secondary-color, 40%);
+
+                font: {
+                    size: 0.9em;
+                    style: italic;
+                }
+
+                &:hover,
+                &:active {
+                    text-decoration: underline;
+                    cursor: pointer;
+                }
+            }
         }
     }
 
     .copywrite {
-        font-family: $copywrite-font;
-        font-size: 0.8em;
         line-height: 0.8em;
         color: darken($secondary-color, 40%);
+
+        font: {
+            family: $copywrite-font;
+            size: 0.8em;
+        }
     }
 }
 
@@ -533,7 +560,7 @@ footer {
         width: 100% !important;
     }
 
-    .password_container .fa-key
+    .password_container .fa-key // Move
     {
         left: -16px !important;
     }
