@@ -82,9 +82,9 @@
   display: block;
   height: 38px;
   line-height: 38px;
-  padding-left: 32px;
   background-color: rgba(0, 0, 0, 0.1);
   color: #fff;
+  text-align: center;
   text-decoration: none;
   font-size: 1.2em;
 }
@@ -475,11 +475,17 @@
  Media Queries
 **************/
 @media (max-width: 1000px) {
-  .search_bar_container div:nth-child(1) {
-    top: 135px !important;
+  .search_bar_container div:nth-child(1) .search_bar {
+    width: 300px !important;
   }
-  .search_bar {
-    width: 100% !important;
+  .search_bar_container div:nth-child(1) .search_bar:hover, .search_bar_container div:nth-child(1) .search_bar:focus {
+    width: 320px !important;
+  }
+  .search_bar_container .search_result {
+    width: 300px !important;
+  }
+  .search_bar_container:has(.search_bar:hover) .search_result, .search_bar_container:has(.search_bar:focus) .search_result {
+    width: 320px !important;
   }
 }
 @media (max-width: 920px) {
@@ -493,6 +499,9 @@
   }
   .banner .search_bar_container div:nth-child(1) {
     top: 119px !important;
+  }
+  .banner .search_bar_container .search_result {
+    top: 157px !important;
   }
   .banner .account {
     top: 61px;
