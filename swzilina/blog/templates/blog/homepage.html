@@ -31,9 +31,13 @@
         {% endfor %}
     </div>
     
-    <div class="search_bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Vyhľadať" autocomplete="off">
+    <div class="search_bar_container">
+        <div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input class="search_bar" type="text" placeholder="Hľadať" autocomplete="off">
+        </div>
+
+        <div class="search_result"></div>
     </div>
 
     {% if request.session.logged_in_user_id %}
@@ -308,6 +312,69 @@
         "use strict"
 
         document.addEventListener("DOMContentLoaded", function() {
+            // Search Bar
+
+            const search_bar = document.querySelector(".search_bar")
+            const search_result = document.querySelector(".search_result")
+
+            search_bar.addEventListener("input", function(event) {
+                let searched_text = event.target.value // Searched Text Value
+
+                // Array of Objects of Pages
+                const pages = [
+                    {
+                        url: "/",
+                        title: "Hlavná stránka",
+                    },
+
+                    {
+                        url: "/prihlasenie",
+                        title: "Prihlásenie",
+                    },
+
+                    {
+                        url: "/obnova-hesla",
+                        title: "Obnova hesla",
+                    },
+
+                    {
+                        url: "/registracia",
+                        title: "Registrácia",
+                    },
+
+                    {
+                        url: "/moj-ucet",
+                        title: "Môj účet",
+                    },
+
+                    {
+                        url: "/moje-hodnotenie",
+                        title: "Moje hodnotenie",
+                    },
+                ]
+
+                search_result.innerHTML = "" // Deletes Search Result
+
+                // Deletes Search Result When Searched Text Value is Empty
+                if(searched_text.trim() === "") {
+                    search_result.innerHTML = ""
+                    return
+                }
+                
+                // Filters Pages by Searched Text Value
+                const filtered_pages = pages.filter(function(one_page) {
+                    return one_page.title.toLowerCase().includes(searched_text.toLowerCase())
+                })
+
+                // Renders Result
+                filtered_pages.forEach(function(one_page) {
+                    let search_result_link = document.createElement("a")
+                    search_result_link.setAttribute("href", one_page.url)
+                    search_result_link.textContent = one_page.title
+                    search_result.appendChild(search_result_link)
+                })
+            })
+
             // Selected Attachment
                 
             const attachment = document.querySelector("#select_attachment")

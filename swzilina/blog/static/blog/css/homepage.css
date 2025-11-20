@@ -25,14 +25,14 @@
   width: 12px;
   height: 12px;
 }
-.banner .search_bar {
+.banner .search_bar_container div:nth-child(1) {
   position: absolute;
   top: 77px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
 }
-.banner .search_bar .fa-magnifying-glass {
+.banner .search_bar_container div:nth-child(1) .fa-magnifying-glass {
   position: absolute;
   top: 50%;
   left: 8.5px;
@@ -41,7 +41,7 @@
   color: rgb(229.5, 229.5, 229.5);
   transition: color 0.3s ease;
 }
-.banner .search_bar input {
+.banner .search_bar_container div:nth-child(1) .search_bar {
   padding: 0px 32px;
   width: 450px;
   height: 38px;
@@ -52,20 +52,49 @@
   border-radius: 5px;
   text-align: center;
   outline: none;
+  font-size: 1.2em;
   transition: width 0.3s ease, border 0.3s ease;
 }
-.banner .search_bar input:hover, .banner .search_bar input:focus {
+.banner .search_bar_container div:nth-child(1) .search_bar:hover, .banner .search_bar_container div:nth-child(1) .search_bar:focus {
   width: 470px;
   border: 1px solid #fff;
 }
-.banner .search_bar input::-moz-placeholder {
+.banner .search_bar_container div:nth-child(1) .search_bar::-moz-placeholder {
   color: #cccccc;
 }
-.banner .search_bar input::placeholder {
+.banner .search_bar_container div:nth-child(1) .search_bar::placeholder {
   color: #cccccc;
 }
-.banner .search_bar:has(input:hover) .fa-magnifying-glass, .banner .search_bar:has(input:focus) .fa-magnifying-glass {
+.banner .search_bar_container div:nth-child(1):has(.search_bar:hover) .fa-magnifying-glass, .banner .search_bar_container div:nth-child(1):has(.search_bar:focus) .fa-magnifying-glass {
   color: #fff;
+}
+.banner .search_bar_container .search_result {
+  position: absolute;
+  top: 115px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 450px;
+  border-left: 1px solid rgb(229.5, 229.5, 229.5);
+  border-right: 1px solid rgb(229.5, 229.5, 229.5);
+  transition: width 0.3s ease, border 0.3s ease;
+}
+.banner .search_bar_container .search_result a {
+  display: block;
+  height: 38px;
+  line-height: 38px;
+  padding-left: 32px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+.banner .search_bar_container .search_result a:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+}
+.banner .search_bar_container:has(.search_bar:hover) .search_result, .banner .search_bar_container:has(.search_bar:focus) .search_result {
+  width: 470px;
 }
 .banner .account {
   position: absolute;
@@ -445,6 +474,14 @@
 /**************
  Media Queries
 **************/
+@media (max-width: 1000px) {
+  .search_bar_container div:nth-child(1) {
+    top: 135px !important;
+  }
+  .search_bar {
+    width: 100% !important;
+  }
+}
 @media (max-width: 920px) {
   .all_reviews .one_review {
     width: 100% !important;
@@ -453,6 +490,9 @@
 @media (max-width: 800px) {
   .banner {
     height: 109px;
+  }
+  .banner .search_bar_container div:nth-child(1) {
+    top: 119px !important;
   }
   .banner .account {
     top: 61px;
