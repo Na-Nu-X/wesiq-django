@@ -38,50 +38,84 @@
 
     // Search Bar
 
-    .search_bar {
-        position: absolute;
-        top: 77px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-
-        .fa-magnifying-glass {
+    .search_bar_container {
+        div:nth-child(1) {
             position: absolute;
-            top: 50%;
-            left: 8.5px;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: darken($secondary-color, 10%);
-            transition: color 0.3s ease;
+            top: 77px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+
+            .fa-magnifying-glass {
+                position: absolute;
+                top: 50%;
+                left: 8.5px;
+                transform: translateY(-50%);
+                font-size: 20px;
+                color: darken($secondary-color, 10%);
+                transition: color 0.3s ease;
+            }
+
+            .search_bar {
+                padding: 0px 32px;
+                width: $main-width / 2;
+                height: 38px;
+                background-color: transparentize($main-color, 0.9);
+                color: $secondary-color;
+                border: none;
+                border: 1px solid darken($secondary-color, 10%);
+                border-radius: 5px;
+                text-align: center;
+                outline: none;
+                font-size: 1.2em;
+                transition: width 0.3s ease, border 0.3s ease;
+
+                &:hover,
+                &:focus {
+                    width: $main-width / 2 + 20px;
+                    border: 1px solid $secondary-color;
+                }
+
+                &::placeholder {
+                    color: darken($secondary-color, 20%);
+                }
+            }
+
+            &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
+                color: $secondary-color;
+            }
         }
 
-        input {
-            padding: 0px 32px;
+        .search_result {
+            position: absolute;
+            top: 115px;
+            left: 50%;
+            transform: translateX(-50%);
             width: $main-width / 2;
-            // width: 300px;
-            height: 38px;
-            background-color: transparentize($main-color, 0.9);
-            color: $secondary-color;
-            border: none;
-            border: 1px solid darken($secondary-color, 10%);
-            border-radius: 5px;
-            text-align: center;
-            outline: none;
+            border-left: 1px solid darken($secondary-color, 10%);
+            border-right: 1px solid darken($secondary-color, 10%);
             transition: width 0.3s ease, border 0.3s ease;
 
-            &:hover,
-            &:focus {
-                width: $main-width / 2 + 20px;
-                border: 1px solid $secondary-color;
-            }
+            a {
+                display: block;
+                height: 38px;
+                line-height: 38px;
+                padding-left: 32px;
+                background-color: transparentize($main-color, 0.9);
+                color: $secondary-color;
+                text-decoration: none;
+                font-size: 1.2em;
 
-            &::placeholder {
-                color: darken($secondary-color, 20%);
+                &:hover {
+                    background-color: transparentize($main-color, 0.8);
+                    letter-spacing: 0.5px;
+                    transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+                }
             }
         }
 
-        &:has(input:hover) .fa-magnifying-glass, &:has(input:focus) .fa-magnifying-glass {
-            color: $secondary-color;
+        &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
+            width: $main-width / 2 + 20px;
         }
     }
 
@@ -516,6 +550,18 @@
  Media Queries
 **************/
 
+@media (max-width: 1000px) {
+    .search_bar_container {
+        div:nth-child(1) {
+            top: 135px !important;
+        }
+    }
+
+    .search_bar {
+        width: 100% !important;
+    }
+}
+
 @media (max-width: ($main-width + 20px)) {
     .all_reviews .one_review {
         width: 100% !important;
@@ -525,6 +571,12 @@
 @media (max-width: 800px) {
     .banner {
         height: 109px;
+
+        .search_bar_container {
+            div:nth-child(1) {
+                top: 119px !important;
+            }
+        }
 
         .account {
             top: 61px;
