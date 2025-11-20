@@ -100,9 +100,9 @@
                 display: block;
                 height: 38px;
                 line-height: 38px;
-                padding-left: 32px;
                 background-color: transparentize($main-color, 0.9);
                 color: $secondary-color;
+                text-align: center;
                 text-decoration: none;
                 font-size: 1.2em;
 
@@ -551,14 +551,27 @@
 **************/
 
 @media (max-width: 1000px) {
+    // Search Bar
+
     .search_bar_container {
         div:nth-child(1) {
-            top: 135px !important;
-        }
-    }
+            .search_bar {
+                width: 300px !important;
 
-    .search_bar {
-        width: 100% !important;
+                &:hover,
+                &:focus {
+                    width: 300px + 20px !important;
+                }
+            }
+        }
+
+        .search_result {
+            width: 300px !important;
+        }
+
+        &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
+            width: 300px + 20px !important;
+        }
     }
 }
 
@@ -575,6 +588,10 @@
         .search_bar_container {
             div:nth-child(1) {
                 top: 119px !important;
+            }
+
+            .search_result {
+                top: 157px !important;
             }
         }
 
