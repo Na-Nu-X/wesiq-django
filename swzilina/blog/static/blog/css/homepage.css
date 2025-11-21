@@ -57,7 +57,7 @@
 }
 .banner .search_bar_container div:nth-child(1) .search_bar:hover, .banner .search_bar_container div:nth-child(1) .search_bar:focus {
   width: 470px;
-  border: 1px solid #fff;
+  border-color: #fff !important;
 }
 .banner .search_bar_container div:nth-child(1) .search_bar::-moz-placeholder {
   color: #cccccc;
@@ -70,31 +70,40 @@
 }
 .banner .search_bar_container .search_result {
   position: absolute;
-  top: 115px;
+  top: 0px;
   left: 50%;
   transform: translateX(-50%);
   width: 450px;
-  border-left: 1px solid rgb(229.5, 229.5, 229.5);
-  border-right: 1px solid rgb(229.5, 229.5, 229.5);
-  transition: width 0.3s ease, border 0.3s ease;
+  border-radius: 0px 0px 5px 5px;
+  opacity: 0;
+  transition: top 0.3s ease, width 0.3s ease, border 0.3s ease, opacity 0.5s ease;
+  z-index: 50;
+}
+.banner .search_bar_container .search_result.active {
+  top: 115px;
+  opacity: 1;
 }
 .banner .search_bar_container .search_result a {
   display: block;
   height: 38px;
   line-height: 38px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
   text-align: center;
   text-decoration: none;
   font-size: 1.2em;
+  transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+}
+.banner .search_bar_container .search_result a:nth-child(1) {
+  margin-top: 10px;
 }
 .banner .search_bar_container .search_result a:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   letter-spacing: 0.5px;
-  transition: background-color 0.3s ease, letter-spacing 0.3s ease;
 }
 .banner .search_bar_container:has(.search_bar:hover) .search_result, .banner .search_bar_container:has(.search_bar:focus) .search_result {
   width: 470px;
+  border-color: #fff !important;
 }
 .banner .account {
   position: absolute;
@@ -471,6 +480,17 @@
   width: 100%;
 }
 
+/***********
+ Key Frames
+***********/
+@keyframes move_animation {
+  0% {
+    top: 0px !important;
+  }
+  100% {
+    top: 115px !important;
+  }
+}
 /**************
  Media Queries
 **************/
@@ -500,8 +520,11 @@
   .banner .search_bar_container div:nth-child(1) {
     top: 119px !important;
   }
-  .banner .search_bar_container .search_result {
+  .banner .search_bar_container .search_result.active {
     top: 157px !important;
+  }
+  .banner .search_bar_container .search_result a:nth-child(1) {
+    margin-top: 0px !important;
   }
   .banner .account {
     top: 61px;
