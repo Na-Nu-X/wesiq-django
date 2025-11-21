@@ -73,7 +73,7 @@
                 &:hover,
                 &:focus {
                     width: $main-width / 2 + 20px;
-                    border: 1px solid $secondary-color;
+                    border-color: $secondary-color !important;
                 }
 
                 &::placeholder {
@@ -88,34 +88,45 @@
 
         .search_result {
             position: absolute;
-            top: 115px;
+            top: 0px;
             left: 50%;
             transform: translateX(-50%);
             width: $main-width / 2;
-            border-left: 1px solid darken($secondary-color, 10%);
-            border-right: 1px solid darken($secondary-color, 10%);
-            transition: width 0.3s ease, border 0.3s ease;
+            border-radius: 0px 0px 5px 5px;
+            opacity: 0;
+            transition: top 0.3s ease, width 0.3s ease, border 0.3s ease, opacity 0.5s ease;
+            z-index: 50;
+
+            &.active {
+                top: 115px;
+                opacity: 1;
+            }
 
             a {
                 display: block;
                 height: 38px;
                 line-height: 38px;
-                background-color: transparentize($main-color, 0.9);
+                background-color: transparentize($secondary-color, 0.9);
                 color: $secondary-color;
                 text-align: center;
                 text-decoration: none;
                 font-size: 1.2em;
+                transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+
+                &:nth-child(1) {
+                    margin-top: 10px;
+                }
 
                 &:hover {
-                    background-color: transparentize($main-color, 0.8);
+                    background-color: transparentize($secondary-color, 0.8);
                     letter-spacing: 0.5px;
-                    transition: background-color 0.3s ease, letter-spacing 0.3s ease;
                 }
             }
         }
 
         &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
             width: $main-width / 2 + 20px;
+            border-color: $secondary-color !important;
         }
     }
 
@@ -546,6 +557,20 @@
     }
 }
 
+/***********
+ Key Frames
+***********/
+
+@keyframes move_animation {
+    0% {
+        top: 0px !important;
+    }
+
+    100% {
+        top: 115px !important;
+    }
+}
+
 /**************
  Media Queries
 **************/
@@ -591,7 +616,15 @@
             }
 
             .search_result {
-                top: 157px !important;
+                &.active {
+                    top: 157px !important;
+                }
+
+                a {
+                    &:nth-child(1) {
+                        margin-top: 0px !important;
+                    }
+                }
             }
         }
 

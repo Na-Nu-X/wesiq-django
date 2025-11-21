@@ -358,6 +358,13 @@
                 // Deletes Search Result When Searched Text Value is Empty
                 if(searched_text.trim() === "") {
                     search_result.innerHTML = ""
+
+                    search_bar.style.borderBottom = "1px solid rgb(229.5, 229.5, 229.5)"
+                    search_bar.style.borderRadius = "5px"
+
+                    search_result.style.border = "none"
+                    search_result.classList.remove("active")
+
                     return
                 }
                 
@@ -373,6 +380,24 @@
                     search_result_link.textContent = one_page.title
                     search_result.appendChild(search_result_link)
                 })
+
+                if(search_result.children.length > 0) {
+                    search_bar.style.borderRadius = "5px 5px 0 0"
+                    search_bar.style.borderBottom = "none"
+
+                    search_result.style.borderBottom = "1px solid rgb(229.5, 229.5, 229.5)"
+                    search_result.style.borderLeft = "1px solid rgb(229.5, 229.5, 229.5)"
+                    search_result.style.borderRight = "1px solid rgb(229.5, 229.5, 229.5)"
+                    search_result.classList.add("active")
+                }
+                
+                else {
+                    search_bar.style.border = "1px solid rgb(229.5, 229.5, 229.5)"
+                    search_bar.style.borderRadius = "5px"
+
+                    search_result.style.border = "none"
+                    search_result.classList.remove("active")
+                }
             })
 
             // Selected Attachment
