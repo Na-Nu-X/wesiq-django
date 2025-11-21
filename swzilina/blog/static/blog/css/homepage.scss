@@ -69,6 +69,7 @@
                 outline: none;
                 font-size: 1.2em;
                 transition: width 0.3s ease, border 0.3s ease;
+                z-index: 50;
 
                 &:hover,
                 &:focus {
@@ -95,7 +96,6 @@
             border-radius: 0px 0px 5px 5px;
             opacity: 0;
             transition: top 0.3s ease, width 0.3s ease, border 0.3s ease, opacity 0.5s ease;
-            z-index: 50;
 
             &.active {
                 top: 115px;
