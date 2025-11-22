@@ -346,6 +346,9 @@ form .form_questions a:hover, form .form_questions a:active {
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
   border-radius: 50%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .move_up:hover {
   cursor: pointer;
