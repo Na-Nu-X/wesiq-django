@@ -56,6 +56,22 @@
                 transition: color 0.3s ease;
             }
 
+            .fa-xmark {
+                position: absolute;
+                top: 50%;
+                right: 0px;
+                transform: translateY(-50%);
+                padding: 9px 8.5px 9px 0px;
+                font-size: 20px;
+                color: darken($secondary-color, 10%);
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: $secondary-color;
+                    cursor: pointer;
+                }
+            }
+
             .search_bar {
                 padding: 0px 32px;
                 width: $main-width / 2;
