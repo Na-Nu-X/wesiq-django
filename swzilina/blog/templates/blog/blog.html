@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Street Workout Žilina - Blog{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}">
+{% endblock style %}
+
+{% block heading %}Blog{% endblock heading %}
+
+{% block content %}
+    <div class="search_bar_container">
+        <div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input class="search_bar" type="text" placeholder="Nájsť článok" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="articles">
+        <a href="{% url 'blog_theme_url' 'front-lever' %}" title="Zobraziť" target="_self">
+            <article class="front_lever">
+                <h2>Front&nbsp;Lever</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed nihil sit maxime explicabo quod, aut, quae, magnam consectetur cupiditate error corrupti officiis voluptate. Iure quidem porro eius voluptates, incidunt alias.</p>
+            </article>
+        </a>
+
+        <a href="{% url 'blog_theme_url' 'handstand' %}" title="Zobraziť" target="_self">
+            <article class="handstand">
+                <h2>Stojka</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex non dolor quasi distinctio, officia quos placeat animi corporis delectus tempore quod repudiandae culpa voluptatibus minus eligendi rerum natus deserunt ducimus.</p>
+            </article>
+        </a>
+
+        <a href="{% url 'blog_theme_url' 'one-arm-pull-up' %}" title="Zobraziť" target="_self">
+            <article class="one_arm_pull_up">
+                <h2>Zhyb&nbsp;na&nbsp;jednej&nbsp;ruke</h2>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempore fuga reiciendis culpa, consequatur, dicta et optio repudiandae aperiam doloribus eius temporibus. Culpa optio veritatis deserunt modi at, expedita libero quos?</p>
+            </article>
+        </a>
+
+        <a href="{% url 'blog_theme_url' 'swing-360' %}" title="Zobraziť" target="_self">
+            <article class="swing_360">
+                <h2>360</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum perferendis quam numquam qui cum perspiciatis exercitationem dignissimos incidunt culpa iste aliquam eaque nam, eligendi explicabo illum eius, nisi totam molestiae.</p>
+            </article>
+        </a>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Search Bar
+
+            const search_bar = document.querySelector(".search_bar")
+
+            search_bar.addEventListener("input", function(event) {
+                // console.log(event.target.value)
+            })
+        })
+    </script>
+{% endblock script %}

@@ -34,6 +34,7 @@
   text-decoration: none;
   font-size: 1.2em;
   color: #fff;
+  text-transform: uppercase;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 .navigation_bar ul li a:hover, .navigation_bar ul li a:active {
