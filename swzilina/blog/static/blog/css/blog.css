@@ -1,0 +1,96 @@
+.content .search_bar_container div {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.content .search_bar_container div .fa-magnifying-glass {
+  position: absolute;
+  top: 50%;
+  left: 8.5px;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.content .search_bar_container div .search_bar {
+  padding: 0px 32px;
+  width: 500px;
+  height: 38px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  border: none;
+  border: 1px solid rgb(229.5, 229.5, 229.5);
+  border-radius: 5px;
+  text-align: center;
+  outline: none;
+  font-size: 1.2em;
+  transition: width 0.3s ease, border 0.3s ease;
+  z-index: 50;
+}
+.content .search_bar_container div .search_bar:hover, .content .search_bar_container div .search_bar:focus {
+  width: 520px;
+  border-color: #fff !important;
+}
+.content .search_bar_container div .search_bar::-moz-placeholder {
+  color: #cccccc;
+}
+.content .search_bar_container div .search_bar::placeholder {
+  color: #cccccc;
+}
+.content .search_bar_container div:has(.search_bar:hover) .fa-magnifying-glass, .content .search_bar_container div:has(.search_bar:focus) .fa-magnifying-glass {
+  color: #fff;
+}
+.content .articles {
+  position: relative;
+  top: 58px;
+  width: 100%;
+  margin-bottom: 58px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.content .articles a {
+  color: #fff;
+  text-decoration: none;
+}
+.content .articles a article {
+  width: 500px;
+  height: 300px;
+  padding: 20px;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  text-align: justify;
+  transition: transform 0.3s ease;
+}
+.content .articles a article:hover {
+  transform: scale(1.01);
+  cursor: pointer;
+}
+.content .articles a .front_lever {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/front-lever.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.content .articles a .handstand {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/handstand.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.content .articles a .one_arm_pull_up {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/one-arm-pull-up.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.content .articles a .swing_360 {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/swing-360.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}/*# sourceMappingURL=blog.css.map */

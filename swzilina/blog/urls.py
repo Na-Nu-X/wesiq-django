@@ -23,4 +23,7 @@ urlpatterns = [
 
     path('moje-hodnotenie', views.editReviewView, name='edit_review_url'),
     path('my-review', views.editReviewView),
+
+    path('blog/', views.blogView, name='blog_url'),
+    path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
 ]

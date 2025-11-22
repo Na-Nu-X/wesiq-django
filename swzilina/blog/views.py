@@ -553,3 +553,21 @@ def editReviewView(request):
         })
     
     return render(request, "blog/edit_review.html")
+
+def blogView(request):
+    return render(request, "blog/blog.html")
+
+def blogThemeView(request, theme):
+    themes = {
+        "front-lever": "blog/front-lever.html",
+        "handstand": "blog/handstand.html",
+        "one-arm-pull-up": "blog/one-arm-pull-up.html",
+        "swing-360": "blog/swing-360.html",
+    }
+
+    # return render(request, f"blog/{themes/theme}")
+    try:
+        return HttpResponse(themes[theme])
+    
+    except:
+        return HttpResponse("Stránka neexistuje")
