@@ -64,25 +64,10 @@
 
                 // Array of Objects of Articles
                 const articles = [
-                    {
-                        class_name: "front_lever",
-                        title: "Front Lever",
-                    },
-
-                    {
-                        class_name: "handstand",
-                        title: "Stojka",
-                    },
-
-                    {
-                        class_name: "one_arm_pull_up",
-                        title: "Zhyb na jednej ruke",
-                    },
-
-                    {
-                        class_name: "swing_360",
-                        title: "360",
-                    },
+                    { class_name: "front_lever", title: "Front Lever" },
+                    { class_name: "handstand", title: "Stojka" },
+                    { class_name: "one_arm_pull_up", title: "Zhyb na jednej ruke" },
+                    { class_name: "swing_360", title: "360" },
                 ]
                 
                 // Every Article has display: block; by Default
@@ -106,14 +91,14 @@
                 })
             }
 
-            // Delete Search Bar Icon
-            delete_search_bar.addEventListener("click", function() {
-                search_bar.value = ""
+            // Search Bar Input
+            search_bar.addEventListener("input", function() {
                 renderArticles()
             })
 
-            // Search Bar Input
-            search_bar.addEventListener("input", function() {
+            // Delete Search Bar Icon
+            delete_search_bar.addEventListener("click", function() {
+                search_bar.value = ""
                 renderArticles()
             })
         })

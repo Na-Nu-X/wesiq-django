@@ -16,8 +16,10 @@
         display: block;
         color: darken($secondary-color, 40%);
         position: absolute;
-        bottom: 26px;
         right: 1px;
+        bottom: 10px;
+        padding-bottom: 16px;
+        padding-top: 19px;
         transition: right 0.3s ease;
 
         &:hover {

@@ -34,6 +34,7 @@
     <div class="search_bar_container">
         <div>
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
             <input class="search_bar" type="text" placeholder="Hľadať" autocomplete="off">
         </div>
 
@@ -316,41 +317,19 @@
 
             const search_bar = document.querySelector(".search_bar")
             const search_result = document.querySelector(".search_result")
+            const delete_search_bar = document.querySelector(".fa-xmark")
 
-            search_bar.addEventListener("input", function(event) {
-                let searched_text = event.target.value // Searched Text Value
+            function renderSearchResult() {
+                let searched_text = search_bar.value // Searched Text Value
 
                 // Array of Objects of Pages
                 const pages = [
-                    {
-                        url: "/",
-                        title: "Hlavná stránka",
-                    },
-
-                    {
-                        url: "/prihlasenie",
-                        title: "Prihlásenie",
-                    },
-
-                    {
-                        url: "/obnova-hesla",
-                        title: "Obnova hesla",
-                    },
-
-                    {
-                        url: "/registracia",
-                        title: "Registrácia",
-                    },
-
-                    {
-                        url: "/moj-ucet",
-                        title: "Môj účet",
-                    },
-
-                    {
-                        url: "/moje-hodnotenie",
-                        title: "Moje hodnotenie",
-                    },
+                    { url: "/", title: "Hlavná stránka" },
+                    { url: "/prihlasenie", title: "Prihlásenie" },
+                    { url: "/obnova-hesla", title: "Obnova hesla" },
+                    { url: "/registracia", title: "Registrácia" },
+                    { url: "/moj-ucet", title: "Môj účet" },
+                    { url: "/moje-hodnotenie", title: "Moje hodnotenie" },
                 ]
 
                 search_result.innerHTML = "" // Deletes Search Result
@@ -398,6 +377,17 @@
                     search_result.style.border = "none"
                     search_result.classList.remove("active")
                 }
+            }
+
+            // Delete Search Bar Icon
+            delete_search_bar.addEventListener("click", function() {
+                search_bar.value = ""
+                renderSearchResult()
+            })
+
+            // Search Bar Input
+            search_bar.addEventListener("input", function(event) {
+                renderSearchResult()
             })
 
             // Selected Attachment
