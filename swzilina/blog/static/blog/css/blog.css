@@ -13,6 +13,20 @@
   color: rgb(229.5, 229.5, 229.5);
   transition: color 0.3s ease;
 }
+.content .search_bar_container div .fa-xmark {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  padding: 9px 8.5px 9px 0px;
+  font-size: 20px;
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.content .search_bar_container div .fa-xmark:hover {
+  color: #fff;
+  cursor: pointer;
+}
 .content .search_bar_container div .search_bar {
   padding: 0px 32px;
   width: 500px;
@@ -53,42 +67,46 @@
   flex-wrap: wrap;
   gap: 20px;
 }
-.content .articles a {
-  color: #fff;
-  text-decoration: none;
-}
-.content .articles a article {
+.content .articles article {
   width: 500px;
   height: 300px;
-  padding: 20px;
-  border: 1px solid #fff;
+  border: 2px solid #fff;
   border-radius: 5px;
   text-align: justify;
+  box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease;
 }
-.content .articles a article:hover {
+.content .articles article:hover {
   transform: scale(1.01);
   cursor: pointer;
 }
-.content .articles a .front_lever {
+.content .articles article a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  color: #fff;
+  text-decoration: none;
+}
+.content .articles .front_lever {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/front-lever.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
-.content .articles a .handstand {
+.content .articles .handstand {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/handstand.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
-.content .articles a .one_arm_pull_up {
+.content .articles .one_arm_pull_up {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/one-arm-pull-up.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
-.content .articles a .swing_360 {
+.content .articles .swing_360 {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/swing-360.webp");
   background-size: cover;
   background-position: center;

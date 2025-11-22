@@ -369,7 +369,7 @@
   transition: transform 0.3s ease;
 }
 .reviews .all_reviews .one_review:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
 }
 .reviews .all_reviews .one_review .reviewer .date {
   font-style: italic;
