@@ -1,9 +1,6 @@
 @import "../../../../static/css/partials/variables";
 
 .content {
-    // position: relative;
-    
-
     // Search Bar
 
     .search_bar_container {
@@ -21,6 +18,22 @@
                 font-size: 20px;
                 color: darken($secondary-color, 10%);
                 transition: color 0.3s ease;
+            }
+
+            .fa-xmark {
+                position: absolute;
+                top: 50%;
+                right: 0px;
+                transform: translateY(-50%);
+                padding: 9px 8.5px 9px 0px;
+                font-size: 20px;
+                color: darken($secondary-color, 10%);
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: $secondary-color;
+                    cursor: pointer;
+                }
             }
 
             .search_bar {
@@ -67,63 +80,67 @@
         flex-wrap: wrap;
         gap: 20px;
 
-        a {
-            color: $secondary-color;
-            text-decoration: none;
+        article {
+            width: 500px;
+            height: 300px;
+            border: 2px solid $secondary-color;
+            border-radius: 5px;
+            text-align: justify;
+            box-shadow: 5px 5px 10px lighten($main-color, 20%);
+            transition: transform 0.3s ease;
 
-            article {
-                width: 500px;
-                height: 300px;
+            &:hover {
+                transform: scale(1.01);
+                cursor: pointer;
+            }
+
+            a {
+                display: block;
+                width: 100%;
+                height: 100%;
                 padding: 20px;
-                border: 1px solid $secondary-color;
-                border-radius: 5px;
-                text-align: justify;
-                transition: transform 0.3s ease;
-
-                &:hover {
-                    transform: scale(1.01);
-                    cursor: pointer;
-                }
+                color: $secondary-color;
+                text-decoration: none;
             }
+        }
 
-            .front_lever {
-                background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
-                
-                background: {
-                    size: cover;
-                    position: center;
-                    repeat: no-repeat;
-                }
+        .front_lever {
+            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
+            
+            background: {
+                size: cover;
+                position: center;
+                repeat: no-repeat;
             }
+        }
 
-            .handstand {
-                background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
-                
-                background: {
-                    size: cover;
-                    position: center;
-                    repeat: no-repeat;
-                }
+        .handstand {
+            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
+            
+            background: {
+                size: cover;
+                position: center;
+                repeat: no-repeat;
             }
+        }
 
-            .one_arm_pull_up {
-                background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
-                
-                background: {
-                    size: cover;
-                    position: center;
-                    repeat: no-repeat;
-                }
+        .one_arm_pull_up {
+            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
+            
+            background: {
+                size: cover;
+                position: center;
+                repeat: no-repeat;
             }
+        }
 
-            .swing_360 {
-                background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
-                
-                background: {
-                    size: cover;
-                    position: center;
-                    repeat: no-repeat;
-                }
+        .swing_360 {
+            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
+            
+            background: {
+                size: cover;
+                position: center;
+                repeat: no-repeat;
             }
         }
     }
