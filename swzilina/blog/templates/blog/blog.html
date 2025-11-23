@@ -11,10 +11,15 @@
 
 {% block content %}
     <div class="search_bar_container">
-        <div>
+        <div class="search_bar_menu">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
             <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
             <input class="search_bar" type="text" placeholder="Nájsť článok" autocomplete="off">
+        </div>
+
+        <div class="filter">
+            <img src="{% static 'images/filter.png' %}"> <!-- https://www.flaticon.com/free-icon/filter_7854748 -->
+            {% comment %} <p>Filtrovať</p> {% endcomment %}
         </div>
     </div>
 
@@ -62,7 +67,7 @@
             function renderArticles() {
                 let searched_text = event.target.value // Searched Text Value
 
-                // Array of Objects of Articles
+                // Data - Array of Objects of Articles
                 const articles = [
                     { class_name: "front_lever", title: "Front Lever" },
                     { class_name: "handstand", title: "Stojka" },
