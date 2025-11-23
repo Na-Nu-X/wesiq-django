@@ -322,7 +322,7 @@
             function renderSearchResult() {
                 let searched_text = search_bar.value // Searched Text Value
 
-                // Array of Objects of Pages
+                // Data - Array of Objects of Pages
                 const pages = [
                     { url: "/", title: "Hlavná stránka" },
                     { url: "/prihlasenie", title: "Prihlásenie" },
@@ -361,7 +361,7 @@
                 })
 
                 if(search_result.children.length > 0) {
-                    search_bar.style.borderRadius = "5px 5px 0 0"
+                    search_bar.style.borderRadius = "5px 5px 0px 0px"
                     search_bar.style.borderBottom = "none"
 
                     search_result.style.borderBottom = "1px solid rgb(229.5, 229.5, 229.5)"

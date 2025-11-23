@@ -4,11 +4,14 @@
     // Search Bar
 
     .search_bar_container {
-        div {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding-left: 120px;
+
+        .search_bar_menu {
+            position: relative;
 
             .fa-magnifying-glass {
                 position: absolute;
@@ -18,6 +21,7 @@
                 font-size: 20px;
                 color: darken($secondary-color, 10%);
                 transition: color 0.3s ease;
+                z-index: 50;
             }
 
             .fa-xmark {
@@ -29,6 +33,7 @@
                 font-size: 20px;
                 color: darken($secondary-color, 10%);
                 transition: color 0.3s ease;
+                z-index: 50;
 
                 &:hover {
                     color: $secondary-color;
@@ -41,9 +46,10 @@
                 width: 500px;
                 height: 38px;
                 background-color: transparentize($main-color, 0.9);
+                backdrop-filter: blur(5px);
                 color: $secondary-color;
                 border: none;
-                border: 1px solid darken($secondary-color, 10%);
+                border: 2px solid darken($secondary-color, 10%);
                 border-radius: 5px;
                 text-align: center;
                 outline: none;
@@ -66,22 +72,47 @@
                 color: $secondary-color;
             }
         }
+
+        .filter {
+            position: relative;
+            width: 100px;
+            height: 38px;
+            margin-left: 20px;
+            background-color: transparentize($secondary-color, 0.9);
+            backdrop-filter: blur(5px);
+            border: 2px solid darken($secondary-color, 10%);
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
+
+            img {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
     }
 
     .articles {
         position: relative;
-        top: 38px + 20px;
+        top: 20px;
         width: 100%;
-        margin-bottom: 38px + 20px;
+        margin-bottom: 20px;
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
         gap: 20px;
+        padding: 0px 20px;
 
         article {
-            width: 500px;
+            max-width: 500px;
             height: 300px;
             border: 2px solid $secondary-color;
             border-radius: 5px;
@@ -143,5 +174,31 @@
                 repeat: no-repeat;
             }
         }
+    }
+}
+
+/**************
+ Media Queries
+**************/
+
+@media (max-width: 1595px) {
+    .search_bar_container {
+        padding-left: 0px !important;
+    }
+}
+
+@media (max-width: 1075px) {
+    .search_bar {
+        width: 680px !important;
+    }
+
+    article {
+        max-width: 800px !important;
+    }
+}
+
+@media (max-width: 860px) {
+    .search_bar {
+        width: 360px !important;
     }
 }
