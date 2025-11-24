@@ -36,6 +36,8 @@
 </head>
 
 <body>
+    <span class="preloader"></span> <!-- https://cssloaders.github.io/ -->
+
     <header>
         <nav class="navigation_bar">
             <ul>
@@ -133,6 +135,7 @@
         })
     </script>
 
+    <script src="{% static 'js/preloader.js' %}" defer></script>
     <script src="{% static 'js/navigation.js' %}" defer></script>
     <script src="{% static 'js/move_up.js' %}" defer></script>
     {% block script %}{% endblock script %}
