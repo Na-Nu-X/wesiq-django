@@ -176,21 +176,6 @@
     }
 }
 
-.no_logged_in p, .code_expired p { // Move
-    text-align: center;
-
-    a {
-        text-decoration: none;
-        font-style: italic;
-        color: $secondary-color;
-
-        &:hover,
-        &:active {
-            text-decoration: underline;
-        }
-    }
-}
-
 main {
     min-height: 100vh;
     padding-bottom: 100vh;
@@ -392,62 +377,6 @@ form {
 
     select:hover, select:focus {
         cursor: pointer;
-    }
-
-    .password_container { // Move
-        position: relative;
-
-        &:has(.password:hover) .fa-key, &:has(.password:focus) .fa-key {
-            left: -16px;
-        }
-
-        &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
-        &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
-            right: 0px;
-        }
-
-        &:has(.password:hover) .fa-copy, &:has(.password:focus) .fa-copy {
-            right: -19px;
-        }
-
-        .password {
-            padding-right: 28px !important;
-            -webkit-text-security: disc;
-        }
-
-        .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
-            display: block;
-            color: darken($secondary-color, 40%);
-            position: absolute;
-            bottom: 10px;
-            padding-bottom: 16px;
-            padding-top: 19px;
-
-            &:hover {
-                color: darken($secondary-color, 20%);
-                cursor: pointer;
-                transition: color 0.3s ease;
-            }
-        }
-
-        .fa-eye {
-            display: none;
-        }
-
-        .fa-eye, .fa-eye-slash {
-            right: 20px;
-            transition: right 0.3s ease;
-        }
-
-        .fa-key {
-            left: 3px;
-            transition: left 0.3s ease;
-        }
-
-        .fa-copy {
-            right: 1px;
-            transition: right 0.3s ease;
-        }
     }
 
     .form_report {
@@ -677,20 +606,5 @@ footer { // Minix
 @media (max-width: 600px) {
     input[type="text"], input[type="email"], input[type="password"], select, input[type="submit"] {
         width: 100% !important;
-    }
-
-    .password_container .fa-key // Move
-    {
-        left: -16px !important;
-    }
-
-    .password_container .fa-eye,
-    .password_container .fa-eye-slash
-    {
-        right: 0px !important;
-    }
-
-    .password_container .fa-copy {
-        right: -19px !important;
     }
 }

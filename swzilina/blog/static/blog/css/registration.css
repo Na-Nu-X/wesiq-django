@@ -1,3 +1,51 @@
+/************
+ Main Styles
+************/
+.password_container {
+  position: relative;
+}
+.password_container:has(.password:hover) .fa-key, .password_container:has(.password:focus) .fa-key {
+  left: -16px;
+}
+.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye, .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash {
+  right: 0px;
+}
+.password_container:has(.password:hover) .fa-copy, .password_container:has(.password:focus) .fa-copy {
+  right: -19px;
+}
+.password_container .password {
+  padding-right: 28px !important;
+  -webkit-text-security: disc;
+}
+.password_container .fa-eye, .password_container .fa-eye-slash, .password_container .fa-key, .password_container .fa-copy {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+}
+.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover, .password_container .fa-key:hover, .password_container .fa-copy:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.password_container .fa-eye {
+  display: none;
+}
+.password_container .fa-eye, .password_container .fa-eye-slash {
+  right: 20px;
+  transition: right 0.3s ease;
+}
+.password_container .fa-key {
+  left: 3px;
+  transition: left 0.3s ease;
+}
+.password_container .fa-copy {
+  right: 1px;
+  transition: right 0.3s ease;
+}
+
 .password_check_container {
   position: relative;
 }
@@ -27,7 +75,14 @@
  Media Queries
 **************/
 @media (max-width: 600px) {
-  .password_check_container .fa-copy {
+  .password_container .fa-eye,
+  .password_container .fa-eye-slash {
+    right: 0px !important;
+  }
+  .password_container .fa-key {
+    left: -16px !important;
+  }
+  .password_container .fa-copy, .password_check_container .fa-copy {
     right: -19px !important;
   }
 }/*# sourceMappingURL=registration.css.map */

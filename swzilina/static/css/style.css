@@ -120,18 +120,6 @@
   color: #df3535;
 }
 
-.no_logged_in p, .code_expired p {
-  text-align: center;
-}
-.no_logged_in p a, .code_expired p a {
-  text-decoration: none;
-  font-style: italic;
-  color: #fff;
-}
-.no_logged_in p a:hover, .no_logged_in p a:active, .code_expired p a:hover, .code_expired p a:active {
-  text-decoration: underline;
-}
-
 main {
   min-height: 100vh;
   padding-bottom: 100vh;
@@ -299,50 +287,6 @@ form input::placeholder {
 }
 form select:hover, form select:focus {
   cursor: pointer;
-}
-form .password_container {
-  position: relative;
-}
-form .password_container:has(.password:hover) .fa-key, form .password_container:has(.password:focus) .fa-key {
-  left: -16px;
-}
-form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye, form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
-  right: 0px;
-}
-form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy {
-  right: -19px;
-}
-form .password_container .password {
-  padding-right: 28px !important;
-  -webkit-text-security: disc;
-}
-form .password_container .fa-eye, form .password_container .fa-eye-slash, form .password_container .fa-key, form .password_container .fa-copy {
-  display: block;
-  color: #999999;
-  position: absolute;
-  bottom: 10px;
-  padding-bottom: 16px;
-  padding-top: 19px;
-}
-form .password_container .fa-eye:hover, form .password_container .fa-eye-slash:hover, form .password_container .fa-key:hover, form .password_container .fa-copy:hover {
-  color: #cccccc;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-form .password_container .fa-eye {
-  display: none;
-}
-form .password_container .fa-eye, form .password_container .fa-eye-slash {
-  right: 20px;
-  transition: right 0.3s ease;
-}
-form .password_container .fa-key {
-  left: 3px;
-  transition: left 0.3s ease;
-}
-form .password_container .fa-copy {
-  right: 1px;
-  transition: right 0.3s ease;
 }
 form .form_report {
   position: absolute;
@@ -525,15 +469,5 @@ footer .copywrite {
 @media (max-width: 600px) {
   input[type=text], input[type=email], input[type=password], select, input[type=submit] {
     width: 100% !important;
-  }
-  .password_container .fa-key {
-    left: -16px !important;
-  }
-  .password_container .fa-eye,
-  .password_container .fa-eye-slash {
-    right: 0px !important;
-  }
-  .password_container .fa-copy {
-    right: -19px !important;
   }
 }/*# sourceMappingURL=style.css.map */

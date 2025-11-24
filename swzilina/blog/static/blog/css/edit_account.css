@@ -1,3 +1,18 @@
+/************
+ Main Styles
+************/
+.no_logged_in p {
+  text-align: center;
+}
+.no_logged_in p a {
+  text-decoration: none;
+  font-style: italic;
+  color: #fff;
+}
+.no_logged_in p a:hover, .no_logged_in p a:active {
+  text-decoration: underline;
+}
+
 .profile_picture_container {
   position: relative;
   height: 38px;
