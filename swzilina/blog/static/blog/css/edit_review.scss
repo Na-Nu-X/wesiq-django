@@ -1,5 +1,24 @@
 @import "../../../../static/css/partials/variables";
 
+/************
+ Main Styles
+************/
+
+.no_logged_in p {
+    text-align: center;
+
+    a {
+        text-decoration: none;
+        font-style: italic;
+        color: $secondary-color;
+
+        &:hover,
+        &:active {
+            text-decoration: underline;
+        }
+    }
+}
+
 .reviewer {
     position: relative;
     height: 38px;

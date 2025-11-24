@@ -1,178 +1,182 @@
 @import "../../../../static/css/partials/variables";
 
-.content {
-    // Search Bar
+/************
+ Main Styles
+************/
 
-    .search_bar_container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding-left: 120px;
+// Search Bar
 
-        .search_bar_menu {
-            position: relative;
+.search_bar_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-left: 120px;
 
-            .fa-magnifying-glass {
-                position: absolute;
-                top: 50%;
-                left: 8.5px;
-                transform: translateY(-50%);
-                font-size: 20px;
-                color: darken($secondary-color, 10%);
-                transition: color 0.3s ease;
-                z-index: 50;
-            }
+    .search_bar_menu {
+        position: relative;
 
-            .fa-xmark {
-                position: absolute;
-                top: 50%;
-                right: 0px;
-                transform: translateY(-50%);
-                padding: 9px 8.5px 9px 0px;
-                font-size: 20px;
-                color: darken($secondary-color, 10%);
-                transition: color 0.3s ease;
-                z-index: 50;
+        .fa-magnifying-glass {
+            position: absolute;
+            top: 50%;
+            left: 8.5px;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: darken($secondary-color, 10%);
+            transition: color 0.3s ease;
+            z-index: 50;
+        }
 
-                &:hover {
-                    color: $secondary-color;
-                    cursor: pointer;
-                }
-            }
+        .fa-xmark {
+            position: absolute;
+            top: 50%;
+            right: 0px;
+            transform: translateY(-50%);
+            padding: 9px 8.5px 9px 0px;
+            font-size: 20px;
+            color: darken($secondary-color, 10%);
+            transition: color 0.3s ease;
+            z-index: 50;
 
-            .search_bar {
-                padding: 0px 32px;
-                width: 500px;
-                height: 38px;
-                background-color: transparentize($main-color, 0.9);
-                backdrop-filter: blur(5px);
+            &:hover {
                 color: $secondary-color;
-                border: none;
-                border: 2px solid darken($secondary-color, 10%);
-                border-radius: 5px;
-                text-align: center;
-                outline: none;
-                font-size: 1.2em;
-                transition: width 0.3s ease, border 0.3s ease;
-                z-index: 50;
-
-                &:hover,
-                &:focus {
-                    width: 500px + 20px;
-                    border-color: $secondary-color !important;
-                }
-
-                &::placeholder {
-                    color: darken($secondary-color, 20%);
-                }
-            }
-
-            &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
-                color: $secondary-color;
+                cursor: pointer;
             }
         }
 
-        .filter {
-            position: relative;
-            width: 100px;
+        .search_bar {
+            padding: 0px 32px;
+            width: 500px;
             height: 38px;
-            margin-left: 20px;
-            background-color: transparentize($secondary-color, 0.9);
+            background-color: transparentize($main-color, 0.9);
             backdrop-filter: blur(5px);
+            color: $secondary-color;
+            border: none;
             border: 2px solid darken($secondary-color, 10%);
             border-radius: 5px;
-            transition: transform 0.3s ease;
+            text-align: center;
+            outline: none;
+            font-size: 1.2em;
+            transition: width 0.3s ease, border 0.3s ease;
+            z-index: 50;
 
-            &:hover {
-                cursor: pointer;
-                transform: scale(1.1);
+            &:hover,
+            &:focus {
+                width: 500px + 20px;
+                border-color: $secondary-color !important;
             }
 
-            img {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+            &::placeholder {
+                color: darken($secondary-color, 20%);
             }
+        }
+
+        &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
+            color: $secondary-color;
         }
     }
 
-    .articles {
+    .filter {
         position: relative;
-        top: 20px;
-        width: 100%;
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 0px 20px;
+        width: 100px;
+        height: 38px;
+        margin-left: 20px;
+        background-color: transparentize($secondary-color, 0.9);
+        backdrop-filter: blur(5px);
+        border: 2px solid darken($secondary-color, 10%);
+        border-radius: 5px;
+        transition: transform 0.3s ease;
 
-        article {
-            max-width: 500px;
-            height: 300px;
-            border: 2px solid $secondary-color;
-            border-radius: 5px;
-            text-align: justify;
-            box-shadow: 5px 5px 10px lighten($main-color, 20%);
-            transition: transform 0.3s ease;
-
-            &:hover {
-                transform: scale(1.01);
-                cursor: pointer;
-            }
-
-            a {
-                display: block;
-                width: 100%;
-                height: 100%;
-                padding: 20px;
-                color: $secondary-color;
-                text-decoration: none;
-            }
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.1);
         }
 
-        .front_lever {
-            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
-            
-            background: {
-                size: cover;
-                position: center;
-                repeat: no-repeat;
-            }
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+// Articles
+
+.articles {
+    position: relative;
+    top: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 0px 20px;
+
+    article {
+        max-width: 500px;
+        height: 300px;
+        border: 2px solid $secondary-color;
+        border-radius: 5px;
+        text-align: justify;
+        box-shadow: 5px 5px 10px lighten($main-color, 20%);
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.01);
+            cursor: pointer;
         }
 
-        .handstand {
-            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
-            
-            background: {
-                size: cover;
-                position: center;
-                repeat: no-repeat;
-            }
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            color: $secondary-color;
+            text-decoration: none;
         }
+    }
 
-        .one_arm_pull_up {
-            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
-            
-            background: {
-                size: cover;
-                position: center;
-                repeat: no-repeat;
-            }
+    .front_lever {
+        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
+        
+        background: {
+            size: cover;
+            position: center;
+            repeat: no-repeat;
         }
+    }
 
-        .swing_360 {
-            background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
-            
-            background: {
-                size: cover;
-                position: center;
-                repeat: no-repeat;
-            }
+    .handstand {
+        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
+        
+        background: {
+            size: cover;
+            position: center;
+            repeat: no-repeat;
+        }
+    }
+
+    .one_arm_pull_up {
+        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
+        
+        background: {
+            size: cover;
+            position: center;
+            repeat: no-repeat;
+        }
+    }
+
+    .swing_360 {
+        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
+        
+        background: {
+            size: cover;
+            position: center;
+            repeat: no-repeat;
         }
     }
 }

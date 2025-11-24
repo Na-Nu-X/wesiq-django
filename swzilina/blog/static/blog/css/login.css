@@ -1,3 +1,35 @@
+/************
+ Main Styles
+************/
+.password_container {
+  position: relative;
+}
+.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye, .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash {
+  right: 0px;
+}
+.password_container .password {
+  padding-right: 28px !important;
+  -webkit-text-security: disc;
+}
+.password_container .fa-eye, .password_container .fa-eye-slash {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+  transition: right 0.3s ease;
+}
+.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.password_container .fa-eye {
+  display: none;
+}
+
 .login_methods div {
   position: relative;
   display: block;
@@ -32,4 +64,14 @@
   top: 50%;
   transform: translateY(-50%);
   left: 8px;
+}
+
+/**************
+ Media Queries
+**************/
+@media (max-width: 600px) {
+  .password_container .fa-eye,
+  .password_container .fa-eye-slash {
+    right: 0px !important;
+  }
 }/*# sourceMappingURL=login.css.map */
