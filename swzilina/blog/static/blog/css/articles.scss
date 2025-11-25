@@ -1,0 +1,12 @@
+@import "../../../../static/css/partials/variables";
+
+.content {
+    font-family: $main-font;
+    max-width: $main-width;
+    margin: 0px auto;
+    padding: 10px 20px;
+    background-color: transparentize($main-color, 0.9);
+    border: 1px solid darken($secondary-color, 40%);
+    border-radius: 5px;
+    text-align: justify;
+}
