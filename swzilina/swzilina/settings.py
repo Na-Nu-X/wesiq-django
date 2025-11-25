@@ -45,6 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Google OAuth 2.0
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    # 'blog.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +63,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Google OAuth 2.0
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'swzilina.urls'
@@ -147,3 +158,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Google reCAPTCHA V3
 RECAPTCHA_SITE_KEY = "6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"
 RECAPTCHA_SECRET_KEY = "6LffOQcsAAAAADR5L5rz42G_B9aNmxsq0PotYn4N"
+
+# Google OAuth 2.0
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True

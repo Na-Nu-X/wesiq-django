@@ -6,15 +6,16 @@ class Users(models.Model):
         ("admin", "admin"),
     ]
 
-    first_name = models.CharField(verbose_name="First Name", max_length=50, null=False)
-    last_name = models.CharField(verbose_name="Last Name", max_length=50, null=False)
-    email_address = models.CharField(verbose_name="E-mail Address", max_length=50, null=False)
+    first_name = models.CharField(verbose_name="First Name", max_length=50)
+    last_name = models.CharField(verbose_name="Last Name", max_length=50)
+    email_address = models.CharField(verbose_name="E-mail Address", max_length=50)
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
-    password = models.CharField(verbose_name="Password", max_length=255, null=False)
-    role = models.CharField(verbose_name="Role", choices=role_choices, default="user", null=False)
+    password = models.CharField(verbose_name="Password", max_length=255)
+    role = models.CharField(verbose_name="Role", choices=role_choices, default="user")
     profile_picture_name = models.CharField(verbose_name="Profile Picture File", max_length=50, null=True, blank=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+    google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
