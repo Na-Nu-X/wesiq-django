@@ -558,16 +558,14 @@ def blogView(request):
     return render(request, "blog/blog.html")
 
 def blogThemeView(request, theme):
+    # All Article Themes (Key - URL, Value - Title of Article)
     themes = {
-        "front-lever": "blog/front-lever.html",
-        "handstand": "blog/handstand.html",
-        "one-arm-pull-up": "blog/one-arm-pull-up.html",
-        "swing-360": "blog/swing-360.html",
+        "front-lever": "Front Lever",
+        "handstand": "Stojka",
+        "one-arm-pull-up": "Zhyb na jednej ruke",
+        "swing-360": "360",
     }
 
-    # return render(request, f"blog/{themes/theme}")
-    try:
-        return HttpResponse(themes[theme])
-    
-    except:
-        return HttpResponse("Stránka neexistuje")
+    return render(request, "blog/articles.html", {
+        "theme": themes.get(theme) if themes.get(theme) else "Článok sa nenašiel"
+    })

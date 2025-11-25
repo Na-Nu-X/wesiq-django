@@ -1,0 +1,10 @@
+.content {
+  font-family: Poppins, Arial, sans-serif;
+  max-width: 900px;
+  margin: 0px auto;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid #999999;
+  border-radius: 5px;
+  text-align: justify;
+}/*# sourceMappingURL=articles.css.map */
