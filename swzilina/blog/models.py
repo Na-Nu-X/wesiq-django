@@ -15,6 +15,7 @@ class Users(models.Model):
     profile_picture_name = models.CharField(verbose_name="Profile Picture File", max_length=50, null=True, blank=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+    password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
 
     def __str__(self):

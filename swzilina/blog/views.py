@@ -233,12 +233,15 @@ def loginView(request):
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send()
 
+        # Saves Password Reset Code To Database
+        user.password_reset_code = code
+        user.save()
+
         messages.add_message(request, messages.SUCCESS, f"Overovací kód bol odoslaný na adresu\n{email_address}")
 
         # Redirect After Sending Mail
         response = HttpResponseRedirect(reverse("password_reset_url"))
-        response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True) # Set 10 Minute Cookie With Random 6-Digit Code
-        response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+        # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
         return response
 
     return render(request, "blog/login.html", {
@@ -246,29 +249,30 @@ def loginView(request):
     })
 
 def passwordResetView(request):
-    if request.COOKIES.get("password_reset_code") and request.COOKIES.get("email_address"):
+    if request.COOKIES.get("email_address"):
         if request.method == "POST":
             password_reset_form = passwordResetForm(request.POST)
             if password_reset_form.is_valid():
                 password_reset_code = password_reset_form.cleaned_data["password_reset_code"]
                 new_password = password_reset_form.cleaned_data["new_password"]
 
-                if password_reset_code == request.COOKIES.get("password_reset_code"):
-                    user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
+                user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
 
+                if password_reset_code == user.password_reset_code:
                     if len(new_password) < 8:
                         messages.add_message(request, messages.ERROR, "Heslo je príliš krátke")
 
                     else:
+                        # Saves New Password To Database And Deletes Password Reset Code From Database
                         user.password = make_password(new_password)
+                        user.password_reset_code = None
                         user.save()
 
                         messages.add_message(request, messages.SUCCESS, "Heslo bolo úspešne zmenené")
 
                         # Redirect After Changing Password
                         response = HttpResponseRedirect(reverse("login_url"))
-                        response.delete_cookie("password_reset_code") # Delete Cookie With Code
-                        response.delete_cookie("email_address") # Delete Cookie With Email Address
+                        response.delete_cookie("email_address") # Deletes Cookie With Email Address
                         return response
                 
                 else:
@@ -307,14 +311,18 @@ def passwordResetView(request):
             mail_message.attach_alternative(html_content, "text/html")
             mail_message.send()
 
+            # Saves Password Reset Code To Database
+            user.password_reset_code = code
+            user.save()
+
             messages.add_message(request, messages.SUCCESS, f"Overovací kód bol odoslaný na adresu\n{email_address}")
 
             # Redirect After Sending Mail
             response = HttpResponseRedirect(reverse("password_reset_url"))
-            response.set_cookie("password_reset_code", f"{code}", max_age=60*10, secure=True) # Set 10 Minute Cookie With Random 6-Digit Code
-            response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+            # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
             return response
 
+        # Gets Password Reset Code From URL Parameters If User Opened Attached Link In Mail
         if request.method == "GET" and request.GET.get("password-reset-code"):
             filled_password_reset_form = passwordResetForm(initial={
                 "password_reset_code": request.GET.get("password-reset-code")
