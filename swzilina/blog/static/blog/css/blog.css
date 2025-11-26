@@ -123,7 +123,7 @@
   color: #fff;
   text-decoration: none;
 }
-.articles .front_lever {
+.articles .front-lever {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/front-lever.jpg");
   background-size: cover;
   background-position: center;
@@ -135,13 +135,13 @@
   background-position: center;
   background-repeat: no-repeat;
 }
-.articles .one_arm_pull_up {
+.articles .one-arm-pull-up {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/one-arm-pull-up.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
-.articles .swing_360 {
+.articles .swing-360 {
   background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/swing-360.webp");
   background-size: cover;
   background-position: center;
