@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm
-from blog.models import Users, Reviews
+from blog.models import Users, Reviews, Articles
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -563,7 +563,12 @@ def editReviewView(request):
     return render(request, "blog/edit_review.html")
 
 def blogView(request):
-    return render(request, "blog/blog.html")
+    # Get All Articles From DB
+    articles = Articles.objects.all()
+
+    return render(request, "blog/blog.html", {
+        "articles": articles,
+    })
 
 def blogThemeView(request, theme):
     # All Article Themes (Key - URL, Value - Title of Article)
@@ -574,6 +579,19 @@ def blogThemeView(request, theme):
         "swing-360": "360",
     }
 
-    return render(request, "blog/articles.html", {
-        "theme": themes.get(theme) if themes.get(theme) else "Článok sa nenašiel"
-    })
+    try:
+        article = Articles.objects.get(title=themes[theme])
+        print(article.rating)
+
+        return render(request, "blog/articles.html", {
+            "title": article.title,
+            "content": article.content,
+            "category": article.category,
+            "rating": article.rating,
+            "visitors": article.visitors,
+        })
+    
+    except:
+        return render(request, "blog/articles.html", {
+            "not_found": True,
+        })

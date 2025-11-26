@@ -28,3 +28,11 @@ class Reviews(models.Model):
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+class Articles(models.Model):
+    title = models.CharField(verbose_name="Title", max_length=50, null=False)
+    content = models.TextField(verbose_name="Content", null=False)
+    category = models.CharField(verbose_name="Category", max_length=50, null=False)
+    rating = models.FloatField(verbose_name="Rating", default=0, null=False)
+    visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
+    url = models.CharField(verbose_name="URL / Class", max_length=50, null=False)

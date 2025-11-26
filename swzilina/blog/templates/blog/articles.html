@@ -1,33 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Street Workout Žilina - {{ theme }}{% endblock title %}
+{% block title %}Street Workout Žilina - {{ title|default:"Článok sa nenašiel" }}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/articles.css' %}">
 {% endblock style %}
 
-{% block heading %}{{ theme }}{% endblock heading %}
+{% block heading %}{{ title|default:"Článok sa nenašiel" }}{% endblock heading %}
 
-{% block content %}
-    {% if theme == "Článok sa nenašiel" %}
-        <p>Ospravedlňujeme sa, ale hľadaný článok sa nenašiel.</p>
+{% if not_found != False %}
+    {% block content %}
+        <h2>{{ title }}</h2>
+        <p>{{ content }}</p>
+    {% endblock content %}
 
-    {% elif theme == "Front Lever" %}
-        <h2>Front Lever</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem delectus repellendus nulla veritatis veniam ipsum sequi vel dolore, odio laborum cupiditate saepe dolores nemo similique at vitae? Assumenda, numquam ipsum.</p>
-
-    {% elif theme == "Stojka" %}
-        <h2>Stojka</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem delectus repellendus nulla veritatis veniam ipsum sequi vel dolore, odio laborum cupiditate saepe dolores nemo similique at vitae? Assumenda, numquam ipsum.</p>
-
-    {% elif theme == "Zhyb na jednej ruke" %}
-        <h2>Zhyb na jednej ruke</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem delectus repellendus nulla veritatis veniam ipsum sequi vel dolore, odio laborum cupiditate saepe dolores nemo similique at vitae? Assumenda, numquam ipsum.</p>
-
-    {% elif theme == "360" %}
-        <h2>360</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem delectus repellendus nulla veritatis veniam ipsum sequi vel dolore, odio laborum cupiditate saepe dolores nemo similique at vitae? Assumenda, numquam ipsum.</p>
-
-    {% endif %}
-{% endblock content %}
+{% endif %}
