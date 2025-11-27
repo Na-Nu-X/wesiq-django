@@ -103,12 +103,14 @@
   padding: 0px 20px;
 }
 .articles article {
+  position: relative;
   max-width: 500px;
   height: 300px;
   border: 2px solid #fff;
   border-radius: 5px;
   text-align: justify;
   box-shadow: 5px 5px 10px #333333;
+  overflow: hidden;
   transition: transform 0.3s ease;
   background-size: cover !important;
   background-position: center !important;
@@ -125,6 +127,28 @@
   padding: 20px;
   color: #fff;
   text-decoration: none;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+.articles article a .rating {
+  position: absolute;
+  bottom: 14.5px;
+  left: 20px;
+}
+.articles article a .rating img {
+  width: 12px;
+  height: 12px;
+}
+.articles article a .visitors {
+  position: absolute;
+  bottom: 14.5px;
+  right: 20px;
+  color: #999999;
+  transition: color 0.3s ease;
+}
+.articles article a .visitors:hover {
+  color: #cccccc;
+  cursor: pointer;
 }
 
 /**************

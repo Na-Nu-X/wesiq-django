@@ -571,17 +571,8 @@ def blogView(request):
     })
 
 def blogThemeView(request, theme):
-    # All Article Themes (Key - URL, Value - Title of Article)
-    themes = {
-        "front-lever": "Front Lever",
-        "handstand": "Stojka",
-        "one-arm-pull-up": "Zhyb na jednej ruke",
-        "swing-360": "360",
-    }
-
     try:
-        article = Articles.objects.get(title=themes[theme])
-        print(article.rating)
+        article = Articles.objects.get(link=theme)
 
         return render(request, "blog/articles.html", {
             "title": article.title,
