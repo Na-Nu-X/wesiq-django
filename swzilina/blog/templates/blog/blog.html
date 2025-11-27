@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}">
 {% endblock style %}
 
-{% block heading %}Blog{% endblock heading %}
+{% block heading %}Témy na čítanie{% endblock heading %}
 
 {% block content %}
     <div class="search_bar_container">
@@ -36,6 +36,22 @@
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <h2>{{ one_article.title }}</h2>
                     <p>{{ one_article.content }}</p>
+
+                    <div class="rating" title="Priemerné hodnotenie {{ one_article.rating }}">
+                        {% for _ in "12345" %}
+                            {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
+                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                            {% else %}
+                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="visitors" title="{{ one_article.visitors }} unikátnych návštevníkov">
+                        <p><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
+                    </div>
                 </a>
             </article>
         
