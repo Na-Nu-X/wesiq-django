@@ -24,8 +24,16 @@
 
     <div class="articles">
         {% for one_article in articles %}
-            <article class="{{ one_article.url }}">
-                <a href="{% url 'blog_theme_url' one_article.url %}" title="Zobraziť" target="_self">
+            <article 
+                class="{{ one_article.link }}"
+                data-title="{{ one_article.title }}"
+                style="
+                    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+                    url('{% static 'blog/images/' %}{{ one_article.image_name }}');
+                
+                "
+            >
+                <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <h2>{{ one_article.title }}</h2>
                     <p>{{ one_article.content }}</p>
                 </a>
@@ -48,15 +56,25 @@
             function renderArticles() {
                 let searched_text = event.target.value // Searched Text Value
 
-                // Data - Array of Objects of Articles
-                const articles = [
-                    { class_name: "front-lever", title: "Front Lever" },
-                    { class_name: "handstand", title: "Stojka" },
-                    { class_name: "one-arm-pull-up", title: "Zhyb na jednej ruke" },
-                    { class_name: "swing-360", title: "360" },
-                ]
+                const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tag From Page
+
+                const articles = [] // Data - Array of Objects of Articles
+
+                article_tags.forEach(function(one_article) {
+                    // Gets Data From HTML Tags
+                    const one_article_class = one_article.className // For Example: front-lever
+                    const one_article_title = one_article.dataset.title // For Example: Front Lever
+                    
+                    // Creates And Fill One Object With Values
+                    const one_article_object = {} // For Example: { class_name: "front-lever", title: "Front Lever" }
+                    one_article_object.class_name = one_article_class
+                    one_article_object.title = one_article_title
+
+                    // Saves Filled Object With Values To Data Array
+                    articles.push(one_article_object)
+                })
                 
-                // Every Article has display: block; by Default
+                // Every Article Has display: block; By Default
                 articles.forEach(function(one_article) {
                     document.querySelector(`.${one_article.class_name}`).style.display = "block"
                 })

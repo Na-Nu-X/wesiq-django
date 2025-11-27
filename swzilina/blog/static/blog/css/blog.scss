@@ -124,6 +124,12 @@
         text-align: justify;
         box-shadow: 5px 5px 10px lighten($main-color, 20%);
         transition: transform 0.3s ease;
+        
+        background: {
+            size: cover !important;
+            position: center !important;
+            repeat: no-repeat !important;
+        }
 
         &:hover {
             transform: scale(1.01);
@@ -140,45 +146,45 @@
         }
     }
 
-    .front-lever {
-        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
+    // .front-lever {
+    //     background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/front-lever.jpg"); // https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
         
-        background: {
-            size: cover;
-            position: center;
-            repeat: no-repeat;
-        }
-    }
+    //     background: {
+    //         size: cover;
+    //         position: center;
+    //         repeat: no-repeat;
+    //     }
+    // }
 
-    .handstand {
-        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
+    // .handstand {
+    //     background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/handstand.jpg"); // https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
         
-        background: {
-            size: cover;
-            position: center;
-            repeat: no-repeat;
-        }
-    }
+    //     background: {
+    //         size: cover;
+    //         position: center;
+    //         repeat: no-repeat;
+    //     }
+    // }
 
-    .one-arm-pull-up {
-        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
+    // .one-arm-pull-up {
+    //     background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/one-arm-pull-up.webp"); // https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
         
-        background: {
-            size: cover;
-            position: center;
-            repeat: no-repeat;
-        }
-    }
+    //     background: {
+    //         size: cover;
+    //         position: center;
+    //         repeat: no-repeat;
+    //     }
+    // }
 
-    .swing-360 {
-        background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
+    // .swing-360 {
+    //     background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/swing-360.webp"); // https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
         
-        background: {
-            size: cover;
-            position: center;
-            repeat: no-repeat;
-        }
-    }
+    //     background: {
+    //         size: cover;
+    //         position: center;
+    //         repeat: no-repeat;
+    //     }
+    // }
 }
 
 /**************

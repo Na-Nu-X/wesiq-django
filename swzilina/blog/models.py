@@ -35,4 +35,5 @@ class Articles(models.Model):
     category = models.CharField(verbose_name="Category", max_length=50, null=False)
     rating = models.FloatField(verbose_name="Rating", default=0, null=False)
     visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
-    url = models.CharField(verbose_name="URL / Class", max_length=50, null=False)
+    link = models.CharField(verbose_name="Link", max_length=50, null=False)
+    image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)

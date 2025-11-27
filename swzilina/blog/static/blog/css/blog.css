@@ -110,6 +110,9 @@
   text-align: justify;
   box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 .articles article:hover {
   transform: scale(1.01);
@@ -122,30 +125,6 @@
   padding: 20px;
   color: #fff;
   text-decoration: none;
-}
-.articles .front-lever {
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/front-lever.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.articles .handstand {
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/handstand.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.articles .one-arm-pull-up {
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/one-arm-pull-up.webp");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.articles .swing-360 {
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/swing-360.webp");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 /**************
