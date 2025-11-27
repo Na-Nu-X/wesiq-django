@@ -574,13 +574,22 @@ def blogThemeView(request, theme):
     try:
         article = Articles.objects.get(link=theme)
 
-        return render(request, "blog/articles.html", {
+        # Adds 1 Visitor to The Article's Unique Visitors
+        if not request.COOKIES.get(article.link):
+            article.visitors += 1
+            article.save()
+
+        response = render(request, "blog/articles.html", {
             "title": article.title,
             "content": article.content,
             "category": article.category,
             "rating": article.rating,
             "visitors": article.visitors,
         })
+
+        response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
+
+        return response
     
     except:
         return render(request, "blog/articles.html", {

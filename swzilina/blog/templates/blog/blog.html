@@ -28,16 +28,32 @@
                 class="{{ one_article.link }}"
                 data-title="{{ one_article.title }}"
                 style="
-                    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
-                    url('{% static 'blog/images/' %}{{ one_article.image_name }}');
-                
+                    {% if one_article.image_name %}
+                        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+                        url('{% static 'blog/images/' %}{{ one_article.image_name }}');
+
+                    {% else %}
+                        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8));
+                    
+                    {% endif %}
                 "
             >
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <h2>{{ one_article.title }}</h2>
                     <p>{{ one_article.content }}</p>
 
-                    <div class="rating" title="Priemerné hodnotenie {{ one_article.rating }}">
+                    <div 
+                        class="rating" 
+                        title="
+                            {% if one_article.rating|floatformat:0|add:0 == 0 %}
+                                Zatiaľ žiadne hodnotenia
+                            
+                            {% else %}
+                                Priemerné hodnotenie {{ one_article.rating }}
+
+                            {% endif %}
+                        "
+                    >
                         {% for _ in "12345" %}
                             {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
                                 <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
