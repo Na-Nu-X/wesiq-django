@@ -40,15 +40,21 @@
                 data-title="{{ one_article.title }}"
                 style="
                     {% if one_article.image_name %}
-                        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+                        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
                         url('{% static 'blog/images/' %}{{ one_article.image_name }}');
 
                     {% else %}
-                        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8));
+                        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
                     
                     {% endif %}
                 "
             >
+                <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="Zdielať">
+                    <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+
+                    <p class="share_result"></p>
+                </div>
+
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <h2>{{ one_article.title }}</h2>
                     <p>{{ one_article.content }}</p>
@@ -109,7 +115,7 @@
             function renderArticles() {
                 let searched_text = event.target.value // Searched Text Value
 
-                const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tag From Page
+                const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tags From Page
 
                 const articles = [] // Data - Array of Objects of Articles
 
@@ -157,6 +163,26 @@
             delete_search_bar.addEventListener("click", function() {
                 search_bar.value = ""
                 renderArticles()
+            })
+
+            // Share Article
+
+            const share_buttons = document.querySelectorAll(".share") // Gets Every Share Button HTML Tags From Page
+
+            share_buttons.forEach(function(one_share_button) {
+                one_share_button.addEventListener("click", async function() {
+                    // Gets Data From HTML Tags
+                    let clicked_share_button_title = one_share_button.dataset.title
+                    let clicked_share_button_link = one_share_button.dataset.link
+
+                    // Creates And Fill Object With Data Values
+                    let share_data = {
+                        title: `Street Workout Žilina - ${clicked_share_button_title}`,
+                        url: `http://127.0.0.1:8000/blog/${clicked_share_button_link}`,
+                    }
+
+                    await navigator.share(share_data) // Opens Share Menu
+                })
             })
         })
     </script>
