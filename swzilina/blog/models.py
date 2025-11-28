@@ -37,3 +37,4 @@ class Articles(models.Model):
     visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)
     image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)
+    creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)

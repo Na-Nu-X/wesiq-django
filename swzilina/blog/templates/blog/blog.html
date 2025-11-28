@@ -20,6 +20,17 @@
         <div class="filter">
             <img src="{% static 'images/filter.png' %}"> <!-- https://www.flaticon.com/free-icon/filter_7854748 -->
         </div>
+
+        <div class="sorter">
+            <form method="GET">
+                <select name="sort" onChange="this.form.submit()">
+                    <option value="latest" {% if request.GET.sort == "latest" %}selected{% endif %}>Najnovšie články</option>
+                    <option value="best" {% if request.GET.sort == "best" %}selected{% endif %}>Najlepšie hodnotené</option>
+                    <option value="A-Z" {% if request.GET.sort == "A-Z" %}selected{% endif %}>Podľa abecedy (A-Z)</option>
+                    <option value="Z-A" {% if request.GET.sort == "Z-A" %}selected{% endif %}>Podľa abecedy (Z-A)</option>
+                </select>
+            </form>
+        </div>
     </div>
 
     <div class="articles">
@@ -42,31 +53,41 @@
                     <h2>{{ one_article.title }}</h2>
                     <p>{{ one_article.content }}</p>
 
-                    <div 
-                        class="rating" 
-                        title="
-                            {% if one_article.rating|floatformat:0|add:0 == 0 %}
-                                Zatiaľ žiadne hodnotenia
-                            
-                            {% else %}
-                                Priemerné hodnotenie {{ one_article.rating }}
+                    <div class="article_info">
+                        <div 
+                            class="rating" 
+                            title="
+                                {% if one_article.rating|floatformat:0|add:0 == 0 %}
+                                    Zatiaľ žiadne hodnotenia
+                                
+                                {% else %}
+                                    Priemerné hodnotenie {{ one_article.rating }}
 
-                            {% endif %}
-                        "
-                    >
-                        {% for _ in "12345" %}
-                            {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
-                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                {% endif %}
+                            "
+                        >
+                            {% for _ in "12345" %}
+                                {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
+                                    <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
 
-                            {% else %}
-                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                {% else %}
+                                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
 
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
 
-                    <div class="visitors" title="{{ one_article.visitors }} unikátnych návštevníkov">
-                        <p><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
+                        <div class="category" title="Kategória">
+                            <p><i class="fa-solid fa-list"> </i> {{ one_article.category|capfirst }}</p> <!-- https://fontawesome.com/icons/list -->
+                        </div>
+
+                        <div class="visitors" title="{{ one_article.visitors }} unikátnych návštevníkov">
+                            <p><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
+                        </div>
+
+                        <div class="date" title="Dátum zverejnenia">
+                            <p>{{ one_article.creation_time|date:"d.m. Y" }}</p>
+                        </div>
                     </div>
                 </a>
             </article>
