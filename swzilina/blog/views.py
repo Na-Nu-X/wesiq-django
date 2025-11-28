@@ -563,9 +563,25 @@ def editReviewView(request):
     return render(request, "blog/edit_review.html")
 
 def blogView(request):
-    # Get All Articles From DB
+    # Gets All Articles From DB
     articles = Articles.objects.all()
 
+    # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
+    sort = request.GET.get("sort", "latest")
+
+    if sort == "latest":
+        articles = articles.order_by("-creation_time")
+
+    elif sort == "best":
+        articles = articles.order_by("-rating")
+
+    elif sort == "A-Z":
+        articles = articles.order_by("title")
+
+    elif sort == "Z-A":
+        articles = articles.order_by("-title")
+
+    # Renders Page With Articles Data
     return render(request, "blog/blog.html", {
         "articles": articles,
     })
@@ -585,6 +601,9 @@ def blogThemeView(request, theme):
             "category": article.category,
             "rating": article.rating,
             "visitors": article.visitors,
+            "image_name": article.image_name,
+            "link": article.link,
+            "creation_time": article.creation_time,
         })
 
         response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
