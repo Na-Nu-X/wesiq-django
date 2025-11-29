@@ -24,13 +24,14 @@ class Users(models.Model):
 
 class Reviews(models.Model):
     # user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.CASCADE, related_name="review", null=False)
-    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.SET_NULL, related_name="review", null=True) # Test
+    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.SET_NULL, related_name="review", null=True)
     rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class Articles(models.Model):
+    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.SET_NULL, related_name="articles", null=True)
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50),default=list, null=False)
