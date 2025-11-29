@@ -1,17 +1,20 @@
 /************
  Main Styles
 ************/
-.search_bar_container {
+.content {
+  padding: 0px 20px;
+}
+.content .search_bar_container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-left: 120px;
+  gap: 10px;
 }
-.search_bar_container .search_bar_menu {
+.content .search_bar_container .search_bar_menu {
   position: relative;
 }
-.search_bar_container .search_bar_menu .fa-magnifying-glass {
+.content .search_bar_container .search_bar_menu .fa-magnifying-glass {
   position: absolute;
   top: 50%;
   left: 8.5px;
@@ -21,7 +24,7 @@
   transition: color 0.3s ease;
   z-index: 50;
 }
-.search_bar_container .search_bar_menu .fa-xmark {
+.content .search_bar_container .search_bar_menu .fa-xmark {
   position: absolute;
   top: 50%;
   right: 0px;
@@ -32,12 +35,11 @@
   transition: color 0.3s ease;
   z-index: 50;
 }
-.search_bar_container .search_bar_menu .fa-xmark:hover {
+.content .search_bar_container .search_bar_menu .fa-xmark:hover {
   color: #fff;
   cursor: pointer;
 }
-.search_bar_container .search_bar_menu .search_bar {
-  padding: 0px 32px;
+.content .search_bar_container .search_bar_menu .search_bar {
   width: 500px;
   height: 38px;
   background-color: rgba(0, 0, 0, 0.1);
@@ -53,43 +55,29 @@
   transition: width 0.3s ease, border 0.3s ease;
   z-index: 50;
 }
-.search_bar_container .search_bar_menu .search_bar:hover, .search_bar_container .search_bar_menu .search_bar:focus {
+.content .search_bar_container .search_bar_menu .search_bar:hover, .content .search_bar_container .search_bar_menu .search_bar:focus {
   width: 520px;
   border-color: #fff !important;
 }
-.search_bar_container .search_bar_menu .search_bar::-moz-placeholder {
+.content .search_bar_container .search_bar_menu .search_bar::-moz-placeholder {
   color: #cccccc;
 }
-.search_bar_container .search_bar_menu .search_bar::placeholder {
+.content .search_bar_container .search_bar_menu .search_bar::placeholder {
   color: #cccccc;
 }
-.search_bar_container .search_bar_menu:has(.search_bar:hover) .fa-magnifying-glass, .search_bar_container .search_bar_menu:has(.search_bar:focus) .fa-magnifying-glass {
+.content .search_bar_container .search_bar_menu:has(.search_bar:hover) .fa-magnifying-glass, .content .search_bar_container .search_bar_menu:has(.search_bar:focus) .fa-magnifying-glass {
   color: #fff;
 }
-.search_bar_container .filter {
-  position: relative;
-  width: 100px;
-  height: 38px;
-  margin-left: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
-  border: 2px solid rgb(229.5, 229.5, 229.5);
+.content .search_bar_container .sorter {
+  width: 100%;
+}
+.content .search_bar_container .sorter form {
+  padding: 10px 50px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px solid #fff;
   border-radius: 5px;
-  transition: transform 0.3s ease;
 }
-.search_bar_container .filter:hover {
-  cursor: pointer;
-  transform: scale(1.1);
-}
-.search_bar_container .filter img {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.articles {
+.content .articles {
   position: relative;
   top: 20px;
   width: 100%;
@@ -100,9 +88,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
-  padding: 0px 20px;
 }
-.articles article {
+.content .articles article {
   position: relative;
   max-width: 500px;
   height: 300px;
@@ -116,25 +103,25 @@
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
-.articles article:hover {
+.content .articles article:hover {
   transform: scale(1.01);
   cursor: pointer;
 }
-.articles article .share {
+.content .articles article .share {
   position: absolute;
-  top: 27px;
+  top: 29.5px;
   right: 20px;
   z-index: 50;
 }
-.articles article .share i {
-  font-size: 30px;
+.content .articles article .share i {
+  font-size: 25px;
   color: #999999;
   transition: color 0.3s ease;
 }
-.articles article .share i:hover {
+.content .articles article .share i:hover {
   color: #cccccc;
 }
-.articles article a {
+.content .articles article a {
   display: block;
   width: 100%;
   height: 100%;
@@ -144,12 +131,12 @@
   -webkit-backdrop-filter: blur(2px);
           backdrop-filter: blur(2px);
 }
-.articles article a h2 {
+.content .articles article a h2 {
   margin-bottom: 3.75px;
   font-family: "Balsamiq Sans", sans-serif;
   color: #ebb914;
 }
-.articles article a .article_info {
+.content .articles article a .article_info {
   position: absolute;
   bottom: 0px;
   left: 0px;
@@ -157,73 +144,79 @@
   height: 75px;
   background-color: rgba(255, 255, 255, 0.1);
 }
-.articles article a .article_info .rating {
+.content .articles article a .article_info .rating {
   position: absolute;
   bottom: 37.5px;
   left: 20px;
 }
-.articles article a .article_info .rating img {
+.content .articles article a .article_info .rating img {
   width: 12px;
   height: 12px;
 }
-.articles article a .article_info .category {
+.content .articles article a .article_info .category {
   position: absolute;
   bottom: 14.5px;
   left: 20px;
 }
-.articles article a .article_info .category p {
+.content .articles article a .article_info .category p {
   color: #ebb914;
 }
-.articles article a .article_info .category i {
+.content .articles article a .article_info .category i {
   color: #999999;
   transition: color 0.3s ease;
 }
-.articles article a .article_info .category:hover i {
+.content .articles article a .article_info .category:hover i {
   color: #cccccc;
 }
-.articles article a .article_info .visitors {
+.content .articles article a .article_info .visitors {
   position: absolute;
   bottom: 37.5px;
   right: 20px;
 }
-.articles article a .article_info .visitors p {
+.content .articles article a .article_info .visitors p {
   color: #ebb914;
 }
-.articles article a .article_info .visitors i {
+.content .articles article a .article_info .visitors i {
   color: #999999;
   transition: color 0.3s ease;
 }
-.articles article a .article_info .visitors:hover i {
+.content .articles article a .article_info .visitors:hover i {
   color: #cccccc;
 }
-.articles article a .article_info .date {
+.content .articles article a .article_info .date {
   position: absolute;
   bottom: 14.5px;
   right: 20px;
   transition: color 0.3s ease;
 }
-.articles article a .article_info .date p {
+.content .articles article a .article_info .date p {
   color: #ebb914;
 }
 
+/***********
+ Key Frames
+***********/
+@keyframes fade_in_animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 /**************
  Media Queries
 **************/
-@media (max-width: 1595px) {
-  .search_bar_container {
-    padding-left: 0px !important;
-  }
-}
 @media (max-width: 1075px) {
-  .search_bar {
-    width: 680px !important;
+  .sorter form {
+    max-width: 800px !important;
   }
   article {
     max-width: 800px !important;
   }
 }
-@media (max-width: 860px) {
+@media (max-width: 555px) {
   .search_bar {
-    width: 360px !important;
+    width: 445px !important;
   }
 }/*# sourceMappingURL=blog.css.map */
