@@ -567,36 +567,36 @@ def blogView(request):
     articles = Articles.objects.all()
 
     # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
-    sort = request.GET.get("sort", "latest")
-    category = request.GET.get("category", "all")
+    sort = request.GET.get("sort", "latest").lower()
+    category = request.GET.get("category", "all").lower()
 
     if sort == "latest":
         if category == "all":
             articles.order_by("-creation_time")
 
         else:
-            articles = articles.filter(category=category).order_by("-creation_time")
+            articles = articles.filter(categories__contains=[category]).order_by("-creation_time")
 
     elif sort == "best":
         if category == "all":
             articles = articles.order_by("-rating")
 
         else:
-            articles = articles.filter(category=category).order_by("-rating")
+            articles = articles.filter(categories__contains=[category]).order_by("-rating")
 
-    elif sort == "A-Z":
+    elif sort == "a-z":
         if category == "all":
             articles = articles.order_by("title")
         
         else:
-            articles = articles.filter(category=category).order_by("title")
+            articles = articles.filter(categories__contains=[category]).order_by("title")
 
-    elif sort == "Z-A":
+    elif sort == "z-a":
         if category == "all":
             articles = articles.order_by("-title")
         
         else:
-            articles = articles.filter(category=category).order_by("-title")
+            articles = articles.filter(categories__contains=[category]).order_by("-title")
 
     # Renders Page With Articles Data
     return render(request, "blog/blog.html", {
@@ -615,7 +615,7 @@ def blogThemeView(request, theme):
         response = render(request, "blog/articles.html", {
             "title": article.title,
             "content": article.content,
-            "category": article.category,
+            "category": article.categories,
             "rating": article.rating,
             "visitors": article.visitors,
             "image_name": article.image_name,

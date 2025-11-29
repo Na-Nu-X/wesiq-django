@@ -131,7 +131,7 @@
                 &:hover,
                 &:active {
                     transform: scale(1.1);
-                    color: $error-color;
+                    color: $article-color;
                 }
             }
         }
@@ -353,7 +353,7 @@ form {
         }
     }
 
-    input[type="text"], input[type="email"], input[type="password"], select {
+    input[type="text"], input[type="email"], input[type="password"] {
         width: 90%;
         height: 50px;
         margin-bottom: 10px;
@@ -369,14 +369,45 @@ form {
         &:focus {
             width: 100%;
         }
+
+        &:-webkit-autofill {
+            -webkit-text-fill-color: rgb(255, 255, 255);
+            transition: width 0.3s ease, background-color 9999s ease;
+
+            &:hover,
+            &:focus {
+                -webkit-text-fill-color: rgb(255, 255, 255);
+                transition: width 0.3s ease, background-color 9999s ease;
+            }
+        }
     }
 
     input::placeholder {
         color: darken($secondary-color, 40%);
     }
 
-    select:hover, select:focus {
-        cursor: pointer;
+    select {
+        width: 90%;
+        height: 50px;
+        margin-bottom: 10px;
+        padding: 0px 10px;
+        background: transparent;
+        color: $secondary-color;
+        border: none;
+        border-bottom: 1px solid $secondary-color;
+        outline: none;
+        transition: width 0.3s ease;
+
+        &:hover,
+        &:focus {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        option {
+            background-color: $secondary-color;
+            color: $main-color;
+        }
     }
 
     .form_report {

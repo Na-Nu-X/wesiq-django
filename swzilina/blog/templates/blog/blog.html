@@ -22,16 +22,31 @@
                 <select name="sort" onChange="this.form.submit()">
                     <option value="latest" {% if request.GET.sort == "latest" %}selected{% endif %}>Najnovšie články</option>
                     <option value="best" {% if request.GET.sort == "best" %}selected{% endif %}>Najlepšie hodnotené</option>
-                    <option value="A-Z" {% if request.GET.sort == "A-Z" %}selected{% endif %}>Podľa abecedy (A-Z)</option>
-                    <option value="Z-A" {% if request.GET.sort == "Z-A" %}selected{% endif %}>Podľa abecedy (Z-A)</option>
+                    <option value="a-z" {% if request.GET.sort == "a-z" %}selected{% endif %}>Podľa abecedy (A-Z)</option>
+                    <option value="z-a" {% if request.GET.sort == "z-a" %}selected{% endif %}>Podľa abecedy (Z-A)</option>
                 </select>
 
                 <select name="category" onChange="this.form.submit()">
                     <option value="all" {% if request.GET.category == "all" %}selected{% endif %}>Všetky kategórie</option>
-                    <option value="statics" {% if request.GET.category == "statics" %}selected{% endif %}>Statické prvky</option>
-                    <option value="dynamics" {% if request.GET.category == "dynamics" %}selected{% endif %}>Dynamické triky</option>
-                    <option value="isometrics" {% if request.GET.category == "isometrics" %}selected{% endif %}>Silové cviky</option>
-                    <option value="balance" {% if request.GET.category == "balance" %}selected{% endif %}>Prvky s rovnováhou</option>
+
+                    <optgroup label="Podľa určenia">
+                        <option value="static" {% if request.GET.category == "static" %}selected{% endif %}>Statické prvky</option>
+                        <option value="dynamic" {% if request.GET.category == "dynamic" %}selected{% endif %}>Dynamické triky</option>
+                        <option value="isotonic" {% if request.GET.category == "isotonic" %}selected{% endif %}>Izotonické cviky</option>
+                        <option value="balance" {% if request.GET.category == "balance" %}selected{% endif %}>O rovnováhe</option>
+                    </optgroup>
+
+                    <optgroup label="Podľa pohybu">
+                        <option value="pull" {% if request.GET.category == "pull" %}selected{% endif %}>Ťah</option>
+                        <option value="push" {% if request.GET.category == "push" %}selected{% endif %}>Tlak</option>
+                    </optgroup>
+
+                    <optgroup label="Podľa obtiažnosti">
+                        <option value="beginner" {% if request.GET.category == "beginner" %}selected{% endif %}>Pre začiatočníkov</option>
+                        <option value="intermediate" {% if request.GET.category == "intermediate" %}selected{% endif %}>Pre stredne pokročilých</option>
+                        <option value="advanced" {% if request.GET.category == "advanced" %}selected{% endif %}>Pre pokročilých</option>
+                        <option value="elite" {% if request.GET.category == "elite" %}selected{% endif %}>Pre profesionálov</option>
+                    </optgroup>
                 </select>
             </form>
         </div>
@@ -98,7 +113,14 @@
                         </div>
 
                         <div class="category" title="Kategória">
-                            <p><i class="fa-solid fa-list"> </i> {{ one_article.category|capfirst }}</p> <!-- https://fontawesome.com/icons/list -->
+                            <p>
+                                <i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
+                                
+                                {% for one_category in one_article.categories %}
+                                    {{ one_category|capfirst }}
+
+                                {% endfor %}
+                            </p>
                         </div>
 
                         <div class="visitors" title="{{ one_article.visitors }} unikátnych návštevníkov">
