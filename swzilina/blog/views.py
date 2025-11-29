@@ -568,18 +568,35 @@ def blogView(request):
 
     # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
     sort = request.GET.get("sort", "latest")
+    category = request.GET.get("category", "all")
 
     if sort == "latest":
-        articles = articles.order_by("-creation_time")
+        if category == "all":
+            articles.order_by("-creation_time")
+
+        else:
+            articles = articles.filter(category=category).order_by("-creation_time")
 
     elif sort == "best":
-        articles = articles.order_by("-rating")
+        if category == "all":
+            articles = articles.order_by("-rating")
+
+        else:
+            articles = articles.filter(category=category).order_by("-rating")
 
     elif sort == "A-Z":
-        articles = articles.order_by("title")
+        if category == "all":
+            articles = articles.order_by("title")
+        
+        else:
+            articles = articles.filter(category=category).order_by("title")
 
     elif sort == "Z-A":
-        articles = articles.order_by("-title")
+        if category == "all":
+            articles = articles.order_by("-title")
+        
+        else:
+            articles = articles.filter(category=category).order_by("-title")
 
     # Renders Page With Articles Data
     return render(request, "blog/blog.html", {

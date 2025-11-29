@@ -14,11 +14,7 @@
         <div class="search_bar_menu">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
             <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-            <input class="search_bar" type="text" placeholder="Nájsť článok" autocomplete="off">
-        </div>
-
-        <div class="filter">
-            <img src="{% static 'images/filter.png' %}"> <!-- https://www.flaticon.com/free-icon/filter_7854748 -->
+            <input class="search_bar" placeholder="Nájsť článok" autocomplete="off">
         </div>
 
         <div class="sorter">
@@ -28,6 +24,14 @@
                     <option value="best" {% if request.GET.sort == "best" %}selected{% endif %}>Najlepšie hodnotené</option>
                     <option value="A-Z" {% if request.GET.sort == "A-Z" %}selected{% endif %}>Podľa abecedy (A-Z)</option>
                     <option value="Z-A" {% if request.GET.sort == "Z-A" %}selected{% endif %}>Podľa abecedy (Z-A)</option>
+                </select>
+
+                <select name="category" onChange="this.form.submit()">
+                    <option value="all" {% if request.GET.category == "all" %}selected{% endif %}>Všetky kategórie</option>
+                    <option value="statics" {% if request.GET.category == "statics" %}selected{% endif %}>Statické prvky</option>
+                    <option value="dynamics" {% if request.GET.category == "dynamics" %}selected{% endif %}>Dynamické triky</option>
+                    <option value="isometrics" {% if request.GET.category == "isometrics" %}selected{% endif %}>Silové cviky</option>
+                    <option value="balance" {% if request.GET.category == "balance" %}selected{% endif %}>Prvky s rovnováhou</option>
                 </select>
             </form>
         </div>
@@ -49,6 +53,16 @@
                     {% endif %}
                 "
             >
+                <!-- 
+                    front-lever - https://www.behance.net/gallery/36345741/Lee-Wade-Turner-Calisthenics-for-Forever-Sports/modules/227474853
+
+                    handstand - https://unsplash.com/photos/man-in-black-shorts-standing-on-brown-grass-during-daytime-j6amjHxtc1U
+
+                    one-arm-pull-up - https://images.squarespace-cdn.com/content/v1/5eaa851bc7b0ae39a020ea32/d27cfd00-e7b6-4c49-8a78-4b5493ef8cfd/chin%2Bover%2Bpulling%2Bhand%2B%281%29+%281%29.jpg
+
+                    swing-360 - https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
+                -->
+
                 <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="Zdielať">
                     <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
 
@@ -183,6 +197,20 @@
 
                     await navigator.share(share_data) // Opens Share Menu
                 })
+            })
+
+            // Animated Articles
+
+            window.addEventListener("scroll", function() {
+                const search_bar_container = document.querySelector(".search_bar_container")
+
+                if(window.scrollY > search_bar_container.offsetHeight + 20) {
+                    const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tags From Page
+
+                    article_tags.forEach(function(one_article) {
+                        one_article.style.animation = "fade_in_animation 1s ease-out"
+                    })
+                }
             })
         })
     </script>
