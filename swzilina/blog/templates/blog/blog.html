@@ -7,6 +7,41 @@
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}">
 {% endblock style %}
 
+{% block banner %}
+    <div class="write_article">
+        <a href="{% url 'write_article_url' %}" title="Pridať článok" target="_self">Pridať článok</a>
+    </div>
+
+    {% if request.session.logged_in_user_id %}
+        <div class="account">
+            <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                <img 
+                    class="profile_picture" 
+                    src="
+                        {% if profile_picture_name %}
+                            ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+            </a>
+
+            <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+
+            <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+        </div>
+
+    {% else %}
+        <div class="no_account">
+            <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+        </div>
+
+    {% endif %}
+{% endblock banner %}
+
 {% block heading %}Témy na čítanie{% endblock heading %}
 
 {% block content %}
@@ -78,6 +113,10 @@
                     swing-360 - https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
                 -->
 
+                <div class="info">
+                    <i class="fa-solid fa-circle-info" title="Tento článok pridal {{ one_article.user.first_name }} {{ one_article.user.last_name }}"></i>
+                </div>
+                
                 <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="Zdielať">
                     <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
 

@@ -26,4 +26,7 @@ urlpatterns = [
 
     path('blog/', views.blogView, name='blog_url'),
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
+
+    path('pridat-clanok', views.writeArticleView, name='write_article_url'),
+    path('write-article', views.writeArticleView),
 ]

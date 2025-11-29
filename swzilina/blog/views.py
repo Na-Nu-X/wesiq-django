@@ -598,6 +598,22 @@ def blogView(request):
         else:
             articles = articles.filter(categories__contains=[category]).order_by("-title")
 
+    # Checks If User Is Logged In
+    if "logged_in_user_id" in request.session:
+        # Get Logged In User ID From Session
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        # Get Logged In User From DB
+        user = Users.objects.get(id=logged_in_user_id)
+
+        # Renders Homepage With Filled Contact Form, User Data And Reviews
+        return render(request, "blog/blog.html", {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
+            "articles": articles,
+        })
+
     # Renders Page With Articles Data
     return render(request, "blog/blog.html", {
         "articles": articles,
@@ -631,3 +647,8 @@ def blogThemeView(request, theme):
         return render(request, "blog/articles.html", {
             "not_found": True,
         })
+    
+def writeArticleView(request):
+    return render(request, "blog/write_article.html", {
+        
+    })
