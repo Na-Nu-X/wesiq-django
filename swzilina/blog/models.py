@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 class Users(models.Model):
     role_choices = [
@@ -32,7 +33,8 @@ class Reviews(models.Model):
 class Articles(models.Model):
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     content = models.TextField(verbose_name="Content", null=False)
-    category = models.CharField(verbose_name="Category", max_length=50, null=False)
+    categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50),default=list, null=False)
+    # category = models.CharField(verbose_name="Category", max_length=50, null=False)
     rating = models.FloatField(verbose_name="Rating", default=0, null=False)
     visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)

@@ -86,6 +86,12 @@
                 background-color: transparentize($main-color, 0.9);
                 border: 2px solid $secondary-color;
                 border-radius: 5px;
+
+                select {
+                    optgroup {
+                        background-color: lighten($main-color, 10%);
+                    }
+                }
             }
         }
     }
