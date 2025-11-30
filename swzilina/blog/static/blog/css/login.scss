@@ -4,77 +4,207 @@
  Main Styles
 ************/
 
-.password_container {
+// Form
+
+form {
     position: relative;
+    max-width: 500px;
+    margin: 0px auto;
+    padding: 30px 50px 50px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    border: 2px solid $secondary-color;
+    border-radius: 25px;
 
-    &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
-    &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
-        right: 0px;
-    }
-
-    .password {
-        padding-right: 28px !important;
-        -webkit-text-security: disc;
-    }
-
-    .fa-eye, .fa-eye-slash {
-        display: block;
-        color: darken($secondary-color, 40%);
-        position: absolute;
-        bottom: 10px;
-        right: 20px;
-        padding-bottom: 16px;
-        padding-top: 19px;
-        transition: right 0.3s ease;
+    h2 {
+        margin-bottom: 30px;
+        transition: letter-spacing 0.3s ease;
 
         &:hover {
-            color: darken($secondary-color, 20%);
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: color 0.3s ease;
         }
-    }
 
-    .fa-eye {
-        display: none;
-    }
-}
-
-.login_methods div {
-    position: relative;
-    display: block;
-    width: 90%;
-    height: 50px;
-    line-height: 50px;
-    margin: 10px auto;
-    background-color: transparentize($secondary-color, 0.1);
-    border: 1px solid $main-color;
-    border-radius: 25px;
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-    &:hover {
-        background-color: transparentize($main-color, 0.5);
-        border: 1px solid $secondary-color;
-        transform: scale(1.1);
-        letter-spacing: 1px;
-        cursor: pointer;
-    }
-
-    a {
-        display: block;
-        color: $main-color;
-        text-decoration: none;
-        width: 100%;
-        height: 100%;
-
-        &:hover, &:active {
+        a {
+            font-size: 1em;
+            text-decoration: none;
             color: $secondary-color;
         }
+    }
+
+    .back {
+        position: absolute;
+        top: 42px;
+        left: 50px;
+        width: 32px;
+        height: 32px;
 
         img {
+            width: 32px;
+            height: 32px;
+
+            &:hover {
+                transform: scale(1.1);
+                transition: transform 0.3s ease;
+            }
+        }
+    }
+
+    input[type="text"], input[type="email"] {
+        width: 90%;
+        height: 50px;
+        margin-bottom: 10px;
+        padding: 0px 10px;
+        background: transparent;
+        color: $secondary-color;
+        border: none;
+        border-bottom: 1px solid $secondary-color;
+        outline: none;
+        transition: width 0.3s ease;
+
+        &:hover,
+        &:focus {
+            width: 100%;
+        }
+
+        &::placeholder {
+            color: darken($secondary-color, 40%);
+        }
+
+        &:-webkit-autofill {
+            -webkit-text-fill-color: rgb(255, 255, 255);
+            transition: width 0.3s ease, background-color 9999s ease;
+
+            &:hover,
+            &:focus {
+                -webkit-text-fill-color: rgb(255, 255, 255);
+                transition: width 0.3s ease, background-color 9999s ease;
+            }
+        }
+    }
+
+    .password_container {
+        position: relative;
+
+        &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
+        &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
+            right: 0px;
+        }
+
+        .password {
+            padding-right: 28px !important;
+            -webkit-text-security: disc;
+        }
+
+        .fa-eye, .fa-eye-slash {
+            display: block;
+            color: darken($secondary-color, 40%);
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 8px;
+            bottom: 10px;
+            right: 20px;
+            padding-bottom: 16px;
+            padding-top: 19px;
+            transition: right 0.3s ease;
+
+            &:hover {
+                color: darken($secondary-color, 20%);
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+        }
+
+        .fa-eye {
+            display: none;
+        }
+    }
+
+    .form_report {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.9em;
+
+        &.success {
+            color: $success-color;
+        }
+
+        &.error {
+            color: $error-color;
+        }
+    }
+
+    input[type="submit"] {
+        width: 90%;
+        height: 50px;
+        margin-top: 40px;
+        background-color: transparentize($main-color, 0.2);
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+        &:hover,
+        &:focus {
+            background-color: transparentize($secondary-color, 0.1);
+            color: $main-color;
+            border: 1px solid $main-color;
+            transform: scale(1.1);
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+    }
+
+    .login_methods div {
+        position: relative;
+        display: block;
+        width: 90%;
+        height: 50px;
+        line-height: 50px;
+        margin: 10px auto;
+        background-color: transparentize($secondary-color, 0.1);
+        border: 1px solid $main-color;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+        &:hover {
+            background-color: transparentize($main-color, 0.5);
+            border: 1px solid $secondary-color;
+            transform: scale(1.1);
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        a {
+            display: block;
+            color: $main-color;
+            text-decoration: none;
+            width: 100%;
+            height: 100%;
+
+            &:hover, &:active {
+                color: $secondary-color;
+            }
+
+            img {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                left: 8px;
+            }
+        }
+    }
+
+    .form_questions {
+        margin-top: 10px;
+
+        a {
+            color: $secondary-color;
+            text-decoration: none;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
         }
     }
 }

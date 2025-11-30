@@ -311,6 +311,7 @@ class writeArticleForm(forms.Form):
     # )
 
     category_style = forms.ChoiceField(
+        widget=forms.Select(attrs={"class": "category_style"}),
         choices = {
             "": "Kategória podľa určenia",
             "static": "Statické prvky",
@@ -327,6 +328,7 @@ class writeArticleForm(forms.Form):
     )
 
     category_movement = forms.ChoiceField(
+        widget=forms.Select(attrs={"class": "category_movement"}),
         choices = {
             "": "Kategória podľa pohybu",
             "pull": "Ťah",
@@ -341,6 +343,7 @@ class writeArticleForm(forms.Form):
     )
 
     category_difficulty = forms.ChoiceField(
+        widget=forms.Select(attrs={"class": "category_difficulty"}),
         choices = {
             "": "Kategória podľa obtiažnosti",
             "beginner": "Pre začiatočníkov",

@@ -4,6 +4,162 @@
  Main Styles
 ************/
 
+// Form
+
+form {
+    position: relative;
+    max-width: 500px;
+    margin: 0px auto;
+    padding: 30px 50px 50px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    border: 2px solid $secondary-color;
+    border-radius: 25px;
+
+    h2 {
+        margin-bottom: 30px;
+        transition: letter-spacing 0.3s ease;
+
+        &:hover {
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        a {
+            font-size: 1em;
+            text-decoration: none;
+            color: $secondary-color;
+        }
+    }
+
+    .back {
+        position: absolute;
+        top: 42px;
+        left: 50px;
+        width: 32px;
+        height: 32px;
+
+        img {
+            width: 32px;
+            height: 32px;
+
+            &:hover {
+                transform: scale(1.1);
+                transition: transform 0.3s ease;
+            }
+        }
+    }
+
+    .reviewer {
+        position: relative;
+        height: 38px;
+        margin-left: 5%;
+        text-align: left;
+
+        .profile_picture {
+            width: 38px;
+            height: 38px;
+            padding: 2px;
+            border: 1px solid $secondary-color;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .full_name {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 48px;
+        }
+    }
+
+    .rating {
+        height: 32px;
+        margin: 10px 0px 0px 5%;
+        text-align: left;
+
+        input {
+            display: none;
+        }
+    }
+
+    textarea {
+        width: 90%;
+        height: 162px;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background: transparent;
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 10px;
+        outline: none;
+        resize: none;
+        transition: width 0.3s ease;
+
+        &:hover,
+        &:focus {
+            width: 100%;
+        }
+
+        &::placeholder {
+            color: darken($secondary-color, 40%);
+        }
+    }
+
+    .form_report {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.9em;
+
+        &.success {
+            color: $success-color;
+        }
+
+        &.error {
+            color: $error-color;
+        }
+    }
+
+    input[type="submit"] {
+        width: 90%;
+        height: 50px;
+        margin-top: 40px;
+        background-color: transparentize($main-color, 0.2);
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+        &:hover,
+        &:focus {
+            background-color: transparentize($secondary-color, 0.1);
+            color: $main-color;
+            border: 1px solid $main-color;
+            transform: scale(1.1);
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+    }
+
+    .delete_review {
+        margin-top: 10px;
+        opacity: 0.6;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+
+        &:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            cursor: pointer;
+        }
+    }
+
+    #delete_review {
+        display: none;
+    }
+}
+
 .no_logged_in p {
     text-align: center;
 
@@ -17,73 +173,4 @@
             text-decoration: underline;
         }
     }
-}
-
-.reviewer {
-    position: relative;
-    height: 38px;
-    margin-left: 5%;
-    text-align: left;
-
-    .profile_picture {
-        width: 38px;
-        height: 38px;
-        padding: 2px;
-        border: 1px solid $secondary-color;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    .full_name {
-        display: inline-block;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 48px;
-    }
-}
-
-.rating {
-    height: 32px;
-    margin: 10px 0px 0px 5%;
-    text-align: left;
-
-    input {
-        display: none;
-    }
-}
-
-textarea {
-    width: 90%;
-    height: 162px;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background: transparent;
-    color: $secondary-color;
-    border: 1px solid $secondary-color;
-    border-radius: 10px;
-    outline: none;
-    resize: none;
-    transition: width 0.3s ease;
-
-    &:hover,
-    &:focus {
-        width: 100%;
-    }
-}
-
-.delete_review {
-    margin-top: 10px;
-    opacity: 0.6;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-
-    &:hover {
-        transform: scale(1.1);
-        opacity: 1;
-        cursor: pointer;
-    }
-}
-
-#delete_review {
-    display: none;
 }

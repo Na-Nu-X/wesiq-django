@@ -1,17 +1,87 @@
 /************
  Main Styles
 ************/
-.password_container {
+form {
+  position: relative;
+  max-width: 500px;
+  margin: 0px auto;
+  padding: 30px 50px 50px;
+  text-align: center;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 2px solid #fff;
+  border-radius: 25px;
+}
+form h2 {
+  margin-bottom: 30px;
+  transition: letter-spacing 0.3s ease;
+}
+form h2:hover {
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+form h2 a {
+  font-size: 1em;
+  text-decoration: none;
+  color: #fff;
+}
+form .back {
+  position: absolute;
+  top: 42px;
+  left: 50px;
+  width: 32px;
+  height: 32px;
+}
+form .back img {
+  width: 32px;
+  height: 32px;
+}
+form .back img:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+form input[type=text], form input[type=email] {
+  width: 90%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: width 0.3s ease;
+}
+form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus {
+  width: 100%;
+}
+form input[type=text]::-moz-placeholder, form input[type=email]::-moz-placeholder {
+  color: #999999;
+}
+form input[type=text]::placeholder, form input[type=email]::placeholder {
+  color: #999999;
+}
+form input[type=text]:-webkit-autofill, form input[type=email]:-webkit-autofill {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+form input[type=text]:-webkit-autofill:hover, form input[type=text]:-webkit-autofill:focus, form input[type=email]:-webkit-autofill:hover, form input[type=email]:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+form .password_container {
   position: relative;
 }
-.password_container:has(.password:hover) .fa-eye, .password_container:has(.password:focus) .fa-eye, .password_container:has(.password:hover) .fa-eye-slash, .password_container:has(.password:focus) .fa-eye-slash {
+form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye, form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
   right: 0px;
 }
-.password_container .password {
+form .password_container .password {
   padding-right: 28px !important;
   -webkit-text-security: disc;
 }
-.password_container .fa-eye, .password_container .fa-eye-slash {
+form .password_container .fa-eye, form .password_container .fa-eye-slash {
   display: block;
   color: #999999;
   position: absolute;
@@ -21,16 +91,45 @@
   padding-top: 19px;
   transition: right 0.3s ease;
 }
-.password_container .fa-eye:hover, .password_container .fa-eye-slash:hover {
+form .password_container .fa-eye:hover, form .password_container .fa-eye-slash:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-.password_container .fa-eye {
+form .password_container .fa-eye {
   display: none;
 }
-
-.login_methods div {
+form .form_report {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9em;
+}
+form .form_report.success {
+  color: #52cf20;
+}
+form .form_report.error {
+  color: #df3535;
+}
+form input[type=submit] {
+  width: 90%;
+  height: 50px;
+  margin-top: 40px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+form input[type=submit]:hover, form input[type=submit]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+form .login_methods div {
   position: relative;
   display: block;
   width: 90%;
@@ -42,28 +141,38 @@
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-.login_methods div:hover {
+form .login_methods div:hover {
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #fff;
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
 }
-.login_methods div a {
+form .login_methods div a {
   display: block;
   color: #000;
   text-decoration: none;
   width: 100%;
   height: 100%;
 }
-.login_methods div a:hover, .login_methods div a:active {
+form .login_methods div a:hover, form .login_methods div a:active {
   color: #fff;
 }
-.login_methods div a img {
+form .login_methods div a img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   left: 8px;
+}
+form .form_questions {
+  margin-top: 10px;
+}
+form .form_questions a {
+  color: #fff;
+  text-decoration: none;
+}
+form .form_questions a:hover, form .form_questions a:active {
+  text-decoration: underline;
 }
 
 /**************

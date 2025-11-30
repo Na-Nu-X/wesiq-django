@@ -351,17 +351,28 @@
   outline: none;
   resize: none;
 }
+.reviews .write_review_form .review textarea::-moz-placeholder {
+  color: #999999;
+}
+.reviews .write_review_form .review textarea::placeholder {
+  color: #999999;
+}
 .reviews .write_review_form input[type=submit] {
   width: 178px;
+  height: 50px;
   margin-top: 10px;
   background-color: #52cf20;
   color: #000;
   border: 1px solid #000;
   border-radius: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease;
 }
 .reviews .write_review_form input[type=submit]:hover, .reviews .write_review_form input[type=submit]:focus {
   background-color: rgb(93.730125523, 222.129707113, 42.370292887);
-  letter-spacing: 0px;
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  cursor: pointer;
 }
 .reviews .all_reviews {
   margin: 0px 0px;
@@ -431,7 +442,79 @@
 }
 
 .contact_form {
+  position: relative;
+  max-width: 500px;
   margin: 30px auto 40px;
+  padding: 30px 50px 50px;
+  text-align: center;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 2px solid #fff;
+  border-radius: 25px;
+}
+.contact_form h2 {
+  margin-bottom: 30px;
+  transition: letter-spacing 0.3s ease;
+}
+.contact_form h2:hover {
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.contact_form h2 a {
+  font-size: 1em;
+  text-decoration: none;
+  color: #fff;
+}
+.contact_form input[type=text], .contact_form input[type=email] {
+  width: 90%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: width 0.3s ease;
+}
+.contact_form input[type=text]:hover, .contact_form input[type=text]:focus, .contact_form input[type=email]:hover, .contact_form input[type=email]:focus {
+  width: 100%;
+}
+.contact_form input[type=text]::-moz-placeholder, .contact_form input[type=email]::-moz-placeholder {
+  color: #999999;
+}
+.contact_form input[type=text]::placeholder, .contact_form input[type=email]::placeholder {
+  color: #999999;
+}
+.contact_form input[type=text]:-webkit-autofill, .contact_form input[type=email]:-webkit-autofill {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.contact_form input[type=text]:-webkit-autofill:hover, .contact_form input[type=text]:-webkit-autofill:focus, .contact_form input[type=email]:-webkit-autofill:hover, .contact_form input[type=email]:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.contact_form select {
+  width: 90%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: width 0.3s ease;
+}
+.contact_form select:hover, .contact_form select:focus {
+  width: 100%;
+  cursor: pointer;
+}
+.contact_form select option {
+  background-color: #fff;
+  color: #000;
 }
 .contact_form .message_container {
   position: relative;
@@ -492,6 +575,36 @@
 }
 .contact_form .message_container:has(textarea:hover) .attachment, .contact_form .message_container:has(textarea:focus) .attachment {
   width: 100%;
+}
+.contact_form .form_report {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9em;
+}
+.contact_form .form_report.success {
+  color: #52cf20;
+}
+.contact_form .form_report.error {
+  color: #df3535;
+}
+.contact_form input[type=submit] {
+  width: 90%;
+  height: 50px;
+  margin-top: 40px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.contact_form input[type=submit]:hover, .contact_form input[type=submit]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
 }
 
 /***********
