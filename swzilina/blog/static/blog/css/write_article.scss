@@ -1,0 +1,30 @@
+@import "../../../../static/css/partials/variables";
+
+/************
+ Main Styles
+************/
+
+.write_article_form {
+    max-width: $main-width;
+    padding: 10px 20px;
+    background-color: transparentize($main-color, 0.9);
+    border: 1px solid darken($secondary-color, 40%);
+    border-radius: 5px;
+    text-align: center;
+
+    .categories {
+        display: flex;
+        flex-direction: row;
+
+        select {
+            max-width: 300px !important;
+            border-bottom: 0px solid $secondary-color !important;
+
+            &:hover,
+            &:focus {
+                width: 100%;
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+/************
+ Main Styles
+************/
+.write_article_form {
+  max-width: 900px;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid #999999;
+  border-radius: 5px;
+  text-align: center;
+}
+.write_article_form .categories {
+  display: flex;
+  flex-direction: row;
+}
+.write_article_form .categories select {
+  max-width: 300px !important;
+  border-bottom: 0px solid #fff !important;
+}
+.write_article_form .categories select:hover, .write_article_form .categories select:focus {
+  width: 100%;
+  cursor: pointer;
+}/*# sourceMappingURL=write_article.css.map */

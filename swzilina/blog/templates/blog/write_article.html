@@ -3,6 +3,10 @@
 
 {% block title %}Street Workout Žilina - Pridať článok{% endblock title %}
 
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/css/write_article.css' %}">
+{% endblock style %}
+
 {% block heading %}Pridať článok{% endblock heading %}
 
 {% block content %}
@@ -13,7 +17,22 @@
 
         <a class="back" href="{% url 'blog_url' %}" title="Späť na všetky články" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
 
-        {{ write_article_form }}
+        {{ write_article_form.title }}
+        {{ write_article_form.content }}
+
+        <div class="categories">
+            {{ write_article_form.category_style }}
+            {{ write_article_form.category_movement }}
+            {{ write_article_form.category_difficulty }}
+        </div>
+
+        <div class="link_container">
+            <i class="fa-regular fa-lightbulb" title="Navrhnúť link"></i> <!-- https://fontawesome.com/icons/lightbulb -->
+            {{ write_article_form.link }}
+            <i class="fa-solid fa-circle-info" title="URL adresa vášho článku (napr. front-lever)"></i> <!-- https://fontawesome.com/icons/circle-info -->
+        </div>
+
+        {{ write_article_form.select_article_image }}
 
         <input type="submit" value="Pridať článok">
     </form>
