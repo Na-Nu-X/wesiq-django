@@ -56,6 +56,7 @@
             <form method="GET">
                 <select name="sort" onChange="this.form.submit()">
                     <option value="latest" {% if request.GET.sort == "latest" %}selected{% endif %}>Najnovšie články</option>
+                    <option value="popular" {% if request.GET.sort == "popular" %}selected{% endif %}>Populárne články</option>
                     <option value="best" {% if request.GET.sort == "best" %}selected{% endif %}>Najlepšie hodnotené</option>
                     <option value="a-z" {% if request.GET.sort == "a-z" %}selected{% endif %}>Podľa abecedy (A-Z)</option>
                     <option value="z-a" {% if request.GET.sort == "z-a" %}selected{% endif %}>Podľa abecedy (Z-A)</option>
@@ -69,11 +70,13 @@
                         <option value="dynamic" {% if request.GET.category == "dynamic" %}selected{% endif %}>Dynamické triky</option>
                         <option value="isotonic" {% if request.GET.category == "isotonic" %}selected{% endif %}>Izotonické cviky</option>
                         <option value="balance" {% if request.GET.category == "balance" %}selected{% endif %}>O rovnováhe</option>
+                        <option value="flexibility" {% if request.GET.category == "flexibility" %}selected{% endif %}>O flexibilite</option>
                     </optgroup>
 
                     <optgroup label="Podľa pohybu">
                         <option value="pull" {% if request.GET.category == "pull" %}selected{% endif %}>Ťah</option>
                         <option value="push" {% if request.GET.category == "push" %}selected{% endif %}>Tlak</option>
+                        <option value="legs" {% if request.GET.category == "legs" %}selected{% endif %}>Nohy</option>
                     </optgroup>
 
                     <optgroup label="Podľa obtiažnosti">
@@ -95,7 +98,7 @@
                 style="
                     {% if one_article.image_name %}
                         background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
-                        url('{% static 'blog/images/' %}{{ one_article.image_name }}');
+                        url('{% static '../media/images/' %}{{ one_article.user_id }}/{{ one_article.image_name }}');
 
                     {% else %}
                         background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
