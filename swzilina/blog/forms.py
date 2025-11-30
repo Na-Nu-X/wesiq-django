@@ -164,7 +164,7 @@ class registrationForm(forms.Form):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte vaše telefónne číslo"}),
+        widget=forms.TextInput(attrs={"type": "tel", "placeholder": "Zadajte vaše telefónne číslo"}),
         label=False,
         max_length=20,
         required=False,
@@ -231,7 +231,7 @@ class editAccountForm(forms.Form):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zmeniť telefónne číslo"}),
+        widget=forms.TextInput(attrs={"type": "tel", "placeholder": "Zmeniť telefónne číslo"}),
         label=False,
         max_length=20,
         required=False,
@@ -275,5 +275,99 @@ class editAccountForm(forms.Form):
 
     delete_account = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={"id": "delete_account"}),
+        required=False,
+    )
+
+class writeArticleForm(forms.Form):
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Názov"}),
+        label=False,
+        max_length=20,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný názov je príliš dlhý",
+            "required": "Zadajte názov",
+        },
+    )
+
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Článok"}),
+        label=False,
+        required=True,
+        error_messages={
+            "required": "Obsah článku nesmie byť prázdny",
+        },
+    )
+
+    # categories = forms.CharField(
+    #     widget=forms.TextInput(attrs={"placeholder": "Kategórie"}),
+    #     label=False,
+    #     max_length=30,
+    #     required=True,
+    #     error_messages={
+    #         "max_length": "Zadajte menej kategórií",
+    #         "required": "Zadajte kategórie",
+    #     },
+    # )
+
+    category_style = forms.ChoiceField(
+        choices = {
+            "": "Kategória podľa určenia",
+            "static": "Statické prvky",
+            "dynamic": "Dynamický trik",
+            "isotonic": "Izotonický cvik",
+            "balance": "O rovnováhe",
+            "flexibility": "O flexibilite"
+        },
+        label=False,
+        required=True,
+        error_messages={
+            "required": "Vyberte kategóriu podľa určenia",
+        },
+    )
+
+    category_movement = forms.ChoiceField(
+        choices = {
+            "": "Kategória podľa pohybu",
+            "pull": "Ťah",
+            "push": "Tlak",
+            "legs": "Nohy",
+        },
+        label=False,
+        required=True,
+        error_messages={
+            "required": "Vyberte kategóriu podľa pohybu",
+        },
+    )
+
+    category_difficulty = forms.ChoiceField(
+        choices = {
+            "": "Kategória podľa obtiažnosti",
+            "beginner": "Pre začiatočníkov",
+            "intermediate": "Pre stredne pokročilých",
+            "advanced": "Pre pokročilých",
+            "elite": "Pre profesionálov",
+        },
+        label=False,
+        required=True,
+        error_messages={
+            "required": "Vyberte kategóriu podľa obtiažnosti",
+        },
+    )
+
+    link = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Link"}),
+        label=False,
+        max_length=20,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný link je príliš dlhý",
+            "required": "Zadajte link",
+        },
+    )
+
+    select_article_image = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={"id": "select_article_image", "accept": "image/*"}),
+        label=False,
         required=False,
     )

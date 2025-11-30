@@ -31,11 +31,10 @@ class Reviews(models.Model):
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class Articles(models.Model):
-    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.SET_NULL, related_name="articles", null=True)
+    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.DO_NOTHING, related_name="article", null=True)
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50),default=list, null=False)
-    # category = models.CharField(verbose_name="Category", max_length=50, null=False)
     rating = models.FloatField(verbose_name="Rating", default=0, null=False)
     visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)

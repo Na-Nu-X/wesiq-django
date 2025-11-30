@@ -2,3 +2,19 @@
 {% load static %}
 
 {% block title %}Street Workout Žilina - Pridať článok{% endblock title %}
+
+{% block heading %}Pridať článok{% endblock heading %}
+
+{% block content %}
+    <form class="write_article_form" action="{% url 'write_article_url' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h2><a href="{% url 'write_article_url' %}" target="_self">Pridať článok</a></h2>
+
+        <a class="back" href="{% url 'blog_url' %}" title="Späť na všetky články" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
+
+        {{ write_article_form }}
+
+        <input type="submit" value="Pridať článok">
+    </form>
+{% endblock content %}
