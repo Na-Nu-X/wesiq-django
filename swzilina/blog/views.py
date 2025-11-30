@@ -577,6 +577,13 @@ def blogView(request):
         else:
             articles = articles.filter(categories__contains=[category]).order_by("-creation_time")
 
+    if sort == "popular":
+        if category == "all":
+            articles = articles.order_by("-visitors")
+
+        else:
+            articles = articles.filter(categories__contains=[category]).order_by("-visitors")
+
     elif sort == "best":
         if category == "all":
             articles = articles.order_by("-rating")
@@ -659,22 +666,23 @@ def writeArticleView(request):
             categories.append(write_article_form.cleaned_data["category_movement"])
             categories.append(write_article_form.cleaned_data["category_difficulty"])
 
+            new_image_name = None # Default Image Name Is Saved To Database As null
+
+            article_image_file = request.FILES.get("select_article_image")
+            if article_image_file:
+                new_image_name = write_article_form.cleaned_data["link"] + Path(article_image_file.name).suffix
+                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                image_save_location.save(new_image_name, article_image_file)
+
             new_article = Articles(
                 user_id = logged_in_user_id,
                 title = write_article_form.cleaned_data["title"],
                 content = write_article_form.cleaned_data["content"],
                 categories = categories,
                 link = write_article_form.cleaned_data["link"],
+                image_name = new_image_name,
             )
             new_article.save()
-
-            # article_image_file = request.FILES.get("select_article_image")
-            # if article_image_file:
-            #     new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(article_image_file.name).suffix}"
-            #     image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-            #     image_save_location.save(new_image_name, article_image_file)
-
-            #     article.image_name = new_image_name
 
     return render(request, "blog/write_article.html", {
         "write_article_form": writeArticleForm
