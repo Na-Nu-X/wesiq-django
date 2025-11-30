@@ -264,7 +264,7 @@ form .back img:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
-form input[type=text], form input[type=email], form input[type=password] {
+form input[type=text], form input[type=email], form input[type=tel], form input[type=password] {
   width: 90%;
   height: 50px;
   margin-bottom: 10px;
@@ -276,15 +276,15 @@ form input[type=text], form input[type=email], form input[type=password] {
   outline: none;
   transition: width 0.3s ease;
 }
-form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus, form input[type=password]:hover, form input[type=password]:focus {
+form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus, form input[type=tel]:hover, form input[type=tel]:focus, form input[type=password]:hover, form input[type=password]:focus {
   width: 100%;
 }
-form input[type=text]:-webkit-autofill, form input[type=email]:-webkit-autofill, form input[type=password]:-webkit-autofill {
+form input[type=text]:-webkit-autofill, form input[type=email]:-webkit-autofill, form input[type=tel]:-webkit-autofill, form input[type=password]:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-form input[type=text]:-webkit-autofill:hover, form input[type=text]:-webkit-autofill:focus, form input[type=email]:-webkit-autofill:hover, form input[type=email]:-webkit-autofill:focus, form input[type=password]:-webkit-autofill:hover, form input[type=password]:-webkit-autofill:focus {
+form input[type=text]:-webkit-autofill:hover, form input[type=text]:-webkit-autofill:focus, form input[type=email]:-webkit-autofill:hover, form input[type=email]:-webkit-autofill:focus, form input[type=tel]:-webkit-autofill:hover, form input[type=tel]:-webkit-autofill:focus, form input[type=password]:-webkit-autofill:hover, form input[type=password]:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
@@ -494,7 +494,7 @@ footer .copywrite {
   }
 }
 @media (max-width: 600px) {
-  input[type=text], input[type=email], input[type=password], select, input[type=submit] {
+  input[type=text], input[type=email], input[type=tel], input[type=password], select, input[type=submit] {
     width: 100% !important;
   }
 }/*# sourceMappingURL=style.css.map */

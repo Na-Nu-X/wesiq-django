@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm
 from blog.models import Users, Reviews, Articles
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
@@ -649,6 +649,33 @@ def blogThemeView(request, theme):
         })
     
 def writeArticleView(request):
+    logged_in_user_id = request.session.get("logged_in_user_id")
+
+    if request.method == "POST":
+        write_article_form = writeArticleForm(request.POST, request.FILES)
+        if write_article_form.is_valid():
+            categories = []
+            categories.append(write_article_form.cleaned_data["category_style"])
+            categories.append(write_article_form.cleaned_data["category_movement"])
+            categories.append(write_article_form.cleaned_data["category_difficulty"])
+
+            new_article = Articles(
+                user_id = logged_in_user_id,
+                title = write_article_form.cleaned_data["title"],
+                content = write_article_form.cleaned_data["content"],
+                categories = categories,
+                link = write_article_form.cleaned_data["link"],
+            )
+            new_article.save()
+
+            # article_image_file = request.FILES.get("select_article_image")
+            # if article_image_file:
+            #     new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(article_image_file.name).suffix}"
+            #     image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+            #     image_save_location.save(new_image_name, article_image_file)
+
+            #     article.image_name = new_image_name
+
     return render(request, "blog/write_article.html", {
-        
+        "write_article_form": writeArticleForm
     })
