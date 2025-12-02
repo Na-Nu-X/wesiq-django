@@ -636,14 +636,7 @@ def blogThemeView(request, theme):
             article.save()
 
         response = render(request, "blog/articles.html", {
-            "title": article.title,
-            "content": article.content,
-            "category": article.categories,
-            "rating": article.rating,
-            "visitors": article.visitors,
-            "image_name": article.image_name,
-            "link": article.link,
-            "creation_time": article.creation_time,
+            "article": article,
         })
 
         response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article

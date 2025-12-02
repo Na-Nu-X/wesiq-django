@@ -1,9 +1,57 @@
 .content {
   max-width: 900px;
+  height: 100vh;
   margin: 0px auto;
-  padding: 10px 20px;
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid #999999;
   border-radius: 5px;
   text-align: justify;
+  overflow: hidden;
+}
+.content .article_banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 250px;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.content .article_banner .banner_image {
+  height: 100%;
+}
+.content .article_banner .banner_image img {
+  width: 360px;
+  height: 100%;
+}
+.content .article_banner .banner_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px 20px 10px;
+  color: #000;
+}
+.content .article_banner .banner_info .article_opening {
+  padding: 0px 0px 5px 10px;
+  border-left: 3px solid #000;
+}
+.content .article_banner .banner_info .article_opening h2 {
+  text-align: left;
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 3em;
+}
+.content .article_banner .banner_info .article_info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.content .article_banner .banner_info .article_info .rating img {
+  width: 12px;
+  height: 12px;
+}
+.content .article_banner .banner_info .article_info .date p {
+  padding-top: 3px;
+  font-size: 0.9em;
+}
+.content .article_content {
+  margin: 10px 20px;
 }/*# sourceMappingURL=articles.css.map */
