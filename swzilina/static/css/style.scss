@@ -205,8 +205,8 @@ main {
     backdrop-filter: blur(8px);
     border: 2px solid $secondary-color;
     border-radius: 25px;
-    z-index: 100;
     transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 100;
 
     &.hide {
         opacity: 0;
