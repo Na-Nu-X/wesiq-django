@@ -58,7 +58,7 @@
             <input type="submit" value="Uložiť zmeny">
 
             <div class="form_questions">
-                <p>Zabudli ste heslo? <a href="#" title="Poslať overovací kód">Zmeniť heslo</a></p>
+                <p>Zabudli ste heslo? <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="Poslať overovací kód">Zmeniť heslo</a></p>
             </div>
 
             <label for="delete_account">
@@ -115,6 +115,14 @@
                     delete_account_image.style.opacity = 0.6
                     form_report.textContent = ""
                 }
+            })
+
+            // Password Reset
+
+            const password_reset = document.querySelector(".password_reset")
+
+            password_reset.addEventListener("click", function() {
+                document.cookie = `email_address=${password_reset.dataset.email_address}; max-age=` + 60 * 10 + "; path=/"; // 10 Minutes Timed Cookie With User's Email Address
             })
         })
     </script>
