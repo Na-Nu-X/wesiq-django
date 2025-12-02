@@ -148,43 +148,53 @@
 .content .search_bar_container .search_bar_menu:has(.search_bar:hover) .fa-magnifying-glass, .content .search_bar_container .search_bar_menu:has(.search_bar:focus) .fa-magnifying-glass {
   color: #fff;
 }
-.content .search_bar_container .sorter {
-  width: 100%;
-}
-.content .search_bar_container .sorter form {
-  position: relative;
-  max-width: 500px;
-  margin: 0px auto;
-  padding: 10px 50px;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.1);
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
-  border: 2px solid #fff;
-  border-radius: 5px;
-}
-.content .search_bar_container .sorter form select {
-  width: 90%;
-  height: 50px;
-  margin-bottom: 10px;
-  padding: 0px 10px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  border-bottom: 1px solid #fff;
-  outline: none;
-  transition: width 0.3s ease;
-}
-.content .search_bar_container .sorter form select:hover, .content .search_bar_container .sorter form select:focus {
-  width: 100%;
+.content .search_bar_container .sort_select_menu {
+  width: 300px;
   cursor: pointer;
+  position: relative;
 }
-.content .search_bar_container .sorter form select optgroup {
-  background-color: rgb(25.5, 25.5, 25.5);
+.content .search_bar_container .sort_select_menu .select {
+  background-color: #201e1e;
+  padding: 20px;
+  color: white;
+  font-weight: 500;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.content .search_bar_container .sorter form select option {
-  background-color: #fff;
+.content .search_bar_container .sort_select_menu .options_list {
+  position: absolute;
+  width: 100%;
   color: #000;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  margin-top: 14px;
+  padding: 0 20px;
+  max-height: 180px;
+  overflow-y: auto;
+  transition: 0.4s linear 0.2s;
+  height: 0;
+  z-index: 100;
+}
+.content .search_bar_container .sort_select_menu .options_list::-webkit-scrollbar {
+  width: 4px;
+  background-color: #eee;
+}
+.content .search_bar_container .sort_select_menu .options_list::-webkit-scrollbar-thumb {
+  background-color: #00a8ff;
+}
+.content .search_bar_container .sort_select_menu .options_list.active {
+  height: 180px;
+}
+.content .search_bar_container .sort_select_menu .options_list .option {
+  padding: 8px 0;
+  font-weight: 500;
+  font-size: 14px;
+  transition: 0.3s ease-in-out;
+}
+.content .search_bar_container .sort_select_menu .options_list .option:hover, .content .search_bar_container .sort_select_menu .options_list .option.selected {
+  color: #00a8ff;
 }
 .content .articles {
   position: relative;
