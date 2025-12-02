@@ -52,7 +52,7 @@
             <input class="search_bar" placeholder="Nájsť článok" autocomplete="off">
         </div>
 
-        <div class="sorter">
+        <!-- <div class="sorter">
             <form method="GET">
                 <select name="sort" onChange="this.form.submit()">
                     <option value="latest" {% if request.GET.sort == "latest" %}selected{% endif %}>Najnovšie články</option>
@@ -87,6 +87,22 @@
                     </optgroup>
                 </select>
             </form>
+        </div> -->
+        
+        <!-- Custom Select Menu -->
+        <div class="sort_select_menu">
+            <div class="select">
+                <span>Zoradiť</span>
+                <i class="fas fa-angle-down"></i>
+            </div>
+
+            <div class="options_list">
+                <div class="option">Najnovšie články</div>
+                <div class="option">Populárne články</div>
+                <div class="option">Najlepšie hodnotené</div>
+                <div class="option">Podľa abecedy (A-Z)</div>
+                <div class="option">Podľa abecedy (Z-A)</div>
+            </div>
         </div>
     </div>
 
@@ -275,6 +291,30 @@
                         one_article.style.animation = "fade_in_animation 1s ease-out"
                     })
                 }
+            })
+
+            // Custom Select Menu
+
+            const select = document.querySelector(".select")
+            const options_list = document.querySelector(".options_list")
+            const options = document.querySelectorAll(".option")
+
+            select.addEventListener("click", function() {
+                options_list.classList.toggle("active")
+                select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+            })
+
+            options.forEach(function(option) {
+                option.addEventListener("click", function() {
+                    options.forEach(function(option) {
+                        option.classList.remove('selected')
+                    })
+
+                    select.querySelector(".select span").innerHTML = option.innerHTML
+                    option.classList.add("selected")
+                    options_list.classList.toggle("active")
+                    select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+                })
             })
         })
     </script>
