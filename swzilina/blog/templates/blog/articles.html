@@ -1,18 +1,61 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Street Workout Žilina - {{ title|default:"Článok sa nenašiel" }}{% endblock title %}
+{% block title %}Street Workout Žilina - {{ article.title|default:"Článok sa nenašiel" }}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/articles.css' %}">
 {% endblock style %}
 
-{% block heading %}{{ title|default:"Článok sa nenašiel" }}{% endblock heading %}
+{% block heading %}{{ article.title|default:"Článok sa nenašiel" }}{% endblock heading %}
 
 {% if not_found != False %}
     {% block content %}
-        <h2>{{ title }}</h2>
-        <p>{{ content }}</p>
+        <div class="article_banner">
+            <div class="banner_image">
+                <img src="{% static '../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
+            </div>
+            
+            <div class="banner_info">
+                <div class="article_opening">
+                    <h2>{{ article.title }}</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, consequatur.</p>
+                </div>
+
+                <div class="article_info">
+                    <div 
+                        class="rating" 
+                        title="
+                            {% if article.rating|floatformat:0|add:0 == 0 %}
+                                Zatiaľ žiadne hodnotenia
+                            
+                            {% else %}
+                                Priemerné hodnotenie {{ article.rating }}
+
+                            {% endif %}
+                        "
+                    >
+                        {% for _ in "12345" %}
+                            {% if forloop.counter <= article.rating|floatformat:0|add:0 %}
+                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                            {% else %}
+                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="date" title="Dátum zverejnenia">
+                        <p>{{ article.creation_time|date:"d.m. Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article_content">
+            <p>{{ article.content }}</p>
+        </div>
     {% endblock content %}
 
 {% endif %}
