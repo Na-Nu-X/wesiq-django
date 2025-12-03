@@ -45,10 +45,25 @@
                             {% endif %}
                         {% endfor %}
                     </div>
+                    
+                    <a href="#" title="{{ article.user.first_name }} {{ article.user.last_name }}" target="_self">
+                        <img 
+                            class="profile_picture" 
+                            src="
+                                {% if article.user.profile_picture_name %}
+                                    ../media/images/{{ article.user_id }}/{{ article.user.profile_picture_name }}
 
-                    <div class="date" title="Dátum zverejnenia">
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
+                    </a>
+
+                    <!-- <div class="date" title="Dátum zverejnenia">
                         <p>{{ article.creation_time|date:"d.m. Y" }}</p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
