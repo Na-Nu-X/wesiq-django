@@ -50,11 +50,25 @@
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
+                align-items: center;
 
                 .rating {
                     img {
                         width: 12px;
                         height: 12px;
+                    }
+                }
+
+                .profile_picture {
+                    width: 38px;
+                    height: 38px;
+                    padding: 2px;
+                    border: 1px solid $main-color;
+                    border-radius: 50%;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.1);
                     }
                 }
 

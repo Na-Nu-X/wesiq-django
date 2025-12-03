@@ -43,10 +43,22 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 .content .article_banner .banner_info .article_info .rating img {
   width: 12px;
   height: 12px;
+}
+.content .article_banner .banner_info .article_info .profile_picture {
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  border: 1px solid #000;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.content .article_banner .banner_info .article_info .profile_picture:hover {
+  transform: scale(1.1);
 }
 .content .article_banner .banner_info .article_info .date p {
   padding-top: 3px;
