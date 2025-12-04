@@ -151,6 +151,7 @@
 .content .search_bar_container .select_menus {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 20px;
   max-width: 500px;
 }
@@ -172,6 +173,10 @@
   border: 2px solid rgb(229.5, 229.5, 229.5);
   border-radius: 5px;
   transition: border 0.3s ease;
+}
+.content .search_bar_container .select_menus .sort_select_menu .select span i, .content .search_bar_container .select_menus .category_select_menu .select span i {
+  color: #cccccc;
+  margin-right: 8.5px;
 }
 .content .search_bar_container .select_menus .sort_select_menu .select .fa-angle-down, .content .search_bar_container .select_menus .category_select_menu .select .fa-angle-down {
   color: rgb(229.5, 229.5, 229.5);
@@ -213,6 +218,20 @@
 .content .search_bar_container .select_menus .sort_select_menu .options_list .option:hover, .content .search_bar_container .select_menus .sort_select_menu .options_list .option.selected, .content .search_bar_container .select_menus .category_select_menu .options_list .option:hover, .content .search_bar_container .select_menus .category_select_menu .options_list .option.selected {
   color: #ebb914;
 }
+.content .search_bar_container .select_menus .sort_select_menu .options_list .option i, .content .search_bar_container .select_menus .category_select_menu .options_list .option i {
+  color: #ebb914;
+  margin-right: 10px;
+}
+.content .search_bar_container .select_menus .refresh_select_menus {
+  margin-right: 6.5px;
+  font-size: 20px;
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.content .search_bar_container .select_menus .refresh_select_menus:hover {
+  color: #fff;
+  cursor: pointer;
+}
 .content .articles {
   position: relative;
   top: 20px;
@@ -224,6 +243,10 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
+}
+.content .articles h2 {
+  font-family: "Balsamiq Sans", sans-serif;
+  color: #fff;
 }
 .content .articles article {
   position: relative;
@@ -371,6 +394,6 @@
     width: 445px !important;
   }
   .select_menus .sort_select_menu, .select_menus .category_select_menu {
-    width: 212.5px !important;
+    width: 189.25px !important;
   }
 }/*# sourceMappingURL=blog.css.map */

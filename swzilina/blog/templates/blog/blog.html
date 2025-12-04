@@ -56,16 +56,16 @@
         <div class="select_menus">
             <div class="sort_select_menu">
                 <div class="select">
-                    <span>Najnovšie články</span>
+                    <span><i class="fa-regular fa-clock"></i>Najnovšie články</span> <!-- https://fontawesome.com/icons/clock -->
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest">Najnovšie články</div>
-                    <div class="option {% if request.GET.sort == "popular" %}selected{% endif %}" data-sort="popular">Populárne články</div>
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best">Najlepšie hodnotené</div>
-                    <div class="option {% if request.GET.sort == "a-z" %}selected{% endif %}" data-sort="a-z">Podľa abecedy (A-Z)</div>
-                    <div class="option {% if request.GET.sort == "z-a" %}selected{% endif %}" data-sort="z-a">Podľa abecedy (Z-A)</div>
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i>Najnovšie články</div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "popular" %}selected{% endif %}" data-sort="popular"><i class="fa-regular fa-eye" title="Skryť heslo"></i>Populárne články</div> <!-- https://fontawesome.com/icons/eye -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-regular fa-star"></i>Najlepšie hodnotené</div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.sort == "a-z" %}selected{% endif %}" data-sort="a-z"><i class="fa-solid fa-arrow-up-a-z"></i>Podľa abecedy (A-Z)</div> <!-- https://fontawesome.com/icons/arrow-up-a-z -->
+                    <div class="option {% if request.GET.sort == "z-a" %}selected{% endif %}" data-sort="z-a"><i class="fa-solid fa-arrow-up-z-a"></i>Podľa abecedy (Z-A)</div> <!-- https://fontawesome.com/icons/arrow-up-z-a -->
                 </div>
             </div>
 
@@ -93,10 +93,17 @@
                     <div class="option {% if request.GET.category == "elite" %}selected{% endif %}" data-category="elite">Pre profesionálov</div>
                 </div>
             </div>
+
+            <i class="refresh_select_menus fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
         </div>
     </div>
 
     <div class="articles">
+        {% if no_articles %}
+            <h2>Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články.</h2>
+        
+        {% endif %}
+
         {% for one_article in articles %}
             <article 
                 class="{{ one_article.link }}"
@@ -288,7 +295,9 @@
             // Fuction For Setting Sort Parameter to URL Address
             function setSortParameter(sort_value) {
                 const page_url = new URL(window.location.href) // Gets Current URL
+
                 page_url.searchParams.set("sort", sort_value) // Adds Parameter With Value to The URL
+
                 window.location.href = page_url // Redirects Page
             }
 
@@ -309,6 +318,7 @@
                     sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
                 })
 
+                // Shows Current Selected Option From List
                 if(option.classList[1] === "selected") {
                     sort_select.querySelector(".sort_select_menu .select span").innerHTML = option.innerHTML
                 }
@@ -317,7 +327,9 @@
             // Fuction For Setting Category Parameter to URL Address
             function setCategoryParameter(category_value) {
                 const page_url = new URL(window.location.href) // Gets Current URL
+
                 page_url.searchParams.set("category", category_value) // Adds Parameter With Value to The URL
+
                 window.location.href = page_url // Redirects Page
             }
 
@@ -338,9 +350,24 @@
                     category_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
                 })
 
+                // Shows Current Selected Option From List
                 if(option.classList[1] === "selected") {
                     category_select.querySelector(".category_select_menu .select span").innerHTML = option.innerHTML
                 }
+            })
+
+            // Refresh Select Menus
+
+            const refresh_select_menus = document.querySelector(".refresh_select_menus")
+
+            refresh_select_menus.addEventListener("click", function() {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                // Deletes Parameters In URL
+                page_url.searchParams.delete("sort")
+                page_url.searchParams.delete("category")
+
+                window.location.href = page_url // Redirects Page
             })
         })
     </script>

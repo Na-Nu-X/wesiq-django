@@ -602,6 +602,8 @@ def blogView(request):
     # Gets All Articles From DB
     articles = Articles.objects.all()
 
+    no_articles = True # Default Value That Says That There Are No Articles In The Database
+
     # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
     sort = request.GET.get("sort", "latest").lower()
     category = request.GET.get("category", "all").lower()
@@ -641,6 +643,10 @@ def blogView(request):
         else:
             articles = articles.filter(categories__contains=[category]).order_by("-title")
 
+    # Checks If There Are Any Articles In The Database
+    if(articles.exists()):
+        no_articles = False
+
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
@@ -655,6 +661,7 @@ def blogView(request):
             "last_name": user.last_name,
             "profile_picture_name": user.profile_picture_name,
             "articles": articles,
+            "no_articles": no_articles,
         })
 
     # Renders Page With Articles Data
