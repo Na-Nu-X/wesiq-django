@@ -186,6 +186,7 @@
         .select_menus {
             display: flex;
             flex-direction: row;
+            align-items: center;
             gap: 20px;
             max-width: 500px;
 
@@ -206,6 +207,13 @@
                     border: 2px solid darken($secondary-color, 10%);
                     border-radius: 5px;
                     transition: border 0.3s ease;
+
+                    span {
+                        i {
+                            color: darken($secondary-color, 20%);
+                            margin-right: 8.5px;
+                        }
+                    }
 
                     .fa-angle-down {
                         color: darken($secondary-color, 10%);
@@ -255,7 +263,24 @@
                         &.selected {
                             color: $article-color;
                         }
+
+                        i {
+                            color: $article-color;
+                            margin-right: 10px;
+                        }
                     }
+                }
+            }
+
+            .refresh_select_menus {
+                margin-right: 6.5px;
+                font-size: 20px;
+                color: darken($secondary-color, 10%);
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: $secondary-color;
+                    cursor: pointer;
                 }
             }
         }
@@ -274,6 +299,11 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 20px;
+
+        h2 {
+            font-family: $article-heading-font;
+            color: $secondary-color;
+        }
 
         article {
             position: relative;
@@ -459,7 +489,7 @@
 
     .select_menus {
         .sort_select_menu, .category_select_menu {
-            width: 212.5px !important;
+            width: (445px - (6.5px + 20px)) / 2 - 20px !important; // 189.25px
         }
     }
 }
