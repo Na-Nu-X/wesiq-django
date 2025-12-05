@@ -187,7 +187,7 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             max-width: 500px;
 
             .sort_select_menu, .category_select_menu {
@@ -489,7 +489,7 @@
 
     .select_menus {
         .sort_select_menu, .category_select_menu {
-            width: (445px - (6.5px + 20px)) / 2 - 20px !important; // 189.25px
+            width: (445px - (6.5px + 20px)) / 2 - 10px !important; // 189.25px
         }
     }
 }
