@@ -122,7 +122,9 @@
             const password_reset = document.querySelector(".password_reset")
 
             password_reset.addEventListener("click", function() {
-                document.cookie = `email_address=${password_reset.dataset.email_address}; max-age=` + 60 * 10 + "; path=/"; // 10 Minutes Timed Cookie With User's Email Address
+                document.cookie = `email_address=${password_reset.dataset.email_address}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
+
+                document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
             })
         })
     </script>
