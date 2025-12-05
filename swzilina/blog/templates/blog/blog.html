@@ -93,9 +93,9 @@
                     <div class="option {% if request.GET.category == "elite" %}selected{% endif %}" data-category="elite">Pre profesionálov</div>
                 </div>
             </div>
-
-            <i class="refresh_select_menus fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
         </div>
+
+        <i class="refresh_select_menus fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
     </div>
 
     <div class="articles">
@@ -141,7 +141,7 @@
 
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <h2>{{ one_article.title }}</h2>
-                    <p>{{ one_article.content }}</p>
+                    <p>{{ one_article.content|truncatechars:100 }}</p>
 
                     <div class="article_info">
                         <div 
@@ -190,6 +190,13 @@
             </article>
         
         {% endfor %}
+        
+        <form class="subscribe_form" action="{% url 'blog_url' %}" method="POST">
+            {% csrf_token %}
+
+            <input type="email" placeholder="Zadajte váš e-mail" autocomplete="on">
+            <input type="submit" value="Odoberať" title="Dostávať upozornenia o nových článkoch">
+        </form>
     </div>
 {% endblock content %}
 
