@@ -55,47 +55,53 @@
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
             <div class="sort_select_menu">
+                <div class="refresh">
+                    <i class="fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
+
                 <div class="select">
-                    <span><i class="fa-regular fa-clock"></i>Najnovšie články</span> <!-- https://fontawesome.com/icons/clock -->
+                    <span>Najnovšie články</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i>Najnovšie články</div> <!-- https://fontawesome.com/icons/clock -->
-                    <div class="option {% if request.GET.sort == "popular" %}selected{% endif %}" data-sort="popular"><i class="fa-regular fa-eye" title="Skryť heslo"></i>Populárne články</div> <!-- https://fontawesome.com/icons/eye -->
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-regular fa-star"></i>Najlepšie hodnotené</div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.sort == "a-z" %}selected{% endif %}" data-sort="a-z"><i class="fa-solid fa-arrow-up-a-z"></i>Podľa abecedy (A-Z)</div> <!-- https://fontawesome.com/icons/arrow-up-a-z -->
-                    <div class="option {% if request.GET.sort == "z-a" %}selected{% endif %}" data-sort="z-a"><i class="fa-solid fa-arrow-up-z-a"></i>Podľa abecedy (Z-A)</div> <!-- https://fontawesome.com/icons/arrow-up-z-a -->
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>Najnovšie články</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "popular" %}selected{% endif %}" data-sort="popular"><i class="fa-regular fa-eye"></i><span>Populárne články</span></div> <!-- https://fontawesome.com/icons/eye -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-regular fa-star"></i><span>Najlepšie hodnotené</span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.sort == "a-z" %}selected{% endif %}" data-sort="a-z"><i class="fa-solid fa-arrow-up-a-z"></i><span>Podľa abecedy (A-Z)</span></div> <!-- https://fontawesome.com/icons/arrow-up-a-z -->
+                    <div class="option {% if request.GET.sort == "z-a" %}selected{% endif %}" data-sort="z-a"><i class="fa-solid fa-arrow-up-z-a"></i></span>Podľa abecedy (Z-A)</span></div> <!-- https://fontawesome.com/icons/arrow-up-z-a -->
                 </div>
             </div>
 
             <div class="category_select_menu">
+                <div class="refresh">
+                    <i class="fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
+
                 <div class="select">
                     <span>Všetky kategórie</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option {% if request.GET.category == "all" %}selected{% endif %}" data-category="all">Všetky kategórie</div>
-                    <div class="option {% if request.GET.category == "static" %}selected{% endif %}" data-category="static">Statické prvky</div>
-                    <div class="option {% if request.GET.category == "dynamic" %}selected{% endif %}" data-category="dynamic">Dynamické triky</div>
-                    <div class="option {% if request.GET.category == "isotonic" %}selected{% endif %}" data-category="isotonic">Izotonické cviky</div>
-                    <div class="option {% if request.GET.category == "balance" %}selected{% endif %}" data-category="balance">O rovnováhe</div>
-                    <div class="option {% if request.GET.category == "flexibility" %}selected{% endif %}" data-category="flexibility">O flexibilite</div>
+                    <div class="option {% if request.GET.category == "all" %}selected{% endif %}" data-category="all"><i class="fa-solid fa-icons"></i><span>Všetky kategórie</span></div> <!-- https://fontawesome.com/icons/icons -->
+                    <div class="option {% if request.GET.category == "static" %}selected{% endif %}" data-category="static"><i class="fa-solid fa-list"></i><span>Statické prvky</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "dynamic" %}selected{% endif %}" data-category="dynamic"><i class="fa-solid fa-list"></i><span>Dynamické triky</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "isotonic" %}selected{% endif %}" data-category="isotonic"><i class="fa-solid fa-list"></i><span>Izotonické cviky</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "balance" %}selected{% endif %}" data-category="balance"><i class="fa-solid fa-list"></i><span>O rovnováhe</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "flexibility" %}selected{% endif %}" data-category="flexibility"><i class="fa-solid fa-list"></i><span>O flexibilite</span></div> <!-- https://fontawesome.com/icons/list -->
 
-                    <div class="option {% if request.GET.category == "push" %}selected{% endif %}" data-category="push">Tlak</div>
-                    <div class="option {% if request.GET.category == "pull" %}selected{% endif %}" data-category="pull">Ťah</div>
-                    <div class="option {% if request.GET.category == "legs" %}selected{% endif %}" data-category="legs">Nohy</div>
+                    <div class="option {% if request.GET.category == "push" %}selected{% endif %}" data-category="push"><i class="fa-solid fa-list"></i><span>Tlak</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "pull" %}selected{% endif %}" data-category="pull"><i class="fa-solid fa-list"></i><span>Ťah</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "legs" %}selected{% endif %}" data-category="legs"><i class="fa-solid fa-list"></i><span>Nohy</span></div> <!-- https://fontawesome.com/icons/list -->
 
-                    <div class="option {% if request.GET.category == "beginner" %}selected{% endif %}" data-category="beginner">Pre začiatočníkov</div>
-                    <div class="option {% if request.GET.category == "intermediate" %}selected{% endif %}" data-category="intermediate">Pre stredne pokročilých</div>
-                    <div class="option {% if request.GET.category == "advanced" %}selected{% endif %}" data-category="advanced">Pre pokročilých</div>
-                    <div class="option {% if request.GET.category == "elite" %}selected{% endif %}" data-category="elite">Pre profesionálov</div>
+                    <div class="option {% if request.GET.category == "beginner" %}selected{% endif %}" data-category="beginner"><i class="fa-solid fa-list"></i><span>Pre začiatočníkov</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "intermediate" %}selected{% endif %}" data-category="intermediate"><i class="fa-solid fa-list"></i><span>Pre stredne pokročilých</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "advanced" %}selected{% endif %}" data-category="advanced"><i class="fa-solid fa-list"></i><span>Pre pokročilých</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option {% if request.GET.category == "elite" %}selected{% endif %}" data-category="elite"><i class="fa-solid fa-list"></i><span>Pre profesionálov</span></div> <!-- https://fontawesome.com/icons/list -->
                 </div>
             </div>
         </div>
-
-        <i class="refresh_select_menus fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
     </div>
 
     <div class="articles">
@@ -190,14 +196,17 @@
             </article>
         
         {% endfor %}
-        
-        <form class="subscribe_form" action="{% url 'blog_url' %}" method="POST">
-            {% csrf_token %}
-
-            <input type="email" placeholder="Zadajte váš e-mail" autocomplete="on">
-            <input type="submit" value="Odoberať" title="Dostávať upozornenia o nových článkoch">
-        </form>
     </div>
+
+    <form class="blog_subscribe_form" action="{% url 'blog_url' %}" method="POST">
+        {% csrf_token %}
+
+        {{ blog_subscribe_form.email_address }}
+
+        <input type="submit" value="Odoberať" title="Dostávať upozornenia o nových článkoch">
+    </form>
+
+    <p>Ak chcete byť informovaný o nových článkoch, prihláste sa k odberu zadaním vášej e-mailovej adresy.</p>
 {% endblock content %}
 
 {% block script %}
@@ -325,9 +334,9 @@
                     sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
                 })
 
-                // Shows Current Selected Option From List
+                // Shows Current Selected Option From List Without Icon
                 if(option.classList[1] === "selected") {
-                    sort_select.querySelector(".sort_select_menu .select span").innerHTML = option.innerHTML
+                    sort_select.querySelector(".sort_select_menu .select span").innerHTML = option.querySelector("span").innerHTML
                 }
             })
 
@@ -357,21 +366,30 @@
                     category_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
                 })
 
-                // Shows Current Selected Option From List
+                // Shows Current Selected Option From List Without Icon
                 if(option.classList[1] === "selected") {
-                    category_select.querySelector(".category_select_menu .select span").innerHTML = option.innerHTML
+                    category_select.querySelector(".category_select_menu .select span").innerHTML = option.querySelector("span").innerHTML
                 }
             })
 
             // Refresh Select Menus
 
-            const refresh_select_menus = document.querySelector(".refresh_select_menus")
+            const sort_select_menu_refresh = document.querySelector(".sort_select_menu .refresh .fa-arrow-rotate-right")
+            const category_select_menu_refresh = document.querySelector(".category_select_menu .refresh .fa-arrow-rotate-right")
 
-            refresh_select_menus.addEventListener("click", function() {
+            sort_select_menu_refresh.addEventListener("click", function() {
                 const page_url = new URL(window.location.href) // Gets Current URL
 
                 // Deletes Parameters In URL
                 page_url.searchParams.delete("sort")
+
+                window.location.href = page_url // Redirects Page
+            })
+
+            category_select_menu_refresh.addEventListener("click", function() {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                // Deletes Parameters In URL
                 page_url.searchParams.delete("category")
 
                 window.location.href = page_url // Redirects Page

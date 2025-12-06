@@ -10,13 +10,6 @@
 {% block heading %}Môj&nbsp;účet{% endblock heading %}
 
 {% block content %}
-    {% if messages %}
-        {% for one_message in messages %}
-            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message }}</p>
-        
-        {% endfor %}
-    {% endif %}
-
     {% if request.session.logged_in_user_id %}
         <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
