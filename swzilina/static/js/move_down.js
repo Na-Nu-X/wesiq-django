@@ -12,4 +12,16 @@ document.addEventListener("DOMContentLoaded", function() {
             behavior: "smooth"
         })
     })
+
+    window.addEventListener("scroll", function() {
+        if(window.scrollY > 0) {
+            move_down.style.opacity = "0"
+            move_down.style.visibility = "hidden"
+        }
+
+        else {
+            move_down.style.opacity = "1"
+            move_down.style.visibility = "visible"
+        }
+    })
 })

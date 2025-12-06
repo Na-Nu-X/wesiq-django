@@ -442,6 +442,20 @@
     max-width: 800px !important;
   }
 }
+@media (max-width: 800px) {
+  .banner {
+    height: 109px;
+  }
+  .banner .write_article, .banner .no_account {
+    top: 67.5px;
+  }
+  .banner .account {
+    top: 61px;
+  }
+  .header_container {
+    height: calc(100vh - 109px);
+  }
+}
 @media (max-width: 555px) {
   .search_bar, .num_articles {
     width: 445px !important;

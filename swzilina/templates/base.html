@@ -112,6 +112,10 @@
 
             <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="Zavolať...">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone -->
         </div>
+
+        <div class="other">
+            <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
+        </div>
         
         <p class="copywrite">&copy; Street Workout Žilina 2025, Všetky práva vyhradené</p>
     </footer>
@@ -144,6 +148,14 @@
                 privacy_policy.classList.add("hide")
 
                 // window.location.reload()
+            })
+
+            // Privacy Policy Again
+
+            const privacy_policy_again = document.querySelector(".privacy_policy_again")
+
+            privacy_policy_again.addEventListener("click", function() {
+                privacy_policy.classList.remove("hide")
             })
         })
     </script>

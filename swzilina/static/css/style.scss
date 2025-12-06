@@ -314,6 +314,9 @@ main {
     backdrop-filter: blur(5px);
     border: 2px solid $secondary-color;
     border-radius: 50%;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 
     &:hover {
         cursor: pointer;
@@ -436,6 +439,22 @@ footer { // Minix
                     text-decoration: underline;
                     cursor: pointer;
                 }
+            }
+        }
+    }
+
+    .other {
+        margin-bottom: 20px;
+        color: darken($secondary-color, 40%);
+
+        .privacy_policy_again {
+            display: inline;
+            font-size: 0.9em;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+                cursor: pointer;
             }
         }
     }
