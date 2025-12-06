@@ -110,6 +110,22 @@
 .content {
     padding: 0px 20px;
 
+    // Articles Info
+
+    .num_articles {
+        width: 500px;
+        margin: 0px auto 5px;
+
+        p {
+            color: darken($secondary-color, 20%);
+            font-size: 0.9em;
+
+            span {
+                font-weight: bold;
+            }
+        }
+    }
+
     // Search Bar
 
     .search_bar_container {
@@ -471,7 +487,7 @@
             width: 240px;
             height: 40px;
             padding: 0px 10px;
-            background-color: transparentize($main-color, 0.9);
+            background-color: transparentize($main-color, 0.8);
             backdrop-filter: blur(5px);
             color: $secondary-color;
             border: none;
@@ -532,7 +548,7 @@
 }
 
 @media (max-width: 555px) {
-    .search_bar {
+    .search_bar, .num_articles {
         width: 445px !important;
     }
 
