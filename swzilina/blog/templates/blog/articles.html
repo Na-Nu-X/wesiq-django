@@ -71,6 +71,28 @@
         <div class="article_content">
             <p>{{ article.content }}</p>
         </div>
+
+        <div class="article_forum">
+            <input class="write_comment" type="text" placeholder="Napísať komentár" autocomplete="off">
+
+            <img 
+                class="profile_picture" 
+                src="
+                    {% if profile_picture_name %}
+                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                    {% else %}
+                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                    
+                    {% endif %}
+                "
+            >
+            
+            <img
+                class="send"
+                src="{% static 'images/send.png' %}"
+            > <!-- https://www.flaticon.com/free-icon/send_15310291 -->
+        </div>
     {% endblock content %}
 
 {% endif %}
