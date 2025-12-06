@@ -231,6 +231,9 @@ main {
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
   border-radius: 50%;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .move_down:hover {
   cursor: pointer;
@@ -332,6 +335,18 @@ footer .contact_us p a {
   font-style: italic;
 }
 footer .contact_us p a:hover, footer .contact_us p a:active {
+  text-decoration: underline;
+  cursor: pointer;
+}
+footer .other {
+  margin-bottom: 20px;
+  color: #999999;
+}
+footer .other .privacy_policy_again {
+  display: inline;
+  font-size: 0.9em;
+}
+footer .other .privacy_policy_again:hover, footer .other .privacy_policy_again:active {
   text-decoration: underline;
   cursor: pointer;
 }
