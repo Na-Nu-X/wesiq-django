@@ -374,3 +374,15 @@ class writeArticleForm(forms.Form):
         label=False,
         required=False,
     )
+
+class blogSubscribeForm(forms.Form):
+    email_address = forms.EmailField(
+        widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),
+        label=False,
+        max_length=50,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný e-mail je príliš dlhý",
+            "required": "Zadajte váš e-mail",
+        },
+    )

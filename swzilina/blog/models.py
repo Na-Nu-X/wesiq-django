@@ -18,6 +18,7 @@ class Users(models.Model):
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
+    blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"

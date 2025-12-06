@@ -77,6 +77,13 @@
         </section>
 
         <section class="content">
+            {% if messages %}
+                {% for one_message in messages %}
+                    <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message|safe }}</p>
+                
+                {% endfor %}
+            {% endif %}
+
             {% block content %}{% endblock content %}
         </section>
 
