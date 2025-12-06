@@ -45,6 +45,19 @@
 {% block heading %}Témy na čítanie{% endblock heading %}
 
 {% block content %}
+    <div class="num_articles">
+        {% if num_articles == 1 %}
+            <p>Našiel sa <span>{{ num_articles }}</span> článok.</p>
+
+        {% elif num_articles > 1 and num_articles < 5 %}
+            <p>Našli sa <span>{{ num_articles }}</span> články.</p>
+
+        {% else %}
+            <p>Našlo sa <span>{{ num_articles }}</span> článkov.</p>
+        
+        {% endif %}
+    </div>
+
     <div class="search_bar_container">
         <div class="search_bar_menu">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
@@ -201,12 +214,12 @@
     <form class="blog_subscribe_form" action="{% url 'blog_url' %}" method="POST">
         {% csrf_token %}
 
+        <!-- <p>Pre dostávanie upozornení sa prihláste k odberu.</p> -->
+
         {{ blog_subscribe_form.email_address }}
 
         <input type="submit" value="Odoberať" title="Dostávať upozornenia o nových článkoch">
     </form>
-
-    <p>Ak chcete byť informovaný o nových článkoch, prihláste sa k odberu zadaním vášej e-mailovej adresy.</p>
 {% endblock content %}
 
 {% block script %}

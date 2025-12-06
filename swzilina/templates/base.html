@@ -76,6 +76,10 @@
             {% block buttons %}{% endblock buttons %}
         </section>
 
+        <div class="move_down">
+            <img src="{% static 'images/arrow.png' %}" title="Posunúť nadol"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+        </div>
+
         <section class="content">
             {% if messages %}
                 {% for one_message in messages %}
@@ -88,7 +92,7 @@
         </section>
 
         <div class="move_up">
-            <img src="{% static 'images/move_up.png' %}" title="Posunúť nahor">
+            <img src="{% static 'images/arrow.png' %}" title="Posunúť nahor"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
         </div>
     </main>
 
@@ -146,6 +150,7 @@
 
     <script src="{% static 'js/preloader.js' %}" defer></script>
     <script src="{% static 'js/navigation.js' %}" defer></script>
+    <script src="{% static 'js/move_down.js' %}" defer></script>
     <script src="{% static 'js/move_up.js' %}" defer></script>
     {% block script %}{% endblock script %}
 </body>

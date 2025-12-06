@@ -643,6 +643,8 @@ def blogView(request):
         else:
             articles = articles.filter(categories__contains=[category]).order_by("-title")
 
+    num_articles = articles.count() # Number Of All Articles
+
     # Checks If There Are Any Articles In The Database
     if(articles.exists()):
         no_articles = False
@@ -685,12 +687,14 @@ def blogView(request):
             "articles": articles,
             "no_articles": no_articles,
             "blog_subscribe_form": filled_blog_subscribe_form,
+            "num_articles": num_articles,
         })
 
     # Renders Page With Articles Data
     return render(request, "blog/blog.html", {
         "articles": articles,
         "blog_subscribe_form": blogSubscribeForm,
+        "num_articles": num_articles,
     })
 
 def blogThemeView(request, theme):
