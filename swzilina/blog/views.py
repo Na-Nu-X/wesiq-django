@@ -698,6 +698,14 @@ def blogView(request):
     })
 
 def blogThemeView(request, theme):
+    # Gets Logged In User
+    if "logged_in_user_id" in request.session:
+        # Get Logged In User ID From Session
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        # Get Logged In User From DB
+        user = Users.objects.get(id=logged_in_user_id)
+
     try:
         article = Articles.objects.get(link=theme)
 
@@ -708,6 +716,7 @@ def blogThemeView(request, theme):
 
         response = render(request, "blog/articles.html", {
             "article": article,
+            "profile_picture_name": user.profile_picture_name,
         })
 
         response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
