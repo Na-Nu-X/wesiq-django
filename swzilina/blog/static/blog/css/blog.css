@@ -258,7 +258,7 @@
   flex-wrap: wrap;
   gap: 20px;
 }
-.content .articles h2 {
+.content .articles .no_articles {
   font-family: "Balsamiq Sans", sans-serif;
   color: #fff;
 }

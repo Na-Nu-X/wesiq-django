@@ -68,11 +68,13 @@
   margin: 10px 20px;
 }
 .content .article_forum {
-  position: relative;
   width: 90%;
-  margin: 0px auto;
+  margin: 50px auto 0px;
 }
 .content .article_forum .write_comment {
+  position: relative;
+}
+.content .article_forum .write_comment input {
   width: 100%;
   height: 50px;
   padding-left: 54px;
@@ -85,13 +87,13 @@
   border-radius: 25px;
   outline: none;
 }
-.content .article_forum .write_comment::-moz-placeholder {
+.content .article_forum .write_comment input::-moz-placeholder {
   color: #cccccc;
 }
-.content .article_forum .write_comment::placeholder {
+.content .article_forum .write_comment input::placeholder {
   color: #cccccc;
 }
-.content .article_forum .profile_picture {
+.content .article_forum .write_comment .profile_picture {
   position: absolute;
   left: 6px;
   top: 50%;
@@ -102,12 +104,67 @@
   border: 1px solid #fff;
   border-radius: 50%;
 }
-.content .article_forum .send {
+.content .article_forum .write_comment .send {
   position: absolute;
   right: 15px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(1);
+  transition: transform 0.3s ease;
 }
-.content .article_forum .send:hover {
+.content .article_forum .write_comment .send:hover {
+  transform: translateY(-50%) scale(1.1);
   cursor: pointer;
+}
+.content .article_forum .all_comments {
+  margin-top: 50px;
+  margin-left: 6px;
+}
+.content .article_forum .all_comments .one_comment {
+  margin-bottom: 10px;
+}
+.content .article_forum .all_comments .one_comment .comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.content .article_forum .all_comments .one_comment .comment .profile_picture {
+  width: 38px;
+  height: 38px;
+  margin-right: 10px;
+  padding: 2px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.content .article_forum .all_comments .one_comment .comment .profile_picture:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+.content .article_forum .all_comments .one_comment .interactions {
+  margin-left: 50px;
+}
+.content .article_forum .all_comments .one_comment .interactions .fa-reply {
+  margin-right: 4px;
+  font-size: 15px;
+  color: #cccccc;
+  transition: color 0.3s ease;
+}
+.content .article_forum .all_comments .one_comment .interactions .fa-reply:hover {
+  color: #52cf20;
+  cursor: pointer;
+}
+.content .article_forum .all_comments .one_comment .interactions .fa-heart {
+  font-size: 15px;
+  color: #cccccc;
+  transition: color 0.3s ease;
+}
+.content .article_forum .all_comments .one_comment .interactions .fa-heart:hover {
+  color: #df3535;
+  cursor: pointer;
+}
+.content .article_forum .all_comments .one_comment .reply_1 {
+  margin-top: 10px;
+  margin-left: 48px;
+  padding-left: 10px;
+  border-left: 2px solid #cccccc;
 }/*# sourceMappingURL=articles.css.map */
