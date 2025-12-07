@@ -386,3 +386,15 @@ class blogSubscribeForm(forms.Form):
             "required": "Zadajte váš e-mail",
         },
     )
+
+class writeCommentForm(forms.Form):
+    comment = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Napísať komentár", "autocomplete": "off"}),
+        label=False,
+        max_length=200,
+        required=True,
+        error_messages={
+            "max_length": "Zadaný komentár je príliš dlhý",
+            "required": "Zanechajte komentár",
+        },
+    )
