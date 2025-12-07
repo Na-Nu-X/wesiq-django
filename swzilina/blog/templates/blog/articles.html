@@ -73,8 +73,10 @@
         </div>
 
         <div class="article_forum">
-            <div class="write_comment">
-                <input type="text" placeholder="Napísať komentár" autocomplete="off">
+            <form class="write_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
+                {% csrf_token %}
+                
+                {{ write_comment_form.comment }}
 
                 <img 
                     class="profile_picture" 
@@ -90,7 +92,7 @@
                 >
                 
                 <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
-            </div>
+            </form>
 
             <div class="all_comments">
                 <div class="one_comment">

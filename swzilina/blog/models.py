@@ -37,7 +37,13 @@ class Articles(models.Model):
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50),default=list, null=False)
     rating = models.FloatField(verbose_name="Rating", default=0, null=False)
-    visitors = models.IntegerField(verbose_name="Rating", default=0, null=False)
+    visitors = models.IntegerField(verbose_name="Visitors", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)
     image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+class ArticleForum(models.Model):
+    article = models.ForeignKey(Articles, verbose_name="Article ID", on_delete=models.DO_NOTHING, related_name="comment", null=False)
+    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.DO_NOTHING, related_name="user", null=True)
+    comment = models.TextField(verbose_name="Comment", null=False)
+    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)

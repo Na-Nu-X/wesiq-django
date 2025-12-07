@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
 from blog.models import Users, Reviews, Articles
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
@@ -717,6 +717,7 @@ def blogThemeView(request, theme):
         response = render(request, "blog/articles.html", {
             "article": article,
             "profile_picture_name": user.profile_picture_name,
+            "write_comment_form": writeCommentForm,
         })
 
         response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
