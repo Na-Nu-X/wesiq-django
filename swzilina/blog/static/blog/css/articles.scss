@@ -127,17 +127,25 @@
                 border-radius: 50%;
             }
 
-            .send {
+            button {
                 position: absolute;
-                right: 15px;
-                // top: calc(50% - 10px);
                 top: 50%;
-                transform: translateY(-50%) scale(1);
-                transition: transform 0.3s ease;
+                right: 0px;
+                background-color: transparent;
+                border: none;
+                outline: none;
 
-                &:hover {
-                    transform: translateY(-50%) scale(1.1);
-                    cursor: pointer;
+                .send {
+                    position: absolute;
+                    top: 50%;
+                    right: 15px;
+                    transform: translateY(-50%) scale(1);
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: translateY(-50%) scale(1.1);
+                        cursor: pointer;
+                    }
                 }
             }
         }

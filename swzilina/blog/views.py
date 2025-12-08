@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from blog.models import Users, Reviews, Articles
+from blog.models import Users, Reviews, Articles, ArticleForum
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -701,21 +701,37 @@ def blogThemeView(request, theme):
     try:
         # Gets Logged In User
         if "logged_in_user_id" in request.session:
-            # Get Logged In User ID From Session
+            # Gets Logged In User ID From Session
             logged_in_user_id = request.session.get("logged_in_user_id")
 
-            # Get Logged In User From DB
+            # Gets Logged In User From DB
             user = Users.objects.get(id=logged_in_user_id)
-
+            # Gets Article By URL Address
             article = Articles.objects.get(link=theme)
+            # Gets All Comments Of The Article
+            comments = ArticleForum.objects.filter(article_id=article.id)
+
+            # print(comments[0].comment)
 
         # Adds 1 Visitor to The Article's Unique Visitors
         if not request.COOKIES.get(article.link):
             article.visitors += 1
             article.save()
 
+        # Write Comment Form
+        if request.method == "POST":
+            write_comment_form = writeCommentForm(request.POST)
+            if write_comment_form.is_valid():
+                new_comment = ArticleForum(
+                    article_id = article.id,
+                    user_id = logged_in_user_id,
+                    comment = write_comment_form.cleaned_data["comment"],
+                )
+                new_comment.save()
+
         response = render(request, "blog/articles.html", {
             "article": article,
+            "comments": comments,
             "profile_picture_name": user.profile_picture_name,
             "write_comment_form": writeCommentForm,
             "not_found": False,
