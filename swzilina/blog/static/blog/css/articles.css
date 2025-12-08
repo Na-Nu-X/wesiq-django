@@ -104,14 +104,22 @@
   border: 1px solid #fff;
   border-radius: 50%;
 }
-.content .article_forum .write_comment_form .send {
+.content .article_forum .write_comment_form button {
   position: absolute;
-  right: 15px;
   top: 50%;
+  right: 0px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+.content .article_forum .write_comment_form button .send {
+  position: absolute;
+  top: 50%;
+  right: 15px;
   transform: translateY(-50%) scale(1);
   transition: transform 0.3s ease;
 }
-.content .article_forum .write_comment_form .send:hover {
+.content .article_forum .write_comment_form button .send:hover {
   transform: translateY(-50%) scale(1.1);
   cursor: pointer;
 }
