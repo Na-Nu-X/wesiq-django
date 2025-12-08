@@ -2,7 +2,7 @@
 
 .content {
     max-width: $main-width;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0px auto;
     background-color: transparentize($main-color, 0.9);
     border: 1px solid darken($secondary-color, 40%);
@@ -172,27 +172,38 @@
 
                 .interactions {
                     margin-left: 50px;
+                    display: flex;
 
-                    .fa-reply {
-                        margin-right: 4px;
-                        font-size: 15px;
-                        color: darken($secondary-color, 20%);
-                        transition: color 0.3s ease;
+                    .reply {
+                        margin-right: 10px;
 
-                        &:hover {
-                            color: $success-color;
-                            cursor: pointer;
+                        .fa-reply {
+                            font-size: 15px;
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: darken($secondary-color, 20%);
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
                         }
                     }
+                    
+                    .likes {
+                        .fa-heart {
+                            font-size: 15px;
+                            color: darken($secondary-color, 40%);
 
-                    .fa-heart {
-                        font-size: 15px;
-                        color: darken($secondary-color, 20%);
-                        transition: color 0.3s ease;
+                            &:hover {
+                                color: $error-color !important;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
 
-                        &:hover {
-                            color: $error_color;
-                            cursor: pointer;
+                        p {
+                            display: inline-block;
+                            color: darken($secondary-color, 40%);
                         }
                     }
                 }
