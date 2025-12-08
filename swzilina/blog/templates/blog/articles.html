@@ -9,8 +9,8 @@
 
 {% block heading %}{{ article.title|default:"Článok sa nenašiel" }}{% endblock heading %}
 
-{% if not_found != False %}
-    {% block content %}
+{% block content %}
+    {% if not_found == False %}
         <div class="article_banner">
             <div class="banner_image">
                 <img src="{% static '../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
@@ -73,7 +73,7 @@
         </div>
 
         <div class="article_forum">
-            <form class="write_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
+            <form class="write_comment_form" action="/" method="POST">
                 {% csrf_token %}
                 
                 {{ write_comment_form.comment }}
@@ -115,9 +115,15 @@
                     </div>
                     
                     <div class="interactions">
-                        <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
-                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                        {% comment %} <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart --> {% endcomment %}
+                        <div class="reply">
+                            <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                        </div>
+                        
+                        <div class="likes">
+                            <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                            <p class="likes_counter">0</p>
+                        </div>
                     </div>
                     
                     <div class="reply_1">
@@ -140,9 +146,15 @@
                         </div>
 
                         <div class="interactions">
-                            <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
-                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                            {% comment %} <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart --> {% endcomment %}
+                            <div class="reply">
+                                <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                            </div>
+                            
+                            <div class="likes">
+                                <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                                <p class="likes_counter">0</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -161,13 +173,57 @@
                     </div>
                     
                     <div class="interactions">
-                        <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
-                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                        {% comment %} <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart --> {% endcomment %}
+                        <div class="reply">
+                            <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                        </div>
+                        
+                        <div class="likes">
+                            <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                            <p class="likes_counter">0</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    {% endblock content %}
 
-{% endif %}
+    {% endif %}
+{% endblock content %}
+
+{% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Comment Likes
+
+            const likes = document.querySelectorAll(".likes") // Gets All Like Containers From Page
+
+            likes.forEach(function(one_like) {
+                // Gets Heart And Counter From Each Like Container
+                const one_heart = one_like.querySelector(".fa-heart")
+                const one_like_counter = one_like.querySelector(".likes_counter")
+
+                one_heart.addEventListener("click", function() {
+                    // If The Heart Is Empty
+                    if(one_heart.classList.contains("fa-regular")) {
+                        one_heart.classList.remove("fa-regular")
+                        one_heart.classList.add("fa-solid")
+                        one_heart.style.color = "#df3535"
+
+                        one_like_counter.textContent = parseInt(one_like_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
+                    }
+
+                    // If The Heart Is Already Clicked
+                    else if(one_heart.classList.contains("fa-solid")) {
+                        one_heart.classList.remove("fa-solid")
+                        one_heart.classList.add("fa-regular")
+                        one_heart.style.color = "#999999"
+
+                        one_like_counter.textContent = parseInt(one_like_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock script %}
