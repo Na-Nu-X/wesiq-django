@@ -105,15 +105,15 @@
                             <img 
                                 class="profile_picture" 
                                 src="
-                                    {% if profile_picture_name %}
-                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                    {% if one_comment.user.profile_picture_name %}
+                                        ../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
 
                                     {% else %}
                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                     
                                     {% endif %}
                                 "
-                                title="Zobraziť profil {{ article.user.first_name }} {{ article.user.last_name }}"
+                                title="Zobraziť profil {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
                             >
 
                             <p>{{ one_comment.comment }}</p>
@@ -128,7 +128,7 @@
                             <div class="likes">
                                 <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
 
-                                <p class="likes_counter">0</p>
+                                <p class="likes_counter">{{ one_comment.likes }}</p>
                             </div>
                         </div>
 
@@ -150,6 +150,8 @@
                                 "
                             >
 
+                            <input type="hidden" name="parent_id" value={{ one_comment.id }}>
+
                             <input type="hidden" name="reply_comment_form" value="reply_comment_form"/>
                             
                             <button type="submit">
@@ -157,37 +159,72 @@
                             </button>
                         </form>
 
-                        {% comment %} <div class="reply_1">
-                            <div class="comment">
-                                <img 
-                                    class="profile_picture" 
-                                    src="
-                                        {% if profile_picture_name %}
-                                            ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                        <div class="all_replies">
+                            {% for one_reply in replies %}
+                                {% if one_comment.id == one_reply.parent_id %}
+                                    <div class="one_reply">
+                                        <div class="comment" data-id="{{ one_reply.id }}">
+                                            <img 
+                                                class="profile_picture" 
+                                                src="
+                                                    {% if one_comment.user.profile_picture_name %}
+                                                        ../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
 
-                                        {% else %}
-                                            {% static 'images/profile_picture.png' %}
-                                        
-                                        {% endif %}
-                                    "
-                                    title="Zobraziť profil {{ article.user.first_name }} {{ article.user.last_name }}"
-                                >
+                                                    {% else %}
+                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                    
+                                                    {% endif %}
+                                                "
+                                                title="Zobraziť profil {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
+                                            >
 
-                                <p>Lorem ipsum dolor sit.</p>
-                            </div>
+                                            <p>{{ one_reply.comment }}</p>
+                                        </div>
 
-                            <div class="interactions">
-                                <div class="reply">
-                                    <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
-                                </div>
-                                
-                                <div class="likes">
-                                    <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+                                        <div class="interactions">
+                                            <div class="reply">
+                                                <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                                                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+                                            </div>
+                                            
+                                            <div class="likes">
+                                                <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
 
-                                    <p class="likes_counter">0</p>
-                                </div>
-                            </div>
-                        </div> {% endcomment %}
+                                                <p class="likes_counter">{{ one_reply.likes }}</p>
+                                            </div>
+                                        </div>
+
+                                        <form class="reply_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
+                                            {% csrf_token %}
+                                            
+                                            {{ write_comment_form.comment }}
+
+                                            <img 
+                                                class="profile_picture" 
+                                                src="
+                                                    {% if profile_picture_name %}
+                                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                                                    {% else %}
+                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                    
+                                                    {% endif %}
+                                                "
+                                            >
+
+                                            <input type="hidden" name="parent_id" value={{ one_reply.id }}>
+
+                                            <input type="hidden" name="reply_comment_form" value="reply_comment_form"/>
+                                            
+                                            <button type="submit">
+                                                <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
 
                 {% endfor %}
@@ -235,6 +272,53 @@
                 // Replies
                 const reply = one_comment.querySelector(".interactions .reply .fa-solid")
                 const reply_comment_form = one_comment.querySelector(".reply_comment_form")
+
+                reply.addEventListener("click", function() {
+                    reply_comment_form.classList.toggle("visible")
+
+                    if(reply_comment_form.classList.contains("visible")) {
+                        reply.classList.remove("fa-reply")
+                        reply.classList.add("fa-xmark")
+                    }
+
+                    else if(!reply_comment_form.classList.contains("visible")) {
+                        reply.classList.remove("fa-xmark")
+                        reply.classList.add("fa-reply")
+                    }
+                })
+            })
+
+            const replies = document.querySelectorAll(".one_reply")
+            
+            replies.forEach(function(one_reply) {
+                // Gets Heart And Counter From Each Reply
+                let heart = one_reply.querySelector(".interactions .likes .fa-heart")
+                let likes_counter = one_reply.querySelector(".interactions .likes .likes_counter")
+                
+                // Likes
+                heart.addEventListener("click", function() {
+                    // If The Heart Is Empty
+                    if(heart.classList.contains("fa-regular")) {
+                        heart.classList.remove("fa-regular")
+                        heart.classList.add("fa-solid")
+                        heart.style.color = "#df3535"
+
+                        likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
+                    }
+
+                    // If The Heart Is Already Clicked
+                    else if(heart.classList.contains("fa-solid")) {
+                        heart.classList.remove("fa-solid")
+                        heart.classList.add("fa-regular")
+                        heart.style.color = "#999999"
+
+                        likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+                    }
+                })
+
+                // Replies
+                const reply = one_reply.querySelector(".interactions .reply .fa-solid")
+                const reply_comment_form = one_reply.querySelector(".reply_comment_form")
 
                 reply.addEventListener("click", function() {
                     reply_comment_form.classList.toggle("visible")

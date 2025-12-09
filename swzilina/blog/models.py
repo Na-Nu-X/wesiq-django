@@ -76,7 +76,7 @@ class ArticleForum(models.Model):
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
-    reply = models.ForeignKey(
+    parent = models.ForeignKey(
         "self",
         null=True,
         blank=True,

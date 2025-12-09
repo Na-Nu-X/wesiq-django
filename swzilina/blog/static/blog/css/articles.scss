@@ -229,11 +229,14 @@
                     }
                 }
 
-                .reply_1 {
-                    margin-top: 10px;
-                    margin-left: 50px - 2px;
+                .all_replies {
+                    margin-left: 50px + 4px;
                     padding-left: 10px;
                     border-left: 2px solid darken($secondary-color, 20%);
+
+                    .one_reply {
+                        margin-top: 10px;
+                    }
                 }
             }
         }
