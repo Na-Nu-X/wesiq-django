@@ -92,7 +92,7 @@
         width: 90%;
         margin: 50px auto 0px;
 
-        .write_comment_form {
+        .write_comment_form, .reply_comment_form {
             position: relative;
             // border-bottom: 1px solid $secondary-color;
             // padding-bottom: 20px;
@@ -152,15 +152,15 @@
 
         .all_comments {
             margin-top: 50px;
-            margin-left: 6px;
 
             .one_comment {
-                margin-bottom: 10px;
+                margin-bottom: 20px;
 
                 .comment {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+                    margin-left: 6px;
 
                     .profile_picture {
                         width: 38px;
@@ -179,11 +179,13 @@
                 }
 
                 .interactions {
-                    margin-left: 50px;
+                    margin-left: 50px + 4px;
                     display: flex;
 
                     .reply {
                         margin-right: 10px;
+                        width: 15px;
+                        height: 15px;
 
                         .fa-reply {
                             font-size: 15px;
@@ -191,6 +193,17 @@
 
                             &:hover {
                                 color: darken($secondary-color, 20%);
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+
+                        .fa-xmark {
+                            font-size: 15px;
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: $error-color;
                                 cursor: pointer;
                                 transition: color 0.3s ease;
                             }
@@ -222,6 +235,22 @@
                     padding-left: 10px;
                     border-left: 2px solid darken($secondary-color, 20%);
                 }
+            }
+        }
+        
+        .reply_comment_form {
+            display: none;
+            margin-top: 10px;
+            margin-left: 50px + 4px;
+            padding-left: 10px;
+            border-left: 2px solid darken($secondary-color, 20%);
+
+            &.visible {
+                display: block;
+            }
+
+            .profile_picture {
+                left: 6px + 10px;
             }
         }
     }
