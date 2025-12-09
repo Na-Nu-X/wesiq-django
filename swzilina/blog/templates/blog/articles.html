@@ -90,6 +90,8 @@
                         {% endif %}
                     "
                 >
+
+                <input type="hidden" name="write_comment_form" value="write_comment_form"/>
                 
                 <button type="submit">
                     <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
@@ -99,7 +101,7 @@
             <div class="all_comments">
                 {% for one_comment in comments %}
                     <div class="one_comment">
-                        <div class="comment">
+                        <div class="comment" data-id="{{ one_comment.id }}">
                             <img 
                                 class="profile_picture" 
                                 src="
@@ -120,6 +122,7 @@
                         <div class="interactions">
                             <div class="reply">
                                 <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                             </div>
                             
                             <div class="likes">
@@ -129,7 +132,32 @@
                             </div>
                         </div>
 
-                        <div class="reply_1">
+                        <form class="reply_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
+                            {% csrf_token %}
+                            
+                            {{ write_comment_form.comment }}
+
+                            <img 
+                                class="profile_picture" 
+                                src="
+                                    {% if profile_picture_name %}
+                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+
+                            <input type="hidden" name="reply_comment_form" value="reply_comment_form"/>
+                            
+                            <button type="submit">
+                                <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                            </button>
+                        </form>
+
+                        {% comment %} <div class="reply_1">
                             <div class="comment">
                                 <img 
                                     class="profile_picture" 
@@ -138,7 +166,7 @@
                                             ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                                         {% else %}
-                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                            {% static 'images/profile_picture.png' %}
                                         
                                         {% endif %}
                                     "
@@ -159,7 +187,7 @@
                                     <p class="likes_counter">0</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
 
                 {% endfor %}
@@ -174,32 +202,51 @@
         "use strict"
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Comment Likes
+            // Comments
+        
+            const comments = document.querySelectorAll(".one_comment")
 
-            const likes = document.querySelectorAll(".likes") // Gets All Like Containers From Page
-
-            likes.forEach(function(one_like) {
-                // Gets Heart And Counter From Each Like Container
-                const one_heart = one_like.querySelector(".fa-heart")
-                const one_like_counter = one_like.querySelector(".likes_counter")
-
-                one_heart.addEventListener("click", function() {
+            comments.forEach(function(one_comment) {
+                // Gets Heart And Counter From Each Comment
+                let heart = one_comment.querySelector(".interactions .likes .fa-heart")
+                let likes_counter = one_comment.querySelector(".interactions .likes .likes_counter")
+                
+                // Likes
+                heart.addEventListener("click", function() {
                     // If The Heart Is Empty
-                    if(one_heart.classList.contains("fa-regular")) {
-                        one_heart.classList.remove("fa-regular")
-                        one_heart.classList.add("fa-solid")
-                        one_heart.style.color = "#df3535"
+                    if(heart.classList.contains("fa-regular")) {
+                        heart.classList.remove("fa-regular")
+                        heart.classList.add("fa-solid")
+                        heart.style.color = "#df3535"
 
-                        one_like_counter.textContent = parseInt(one_like_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
+                        likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
                     }
 
                     // If The Heart Is Already Clicked
-                    else if(one_heart.classList.contains("fa-solid")) {
-                        one_heart.classList.remove("fa-solid")
-                        one_heart.classList.add("fa-regular")
-                        one_heart.style.color = "#999999"
+                    else if(heart.classList.contains("fa-solid")) {
+                        heart.classList.remove("fa-solid")
+                        heart.classList.add("fa-regular")
+                        heart.style.color = "#999999"
 
-                        one_like_counter.textContent = parseInt(one_like_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+                        likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+                    }
+                })
+
+                // Replies
+                const reply = one_comment.querySelector(".interactions .reply .fa-solid")
+                const reply_comment_form = one_comment.querySelector(".reply_comment_form")
+
+                reply.addEventListener("click", function() {
+                    reply_comment_form.classList.toggle("visible")
+
+                    if(reply_comment_form.classList.contains("visible")) {
+                        reply.classList.remove("fa-reply")
+                        reply.classList.add("fa-xmark")
+                    }
+
+                    else if(!reply_comment_form.classList.contains("visible")) {
+                        reply.classList.remove("fa-xmark")
+                        reply.classList.add("fa-reply")
                     }
                 })
             })

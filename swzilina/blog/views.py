@@ -719,7 +719,7 @@ def blogThemeView(request, theme):
             article.save()
 
         # Write Comment Form
-        if request.method == "POST":
+        if request.method == "POST" and request.POST.get("write_comment_form"):
             write_comment_form = writeCommentForm(request.POST)
             if write_comment_form.is_valid():
                 new_comment = ArticleForum(

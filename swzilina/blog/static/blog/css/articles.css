@@ -71,10 +71,10 @@
   width: 90%;
   margin: 50px auto 0px;
 }
-.content .article_forum .write_comment_form {
+.content .article_forum .write_comment_form, .content .article_forum .reply_comment_form {
   position: relative;
 }
-.content .article_forum .write_comment_form input {
+.content .article_forum .write_comment_form input, .content .article_forum .reply_comment_form input {
   width: 100%;
   height: 50px;
   padding-left: 54px;
@@ -87,13 +87,13 @@
   border-radius: 25px;
   outline: none;
 }
-.content .article_forum .write_comment_form input::-moz-placeholder {
+.content .article_forum .write_comment_form input::-moz-placeholder, .content .article_forum .reply_comment_form input::-moz-placeholder {
   color: #cccccc;
 }
-.content .article_forum .write_comment_form input::placeholder {
+.content .article_forum .write_comment_form input::placeholder, .content .article_forum .reply_comment_form input::placeholder {
   color: #cccccc;
 }
-.content .article_forum .write_comment_form .profile_picture {
+.content .article_forum .write_comment_form .profile_picture, .content .article_forum .reply_comment_form .profile_picture {
   position: absolute;
   left: 6px;
   top: 50%;
@@ -104,7 +104,7 @@
   border: 1px solid #fff;
   border-radius: 50%;
 }
-.content .article_forum .write_comment_form button {
+.content .article_forum .write_comment_form button, .content .article_forum .reply_comment_form button {
   position: absolute;
   top: 50%;
   right: 0px;
@@ -112,28 +112,28 @@
   border: none;
   outline: none;
 }
-.content .article_forum .write_comment_form button .send {
+.content .article_forum .write_comment_form button .send, .content .article_forum .reply_comment_form button .send {
   position: absolute;
   top: 50%;
   right: 15px;
   transform: translateY(-50%) scale(1);
   transition: transform 0.3s ease;
 }
-.content .article_forum .write_comment_form button .send:hover {
+.content .article_forum .write_comment_form button .send:hover, .content .article_forum .reply_comment_form button .send:hover {
   transform: translateY(-50%) scale(1.1);
   cursor: pointer;
 }
 .content .article_forum .all_comments {
   margin-top: 50px;
-  margin-left: 6px;
 }
 .content .article_forum .all_comments .one_comment {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .content .article_forum .all_comments .one_comment .comment {
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-left: 6px;
 }
 .content .article_forum .all_comments .one_comment .comment .profile_picture {
   width: 38px;
@@ -149,11 +149,13 @@
   cursor: pointer;
 }
 .content .article_forum .all_comments .one_comment .interactions {
-  margin-left: 50px;
+  margin-left: 54px;
   display: flex;
 }
 .content .article_forum .all_comments .one_comment .interactions .reply {
   margin-right: 10px;
+  width: 15px;
+  height: 15px;
 }
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-reply {
   font-size: 15px;
@@ -161,6 +163,15 @@
 }
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-reply:hover {
   color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.content .article_forum .all_comments .one_comment .interactions .reply .fa-xmark {
+  font-size: 15px;
+  color: #999999;
+}
+.content .article_forum .all_comments .one_comment .interactions .reply .fa-xmark:hover {
+  color: #df3535;
   cursor: pointer;
   transition: color 0.3s ease;
 }
@@ -182,4 +193,17 @@
   margin-left: 48px;
   padding-left: 10px;
   border-left: 2px solid #cccccc;
+}
+.content .article_forum .reply_comment_form {
+  display: none;
+  margin-top: 10px;
+  margin-left: 54px;
+  padding-left: 10px;
+  border-left: 2px solid #cccccc;
+}
+.content .article_forum .reply_comment_form.visible {
+  display: block;
+}
+.content .article_forum .reply_comment_form .profile_picture {
+  left: 16px;
 }/*# sourceMappingURL=articles.css.map */

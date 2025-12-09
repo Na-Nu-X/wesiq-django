@@ -24,15 +24,28 @@ class Users(models.Model):
         return f"{self.role}: {self.first_name} {self.last_name}"
 
 class Reviews(models.Model):
-    # user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.CASCADE, related_name="review", null=False)
-    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.SET_NULL, related_name="review", null=True)
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID", 
+        on_delete=models.SET_NULL, 
+        related_name="review", 
+        null=True,
+    )
+    
     rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class Articles(models.Model):
-    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.DO_NOTHING, related_name="article", null=True)
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID",
+        on_delete=models.DO_NOTHING, 
+        related_name="article", 
+        null=True,
+    )
+
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50),default=list, null=False)
@@ -43,7 +56,30 @@ class Articles(models.Model):
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class ArticleForum(models.Model):
-    article = models.ForeignKey(Articles, verbose_name="Article ID", on_delete=models.DO_NOTHING, related_name="comment", null=False)
-    user = models.ForeignKey(Users, verbose_name="User ID", on_delete=models.DO_NOTHING, related_name="user", null=True)
+    article = models.ForeignKey(
+        Articles, 
+        verbose_name="Article ID", 
+        on_delete=models.DO_NOTHING, 
+        related_name="comments", 
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID", 
+        on_delete=models.DO_NOTHING, 
+        related_name="comments", 
+        null=True,
+    )
+
     comment = models.TextField(verbose_name="Comment", null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+    reply = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies",
+    )
