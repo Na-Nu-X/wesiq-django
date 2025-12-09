@@ -14,6 +14,7 @@ from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
 import random, requests, os, secrets
 from django.contrib.auth.hashers import make_password, check_password
+from django.db.models import Q
 
 # Functions
 def captureError(message):
@@ -709,29 +710,42 @@ def blogThemeView(request, theme):
             # Gets Article By URL Address
             article = Articles.objects.get(link=theme)
             # Gets All Comments Of The Article
-            comments = ArticleForum.objects.filter(article_id=article.id)
-
-            # print(comments[0].comment)
+            comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None)
+            replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None))
 
         # Adds 1 Visitor to The Article's Unique Visitors
         if not request.COOKIES.get(article.link):
             article.visitors += 1
             article.save()
 
-        # Write Comment Form
-        if request.method == "POST" and request.POST.get("write_comment_form"):
-            write_comment_form = writeCommentForm(request.POST)
-            if write_comment_form.is_valid():
-                new_comment = ArticleForum(
-                    article_id = article.id,
-                    user_id = logged_in_user_id,
-                    comment = write_comment_form.cleaned_data["comment"],
-                )
-                new_comment.save()
+        if request.method == "POST":
+            # Write Comment Form
+            if request.POST.get("write_comment_form"):
+                write_comment_form = writeCommentForm(request.POST)
+                if write_comment_form.is_valid():
+                    new_comment = ArticleForum(
+                        article_id = article.id,
+                        user_id = logged_in_user_id,
+                        comment = write_comment_form.cleaned_data["comment"],
+                    )
+                    new_comment.save()
+
+            # Reply Comment Form
+            elif request.POST.get("reply_comment_form"):
+                write_comment_form = writeCommentForm(request.POST)
+                if write_comment_form.is_valid():
+                    new_comment_reply = ArticleForum(
+                        article_id = article.id,
+                        user_id = logged_in_user_id,
+                        comment = write_comment_form.cleaned_data["comment"],
+                        parent_id = request.POST.get("parent_id")
+                    )
+                    new_comment_reply.save()
 
         response = render(request, "blog/articles.html", {
             "article": article,
             "comments": comments,
+            "replies": replies,
             "profile_picture_name": user.profile_picture_name,
             "write_comment_form": writeCommentForm,
             "not_found": False,

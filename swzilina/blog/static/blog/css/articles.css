@@ -188,11 +188,13 @@
   display: inline-block;
   color: #999999;
 }
-.content .article_forum .all_comments .one_comment .reply_1 {
-  margin-top: 10px;
-  margin-left: 48px;
+.content .article_forum .all_comments .one_comment .all_replies {
+  margin-left: 54px;
   padding-left: 10px;
   border-left: 2px solid #cccccc;
+}
+.content .article_forum .all_comments .one_comment .all_replies .one_reply {
+  margin-top: 10px;
 }
 .content .article_forum .reply_comment_form {
   display: none;
