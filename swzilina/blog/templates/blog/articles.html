@@ -99,9 +99,16 @@
             </form>
 
             <div class="all_comments">
+                <h2 class="no_comments">
+                    {% if no_comments %}
+                        Zatiaľ&nbsp;žiadne&nbsp;komentáre.<br>Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!
+                    
+                    {% endif %}
+                </h2>
+
                 {% for one_comment in comments %}
-                    <div class="one_comment">
-                        <div class="comment" data-id="{{ one_comment.id }}">
+                    <div class="one_comment" data-id="{{ one_comment.id }}">
+                        <div class="comment">
                             <img 
                                 class="profile_picture" 
                                 src="
@@ -129,6 +136,10 @@
                                 <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
 
                                 <p class="likes_counter">{{ one_comment.likes }}</p>
+                            </div>
+
+                            <div class="date" title="Dátum zverejnenia">
+                                <p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
                             </div>
                         </div>
 
@@ -167,15 +178,15 @@
                                             <img 
                                                 class="profile_picture" 
                                                 src="
-                                                    {% if one_comment.user.profile_picture_name %}
-                                                        ../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
+                                                    {% if one_reply.user.profile_picture_name %}
+                                                        ../media/images/{{ one_reply.user.id }}/{{ one_reply.user.profile_picture_name }}
 
                                                     {% else %}
                                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                                     
                                                     {% endif %}
                                                 "
-                                                title="Zobraziť profil {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
+                                                title="Zobraziť profil {{ one_reply.user.first_name }} {{ one_reply.user.last_name }}"
                                             >
 
                                             <p>{{ one_reply.comment }}</p>
@@ -191,6 +202,10 @@
                                                 <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
 
                                                 <p class="likes_counter">{{ one_reply.likes }}</p>
+                                            </div>
+
+                                            <div class="date" title="Dátum zverejnenia">
+                                                <p>{{ one_reply.creation_time|date:"d.m. Y" }}</p>
                                             </div>
                                         </div>
 
@@ -257,6 +272,9 @@
                         heart.style.color = "#df3535"
 
                         likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
+
+                        // const liked_comment_id = one_comment.dataset.id
+                        // document.cookie = `liked_comment_${liked_comment_id}=${liked_comment_id}; max-age=` + 60 * 60 * 24 * 365 + "; path=/" // 1 Year Timed Cookie
                     }
 
                     // If The Heart Is Already Clicked

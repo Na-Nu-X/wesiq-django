@@ -705,6 +705,8 @@ def blogThemeView(request, theme):
             # Gets Logged In User ID From Session
             logged_in_user_id = request.session.get("logged_in_user_id")
 
+            no_comments = True # Default Value That Says That There Are No Comments In The Database
+
             # Gets Logged In User From DB
             user = Users.objects.get(id=logged_in_user_id)
             # Gets Article By URL Address
@@ -712,6 +714,10 @@ def blogThemeView(request, theme):
             # Gets All Comments Of The Article
             comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None)
             replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None))
+
+            # Checks If There Are Any Articles In The Database
+            if(comments.exists()):
+                no_comments = False
 
         # Adds 1 Visitor to The Article's Unique Visitors
         if not request.COOKIES.get(article.link):
@@ -748,6 +754,7 @@ def blogThemeView(request, theme):
             "replies": replies,
             "profile_picture_name": user.profile_picture_name,
             "write_comment_form": writeCommentForm,
+            "no_comments": no_comments,
             "not_found": False,
         })
 
