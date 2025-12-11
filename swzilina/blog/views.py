@@ -799,3 +799,47 @@ def writeArticleView(request):
     return render(request, "blog/write_article.html", {
         "write_article_form": writeArticleForm
     })
+
+def likeComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) not in comment.likes_from_users):
+                    comment.likes_from_users.append(logged_in_user_id)
+                    comment.likes += 1
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return HttpResponse("Lajk bol pridaný.")
+
+def cancelLikeComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # print(comment_id)
+
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) in comment.likes_from_users):
+                    comment.likes_from_users.remove(str(logged_in_user_id))
+                    comment.likes -= 1
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return HttpResponse("Lajk bol odobraný.")
