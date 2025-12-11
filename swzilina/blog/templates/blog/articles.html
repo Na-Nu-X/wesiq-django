@@ -107,7 +107,7 @@
                 </h2>
 
                 {% for one_comment in comments %}
-                    <div class="one_comment" data-id="{{ one_comment.id }}">
+                    <div class="one_comment" data-id="{{ one_comment.id }}" data-article="{{ one_comment.article.link }}">
                         <div class="comment">
                             <img 
                                 class="profile_picture" 
@@ -133,7 +133,19 @@
                             </div>
                             
                             <div class="likes">
-                                <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+                                <i 
+                                    class="
+                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
+                                            fa-solid
+
+                                        {% else %}
+                                            fa-regular
+                                        
+                                        {% endif %}
+                                        fa-heart
+                                    " 
+                                    title="Páči sa mi"
+                                ></i> <!-- https://fontawesome.com/icons/heart -->
 
                                 <p class="likes_counter">{{ one_comment.likes }}</p>
                             </div>
@@ -255,6 +267,13 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             // Comments
+
+            // Function For Get Cookie by Its Name
+            function getCookie(cookie_name) {
+                const value = `; ${document.cookie}`
+                const parts = value.split(`; ${cookie_name}=`)
+                if (parts.length === 2) return parts.pop().split(";")[0]
+            }
         
             const comments = document.querySelectorAll(".one_comment")
 
@@ -262,6 +281,15 @@
                 // Gets Heart And Counter From Each Comment
                 let heart = one_comment.querySelector(".interactions .likes .fa-heart")
                 let likes_counter = one_comment.querySelector(".interactions .likes .likes_counter")
+
+                // Gets Data From HTML Tags
+                const one_liked_comment_article = one_comment.dataset.article // For Example: front-lever
+                const one_liked_comment_id = one_comment.dataset.id // For Example: 1
+
+                // If User Already Liked The Comment
+                if(heart.classList.contains("fa-solid")) {
+                    heart.style.color = "#df3535"
+                }
                 
                 // Likes
                 heart.addEventListener("click", function() {
@@ -272,9 +300,21 @@
                         heart.style.color = "#df3535"
 
                         likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
-
-                        // const liked_comment_id = one_comment.dataset.id
-                        // document.cookie = `liked_comment_${liked_comment_id}=${liked_comment_id}; max-age=` + 60 * 60 * 24 * 365 + "; path=/" // 1 Year Timed Cookie
+                        
+                        // Sends Liked Commet ID As A POST Data To Like Comment Page
+                        fetch(`/like-comment/${one_liked_comment_id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie("csrftoken"),
+                                "Accept": "application/json"
+                            }
+                        }).then(
+                            response => response.json()
+                        ).then(
+                            data => {
+                                likes_counter.innetText = data.likes
+                            }
+                        ).catch(error => console.error(error))
                     }
 
                     // If The Heart Is Already Clicked
@@ -284,6 +324,21 @@
                         heart.style.color = "#999999"
 
                         likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+
+                        // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
+                        fetch(`/cancel-like-comment/${one_liked_comment_id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie("csrftoken"),
+                                "Accept": "application/json"
+                            }
+                        }).then(
+                            response => response.json()
+                        ).then(
+                            data => {
+                                likes_counter.innetText = data.likes
+                            }
+                        ).catch(error => console.error(error))
                     }
                 })
 
