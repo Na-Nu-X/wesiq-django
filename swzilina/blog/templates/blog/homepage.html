@@ -45,7 +45,7 @@
         <div class="account">
             <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
                 <img 
-                    class="profile_picture" 
+                    class="profile_picture skeleton_loading" 
                     src="
                         {% if profile_picture_name %}
                             media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
@@ -142,7 +142,7 @@
 
             <div class="reviewer">
                 <img 
-                    class="profile_picture" 
+                    class="profile_picture skeleton_loading" 
                     src="
                         {% if profile_picture_name %}
                             media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
@@ -192,7 +192,7 @@
                 <div class="one_review">
                     <div class="reviewer">
                         <img 
-                            class="profile_picture" 
+                            class="profile_picture skeleton_loading" 
                             src="
                                 {% if one_review.user.profile_picture_name %}
                                     media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}

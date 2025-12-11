@@ -16,7 +16,7 @@
         <div class="account">
             <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
                 <img 
-                    class="profile_picture" 
+                    class="profile_picture skeleton_loading" 
                     src="
                         {% if profile_picture_name %}
                             ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
@@ -68,8 +68,8 @@
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
             <div class="sort_select_menu">
-                <div class="refresh">
-                    <i class="fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </div>
 
                 <div class="select">
@@ -87,8 +87,8 @@
             </div>
 
             <div class="category_select_menu">
-                <div class="refresh">
-                    <i class="fa-solid fa-arrow-rotate-right" title="Obnoviť predvolené filtre"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </div>
 
                 <div class="select">
@@ -127,7 +127,7 @@
 
         {% for one_article in articles %}
             <article 
-                class="{{ one_article.link }}"
+                class="{{ one_article.link }} skeleton_loading"
                 data-title="{{ one_article.title }}"
                 style="
                     {% if one_article.image_name %}
@@ -150,8 +150,8 @@
                     swing-360 - https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
                 -->
 
-                <div class="info">
-                    <i class="fa-solid fa-circle-info" title="Tento článok pridal {{ one_article.user.first_name }} {{ one_article.user.last_name }}"></i> <!-- https://fontawesome.com/icons/circle-info -->
+                <div class="info" title="Tento článok pridal {{ one_article.user.first_name }} {{ one_article.user.last_name }}">
+                    <i class="fa-solid fa-circle-info"></i> <!-- https://fontawesome.com/icons/circle-info -->
                 </div>
                 
                 <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="Zdielať">
@@ -161,8 +161,13 @@
                 </div>
 
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
-                    <h2>{{ one_article.title }}</h2>
-                    <p>{{ one_article.content|truncatechars:100 }}</p>
+                    <div class="skeleton_loading skeleton_text">
+                        <h2 class="hidden">{{ one_article.title }}</h2>
+                    </div>
+                    
+                    <div class="skeleton_loading skeleton_text">
+                        <p class="hidden">{{ one_article.content|truncatechars:100 }}</p>
+                    </div>
 
                     <div class="article_info">
                         <div 
@@ -177,34 +182,42 @@
                                 {% endif %}
                             "
                         >
-                            {% for _ in "12345" %}
-                                {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
-                                    <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                            <div class="skeleton_loading skeleton_text">
+                                {% for _ in "12345" %}
+                                    {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
+                                        <img class="hidden" src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
 
-                                {% else %}
-                                    <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                    {% else %}
+                                        <img class="hidden" src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
 
-                                {% endif %}
-                            {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
 
                         <div class="category" title="Kategória">
-                            <p>
-                                <i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
-                                
-                                {% for one_category in one_article.categories %}
-                                    {{ one_category|capfirst }}
+                            <div class="skeleton_loading skeleton_text">
+                                <p class="hidden">
+                                    <i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
+                                    
+                                    {% for one_category in one_article.categories %}
+                                        {{ one_category|capfirst }}
 
-                                {% endfor %}
-                            </p>
+                                    {% endfor %}
+                                </p>
+                            </div>
                         </div>
 
                         <div class="visitors" title="{{ one_article.visitors }} unikátnych návštevníkov">
-                            <p><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
+                            <div class="skeleton_loading skeleton_text">
+                                <p class="hidden"><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
+                            </div>
                         </div>
 
                         <div class="date" title="Dátum zverejnenia">
-                            <p>{{ one_article.creation_time|date:"d.m. Y" }}</p>
+                            <div class="skeleton_loading skeleton_text">
+                                <p class="hidden">{{ one_article.creation_time|date:"d.m. Y" }}</p>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -338,16 +351,18 @@
 
             // Animated Articles
 
-            window.addEventListener("scroll", function() {
-                const search_bar_container = document.querySelector(".search_bar_container")
+            window.addEventListener("load", function() {
+                window.addEventListener("scroll", function() {
+                    const search_bar_container = document.querySelector(".search_bar_container")
 
-                if(window.scrollY > search_bar_container.offsetHeight + 20) {
-                    const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tags From Page
+                    if(window.scrollY > search_bar_container.offsetHeight + 20) {
+                        const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tags From Page
 
-                    article_tags.forEach(function(one_article) {
-                        one_article.style.animation = "fade_in_animation 1s ease-out"
-                    })
-                }
+                        article_tags.forEach(function(one_article) {
+                            one_article.style.animation = "fade_in_animation 1s ease-out"
+                        })
+                    }
+                })
             })
 
             // Custom Select Menu

@@ -76,8 +76,8 @@
             {% block buttons %}{% endblock buttons %}
         </section>
 
-        <div class="move_down">
-            <img src="{% static 'images/arrow.png' %}" title="Posunúť nadol"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+        <div class="move_down" title="Posunúť nadol">
+            <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
         </div>
 
         <section class="content">
@@ -127,6 +127,31 @@
             // Secret Message
 
             console.log("%cStreet Workout Žilina by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)")
+
+            // Removes Skeleton Loading Animation When Page Is Fully Loaded
+
+            const skeleton_loadings = document.querySelectorAll(".skeleton_loading")
+
+            window.addEventListener("load", function() {
+                skeleton_loadings.forEach(function(one_skeleton_loading) {
+                    one_skeleton_loading.classList.remove("skeleton_loading")
+                })
+            })
+
+            // Skeleton Text Loading Animation
+
+            const skeleton_texts = document.querySelectorAll(".skeleton_text")
+
+            skeleton_texts.forEach(function(one_skeleton_text) {
+                let skeleton_texts_tags = one_skeleton_text.querySelectorAll("h2, p, img")
+
+                skeleton_texts_tags.forEach(function(one_skeleton_text_tag) {
+                    one_skeleton_text_tag.classList.remove("hidden")
+                })
+
+                one_skeleton_text.classList.remove("skeleton_loading")
+                one_skeleton_text.classList.remove("skeleton_text")
+            })
 
             // Privacy Policy
             

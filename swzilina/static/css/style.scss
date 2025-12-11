@@ -99,6 +99,32 @@
     }
 }
 
+// Skeleton Loading
+
+.skeleton_loading {
+    animation: skeleton_loading_animation 1s linear infinite alternate;
+
+    &.skeleton_text {
+        border-radius: 10px;
+
+        .hidden {
+            visibility: hidden;
+        }
+    }
+}
+
+@keyframes skeleton_loading_animation {
+    0% {
+        // background-color: #a3b8c2;
+        background-color: darken($secondary-color, 40%);
+    }
+
+    100% {
+        // background-color: #f0f3f5;
+        background-color: darken($secondary-color, 20%);
+    }
+}
+
 /**************
  Header Styles
 **************/
