@@ -58,6 +58,24 @@
     box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
   }
 }
+.skeleton_loading {
+  animation: skeleton_loading_animation 1s linear infinite alternate;
+}
+.skeleton_loading.skeleton_text {
+  border-radius: 10px;
+}
+.skeleton_loading.skeleton_text .hidden {
+  visibility: hidden;
+}
+
+@keyframes skeleton_loading_animation {
+  0% {
+    background-color: #999999;
+  }
+  100% {
+    background-color: #cccccc;
+  }
+}
 /**************
  Header Styles
 **************/
