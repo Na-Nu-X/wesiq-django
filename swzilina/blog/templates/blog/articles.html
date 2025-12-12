@@ -185,7 +185,7 @@
                         <div class="all_replies">
                             {% for one_reply in replies %}
                                 {% if one_comment.id == one_reply.parent_id %}
-                                    <div class="one_reply">
+                                    <div class="one_reply" data-id="{{ one_reply.id }}">
                                         <div class="comment" data-id="{{ one_reply.id }}">
                                             <img 
                                                 class="profile_picture" 
@@ -211,7 +211,19 @@
                                             </div>
                                             
                                             <div class="likes">
-                                                <i class="fa-regular fa-heart" title="Páči sa mi"></i> <!-- https://fontawesome.com/icons/heart -->
+                                                <i 
+                                                    class="
+                                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_reply.likes_from_users %}
+                                                            fa-solid
+
+                                                        {% else %}
+                                                            fa-regular
+                                                        
+                                                        {% endif %}
+                                                        fa-heart
+                                                    " 
+                                                    title="Páči sa mi"
+                                                ></i> <!-- https://fontawesome.com/icons/heart -->
 
                                                 <p class="likes_counter">{{ one_reply.likes }}</p>
                                             </div>
@@ -284,7 +296,7 @@
 
                 // Gets Data From HTML Tags
                 const one_liked_comment_article = one_comment.dataset.article // For Example: front-lever
-                const one_liked_comment_id = one_comment.dataset.id // For Example: 1
+                const one_liked_comment_id = one_comment.dataset.id // Gets Comment ID From Data Value
 
                 // If User Already Liked The Comment
                 if(heart.classList.contains("fa-solid")) {
@@ -367,6 +379,13 @@
                 // Gets Heart And Counter From Each Reply
                 let heart = one_reply.querySelector(".interactions .likes .fa-heart")
                 let likes_counter = one_reply.querySelector(".interactions .likes .likes_counter")
+
+                const one_liked_reply_id = one_reply.dataset.id // Gets Reply ID From Data Value
+
+                // If User Already Liked The Reply
+                if(heart.classList.contains("fa-solid")) {
+                    heart.style.color = "#df3535"
+                }
                 
                 // Likes
                 heart.addEventListener("click", function() {
@@ -377,6 +396,21 @@
                         heart.style.color = "#df3535"
 
                         likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
+
+                        // Sends Liked Commet ID As A POST Data To Like Comment Page
+                        fetch(`/like-comment/${one_liked_reply_id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie("csrftoken"),
+                                "Accept": "application/json"
+                            }
+                        }).then(
+                            response => response.json()
+                        ).then(
+                            data => {
+                                likes_counter.innetText = data.likes
+                            }
+                        ).catch(error => console.error(error))
                     }
 
                     // If The Heart Is Already Clicked
@@ -386,6 +420,21 @@
                         heart.style.color = "#999999"
 
                         likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+
+                        // Sends Liked Commet ID As A POST Data To Like Comment Page
+                        fetch(`/cancel-like-comment/${one_liked_reply_id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie("csrftoken"),
+                                "Accept": "application/json"
+                            }
+                        }).then(
+                            response => response.json()
+                        ).then(
+                            data => {
+                                likes_counter.innetText = data.likes
+                            }
+                        ).catch(error => console.error(error))
                     }
                 })
 
