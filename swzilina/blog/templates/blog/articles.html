@@ -127,12 +127,12 @@
                         </div>
 
                         <div class="interactions">
-                            <div class="reply">
-                                <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                            <div class="reply" title="Odpovedať...">
+                                <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
                                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                             </div>
                             
-                            <div class="likes">
+                            <div class="likes" title="Páči sa mi...">
                                 <i 
                                     class="
                                         {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
@@ -143,11 +143,14 @@
                                         
                                         {% endif %}
                                         fa-heart
-                                    " 
-                                    title="Páči sa mi"
+                                    "
                                 ></i> <!-- https://fontawesome.com/icons/heart -->
 
                                 <p class="likes_counter">{{ one_comment.likes }}</p>
+                            </div>
+
+                            <div class="report" title="Nahlásiť...">
+                                <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
                             </div>
 
                             <div class="date" title="Dátum zverejnenia">
@@ -205,12 +208,12 @@
                                         </div>
 
                                         <div class="interactions">
-                                            <div class="reply">
-                                                <i class="fa-solid fa-reply" title="Odpovedať"></i> <!-- https://fontawesome.com/icons/reply -->
+                                            <div class="reply" title="Odpovedať...">
+                                                <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
                                                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                                             </div>
                                             
-                                            <div class="likes">
+                                            <div class="likes" title="Páči sa mi...">
                                                 <i 
                                                     class="
                                                         {% if request.session.logged_in_user_id|stringformat:"i" in one_reply.likes_from_users %}
@@ -221,11 +224,14 @@
                                                         
                                                         {% endif %}
                                                         fa-heart
-                                                    " 
-                                                    title="Páči sa mi"
+                                                    "
                                                 ></i> <!-- https://fontawesome.com/icons/heart -->
 
                                                 <p class="likes_counter">{{ one_reply.likes }}</p>
+                                            </div>
+
+                                            <div class="report" title="Nahlásiť...">
+                                                <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
                                             </div>
 
                                             <div class="date" title="Dátum zverejnenia">
@@ -290,13 +296,12 @@
             const comments = document.querySelectorAll(".one_comment")
 
             comments.forEach(function(one_comment) {
+                // Gets Data From HTML Tags
+                const one_comment_id = one_comment.dataset.id // Gets Comment ID From Data Value
+
                 // Gets Heart And Counter From Each Comment
                 let heart = one_comment.querySelector(".interactions .likes .fa-heart")
                 let likes_counter = one_comment.querySelector(".interactions .likes .likes_counter")
-
-                // Gets Data From HTML Tags
-                const one_liked_comment_article = one_comment.dataset.article // For Example: front-lever
-                const one_liked_comment_id = one_comment.dataset.id // Gets Comment ID From Data Value
 
                 // If User Already Liked The Comment
                 if(heart.classList.contains("fa-solid")) {
@@ -314,7 +319,7 @@
                         likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
                         
                         // Sends Liked Commet ID As A POST Data To Like Comment Page
-                        fetch(`/like-comment/${one_liked_comment_id}`, {
+                        fetch(`/like-comment/${one_comment_id}`, {
                             method: "POST",
                             headers: {
                                 "X-CSRFToken": getCookie("csrftoken"),
@@ -338,7 +343,7 @@
                         likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
 
                         // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
-                        fetch(`/cancel-like-comment/${one_liked_comment_id}`, {
+                        fetch(`/cancel-like-comment/${one_comment_id}`, {
                             method: "POST",
                             headers: {
                                 "X-CSRFToken": getCookie("csrftoken"),
@@ -371,16 +376,37 @@
                         reply.classList.add("fa-reply")
                     }
                 })
+
+                // Report Comment
+                let flag = one_comment.querySelector(".interactions .report .fa-flag")
+
+                flag.addEventListener("click", function() {
+                    // Sends Liked Commet ID As A POST Data To Like Comment Page
+                    fetch(`/report-comment/${one_comment_id}`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                            "Accept": "application/json"
+                        }
+                    }).then(
+                        response => response.json()
+                    ).then(
+                        data => {
+                            // likes_counter.innetText = data.likes
+                        }
+                    ).catch(error => console.error(error))
+                })
             })
 
             const replies = document.querySelectorAll(".one_reply")
             
             replies.forEach(function(one_reply) {
+                // Gets Data From HTML Tags
+                const one_reply_id = one_reply.dataset.id // Gets Reply ID From Data Value
+
                 // Gets Heart And Counter From Each Reply
                 let heart = one_reply.querySelector(".interactions .likes .fa-heart")
                 let likes_counter = one_reply.querySelector(".interactions .likes .likes_counter")
-
-                const one_liked_reply_id = one_reply.dataset.id // Gets Reply ID From Data Value
 
                 // If User Already Liked The Reply
                 if(heart.classList.contains("fa-solid")) {
@@ -398,7 +424,7 @@
                         likes_counter.textContent = parseInt(likes_counter.textContent) + 1 // Adds 1 Like To The Counter By Clicking On The Empty Heart
 
                         // Sends Liked Commet ID As A POST Data To Like Comment Page
-                        fetch(`/like-comment/${one_liked_reply_id}`, {
+                        fetch(`/like-comment/${one_reply_id}`, {
                             method: "POST",
                             headers: {
                                 "X-CSRFToken": getCookie("csrftoken"),
@@ -422,7 +448,7 @@
                         likes_counter.textContent = parseInt(likes_counter.textContent) - 1 // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
 
                         // Sends Liked Commet ID As A POST Data To Like Comment Page
-                        fetch(`/cancel-like-comment/${one_liked_reply_id}`, {
+                        fetch(`/cancel-like-comment/${one_reply_id}`, {
                             method: "POST",
                             headers: {
                                 "X-CSRFToken": getCookie("csrftoken"),
@@ -454,6 +480,26 @@
                         reply.classList.remove("fa-xmark")
                         reply.classList.add("fa-reply")
                     }
+                })
+
+                // Report Comment
+                let flag = one_reply.querySelector(".interactions .report .fa-flag")
+
+                flag.addEventListener("click", function() {
+                    // Sends Liked Commet ID As A POST Data To Like Comment Page
+                    fetch(`/report-comment/${one_reply_id}`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                            "Accept": "application/json"
+                        }
+                    }).then(
+                        response => response.json()
+                    ).then(
+                        data => {
+                            // likes_counter.innetText = data.likes
+                        }
+                    ).catch(error => console.error(error))
                 })
             })
         })

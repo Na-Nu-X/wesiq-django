@@ -153,14 +153,11 @@
 .content .article_forum .all_comments .one_comment .interactions {
   margin-left: 54px;
   display: flex;
+  align-items: center;
   gap: 10px;
 }
-.content .article_forum .all_comments .one_comment .interactions .reply {
-  width: 15px;
-  height: 15px;
-}
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-reply {
-  font-size: 15px;
+  font-size: 1em;
   color: #999999;
 }
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-reply:hover {
@@ -169,7 +166,7 @@
   transition: color 0.3s ease;
 }
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-xmark {
-  font-size: 15px;
+  font-size: 1em;
   color: #999999;
 }
 .content .article_forum .all_comments .one_comment .interactions .reply .fa-xmark:hover {
@@ -178,7 +175,7 @@
   transition: color 0.3s ease;
 }
 .content .article_forum .all_comments .one_comment .interactions .likes .fa-heart {
-  font-size: 15px;
+  font-size: 1em;
   color: #999999;
 }
 .content .article_forum .all_comments .one_comment .interactions .likes .fa-heart:hover {
@@ -190,7 +187,20 @@
   display: inline-block;
   color: #999999;
 }
+.content .article_forum .all_comments .one_comment .interactions .report .fa-flag {
+  font-size: 1em;
+  color: #999999;
+}
+.content .article_forum .all_comments .one_comment .interactions .report .fa-flag:hover {
+  color: #df3535;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.content .article_forum .all_comments .one_comment .interactions .date {
+  margin-left: 10px;
+}
 .content .article_forum .all_comments .one_comment .interactions .date p {
+  font-size: 0.9em;
   font-style: italic;
   color: #999999;
 }

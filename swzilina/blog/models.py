@@ -56,6 +56,11 @@ class Articles(models.Model):
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class ArticleForum(models.Model):
+    status_choices = [
+        ("OK", "OK"),
+        ("hidden", "hidden"),
+    ]
+
     article = models.ForeignKey(
         Articles, 
         verbose_name="Article ID", 
@@ -84,3 +89,7 @@ class ArticleForum(models.Model):
         on_delete=models.CASCADE,
         related_name="replies",
     )
+
+    status = models.CharField(verbose_name="Status", choices=status_choices, default="OK")
+    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users"), default=list, null=False)

@@ -712,8 +712,8 @@ def blogThemeView(request, theme):
             # Gets Article By URL Address
             article = Articles.objects.get(link=theme)
             # Gets All Comments Of The Article
-            comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None)
-            replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None))
+            comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None, status="OK")
+            replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None) & Q(status="OK"))
 
             # Checks If There Are Any Articles In The Database
             if(comments.exists()):
@@ -824,8 +824,6 @@ def likeComment(request, comment_id):
 def cancelLikeComment(request, comment_id):
     if request.method == "POST":
         try:
-            # print(comment_id)
-
             # Gets Logged In User
             if "logged_in_user_id" in request.session:
                 # Gets Logged In User ID From Session
@@ -843,3 +841,27 @@ def cancelLikeComment(request, comment_id):
             pass
 
     return HttpResponse("Lajk bol odobraný.")
+
+def reportComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) not in comment.reports_from_users):
+                    comment.reports_from_users.append(logged_in_user_id)
+                    comment.reports += 1
+
+                    if comment.reports >= 5:
+                        comment.status = "hidden"
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return HttpResponse("Nahlásenie bolo odoslané.")

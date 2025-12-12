@@ -188,14 +188,12 @@
                 .interactions {
                     margin-left: 50px + 4px;
                     display: flex;
+                    align-items: center;
                     gap: 10px;
 
                     .reply {
-                        width: 15px;
-                        height: 15px;
-
                         .fa-reply {
-                            font-size: 15px;
+                            font-size: 1em;
                             color: darken($secondary-color, 40%);
 
                             &:hover {
@@ -206,7 +204,7 @@
                         }
 
                         .fa-xmark {
-                            font-size: 15px;
+                            font-size: 1em;
                             color: darken($secondary-color, 40%);
 
                             &:hover {
@@ -219,7 +217,7 @@
                     
                     .likes {
                         .fa-heart {
-                            font-size: 15px;
+                            font-size: 1em;
                             color: darken($secondary-color, 40%);
 
                             &:hover {
@@ -235,8 +233,24 @@
                         }
                     }
 
+                    .report {
+                        .fa-flag {
+                            font-size: 1em;
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: $error-color;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+                    }
+
                     .date {
+                        margin-left: 10px;
+
                         p {
+                            font-size: 0.9em;
                             font-style: italic;
                             color: darken($secondary-color, 40%);
                         }
