@@ -74,7 +74,7 @@
 {% block heading %}Street&nbsp;Workout Žilina{% endblock heading %}
 {% block buttons %}
     <div class="buttons"> <!-- https://codepen.io/hilwat/pen/BeemVX -->
-        <a class="blob-btn login_button" href="{% url 'login_url' %}" target="_self">
+        <a class="blob-btn login_button" href="#">
             Prihlásiť
             <span class="blob-btn__inner">
             <span class="blob-btn__blobs">
@@ -86,7 +86,7 @@
             </span>
         </a>
 
-        <a class="blob-btn registration_button" href="{% url 'registration_url' %}" target="_self">
+        <a class="blob-btn registration_button" href="#">
             Zaregistrovať
             <span class="blob-btn__inner">
             <span class="blob-btn__blobs">
@@ -113,6 +113,99 @@
 {% endblock buttons %}
 
 {% block content %}
+    <dialog class="login_form_dialog">
+        <form class="login_form" action="{% url 'homepage_url' %}" method="POST">
+            {% csrf_token %}
+
+            <h2>Prihlásenie</h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
+
+            {{ login_form.email_address }}
+            
+            <div class="password_container">
+                {{ login_form.password }}
+                <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
+                <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+            </div>
+
+            <p class="form_report" style="bottom: 287px;"></p>
+            <input type="submit" name="login_form_submit" value="Prihlásiť sa">
+
+            <div class="login_methods">
+                <div>
+                    <a href="/accounts/google/login/"><img src="{% static 'images/google_logo.png' %}">Google prihlásenie</a> <!-- https://www.flaticon.com/free-icon/search_281764 -->
+                </div>
+
+                <div>
+                    <a href="#"><img src="{% static 'images/facebook_logo_2.png' %}">Facebook prihlásenie</a> <!-- https://www.flaticon.com/free-icon/facebook_5968764 -->
+                </div>
+            </div>
+
+            <div class="form_questions">
+                <p>Zabudli ste heslo? <a class="password_reset" href="?password-reset=true" title="Poslať overovací kód">Zmeniť heslo</a></p>
+                <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="registration_form_dialog">
+        <!-- Google reCAPTCHA V3 -->
+        <script>
+            grecaptcha.ready(function() {
+                // Registration Form
+
+                const registration_form = document.querySelector(".registration_form")
+                if(registration_form) {
+                    registration_form.addEventListener("submit", function(event) {
+                        event.preventDefault()
+                        grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "registration_form"}).then(function(token) {
+                            document.getElementById("registration_form_recaptcha").value = token
+                            registration_form.submit()
+                        })
+                    })
+                }
+            })
+        </script>
+
+        <form class="registration_form" action="{% url 'homepage_url' %}" method="POST">
+            {% csrf_token %}
+
+            <h2>Registrácia</h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><img src="{% static 'images/back.png' %}"></a> <!-- https://www.flaticon.com/free-icon/back_2099166 -->
+
+            {{ registration_form.first_name }}
+            {{ registration_form.last_name }}
+            {{ registration_form.email_address }}
+            {{ registration_form.phone_number }}
+            
+            <div class="password_container">
+                <i class="fa-solid fa-key" title="Navrhnúť heslo"></i> <!-- https://fontawesome.com/icons/key -->
+                {{ registration_form.password }}
+                <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
+                <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+                <i class="fa-solid fa-copy copy_password" title="Skopírovať"></i> <!-- https://fontawesome.com/icons/copy -->
+            </div>
+
+            <div class="password_check_container">
+                {{ registration_form.password_check }}
+                <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
+            </div>
+
+            <p class="form_report" style="bottom: 241px;"></p>
+            <input type="hidden" name="registration_form_submit" value="registration_form_submit">
+            <input type="submit" value="Vytvoriť účet">
+
+            <div class="form_questions">
+                <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
+            </div>
+
+            <!-- Google reCAPTCHA V3 -->
+            <input type="hidden" name="g-recaptcha-response" id="registration_form_recaptcha">
+        </form>
+    </dialog>
+
     <h2>O nás</h2>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, nesciunt.
     <br>
@@ -124,7 +217,7 @@
             grecaptcha.ready(function() {
                 // Write Review Form
 
-                const write_review_form = document.querySelector(".write_review_form");
+                const write_review_form = document.querySelector(".write_review_form")
                 if(write_review_form) {
                     write_review_form.addEventListener("submit", function(event) {
                         event.preventDefault()
@@ -382,6 +475,197 @@
             // Search Bar Input
             search_bar.addEventListener("input", function(event) {
                 renderSearchResult()
+            })
+
+            // Login Form
+
+            // Login Form Dialog
+            const login_button = document.querySelector(".login_button")
+            const login_form_dialog = document.querySelector(".login_form_dialog")
+            const login_form = document.querySelector(".login_form")
+
+            login_button.addEventListener("click", function() {
+                login_form_dialog.showModal()
+            })
+
+            login_form_dialog.addEventListener("click", function(event) {
+                const login_form_dimensions = login_form.getBoundingClientRect()
+
+                if (
+                    event.clientX < login_form_dimensions.left ||
+                    event.clientX > login_form_dimensions.right ||
+                    event.clientY < login_form_dimensions.top ||
+                    event.clientY > login_form_dimensions.bottom
+                ) {
+                    login_form_dialog.close()
+                }
+            })
+
+            // Form
+            login_form.addEventListener("click", function() {
+                // Toggle Show / Hide Password
+
+                const password = login_form.querySelector(".password")
+                const show_password = login_form.querySelector(".fa-eye-slash")
+                const hide_password = login_form.querySelector(".fa-eye")
+
+                show_password.addEventListener("click", function() {
+                    show_password.style.display = "none"
+                    hide_password.style.display = "block"
+
+                    password.style.webkitTextSecurity = "none"
+                })
+
+                hide_password.addEventListener("click", function() {
+                    hide_password.style.display = "none"
+                    show_password.style.display = "block"
+
+                    password.style.webkitTextSecurity = "disc"
+                })
+            })
+
+            // Password Reset
+
+            const password_reset = login_form.querySelector(".password_reset")
+            const email_address = login_form.querySelector(".email_address")
+            const form_report = login_form.querySelector(".form_report")
+
+            password_reset.addEventListener("click", function() {
+                console.log(email_address.value)
+
+                if(email_address.value !== "" && email_address.value.includes("@") && email_address.value.includes(".")) {
+                    form_report.textContent = ""
+
+                    document.cookie = `email_address=${email_address.value}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
+
+                    document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
+                }
+
+                else {
+                    event.preventDefault()
+
+                    form_report.textContent = "Zadajte váš e-mail"
+                    form_report.classList.add("error")
+                }
+            })
+
+            // Registration Form
+
+            // Registration Form Dialog
+            const registration_button = document.querySelector(".registration_button")
+            const registration_form_dialog = document.querySelector(".registration_form_dialog")
+            const registration_form = document.querySelector(".registration_form")
+
+            registration_button.addEventListener("click", function() {
+                registration_form_dialog.showModal()
+            })
+
+            registration_form_dialog.addEventListener("click", function(event) {
+                const registration_form_dimensions = registration_form.getBoundingClientRect()
+
+                if (
+                    event.clientX < registration_form_dimensions.left ||
+                    event.clientX > registration_form_dimensions.right ||
+                    event.clientY < registration_form_dimensions.top ||
+                    event.clientY > registration_form_dimensions.bottom
+                ) {
+                    registration_form_dialog.close()
+                }
+            })
+            
+            // Form
+            registration_form.addEventListener("click", function() {
+                // Toggle Show / Hide Password
+
+                const password = registration_form.querySelector(".password")
+                const show_password = registration_form.querySelector(".fa-eye-slash")
+                const hide_password = registration_form.querySelector(".fa-eye")
+
+                show_password.addEventListener("click", function() {
+                    show_password.style.display = "none"
+                    hide_password.style.display = "block"
+
+                    password.style.webkitTextSecurity = "none"
+                })
+
+                hide_password.addEventListener("click", function() {
+                    hide_password.style.display = "none"
+                    show_password.style.display = "block"
+
+                    password.style.webkitTextSecurity = "disc"
+                })
+
+                // Random Password Generator
+
+                const generate_password = registration_form.querySelector(".fa-key")
+
+                const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+                const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                const special_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', ',', '.', '<', '>', '/', '?', '\\', '|', '`', '~']
+
+                generate_password.addEventListener("click", function() {
+                    function shuffleString(string) {
+                        let array = string.split("")
+
+                        for(let i = array.length - 1; i > 0; i--) {
+                            let j = Math.floor(Math.random() * (i + 1));
+                            [array[i], array[j]] = [array[j], array[i]]
+                        }
+
+                        return array.join("");
+                    }
+
+                    let generated_password = ""
+
+                    for(let x = 0; x < 5; x++) {
+                        generated_password = generated_password + alphabet[Math.floor(Math.random() * alphabet.length)] + numbers[Math.floor(Math.random() * numbers.length)] + special_chars[Math.floor(Math.random() * special_chars.length)]
+                    }
+
+                    password.value = shuffleString(generated_password)
+                })
+
+                // Copy Password To Clipboard
+
+                const copy_password = registration_form.querySelector(".copy_password")
+
+                copy_password.addEventListener("click", function() {
+                    password.select()
+                    password.setSelectionRange(0, password.value.length)
+                    document.execCommand("copy")
+                    // navigator.clipboard.writeText(password.value) // Only HTTPS
+                })
+
+                // Paste From Clipboard
+
+                const password_check = registration_form.querySelector(".password_check")
+                const paste_password = registration_form.querySelector(".paste_password")
+
+                paste_password.addEventListener("click", function() {
+                    // password_check_input.value = navigator.clipboard.readText() // Only HTTPS
+                    password_check.value = password.value
+                })
+
+                // Password Verification
+
+                const form_report = registration_form.querySelector(".form_report")
+                
+                document.addEventListener("input", function() {
+                    if(password.value == password_check.value && password.value != "") {
+                        form_report.textContent = "Heslá sa zhodujú"
+                        form_report.classList.remove("error")
+                        form_report.classList.add("success")
+                    }
+
+                    else if(password.value != password_check.value) {
+                        form_report.textContent = "Heslá sa nezhodujú"
+                        form_report.classList.remove("success")
+                        form_report.classList.add("error")
+                    }
+
+                    else {
+                        form_report.textContent = ""
+                    }
+                })
             })
 
             // Selected Attachment

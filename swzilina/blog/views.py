@@ -23,6 +23,124 @@ def captureError(message):
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 def homepageView(request):
+    # Login Form
+    if request.method == "POST" and request.POST.get("login_form_submit"):
+        login_form = loginForm(request.POST)
+        if login_form.is_valid():
+            email_address = login_form.cleaned_data["email_address"]
+            password = login_form.cleaned_data["password"]
+
+            try:
+                user = Users.objects.get(email_address=email_address)
+                if check_password(password, user.password):
+                    request.session["logged_in_user_id"] = user.id
+
+                    messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{user.first_name}&nbsp;{user.last_name}")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else: # Wrong Password
+                    messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+                    captureError("Nesprávne prihlasovacie údaje")
+            
+            except Users.DoesNotExist: # Wrong E-mail Address
+                messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+                captureError("Nesprávne prihlasovacie údaje")
+
+    if request.GET.get("password-reset"):
+        email_address = request.COOKIES.get("email_address")
+        user = Users.objects.get(email_address=email_address)
+
+        # Generates Random 6-Digit Code
+        code = ""
+
+        for one_number in range(6):
+            one_number = random.randint(0, 9)
+            code += str(one_number)
+
+        # Send Mail
+        subject = "SW Žilina - Obnova hesla"
+        text_content = f"Dobrý deň {user.first_name} {user.last_name},\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code={code} - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
+        sender = settings.EMAIL_HOST_USER
+        receiver = [email_address]
+        html_content = f"""
+            <h1>Dobrý deň {user.first_name} {user.last_name},</h1>
+            <p>dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code={code}" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.<p>
+            <h1>{code}</h1>
+            <p>Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.<br>
+            Tím Street Workout Žilina.</p>
+        """
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+        mail_message.send()
+
+        # Saves Password Reset Code To Database
+        user.password_reset_code = code
+        user.save()
+
+        messages.add_message(request, messages.SUCCESS, f"Overovací&nbsp;kód&nbsp;bol&nbsp;odoslaný&nbsp;na&nbsp;adresu<br>{email_address}")
+
+        # Redirect After Sending Mail
+        response = HttpResponseRedirect(reverse("password_reset_url"))
+        # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+        return response
+    
+    # Registration Form
+    if request.method == "POST" and request.POST.get("registration_form_submit"):
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
+
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, "Overenie&nbsp;reCaptcha&nbsp;zlyhalo")
+            captureError("Overenie reCaptcha zlyhalo")
+
+        else:
+            registration_form = registrationForm(request.POST)
+            if registration_form.is_valid():
+                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                    messages.add_message(request, messages.ERROR, "Tento&nbsp;e-mail&nbsp;už&nbsp;je&nbsp;zaregistrovaný")
+                    captureError("Tento e-mail už je zaregistrovaný")
+
+                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                    messages.add_message(request, messages.ERROR, "Heslá&nbsp;sa&nbsp;nezhodujú")
+
+                elif len(registration_form.cleaned_data["password"]) < 8:
+                    messages.add_message(request, messages.ERROR, "Heslo&nbsp;je&nbsp;príliš&nbsp;krátke")
+
+                else:
+                    new_user = Users(
+                        first_name = registration_form.cleaned_data["first_name"],
+                        last_name = registration_form.cleaned_data["last_name"],
+                        email_address = registration_form.cleaned_data["email_address"],
+                        phone_number = registration_form.cleaned_data["phone_number"],
+                        password = make_password(registration_form.cleaned_data["password"]),
+                    )
+                    new_user.save()
+
+                    # Deletes Previous User ID Session If Was Logged In
+                    if "logged_in_user_id" in request.session:
+                        del request.session["logged_in_user_id"]
+
+                    # Sets User ID Session For New Registered User For Login or Switch Account
+                    request.session["logged_in_user_id"] = new_user.id
+
+                    messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{new_user.first_name}&nbsp;{new_user.last_name}")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else:
+                messages.add_message(request, messages.ERROR, "Registrácia&nbsp;zlyhala")
+                captureError("Registrácia zlyhala")
+
     # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
         # Loads Data From reCaptcha In Registration Page
@@ -155,6 +273,8 @@ def homepageView(request):
 
         # Renders Homepage With Filled Contact Form, User Data And Reviews
         return render(request, "blog/homepage.html", {
+            "login_form": loginForm,
+            "registration_form": registrationForm,
             "contact_form": filled_contact_form,
             "first_name": user.first_name,
             "last_name": user.last_name,
@@ -177,6 +297,8 @@ def homepageView(request):
 
     # Renders Homepage With Reviews
     return render(request, "blog/homepage.html", {
+        "login_form": loginForm,
+        "registration_form": registrationForm,
         "contact_form": contactForm,
         "review_form": reviewForm,
         "reviews": reviews,
