@@ -43,7 +43,7 @@
 
     {% if request.session.logged_in_user_id %}
         <div class="account">
-            <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+            <a class="profile_button" href="#" title="Môj účet">
                 <img 
                     class="profile_picture skeleton_loading" 
                     src="
@@ -204,6 +204,51 @@
             <!-- Google reCAPTCHA V3 -->
             <input type="hidden" name="g-recaptcha-response" id="registration_form_recaptcha">
         </form>
+    </dialog>
+
+    <dialog class="profile_dialog">
+        <div class="profile">
+            <div class="top">
+                <div class="left">
+                    <h2>{{ first_name }} {{ last_name }}</h2>
+
+                    <div class="society">
+                        <p title="Počet sledovateľov"><i class="fa-regular fa-user"></i> 34</p> <!-- https://fontawesome.com/icons/user -->
+                        <p title="Počet sledujúcich"><i class="fa-regular fa-user"></i> 65</p> <!-- https://fontawesome.com/icons/user -->
+
+                        <p title="Úspechy"><i class="fa-solid fa-trophy"></i> 12</p> <!-- https://fontawesome.com/icons/trophy -->
+                    </div>
+                </div>
+                
+                <div class="right">
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if profile_picture_name %}
+                                media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
+
+                    <div class="links">
+                        <img src="{% static 'images/instagram_logo.png' %}">
+                        <!-- <img src="{% static 'images/facebook_logo.png' %}"> -->
+                        <!-- <img src="{% static 'images/tiktok_logo.png' %}"> -->
+                        <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="middle">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, beatae!</p>
+            </div>
+
+            {% comment %} <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear --> {% endcomment %}
+        </div>
     </dialog>
 
     <h2>O nás</h2>
@@ -666,6 +711,29 @@
                         form_report.textContent = ""
                     }
                 })
+            })
+
+            // Profile Dialog
+
+            const profile_button = document.querySelector(".profile_button")
+            const profile_dialog = document.querySelector(".profile_dialog")
+            const profile = document.querySelector(".profile")
+
+            profile_button.addEventListener("click", function() {
+                profile_dialog.showModal()
+            })
+
+            profile_dialog.addEventListener("click", function(event) {
+                const profile_dimensions = profile.getBoundingClientRect()
+
+                if (
+                    event.clientX < profile_dimensions.left ||
+                    event.clientX > profile_dimensions.right ||
+                    event.clientY < profile_dimensions.top ||
+                    event.clientY > profile_dimensions.bottom
+                ) {
+                    profile_dialog.close()
+                }
             })
 
             // Selected Attachment
