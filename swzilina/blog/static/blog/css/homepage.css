@@ -187,16 +187,6 @@
   animation: fade_in_animation 1s ease-out forwards;
 }
 
-.blob-btn.login_button {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #000;
-}
-
-.blob-btn.registration_button {
-  background-color: rgba(0, 0, 0, 0.2);
-  color: #fff;
-}
-
 .blob-btn {
   text-decoration: none;
   display: inline-block;
@@ -214,6 +204,17 @@
   cursor: pointer;
   border-radius: 30px;
   transition: transform 0.3s ease;
+}
+.blob-btn.login_button {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #000;
+}
+.blob-btn.registration_button {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+.blob-btn:hover, .blob-btn:focus {
+  transform: scale(1.1);
 }
 .blob-btn:before {
   content: "";
@@ -303,11 +304,6 @@
   }
 }
 
-.blob-btn:hover,
-.blob-btn:focus {
-  transform: scale(1.1);
-}
-
 .content {
   font-family: Poppins, Arial, sans-serif;
   max-width: 900px;
@@ -318,11 +314,361 @@
   border-radius: 5px;
   text-align: justify;
 }
-
-.reviews {
+.content .login_form_dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+.content .login_form_dialog .login_form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  width: 100%;
+  padding: 30px 50px 50px;
+  text-align: center;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 2px solid #fff;
+  border-radius: 25px;
+}
+.content .login_form_dialog .login_form h2 {
+  margin-bottom: 30px;
+  color: #fff;
+}
+.content .login_form_dialog .login_form .back {
+  position: absolute;
+  top: 42px;
+  left: 50px;
+  width: 32px;
+  height: 32px;
+}
+.content .login_form_dialog .login_form .back img {
+  width: 32px;
+  height: 32px;
+}
+.content .login_form_dialog .login_form .back img:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+.content .login_form_dialog .login_form input[type=text], .content .login_form_dialog .login_form input[type=email] {
+  width: 90%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: width 0.3s ease;
+}
+.content .login_form_dialog .login_form input[type=text]:hover, .content .login_form_dialog .login_form input[type=text]:focus, .content .login_form_dialog .login_form input[type=email]:hover, .content .login_form_dialog .login_form input[type=email]:focus {
+  width: 100%;
+}
+.content .login_form_dialog .login_form input[type=text]::-moz-placeholder, .content .login_form_dialog .login_form input[type=email]::-moz-placeholder {
+  color: #999999;
+}
+.content .login_form_dialog .login_form input[type=text]::placeholder, .content .login_form_dialog .login_form input[type=email]::placeholder {
+  color: #999999;
+}
+.content .login_form_dialog .login_form input[type=text]:-webkit-autofill, .content .login_form_dialog .login_form input[type=email]:-webkit-autofill {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.content .login_form_dialog .login_form input[type=text]:-webkit-autofill:hover, .content .login_form_dialog .login_form input[type=text]:-webkit-autofill:focus, .content .login_form_dialog .login_form input[type=email]:-webkit-autofill:hover, .content .login_form_dialog .login_form input[type=email]:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.content .login_form_dialog .login_form .password_container {
+  position: relative;
+}
+.content .login_form_dialog .login_form .password_container:has(.password:hover) .fa-eye, .content .login_form_dialog .login_form .password_container:has(.password:focus) .fa-eye, .content .login_form_dialog .login_form .password_container:has(.password:hover) .fa-eye-slash, .content .login_form_dialog .login_form .password_container:has(.password:focus) .fa-eye-slash {
+  right: 0px;
+}
+.content .login_form_dialog .login_form .password_container .password {
+  padding-right: 28px !important;
+  -webkit-text-security: disc;
+}
+.content .login_form_dialog .login_form .password_container .fa-eye, .content .login_form_dialog .login_form .password_container .fa-eye-slash {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+  transition: right 0.3s ease;
+}
+.content .login_form_dialog .login_form .password_container .fa-eye:hover, .content .login_form_dialog .login_form .password_container .fa-eye-slash:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.content .login_form_dialog .login_form .password_container .fa-eye {
+  display: none;
+}
+.content .login_form_dialog .login_form .form_report {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9em;
+}
+.content .login_form_dialog .login_form .form_report.success {
+  color: #52cf20;
+}
+.content .login_form_dialog .login_form .form_report.error {
+  color: #df3535;
+}
+.content .login_form_dialog .login_form input[type=submit] {
+  width: 90%;
+  height: 50px;
+  margin-top: 40px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.content .login_form_dialog .login_form input[type=submit]:hover, .content .login_form_dialog .login_form input[type=submit]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.content .login_form_dialog .login_form .login_methods div {
+  position: relative;
+  display: block;
+  width: 90%;
+  height: 50px;
+  line-height: 50px;
+  margin: 10px auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #000;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.content .login_form_dialog .login_form .login_methods div:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #fff;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.content .login_form_dialog .login_form .login_methods div a {
+  display: block;
+  color: #000;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+}
+.content .login_form_dialog .login_form .login_methods div a:hover, .content .login_form_dialog .login_form .login_methods div a:active {
+  color: #fff;
+}
+.content .login_form_dialog .login_form .login_methods div a img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 8px;
+}
+.content .login_form_dialog .login_form .form_questions {
+  margin-top: 10px;
+  color: #fff;
+}
+.content .login_form_dialog .login_form .form_questions a {
+  color: #fff;
+  text-decoration: none;
+}
+.content .login_form_dialog .login_form .form_questions a:hover, .content .login_form_dialog .login_form .form_questions a:active {
+  text-decoration: underline;
+}
+.content .registration_form_dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+.content .registration_form_dialog .registration_form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  width: 100%;
+  padding: 30px 50px 50px;
+  text-align: center;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 2px solid #fff;
+  border-radius: 25px;
+}
+.content .registration_form_dialog .registration_form h2 {
+  margin-bottom: 30px;
+  color: #fff;
+}
+.content .registration_form_dialog .registration_form .back {
+  position: absolute;
+  top: 42px;
+  left: 50px;
+  width: 32px;
+  height: 32px;
+}
+.content .registration_form_dialog .registration_form .back img {
+  width: 32px;
+  height: 32px;
+}
+.content .registration_form_dialog .registration_form .back img:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+.content .registration_form_dialog .registration_form input[type=text], .content .registration_form_dialog .registration_form input[type=email], .content .registration_form_dialog .registration_form input[type=tel], .content .registration_form_dialog .registration_form input[type=password] {
+  width: 90%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: width 0.3s ease;
+}
+.content .registration_form_dialog .registration_form input[type=text]:hover, .content .registration_form_dialog .registration_form input[type=text]:focus, .content .registration_form_dialog .registration_form input[type=email]:hover, .content .registration_form_dialog .registration_form input[type=email]:focus, .content .registration_form_dialog .registration_form input[type=tel]:hover, .content .registration_form_dialog .registration_form input[type=tel]:focus, .content .registration_form_dialog .registration_form input[type=password]:hover, .content .registration_form_dialog .registration_form input[type=password]:focus {
+  width: 100%;
+}
+.content .registration_form_dialog .registration_form input[type=text]::-moz-placeholder, .content .registration_form_dialog .registration_form input[type=email]::-moz-placeholder, .content .registration_form_dialog .registration_form input[type=tel]::-moz-placeholder, .content .registration_form_dialog .registration_form input[type=password]::-moz-placeholder {
+  color: #999999;
+}
+.content .registration_form_dialog .registration_form input[type=text]::placeholder, .content .registration_form_dialog .registration_form input[type=email]::placeholder, .content .registration_form_dialog .registration_form input[type=tel]::placeholder, .content .registration_form_dialog .registration_form input[type=password]::placeholder {
+  color: #999999;
+}
+.content .registration_form_dialog .registration_form input[type=text]:-webkit-autofill, .content .registration_form_dialog .registration_form input[type=email]:-webkit-autofill, .content .registration_form_dialog .registration_form input[type=tel]:-webkit-autofill, .content .registration_form_dialog .registration_form input[type=password]:-webkit-autofill {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.content .registration_form_dialog .registration_form input[type=text]:-webkit-autofill:hover, .content .registration_form_dialog .registration_form input[type=text]:-webkit-autofill:focus, .content .registration_form_dialog .registration_form input[type=email]:-webkit-autofill:hover, .content .registration_form_dialog .registration_form input[type=email]:-webkit-autofill:focus, .content .registration_form_dialog .registration_form input[type=tel]:-webkit-autofill:hover, .content .registration_form_dialog .registration_form input[type=tel]:-webkit-autofill:focus, .content .registration_form_dialog .registration_form input[type=password]:-webkit-autofill:hover, .content .registration_form_dialog .registration_form input[type=password]:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(255, 255, 255);
+  -webkit-transition: width 0.3s ease, background-color 9999s ease;
+  transition: width 0.3s ease, background-color 9999s ease;
+}
+.content .registration_form_dialog .registration_form .password_container {
+  position: relative;
+}
+.content .registration_form_dialog .registration_form .password_container:has(.password:hover) .fa-key, .content .registration_form_dialog .registration_form .password_container:has(.password:focus) .fa-key {
+  left: -16px;
+}
+.content .registration_form_dialog .registration_form .password_container:has(.password:hover) .fa-eye, .content .registration_form_dialog .registration_form .password_container:has(.password:focus) .fa-eye, .content .registration_form_dialog .registration_form .password_container:has(.password:hover) .fa-eye-slash, .content .registration_form_dialog .registration_form .password_container:has(.password:focus) .fa-eye-slash {
+  right: 0px;
+}
+.content .registration_form_dialog .registration_form .password_container:has(.password:hover) .fa-copy, .content .registration_form_dialog .registration_form .password_container:has(.password:focus) .fa-copy {
+  right: -19px;
+}
+.content .registration_form_dialog .registration_form .password_container .password {
+  padding-right: 28px !important;
+  -webkit-text-security: disc;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash, .content .registration_form_dialog .registration_form .password_container .fa-key, .content .registration_form_dialog .registration_form .password_container .fa-copy {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye:hover, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash:hover, .content .registration_form_dialog .registration_form .password_container .fa-key:hover, .content .registration_form_dialog .registration_form .password_container .fa-copy:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye {
+  display: none;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash {
+  right: 20px;
+  transition: right 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-key {
+  left: 3px;
+  transition: left 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-copy {
+  right: 1px;
+  transition: right 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_check_container {
+  position: relative;
+}
+.content .registration_form_dialog .registration_form .password_check_container:has(.password_check:hover) .fa-copy, .content .registration_form_dialog .registration_form .password_check_container:has(.password_check:focus) .fa-copy {
+  right: -19px;
+}
+.content .registration_form_dialog .registration_form .password_check_container .password_check {
+  padding-right: 28px !important;
+}
+.content .registration_form_dialog .registration_form .password_check_container .fa-copy {
+  display: block;
+  color: #999999;
+  position: absolute;
+  right: 1px;
+  bottom: 10px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+  transition: right 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_check_container .fa-copy:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .form_report {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9em;
+}
+.content .registration_form_dialog .registration_form .form_report.success {
+  color: #52cf20;
+}
+.content .registration_form_dialog .registration_form .form_report.error {
+  color: #df3535;
+}
+.content .registration_form_dialog .registration_form input[type=submit] {
+  width: 90%;
+  height: 50px;
+  margin-top: 40px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.content .registration_form_dialog .registration_form input[type=submit]:hover, .content .registration_form_dialog .registration_form input[type=submit]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.content .registration_form_dialog .registration_form .form_questions {
+  margin-top: 10px;
+  color: #fff;
+}
+.content .registration_form_dialog .registration_form .form_questions a {
+  color: #fff;
+  text-decoration: none;
+}
+.content .registration_form_dialog .registration_form .form_questions a:hover, .content .registration_form_dialog .registration_form .form_questions a:active {
+  text-decoration: underline;
+}
+.content .reviews {
   margin-top: 50px;
 }
-.reviews .write_review_form {
+.content .reviews .write_review_form {
   max-width: 100%;
   margin-bottom: 50px;
   padding: 0px 0px;
@@ -331,13 +677,13 @@
           backdrop-filter: none;
   border: none;
 }
-.reviews .write_review_form .review {
+.content .reviews .write_review_form .review {
   height: 142px;
 }
-.reviews .write_review_form .review .rating input {
+.content .reviews .write_review_form .review .rating input {
   display: none;
 }
-.reviews .write_review_form .review textarea {
+.content .reviews .write_review_form .review textarea {
   width: 100%;
   height: 100px;
   margin-top: 10px;
@@ -351,13 +697,13 @@
   outline: none;
   resize: none;
 }
-.reviews .write_review_form .review textarea::-moz-placeholder {
+.content .reviews .write_review_form .review textarea::-moz-placeholder {
   color: #999999;
 }
-.reviews .write_review_form .review textarea::placeholder {
+.content .reviews .write_review_form .review textarea::placeholder {
   color: #999999;
 }
-.reviews .write_review_form input[type=submit] {
+.content .reviews .write_review_form input[type=submit] {
   width: 178px;
   height: 50px;
   margin-top: 10px;
@@ -367,21 +713,21 @@
   border-radius: 10px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease;
 }
-.reviews .write_review_form input[type=submit]:hover, .reviews .write_review_form input[type=submit]:focus {
+.content .reviews .write_review_form input[type=submit]:hover, .content .reviews .write_review_form input[type=submit]:focus {
   background-color: rgb(93.730125523, 222.129707113, 42.370292887);
   color: #000;
   border: 1px solid #000;
   transform: scale(1.1);
   cursor: pointer;
 }
-.reviews .all_reviews {
+.content .reviews .all_reviews {
   margin: 0px 0px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.reviews .all_reviews .one_review {
+.content .reviews .all_reviews .one_review {
   width: 420px;
   margin-bottom: 20px;
   padding: 10px;
@@ -393,30 +739,30 @@
   box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease;
 }
-.reviews .all_reviews .one_review:hover {
+.content .reviews .all_reviews .one_review:hover {
   transform: scale(1.01);
 }
-.reviews .all_reviews .one_review .reviewer .date {
+.content .reviews .all_reviews .one_review .reviewer .date {
   font-style: italic;
   color: #999999;
 }
-.reviews .all_reviews .one_review .review p {
+.content .reviews .all_reviews .one_review .review p {
   margin-top: 10px;
 }
-.reviews .all_reviews .one_review .review .edit_review {
+.content .reviews .all_reviews .one_review .review .edit_review {
   text-decoration: none;
   font-size: 0.9em;
   color: #999999;
 }
-.reviews .all_reviews .one_review .review .edit_review:hover, .reviews .all_reviews .one_review .review .edit_review:active {
+.content .reviews .all_reviews .one_review .review .edit_review:hover, .content .reviews .all_reviews .one_review .review .edit_review:active {
   text-decoration: underline;
 }
-.reviews .write_review_form .reviewer, .reviews .all_reviews .reviewer {
+.content .reviews .write_review_form .reviewer, .content .reviews .all_reviews .reviewer {
   position: relative;
   height: 38px;
   text-align: left;
 }
-.reviews .write_review_form .reviewer .profile_picture, .reviews .all_reviews .reviewer .profile_picture {
+.content .reviews .write_review_form .reviewer .profile_picture, .content .reviews .all_reviews .reviewer .profile_picture {
   width: 38px;
   height: 38px;
   padding: 2px;
@@ -424,24 +770,23 @@
   border-radius: 50%;
   cursor: pointer;
 }
-.reviews .write_review_form .reviewer .full_name, .reviews .all_reviews .reviewer .full_name {
+.content .reviews .write_review_form .reviewer .full_name, .content .reviews .all_reviews .reviewer .full_name {
   display: inline-block;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   left: 48px;
 }
-.reviews .write_review_form .review .rating, .reviews .all_reviews .review .rating {
+.content .reviews .write_review_form .review .rating, .content .reviews .all_reviews .review .rating {
   height: 32px;
   margin-top: 10px;
 }
-.reviews .write_review_form .review .rating img:hover, .reviews .all_reviews .review .rating img:hover {
+.content .reviews .write_review_form .review .rating img:hover, .content .reviews .all_reviews .review .rating img:hover {
   transform: scale(1.1);
   cursor: pointer;
   transition: transform 0.3s ease;
 }
-
-.contact_form {
+.content .contact_form {
   position: relative;
   max-width: 500px;
   margin: 30px auto 40px;
@@ -452,20 +797,20 @@
   border: 2px solid #fff;
   border-radius: 25px;
 }
-.contact_form h2 {
+.content .contact_form h2 {
   margin-bottom: 30px;
   transition: letter-spacing 0.3s ease;
 }
-.contact_form h2:hover {
+.content .contact_form h2:hover {
   letter-spacing: 1px;
   cursor: pointer;
 }
-.contact_form h2 a {
+.content .contact_form h2 a {
   font-size: 1em;
   text-decoration: none;
   color: #fff;
 }
-.contact_form input[type=text], .contact_form input[type=email] {
+.content .contact_form input[type=text], .content .contact_form input[type=email] {
   width: 90%;
   height: 50px;
   margin-bottom: 10px;
@@ -477,26 +822,26 @@
   outline: none;
   transition: width 0.3s ease;
 }
-.contact_form input[type=text]:hover, .contact_form input[type=text]:focus, .contact_form input[type=email]:hover, .contact_form input[type=email]:focus {
+.content .contact_form input[type=text]:hover, .content .contact_form input[type=text]:focus, .content .contact_form input[type=email]:hover, .content .contact_form input[type=email]:focus {
   width: 100%;
 }
-.contact_form input[type=text]::-moz-placeholder, .contact_form input[type=email]::-moz-placeholder {
+.content .contact_form input[type=text]::-moz-placeholder, .content .contact_form input[type=email]::-moz-placeholder {
   color: #999999;
 }
-.contact_form input[type=text]::placeholder, .contact_form input[type=email]::placeholder {
+.content .contact_form input[type=text]::placeholder, .content .contact_form input[type=email]::placeholder {
   color: #999999;
 }
-.contact_form input[type=text]:-webkit-autofill, .contact_form input[type=email]:-webkit-autofill {
+.content .contact_form input[type=text]:-webkit-autofill, .content .contact_form input[type=email]:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.contact_form input[type=text]:-webkit-autofill:hover, .contact_form input[type=text]:-webkit-autofill:focus, .contact_form input[type=email]:-webkit-autofill:hover, .contact_form input[type=email]:-webkit-autofill:focus {
+.content .contact_form input[type=text]:-webkit-autofill:hover, .content .contact_form input[type=text]:-webkit-autofill:focus, .content .contact_form input[type=email]:-webkit-autofill:hover, .content .contact_form input[type=email]:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.contact_form select {
+.content .contact_form select {
   width: 90%;
   height: 50px;
   margin-bottom: 10px;
@@ -508,18 +853,18 @@
   outline: none;
   transition: width 0.3s ease;
 }
-.contact_form select:hover, .contact_form select:focus {
+.content .contact_form select:hover, .content .contact_form select:focus {
   width: 100%;
   cursor: pointer;
 }
-.contact_form select option {
+.content .contact_form select option {
   background-color: #fff;
   color: #000;
 }
-.contact_form .message_container {
+.content .contact_form .message_container {
   position: relative;
 }
-.contact_form .message_container textarea {
+.content .contact_form .message_container textarea {
   width: 90%;
   height: 100px;
   margin-top: 10px;
@@ -532,16 +877,16 @@
   resize: none;
   transition: width 0.3s ease;
 }
-.contact_form .message_container textarea:hover, .contact_form .message_container textarea:focus {
+.content .contact_form .message_container textarea:hover, .content .contact_form .message_container textarea:focus {
   width: 100%;
 }
-.contact_form .message_container textarea::-moz-placeholder {
+.content .contact_form .message_container textarea::-moz-placeholder {
   color: #999999;
 }
-.contact_form .message_container textarea::placeholder {
+.content .contact_form .message_container textarea::placeholder {
   color: #999999;
 }
-.contact_form .message_container .attachment {
+.content .contact_form .message_container .attachment {
   position: relative;
   background-color: rgba(0, 0, 0, 0.2);
   position: absolute;
@@ -553,42 +898,42 @@
   border-radius: 0px 0px 10px 10px;
   transition: width 0.3s ease;
 }
-.contact_form .message_container .attachment p {
+.content .contact_form .message_container .attachment p {
   font-size: 0.8em;
   line-height: 25px;
   color: #999999;
 }
-.contact_form .message_container .attachment i {
+.content .contact_form .message_container .attachment i {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: 4.5px;
   color: #999999;
 }
-.contact_form .message_container .attachment i:hover {
+.content .contact_form .message_container .attachment i:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-.contact_form .message_container .attachment #select_attachment {
+.content .contact_form .message_container .attachment #select_attachment {
   display: none;
 }
-.contact_form .message_container:has(textarea:hover) .attachment, .contact_form .message_container:has(textarea:focus) .attachment {
+.content .contact_form .message_container:has(textarea:hover) .attachment, .content .contact_form .message_container:has(textarea:focus) .attachment {
   width: 100%;
 }
-.contact_form .form_report {
+.content .contact_form .form_report {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.9em;
 }
-.contact_form .form_report.success {
+.content .contact_form .form_report.success {
   color: #52cf20;
 }
-.contact_form .form_report.error {
+.content .contact_form .form_report.error {
   color: #df3535;
 }
-.contact_form input[type=submit] {
+.content .contact_form input[type=submit] {
   width: 90%;
   height: 50px;
   margin-top: 40px;
@@ -598,7 +943,7 @@
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-.contact_form input[type=submit]:hover, .contact_form input[type=submit]:focus {
+.content .contact_form input[type=submit]:hover, .content .contact_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
   color: #000;
   border: 1px solid #000;
@@ -667,6 +1012,23 @@
   .blob-btn {
     width: 80% !important;
     margin: 10px 0px !important;
+  }
+  .login_form .password_container .fa-eye,
+  .login_form .password_container .fa-eye-slash {
+    right: 0px !important;
+  }
+  .login_methods div {
+    width: 100% !important;
+  }
+  .registration_form .password_container .fa-eye,
+  .registration_form .password_container .fa-eye-slash {
+    right: 0px !important;
+  }
+  .registration_form .password_container .fa-key {
+    left: -16px !important;
+  }
+  .registration_form .password_container .fa-copy, .password_check_container .fa-copy {
+    right: -19px !important;
   }
   .write_review_form input[type=submit] {
     width: 178px !important;

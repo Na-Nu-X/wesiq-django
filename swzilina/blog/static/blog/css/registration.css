@@ -1,7 +1,7 @@
 /************
  Main Styles
 ************/
-form {
+.registration_form {
   position: relative;
   max-width: 500px;
   margin: 0px auto;
@@ -12,35 +12,35 @@ form {
   border: 2px solid #fff;
   border-radius: 25px;
 }
-form h2 {
+.registration_form h2 {
   margin-bottom: 30px;
   transition: letter-spacing 0.3s ease;
 }
-form h2:hover {
+.registration_form h2:hover {
   letter-spacing: 1px;
   cursor: pointer;
 }
-form h2 a {
+.registration_form h2 a {
   font-size: 1em;
   text-decoration: none;
   color: #fff;
 }
-form .back {
+.registration_form .back {
   position: absolute;
   top: 42px;
   left: 50px;
   width: 32px;
   height: 32px;
 }
-form .back img {
+.registration_form .back img {
   width: 32px;
   height: 32px;
 }
-form .back img:hover {
+.registration_form .back img:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
-form input[type=text], form input[type=email], form input[type=tel], form input[type=password] {
+.registration_form input[type=text], .registration_form input[type=email], .registration_form input[type=tel], .registration_form input[type=password] {
   width: 90%;
   height: 50px;
   margin-bottom: 10px;
@@ -52,42 +52,42 @@ form input[type=text], form input[type=email], form input[type=tel], form input[
   outline: none;
   transition: width 0.3s ease;
 }
-form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus, form input[type=tel]:hover, form input[type=tel]:focus, form input[type=password]:hover, form input[type=password]:focus {
+.registration_form input[type=text]:hover, .registration_form input[type=text]:focus, .registration_form input[type=email]:hover, .registration_form input[type=email]:focus, .registration_form input[type=tel]:hover, .registration_form input[type=tel]:focus, .registration_form input[type=password]:hover, .registration_form input[type=password]:focus {
   width: 100%;
 }
-form input[type=text]::-moz-placeholder, form input[type=email]::-moz-placeholder, form input[type=tel]::-moz-placeholder, form input[type=password]::-moz-placeholder {
+.registration_form input[type=text]::-moz-placeholder, .registration_form input[type=email]::-moz-placeholder, .registration_form input[type=tel]::-moz-placeholder, .registration_form input[type=password]::-moz-placeholder {
   color: #999999;
 }
-form input[type=text]::placeholder, form input[type=email]::placeholder, form input[type=tel]::placeholder, form input[type=password]::placeholder {
+.registration_form input[type=text]::placeholder, .registration_form input[type=email]::placeholder, .registration_form input[type=tel]::placeholder, .registration_form input[type=password]::placeholder {
   color: #999999;
 }
-form input[type=text]:-webkit-autofill, form input[type=email]:-webkit-autofill, form input[type=tel]:-webkit-autofill, form input[type=password]:-webkit-autofill {
+.registration_form input[type=text]:-webkit-autofill, .registration_form input[type=email]:-webkit-autofill, .registration_form input[type=tel]:-webkit-autofill, .registration_form input[type=password]:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-form input[type=text]:-webkit-autofill:hover, form input[type=text]:-webkit-autofill:focus, form input[type=email]:-webkit-autofill:hover, form input[type=email]:-webkit-autofill:focus, form input[type=tel]:-webkit-autofill:hover, form input[type=tel]:-webkit-autofill:focus, form input[type=password]:-webkit-autofill:hover, form input[type=password]:-webkit-autofill:focus {
+.registration_form input[type=text]:-webkit-autofill:hover, .registration_form input[type=text]:-webkit-autofill:focus, .registration_form input[type=email]:-webkit-autofill:hover, .registration_form input[type=email]:-webkit-autofill:focus, .registration_form input[type=tel]:-webkit-autofill:hover, .registration_form input[type=tel]:-webkit-autofill:focus, .registration_form input[type=password]:-webkit-autofill:hover, .registration_form input[type=password]:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-form .password_container {
+.registration_form .password_container {
   position: relative;
 }
-form .password_container:has(.password:hover) .fa-key, form .password_container:has(.password:focus) .fa-key {
+.registration_form .password_container:has(.password:hover) .fa-key, .registration_form .password_container:has(.password:focus) .fa-key {
   left: -16px;
 }
-form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye, form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
+.registration_form .password_container:has(.password:hover) .fa-eye, .registration_form .password_container:has(.password:focus) .fa-eye, .registration_form .password_container:has(.password:hover) .fa-eye-slash, .registration_form .password_container:has(.password:focus) .fa-eye-slash {
   right: 0px;
 }
-form .password_container:has(.password:hover) .fa-copy, form .password_container:has(.password:focus) .fa-copy {
+.registration_form .password_container:has(.password:hover) .fa-copy, .registration_form .password_container:has(.password:focus) .fa-copy {
   right: -19px;
 }
-form .password_container .password {
+.registration_form .password_container .password {
   padding-right: 28px !important;
   -webkit-text-security: disc;
 }
-form .password_container .fa-eye, form .password_container .fa-eye-slash, form .password_container .fa-key, form .password_container .fa-copy {
+.registration_form .password_container .fa-eye, .registration_form .password_container .fa-eye-slash, .registration_form .password_container .fa-key, .registration_form .password_container .fa-copy {
   display: block;
   color: #999999;
   position: absolute;
@@ -95,36 +95,36 @@ form .password_container .fa-eye, form .password_container .fa-eye-slash, form .
   padding-bottom: 16px;
   padding-top: 19px;
 }
-form .password_container .fa-eye:hover, form .password_container .fa-eye-slash:hover, form .password_container .fa-key:hover, form .password_container .fa-copy:hover {
+.registration_form .password_container .fa-eye:hover, .registration_form .password_container .fa-eye-slash:hover, .registration_form .password_container .fa-key:hover, .registration_form .password_container .fa-copy:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-form .password_container .fa-eye {
+.registration_form .password_container .fa-eye {
   display: none;
 }
-form .password_container .fa-eye, form .password_container .fa-eye-slash {
+.registration_form .password_container .fa-eye, .registration_form .password_container .fa-eye-slash {
   right: 20px;
   transition: right 0.3s ease;
 }
-form .password_container .fa-key {
+.registration_form .password_container .fa-key {
   left: 3px;
   transition: left 0.3s ease;
 }
-form .password_container .fa-copy {
+.registration_form .password_container .fa-copy {
   right: 1px;
   transition: right 0.3s ease;
 }
-form .password_check_container {
+.registration_form .password_check_container {
   position: relative;
 }
-form .password_check_container:has(.password_check:hover) .fa-copy, form .password_check_container:has(.password_check:focus) .fa-copy {
+.registration_form .password_check_container:has(.password_check:hover) .fa-copy, .registration_form .password_check_container:has(.password_check:focus) .fa-copy {
   right: -19px;
 }
-form .password_check_container .password_check {
+.registration_form .password_check_container .password_check {
   padding-right: 28px !important;
 }
-form .password_check_container .fa-copy {
+.registration_form .password_check_container .fa-copy {
   display: block;
   color: #999999;
   position: absolute;
@@ -134,24 +134,24 @@ form .password_check_container .fa-copy {
   padding-top: 19px;
   transition: right 0.3s ease;
 }
-form .password_check_container .fa-copy:hover {
+.registration_form .password_check_container .fa-copy:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-form .form_report {
+.registration_form .form_report {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.9em;
 }
-form .form_report.success {
+.registration_form .form_report.success {
   color: #52cf20;
 }
-form .form_report.error {
+.registration_form .form_report.error {
   color: #df3535;
 }
-form input[type=submit] {
+.registration_form input[type=submit] {
   width: 90%;
   height: 50px;
   margin-top: 40px;
@@ -161,7 +161,7 @@ form input[type=submit] {
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-form input[type=submit]:hover, form input[type=submit]:focus {
+.registration_form input[type=submit]:hover, .registration_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
   color: #000;
   border: 1px solid #000;
@@ -169,14 +169,14 @@ form input[type=submit]:hover, form input[type=submit]:focus {
   letter-spacing: 1px;
   cursor: pointer;
 }
-form .form_questions {
+.registration_form .form_questions {
   margin-top: 10px;
 }
-form .form_questions a {
+.registration_form .form_questions a {
   color: #fff;
   text-decoration: none;
 }
-form .form_questions a:hover, form .form_questions a:active {
+.registration_form .form_questions a:hover, .registration_form .form_questions a:active {
   text-decoration: underline;
 }
 

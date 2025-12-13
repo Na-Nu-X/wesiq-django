@@ -1,7 +1,7 @@
 /************
  Main Styles
 ************/
-form {
+.login_form {
   position: relative;
   max-width: 500px;
   margin: 0px auto;
@@ -12,35 +12,35 @@ form {
   border: 2px solid #fff;
   border-radius: 25px;
 }
-form h2 {
+.login_form h2 {
   margin-bottom: 30px;
   transition: letter-spacing 0.3s ease;
 }
-form h2:hover {
+.login_form h2:hover {
   letter-spacing: 1px;
   cursor: pointer;
 }
-form h2 a {
+.login_form h2 a {
   font-size: 1em;
   text-decoration: none;
   color: #fff;
 }
-form .back {
+.login_form .back {
   position: absolute;
   top: 42px;
   left: 50px;
   width: 32px;
   height: 32px;
 }
-form .back img {
+.login_form .back img {
   width: 32px;
   height: 32px;
 }
-form .back img:hover {
+.login_form .back img:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
-form input[type=text], form input[type=email] {
+.login_form input[type=text], .login_form input[type=email] {
   width: 90%;
   height: 50px;
   margin-bottom: 10px;
@@ -52,36 +52,36 @@ form input[type=text], form input[type=email] {
   outline: none;
   transition: width 0.3s ease;
 }
-form input[type=text]:hover, form input[type=text]:focus, form input[type=email]:hover, form input[type=email]:focus {
+.login_form input[type=text]:hover, .login_form input[type=text]:focus, .login_form input[type=email]:hover, .login_form input[type=email]:focus {
   width: 100%;
 }
-form input[type=text]::-moz-placeholder, form input[type=email]::-moz-placeholder {
+.login_form input[type=text]::-moz-placeholder, .login_form input[type=email]::-moz-placeholder {
   color: #999999;
 }
-form input[type=text]::placeholder, form input[type=email]::placeholder {
+.login_form input[type=text]::placeholder, .login_form input[type=email]::placeholder {
   color: #999999;
 }
-form input[type=text]:-webkit-autofill, form input[type=email]:-webkit-autofill {
+.login_form input[type=text]:-webkit-autofill, .login_form input[type=email]:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-form input[type=text]:-webkit-autofill:hover, form input[type=text]:-webkit-autofill:focus, form input[type=email]:-webkit-autofill:hover, form input[type=email]:-webkit-autofill:focus {
+.login_form input[type=text]:-webkit-autofill:hover, .login_form input[type=text]:-webkit-autofill:focus, .login_form input[type=email]:-webkit-autofill:hover, .login_form input[type=email]:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-form .password_container {
+.login_form .password_container {
   position: relative;
 }
-form .password_container:has(.password:hover) .fa-eye, form .password_container:has(.password:focus) .fa-eye, form .password_container:has(.password:hover) .fa-eye-slash, form .password_container:has(.password:focus) .fa-eye-slash {
+.login_form .password_container:has(.password:hover) .fa-eye, .login_form .password_container:has(.password:focus) .fa-eye, .login_form .password_container:has(.password:hover) .fa-eye-slash, .login_form .password_container:has(.password:focus) .fa-eye-slash {
   right: 0px;
 }
-form .password_container .password {
+.login_form .password_container .password {
   padding-right: 28px !important;
   -webkit-text-security: disc;
 }
-form .password_container .fa-eye, form .password_container .fa-eye-slash {
+.login_form .password_container .fa-eye, .login_form .password_container .fa-eye-slash {
   display: block;
   color: #999999;
   position: absolute;
@@ -91,27 +91,27 @@ form .password_container .fa-eye, form .password_container .fa-eye-slash {
   padding-top: 19px;
   transition: right 0.3s ease;
 }
-form .password_container .fa-eye:hover, form .password_container .fa-eye-slash:hover {
+.login_form .password_container .fa-eye:hover, .login_form .password_container .fa-eye-slash:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
 }
-form .password_container .fa-eye {
+.login_form .password_container .fa-eye {
   display: none;
 }
-form .form_report {
+.login_form .form_report {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.9em;
 }
-form .form_report.success {
+.login_form .form_report.success {
   color: #52cf20;
 }
-form .form_report.error {
+.login_form .form_report.error {
   color: #df3535;
 }
-form input[type=submit] {
+.login_form input[type=submit] {
   width: 90%;
   height: 50px;
   margin-top: 40px;
@@ -121,7 +121,7 @@ form input[type=submit] {
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-form input[type=submit]:hover, form input[type=submit]:focus {
+.login_form input[type=submit]:hover, .login_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
   color: #000;
   border: 1px solid #000;
@@ -129,7 +129,7 @@ form input[type=submit]:hover, form input[type=submit]:focus {
   letter-spacing: 1px;
   cursor: pointer;
 }
-form .login_methods div {
+.login_form .login_methods div {
   position: relative;
   display: block;
   width: 90%;
@@ -141,37 +141,37 @@ form .login_methods div {
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-form .login_methods div:hover {
+.login_form .login_methods div:hover {
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #fff;
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
 }
-form .login_methods div a {
+.login_form .login_methods div a {
   display: block;
   color: #000;
   text-decoration: none;
   width: 100%;
   height: 100%;
 }
-form .login_methods div a:hover, form .login_methods div a:active {
+.login_form .login_methods div a:hover, .login_form .login_methods div a:active {
   color: #fff;
 }
-form .login_methods div a img {
+.login_form .login_methods div a img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   left: 8px;
 }
-form .form_questions {
+.login_form .form_questions {
   margin-top: 10px;
 }
-form .form_questions a {
+.login_form .form_questions a {
   color: #fff;
   text-decoration: none;
 }
-form .form_questions a:hover, form .form_questions a:active {
+.login_form .form_questions a:hover, .login_form .form_questions a:active {
   text-decoration: underline;
 }
 
