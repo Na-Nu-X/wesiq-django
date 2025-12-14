@@ -141,7 +141,7 @@
 main {
   min-height: 100vh;
   padding-bottom: 100vh;
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)), url("../images/background.jpg");
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url("../images/bg.png");
   color: #fff;
   background-size: cover;
   background-position: center;
@@ -162,7 +162,7 @@ main {
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
   border: 2px solid #fff;
-  border-radius: 25px;
+  border-radius: 10px;
   transition: opacity 0.5s ease, visibility 0.5s ease;
   z-index: 100;
 }
@@ -316,35 +316,15 @@ footer {
   background: radial-gradient(circle, rgb(25.5, 25.5, 25.5) 0%, #000 100%);
   border-top: 1px solid #fff;
 }
-footer .follow_us {
-  margin-bottom: 20px;
-}
-footer .follow_us p {
-  margin-bottom: 5px;
+footer h2 {
+  font-size: 2.5em;
   color: #fff;
-}
-footer .follow_us p:nth-child(1) {
-  font-weight: bold;
-  text-transform: uppercase;
-}
-footer .follow_us a img {
-  margin: 0px 5px;
-  opacity: 0.8;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-footer .follow_us a img:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
-footer .contact_us {
-  margin-bottom: 20px;
 }
 footer .contact_us p {
   color: #fff;
 }
-footer .contact_us p:nth-child(1) {
-  font-weight: bold;
-  text-transform: uppercase;
+footer .contact_us p i {
+  font-size: 1em;
 }
 footer .contact_us p a {
   text-decoration: none;
@@ -356,8 +336,35 @@ footer .contact_us p a:hover, footer .contact_us p a:active {
   text-decoration: underline;
   cursor: pointer;
 }
+footer .social_media {
+  margin: 20px 0px;
+}
+footer .social_media i {
+  margin: 0px 5px;
+  font-size: 2em;
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+footer .social_media i:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+footer .navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+footer .navigation a {
+  text-decoration: none;
+  font-size: 0.9em;
+  color: #fff;
+}
+footer .navigation a:hover, footer .navigation a:active {
+  text-decoration: underline;
+}
 footer .other {
-  margin-bottom: 20px;
   color: #999999;
 }
 footer .other .privacy_policy_again {
@@ -368,8 +375,7 @@ footer .other .privacy_policy_again:hover, footer .other .privacy_policy_again:a
   text-decoration: underline;
   cursor: pointer;
 }
-footer .copywrite {
-  line-height: 0.8em;
+footer .other .copywrite {
   color: #999999;
   font-family: "Courier New", Courier, monospace;
   font-size: 0.8em;

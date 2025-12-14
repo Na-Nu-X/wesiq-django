@@ -331,7 +331,7 @@
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 .content .login_form_dialog .login_form h2 {
   margin-bottom: 30px;
@@ -504,7 +504,7 @@
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 .content .registration_form_dialog .registration_form h2 {
   margin-bottom: 30px;
@@ -883,18 +883,12 @@
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 .content .contact_form h2 {
   margin-bottom: 30px;
-  transition: letter-spacing 0.3s ease;
-}
-.content .contact_form h2:hover {
-  letter-spacing: 1px;
-  cursor: pointer;
 }
 .content .contact_form h2 a {
-  font-size: 1em;
   text-decoration: none;
   color: #fff;
 }
@@ -929,25 +923,69 @@
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.content .contact_form select {
+.content .contact_form .subject_select_menu {
+  position: relative;
+  cursor: pointer;
+}
+.content .contact_form .subject_select_menu .select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 90%;
   height: 50px;
-  margin-bottom: 10px;
+  margin: 0px auto;
   padding: 0px 10px;
   background: transparent;
   color: #fff;
-  border: none;
   border-bottom: 1px solid #fff;
-  outline: none;
   transition: width 0.3s ease;
 }
-.content .contact_form select:hover, .content .contact_form select:focus {
+.content .contact_form .subject_select_menu .select:hover {
   width: 100%;
-  cursor: pointer;
 }
-.content .contact_form select option {
-  background-color: #fff;
-  color: #000;
+.content .contact_form .subject_select_menu .select:hover .fa-angle-down {
+  color: #ebb914;
+}
+.content .contact_form .subject_select_menu .select span {
+  margin-left: 5px;
+}
+.content .contact_form .subject_select_menu .select .fa-angle-down {
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.content .contact_form .subject_select_menu .options_list {
+  interpolate-size: allow-keywords;
+  position: absolute;
+  width: 90%;
+  height: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: left;
+  padding: 0px 15px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0px 0px 5px 5px;
+  overflow: hidden;
+  transition: height 0.3s ease, width 0.3s ease;
+  z-index: 100;
+}
+.content .contact_form .subject_select_menu .options_list.active {
+  height: auto;
+}
+.content .contact_form .subject_select_menu .options_list .option {
+  padding: 5px 0px;
+  transition: color 0.3s ease;
+}
+.content .contact_form .subject_select_menu .options_list .option:hover, .content .contact_form .subject_select_menu .options_list .option.selected {
+  color: #ebb914 !important;
+}
+.content .contact_form .subject_select_menu .options_list .option i {
+  width: 1em;
+  margin-right: 10px;
+  color: #ebb914;
+}
+.content .contact_form .subject_select_menu:has(.select:hover) .options_list {
+  width: 100%;
 }
 .content .contact_form .message_container {
   position: relative;

@@ -10,7 +10,7 @@ form {
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 form h2 {
   margin-bottom: 30px;

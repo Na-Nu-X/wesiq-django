@@ -181,7 +181,7 @@ def homepageView(request):
                     if attachment_file.size < 25000000:
                         mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
 
-                        # mail_message.send()
+                        mail_message.send()
 
                         messages.add_message(request, messages.SUCCESS, "Správa&nbsp;bola&nbsp;odoslaná")
 
@@ -190,7 +190,7 @@ def homepageView(request):
                         captureError("Príloha je príliš veľká")
 
                 else: # Sends Mail Without An Attachment
-                    # mail_message.send()
+                    mail_message.send()
 
                     messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
             

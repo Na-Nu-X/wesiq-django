@@ -415,7 +415,22 @@
         {{ contact_form.first_name }}
         {{ contact_form.last_name }}
         {{ contact_form.email_address }}
-        {{ contact_form.subject }}
+        {% comment %} {{ contact_form.subject }} {% endcomment %}
+
+        <div class="subject_select_menu">
+            <input type="hidden" name="subject" value="Otázka">
+
+            <div class="select">
+                <span>Otázka</span>
+                <i class="fas fa-angle-down"></i>
+            </div>
+
+            <div class="options_list">
+                <div class="option" data-subject="question"><i class="fa-solid fa-question"></i><span>Otázka</span></div> <!-- https://fontawesome.com/icons/question -->
+                <div class="option" data-subject="suggestion"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Návrh na zlepšenie</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+                <div class="option" data-subject="bug"><i class="fa-solid fa-bug"></i><span>Nahlásenie chyby</span></div> <!-- https://fontawesome.com/icons/bug -->
+            </div>
+        </div>
 
         <div class="message_container">
             {{ contact_form.message }}
@@ -734,6 +749,40 @@
                 ) {
                     profile_dialog.close()
                 }
+            })
+
+            // Custom Select Menu
+
+            const subject_select_menu = document.querySelector(".subject_select_menu")
+            const subject_select = document.querySelector(".subject_select_menu .select")
+            const subject_options_list = document.querySelector(".subject_select_menu .options_list")
+            const subject_options = document.querySelectorAll(".subject_select_menu .option")
+
+            subject_select.addEventListener("click", function() {
+                subject_options_list.classList.toggle("active")
+                subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+            })
+
+            subject_options.forEach(function(option) {
+                option.addEventListener("click", function() {
+                    sessionStorage.setItem("subject", option.dataset.subject)
+
+                    subject_options_list.classList.toggle("active")
+                    subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+
+                    // Remove Selected Class From Options
+                    subject_options.forEach(function(remove_selected) {
+                        remove_selected.classList.remove("selected")
+                    })
+
+                    // Shows Current Selected Option From List Without Icon
+                    if(option.dataset.subject === sessionStorage.getItem("subject")) {
+                        subject_select.querySelector("span").textContent = option.querySelector("span").textContent
+                        subject_select_menu.querySelector("input").value = option.querySelector("span").textContent
+
+                        option.classList.add("selected") // Adds Selected Class To Selected Option
+                    }
+                })
             })
 
             // Selected Attachment
