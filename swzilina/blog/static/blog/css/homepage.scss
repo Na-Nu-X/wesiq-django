@@ -384,7 +384,7 @@
             text-align: center;
             backdrop-filter: blur(5px);
             border: 2px solid $secondary-color;
-            border-radius: 25px;
+            border-radius: 10px;
 
             h2 {
                 margin-bottom: 30px;
@@ -588,7 +588,7 @@
             text-align: center;
             backdrop-filter: blur(5px);
             border: 2px solid $secondary-color;
-            border-radius: 25px;
+            border-radius: 10px;
 
             h2 {
                 margin-bottom: 30px;
@@ -1046,19 +1046,12 @@
         text-align: center;
         backdrop-filter: blur(5px);
         border: 2px solid $secondary-color;
-        border-radius: 25px;
+        border-radius: 10px;
 
         h2 {
             margin-bottom: 30px;
-            transition: letter-spacing 0.3s ease;
-
-            &:hover {
-                letter-spacing: 1px;
-                cursor: pointer;
-            }
 
             a {
-                font-size: 1em;
                 text-decoration: none;
                 color: $secondary-color;
             }
@@ -1097,27 +1090,82 @@
             }
         }
 
-        select {
-            width: 90%;
-            height: 50px;
-            margin-bottom: 10px;
-            padding: 0px 10px;
-            background: transparent;
-            color: $secondary-color;
-            border: none;
-            border-bottom: 1px solid $secondary-color;
-            outline: none;
-            transition: width 0.3s ease;
+        // Custom Select Menu
 
-            &:hover,
-            &:focus {
-                width: 100%;
-                cursor: pointer;
+        .subject_select_menu {
+            position: relative;
+            cursor: pointer;
+
+            .select {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 90%;
+                height: 50px;
+                margin: 0px auto;
+                padding: 0px 10px;
+                background: transparent;
+                color: $secondary-color;
+                border-bottom: 1px solid $secondary-color;
+                transition: width 0.3s ease;
+
+                &:hover {
+                    width: 100%;
+
+                    .fa-angle-down {
+                        color: $article-color;
+                    }
+                }
+
+                span {
+                    margin-left: 5px;
+                }
+
+                .fa-angle-down {
+                    color: darken($secondary-color, 10%);
+                    transition: color 0.3s ease,
+                }
             }
 
-            option {
-                background-color: $secondary-color;
-                color: $main-color;
+            .options_list {
+                interpolate-size: allow-keywords;
+                position: absolute;
+                width: 90%;
+                height: 0px;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: left;
+                padding: 0px 15px;
+                color: $secondary-color;
+                background-color: transparentize($main-color, 0.2);
+                border-radius: 0px 0px 5px 5px;
+                overflow: hidden;
+                transition: height 0.3s ease, width 0.3s ease;
+                z-index: 100;
+
+                &.active {
+                    height: auto;
+                }
+
+                .option {
+                    padding: 5px 0px;
+                    transition: color 0.3s ease;
+
+                    &:hover,
+                    &.selected {
+                        color: $article-color !important;
+                    }
+
+                    i {
+                        width: 1em;
+                        margin-right: 10px;
+                        color: $article-color;
+                    }
+                }
+            }
+
+            &:has(.select:hover) .options_list {
+                width: 100%;
             }
         }
         

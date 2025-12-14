@@ -97,27 +97,31 @@
     </main>
 
     <footer>
-        <div class="follow_us">
-            <p>SLEDUJTE NÁS</p>
-            <a href="https://www.instagram.com/" title="Instagram" target="_blank"><img src="{% static 'images/instagram_logo.png' %}" alt="Instagram"></a> <!-- https://www.flaticon.com/free-icon/instagram_174855 -->
+        <h2>Street&nbsp;Workout&nbsp;Žilina</h2>
 
-            <a href="https://www.facebook.com/" title="Facebook" target="_blank"><img src="{% static 'images/facebook_logo.png' %}" alt="Facebook"></a> <!-- https://www.flaticon.com/free-icon/facebook_733547 -->
-
-            <a href="https://www.tiktok.com/" title="TikTok" target="_blank"><img src="{% static 'images/tiktok_logo.png' %}" alt="TikTok"></a> <!-- https://www.flaticon.com/free-icon/tik-tok_3046121 -->
-        </div>
-        
         <div class="contact_us">
-            <p>KONTAKT</p>
             <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="Napísať...">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
 
             <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="Zavolať...">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone -->
         </div>
 
-        <div class="other">
-            <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
+        <div class="social_media">
+            <a href="https://www.instagram.com/" title="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a> <!-- https://fontawesome.com/icons/instagram -->
+            <a href="https://www.facebook.com/" title="Facebook" target="_blank"><i class="fa-brands fa-facebook"></i></a> <!-- https://fontawesome.com/icons/facebook -->
+            <a href="https://www.tiktok.com/" title="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a> <!-- https://fontawesome.com/icons/tiktok -->
         </div>
         
-        <p class="copywrite">&copy; Street Workout Žilina 2025, Všetky práva vyhradené</p>
+        <div class="navigation">
+            <a href="{% url 'homepage_url' %}" title="Domov" target="_self">Domov</a>
+            <a href="{% url 'login_url' %}" title="Prihlásenie" target="_self">Prihlásenie</a>
+            <a href="{% url 'registration_url' %}" title="Registrácia" target="_self">Registrácia</a>
+            <a href="{% url 'blog_url' %}" title="Blog" target="_self">Blog</a>
+        </div>
+        
+        <div class="other">
+            <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
+            <p class="copywrite">&copy; Street Workout Žilina 2025, Všetky práva vyhradené</p>
+        </div>
     </footer>
 
     <script defer>

@@ -395,7 +395,7 @@
 
                 // Shows Current Selected Option From List Without Icon
                 if(option.classList[1] === "selected") {
-                    sort_select.querySelector(".sort_select_menu .select span").innerHTML = option.querySelector("span").innerHTML
+                    sort_select.querySelector("span").textContent = option.querySelector("span").textContent
                 }
             })
 
@@ -427,7 +427,7 @@
 
                 // Shows Current Selected Option From List Without Icon
                 if(option.classList[1] === "selected") {
-                    category_select.querySelector(".category_select_menu .select span").innerHTML = option.querySelector("span").innerHTML
+                    category_select.querySelector("span").textContent = option.querySelector("span").textContent
                 }
             })
 
