@@ -773,7 +773,8 @@
 }
 .content .reviews .write_review_form .review textarea {
   width: 100%;
-  height: 100px;
+  min-height: 100px;
+  field-sizing: content;
   margin-top: 10px;
   padding: 5px 10px;
   background: transparent;
@@ -799,14 +800,104 @@
   color: #000;
   border: 1px solid #000;
   border-radius: 10px;
-  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
 .content .reviews .write_review_form input[type=submit]:hover, .content .reviews .write_review_form input[type=submit]:focus {
   background-color: rgb(93.730125523, 222.129707113, 42.370292887);
   color: #000;
-  border: 1px solid #000;
-  transform: scale(1.1);
+  letter-spacing: 1px;
   cursor: pointer;
+}
+.content .reviews .select_menus {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0px auto 20px;
+}
+.content .reviews .select_menus .sort_select_menu, .content .reviews .select_menus .rating_select_menu {
+  position: relative;
+  width: 250px;
+  cursor: pointer;
+}
+.content .reviews .select_menus .sort_select_menu .refresh .fa-arrow-rotate-right, .content .reviews .select_menus .rating_select_menu .refresh .fa-arrow-rotate-right {
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  transform: translateY(-50%);
+  padding: 12.5px 0px 12.5px 8.5px;
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+  z-index: 50;
+}
+.content .reviews .select_menus .sort_select_menu .refresh .fa-arrow-rotate-right:hover, .content .reviews .select_menus .rating_select_menu .refresh .fa-arrow-rotate-right:hover {
+  color: #fff;
+  cursor: pointer;
+}
+.content .reviews .select_menus .sort_select_menu .select, .content .reviews .select_menus .rating_select_menu .select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0px 8.5px;
+  color: #cccccc;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 2px solid rgb(229.5, 229.5, 229.5);
+  border-radius: 5px;
+  transition: border 0.3s ease;
+}
+.content .reviews .select_menus .sort_select_menu .select span, .content .reviews .select_menus .rating_select_menu .select span {
+  margin-left: 21.5px;
+}
+.content .reviews .select_menus .sort_select_menu .select .fa-angle-down, .content .reviews .select_menus .rating_select_menu .select .fa-angle-down {
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.content .reviews .select_menus .sort_select_menu .select:hover, .content .reviews .select_menus .rating_select_menu .select:hover {
+  border-color: #fff !important;
+}
+.content .reviews .select_menus .sort_select_menu .select:hover .fa-angle-down, .content .reviews .select_menus .rating_select_menu .select:hover .fa-angle-down {
+  color: #ebb914;
+}
+.content .reviews .select_menus .sort_select_menu .options_list, .content .reviews .select_menus .rating_select_menu .options_list {
+  position: absolute;
+  width: 100%;
+  height: 0px;
+  margin-top: 10px;
+  padding: 0px 8.5px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  overflow-y: hidden;
+  transition: height 0.3s ease;
+  z-index: 100;
+}
+.content .reviews .select_menus .sort_select_menu .options_list.active, .content .reviews .select_menus .rating_select_menu .options_list.active {
+  height: 167px;
+}
+.content .reviews .select_menus .sort_select_menu .options_list .option, .content .reviews .select_menus .rating_select_menu .options_list .option {
+  padding: 5px 0px;
+  transition: color 0.3s ease;
+}
+.content .reviews .select_menus .sort_select_menu .options_list .option:hover, .content .reviews .select_menus .sort_select_menu .options_list .option.selected, .content .reviews .select_menus .rating_select_menu .options_list .option:hover, .content .reviews .select_menus .rating_select_menu .options_list .option.selected {
+  color: #ebb914;
+}
+.content .reviews .select_menus .sort_select_menu .options_list .option i, .content .reviews .select_menus .rating_select_menu .options_list .option i {
+  color: #ebb914;
+  margin-right: 8.5px;
+}
+.content .reviews .select_menus .rating_select_menu .options_list {
+  overflow-y: auto;
+}
+.content .reviews .select_menus .rating_select_menu .options_list::-webkit-scrollbar {
+  width: 3px;
+  background-color: #fff;
+}
+.content .reviews .select_menus .rating_select_menu .options_list::-webkit-scrollbar-thumb {
+  background-color: #ebb914;
 }
 .content .reviews .all_reviews {
   margin: 0px 0px;
@@ -823,7 +914,7 @@
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 1px solid #fff;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease;
 }
@@ -925,6 +1016,7 @@
 }
 .content .contact_form .subject_select_menu {
   position: relative;
+  margin-bottom: 10px;
   cursor: pointer;
 }
 .content .contact_form .subject_select_menu .select {
@@ -992,13 +1084,14 @@
 }
 .content .contact_form .message_container textarea {
   width: 90%;
-  height: 100px;
+  min-height: 100px;
+  field-sizing: content;
   margin-top: 10px;
-  padding: 5px 10px;
+  padding: 5px 10px 25px;
   background: transparent;
   color: #fff;
   border: 1px solid #fff;
-  border-radius: 10px;
+  border-radius: 5px;
   outline: none;
   resize: none;
   transition: width 0.3s ease;
@@ -1021,7 +1114,7 @@
   transform: translateX(-50%);
   width: 90%;
   height: 25px;
-  border-radius: 0px 0px 10px 10px;
+  border-radius: 0px 0px 5px 5px;
   transition: width 0.3s ease;
 }
 .content .contact_form .message_container .attachment p {

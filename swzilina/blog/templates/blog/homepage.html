@@ -325,6 +325,47 @@
             <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
         </form>
 
+        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+        <div class="select_menus">
+            <div class="sort_select_menu">
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
+
+                <div class="select">
+                    <span>Najnovšie recenzie</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>Najnovšie recenzie</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>Najstaršie recenzie</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>Najlepšie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-up -->
+                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>Najhoršie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-down -->
+                </div>
+            </div>
+
+            <div class="rating_select_menu">
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
+
+                <div class="select">
+                    <span>Všetky kategórie</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>Všetky recenzie</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
+                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                </div>
+            </div>
+        </div>
+
         <div class="all_reviews">
             {% for one_review in reviews %}
                 <div class="one_review">
@@ -417,6 +458,7 @@
         {{ contact_form.email_address }}
         {% comment %} {{ contact_form.subject }} {% endcomment %}
 
+        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="subject_select_menu">
             <input type="hidden" name="subject" value="Otázka">
 
@@ -751,7 +793,96 @@
                 }
             })
 
-            // Custom Select Menu
+            // Custom Select Menu - Reviews
+
+            // Fuction For Setting Sort Parameter to URL Address
+            function setSortParameter(sort_value) {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                page_url.searchParams.set("sort", sort_value) // Adds Parameter With Value to The URL
+
+                window.location.href = page_url // Redirects Page
+            }
+
+            const sort_select = document.querySelector(".sort_select_menu .select")
+            const sort_options_list = document.querySelector(".sort_select_menu .options_list")
+            const sort_options = document.querySelectorAll(".sort_select_menu .option")
+
+            sort_select.addEventListener("click", function() {
+                sort_options_list.classList.toggle("active")
+                sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+            })
+
+            sort_options.forEach(function(option) {
+                option.addEventListener("click", function() {
+                    setSortParameter(option.dataset.sort) // Sets sort URL Parameter With Value From data in Options
+
+                    sort_options_list.classList.toggle("active")
+                    sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+                })
+
+                // Shows Current Selected Option From List Without Icon
+                if(option.classList[1] === "selected") {
+                    sort_select.querySelector("span").textContent = option.querySelector("span").textContent
+                }
+            })
+
+            // Fuction For Setting Rating Parameter to URL Address
+            function setRatingParameter(rating_value) {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                page_url.searchParams.set("rating", rating_value) // Adds Parameter With Value to The URL
+
+                window.location.href = page_url // Redirects Page
+            }
+
+            const rating_select = document.querySelector(".rating_select_menu .select")
+            const rating_options_list = document.querySelector(".rating_select_menu .options_list")
+            const rating_options = document.querySelectorAll(".rating_select_menu .option")
+
+            rating_select.addEventListener("click", function() {
+                rating_options_list.classList.toggle("active")
+                rating_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+            })
+
+            rating_options.forEach(function(option) {
+                option.addEventListener("click", function() {
+                    setRatingParameter(option.dataset.rating) // Sets rating URL Parameter With Value From data in Options
+
+                    rating_options_list.classList.toggle("active")
+                    rating_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+                })
+
+                // Shows Current Selected Option From List Without Icon
+                if(option.classList[1] === "selected") {
+                    rating_select.querySelector("span").innerHTML = option.querySelector("span").innerHTML
+                }
+            })
+
+            // Refresh Select Menus
+
+            const sort_select_menu_refresh = document.querySelector(".sort_select_menu .refresh .fa-arrow-rotate-right")
+            const rating_select_menu_refresh = document.querySelector(".rating_select_menu .refresh .fa-arrow-rotate-right")
+
+            sort_select_menu_refresh.addEventListener("click", function() {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                // Deletes Parameters In URL
+                page_url.searchParams.delete("sort")
+
+                window.location.href = page_url // Redirects Page
+            })
+
+            rating_select_menu_refresh.addEventListener("click", function() {
+                const page_url = new URL(window.location.href) // Gets Current URL
+
+                // Deletes Parameters In URL
+                page_url.searchParams.delete("rating")
+
+                window.location.href = page_url // Redirects Page
+            })
+
+            // Custom Select Menu - Contact Form
 
             const subject_select_menu = document.querySelector(".subject_select_menu")
             const subject_select = document.querySelector(".subject_select_menu .select")

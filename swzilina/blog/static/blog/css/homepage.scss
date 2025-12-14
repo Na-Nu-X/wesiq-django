@@ -913,7 +913,8 @@
 
                 textarea {
                     width: 100%;
-                    height: 100px;
+                    min-height: 100px;
+                    field-sizing: content;
                     margin-top: 10px;
                     padding: 5px 10px;
                     background: transparent;
@@ -938,18 +939,133 @@
                 color: $main-color;
                 border: 1px solid $main-color;
                 border-radius: 10px;
-                transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease;
+                transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
                 &:hover,
                 &:focus {
                     background-color: lighten($success-color, 5%);
                     color: $main-color;
-                    border: 1px solid $main-color;
-                    transform: scale(1.1);
+                    letter-spacing: 1px;
                     cursor: pointer;
                 }
             }
         }
+
+        // Custom Select Menu
+
+        .select_menus {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0px auto 20px;
+
+            .sort_select_menu, .rating_select_menu {
+                position: relative;
+                width: 250px;
+                cursor: pointer;
+
+                .refresh {
+                    .fa-arrow-rotate-right {
+                        position: absolute;
+                        top: 50%;
+                        left: 0px;
+                        transform: translateY(-50%);
+                        padding: 12.5px 0px 12.5px 8.5px;
+                        color: darken($secondary-color, 10%);
+                        transition: color 0.3s ease;
+                        z-index: 50;
+
+                        &:hover {
+                            color: $secondary-color;
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .select {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    height: 40px;
+                    padding: 0px 8.5px;
+                    color: darken($secondary-color, 20%);
+                    background-color: transparentize($main-color, 0.8);
+                    backdrop-filter: blur(5px);
+                    border: 2px solid darken($secondary-color, 10%);
+                    border-radius: 5px;
+                    transition: border 0.3s ease;
+
+                    span {
+                        margin-left: 15px + 8.5px - 2px;
+                    }
+
+                    .fa-angle-down {
+                        color: darken($secondary-color, 10%);
+                        transition: color 0.3s ease,
+                    }
+
+                    &:hover {
+                        border-color: $secondary-color !important;
+
+                        .fa-angle-down {
+                            color: $article-color;
+                        }
+                    }
+                }
+
+                .options_list {
+                    position: absolute;
+                    width: 100%;
+                    height: 0px;
+                    margin-top: 10px;
+                    padding: 0px 8.5px;
+                    color: $secondary-color;
+                    background-color: transparentize($main-color, 0.2);
+                    border-radius: 5px;
+                    overflow-y: hidden;
+                    transition: height 0.3s ease;
+                    z-index: 100;
+
+                    &.active {
+                        height: 167px;
+                    }
+
+                    .option {
+                        padding: 5px 0px;
+                        transition: color 0.3s ease;
+
+                        &:hover,
+                        &.selected {
+                            color: $article-color;
+                        }
+
+                        i {
+                            color: $article-color;
+                            margin-right: 8.5px;
+                        }
+                    }
+                }
+            }
+
+            .rating_select_menu {
+                .options_list {
+                    overflow-y: auto;
+
+                    &::-webkit-scrollbar {
+                        width: 3px;
+                        background-color: $secondary-color;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background-color: $article-color;
+                    }
+                }
+            }
+        }
+
+        // All Reviews
 
         .all_reviews {
             margin: 0px 0px;
@@ -965,7 +1081,7 @@
                 background-color: transparentize($secondary-color, 0.9);
                 backdrop-filter: blur(5px);
                 border: 1px solid $secondary-color;
-                border-radius: 10px;
+                border-radius: 5px;
                 box-shadow: 5px 5px 10px lighten($main-color, 20%);
                 transition: transform 0.3s ease;
 
@@ -1094,6 +1210,7 @@
 
         .subject_select_menu {
             position: relative;
+            margin-bottom: 10px;
             cursor: pointer;
 
             .select {
@@ -1174,13 +1291,14 @@
 
             textarea {
                 width: 90%;
-                height: 100px;
+                min-height: 100px;
+                field-sizing: content;
                 margin-top: 10px;
-                padding: 5px 10px;
+                padding: 5px 10px 25px;
                 background: transparent;
                 color: $secondary-color;
                 border: 1px solid $secondary-color;
-                border-radius: 10px;
+                border-radius: 5px;
                 outline: none;
                 resize: none;
                 transition: width 0.3s ease;
@@ -1203,7 +1321,7 @@
                 transform: translateX(-50%);
                 width: 90%;
                 height: 25px;
-                border-radius: 0px 0px 10px 10px;
+                border-radius: 0px 0px 5px 5px;
                 transition: width 0.3s ease;
 
                 p {
