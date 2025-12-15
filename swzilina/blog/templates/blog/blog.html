@@ -125,9 +125,10 @@
             {% endif %}
         </h2>
 
+        {% comment %} article class="skeleton_loading" {% endcomment %}
         {% for one_article in articles %}
             <article 
-                class="{{ one_article.link }} skeleton_loading"
+                class="{{ one_article.link }}"
                 data-title="{{ one_article.title }}"
                 style="
                     {% if one_article.image_name %}
@@ -160,13 +161,13 @@
                     <p class="share_result"></p>
                 </div>
 
+                <div class="description skeleton_loading skeleton_text">
+                    <p class="hidden">{{ one_article.content|truncatechars:200 }}</p>
+                </div>
+
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="Zobraziť" target="_self">
                     <div class="skeleton_loading skeleton_text">
                         <h2 class="hidden">{{ one_article.title }}</h2>
-                    </div>
-                    
-                    <div class="skeleton_loading skeleton_text">
-                        <p class="hidden">{{ one_article.content|truncatechars:100 }}</p>
                     </div>
 
                     <div class="article_info">
