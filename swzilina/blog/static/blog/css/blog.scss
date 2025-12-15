@@ -309,15 +309,13 @@
 
     .articles {
         position: relative;
-        top: 20px;
         width: 100%;
-        margin-bottom: 20px;
+        margin-top: 10px;
         display: flex;
         flex-direction: row;
         justify-content: center;
-        align-items: center;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 0px;
 
         .no_articles {
             font-family: $article-heading-font;
@@ -329,6 +327,7 @@
             max-width: 500px;
             width: 100%;
             height: 300px;
+            margin: 10px;
             border: 1px solid $secondary-color;
             border-radius: 5px;
             text-align: center;
@@ -345,6 +344,11 @@
             &:hover {
                 transform: scale(1.01);
                 cursor: pointer;
+
+                .description {
+                    transform: translateX(0);
+                    filter: blur(0px);
+                }
             }
 
             .info {
@@ -381,6 +385,26 @@
                 }
             }
 
+            .description {
+                pointer-events: none;
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 300px;
+                background-color: transparentize($main-color, 0.8);
+                z-index: 50;
+                transform: translateX(-100%);
+                filter: blur(5px);
+                transition: transform 0.3s ease, filter 0.1s ease;
+
+                p {
+                    padding: 0px 20px;
+                    text-align: justify;
+                }
+            }
+
             a {
                 display: block;
                 width: 100%;
@@ -394,6 +418,7 @@
                     margin-bottom: 3.75px;
                     font-family: $article-heading-font;
                     color: $article-color;
+                    text-shadow: 0px 0px 10px $main-color;
                 }
 
                 .article_info {
@@ -481,7 +506,7 @@
         align-items: center;
         gap: 20px;
         width: 100%;
-        padding-top: 20px;
+        padding-top: 10px;
 
         input {
             width: 240px;
