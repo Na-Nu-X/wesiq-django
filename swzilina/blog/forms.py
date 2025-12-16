@@ -131,7 +131,7 @@ class passwordResetForm(forms.Form):
 
 class registrationForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte vaše meno"}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": "Meno"}),
         label=False,
         max_length=50,
         required=True,
@@ -142,7 +142,7 @@ class registrationForm(forms.Form):
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte vaše priezvisko"}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": "Priezvisko"}),
         label=False,
         max_length=50,
         required=True,
@@ -153,7 +153,7 @@ class registrationForm(forms.Form):
     )
 
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "E-mail"}),
         label=False,
         max_length=50,
         required=True,
@@ -164,7 +164,7 @@ class registrationForm(forms.Form):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"type": "tel", "placeholder": "Zadajte vaše telefónne číslo"}),
+        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": "Telefónne číslo"}),
         label=False,
         max_length=20,
         required=False,
@@ -187,7 +187,7 @@ class registrationForm(forms.Form):
     )
 
     password_check = forms.CharField(
-        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Znovu zadajte heslo", "autocomplete": "off"}),
+        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Overte heslo", "autocomplete": "off"}),
         label=False,
         min_length=8,
         max_length=50,
