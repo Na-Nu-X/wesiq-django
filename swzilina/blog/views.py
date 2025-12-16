@@ -207,6 +207,42 @@ def homepageView(request):
     avg_rating = reviews.aggregate(Avg("rating"))
     num_reviews = reviews.count()
 
+    # Sorts Reviews By User Preferencies (The Latest Articles Are Set As Default)
+    sort = request.GET.get("sort", "latest").lower()
+    rating = request.GET.get("rating", "all")
+
+    if sort == "latest":
+        if rating == "all":
+            reviews.order_by("-creation_time")
+            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+
+        else:
+            reviews = reviews.filter(rating=int(rating)).order_by("-creation_time")
+
+    if sort == "oldest":
+        if rating == "all":
+            reviews.order_by("creation_time")
+            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+
+        else:
+            reviews = reviews.filter(rating=int(rating)).order_by("creation_time")
+
+    if sort == "best":
+        if rating == "all":
+            reviews.order_by("-rating")
+            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+
+        else:
+            reviews = reviews.filter(rating=int(rating)).order_by("-rating")
+
+    if sort == "worst":
+        if rating == "all":
+            reviews.order_by("rating")
+            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+
+        else:
+            reviews = reviews.filter(rating=int(rating)).order_by("rating")
+
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
@@ -802,7 +838,7 @@ def blogView(request):
             "email_address": user.email_address,
         })
 
-        # Renders Homepage With Filled Contact Form, User Data And Reviews
+        # Renders Blog Page With Filled Subscribe Form, User Data And Articles
         return render(request, "blog/blog.html", {
             "first_name": user.first_name,
             "last_name": user.last_name,
