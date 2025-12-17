@@ -35,10 +35,10 @@
 .registration_form .back img {
   width: 32px;
   height: 32px;
+  transition: transform 0.3s ease;
 }
 .registration_form .back img:hover {
   transform: scale(1.1);
-  transition: transform 0.3s ease;
 }
 .registration_form input[type=text], .registration_form input[type=email], .registration_form input[type=tel], .registration_form input[type=password] {
   width: 90%;
@@ -48,12 +48,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .registration_form input[type=text]:hover, .registration_form input[type=text]:focus, .registration_form input[type=email]:hover, .registration_form input[type=email]:focus, .registration_form input[type=tel]:hover, .registration_form input[type=tel]:focus, .registration_form input[type=password]:hover, .registration_form input[type=password]:focus {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .registration_form input[type=text]::-moz-placeholder, .registration_form input[type=email]::-moz-placeholder, .registration_form input[type=tel]::-moz-placeholder, .registration_form input[type=password]::-moz-placeholder {
   color: #999999;
@@ -98,7 +99,20 @@
 .registration_form .password_container .fa-eye:hover, .registration_form .password_container .fa-eye-slash:hover, .registration_form .password_container .fa-key:hover, .registration_form .password_container .fa-copy:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
+}
+.registration_form .password_container .fa-key {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+}
+.registration_form .password_container .fa-key:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease, left 0.3s ease;
 }
 .registration_form .password_container .fa-eye {
   display: none;
@@ -137,7 +151,7 @@
 .registration_form .password_check_container .fa-copy:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .registration_form .form_report {
   position: absolute;
