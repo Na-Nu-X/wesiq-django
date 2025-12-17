@@ -328,6 +328,7 @@
   width: 100%;
   padding: 30px 50px 50px;
   text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
@@ -370,10 +371,10 @@
 .content .login_form_dialog .login_form .back img {
   width: 32px;
   height: 32px;
+  transition: transform 0.3s ease;
 }
 .content .login_form_dialog .login_form .back img:hover {
   transform: scale(1.1);
-  transition: transform 0.3s ease;
 }
 .content .login_form_dialog .login_form .email_address_container {
   position: relative;
@@ -391,7 +392,7 @@
 .content .login_form_dialog .login_form .email_address_container i:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, left 0.3s ease;
 }
 .content .login_form_dialog .login_form .email_address_container:has(.email_address:hover) .fa-envelope, .content .login_form_dialog .login_form .email_address_container:has(.email_address:focus) .fa-envelope {
   left: -16px;
@@ -404,12 +405,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .login_form_dialog .login_form input[type=text]:hover, .content .login_form_dialog .login_form input[type=text]:focus, .content .login_form_dialog .login_form input[type=email]:hover, .content .login_form_dialog .login_form input[type=email]:focus {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .content .login_form_dialog .login_form input[type=text]::-moz-placeholder, .content .login_form_dialog .login_form input[type=email]::-moz-placeholder {
   color: #999999;
@@ -443,7 +445,7 @@
 .content .login_form_dialog .login_form .password_container .fa-lock:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, left 0.3s ease;
 }
 .content .login_form_dialog .login_form .password_container:has(.password:hover) .fa-lock, .content .login_form_dialog .login_form .password_container:has(.password:focus) .fa-lock {
   left: -16px;
@@ -468,7 +470,7 @@
 .content .login_form_dialog .login_form .password_container .fa-eye:hover, .content .login_form_dialog .login_form .password_container .fa-eye-slash:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .content .login_form_dialog .login_form .password_container .fa-eye {
   display: none;
@@ -563,6 +565,7 @@
   width: 100%;
   padding: 30px 50px 50px;
   text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
@@ -605,10 +608,10 @@
 .content .registration_form_dialog .registration_form .back img {
   width: 32px;
   height: 32px;
+  transition: transform 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .back img:hover {
   transform: scale(1.1);
-  transition: transform 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .inputs {
   display: flex;
@@ -629,12 +632,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=text]:hover, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=text]:focus, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=email]:hover, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=email]:focus, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=tel]:hover, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=tel]:focus, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=text]:hover, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=text]:focus, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=email]:hover, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=email]:focus, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=tel]:hover, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=tel]:focus, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=text]:hover, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=text]:focus, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=email]:hover, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=email]:focus, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=tel]:hover, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=tel]:focus, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=text]:hover, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=text]:focus, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=email]:hover, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=email]:focus, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=tel]:hover, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=tel]:focus {
-  width: calc(100% - 20px);
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=text]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=email]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .first_name_container input[type=tel]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=text]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=email]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .last_name_container input[type=tel]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=text]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=email]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .email_address_container input[type=tel]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=text]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=email]::-moz-placeholder, .content .registration_form_dialog .registration_form .inputs .phone_number_container input[type=tel]::-moz-placeholder {
   color: #999999;
@@ -671,19 +675,19 @@
 .content .registration_form_dialog .registration_form .inputs .first_name_container i:hover, .content .registration_form_dialog .registration_form .inputs .last_name_container i:hover, .content .registration_form_dialog .registration_form .inputs .email_address_container i:hover, .content .registration_form_dialog .registration_form .inputs .phone_number_container i:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:focus) .fa-user {
-  right: 10px;
+  right: 0px;
 }
 .content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:focus) .fa-user {
-  right: 10px;
+  right: 0px;
 }
 .content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:hover) .fa-envelope, .content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:focus) .fa-envelope {
-  right: 10px;
+  right: 0px;
 }
 .content .registration_form_dialog .registration_form .inputs .phone_number_container:has(.phone_number:hover) .fa-phone, .content .registration_form_dialog .registration_form .inputs .phone_number_container:has(.phone_number:focus) .fa-phone {
-  right: 10px;
+  right: 0px;
 }
 .content .registration_form_dialog .registration_form .password, .content .registration_form_dialog .registration_form input[type=password] {
   width: 90%;
@@ -693,12 +697,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .password:hover, .content .registration_form_dialog .registration_form .password:focus, .content .registration_form_dialog .registration_form input[type=password]:hover, .content .registration_form_dialog .registration_form input[type=password]:focus {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .content .registration_form_dialog .registration_form .password::-moz-placeholder, .content .registration_form_dialog .registration_form input[type=password]::-moz-placeholder {
   color: #999999;
@@ -732,7 +737,7 @@
   padding-right: 28px !important;
   -webkit-text-security: disc;
 }
-.content .registration_form_dialog .registration_form .password_container .fa-eye, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash, .content .registration_form_dialog .registration_form .password_container .fa-key, .content .registration_form_dialog .registration_form .password_container .fa-copy {
+.content .registration_form_dialog .registration_form .password_container .fa-key {
   display: block;
   color: #999999;
   position: absolute;
@@ -740,10 +745,23 @@
   padding-bottom: 16px;
   padding-top: 19px;
 }
-.content .registration_form_dialog .registration_form .password_container .fa-eye:hover, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash:hover, .content .registration_form_dialog .registration_form .password_container .fa-key:hover, .content .registration_form_dialog .registration_form .password_container .fa-copy:hover {
+.content .registration_form_dialog .registration_form .password_container .fa-key:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, left 0.3s ease;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash, .content .registration_form_dialog .registration_form .password_container .fa-copy {
+  display: block;
+  color: #999999;
+  position: absolute;
+  bottom: 10px;
+  padding-bottom: 16px;
+  padding-top: 19px;
+}
+.content .registration_form_dialog .registration_form .password_container .fa-eye:hover, .content .registration_form_dialog .registration_form .password_container .fa-eye-slash:hover, .content .registration_form_dialog .registration_form .password_container .fa-copy:hover {
+  color: #cccccc;
+  cursor: pointer;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .password_container .fa-eye {
   display: none;
@@ -776,7 +794,7 @@
 .content .registration_form_dialog .registration_form .password_check_container .fa-lock:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, left 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .password_check_container:has(.password_check:hover) .fa-lock, .content .registration_form_dialog .registration_form .password_check_container:has(.password_check:focus) .fa-lock {
   left: -16px;
@@ -800,7 +818,7 @@
 .content .registration_form_dialog .registration_form .password_check_container .fa-copy:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .content .registration_form_dialog .registration_form .form_report {
   position: absolute;
@@ -855,6 +873,7 @@
   transform: translate(-50%, -50%);
   max-width: 500px;
   width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
@@ -1169,12 +1188,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .contact_form input[type=text]:hover, .content .contact_form input[type=text]:focus, .content .contact_form input[type=email]:hover, .content .contact_form input[type=email]:focus {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .content .contact_form input[type=text]::-moz-placeholder, .content .contact_form input[type=email]::-moz-placeholder {
   color: #999999;
@@ -1207,11 +1227,12 @@
   padding: 0px 10px;
   background: transparent;
   color: #fff;
-  border-bottom: 1px solid #fff;
-  transition: width 0.3s ease;
+  border-bottom: 1px solid #999999;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .contact_form .subject_select_menu .select:hover {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .content .contact_form .subject_select_menu .select:hover .fa-angle-down {
   color: #ebb914;
@@ -1268,14 +1289,15 @@
   padding: 5px 10px 25px;
   background: transparent;
   color: #fff;
-  border: 1px solid #fff;
+  border: 1px solid #999999;
   border-radius: 5px;
   outline: none;
   resize: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .content .contact_form .message_container textarea:hover, .content .contact_form .message_container textarea:focus {
   width: 100%;
+  border: 1px solid #cccccc;
 }
 .content .contact_form .message_container textarea::-moz-placeholder {
   color: #999999;

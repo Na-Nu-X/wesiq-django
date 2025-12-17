@@ -42,10 +42,10 @@ form {
         img {
             width: 32px;
             height: 32px;
+            transition: transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.1);
-                transition: transform 0.3s ease;
             }
         }
     }
@@ -91,15 +91,16 @@ form {
         padding: 5px 10px;
         background: transparent;
         color: $secondary-color;
-        border: 1px solid $secondary-color;
+        border: 1px solid darken($secondary-color, 40%);
         border-radius: 10px;
         outline: none;
         resize: none;
-        transition: width 0.3s ease;
+        transition: width 0.3s ease, border 0.3s ease;
 
         &:hover,
         &:focus {
             width: 100%;
+            border: 1px solid darken($secondary-color, 20%);
         }
 
         &::placeholder {

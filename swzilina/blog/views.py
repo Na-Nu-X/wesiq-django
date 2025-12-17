@@ -213,32 +213,28 @@ def homepageView(request):
 
     if sort == "latest":
         if rating == "all":
-            reviews.order_by("-creation_time")
-            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+            reviews = reviews.order_by("-creation_time")
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("-creation_time")
 
     if sort == "oldest":
         if rating == "all":
-            reviews.order_by("creation_time")
-            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+            reviews = reviews.order_by("creation_time")
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("creation_time")
 
     if sort == "best":
         if rating == "all":
-            reviews.order_by("-rating")
-            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+            reviews = reviews.order_by("-rating")
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("-rating")
 
     if sort == "worst":
         if rating == "all":
-            reviews.order_by("rating")
-            print(reviews[0].rating, reviews[1].rating, reviews[2].rating)
+            reviews = reviews.order_by("rating")
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("rating")

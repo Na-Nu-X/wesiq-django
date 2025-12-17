@@ -34,7 +34,9 @@
 {% endblock recaptcha %}
 
 {% block navigation_bar_items %}
-    <li><a href="{% url 'login_url' %}" target="_self">PRIHLÁSENIE</a></li>
+    <li>
+        <a href="{% url 'login_url' %}" target="_self">PRIHLÁSENIE</a>
+    </li>
 {% endblock navigation_bar_items %}
 
 {% block heading %}Registrácia{% endblock heading %}

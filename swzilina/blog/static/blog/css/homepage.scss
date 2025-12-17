@@ -382,6 +382,7 @@
             width: 100%;
             padding: 30px 50px 50px;
             text-align: center;
+            background-color: transparentize($main-color, 0.8);
             backdrop-filter: blur(5px);
             border: 2px solid $secondary-color;
             border-radius: 10px;
@@ -426,10 +427,10 @@
                 img {
                     width: 32px;
                     height: 32px;
+                    transition: transform 0.3s ease;
 
                     &:hover {
                         transform: scale(1.1);
-                        transition: transform 0.3s ease;
                     }
                 }
             }
@@ -450,7 +451,7 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, left 0.3s ease;
                     }
                 }
             }
@@ -467,13 +468,14 @@
                 background: transparent;
                 color: $secondary-color;
                 border: none;
-                border-bottom: 1px solid $secondary-color;
+                border-bottom: 1px solid darken($secondary-color, 40%);
                 outline: none;
-                transition: width 0.3s ease;
+                transition: width 0.3s ease, border 0.3s ease;
 
                 &:hover,
                 &:focus {
                     width: 100%;
+                    border-bottom: 1px solid darken($secondary-color, 20%);
                 }
 
                 &::placeholder {
@@ -508,7 +510,7 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, left 0.3s ease;
                     }
                 }
 
@@ -540,7 +542,7 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, right 0.3s ease;
                     }
                 }
 
@@ -658,6 +660,7 @@
             width: 100%;
             padding: 30px 50px 50px;
             text-align: center;
+            background-color: transparentize($main-color, 0.8);
             backdrop-filter: blur(5px);
             border: 2px solid $secondary-color;
             border-radius: 10px;
@@ -702,10 +705,10 @@
                 img {
                     width: 32px;
                     height: 32px;
+                    transition: transform 0.3s ease;
 
                     &:hover {
                         transform: scale(1.1);
-                        transition: transform 0.3s ease;
                     }
                 }
             }
@@ -729,13 +732,14 @@
                         background: transparent;
                         color: $secondary-color;
                         border: none;
-                        border-bottom: 1px solid $secondary-color;
+                        border-bottom: 1px solid darken($secondary-color, 40%);
                         outline: none;
-                        transition: width 0.3s ease;
+                        transition: width 0.3s ease, border 0.3s ease;
 
                         &:hover,
                         &:focus {
-                            width: calc(100% - 20px);
+                            width: calc(100%);
+                            border-bottom: 1px solid darken($secondary-color, 20%);
                         }
 
                         &::placeholder {
@@ -775,25 +779,25 @@
                         &:hover {
                             color: darken($secondary-color, 20%);
                             cursor: pointer;
-                            transition: color 0.3s ease;
+                            transition: color 0.3s ease, right 0.3s ease;
                         }
                     }
                 }
 
                 .first_name_container:has(.first_name:hover) .fa-user, .first_name_container:has(.first_name:focus) .fa-user {
-                    right: 10px;
+                    right: 0px;
                 }
 
                 .last_name_container:has(.last_name:hover) .fa-user, .last_name_container:has(.last_name:focus) .fa-user {
-                    right: 10px;
+                    right: 0px;
                 }
 
                 .email_address_container:has(.email_address:hover) .fa-envelope, .email_address_container:has(.email_address:focus) .fa-envelope {
-                    right: 10px;
+                    right: 0px;
                 }
 
                 .phone_number_container:has(.phone_number:hover) .fa-phone, .phone_number_container:has(.phone_number:focus) .fa-phone {
-                    right: 10px;
+                    right: 0px;
                 }
             }
 
@@ -805,13 +809,14 @@
                 background: transparent;
                 color: $secondary-color;
                 border: none;
-                border-bottom: 1px solid $secondary-color;
+                border-bottom: 1px solid darken($secondary-color, 40%);
                 outline: none;
-                transition: width 0.3s ease;
+                transition: width 0.3s ease, border 0.3s ease;
 
                 &:hover,
                 &:focus {
                     width: 100%;
+                    border-bottom: 1px solid darken($secondary-color, 20%);
                 }
 
                 &::placeholder {
@@ -851,7 +856,7 @@
                     -webkit-text-security: disc;
                 }
 
-                .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
+                .fa-key {
                     display: block;
                     color: darken($secondary-color, 40%);
                     position: absolute;
@@ -862,7 +867,22 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, left 0.3s ease;
+                    }
+                }
+
+                .fa-eye, .fa-eye-slash, .fa-copy {
+                    display: block;
+                    color: darken($secondary-color, 40%);
+                    position: absolute;
+                    bottom: 10px;
+                    padding-bottom: 16px;
+                    padding-top: 19px;
+
+                    &:hover {
+                        color: darken($secondary-color, 20%);
+                        cursor: pointer;
+                        transition: color 0.3s ease, right 0.3s ease;
                     }
                 }
 
@@ -902,7 +922,7 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, left 0.3s ease;
                     }
                 }
 
@@ -933,7 +953,7 @@
                     &:hover {
                         color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease;
+                        transition: color 0.3s ease, right 0.3s ease;
                     }
                 }
             }
@@ -1004,6 +1024,7 @@
             transform: translate(-50%, -50%);
             max-width: 500px;
             width: 100%;
+            background-color: transparentize($main-color, 0.8);
             backdrop-filter: blur(5px);
             border: 2px solid $secondary-color;
             border-radius: 10px;
@@ -1387,13 +1408,14 @@
             background: transparent;
             color: $secondary-color;
             border: none;
-            border-bottom: 1px solid $secondary-color;
+            border-bottom: 1px solid darken($secondary-color, 40%);
             outline: none;
-            transition: width 0.3s ease;
+            transition: width 0.3s ease, border 0.3s ease;
 
             &:hover,
             &:focus {
                 width: 100%;
+                border-bottom: 1px solid darken($secondary-color, 20%);
             }
 
             &::placeholder {
@@ -1429,11 +1451,12 @@
                 padding: 0px 10px;
                 background: transparent;
                 color: $secondary-color;
-                border-bottom: 1px solid $secondary-color;
-                transition: width 0.3s ease;
+                border-bottom: 1px solid darken($secondary-color, 40%);
+                transition: width 0.3s ease, border 0.3s ease;
 
                 &:hover {
                     width: 100%;
+                    border-bottom: 1px solid darken($secondary-color, 20%);
 
                     .fa-angle-down {
                         color: $article-color;
@@ -1503,14 +1526,16 @@
                 padding: 5px 10px 25px;
                 background: transparent;
                 color: $secondary-color;
-                border: 1px solid $secondary-color;
+                border: 1px solid darken($secondary-color, 40%);
                 border-radius: 5px;
                 outline: none;
                 resize: none;
-                transition: width 0.3s ease;
+                transition: width 0.3s ease, border 0.3s ease;
 
-                &:hover, &:focus {
+                &:hover,
+                &:focus {
                     width: 100%;
+                    border: 1px solid darken($secondary-color, 20%);
                 }
 
                 &::placeholder {

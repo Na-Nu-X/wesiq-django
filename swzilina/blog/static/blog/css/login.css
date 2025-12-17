@@ -35,10 +35,10 @@
 .login_form .back img {
   width: 32px;
   height: 32px;
+  transition: transform 0.3s ease;
 }
 .login_form .back img:hover {
   transform: scale(1.1);
-  transition: transform 0.3s ease;
 }
 .login_form input[type=text], .login_form input[type=email] {
   width: 90%;
@@ -48,12 +48,13 @@
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #999999;
   outline: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, border 0.3s ease;
 }
 .login_form input[type=text]:hover, .login_form input[type=text]:focus, .login_form input[type=email]:hover, .login_form input[type=email]:focus {
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 }
 .login_form input[type=text]::-moz-placeholder, .login_form input[type=email]::-moz-placeholder {
   color: #999999;
@@ -94,7 +95,7 @@
 .login_form .password_container .fa-eye:hover, .login_form .password_container .fa-eye-slash:hover {
   color: #cccccc;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, right 0.3s ease;
 }
 .login_form .password_container .fa-eye {
   display: none;

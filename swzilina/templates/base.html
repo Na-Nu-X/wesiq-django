@@ -43,8 +43,18 @@
     <header>
         <nav class="navigation_bar">
             <ul>
-                <li><a href="{% url 'homepage_url' %}" target="_self">DOMOV</a></li>
-                <li><a href="{% url 'blog_url' %}" target="_self">BLOG</a></li>
+                <li>
+                    <a href="{% url 'homepage_url' %}" target="_self">DOMOV</a>
+                </li>
+
+                <li>
+                    <a href="#" target="_self">KOMUNITA</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'blog_url' %}" target="_self">BLOG</a>
+                </li>
+                
                 {% block navigation_bar_items %}{% endblock navigation_bar_items %}
 
                 <div class="navigation_icon">
