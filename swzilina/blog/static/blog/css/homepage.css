@@ -360,6 +360,7 @@
 .content .login_form_dialog .login_form h2 {
   margin-bottom: 30px;
   color: #fff;
+  animation: fade_in_animation 0.3s ease-out;
 }
 .content .login_form_dialog .login_form .back {
   position: absolute;
@@ -496,6 +497,7 @@
   border: 1px solid #fff;
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+  animation: fade_in_animation 0.3s ease;
 }
 .content .login_form_dialog .login_form input[type=submit]:hover, .content .login_form_dialog .login_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
@@ -523,6 +525,15 @@
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
+}
+.content .login_form_dialog .login_form .login_methods div:nth-child(1) {
+  animation: fade_in_animation 0.4s ease;
+}
+.content .login_form_dialog .login_form .login_methods div:nth-child(2) {
+  animation: fade_in_animation 0.5s ease;
+}
+.content .login_form_dialog .login_form .login_methods div:nth-child(3) {
+  animation: fade_in_animation 0.6s ease;
 }
 .content .login_form_dialog .login_form .login_methods div a {
   display: block;
@@ -597,6 +608,7 @@
 .content .registration_form_dialog .registration_form h2 {
   margin-bottom: 30px;
   color: #fff;
+  animation: fade_in_animation 0.3s ease-out;
 }
 .content .registration_form_dialog .registration_form .back {
   position: absolute;
@@ -841,6 +853,7 @@
   border: 1px solid #fff;
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+  animation: fade_in_animation 0.3s ease;
 }
 .content .registration_form_dialog .registration_form input[type=submit]:hover, .content .registration_form_dialog .registration_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
@@ -1322,14 +1335,48 @@
   line-height: 25px;
   color: #999999;
 }
-.content .contact_form .message_container .attachment i {
+.content .contact_form .message_container .attachment .tooltip::before, .content .contact_form .message_container .attachment .tooltip::after {
+  --scale: 0;
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) translateY(var(--translate-y, 0)) scale(var(--scale));
+  transform-origin: bottom center;
+  transition: 0.3s transform 0s;
+}
+.content .contact_form .message_container .attachment .tooltip::before {
+  --translate-y: calc(-100% - 10px);
+  content: attr(data-tooltip);
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 0.8em;
+  background-color: rgba(235, 185, 20, 0.2);
+  color: #fff;
+  text-shadow: 0px 0px 5px #000;
+}
+.content .contact_form .message_container .attachment .tooltip::after {
+  --translate-y: calc(-1 * 10px);
+  content: "";
+  border: 10px solid transparent;
+  border-top-color: rgba(235, 185, 20, 0.2);
+  transform-origin: top center;
+}
+.content .contact_form .message_container .attachment .tooltip:hover::before, .content .contact_form .message_container .attachment .tooltip:hover::after {
+  --scale: 1;
+  transition: 0.3s transform 3s;
+}
+.content .contact_form .message_container .attachment .tooltip i {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: 4.5px;
   color: #999999;
 }
-.content .contact_form .message_container .attachment i:hover {
+.content .contact_form .message_container .attachment .tooltip i:hover {
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -1374,12 +1421,14 @@
 /***********
  Key Frames
 ***********/
-@keyframes move_animation {
+@keyframes fade_in_animation {
   0% {
-    top: 0px !important;
+    opacity: 0;
+    transform: scale(0.8);
   }
   100% {
-    top: 115px !important;
+    opacity: 1;
+    transform: scale(1);
   }
 }
 /**************
