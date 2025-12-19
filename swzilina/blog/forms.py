@@ -106,7 +106,7 @@ class loginForm(forms.Form):
 
 class passwordResetForm(forms.Form):
     password_reset_code = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte 6-miestny overovací kód", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "password_reset_code", "placeholder": "Zadajte 6-miestny overovací kód", "autocomplete": "off"}),
         label=False,
         max_length=6,
         required=True,
@@ -201,7 +201,7 @@ class registrationForm(forms.Form):
 
 class editAccountForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zmeniť meno"}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": "Zmeniť meno"}),
         label=False,
         max_length=50,
         required=False,
@@ -211,7 +211,7 @@ class editAccountForm(forms.Form):
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zmeniť priezvisko"}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": "Zmeniť priezvisko"}),
         label=False,
         max_length=50,
         required=False,
@@ -221,7 +221,7 @@ class editAccountForm(forms.Form):
     )
 
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Zmeniť e-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "Zmeniť e-mail"}),
         label=False,
         max_length=50,
         required=False,
@@ -231,7 +231,7 @@ class editAccountForm(forms.Form):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"type": "tel", "placeholder": "Zmeniť telefónne číslo"}),
+        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": "Zmeniť telefónne číslo"}),
         label=False,
         max_length=20,
         required=False,

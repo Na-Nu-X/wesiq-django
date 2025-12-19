@@ -71,7 +71,8 @@ form .rating input {
 }
 form textarea {
   width: 90%;
-  height: 162px;
+  min-height: 100px;
+  field-sizing: content;
   margin-top: 10px;
   padding: 5px 10px;
   background: transparent;

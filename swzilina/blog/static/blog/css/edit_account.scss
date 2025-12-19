@@ -14,7 +14,7 @@ form {
     text-align: center;
     backdrop-filter: blur(5px);
     border: 2px solid $secondary-color;
-    border-radius: 10px;
+    border-radius: $medium-border-radius;
 
     h2 {
         margin-bottom: 30px;
@@ -90,38 +90,75 @@ form {
         }
     }
 
-    input[type="text"], input[type="email"], input[type="tel"] {
-        width: 90%;
-        height: 50px;
-        margin-bottom: 10px;
-        padding: 0px 10px;
-        background: transparent;
-        color: $secondary-color;
-        border: none;
-        border-bottom: 1px solid darken($secondary-color, 40%);
-        outline: none;
-        transition: width 0.3s ease, border 0.3s ease;
+    .first_name_container, .last_name_container, .email_address_container, .phone_number_container {
+        position: relative;
+        // transform-origin: left;
 
-        &:hover,
-        &:focus {
-            width: 100%;
-            border-bottom: 1px solid darken($secondary-color, 20%);
-        }
-
-        &::placeholder {
-            color: darken($secondary-color, 40%);
-        }
-
-        &:-webkit-autofill {
-            -webkit-text-fill-color: rgb(255, 255, 255);
-            transition: width 0.3s ease, background-color 9999s ease;
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 90%;
+            height: 50px;
+            margin-bottom: 10px;
+            padding: 0px 10px;
+            background: transparent;
+            color: $secondary-color;
+            border: none;
+            border-bottom: 1px solid darken($secondary-color, 40%);
+            outline: none;
+            transition: width 0.3s ease, border 0.3s ease;
 
             &:hover,
             &:focus {
+                width: 100%;
+                border-bottom: 1px solid darken($secondary-color, 20%);
+            }
+
+            &::placeholder {
+                color: darken($secondary-color, 40%);
+            }
+
+            &:-webkit-autofill {
                 -webkit-text-fill-color: rgb(255, 255, 255);
                 transition: width 0.3s ease, background-color 9999s ease;
+
+                &:hover,
+                &:focus {
+                    -webkit-text-fill-color: rgb(255, 255, 255);
+                    transition: width 0.3s ease, background-color 9999s ease;
+                }
             }
         }
+
+        .first_name, .last_name {
+            padding-right: 23px !important;
+        }
+
+        .email_address, .phone_number {
+            padding-right: 25px !important;
+        }
+
+        i {
+            display: block;
+            color: darken($secondary-color, 40%);
+            position: absolute;
+            bottom: 10px;
+            left: 3px;
+            padding-bottom: 16px;
+            padding-top: 19px;
+            transition: left 0.3s ease;
+
+            &:hover {
+                color: darken($secondary-color, 20%);
+                cursor: pointer;
+                transition: color 0.3s ease, left 0.3s ease;
+            }
+        }
+    }
+
+    .first_name_container:has(.first_name:hover) .fa-user, .first_name_container:has(.first_name:focus) .fa-user,
+    .last_name_container:has(.last_name:hover) .fa-user, .last_name_container:has(.last_name:focus) .fa-user,
+    .email_address_container:has(.email_address:hover) .fa-envelope, .email_address_container:has(.email_address:focus) .fa-envelope,
+    .phone_number_container:has(.phone_number:hover) .fa-phone, .phone_number_container:has(.phone_number:focus) .fa-phone {
+        left: -16px;
     }
 
     .form_report {
@@ -146,7 +183,7 @@ form {
         background-color: transparentize($main-color, 0.2);
         color: $secondary-color;
         border: 1px solid $secondary-color;
-        border-radius: 25px;
+        border-radius: $big-border-radius;
         transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
         &:hover,
