@@ -42,10 +42,25 @@
                 {{ edit_account_form.delete_profile_picture }}
             </div>
 
-            {{ edit_account_form.first_name }}
-            {{ edit_account_form.last_name }}
-            {{ edit_account_form.email_address }}
-            {{ edit_account_form.phone_number }}
+            <div class="first_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ edit_account_form.first_name }}
+            </div>
+            
+            <div class="last_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ edit_account_form.last_name }}
+            </div>
+            
+            <div class="email_address_container">
+                <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                {{ edit_account_form.email_address }}
+            </div>
+            
+            <div class="phone_number_container">
+                <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                {{ edit_account_form.phone_number }}
+            </div>
 
             <p class="form_report" style="bottom: 194px;"></p>
             <input type="submit" value="Uložiť zmeny">

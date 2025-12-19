@@ -492,12 +492,12 @@
   width: 90%;
   height: 50px;
   margin-top: 40px;
+  margin-bottom: 10px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   border: 1px solid #fff;
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-  animation: fade_in_animation 0.3s ease;
 }
 .content .login_form_dialog .login_form input[type=submit]:hover, .content .login_form_dialog .login_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
@@ -507,6 +507,28 @@
   letter-spacing: 1px;
   cursor: pointer;
 }
+.content .login_form_dialog .login_form .login_methods p {
+  position: relative;
+  color: #999999;
+}
+.content .login_form_dialog .login_form .login_methods p span:nth-child(1) {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  width: 135px;
+  height: 1px;
+  background-color: #999999;
+}
+.content .login_form_dialog .login_form .login_methods p span:nth-child(2) {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  width: 135px;
+  height: 1px;
+  background-color: #999999;
+}
 .content .login_form_dialog .login_form .login_methods div {
   position: relative;
   display: block;
@@ -514,42 +536,86 @@
   height: 50px;
   line-height: 50px;
   margin: 10px auto;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #000;
+  background-color: rgba(0, 0, 0, 0.9);
   border-radius: 25px;
-  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+  transition: transform 0.3s ease, letter-spacing 0.3s ease;
 }
 .content .login_form_dialog .login_form .login_methods div:hover {
-  background-color: rgba(0, 0, 0, 0.5);
-  border: 1px solid #fff;
-  transform: scale(1.1);
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: pointer;
 }
-.content .login_form_dialog .login_form .login_methods div:nth-child(1) {
-  animation: fade_in_animation 0.4s ease;
-}
-.content .login_form_dialog .login_form .login_methods div:nth-child(2) {
-  animation: fade_in_animation 0.5s ease;
-}
-.content .login_form_dialog .login_form .login_methods div:nth-child(3) {
-  animation: fade_in_animation 0.6s ease;
+.content .login_form_dialog .login_form .login_methods div:hover a i {
+  color: #cccccc;
 }
 .content .login_form_dialog .login_form .login_methods div a {
   display: block;
-  color: #000;
+  color: #fff;
   text-decoration: none;
   width: 100%;
   height: 100%;
 }
-.content .login_form_dialog .login_form .login_methods div a:hover, .content .login_form_dialog .login_form .login_methods div a:active {
-  color: #fff;
-}
-.content .login_form_dialog .login_form .login_methods div a img {
+.content .login_form_dialog .login_form .login_methods div a i {
+  font-size: 20px;
   position: absolute;
   top: 50%;
+  left: 14px;
   transform: translateY(-50%);
-  left: 8px;
+  color: #999999;
+  transition: color 0.3s ease;
+}
+.content .login_form_dialog .login_form .login_methods .google::after, .content .login_form_dialog .login_form .login_methods .google::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  padding: 3px;
+  border-radius: inherit;
+  z-index: -1;
+  animation: 10s spin linear infinite;
+  background-image: conic-gradient(from var(--angle), red, yellow, green, blue, red);
+}
+.content .login_form_dialog .login_form .login_methods .google::before {
+  filter: blur(5px);
+  opacity: 0.5;
+}
+.content .login_form_dialog .login_form .login_methods .apple::after, .content .login_form_dialog .login_form .login_methods .apple::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  padding: 3px;
+  border-radius: inherit;
+  z-index: -1;
+  animation: 10s spin linear infinite;
+  background-image: conic-gradient(from var(--angle), lightgreen, chartreuse, greenyellow, green, darkgreen, lightgreen);
+}
+.content .login_form_dialog .login_form .login_methods .apple::before {
+  filter: blur(5px);
+  opacity: 0.5;
+}
+.content .login_form_dialog .login_form .login_methods .facebook::after, .content .login_form_dialog .login_form .login_methods .facebook::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  padding: 3px;
+  border-radius: inherit;
+  z-index: -1;
+  animation: 10s spin linear infinite;
+  background-image: conic-gradient(from var(--angle), dodgerblue, blue, darkblue, dodgerblue);
+}
+.content .login_form_dialog .login_form .login_methods .facebook::before {
+  filter: blur(5px);
+  opacity: 0.5;
 }
 .content .login_form_dialog .login_form .form_questions {
   margin-top: 10px;
@@ -689,15 +755,9 @@
   cursor: pointer;
   transition: color 0.3s ease, right 0.3s ease;
 }
-.content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:focus) .fa-user {
-  right: 0px;
-}
-.content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:focus) .fa-user {
-  right: 0px;
-}
-.content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:hover) .fa-envelope, .content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:focus) .fa-envelope {
-  right: 0px;
-}
+.content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .first_name_container:has(.first_name:focus) .fa-user,
+.content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:hover) .fa-user, .content .registration_form_dialog .registration_form .inputs .last_name_container:has(.last_name:focus) .fa-user,
+.content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:hover) .fa-envelope, .content .registration_form_dialog .registration_form .inputs .email_address_container:has(.email_address:focus) .fa-envelope,
 .content .registration_form_dialog .registration_form .inputs .phone_number_container:has(.phone_number:hover) .fa-phone, .content .registration_form_dialog .registration_form .inputs .phone_number_container:has(.phone_number:focus) .fa-phone {
   right: 0px;
 }
@@ -853,7 +913,6 @@
   border: 1px solid #fff;
   border-radius: 25px;
   transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-  animation: fade_in_animation 0.3s ease;
 }
 .content .registration_form_dialog .registration_form input[type=submit]:hover, .content .registration_form_dialog .registration_form input[type=submit]:focus {
   background-color: rgba(255, 255, 255, 0.9);
@@ -1419,6 +1478,14 @@
 }
 
 /***********
+ Custom Properties
+***********/
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+/***********
  Key Frames
 ***********/
 @keyframes fade_in_animation {
@@ -1429,6 +1496,14 @@
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+@keyframes spin {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
   }
 }
 /**************

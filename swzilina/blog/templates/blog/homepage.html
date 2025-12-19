@@ -67,7 +67,7 @@
 
     {% else %}
         <div class="no_account">
-            <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+            <a class="login" href="#" title="Prihlásiť sa">Neprihlásený</a>
         </div>
 
     {% endif %}
@@ -128,7 +128,6 @@
                 {{ login_form.email_address }}
             </div>
             
-            
             <div class="password_container">
                 <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                 {{ login_form.password }}
@@ -140,16 +139,18 @@
             <input type="submit" name="login_form_submit" value="Prihlásiť sa">
 
             <div class="login_methods">
-                <div>
-                    <a href="/accounts/google/login/"><img src="{% static 'images/google_logo.png' %}">Google prihlásenie</a> <!-- https://www.flaticon.com/free-icon/search_281764 -->
+                <p><span></span>alebo<span></span></p>
+
+                <div class="google">
+                    <a href="/accounts/google/login/"><i class="fa-brands fa-google"></i>Google</a> <!-- https://fontawesome.com/icons/google -->
                 </div>
 
-                <div>
-                    <a href="#"><img src="{% static 'images/apple_logo.png' %}">Apple prihlásenie</a> <!-- https://www.flaticon.com/free-icon/apple-logo_747 -->
+                <div class="apple">
+                    <a href="#"><i class="fa-brands fa-apple"></i>Apple</a> <!-- https://fontawesome.com/icons/apple -->
                 </div>
 
-                <div>
-                    <a href="#"><img src="{% static 'images/facebook_logo_2.png' %}">Facebook prihlásenie</a> <!-- https://www.flaticon.com/free-icon/facebook_5968764 -->
+                <div class="facebook">
+                    <a href="#"><i class="fa-brands fa-facebook"></i>Facebook</a> <!-- https://fontawesome.com/icons/facebook -->
                 </div>
             </div>
 
@@ -614,12 +615,19 @@
 
             // Login Form Dialog
             const login_button = document.querySelector(".login_button")
+            const no_logged_in_button = document.querySelector(".login")
             const login_form_dialog = document.querySelector(".login_form_dialog")
             const login_form = document.querySelector(".login_form")
 
             login_button.addEventListener("click", function() {
                 login_form_dialog.showModal()
             })
+
+            if(no_logged_in_button) {
+                no_logged_in_button.addEventListener("click", function() {
+                    login_form_dialog.showModal()
+                })
+            }
 
             login_form_dialog.addEventListener("click", function(event) {
                 const login_form_dimensions = login_form.getBoundingClientRect()

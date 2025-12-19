@@ -14,7 +14,7 @@
     text-align: center;
     backdrop-filter: blur(5px);
     border: 2px solid $secondary-color;
-    border-radius: 10px;
+    border-radius: $medium-border-radius;
 
     h2 {
         margin-bottom: 30px;
@@ -207,7 +207,7 @@
         background-color: transparentize($main-color, 0.2);
         color: $secondary-color;
         border: 1px solid $secondary-color;
-        border-radius: 25px;
+        border-radius: $big-border-radius;
         transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
         &:hover,
