@@ -1354,7 +1354,7 @@
   text-align: center;
   border-radius: 5px;
   font-size: 0.8em;
-  background-color: rgba(235, 185, 20, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
   text-shadow: 0px 0px 5px #000;
 }
@@ -1362,12 +1362,12 @@
   --translate-y: calc(-1 * 10px);
   content: "";
   border: 10px solid transparent;
-  border-top-color: rgba(235, 185, 20, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.2);
   transform-origin: top center;
 }
 .content .contact_form .message_container .attachment .tooltip:hover::before, .content .contact_form .message_container .attachment .tooltip:hover::after {
   --scale: 1;
-  transition: 0.3s transform 3s;
+  transition: 0.3s transform 1s;
 }
 .content .contact_form .message_container .attachment .tooltip i {
   position: absolute;

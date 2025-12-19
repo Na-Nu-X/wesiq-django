@@ -151,8 +151,10 @@
                     swing-360 - https://www.gornation.com/cdn/shop/articles/header_584b6ba9-e54a-4fca-98dc-901516515e58.jpg
                 -->
 
-                <div class="info" title="Tento článok pridal {{ one_article.user.first_name }} {{ one_article.user.last_name }}">
-                    <i class="fa-solid fa-circle-info"></i> <!-- https://fontawesome.com/icons/circle-info -->
+                <div class="info">
+                    <div class="tooltip" data-tooltip="Tento článok pridal {{ one_article.user.first_name }} {{ one_article.user.last_name }}">
+                        <i class="fa-solid fa-circle-info"></i> <!-- https://fontawesome.com/icons/circle-info -->
+                    </div>
                 </div>
                 
                 <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="Zdielať">
