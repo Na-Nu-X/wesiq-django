@@ -20,6 +20,9 @@ class Users(models.Model):
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
 
+    following = ArrayField(models.CharField(verbose_name="Following"), default=list, null=False)
+    followers = ArrayField(models.CharField(verbose_name="Followers"), default=list, null=False)
+
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
 

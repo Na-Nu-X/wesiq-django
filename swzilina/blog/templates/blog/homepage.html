@@ -242,11 +242,15 @@
                 <div class="left">
                     <h2>{{ first_name }} {{ last_name }}</h2>
 
-                    <div class="society">
-                        <p title="Počet sledovateľov"><i class="fa-regular fa-user"></i> 34</p> <!-- https://fontawesome.com/icons/user -->
-                        <p title="Počet sledujúcich"><i class="fa-regular fa-user"></i> 65</p> <!-- https://fontawesome.com/icons/user -->
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, beatae!</p>
 
-                        <p title="Úspechy"><i class="fa-solid fa-trophy"></i> 12</p> <!-- https://fontawesome.com/icons/trophy -->
+                    <div class="society">
+                        <p title="Počet sledovateľov"><i class="fa-regular fa-user"></i> {{ logged_in_user.followers|length }}</p> <!-- https://fontawesome.com/icons/user -->
+                        <p title="Počet sledujúcich"><i class="fa-regular fa-user"></i> {{ logged_in_user.following|length }}</p> <!-- https://fontawesome.com/icons/user -->
+
+                        {% comment %} <p title="Úspechy"><i class="fa-solid fa-trophy"></i> 12</p> <!-- https://fontawesome.com/icons/trophy --> {% endcomment %}
+
+                        <p><i class="fa-solid fa-fire"></i> 53</p> <!-- https://fontawesome.com/icons/fire -->
                     </div>
                 </div>
                 
@@ -273,8 +277,73 @@
                 </div>
             </div>
             
-            <div class="middle">
+            {% comment %} <div class="middle">
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, beatae!</p>
+            </div> {% endcomment %}
+            
+            <div class="bottom">
+                <div class="activity">
+                    <div>
+                        <canvas class="activity_chart"></canvas>
+                    </div>
+
+                    <div>
+                        <p>Týždenná aktivita</p>
+                        <p><i class="fa-regular fa-clock"></i> 6h 34m</p> <!-- https://fontawesome.com/icons/clock -->
+
+                        <p>Celkovo aktivít</p>
+                        <p>103</p>
+                    </div>
+                </div>
+
+                {% comment %} <h2>Príspevky</h2> {% endcomment %}
+
+                <div class="posts">
+                    <div>
+                        <img src="https://picsum.photos/200?random=1">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=2">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=3">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+
+                    <div>
+                        <img src="https://picsum.photos/200?random=4">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=5">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=6">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+
+                    <div>
+                        <img src="https://picsum.photos/200?random=7">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=8">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                    
+                    <div>
+                        <img src="https://picsum.photos/200?random=9">
+                        <i class="fa-regular fa-image"></i> <!-- https://fontawesome.com/icons/image -->
+                    </div>
+                </div>
             </div>
 
             {% comment %} <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear --> {% endcomment %}
@@ -832,6 +901,97 @@
                 ) {
                     profile_dialog.close()
                 }
+            })
+
+            // Chart
+            const activity_chart = document.querySelector(".activity_chart")
+
+            const plugin = {
+            id: 'customCanvasBackgroundColor',
+            beforeDraw: (chart, args, options) => {
+                const {ctx} = chart;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = options.color || '#99ffff';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+            };
+            
+            new Chart(activity_chart, {
+                type: "line",
+                data: {
+                    labels: ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"],
+                    datasets: [{
+                        label: "aktivita",
+                        data: [1.5, 0.5, 2, 1, 0, 1, 0.5],
+                        borderColor: '#ebb914',
+                        backgroundColor: '#ffffff',
+                        borderWidth: 1,
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    animation: false,
+
+                    scales: {
+                        x: {
+                            grid: {
+                                // display: false,
+                                color: "#999999",
+                            },
+
+                            ticks: {
+                                font: {
+                                    size: 15,
+                                }
+                            }
+                        },
+
+                        y: {
+                            //beginAtZero: true,
+                            grid: {
+                                // display: false,
+                                color: "#999999",
+                            },
+
+                            ticks: {
+                                font: {
+                                    size: 15,
+                                }
+                            }
+                        },
+                    },
+
+                    plugins: {
+                        customCanvasBackgroundColor: {
+                            color: 'transparent',
+                        },
+
+                        legend: {
+                            display: false,
+                            //labels: {
+                            //    font: {
+                            //        size: 15
+                            //    }
+                            //}
+                        },
+                    },
+
+                    elements: {
+                        line: {
+                            tension: 0,
+                        },
+
+                        point: {
+                            pointStyle: "circle",
+                            hoverRadius: 5,
+                            hoverBorderWidth: 2,
+                        }
+                    }
+                },
+
+                plugins: [plugin],
             })
 
             // Custom Select Menu - Reviews

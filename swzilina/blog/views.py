@@ -318,6 +318,8 @@ def homepageView(request):
             "reviews": reviews,
             "avg_rating": avg_rating,
             "num_reviews": num_reviews,
+
+            "logged_in_user": user,
         })
     
     else:

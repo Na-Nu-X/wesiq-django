@@ -578,7 +578,7 @@
   padding: 3px;
   border-radius: inherit;
   z-index: -1;
-  animation: 10s spin linear infinite;
+  animation: 5s spin linear infinite;
   background-image: conic-gradient(from var(--angle), red, yellow, green, blue, red);
 }
 .content .login_form_dialog .login_form .login_methods .google::before {
@@ -596,8 +596,8 @@
   padding: 3px;
   border-radius: inherit;
   z-index: -1;
-  animation: 10s spin linear infinite;
-  background-image: conic-gradient(from var(--angle), lightgreen, chartreuse, greenyellow, green, darkgreen, lightgreen);
+  animation: 5s spin linear infinite;
+  background-image: conic-gradient(from var(--angle), chartreuse, transparent, chartreuse);
 }
 .content .login_form_dialog .login_form .login_methods .apple::before {
   filter: blur(5px);
@@ -614,8 +614,8 @@
   padding: 3px;
   border-radius: inherit;
   z-index: -1;
-  animation: 10s spin linear infinite;
-  background-image: conic-gradient(from var(--angle), dodgerblue, blue, darkblue, dodgerblue);
+  animation: 5s spin linear infinite;
+  background-image: conic-gradient(from var(--angle), dodgerblue, transparent, dodgerblue);
 }
 .content .login_form_dialog .login_form .login_methods .facebook::before {
   filter: blur(5px);
@@ -969,8 +969,15 @@
   display: flex;
   flex-direction: column;
   padding: 0px;
+  max-width: 50%;
 }
 .content .profile_dialog .profile .top .left h2 {
+  text-align: left;
+  color: #fff;
+}
+.content .profile_dialog .profile .top .left p {
+  text-align: justify;
+  margin-bottom: 5px;
   color: #fff;
 }
 .content .profile_dialog .profile .top .left .society {
@@ -985,6 +992,9 @@
   color: #cccccc;
   cursor: pointer;
   transition: color 0.3s ease;
+}
+.content .profile_dialog .profile .top .left .society .fa-fire {
+  color: #ebb914;
 }
 .content .profile_dialog .profile .top .right {
   display: flex;
@@ -1023,8 +1033,82 @@
   cursor: pointer;
   transition: color 0.3s ease;
 }
-.content .profile_dialog .profile .middle p {
+.content .profile_dialog .profile .bottom {
+  margin: 15px;
+}
+.content .profile_dialog .profile .bottom .activity {
+  position: relative;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+.content .profile_dialog .profile .bottom .activity div:nth-child(1) {
+  width: 70%;
+  height: 160px;
+}
+.content .profile_dialog .profile .bottom .activity div:nth-child(2) {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+}
+.content .profile_dialog .profile .bottom .activity div:nth-child(2) p {
+  text-align: left;
   color: #fff;
+}
+.content .profile_dialog .profile .bottom .activity div:nth-child(2) p:nth-child(even) {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #999999;
+}
+.content .profile_dialog .profile .bottom .posts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 350px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.content .profile_dialog .profile .bottom .posts::-webkit-scrollbar {
+  width: 3px;
+  background-color: #cccccc;
+}
+.content .profile_dialog .profile .bottom .posts::-webkit-scrollbar-thumb {
+  background-color: #999999;
+}
+.content .profile_dialog .profile .bottom .posts div {
+  position: relative;
+  padding: 5px;
+}
+.content .profile_dialog .profile .bottom .posts div:hover i {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+.content .profile_dialog .profile .bottom .posts div img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1/1;
+  -o-object-fit: cover;
+     object-fit: cover;
+  box-shadow: 0px 0px 5px #333333;
+  border-radius: 5px;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.content .profile_dialog .profile .bottom .posts div img:hover {
+  transform: scale(1.02);
+  filter: grayscale(1);
+  cursor: pointer;
+}
+.content .profile_dialog .profile .bottom .posts div i {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5em;
+  color: #999999;
 }
 .content .reviews {
   margin-top: 50px;
