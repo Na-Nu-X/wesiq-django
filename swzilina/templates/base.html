@@ -66,6 +66,19 @@
                 </div>
             </ul>
         </nav>
+
+        <div class="banner">
+            {% block banner %}{% endblock banner %}
+        </div>
+        
+        <div class="header_container">
+            <h1><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
+            {% block buttons %}{% endblock buttons %}
+        </div>
+
+        <div class="move_down" title="Posunúť nadol">
+            <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+        </div>
     </header>
 
     <main>
@@ -79,19 +92,6 @@
                 <button class="privacy_policy_reject">Iba nevyhnutné</button>
             </div>
         </section>
-
-        <section class="banner">
-            {% block banner %}{% endblock banner %}
-        </section>
-        
-        <section class="header_container">
-            <h1><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
-            {% block buttons %}{% endblock buttons %}
-        </section>
-
-        <div class="move_down" title="Posunúť nadol">
-            <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
-        </div>
 
         <section class="content">
             {% if messages %}

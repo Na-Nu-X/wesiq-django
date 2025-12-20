@@ -70,7 +70,7 @@ class reviewForm(forms.Form):
     )
 
     review = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": "Zanechajte nám hodnotenie"}),
+        widget=forms.Textarea(attrs={"class": "review_content", "placeholder": "Zanechajte nám hodnotenie"}),
         label=False,
         max_length=200,
         required=False,

@@ -365,9 +365,8 @@
     font-family: $main-font;
     max-width: $main-width;
     margin: 0px auto;
-    padding: 10px 20px;
+    padding: 0px 20px;
     background-color: transparentize($main-color, 0.9);
-    border: 1px solid darken($secondary-color, 40%);
     border-radius: $small-border-radius;
     text-align: justify;
 
@@ -1317,12 +1316,22 @@
                     overflow-y: auto;
 
                     &::-webkit-scrollbar {
-                        width: 3px;
-                        background-color: darken($secondary-color, 20%);
+                        width: 5px;
                     }
 
                     &::-webkit-scrollbar-thumb {
                         background-color: darken($secondary-color, 40%);
+                        border-radius: 2.5px;
+
+                        &:hover {
+                            background-color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                        }
+                    }
+
+                    &::-webkit-scrollbar-track {
+                        background-color: lighten($main-color, 20%);
+                        border-radius: 2.5px;
                     }
 
                     div {
@@ -1368,71 +1377,22 @@
                     }
                 }
             }
-
-            // .middle {
-            //     p {
-            //         color: $secondary-color;
-            //     }
-            // }
         }
     }
 
     // Reviews
 
     .reviews {
-        margin-top: 50px;
+        .num_reviews {
+            width: 500px;
+            margin: 0px auto 5px;
 
-        .write_review_form {
-            max-width: 100%;
-            margin-bottom: 50px;
-            padding: 0px 0px;
-            text-align: left;
-            backdrop-filter: none;
-            border: none;
+            p {
+                color: darken($secondary-color, 20%);
+                font-size: 0.9em;
 
-            .review {
-                height: 142px;
-
-                .rating input {
-                    display: none;
-                }
-
-                textarea {
-                    width: 100%;
-                    min-height: 100px;
-                    field-sizing: content;
-                    margin-top: 10px;
-                    padding: 5px 10px;
-                    background: transparent;
-                    color: $secondary-color;
-                    backdrop-filter: blur(5px);
-                    border: 1px solid $secondary-color;
-                    border-radius: $medium-border-radius;
-                    outline: none;
-                    resize: none;
-
-                    &::placeholder {
-                        color: darken($secondary-color, 40%);
-                    }
-                }
-            }
-
-            input[type="submit"] {
-                width: 178px;
-                height: 50px;
-                margin-top: 10px;
-                background-color: $success-color;
-                color: $main-color;
-                border: 1px solid $main-color;
-                border-radius: $medium-border-radius;
-                transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-                &:hover,
-                &:focus {
-                    background-color: lighten($success-color, 5%);
-                    color: $main-color;
-                    letter-spacing: 1px;
-                    cursor: pointer;
+                span {
+                    font-weight: bold;
                 }
             }
         }
@@ -1442,10 +1402,11 @@
         .select_menus {
             display: flex;
             flex-direction: row;
+            justify-content: center;
             align-items: center;
             gap: 20px;
             max-width: 500px;
-            margin: 0px auto 20px;
+            margin: 0px auto 10px;
 
             .sort_select_menu, .rating_select_menu {
                 position: relative;
@@ -1515,7 +1476,7 @@
                     z-index: 100;
 
                     &.active {
-                        height: 167px;
+                        height: 158px + 10px; // Review Height + Gap
                     }
 
                     .option {
@@ -1554,15 +1515,21 @@
         // All Reviews
 
         .all_reviews {
-            margin: 0px 0px;
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-between;
 
+            .no_reviews {
+                width: 100%;
+                text-align: center;
+                font-family: $article-heading-font;
+                color: $secondary-color;
+            }
+
             .one_review {
-                width: ($main-width - 60px) / 2; // 60px = Side Paddings + Gap Between Reviews
-                margin-bottom: 20px;
+                width: calc((100% - 40px) / 3); // 40px = Gap Between Reviews, 3 Because There Are 3 Reviews In One Row
+                margin: 10px 0px;
                 padding: 10px;
                 background-color: transparentize($secondary-color, 0.9);
                 backdrop-filter: blur(5px);
@@ -1634,6 +1601,77 @@
                         transition: transform 0.3s ease;
                     }
                 }
+
+                .review_content {
+                    width: 500px;
+                    border-radius: $small-border-radius;
+                }
+            }
+        }
+
+        .reviews_container {
+            max-width: $main-width;
+            margin-top: 10px;
+            margin-bottom: 50px;
+            padding: 10px;
+            background-color: transparentize($secondary-color, 0.9);
+            border-radius: $small-border-radius;
+
+            .write_review_form {
+                max-width: 500px;
+                margin: 0px auto;
+                
+                .review {
+                    .rating input {
+                        display: none;
+                    }
+
+                    textarea {
+                        width: 100%;
+                        min-height: 100px;
+                        field-sizing: content;
+                        margin-top: 10px;
+                        padding: 5px 10px;
+                        background: transparent;
+                        color: $secondary-color;
+                        backdrop-filter: blur(5px);
+                        border: 1px solid darken($secondary-color, 40%);
+                        border-radius: $small-border-radius;
+                        outline: none;
+                        resize: none;
+                        transition: border 0.3s ease;
+
+                        &:hover,
+                        &:focus {
+                            border: 1px solid darken($secondary-color, 20%);
+                        }
+
+                        &::placeholder {
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+                }
+
+                input[type="submit"] {
+                    width: 100%;
+                    height: 50px;
+                    margin-top: 10px + 5px;
+                    background-color: transparentize($main-color, 0.2);
+                    color: $secondary-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: $big-border-radius;
+                    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+                    &:hover,
+                    &:focus {
+                        background-color: transparentize($secondary-color, 0.1);
+                        color: $main-color;
+                        border: 1px solid $main-color;
+                        transform: scale(1.1);
+                        letter-spacing: 1px;
+                        cursor: pointer;
+                    }
+                }
             }
         }
     }
@@ -1643,20 +1681,40 @@
     .contact_form {
         position: relative;
         max-width: 500px;
-        margin: 30px auto 40px;
+        margin: 30px auto 0px;
         padding: 30px 50px 50px;
         text-align: center;
         backdrop-filter: blur(5px);
         border: 2px solid $secondary-color;
         border-radius: $medium-border-radius;
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: -250px;
+            left: -50px;
+            width: 400px;
+            height: 400px;
+            border-radius: 100%;
+            background-color: transparentize($main-color, 0.8);
+            z-index: -1;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: -200px;
+            right: -50px;
+            width: 400px;
+            height: 400px;
+            border-radius: 100%;
+            background-color: transparentize($main-color, 0.8);
+            z-index: -1;
+        }
 
         h2 {
             margin-bottom: 30px;
-
-            a {
-                text-decoration: none;
-                color: $secondary-color;
-            }
         }
         
         input[type="text"], input[type="email"] {
@@ -1970,6 +2028,12 @@
  Media Queries
 **************/
 
+@media (max-width: 1200px) {
+    .all_reviews .one_review {
+        width: calc((100% - 20px) / 2) !important; // 20px = Gap Between Reviews, 2 Because There Are 2 Reviews In One Row
+    }
+}
+
 @media (max-width: 1000px) {
     // Search Bar
 
@@ -1992,12 +2056,6 @@
         &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
             width: 300px + 20px !important;
         }
-    }
-}
-
-@media (max-width: ($main-width + 20px)) {
-    .all_reviews .one_review {
-        width: 100% !important;
     }
 }
 
@@ -2035,6 +2093,10 @@
     .header_container {
         height: calc(100vh - 109px);
     }
+
+    .all_reviews .one_review {
+        width: 100% !important;
+    }
 }
 
 @media (max-width: 600px) {
@@ -2065,15 +2127,23 @@
         right: -19px !important;
     }
 
-    .write_review_form input[type="submit"] {
-        width: 178px !important;
-    }
-
     textarea {
         width: 100% !important;
     }
 
     .attachment {
         width: 100% !important;
+    }
+}
+
+@media (max-width: 555px) {
+    .num_reviews {
+        width: 445px !important;
+    }
+
+    .select_menus {
+        .sort_select_menu, .rating_select_menu {
+            width: (445px - 20px) / 2 !important;
+        }
     }
 }

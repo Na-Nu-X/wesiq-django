@@ -149,50 +149,130 @@
  Header Styles
 **************/
 
-// Navigation Bar
+header {
+    min-height: 100vh;
+    // background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/background.png"); // https://chatgpt.com/
+    background: linear-gradient(transparentize($main-color, 1), transparentize($main-color, 0.8)), url("../images/background.png"); // https://chatgpt.com/
+    color: $secondary-color;
 
-.navigation_bar {
-    position: fixed;
-    width: 100%;
-    background-color: transparentize($main-color, 0.2);
-    border-bottom: 1px solid $secondary-color;
-    opacity: 1;
-    z-index: 200;
+    background: {
+        size: cover;
+        position: center;
+        repeat: no-repeat;
+        attachment: fixed;
+    }
 
-    ul {
-        text-align: center;
+    // Navigation Bar
 
-        li {
-            display: inline-block;
+    .navigation_bar {
+        position: fixed;
+        width: 100%;
+        background-color: transparentize($main-color, 0.2);
+        border-bottom: 1px solid $secondary-color;
+        opacity: 1;
+        z-index: 200;
 
-            a {
-                display: block;
-                margin: 20px 10px;
-                text-decoration: none;
-                font-size: 1.2em;
+        ul {
+            text-align: center;
+
+            li {
+                display: inline-block;
+
+                a {
+                    display: block;
+                    margin: 20px 10px;
+                    text-decoration: none;
+                    font-size: 1.2em;
+                    color: $secondary-color;
+                    text-transform: uppercase;
+                    transition: transform 0.3s ease, color 0.3s ease;
+
+                    &:hover,
+                    &:active {
+                        transform: scale(1.1);
+                        color: $article-color;
+                    }
+                }
+            }
+
+            .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
+                display: none;
+                margin: 10px 0px;
                 color: $secondary-color;
-                text-transform: uppercase;
-                transition: transform 0.3s ease, color 0.3s ease;
+                font-size: 2em;
+                transition: transform 0.3s ease;
 
-                &:hover,
-                &:active {
+                &:hover {
                     transform: scale(1.1);
-                    color: $article-color;
+                    cursor: pointer;
                 }
             }
         }
+    }
 
-        .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
-            display: none;
-            margin: 10px 0px;
-            color: $secondary-color;
-            font-size: 2em;
-            transition: transform 0.3s ease;
+    .header_container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-            &:hover {
-                transform: scale(1.1);
-                cursor: pointer;
+        h1 {
+            text-align: center;
+
+            a {
+                text-decoration: none;
+                text-shadow: 0px 0px 5px $main-color;
+                color: $secondary-color;
+                animation: fade_in_animation 2s ease-out;
+                transition: letter-spacing 0.3s ease;
+
+                font: {
+                    family: $heading-font;
+                    size: 4em;
+                }
+
+                &:hover,
+                &:active {
+                    letter-spacing: 0.5px;
+                }
             }
+        }
+    }
+
+    // Move Down
+
+    .move_down {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        width: 50px;
+        height: 50px;
+        background-color: transparentize($main-color, 0.9);
+        backdrop-filter: blur(5px);
+        border: 2px solid $secondary-color;
+        border-radius: 50%;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+
+        &:hover {
+            cursor: pointer;
+
+            & img {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        img {
+            position: absolute;
+            top: calc(50% + 3px);
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(180deg);
+            width: 32px;
+            height: 32px;
+            transition: width 0.3s ease, height 0.3s ease;
         }
     }
 }
@@ -223,17 +303,9 @@
 }
 
 main {
-    min-height: 100vh;
-    padding-bottom: 100vh;
-    background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/background.png"); // https://chatgpt.com/
+    padding: 50px 0px;
+    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     color: $secondary-color;
-
-    background: {
-        size: cover;
-        position: center;
-        repeat: no-repeat;
-        attachment: fixed;
-    }
 }
 
 // Privacy Policy Bar
@@ -316,72 +388,6 @@ main {
                 cursor: pointer;
             }
         }
-    }
-}
-
-.header_container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    h1 {
-        text-align: center;
-
-        a {
-            text-decoration: none;
-            text-shadow: 0px 0px 5px $main-color;
-            color: $secondary-color;
-            animation: fade_in_animation 2s ease-out;
-            transition: letter-spacing 0.3s ease;
-
-            font: {
-                family: $heading-font;
-                size: 4em;
-            }
-
-            &:hover,
-            &:active {
-                letter-spacing: 0.5px;
-            }
-        }
-    }
-}
-
-// Move Down
-
-.move_down {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 50px;
-    height: 50px;
-    background-color: transparentize($main-color, 0.9);
-    backdrop-filter: blur(5px);
-    border: 2px solid $secondary-color;
-    border-radius: 50%;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-
-    &:hover {
-        cursor: pointer;
-
-        & img {
-            width: 36px;
-            height: 36px;
-        }
-    }
-
-    img {
-        position: absolute;
-        top: calc(50% + 3px);
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(180deg);
-        width: 32px;
-        height: 32px;
-        transition: width 0.3s ease, height 0.3s ease;
     }
 }
 
@@ -589,7 +595,7 @@ footer { // Minix
     }
 
     .header_container h1 a {
-        font-size: 3em;
+        font-size: 3em !important;
     }
 }
 

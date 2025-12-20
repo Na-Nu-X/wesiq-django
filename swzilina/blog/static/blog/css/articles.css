@@ -1,5 +1,5 @@
 .content {
-  max-width: 900px;
+  max-width: 1580px;
   min-height: 100vh;
   margin: 0px auto;
   background-color: rgba(0, 0, 0, 0.1);
@@ -19,7 +19,7 @@
   height: 100%;
 }
 .content .article_banner .banner_image img {
-  width: 360px;
+  width: 632px;
   height: 100%;
 }
 .content .article_banner .banner_info {

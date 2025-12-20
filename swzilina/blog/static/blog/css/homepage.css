@@ -310,11 +310,10 @@
 
 .content {
   font-family: Poppins, Arial, sans-serif;
-  max-width: 900px;
+  max-width: 1580px;
   margin: 0px auto;
-  padding: 10px 20px;
+  padding: 0px 20px;
   background-color: rgba(0, 0, 0, 0.1);
-  border: 1px solid #999999;
   border-radius: 5px;
   text-align: justify;
 }
@@ -1068,11 +1067,19 @@
   overflow-y: auto;
 }
 .content .profile_dialog .profile .bottom .posts::-webkit-scrollbar {
-  width: 3px;
-  background-color: #cccccc;
+  width: 5px;
 }
 .content .profile_dialog .profile .bottom .posts::-webkit-scrollbar-thumb {
   background-color: #999999;
+  border-radius: 2.5px;
+}
+.content .profile_dialog .profile .bottom .posts::-webkit-scrollbar-thumb:hover {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+.content .profile_dialog .profile .bottom .posts::-webkit-scrollbar-track {
+  background-color: #333333;
+  border-radius: 2.5px;
 }
 .content .profile_dialog .profile .bottom .posts div {
   position: relative;
@@ -1110,68 +1117,25 @@
   font-size: 2.5em;
   color: #999999;
 }
-.content .reviews {
-  margin-top: 50px;
+.content .reviews .num_reviews {
+  width: 500px;
+  margin: 0px auto 5px;
 }
-.content .reviews .write_review_form {
-  max-width: 100%;
-  margin-bottom: 50px;
-  padding: 0px 0px;
-  text-align: left;
-  -webkit-backdrop-filter: none;
-          backdrop-filter: none;
-  border: none;
+.content .reviews .num_reviews p {
+  color: #cccccc;
+  font-size: 0.9em;
 }
-.content .reviews .write_review_form .review {
-  height: 142px;
-}
-.content .reviews .write_review_form .review .rating input {
-  display: none;
-}
-.content .reviews .write_review_form .review textarea {
-  width: 100%;
-  min-height: 100px;
-  field-sizing: content;
-  margin-top: 10px;
-  padding: 5px 10px;
-  background: transparent;
-  color: #fff;
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
-  border: 1px solid #fff;
-  border-radius: 10px;
-  outline: none;
-  resize: none;
-}
-.content .reviews .write_review_form .review textarea::-moz-placeholder {
-  color: #999999;
-}
-.content .reviews .write_review_form .review textarea::placeholder {
-  color: #999999;
-}
-.content .reviews .write_review_form input[type=submit] {
-  width: 178px;
-  height: 50px;
-  margin-top: 10px;
-  background-color: #52cf20;
-  color: #000;
-  border: 1px solid #000;
-  border-radius: 10px;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-}
-.content .reviews .write_review_form input[type=submit]:hover, .content .reviews .write_review_form input[type=submit]:focus {
-  background-color: rgb(93.730125523, 222.129707113, 42.370292887);
-  color: #000;
-  letter-spacing: 1px;
-  cursor: pointer;
+.content .reviews .num_reviews p span {
+  font-weight: bold;
 }
 .content .reviews .select_menus {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 20px;
   max-width: 500px;
-  margin: 0px auto 20px;
+  margin: 0px auto 10px;
 }
 .content .reviews .select_menus .sort_select_menu, .content .reviews .select_menus .rating_select_menu {
   position: relative;
@@ -1233,7 +1197,7 @@
   z-index: 100;
 }
 .content .reviews .select_menus .sort_select_menu .options_list.active, .content .reviews .select_menus .rating_select_menu .options_list.active {
-  height: 167px;
+  height: 168px;
 }
 .content .reviews .select_menus .sort_select_menu .options_list .option, .content .reviews .select_menus .rating_select_menu .options_list .option {
   padding: 5px 0px;
@@ -1257,15 +1221,20 @@
   background-color: #ebb914;
 }
 .content .reviews .all_reviews {
-  margin: 0px 0px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.content .reviews .all_reviews .no_reviews {
+  width: 100%;
+  text-align: center;
+  font-family: "Balsamiq Sans", sans-serif;
+  color: #fff;
+}
 .content .reviews .all_reviews .one_review {
-  width: 420px;
-  margin-bottom: 20px;
+  width: calc((100% - 40px) / 3);
+  margin: 10px 0px;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
   -webkit-backdrop-filter: blur(5px);
@@ -1322,23 +1291,104 @@
   cursor: pointer;
   transition: transform 0.3s ease;
 }
+.content .reviews .write_review_form .review .review_content, .content .reviews .all_reviews .review .review_content {
+  width: 500px;
+  border-radius: 5px;
+}
+.content .reviews .reviews_container {
+  max-width: 1580px;
+  margin-top: 10px;
+  margin-bottom: 50px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+.content .reviews .reviews_container .write_review_form {
+  max-width: 500px;
+  margin: 0px auto;
+}
+.content .reviews .reviews_container .write_review_form .review .rating input {
+  display: none;
+}
+.content .reviews .reviews_container .write_review_form .review textarea {
+  width: 100%;
+  min-height: 100px;
+  field-sizing: content;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: transparent;
+  color: #fff;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border: 1px solid #999999;
+  border-radius: 5px;
+  outline: none;
+  resize: none;
+  transition: border 0.3s ease;
+}
+.content .reviews .reviews_container .write_review_form .review textarea:hover, .content .reviews .reviews_container .write_review_form .review textarea:focus {
+  border: 1px solid #cccccc;
+}
+.content .reviews .reviews_container .write_review_form .review textarea::-moz-placeholder {
+  color: #999999;
+}
+.content .reviews .reviews_container .write_review_form .review textarea::placeholder {
+  color: #999999;
+}
+.content .reviews .reviews_container .write_review_form input[type=submit] {
+  width: 100%;
+  height: 50px;
+  margin-top: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.content .reviews .reviews_container .write_review_form input[type=submit]:hover, .content .reviews .reviews_container .write_review_form input[type=submit]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #000;
+  transform: scale(1.1);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
 .content .contact_form {
   position: relative;
   max-width: 500px;
-  margin: 30px auto 40px;
+  margin: 30px auto 0px;
   padding: 30px 50px 50px;
   text-align: center;
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   border: 2px solid #fff;
   border-radius: 10px;
+  overflow: hidden;
+}
+.content .contact_form::before {
+  content: "";
+  position: absolute;
+  top: -250px;
+  left: -50px;
+  width: 400px;
+  height: 400px;
+  border-radius: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: -1;
+}
+.content .contact_form::after {
+  content: "";
+  position: absolute;
+  bottom: -200px;
+  right: -50px;
+  width: 400px;
+  height: 400px;
+  border-radius: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: -1;
 }
 .content .contact_form h2 {
   margin-bottom: 30px;
-}
-.content .contact_form h2 a {
-  text-decoration: none;
-  color: #fff;
 }
 .content .contact_form input[type=text], .content .contact_form input[type=email] {
   width: 90%;
@@ -1597,6 +1647,11 @@
 /**************
  Media Queries
 **************/
+@media (max-width: 1200px) {
+  .all_reviews .one_review {
+    width: calc((100% - 20px) / 2) !important;
+  }
+}
 @media (max-width: 1000px) {
   .search_bar_container div:nth-child(1) .search_bar {
     width: 300px !important;
@@ -1609,11 +1664,6 @@
   }
   .search_bar_container:has(.search_bar:hover) .search_result, .search_bar_container:has(.search_bar:focus) .search_result {
     width: 320px !important;
-  }
-}
-@media (max-width: 920px) {
-  .all_reviews .one_review {
-    width: 100% !important;
   }
 }
 @media (max-width: 800px) {
@@ -1638,6 +1688,9 @@
   .header_container {
     height: calc(100vh - 109px);
   }
+  .all_reviews .one_review {
+    width: 100% !important;
+  }
 }
 @media (max-width: 600px) {
   .blob-btn {
@@ -1661,13 +1714,18 @@
   .registration_form .password_container .fa-copy, .password_check_container .fa-copy {
     right: -19px !important;
   }
-  .write_review_form input[type=submit] {
-    width: 178px !important;
-  }
   textarea {
     width: 100% !important;
   }
   .attachment {
     width: 100% !important;
+  }
+}
+@media (max-width: 555px) {
+  .num_reviews {
+    width: 445px !important;
+  }
+  .select_menus .sort_select_menu, .select_menus .rating_select_menu {
+    width: 212.5px !important;
   }
 }/*# sourceMappingURL=homepage.css.map */
