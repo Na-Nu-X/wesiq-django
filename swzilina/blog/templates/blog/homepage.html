@@ -350,79 +350,26 @@
         </div>
     </dialog>
 
-    <h2>O nás</h2>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, nesciunt.
+    {% comment %} <h2>O nás</h2> {% endcomment %}
+    {% comment %} <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, nesciunt.
     <br>
-    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti similique cum nesciunt minus optio nostrum.</p>
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti similique cum nesciunt minus optio nostrum.</p> {% endcomment %}
 
     <div class="reviews">
-        <!-- Google reCAPTCHA V3 -->
-        <script>
-            grecaptcha.ready(function() {
-                // Write Review Form
+        <h2>Čo si myslia ostatní?</h2>
 
-                const write_review_form = document.querySelector(".write_review_form")
-                if(write_review_form) {
-                    write_review_form.addEventListener("submit", function(event) {
-                        event.preventDefault()
-                        grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "write_review_form"}).then(function(token) {
-                            document.getElementById("write_review_form_recaptcha").value = token
-                            write_review_form.submit()
-                        })
-                    })
-                }
-            })
-        </script>
+        <div class="num_reviews">
+            {% if reviews|length == 1 %}
+                <p>Našla sa <span>{{ reviews|length }}</span> recenzia.</p>
 
-        <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
-            {% csrf_token %}
+            {% elif reviews|length > 1 and reviews|length < 5 %}
+                <p>Našli sa <span>{{ reviews|length }}</span> recenzie.</p>
 
-            <div class="reviewer">
-                <img 
-                    class="profile_picture skeleton_loading" 
-                    src="
-                        {% if profile_picture_name %}
-                            media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                >
-
-                <p class="full_name">
-                    {% if request.session.logged_in_user_id %}
-                        {{ first_name }} {{ last_name }}
-
-                    {% else %}
-                        Anonymný užívateľ
-
-                    {% endif %}
-                </p>
-            </div>
-
-            <div class="review">
-                <div class="rating">
-                    <div class="stars">
-                        {% for _ in "12345" %}
-                            <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                            
-                        {% endfor %}
-                    </div>
-
-                    {{ review_form.rating }}
-                </div>
-
-                {{ review_form.review }}
-            </div>
-
-            <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
-            <input type="submit" value="Zverejniť">
-
-            <!-- Google reCAPTCHA V3 -->
-            <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
-        </form>
+            {% else %}
+                <p>Našlo sa <span>{{ reviews|length }}</span> recenzií.</p>
+            
+            {% endif %}
+        </div>
 
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
@@ -466,6 +413,13 @@
         </div>
 
         <div class="all_reviews">
+            <h2 class="no_reviews">
+                {% if reviews|length == 0 %}
+                    Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie.
+                
+                {% endif %}
+            </h2>
+
             {% for one_review in reviews %}
                 <div class="one_review">
                     <div class="reviewer">
@@ -526,6 +480,76 @@
                 </div>
             
             {% endfor %}
+        </div>
+
+        <div class="reviews_container">
+            <!-- Google reCAPTCHA V3 -->
+            <script>
+                grecaptcha.ready(function() {
+                    // Write Review Form
+
+                    const write_review_form = document.querySelector(".write_review_form")
+                    if(write_review_form) {
+                        write_review_form.addEventListener("submit", function(event) {
+                            event.preventDefault()
+                            grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "write_review_form"}).then(function(token) {
+                                document.getElementById("write_review_form_recaptcha").value = token
+                                write_review_form.submit()
+                            })
+                        })
+                    }
+                })
+            </script>
+
+            <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="reviewer">
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if profile_picture_name %}
+                                media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
+
+                    <p class="full_name">
+                        {% if request.session.logged_in_user_id %}
+                            {{ first_name }} {{ last_name }}
+
+                        {% else %}
+                            Anonymný užívateľ
+
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="review">
+                    <div class="rating">
+                        <div class="stars">
+                            {% for _ in "12345" %}
+                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                
+                            {% endfor %}
+                        </div>
+
+                        {{ review_form.rating }}
+                    </div>
+
+                    {{ review_form.review }}
+                </div>
+
+                <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
+                <input type="submit" value="Zverejniť">
+
+                <!-- Google reCAPTCHA V3 -->
+                <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
+            </form>
         </div>
     </div>
 
