@@ -815,9 +815,11 @@
             const profile_dialog = document.querySelector(".profile_dialog")
             const profile = document.querySelector(".profile")
 
-            profile_button.addEventListener("click", function() {
-                profile_dialog.showModal()
-            })
+            if(profile_button) {
+                profile_button.addEventListener("click", function() {
+                    profile_dialog.showModal()
+                })
+            }
 
             profile_dialog.addEventListener("click", function(event) {
                 const profile_dimensions = profile.getBoundingClientRect()

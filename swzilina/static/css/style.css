@@ -76,6 +76,23 @@
     background-color: #cccccc;
   }
 }
+.skip_link {
+  opacity: 0;
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 1.2em;
+  color: #fff;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.skip_link:focus {
+  opacity: 1;
+  outline: none;
+}
+
 /**************
  Header Styles
 **************/
