@@ -88,4 +88,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if(scroll_reviews && reviews) {
         autoScrollButtons(scroll_reviews, reviews)
     }
+
+    // Skip Link
+
+    const skip_link = document.querySelector(".skip_link")
+    const content = document.querySelector(".content")
+
+    if(skip_link && content) {
+        autoScrollButtons(skip_link, content)
+    }
 })

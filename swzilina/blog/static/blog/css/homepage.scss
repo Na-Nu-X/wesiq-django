@@ -6,6 +6,12 @@
     opacity: 0.8 !important;
 }
 
+// Skip Link
+
+.skip_link {
+    top: 125px + 5px;
+}
+
 /************
  Main Styles
 ************/
@@ -625,7 +631,7 @@
                     height: 50px;
                     line-height: 50px;
                     margin: 10px auto;
-                    background-color: transparentize($main-color, 0.1);
+                    background-color: transparentize($main-color, 0.05);
                     border-radius: $big-border-radius;
                     transition: transform 0.3s ease, letter-spacing 0.3s ease;
 

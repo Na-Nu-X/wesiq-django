@@ -2,6 +2,10 @@
   opacity: 0.8 !important;
 }
 
+.skip_link {
+  top: 130px;
+}
+
 /************
  Main Styles
 ************/
@@ -536,7 +540,7 @@
   height: 50px;
   line-height: 50px;
   margin: 10px auto;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.95);
   border-radius: 25px;
   transition: transform 0.3s ease, letter-spacing 0.3s ease;
 }
