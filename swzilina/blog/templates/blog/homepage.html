@@ -417,31 +417,93 @@
                 <div class="one_column">
                     <p class="rating">5</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="12">0</p>
+                    <p class="counter" data-amount="12"></p>
                 </div>
                 
                 <div class="one_column">
                     <p class="rating">4</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="24">0</p>
+                    <p class="counter" data-amount="24"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">3</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="5">0</p>
+                    <p class="counter" data-amount="5"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">2</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="2">0</p>
+                    <p class="counter" data-amount="2"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">1</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="1">0</p>
+                    <p class="counter" data-amount="0"></p>
+                </div>
+            </div>
+
+            <div class="average_rating">
+                <p>{{ 4.255|floatformat:2 }}</p>
+                {% comment %} <p>{{ avg_rating.rating__avg|floatformat:1 }}</p> {% endcomment %}
+
+                <div class="stars">
+                    <span class="star">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                            <linearGradient id="float_star_1" x1="0" x2="100%" y1="0" y2="0">
+                                <stop offset="0" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#cccccc"></stop>
+                            </linearGradient>
+                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_1)"></polygon>
+                        </svg>
+                    </span>
+
+                    <span class="star">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                            <linearGradient id="float_star_2" x1="0" x2="100%" y1="0" y2="0">
+                                <stop offset="0" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#cccccc"></stop>
+                            </linearGradient>
+                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_2)"></polygon>
+                        </svg>
+                    </span>
+
+                    <span class="star">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                            <linearGradient id="float_star_3" x1="0" x2="100%" y1="0" y2="0">
+                                <stop offset="0" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#cccccc"></stop>
+                            </linearGradient>
+                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_3)"></polygon>
+                        </svg>
+                    </span>
+
+                    <span class="star">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                            <linearGradient id="float_star_4" x1="0" x2="100%" y1="0" y2="0">
+                                <stop offset="0" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#cccccc"></stop>
+                            </linearGradient>
+                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_4)"></polygon>
+                        </svg>
+                    </span>
+
+                    <span class="star">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                            <linearGradient id="float_star_5" x1="0" x2="100%" y1="0" y2="0">
+                                <stop offset="0" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#ebb914"></stop>
+                                <stop offset="0%" stop-color="#cccccc"></stop>
+                            </linearGradient>
+                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_5)"></polygon>
+                        </svg>
+                    </span>
                 </div>
             </div>
 
@@ -1172,6 +1234,33 @@
                 }
 
                 requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
+            })
+
+            // Average Rating
+
+            const average_rating_number = parseFloat(document.querySelector(".average_rating p").textContent) // Gets Average Rating And Stores It As A Float Number
+            const average_rating_stars = document.querySelectorAll(".average_rating .stars .star") // Gets All 5 Star Icons
+
+            let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+
+            average_rating_stars.forEach(function(one_star, index) {
+                let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+
+                // Fills Full Stars
+                if(index + 1 <= parseInt(average_rating_number)) {
+                    filled_part.setAttribute("offset", "100%")
+
+                    // Saves Rest From Average Rating
+                    rest_from_average_rating_number = average_rating_number
+                    rest_from_average_rating_number -= index + 1
+                }
+
+                // Fills Rest From Average Rating
+                else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
+                    filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+
+                    rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
+                }
             })
 
             // Custom Select Menu - Contact Form
