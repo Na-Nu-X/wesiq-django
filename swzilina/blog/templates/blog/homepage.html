@@ -417,37 +417,37 @@
                 <div class="one_column">
                     <p class="rating">5</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="12"></p>
+                    <p class="counter" data-amount="{{ reviews_amount_by_stars.five_star_reviews_amount }}"></p>
                 </div>
                 
                 <div class="one_column">
                     <p class="rating">4</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="24"></p>
+                    <p class="counter" data-amount="{{ reviews_amount_by_stars.four_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">3</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="5"></p>
+                    <p class="counter" data-amount="{{ reviews_amount_by_stars.three_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">2</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="2"></p>
+                    <p class="counter" data-amount="{{ reviews_amount_by_stars.two_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">1</p>
                     <div class="review_bar"></div>
-                    <p class="counter" data-amount="0"></p>
+                    <p class="counter" data-amount="{{ reviews_amount_by_stars.one_star_reviews_amount }}"></p>
                 </div>
             </div>
 
             <div class="average_rating">
-                <p>{{ 4.255|floatformat:2 }}</p>
-                {% comment %} <p>{{ avg_rating.rating__avg|floatformat:1 }}</p> {% endcomment %}
+                <!-- <p>{{ avg_rating.rating__avg|floatformat:2 }}</p> -->
+                <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}<span></p>
 
                 <div class="stars">
                     <span class="star">
@@ -505,6 +505,8 @@
                         </svg>
                     </span>
                 </div>
+
+                <p class="reviews_amount">{{ num_reviews }}</p>
             </div>
 
             {% comment %} <div class="info">
@@ -1238,8 +1240,9 @@
 
             // Average Rating
 
-            const average_rating_number = parseFloat(document.querySelector(".average_rating p").textContent) // Gets Average Rating And Stores It As A Float Number
-            const average_rating_stars = document.querySelectorAll(".average_rating .stars .star") // Gets All 5 Star Icons
+            // const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating p").textContent) // Gets Average Rating And Stores It As A Float Number
+            const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
+            const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
 
             let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
 
