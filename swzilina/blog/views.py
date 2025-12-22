@@ -15,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives
 import random, requests, os, secrets
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
+import math
 
 # Functions
 def captureError(message):
@@ -204,8 +205,19 @@ def homepageView(request):
     reviews = Reviews.objects.all()
 
     # Info About Reviews
-    avg_rating = reviews.aggregate(Avg("rating"))
     num_reviews = reviews.count()
+
+    avg_rating = reviews.aggregate(Avg("rating"))
+    avg_rating_integer = math.floor(float(avg_rating["rating__avg"]))
+    avg_rating_rest = str(float(avg_rating["rating__avg"]) - avg_rating_integer).replace(".", "")
+
+    reviews_amount_by_stars = {
+        "one_star_reviews_amount": len(reviews.filter(rating=1)),
+        "two_star_reviews_amount": len(reviews.filter(rating=2)),
+        "three_star_reviews_amount": len(reviews.filter(rating=3)),
+        "four_star_reviews_amount": len(reviews.filter(rating=4)),
+        "five_star_reviews_amount": len(reviews.filter(rating=5)),
+    }
 
     # Sorts Reviews By User Preferencies (The Latest Articles Are Set As Default)
     sort = request.GET.get("sort", "latest").lower()
@@ -316,9 +328,11 @@ def homepageView(request):
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
             "reviews": reviews,
-            "avg_rating": avg_rating,
             "num_reviews": num_reviews,
-
+            "avg_rating": avg_rating,
+            "avg_rating_integer": avg_rating_integer,
+            "avg_rating_rest": avg_rating_rest,
+            "reviews_amount_by_stars": reviews_amount_by_stars,
             "logged_in_user": user,
         })
     
@@ -336,8 +350,11 @@ def homepageView(request):
         "contact_form": contactForm,
         "review_form": reviewForm,
         "reviews": reviews,
-        "avg_rating": avg_rating,
         "num_reviews": num_reviews,
+        "avg_rating": avg_rating,
+        "avg_rating_integer": avg_rating_integer,
+        "avg_rating_rest": avg_rating_rest,
+        "reviews_amount_by_stars": reviews_amount_by_stars,
     })
 
 def loginView(request):

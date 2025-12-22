@@ -1383,6 +1383,9 @@
     // Reviews
 
     .reviews {
+        // background: radial-gradient(circle, lighten($main-color, 10%) 0%, transparent 100%);
+        // padding-top: 20px;
+
         .num_reviews {
             width: 500px;
             margin: 0px auto 5px;
@@ -1521,7 +1524,8 @@
             max-width: $main-width;
             margin: 10px 0px;
             padding: 10px 50px;
-            background-color: transparentize($secondary-color, 0.95);
+            // background-color: transparentize($secondary-color, 0.95);
+            background: radial-gradient(circle, lighten($main-color, 10%) 0%, transparent 100%);
             border-radius: $small-border-radius;
 
             .graph {
@@ -1537,8 +1541,8 @@
 
                     .rating {
                         width: 2em;
-                        text-align: right;
-
+                        text-align: center;
+                        color: darken($secondary-color, 20%);
                     }
 
                     .review_bar {
@@ -1558,6 +1562,7 @@
                             width: var(--progress);
                             height: 100%;
                             background-color: $article-color;
+                            box-shadow: 0px 0px 5px transparentize($article-color, 0.4);
                             border-radius: inherit;
                             
                         }
@@ -1565,7 +1570,8 @@
 
                     .counter {
                         width: 2em;
-                        text-align: left;
+                        text-align: center;
+                        color: darken($secondary-color, 20%);
                     }
                 }
             }
@@ -1578,8 +1584,18 @@
                 width: max-content;
 
                 p {
-                    font-size: 30px;
-                    line-height: 30px;
+                    font-size: 40px;
+                }
+
+                .average_rating_number {
+                    position: relative;
+                    color: darken($secondary-color, 20%);
+
+                    span {
+                        position: relative;
+                        bottom: 14px;
+                        font-size: 20px;
+                    }
                 }
 
                 .stars {
@@ -1593,6 +1609,11 @@
                         width: 32px;
                         height: 32px;
                     }
+                }
+
+                .reviews_amount {
+                    font-size: 20px;
+                    color: darken($secondary-color, 20%);
                 }
             }
 
@@ -1716,15 +1737,17 @@
         .write_review_form_container {
             max-width: $main-width;
             margin-top: 10px;
-            margin-bottom: 50px;
+            // margin-bottom: 50px;
+            margin-bottom: 40px;
             padding: 10px 50px;
-            background-color: transparentize($secondary-color, 0.95);
+            // background-color: transparentize($secondary-color, 0.95);
+            background: radial-gradient(circle, lighten($main-color, 10%) 0%, transparent 100%);
             border-radius: $small-border-radius;
 
             .write_review_form {
                 max-width: 500px;
                 position: relative;
-                padding-bottom: 20px;
+                // padding-bottom: 10px;
                 text-align: center;
                 margin: 0px auto;
                 
@@ -1787,7 +1810,7 @@
     .contact_form {
         position: relative;
         max-width: 500px;
-        margin: 30px auto 0px;
+        margin: 0px auto;
         padding: 30px 50px 50px;
         text-align: center;
         backdrop-filter: blur(5px);
