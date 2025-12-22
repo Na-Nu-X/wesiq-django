@@ -412,6 +412,46 @@
             </div>
         </div>
 
+        <div class="reviews_info_container">
+            <div class="graph">
+                <div class="one_column">
+                    <p class="rating">5</p>
+                    <div class="review_bar"></div>
+                    <p class="counter" data-amount="12">0</p>
+                </div>
+                
+                <div class="one_column">
+                    <p class="rating">4</p>
+                    <div class="review_bar"></div>
+                    <p class="counter" data-amount="24">0</p>
+                </div>
+
+                <div class="one_column">
+                    <p class="rating">3</p>
+                    <div class="review_bar"></div>
+                    <p class="counter" data-amount="5">0</p>
+                </div>
+
+                <div class="one_column">
+                    <p class="rating">2</p>
+                    <div class="review_bar"></div>
+                    <p class="counter" data-amount="2">0</p>
+                </div>
+
+                <div class="one_column">
+                    <p class="rating">1</p>
+                    <div class="review_bar"></div>
+                    <p class="counter" data-amount="1">0</p>
+                </div>
+            </div>
+
+            {% comment %} <div class="info">
+                <img src="{% static 'images/star_big.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+
+                <p>4.3</p>
+            </div> {% endcomment %}
+        </div>
+
         <div class="all_reviews">
             <h2 class="no_reviews">
                 {% if reviews|length == 0 %}
@@ -482,7 +522,7 @@
             {% endfor %}
         </div>
 
-        <div class="reviews_container">
+        <div class="write_review_form_container">
             <!-- Google reCAPTCHA V3 -->
             <script>
                 grecaptcha.ready(function() {
@@ -504,31 +544,6 @@
             <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
                 {% csrf_token %}
 
-                <div class="reviewer">
-                    <img 
-                        class="profile_picture skeleton_loading" 
-                        src="
-                            {% if profile_picture_name %}
-                                media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-
-                            {% else %}
-                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                            
-                            {% endif %}
-                        "
-                    >
-
-                    <p class="full_name">
-                        {% if request.session.logged_in_user_id %}
-                            {{ first_name }} {{ last_name }}
-
-                        {% else %}
-                            Anonymný užívateľ
-
-                        {% endif %}
-                    </p>
-                </div>
-
                 <div class="review">
                     <div class="rating">
                         <div class="stars">
@@ -545,7 +560,7 @@
                 </div>
 
                 <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
-                <input type="submit" value="Zverejniť">
+                <input type="submit" value="Uverejniť">
 
                 <!-- Google reCAPTCHA V3 -->
                 <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
@@ -1105,6 +1120,58 @@
                 page_url.searchParams.delete("rating")
 
                 window.location.href = page_url // Redirects Page
+            })
+
+            // Reviews Graph
+
+            const reviews_graph_columns = document.querySelectorAll(".reviews_info_container .graph .one_column")
+            
+            // Gets Total Amount Of Reviews
+            let total_reviews_amount = 0 // Saves Total Amount Of All Reviews
+
+            reviews_graph_columns.forEach(function(one_column) {
+                // HTML Tags
+                const counter = one_column.querySelector(".counter")
+
+                total_reviews_amount += parseInt(counter.dataset.amount) // Adds Amount Of Reviews From Each Column To Total Amount
+            })
+
+            // Review Graph Animation
+            reviews_graph_columns.forEach(function(one_column) {
+                // HTML Tags
+                const bar = one_column.querySelector(".review_bar")
+                const counter = one_column.querySelector(".counter")
+
+                const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
+                const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
+                const animation_duration = 3000 // 2 Seconds Animation
+
+                let start_time = null // Sets Start Time Default Value
+
+                // Function For Ease Out Animation Effect
+                function easeOutEffect(t) {
+                    return 1 - Math.pow(1 - t, 3)
+                }
+
+                // Function For Animation
+                function reviewGraphAnimation(time) {
+                    if(!start_time) start_time = time
+
+                    const elapsed_time = time - start_time // Animation Elapsed Time
+                    const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
+                    const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+
+                    // Sets Values To Graph In Each Frame Of The Animation
+                    bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
+                    counter.textContent = parseInt(eased * counter.dataset.amount) // Sets Each Column's Reviews Amount To Its Counter
+
+                    // Calls The Animation Until Its Duration Ends
+                    if(progress < 1) {
+                        requestAnimationFrame(reviewGraphAnimation)
+                    }
+                }
+
+                requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
             })
 
             // Custom Select Menu - Contact Form

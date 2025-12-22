@@ -1512,6 +1512,81 @@
             }
         }
 
+        .reviews_info_container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            max-width: $main-width;
+            margin: 10px 0px;
+            padding: 10px 50px;
+            background-color: transparentize($secondary-color, 0.95);
+            border-radius: $small-border-radius;
+
+            .graph {
+                max-width: 500px;
+                width: 100%;
+                margin: 0px auto;
+
+                .one_column {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 20px;
+
+                    .rating {
+                        width: 2em;
+                        text-align: right;
+
+                    }
+
+                    .review_bar {
+                        --progress: 0%;
+
+                        position: relative;
+                        width: 100%;
+                        height: 8px;
+                        background-color: darken($secondary-color, 20%);
+                        border-radius: calc(8px / 2);
+
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 0px;
+                            left: 0px;
+                            width: var(--progress);
+                            height: 100%;
+                            background-color: $article-color;
+                            border-radius: inherit;
+                            
+                        }
+                    }
+
+                    .counter {
+                        width: 2em;
+                        text-align: left;
+                    }
+                }
+            }
+
+            .info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                }
+
+                p {
+                    font-size: 30px;
+                    line-height: 30px;
+                }
+            }
+        }
+
         // All Reviews
 
         .all_reviews {
@@ -1531,15 +1606,17 @@
                 width: calc((100% - 40px) / 3); // 40px = Gap Between Reviews, 3 Because There Are 3 Reviews In One Row
                 margin: 10px 0px;
                 padding: 10px;
-                background-color: transparentize($secondary-color, 0.9);
+                background-color: transparentize($secondary-color, 0.95);
                 backdrop-filter: blur(5px);
                 border: 1px solid $secondary-color;
                 border-radius: $small-border-radius;
                 box-shadow: 5px 5px 10px lighten($main-color, 20%);
-                transition: transform 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:hover {
                     transform: scale(1.01);
+                    background-color: transparentize($secondary-color, 0.9);
+                    cursor: pointer;
                 }
 
                 .reviewer .date {
@@ -1566,7 +1643,7 @@
             }
         }
 
-        .write_review_form, .all_reviews {
+        .all_reviews {
             .reviewer {
                 position: relative;
                 height: 38px;
@@ -1609,21 +1686,26 @@
             }
         }
 
-        .reviews_container {
+        .write_review_form_container {
             max-width: $main-width;
             margin-top: 10px;
             margin-bottom: 50px;
-            padding: 10px;
-            background-color: transparentize($secondary-color, 0.9);
+            padding: 10px 50px;
+            background-color: transparentize($secondary-color, 0.95);
             border-radius: $small-border-radius;
 
             .write_review_form {
                 max-width: 500px;
+                position: relative;
+                padding-bottom: 20px;
+                text-align: center;
                 margin: 0px auto;
                 
                 .review {
-                    .rating input {
-                        display: none;
+                    .rating {
+                        input {
+                            display: none;
+                        }
                     }
 
                     textarea {
@@ -1634,7 +1716,6 @@
                         padding: 5px 10px;
                         background: transparent;
                         color: $secondary-color;
-                        backdrop-filter: blur(5px);
                         border: 1px solid darken($secondary-color, 40%);
                         border-radius: $small-border-radius;
                         outline: none;
@@ -1655,18 +1736,16 @@
                 input[type="submit"] {
                     width: 100%;
                     height: 50px;
-                    margin-top: 10px + 5px;
-                    background-color: transparentize($main-color, 0.2);
-                    color: $secondary-color;
-                    border: 1px solid $secondary-color;
-                    border-radius: $big-border-radius;
-                    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+                    margin-top: 6px + 10px;
+                    background-color: $success-color;
+                    color: $main-color;
+                    border: 1px solid $main-color;
+                    border-radius: $small-border-radius;
+                    transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
                     &:hover,
                     &:focus {
-                        background-color: transparentize($secondary-color, 0.1);
-                        color: $main-color;
-                        border: 1px solid $main-color;
+                        background-color: lighten($success-color, 10%);
                         transform: scale(1.1);
                         letter-spacing: 1px;
                         cursor: pointer;
