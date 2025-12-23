@@ -362,93 +362,125 @@
             <div class="graph">
                 <div class="one_column">
                     <p class="rating">5</p>
-                    <div class="review_bar"></div>
+
+                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.five_star_reviews_amount }} recenzií">
+                        <div class="review_bar"></div>
+                    </div>
+
                     <p class="counter" data-amount="{{ reviews_amount_by_stars.five_star_reviews_amount }}"></p>
                 </div>
                 
                 <div class="one_column">
                     <p class="rating">4</p>
-                    <div class="review_bar"></div>
+
+                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.four_star_reviews_amount }} recenzií">
+                        <div class="review_bar"></div>
+                    </div>
+
                     <p class="counter" data-amount="{{ reviews_amount_by_stars.four_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">3</p>
-                    <div class="review_bar"></div>
+
+                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.three_star_reviews_amount }} recenzií">
+                        <div class="review_bar"></div>
+                    </div>
+
                     <p class="counter" data-amount="{{ reviews_amount_by_stars.three_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">2</p>
-                    <div class="review_bar"></div>
+
+                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.two_star_reviews_amount }} recenzií">
+                        <div class="review_bar"></div>
+                    </div>
+
                     <p class="counter" data-amount="{{ reviews_amount_by_stars.two_star_reviews_amount }}"></p>
                 </div>
 
                 <div class="one_column">
                     <p class="rating">1</p>
-                    <div class="review_bar"></div>
+
+                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.one_star_reviews_amount }} recenzií">
+                        <div class="review_bar"></div>
+                    </div>
+
                     <p class="counter" data-amount="{{ reviews_amount_by_stars.one_star_reviews_amount }}"></p>
                 </div>
             </div>
 
             <div class="average_rating">
-                <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
+                <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                    <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
+                </div>
 
                 <div class="stars">
-                    <span class="star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                            <linearGradient id="float_star_1" x1="0" x2="100%" y1="0" y2="0">
-                                <stop offset="0" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#cccccc"></stop>
-                            </linearGradient>
-                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_1)"></polygon>
-                        </svg>
-                    </span>
+                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <span class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                <linearGradient id="float_star_1" x1="0" x2="100%" y1="0" y2="0">
+                                    <stop offset="0" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#cccccc"></stop>
+                                </linearGradient>
+                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_1)"></polygon>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <span class="star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                            <linearGradient id="float_star_2" x1="0" x2="100%" y1="0" y2="0">
-                                <stop offset="0" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#cccccc"></stop>
-                            </linearGradient>
-                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_2)"></polygon>
-                        </svg>
-                    </span>
+                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <span class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                <linearGradient id="float_star_2" x1="0" x2="100%" y1="0" y2="0">
+                                    <stop offset="0" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#cccccc"></stop>
+                                </linearGradient>
+                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_2)"></polygon>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <span class="star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                            <linearGradient id="float_star_3" x1="0" x2="100%" y1="0" y2="0">
-                                <stop offset="0" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#cccccc"></stop>
-                            </linearGradient>
-                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_3)"></polygon>
-                        </svg>
-                    </span>
+                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <span class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                <linearGradient id="float_star_3" x1="0" x2="100%" y1="0" y2="0">
+                                    <stop offset="0" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#cccccc"></stop>
+                                </linearGradient>
+                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_3)"></polygon>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <span class="star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                            <linearGradient id="float_star_4" x1="0" x2="100%" y1="0" y2="0">
-                                <stop offset="0" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#cccccc"></stop>
-                            </linearGradient>
-                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_4)"></polygon>
-                        </svg>
-                    </span>
+                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <span class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                <linearGradient id="float_star_4" x1="0" x2="100%" y1="0" y2="0">
+                                    <stop offset="0" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#cccccc"></stop>
+                                </linearGradient>
+                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_4)"></polygon>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <span class="star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                            <linearGradient id="float_star_5" x1="0" x2="100%" y1="0" y2="0">
-                                <stop offset="0" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#ebb914"></stop>
-                                <stop offset="0%" stop-color="#cccccc"></stop>
-                            </linearGradient>
-                            <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_5)"></polygon>
-                        </svg>
-                    </span>
+                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <span class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                <linearGradient id="float_star_5" x1="0" x2="100%" y1="0" y2="0">
+                                    <stop offset="0" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#ebb914"></stop>
+                                    <stop offset="0%" stop-color="#cccccc"></stop>
+                                </linearGradient>
+                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_5)"></polygon>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
 
                 <!-- <p class="reviews_amount">{{ num_reviews }}</p> -->
