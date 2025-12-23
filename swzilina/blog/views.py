@@ -208,15 +208,15 @@ def homepageView(request):
     num_reviews = reviews.count()
 
     avg_rating = reviews.aggregate(Avg("rating"))
-    avg_rating_integer = math.floor(float(avg_rating["rating__avg"]))
-    avg_rating_rest = str(float(avg_rating["rating__avg"]) - avg_rating_integer).replace(".", "")
+    avg_rating_integer = math.floor(float(avg_rating["rating__avg"])) # For Example From Average Rating Of 4.25 It Returns 4
+    avg_rating_rest = str(float(avg_rating["rating__avg"]) - avg_rating_integer).replace(".", "") # For Example From Average Rating Of 4.25 It Returns 25
 
     reviews_amount_by_stars = {
-        "one_star_reviews_amount": len(reviews.filter(rating=1)),
-        "two_star_reviews_amount": len(reviews.filter(rating=2)),
-        "three_star_reviews_amount": len(reviews.filter(rating=3)),
-        "four_star_reviews_amount": len(reviews.filter(rating=4)),
-        "five_star_reviews_amount": len(reviews.filter(rating=5)),
+        "5": len(reviews.filter(rating=5)), # Number Of Reviews With 5 Star Rating
+        "4": len(reviews.filter(rating=4)), # Number Of Reviews With 4 Star Rating
+        "3": len(reviews.filter(rating=3)), # Number Of Reviews With 3 Star Rating
+        "2": len(reviews.filter(rating=2)), # Number Of Reviews With 2 Star Rating
+        "1": len(reviews.filter(rating=1)), # Number Of Reviews With 1 Star Rating
     }
 
     # Sorts Reviews By User Preferencies (The Latest Articles Are Set As Default)
