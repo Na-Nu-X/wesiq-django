@@ -1263,8 +1263,9 @@
 .content .reviews .reviews_info_container .average_rating .tooltip .average_rating_number {
   position: relative;
   width: 70px;
-  margin-right: 20px;
   color: #cccccc;
+  opacity: 0;
+  animation: fade_in_transparency 1s ease 3s forwards;
 }
 .content .reviews .reviews_info_container .average_rating .tooltip .average_rating_number:hover {
   cursor: pointer;
@@ -1277,7 +1278,7 @@
 .content .reviews .reviews_info_container .average_rating .stars {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 20px;
   width: 100%;
   height: 100%;
 }
@@ -1840,6 +1841,11 @@
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+@keyframes fade_in_transparency {
+  100% {
+    opacity: 1;
   }
 }
 @keyframes spin {

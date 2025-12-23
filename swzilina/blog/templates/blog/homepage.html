@@ -360,127 +360,69 @@
 
         <div class="reviews_info_container">
             <div class="graph">
-                <div class="one_column">
-                    <p class="rating">5</p>
+                {% for key, value in reviews_amount_by_stars.items %}
+                    <div class="one_column">
+                        <p class="rating">{{ key }}</p>
 
-                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.five_star_reviews_amount }} recenzií">
-                        <div class="review_bar"></div>
+                        <div 
+                            class="tooltip" 
+                            data-tooltip="
+                                {% if value == 0 or value >= 5 %}
+                                    {{ value }} recenzií
+
+                                {% elif value == 1 %}
+                                    {{ value }} recenzia
+                                
+                                {% elif value > 1 or value <= 4 %}
+                                    {{ value }} recenzie
+                                
+                                {% endif %}
+                            "
+                        >
+                            <div class="review_bar"></div>
+                        </div>
+
+                        <p class="counter" data-amount="{{ value }}"></p>
                     </div>
-
-                    <p class="counter" data-amount="{{ reviews_amount_by_stars.five_star_reviews_amount }}"></p>
-                </div>
                 
-                <div class="one_column">
-                    <p class="rating">4</p>
-
-                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.four_star_reviews_amount }} recenzií">
-                        <div class="review_bar"></div>
-                    </div>
-
-                    <p class="counter" data-amount="{{ reviews_amount_by_stars.four_star_reviews_amount }}"></p>
-                </div>
-
-                <div class="one_column">
-                    <p class="rating">3</p>
-
-                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.three_star_reviews_amount }} recenzií">
-                        <div class="review_bar"></div>
-                    </div>
-
-                    <p class="counter" data-amount="{{ reviews_amount_by_stars.three_star_reviews_amount }}"></p>
-                </div>
-
-                <div class="one_column">
-                    <p class="rating">2</p>
-
-                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.two_star_reviews_amount }} recenzií">
-                        <div class="review_bar"></div>
-                    </div>
-
-                    <p class="counter" data-amount="{{ reviews_amount_by_stars.two_star_reviews_amount }}"></p>
-                </div>
-
-                <div class="one_column">
-                    <p class="rating">1</p>
-
-                    <div class="tooltip" data-tooltip="{{ reviews_amount_by_stars.one_star_reviews_amount }} recenzií">
-                        <div class="review_bar"></div>
-                    </div>
-
-                    <p class="counter" data-amount="{{ reviews_amount_by_stars.one_star_reviews_amount }}"></p>
-                </div>
+                {% endfor %}
             </div>
 
             <div class="average_rating">
-                <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                <div 
+                    class="tooltip" 
+                    data-tooltip="
+                        {% if num_reviews == 0 %}
+                            Zatiaľ žiadne recenzie
+
+                        {% elif num_reviews == 1 %}
+                            Na základe {{ num_reviews }} recenzie
+
+                        {% elif num_reviews >= 2 %}
+                            Na základe {{ num_reviews }} recenzií
+
+                        {% endif %}
+                    "
+                >
                     <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
                 </div>
 
                 <div class="stars">
-                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
-                        <span class="star">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                <linearGradient id="float_star_1" x1="0" x2="100%" y1="0" y2="0">
-                                    <stop offset="0" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#cccccc"></stop>
-                                </linearGradient>
-                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_1)"></polygon>
-                            </svg>
-                        </span>
-                    </div>
-
-                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
-                        <span class="star">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                <linearGradient id="float_star_2" x1="0" x2="100%" y1="0" y2="0">
-                                    <stop offset="0" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#cccccc"></stop>
-                                </linearGradient>
-                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_2)"></polygon>
-                            </svg>
-                        </span>
-                    </div>
-
-                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
-                        <span class="star">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                <linearGradient id="float_star_3" x1="0" x2="100%" y1="0" y2="0">
-                                    <stop offset="0" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#cccccc"></stop>
-                                </linearGradient>
-                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_3)"></polygon>
-                            </svg>
-                        </span>
-                    </div>
-
-                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
-                        <span class="star">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                <linearGradient id="float_star_4" x1="0" x2="100%" y1="0" y2="0">
-                                    <stop offset="0" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#cccccc"></stop>
-                                </linearGradient>
-                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_4)"></polygon>
-                            </svg>
-                        </span>
-                    </div>
-
-                    <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
-                        <span class="star">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                <linearGradient id="float_star_5" x1="0" x2="100%" y1="0" y2="0">
-                                    <stop offset="0" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#ebb914"></stop>
-                                    <stop offset="0%" stop-color="#cccccc"></stop>
-                                </linearGradient>
-                                <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_5)"></polygon>
-                            </svg>
-                        </span>
-                    </div>
+                    {% for index in "12345" %}
+                        <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                            <span class="star">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                    <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
+                                        <stop offset="0" stop-color="#ebb914"></stop>
+                                        <stop offset="0%" stop-color="#ebb914"></stop>
+                                        <stop offset="0%" stop-color="#cccccc"></stop>
+                                    </linearGradient>
+                                    <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke="#ffffff" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></polygon>
+                                </svg>
+                            </span>
+                        </div>
+                        
+                    {% endfor %}
                 </div>
 
                 <!-- <p class="reviews_amount">{{ num_reviews }}</p> -->
@@ -1275,7 +1217,7 @@
             // Animation's Settings
             const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
             const animation_duration = 3000 // 3 Seconds Animation
-            let start_time = null // Sets Start Time Default Value
+            let start_time = 3000 // Sets Start Time Default Value / Delay For Animation Start
 
             // Function For Ease Out Animation Effect
             function easeOutEffect(t) {
@@ -1290,36 +1232,41 @@
                 const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
                 const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
 
-                // Average Rating Number Rendering
-                const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
-                // Splits Array
-                average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
+                average_rating_number_tag.innerHTML = "0<span>00</span>" // Renders Start Values To HTML
 
-                // Stars Rendering
-                const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
-                const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
+                // Starts The Animation After Delay Set In Start Time Expires
+                if(progress >= 0) {
+                    // Average Rating Number Rendering
+                    const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
+                    // Splits Array
+                    average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
 
-                let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+                    // Stars Rendering
+                    const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
+                    const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
 
-                average_rating_stars.forEach(function(one_star, index) {
-                    let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+                    let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
 
-                    // Fills Full Stars
-                    if(index + 1 <= parseInt(average_rating_number)) {
-                        filled_part.setAttribute("offset", "100%")
+                    average_rating_stars.forEach(function(one_star, index) {
+                        let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
 
-                        // Saves Rest From Average Rating
-                        rest_from_average_rating_number = average_rating_number
-                        rest_from_average_rating_number -= index + 1
-                    }
+                        // Fills Full Stars
+                        if(index + 1 <= parseInt(average_rating_number)) {
+                            filled_part.setAttribute("offset", "100%")
 
-                    // Fills Rest From Average Rating
-                    else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                        filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+                            // Saves Rest From Average Rating
+                            rest_from_average_rating_number = average_rating_number
+                            rest_from_average_rating_number -= index + 1
+                        }
 
-                        rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
-                    }
-                })
+                        // Fills Rest From Average Rating
+                        else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
+                            filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+
+                            rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
+                        }
+                    })
+                }
                 
                 // Calls The Animation Until Its Duration Ends
                 if(progress < 1) {
