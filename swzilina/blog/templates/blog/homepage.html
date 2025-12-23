@@ -358,60 +358,6 @@
     <div class="reviews">
         <h2>Čo si myslia ostatní?</h2>
 
-        <div class="num_reviews">
-            {% if reviews|length == 1 %}
-                <p>Našla sa <span>{{ reviews|length }}</span> recenzia.</p>
-
-            {% elif reviews|length > 1 and reviews|length < 5 %}
-                <p>Našli sa <span>{{ reviews|length }}</span> recenzie.</p>
-
-            {% else %}
-                <p>Našlo sa <span>{{ reviews|length }}</span> recenzií.</p>
-            
-            {% endif %}
-        </div>
-
-        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-        <div class="select_menus">
-            <div class="sort_select_menu">
-                <div class="refresh" title="Obnoviť predvolené filtre">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </div>
-
-                <div class="select">
-                    <span>Najnovšie recenzie</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list">
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>Najnovšie recenzie</span></div> <!-- https://fontawesome.com/icons/clock -->
-                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>Najstaršie recenzie</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>Najlepšie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-up -->
-                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>Najhoršie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-down -->
-                </div>
-            </div>
-
-            <div class="rating_select_menu">
-                <div class="refresh" title="Obnoviť predvolené filtre">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </div>
-
-                <div class="select">
-                    <span>Všetky kategórie</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list">
-                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>Všetky recenzie</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
-                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                </div>
-            </div>
-        </div>
-
         <div class="reviews_info_container">
             <div class="graph">
                 <div class="one_column">
@@ -446,8 +392,7 @@
             </div>
 
             <div class="average_rating">
-                <!-- <p>{{ avg_rating.rating__avg|floatformat:2 }}</p> -->
-                <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}<span></p>
+                <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
 
                 <div class="stars">
                     <span class="star">
@@ -506,14 +451,62 @@
                     </span>
                 </div>
 
-                <p class="reviews_amount">{{ num_reviews }}</p>
+                <!-- <p class="reviews_amount">{{ num_reviews }}</p> -->
+            </div>
+        </div>
+
+        <div class="num_reviews">
+            {% if reviews|length == 1 %}
+                <p>Našla sa <span>{{ reviews|length }}</span> recenzia.</p>
+
+            {% elif reviews|length > 1 and reviews|length < 5 %}
+                <p>Našli sa <span>{{ reviews|length }}</span> recenzie.</p>
+
+            {% else %}
+                <p>Našlo sa <span>{{ reviews|length }}</span> recenzií.</p>
+            
+            {% endif %}
+        </div>
+
+        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+        <div class="select_menus">
+            <div class="sort_select_menu">
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
+
+                <div class="select">
+                    <span>Najnovšie recenzie</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>Najnovšie recenzie</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>Najstaršie recenzie</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>Najlepšie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-up -->
+                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>Najhoršie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-down -->
+                </div>
             </div>
 
-            {% comment %} <div class="info">
-                <img src="{% static 'images/star_big.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            <div class="rating_select_menu">
+                <div class="refresh" title="Obnoviť predvolené filtre">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                </div>
 
-                <p>4.3</p>
-            </div> {% endcomment %}
+                <div class="select">
+                    <span>Všetky kategórie</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>Všetky recenzie</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
+                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                </div>
+            </div>
         </div>
 
         <div class="all_reviews">
@@ -1186,7 +1179,7 @@
                 window.location.href = page_url // Redirects Page
             })
 
-            // Reviews Graph
+            // Review Graph
 
             const reviews_graph_columns = document.querySelectorAll(".reviews_info_container .graph .one_column")
             
@@ -1207,9 +1200,10 @@
                 const counter = one_column.querySelector(".counter")
 
                 const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
-                const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
-                const animation_duration = 3000 // 2 Seconds Animation
 
+                // Animation's Settings
+                const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
+                const animation_duration = 3000 // 3 Seconds Animation
                 let start_time = null // Sets Start Time Default Value
 
                 // Function For Ease Out Animation Effect
@@ -1225,8 +1219,11 @@
                     const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
                     const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
 
+                    // Each Progress Bar Rendering
                     // Sets Values To Graph In Each Frame Of The Animation
                     bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
+
+                    // Each Review Counter Rendering
                     counter.textContent = parseInt(eased * counter.dataset.amount) // Sets Each Column's Reviews Amount To Its Counter
 
                     // Calls The Animation Until Its Duration Ends
@@ -1240,31 +1237,65 @@
 
             // Average Rating
 
-            // const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating p").textContent) // Gets Average Rating And Stores It As A Float Number
-            const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
-            const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
+            // Average Rating Animation
+            const average_rating_number_tag = document.querySelector(".reviews_info_container .average_rating .average_rating_number") // Gets Average Rating Number HTML Tag
 
-            let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+            // Animation's Settings
+            const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
+            const animation_duration = 3000 // 3 Seconds Animation
+            let start_time = null // Sets Start Time Default Value
 
-            average_rating_stars.forEach(function(one_star, index) {
-                let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+            // Function For Ease Out Animation Effect
+            function easeOutEffect(t) {
+                return 1 - Math.pow(1 - t, 3)
+            }
 
-                // Fills Full Stars
-                if(index + 1 <= parseInt(average_rating_number)) {
-                    filled_part.setAttribute("offset", "100%")
+            // Function For Animation
+            function reviewGraphAnimation(time) {
+                if(!start_time) start_time = time
 
-                    // Saves Rest From Average Rating
-                    rest_from_average_rating_number = average_rating_number
-                    rest_from_average_rating_number -= index + 1
+                const elapsed_time = time - start_time // Animation Elapsed Time
+                const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
+                const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+
+                // Average Rating Number Rendering
+                const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
+                // Splits Array
+                average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
+
+                // Stars Rendering
+                const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
+                const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
+
+                let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+
+                average_rating_stars.forEach(function(one_star, index) {
+                    let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+
+                    // Fills Full Stars
+                    if(index + 1 <= parseInt(average_rating_number)) {
+                        filled_part.setAttribute("offset", "100%")
+
+                        // Saves Rest From Average Rating
+                        rest_from_average_rating_number = average_rating_number
+                        rest_from_average_rating_number -= index + 1
+                    }
+
+                    // Fills Rest From Average Rating
+                    else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
+                        filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+
+                        rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
+                    }
+                })
+                
+                // Calls The Animation Until Its Duration Ends
+                if(progress < 1) {
+                    requestAnimationFrame(reviewGraphAnimation)
                 }
+            }
 
-                // Fills Rest From Average Rating
-                else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                    filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
-
-                    rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
-                }
-            })
+            requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
 
             // Custom Select Menu - Contact Form
 
