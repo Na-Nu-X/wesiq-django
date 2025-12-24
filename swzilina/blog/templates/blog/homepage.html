@@ -382,7 +382,7 @@
                             <div class="review_bar"></div>
                         </div>
 
-                        <p class="counter" data-amount="{{ value }}"></p>
+                        <p class="counter" data-amount="{{ value }}">0</p>
                     </div>
                 
                 {% endfor %}
@@ -417,7 +417,7 @@
                                         <stop offset="0%" stop-color="#ebb914"></stop>
                                         <stop offset="0%" stop-color="#cccccc"></stop>
                                     </linearGradient>
-                                    <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke="#ffffff" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></polygon>
+                                    <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></polygon>
                                 </svg>
                             </span>
                         </div>
@@ -425,6 +425,7 @@
                     {% endfor %}
                 </div>
 
+                <!-- <p>/ 5</p> -->
                 <!-- <p class="reviews_amount">{{ num_reviews }}</p> -->
             </div>
         </div>
@@ -1153,128 +1154,151 @@
                 window.location.href = page_url // Redirects Page
             })
 
-            // Review Graph
+            // Reviews
 
-            const reviews_graph_columns = document.querySelectorAll(".reviews_info_container .graph .one_column")
-            
-            // Gets Total Amount Of Reviews
-            let total_reviews_amount = 0 // Saves Total Amount Of All Reviews
+            let run_again = true // Protection Against Multiple Execution Of If Statement
 
-            reviews_graph_columns.forEach(function(one_column) {
-                // HTML Tags
-                const counter = one_column.querySelector(".counter")
+            window.addEventListener("scroll", function() {
+                const reviews = document.querySelector(".reviews") // Gets Reviews From HTML
+                const reviews_dimensions = reviews.getBoundingClientRect() // Gets Reviews Dimensions
+                const navigation_bar = document.querySelector(".navigation_bar") // Gets Navigation Bar From HTML
 
-                total_reviews_amount += parseInt(counter.dataset.amount) // Adds Amount Of Reviews From Each Column To Total Amount
-            })
+                // Starts Only If User Scrolls To Reviews To See Them
+                if(reviews_dimensions.top - navigation_bar.offsetHeight <= 0 && run_again == true) {
+                    document.querySelector(".reviews_info_container .average_rating").style.animation = "fade_in_animation 0.5s ease 3s forwards" // Sets Animation In CSS And Makes Average Rating Appear
 
-            // Review Graph Animation
-            reviews_graph_columns.forEach(function(one_column) {
-                // HTML Tags
-                const bar = one_column.querySelector(".review_bar")
-                const counter = one_column.querySelector(".counter")
-
-                const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
-
-                // Animation's Settings
-                const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
-                const animation_duration = 3000 // 3 Seconds Animation
-                let start_time = null // Sets Start Time Default Value
-
-                // Function For Ease Out Animation Effect
-                function easeOutEffect(t) {
-                    return 1 - Math.pow(1 - t, 3)
-                }
-
-                // Function For Animation
-                function reviewGraphAnimation(time) {
-                    if(!start_time) start_time = time
-
-                    const elapsed_time = time - start_time // Animation Elapsed Time
-                    const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
-                    const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
-
-                    // Each Progress Bar Rendering
-                    // Sets Values To Graph In Each Frame Of The Animation
-                    bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
-
-                    // Each Review Counter Rendering
-                    counter.textContent = parseInt(eased * counter.dataset.amount) // Sets Each Column's Reviews Amount To Its Counter
-
-                    // Calls The Animation Until Its Duration Ends
-                    if(progress < 1) {
-                        requestAnimationFrame(reviewGraphAnimation)
-                    }
-                }
-
-                requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
-            })
-
-            // Average Rating
-
-            // Average Rating Animation
-            const average_rating_number_tag = document.querySelector(".reviews_info_container .average_rating .average_rating_number") // Gets Average Rating Number HTML Tag
-
-            // Animation's Settings
-            const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
-            const animation_duration = 3000 // 3 Seconds Animation
-            let start_time = 3000 // Sets Start Time Default Value / Delay For Animation Start
-
-            // Function For Ease Out Animation Effect
-            function easeOutEffect(t) {
-                return 1 - Math.pow(1 - t, 3)
-            }
-
-            // Function For Animation
-            function reviewGraphAnimation(time) {
-                if(!start_time) start_time = time
-
-                const elapsed_time = time - start_time // Animation Elapsed Time
-                const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
-                const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
-
-                average_rating_number_tag.innerHTML = "0<span>00</span>" // Renders Start Values To HTML
-
-                // Starts The Animation After Delay Set In Start Time Expires
-                if(progress >= 0) {
-                    // Average Rating Number Rendering
-                    const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
-                    // Splits Array
-                    average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
-
-                    // Stars Rendering
-                    const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
-                    const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
-
-                    let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
-
-                    average_rating_stars.forEach(function(one_star, index) {
-                        let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
-
-                        // Fills Full Stars
-                        if(index + 1 <= parseInt(average_rating_number)) {
-                            filled_part.setAttribute("offset", "100%")
-
-                            // Saves Rest From Average Rating
-                            rest_from_average_rating_number = average_rating_number
-                            rest_from_average_rating_number -= index + 1
-                        }
-
-                        // Fills Rest From Average Rating
-                        else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                            filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
-
-                            rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
-                        }
+                    // Sets Animation In CSS For Each Review And Makes Them Appear
+                    const all_reviews = document.querySelectorAll(".reviews .all_reviews .one_review")
+                    all_reviews.forEach(function(one_review) {
+                        one_review.style.animation = "fade_in_animation 1s ease-out forwards"
                     })
-                }
-                
-                // Calls The Animation Until Its Duration Ends
-                if(progress < 1) {
-                    requestAnimationFrame(reviewGraphAnimation)
-                }
-            }
 
-            requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
+                    // Review Graph
+
+                    const reviews_graph_columns = document.querySelectorAll(".reviews_info_container .graph .one_column")
+                    
+                    // Gets Total Amount Of Reviews
+                    let total_reviews_amount = 0 // Saves Total Amount Of All Reviews
+
+                    reviews_graph_columns.forEach(function(one_column) {
+                        // HTML Tags
+                        const counter = one_column.querySelector(".counter")
+
+                        total_reviews_amount += parseInt(counter.dataset.amount) // Adds Amount Of Reviews From Each Column To Total Amount
+                    })
+
+                    // Review Graph Animation
+                    reviews_graph_columns.forEach(function(one_column) {
+                        // HTML Tags
+                        const bar = one_column.querySelector(".review_bar")
+                        const counter = one_column.querySelector(".counter")
+
+                        const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
+
+                        // Animation's Settings
+                        const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
+                        const animation_duration = 3000 // 3 Seconds Animation
+                        let start_time = null // Sets Start Time Default Value
+
+                        // Function For Ease Out Animation Effect
+                        function easeOutEffect(t) {
+                            return 1 - Math.pow(1 - t, 3)
+                        }
+
+                        // Function For Animation
+                        function reviewGraphAnimation(time) {
+                            if(!start_time) start_time = time
+
+                            const elapsed_time = time - start_time // Animation Elapsed Time
+                            const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
+                            const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+
+                            // Each Progress Bar Rendering
+                            // Sets Values To Graph In Each Frame Of The Animation
+                            bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
+
+                            // Each Review Counter Rendering
+                            counter.textContent = parseInt(eased * counter.dataset.amount) // Sets Each Column's Reviews Amount To Its Counter
+
+                            // Calls The Animation Until Its Duration Ends
+                            if(progress < 1) {
+                                requestAnimationFrame(reviewGraphAnimation)
+                            }
+                        }
+
+                        requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
+                    })
+
+                    // Average Rating
+
+                    // Average Rating Animation
+                    const average_rating_number_tag = document.querySelector(".reviews_info_container .average_rating .average_rating_number") // Gets Average Rating Number HTML Tag
+
+                    // Animation's Settings
+                    const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
+                    const animation_duration = 3000 // 3 Seconds Animation
+                    let start_time = null // Sets Start Time Default Value / Delay For Animation Start
+
+                    // Function For Ease Out Animation Effect
+                    function easeOutEffect(t) {
+                        return 1 - Math.pow(1 - t, 3)
+                    }
+
+                    // Function For Animation
+                    function reviewGraphAnimation(time) {
+                        if(!start_time) start_time = time + 3000
+
+                        const elapsed_time = time - start_time // Animation Elapsed Time
+                        const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
+                        const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+
+                        // average_rating_number_tag.innerHTML = "0<span>00</span>" // Renders Start Values To HTML
+
+                        // Starts The Animation After Delay Set In Start Time Expires
+                        if(progress >= 0) {
+                            // Average Rating Number Rendering
+                            const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
+                            // Splits Array
+                            average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
+
+                            // Stars Rendering
+                            const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
+                            const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
+
+                            let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+
+                            average_rating_stars.forEach(function(one_star, index) {
+                                let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+
+                                // Fills Full Stars
+                                if(index + 1 <= parseInt(average_rating_number)) {
+                                    filled_part.setAttribute("offset", "100%")
+
+                                    // Saves Rest From Average Rating
+                                    rest_from_average_rating_number = average_rating_number
+                                    rest_from_average_rating_number -= index + 1
+                                }
+
+                                // Fills Rest From Average Rating
+                                else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
+                                    filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+
+                                    rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
+                                }
+                            })
+                        }
+                        
+                        // Calls The Animation Until Its Duration Ends
+                        if(progress < 1) {
+                            requestAnimationFrame(reviewGraphAnimation)
+                        }
+                    }
+
+                    requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
+
+                    run_again = false // Ends If Statement
+                }
+            })
 
             // Custom Select Menu - Contact Form
 
