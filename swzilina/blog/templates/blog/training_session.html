@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Street Workout Žilina - Tréning{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/css/training_session.css' %}">
+{% endblock style %}
+
+{% block heading %}Tréning{% endblock heading %}
+
+{% block content %}
+    <div class="activity_record">
+        <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
+
+        <div class="buttons">
+            <a class="playback"><i class="fa-solid fa-play"></i></a> <!-- https://fontawesome.com/icons/play -->
+            {% comment %} <a href="#"><i class="fa-solid fa-stop"></i></a> <!-- https://fontawesome.com/icons/stop --> {% endcomment %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script defer>
+        "use strict"
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const playback = document.querySelector(".playback")
+            const timer = document.querySelector(".timer")
+
+            let elapsed_time = 0 // Elapsed Time In Seconds (Default 0)
+            let timer_interval = null
+            
+            playback.addEventListener("click", function() {
+                const icon = playback.querySelector("i")
+
+                if(icon.classList.contains("fa-play")) {
+                    // Changes Icons
+                    icon.classList.remove("fa-play")
+                    icon.classList.add("fa-stop")
+
+                    // Starts Timer With 1 Second Interval
+                    timer_interval = setInterval(function() {
+                        elapsed_time += 1 // Every Second Increases Elapsed Time By 1
+
+                        // Seconds
+                        if(elapsed_time % 60 < 10) {
+                            timer.querySelector(".seconds").textContent = `0${elapsed_time % 60}`
+                        }
+
+                        else if(elapsed_time % 60 >= 10 && elapsed_time % 60 < 60) {
+                            timer.querySelector(".seconds").textContent = elapsed_time % 60
+                        }
+
+                        // Minutes
+                        if((Math.floor(elapsed_time / 60)) % 60 < 10) {
+                            timer.querySelector(".minutes").textContent = `0${(Math.floor(elapsed_time / 60)) % 60}`
+                        }
+
+                        else if((Math.floor(elapsed_time / 60)) % 60 >= 10 && (Math.floor(elapsed_time / 60)) % 60 < 60) {
+                            timer.querySelector(".minutes").textContent = (Math.floor(elapsed_time / 60)) % 60
+                        }
+
+                        // Hours
+                        if((Math.floor(elapsed_time / 3600)) % 60 < 10) {
+                            timer.querySelector(".hours").textContent = `0${(Math.floor(elapsed_time / 3600)) % 60}`
+                        }
+
+                        else if((Math.floor(elapsed_time / 3600)) % 60 >= 10 && (Math.floor(elapsed_time / 3600)) % 60 < 60) {
+                            timer.querySelector(".hours").textContent = (Math.floor(elapsed_time / 3600)) % 60
+                        }
+
+                        console.log(elapsed_time)
+                    }, 1000)
+                }
+
+                else if(icon.classList.contains("fa-stop")) {
+                    // Changes Icons
+                    icon.classList.remove("fa-stop")
+                    icon.classList.add("fa-play")
+
+                    // Stops Timer
+                    clearInterval(timer_interval)
+                    timer_interval = null
+                }
+            })
+        })
+    </script>
+{% endblock script %}

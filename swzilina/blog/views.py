@@ -1038,3 +1038,6 @@ def reportComment(request, comment_id):
             pass
 
     return HttpResponse("Nahlásenie bolo odoslané.")
+
+def trainingSessionView(request):
+    return render(request, "blog/training_session.html")
