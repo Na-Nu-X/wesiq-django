@@ -1145,9 +1145,19 @@
   gap: 20px;
 }
 .content .reviews .reviews_info_container .graph .one_column .rating {
-  width: 2em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   text-align: center;
+  gap: 5px;
+  width: 40px;
   color: #cccccc;
+}
+.content .reviews .reviews_info_container .graph .one_column .rating span {
+  width: 10px;
+}
+.content .reviews .reviews_info_container .graph .one_column .rating .fa-star {
+  color: #ebb914;
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip {
   max-width: 500px;
@@ -1189,11 +1199,13 @@
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar {
   --progress: 0%;
+  --animation: none;
   position: relative;
   width: 100%;
   height: 6px;
   background-color: #cccccc;
   border-radius: 3px;
+  transition: background-color 0.3s ease;
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar::before {
   content: "";
@@ -1202,12 +1214,13 @@
   left: 0px;
   width: var(--progress);
   height: 100%;
-  background-color: #ebb914;
   box-shadow: 0px 0px 5px rgba(235, 185, 20, 0.6);
   border-radius: inherit;
   transition: box-shadow 0.3s ease;
+  animation: var(--animation);
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar:hover {
+  background-color: rgb(229.5, 229.5, 229.5);
   cursor: pointer;
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar:hover::before {
@@ -1861,6 +1874,14 @@
   }
   100% {
     --angle: 360deg;
+  }
+}
+@keyframes review_bar_color_animation {
+  0% {
+    background-color: red;
+  }
+  100% {
+    background-color: #ebb914;
   }
 }
 /**************
