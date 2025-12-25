@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from blog.models import Users, Reviews, Articles, ArticleForum
+from blog.models import Users, Reviews, Articles, ArticleForum, Activity
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -17,6 +17,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 import math
 from django.http import JsonResponse
+from django.db.models import Max
 
 # Functions
 def captureError(message):
@@ -1041,22 +1042,40 @@ def reportComment(request, comment_id):
     return HttpResponse("Nahlásenie bolo odoslané.")
 
 def trainingSessionView(request):
-    if request.method == "POST":
-        try:
-            # Gets Logged In User
-            if "logged_in_user_id" in request.session:
-                logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
+    # Gets Logged In User
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+        activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
+        latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
+        longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+        
+        if request.method == "POST":
+            try:
                 gained_xp = request.POST.get("gained_xp") # Gets Gained XP From POST Data
 
                 # Increments Gained XP For The User In The Database
-                logged_in_user.xp += int(gained_xp)
+                # logged_in_user.xp += int(gained_xp)
                 # logged_in_user.save()
+
+                # Saves New Activity To Database
+                new_activity = Activity(
+                    user_id = logged_in_user_id,
+                    formatted_elapsed_time = request.POST.get("formatted_elapsed_time"),
+                    elapsed_time = int(request.POST.get("elapsed_time")),
+                    gained_xp = int(gained_xp),
+                )
+                # new_activity.save()
 
                 return JsonResponse({"success": "XP boli pridané."})
 
-        except:
-            pass
+            except:
+                pass
+
+        return render(request, "blog/training_session.html", {
+            "latest_activity": latest_activity,
+            "longest_activity": longest_activity,
+        })
 
     return render(request, "blog/training_session.html")
