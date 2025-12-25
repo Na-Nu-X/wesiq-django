@@ -10,14 +10,23 @@
 {% block heading %}Tréning{% endblock heading %}
 
 {% block content %}
-    <div class="activity_record">
-        <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
+    <div class="activity">
+        <div class="record_activity">
+            <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
 
-        <div class="buttons">
-            <a class="playback"><i class="fa-solid fa-play"></i></a> <!-- https://fontawesome.com/icons/play -->
-            {% comment %} <a href="#"><i class="fa-solid fa-stop"></i></a> <!-- https://fontawesome.com/icons/stop --> {% endcomment %}
+            <div class="buttons">
+                <a class="play"><i class="fa-solid fa-play"></i></a> <!-- https://fontawesome.com/icons/play -->
+                {% comment %} <a class="play"><i class="fa-solid fa-pause"></i></a> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
+                <a class="stop"><i class="fa-solid fa-stop"></i></a> <!-- https://fontawesome.com/icons/stop -->
+            </div>
+        </div>
+
+        <div class="activity_info">
+            <p>Posledná aktivita: <span>01:34:13</span> | <span>+273XP</span> | <span>25.12.2025</span></p>
+            <p>Najdlhšia aktivita: <span>02:42:00</span> | <span>+421XP</span> | <span>13.10.2025</span></p>
         </div>
     </div>
+    
 {% endblock content %}
 
 {% block script %}
@@ -25,19 +34,25 @@
         "use strict"
 
         document.addEventListener("DOMContentLoaded", function() {
-            const playback = document.querySelector(".playback")
+            const play = document.querySelector(".play")
+            const stop = document.querySelector(".stop")
+
+            const play_icon = play.querySelector("i")
+
             const timer = document.querySelector(".timer")
+            const seconds = timer.querySelector(".seconds")
+            const minutes = timer.querySelector(".minutes")
+            const hours = timer.querySelector(".hours")
 
             let elapsed_time = 0 // Elapsed Time In Seconds (Default 0)
             let timer_interval = null
             
-            playback.addEventListener("click", function() {
-                const icon = playback.querySelector("i")
-
-                if(icon.classList.contains("fa-play")) {
+            // Play / Resume Buttons
+            play.addEventListener("click", function() {
+                if(play_icon.classList.contains("fa-play")) {
                     // Changes Icons
-                    icon.classList.remove("fa-play")
-                    icon.classList.add("fa-stop")
+                    play_icon.classList.remove("fa-play")
+                    play_icon.classList.add("fa-pause")
 
                     // Starts Timer With 1 Second Interval
                     timer_interval = setInterval(function() {
@@ -45,43 +60,70 @@
 
                         // Seconds
                         if(elapsed_time % 60 < 10) {
-                            timer.querySelector(".seconds").textContent = `0${elapsed_time % 60}`
+                            seconds.textContent = `0${elapsed_time % 60}`
                         }
 
                         else if(elapsed_time % 60 >= 10 && elapsed_time % 60 < 60) {
-                            timer.querySelector(".seconds").textContent = elapsed_time % 60
+                            seconds.textContent = elapsed_time % 60
                         }
 
                         // Minutes
                         if((Math.floor(elapsed_time / 60)) % 60 < 10) {
-                            timer.querySelector(".minutes").textContent = `0${(Math.floor(elapsed_time / 60)) % 60}`
+                            minutes.textContent = `0${(Math.floor(elapsed_time / 60)) % 60}`
                         }
 
                         else if((Math.floor(elapsed_time / 60)) % 60 >= 10 && (Math.floor(elapsed_time / 60)) % 60 < 60) {
-                            timer.querySelector(".minutes").textContent = (Math.floor(elapsed_time / 60)) % 60
+                            minutes.textContent = (Math.floor(elapsed_time / 60)) % 60
                         }
 
                         // Hours
                         if((Math.floor(elapsed_time / 3600)) % 60 < 10) {
-                            timer.querySelector(".hours").textContent = `0${(Math.floor(elapsed_time / 3600)) % 60}`
+                            hours.textContent = `0${(Math.floor(elapsed_time / 3600)) % 60}`
                         }
 
                         else if((Math.floor(elapsed_time / 3600)) % 60 >= 10 && (Math.floor(elapsed_time / 3600)) % 60 < 60) {
-                            timer.querySelector(".hours").textContent = (Math.floor(elapsed_time / 3600)) % 60
+                            hours.textContent = (Math.floor(elapsed_time / 3600)) % 60
                         }
-
-                        console.log(elapsed_time)
-                    }, 1000)
+                    }, 1)
                 }
 
-                else if(icon.classList.contains("fa-stop")) {
+                else if(play_icon.classList.contains("fa-pause")) {
                     // Changes Icons
-                    icon.classList.remove("fa-stop")
-                    icon.classList.add("fa-play")
+                    play_icon.classList.remove("fa-pause")
+                    play_icon.classList.add("fa-play")
 
                     // Stops Timer
                     clearInterval(timer_interval)
                     timer_interval = null
+                }
+            })
+
+            // Stop Button
+            stop.addEventListener("click", function() {
+                // Only Executed If A Timer Has Been Started
+                if(elapsed_time >= 1) {
+                    // Stops Timer
+                    clearInterval(timer_interval)
+                    timer_interval = null
+
+                    // Set Timer's Default Values
+                    seconds.textContent = "00"
+                    minutes.textContent = "00"
+                    hours.textContent = "00"
+
+                    // Set Play Icon If Is Set As Pause
+                    if(play_icon.classList.contains("fa-pause")) {
+                        play_icon.classList.remove("fa-pause")
+                        play_icon.classList.add("fa-play")
+                    }
+
+                    // Calculates Gained XP
+                    const xp_boost = 1.0 // 1 Times Boosted Amount Of XP By Default
+                    const gained_xp = Math.round(((elapsed_time / 3600) * 100) * xp_boost) // 1 Hour Of Activity Is +100XP By Default
+                    console.log(elapsed_time)
+                    console.log(gained_xp)
+
+                    elapsed_time = 0 // Set Elapsed Time To Default Value
                 }
             })
         })
