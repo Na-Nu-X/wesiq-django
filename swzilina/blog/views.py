@@ -16,6 +16,7 @@ import random, requests, os, secrets
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 import math
+from django.http import JsonResponse
 
 # Functions
 def captureError(message):
@@ -1040,4 +1041,22 @@ def reportComment(request, comment_id):
     return HttpResponse("Nahlásenie bolo odoslané.")
 
 def trainingSessionView(request):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
+                gained_xp = request.POST.get("gained_xp") # Gets Gained XP From POST Data
+
+                # Increments Gained XP For The User In The Database
+                logged_in_user.xp += int(gained_xp)
+                # logged_in_user.save()
+
+                return JsonResponse({"success": "XP boli pridané."})
+
+        except:
+            pass
+
     return render(request, "blog/training_session.html")
