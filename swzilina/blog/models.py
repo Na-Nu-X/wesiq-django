@@ -27,6 +27,20 @@ class Users(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
+    
+class Activity(models.Model):
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID", 
+        on_delete=models.DO_NOTHING, 
+        related_name="activities", 
+        null=True,
+    )
+
+    end_time = models.DateTimeField(verbose_name="End Time", auto_now_add=True, null=False)
+    formatted_elapsed_time = models.CharField(verbose_name="Formatted Elapsed Time", max_length=11, default="00h 00m 01s", null=False)
+    elapsed_time = models.IntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
+    gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
 
 class Reviews(models.Model):
     user = models.ForeignKey(

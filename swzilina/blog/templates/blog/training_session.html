@@ -11,8 +11,6 @@
 
 {% block content %}
     <div class="activity">
-        <p class="activity_report"></p>
-
         <div class="record_activity">
             <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
 
@@ -26,9 +24,11 @@
         <p class="activity_info"></p>
 
         <div class="previous_activity">
-            <p>Posledná aktivita: <span>01:34:13</span> | <span>+273XP</span> | <span>25.12.2025</span></p>
-            <p>Najdlhšia aktivita: <span>02:42:00</span> | <span>+421XP</span> | <span>13.10.2025</span></p>
+            <p>Posledná aktivita: <span>{{ latest_activity.formatted_elapsed_time }}</span><span>{{ latest_activity.gained_xp }}XP</span><span>{{ latest_activity.end_time|date:"d.m. Y" }}</span></p>
+            <p>Najdlhšia aktivita: <span>{{ longest_activity.formatted_elapsed_time }}</span><span>{{ longest_activity.gained_xp }}XP</span><span>{{ longest_activity.end_time|date:"d.m. Y" }}</span></p>
         </div>
+
+        <p class="activity_report"></p>
     </div>
     
 {% endblock content %}
@@ -70,6 +70,16 @@
             let xp_boost = 1 // 1 Times Boosted Amount Of XP By Default
             let xp_boost_remaining_time = 600 // 10 Minutes
 
+            if(xp_boost_remaining_time <= 0) {
+                xp_boost = 1
+                activity_info.textContent = "Žiadne aktívne navýšenia XP"
+            }
+
+            else {
+                xp_boost = 2 // Change
+                activity_info.textContent = `${xp_boost}x XP`
+            }
+
             // Activity Report
             const activity_report = document.querySelector(".activity .activity_report")
 
@@ -95,18 +105,12 @@
 
                         if(xp_boost_remaining_time <= 0) {
                             xp_boost = 1
+                            activity_info.textContent = "Žiadne aktívne navýšenia XP"
                         }
 
                         else {
-                            xp_boost = 2
-                        }
-
-                        if(xp_boost == 1) {
-                            activity_info.textContent = "Žiadne aktívne navýšenia XP."
-                        }
-
-                        else {
-                            activity_info.textContent = `Súčasné navýšenie ${xp_boost}x XP.`
+                            xp_boost = 2 // Change
+                            activity_info.textContent = `${xp_boost}x XP`
                         }
 
                         // Calculates Every Unit For Timer
@@ -157,15 +161,20 @@
 
                     // Renders Completed Activity Informations
                     if(gained_xp == 0) {
-                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Nezískali ste žiadne XP.`
+                        // activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Nezískali ste žiadne XP.`
+                        activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>${gained_xp} XP`
+                        activity_report.style.animation = "fade_out_animation 5s ease"
                     }
                     
                     else {
-                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Získali ste <span>${gained_xp}XP</span>!`
+                        // activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Získali ste <span>${gained_xp}XP</span>!`
+                        activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br><span>${gained_xp}XP</span>`
                     }
 
-                    // Sends Gained XP As A POST Data
+                    // Sends POST Data
                     const post_data = new FormData()
+                    post_data.append("formatted_elapsed_time", `${timer_hours}h ${timer_minutes}m ${timer_seconds}s`)
+                    post_data.append("elapsed_time", elapsed_time)
                     post_data.append("gained_xp", gained_xp)
 
                     fetch("/training-session", {
