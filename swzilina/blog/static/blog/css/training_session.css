@@ -17,6 +17,9 @@
   justify-content: center;
   gap: 20px;
 }
+.content .activity .activity_report {
+  text-align: center;
+}
 .content .activity .record_activity {
   display: flex;
   flex-direction: column;
@@ -66,6 +69,9 @@
   font-size: 30px;
   color: #fff;
 }
-.content .activity .activity_info p {
+.content .activity .record_activity .buttons a .fa-play {
+  left: calc(50% + 2.5px);
+}
+.content .activity .previous_activity p {
   text-align: center;
 }/*# sourceMappingURL=training_session.css.map */

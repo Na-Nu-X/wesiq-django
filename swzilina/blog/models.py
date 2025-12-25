@@ -23,6 +23,8 @@ class Users(models.Model):
     following = ArrayField(models.CharField(verbose_name="Following"), default=list, null=False)
     followers = ArrayField(models.CharField(verbose_name="Followers"), default=list, null=False)
 
+    xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
+
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
 
