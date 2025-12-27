@@ -359,7 +359,7 @@ main {
 
             &:hover,
             &:focus {
-                background-color: lighten($success-color, 5%);
+                background-color: lighten($success-color, 10%);
                 transform: scale(1.1);
                 letter-spacing: 1px;
                 cursor: pointer;

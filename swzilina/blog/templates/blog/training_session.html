@@ -21,6 +21,41 @@
             </div>
         </div>
 
+        <div class="training_plan">
+            <div class="current_exercise">
+                <h3>Front Lever Hold</h3>
+                <p>Until Failure</p>
+                <p>1 / 3</p>
+
+                <div class="skip_exercise">
+                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+            </div>
+
+            <div class="next_exercise">
+                <h3>Front Lever Pull Ups</h3>
+                <p>10x</p>
+                <p>1 / 3</p>
+
+                <div class="skip_exercise">
+                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+            </div>
+
+            <div class="progress_bar">
+                <div class="bar active"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+
         <p class="activity_info"></p>
 
         <div class="previous_activity">
@@ -133,7 +168,7 @@
                         timerFormat(timer_seconds, timer_seconds_tag) // Renders Current Seconds In Timer
                         timerFormat(timer_minutes, timer_minutes_tag) // Renders Current Minutes In Timer
                         timerFormat(timer_hours, timer_hours_tag) // Renders Current Hours In Timer
-                    }, 1)
+                    }, 1000)
                 }
 
                 else if(play_icon.classList.contains("fa-pause")) {
@@ -161,14 +196,13 @@
 
                     // Renders Completed Activity Informations
                     if(gained_xp == 0) {
-                        // activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Nezískali ste žiadne XP.`
-                        activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>${gained_xp} XP`
-                        activity_report.style.animation = "fade_out_animation 5s ease"
+                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Nezískali ste žiadne XP.`
+                        // activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>${gained_xp} XP`
                     }
                     
                     else {
-                        // activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Získali ste <span>${gained_xp}XP</span>!`
-                        activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br><span>${gained_xp}XP</span>`
+                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Získali ste <span>${gained_xp}XP</span>!`
+                        // activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br><span>${gained_xp}XP</span>`
                     }
 
                     // Sends POST Data
