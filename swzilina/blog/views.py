@@ -76,7 +76,7 @@ def homepageView(request):
 
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
-        mail_message.send()
+        # mail_message.send()
 
         # Saves Password Reset Code To Database
         user.password_reset_code = code
@@ -407,7 +407,7 @@ def loginView(request):
 
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
-        mail_message.send()
+        # mail_message.send()
 
         # Saves Password Reset Code To Database
         user.password_reset_code = code
@@ -485,7 +485,7 @@ def passwordResetView(request):
 
             mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
             mail_message.attach_alternative(html_content, "text/html")
-            mail_message.send()
+            # mail_message.send()
 
             # Saves Password Reset Code To Database
             user.password_reset_code = code
@@ -690,7 +690,7 @@ def editAccountView(request):
 
             mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
             mail_message.attach_alternative(html_content, "text/html")
-            mail_message.send()
+            # mail_message.send()
 
             # Saves Password Reset Code To Database
             logged_in_user.password_reset_code = code
@@ -1068,7 +1068,11 @@ def trainingSessionView(request):
                 )
                 # new_activity.save()
 
+                # messages.add_message(request, messages.SUCCESS, f"Aktuálna aktivita trvala {request.POST.get("formatted_elapsed_time")}.<br>Získali ste {gained_xp}XP!")
+
                 return JsonResponse({"success": "XP boli pridané."})
+            
+                # return HttpResponseRedirect(reverse("training_session_url"))
 
             except:
                 pass
