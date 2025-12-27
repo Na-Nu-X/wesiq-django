@@ -22,37 +22,52 @@
         </div>
 
         <div class="training_plan">
-            <div class="current_exercise">
-                <h3>Front Lever Hold</h3>
-                <p>Until Failure</p>
-                <p>1 / 3</p>
+            {% for one_exercise in training_plan %}
+                <div 
+                    class="
+                        exercise
 
-                <div class="skip_exercise">
-                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                        {% if forloop.counter == 1 %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    <h3>{{ one_exercise.exercise }}</h3>
+
+                    <p>
+                        {% if one_exercise.reps == 0 %}
+                            Do zlyhania
+
+                        {% else %}
+                            {{ one_exercise.reps }}x
+                        
+                        {% endif %}
+                    </p>
+
+                    <p>1 / {{ one_exercise.sets }}</p>
+
+                    <div class="skip_exercise">
+                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                    </div>
                 </div>
-            </div>
 
-            <div class="next_exercise">
-                <h3>Front Lever Pull Ups</h3>
-                <p>10x</p>
-                <p>1 / 3</p>
-
-                <div class="skip_exercise">
-                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                </div>
-            </div>
+            {% endfor %}
 
             <div class="progress_bar">
-                <div class="bar active"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+                {% for one_exercise in training_plan %}
+                    <div 
+                        class="
+                            bar
+
+                            {% if forloop.counter == 1 %}
+                                active
+                            {% endif %}
+                        "
+                    >
+
+                    </div>
+
+                {% endfor %}
             </div>
         </div>
 
@@ -237,6 +252,48 @@
                     elapsed_time = 0 // Set Elapsed Time To Default Value
                     gained_xp = 0 // Set Gained XP To Default Value
                 }
+            })
+
+            // Training Plan
+
+            const training_plan = document.querySelector(".training_plan")
+            const exercises = training_plan.querySelectorAll(".exercise")
+            const progress_bar = training_plan.querySelectorAll(".progress_bar .bar")
+
+            exercises.forEach(function(one_exercise, index) {
+                // Skip Exercise By Button
+                const skip_exercise = one_exercise.querySelector(".skip_exercise")
+
+                skip_exercise.addEventListener("click", function(one_button) {
+                    if(index + 1 > exercises.length - 1) return // Do Nothing, If There Isn't Any Next Exercise
+
+                    // Adds Active Class To Exercise
+                    exercises[index].classList.remove("active")
+                    exercises[index + 1].classList.add("active")
+
+                    // Adds Active Class To Progress Bar
+                    progress_bar[index].classList.remove("active")
+                    progress_bar[index + 1].classList.add("active")
+                })
+            })
+
+            progress_bar.forEach(function(one_bar, index) {
+                // Select Exercise By Progress Bar
+                one_bar.addEventListener("click", function() {
+                    // Adds Active Class To Exercise
+                    [...exercises].filter(function(one_exercise) {
+                        one_exercise.classList.remove("active")
+                    })
+
+                    exercises[index].classList.add("active")
+
+                    // Adds Active Class To Progress Bar
+                    progress_bar.forEach(function(one_bar) {
+                        one_bar.classList.remove("active")
+                    })
+
+                    one_bar.classList.add("active")
+                })
             })
         })
     </script>
