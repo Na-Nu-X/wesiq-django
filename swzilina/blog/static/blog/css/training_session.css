@@ -87,8 +87,9 @@
   position: relative;
   max-width: 500px;
   width: 100%;
+  overflow: hidden;
 }
-.content .activity .training_plan .current_exercise, .content .activity .training_plan .next_exercise {
+.content .activity .training_plan .exercise {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -101,15 +102,37 @@
   border: 2px solid #fff;
   border-radius: 5px;
 }
-.content .activity .training_plan .current_exercise h3, .content .activity .training_plan .next_exercise h3 {
+.content .activity .training_plan .exercise:not(.active) {
+  position: absolute;
+  top: 0px;
+  visibility: hidden;
+  opacity: 0;
+}
+.content .activity .training_plan .exercise:not(.active) h3 {
+  transform: translateY(-100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.content .activity .training_plan .exercise:not(.active) p {
+  transform: translateY(-100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.content .activity .training_plan .exercise h3 {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
+  visibility: visible;
+  opacity: 1;
+  transition: transform 0.3s ease, visibility 0.3s ease, opacity 0.3s ease;
 }
-.content .activity .training_plan .current_exercise p, .content .activity .training_plan .next_exercise p {
+.content .activity .training_plan .exercise p {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 1.2em;
+  visibility: visible;
+  opacity: 1;
+  transition: transform 0.3s ease, visibility 0.3s ease, opacity 0.3s ease;
 }
-.content .activity .training_plan .current_exercise .skip_exercise, .content .activity .training_plan .next_exercise .skip_exercise {
+.content .activity .training_plan .exercise .skip_exercise {
   position: relative;
   width: 50px;
   height: 50px;
@@ -119,12 +142,12 @@
   border-radius: 50%;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.content .activity .training_plan .current_exercise .skip_exercise:hover, .content .activity .training_plan .next_exercise .skip_exercise:hover {
+.content .activity .training_plan .exercise .skip_exercise:hover {
   transform: scale(1.05);
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
   cursor: pointer;
 }
-.content .activity .training_plan .current_exercise .skip_exercise .fa-angle-right, .content .activity .training_plan .next_exercise .skip_exercise .fa-angle-right {
+.content .activity .training_plan .exercise .skip_exercise .fa-angle-right {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -132,22 +155,14 @@
   font-size: 30px;
   color: #fff;
 }
-.content .activity .training_plan .next_exercise {
-  display: none;
-  position: absolute;
-  top: 0px;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-}
 .content .activity .training_plan .progress_bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 20px;
+  margin: 0px 10px 20px;
 }
 .content .activity .training_plan .progress_bar .bar {
-  max-width: 100px;
   width: 100%;
   height: 10px;
   border: 1px solid #fff;
@@ -155,7 +170,7 @@
   transition: transform 0.3s ease;
 }
 .content .activity .training_plan .progress_bar .bar:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   cursor: pointer;
 }
 .content .activity .training_plan .progress_bar .bar.active {

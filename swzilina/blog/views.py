@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from blog.models import Users, Reviews, Articles, ArticleForum, Activity
+from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1050,6 +1050,8 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+
+        training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets Logged In User's Training Plan
         
         if request.method == "POST":
             try:
@@ -1080,6 +1082,7 @@ def trainingSessionView(request):
         return render(request, "blog/training_session.html", {
             "latest_activity": latest_activity,
             "longest_activity": longest_activity,
+            "training_plan": training_plan,
         })
 
     return render(request, "blog/training_session.html")

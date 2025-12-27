@@ -112,3 +112,16 @@ class ArticleForum(models.Model):
     status = models.CharField(verbose_name="Status", choices=status_choices, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
     reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users"), default=list, null=False)
+
+class TrainingPlan(models.Model):
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID",
+        on_delete=models.DO_NOTHING, 
+        related_name="training_plans", 
+        null=True,
+    )
+
+    exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
+    sets = models.IntegerField(verbose_name="Sets", default=1, null=False)
+    reps = models.IntegerField(verbose_name="Reps", default=1, null=False)
