@@ -15,6 +15,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 500px;
+  margin: 0px auto;
 }
 .content .activity .record_activity {
   display: flex;
@@ -24,7 +26,7 @@
   margin-bottom: 20px;
 }
 .content .activity .record_activity .timer {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-family: "Orbitron", sans-serif;
   font-size: 2.5em;
 }
@@ -48,11 +50,23 @@
 }
 .content .activity .record_activity .buttons a {
   position: relative;
-  width: 150px;
+  width: 240px;
   height: 50px;
   border: 1px solid #fff;
-  border-radius: 25px;
-  transition: transform 0.3s ease;
+  border-radius: 5px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.content .activity .record_activity .buttons a:nth-child(1) {
+  background-color: #52cf20;
+}
+.content .activity .record_activity .buttons a:nth-child(1):hover, .content .activity .record_activity .buttons a:nth-child(1):focus {
+  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+}
+.content .activity .record_activity .buttons a:nth-child(2) {
+  background-color: #df3535;
+}
+.content .activity .record_activity .buttons a:nth-child(2):hover, .content .activity .record_activity .buttons a:nth-child(2):focus {
+  background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
 }
 .content .activity .record_activity .buttons a:hover, .content .activity .record_activity .buttons a:focus {
   transform: scale(1.05);
@@ -68,6 +82,84 @@
 }
 .content .activity .record_activity .buttons a .fa-play {
   left: calc(50% + 2.5px);
+}
+.content .activity .training_plan {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+}
+.content .activity .training_plan .current_exercise, .content .activity .training_plan .next_exercise {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #fff;
+  border-radius: 5px;
+}
+.content .activity .training_plan .current_exercise h3, .content .activity .training_plan .next_exercise h3 {
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 2em;
+}
+.content .activity .training_plan .current_exercise p, .content .activity .training_plan .next_exercise p {
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 1.2em;
+}
+.content .activity .training_plan .current_exercise .skip_exercise, .content .activity .training_plan .next_exercise .skip_exercise {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin-top: 20px;
+  background-color: #52cf20;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.content .activity .training_plan .current_exercise .skip_exercise:hover, .content .activity .training_plan .next_exercise .skip_exercise:hover {
+  transform: scale(1.05);
+  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  cursor: pointer;
+}
+.content .activity .training_plan .current_exercise .skip_exercise .fa-angle-right, .content .activity .training_plan .next_exercise .skip_exercise .fa-angle-right {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  color: #fff;
+}
+.content .activity .training_plan .next_exercise {
+  display: none;
+  position: absolute;
+  top: 0px;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+.content .activity .training_plan .progress_bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.content .activity .training_plan .progress_bar .bar {
+  max-width: 100px;
+  width: 100%;
+  height: 10px;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+.content .activity .training_plan .progress_bar .bar:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+.content .activity .training_plan .progress_bar .bar.active {
+  background-color: #52cf20;
 }
 .content .activity .activity_info {
   margin-bottom: 20px;
