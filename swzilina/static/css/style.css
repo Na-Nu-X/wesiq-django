@@ -96,15 +96,6 @@
 /**************
  Header Styles
 **************/
-header {
-  min-height: 100vh;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)), url("../images/background.png");
-  color: #fff;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
 header .navigation_bar {
   position: fixed;
   width: 100%;
@@ -142,28 +133,6 @@ header .navigation_bar ul .navigation_icon .fa-bars, header .navigation_bar ul .
 header .navigation_bar ul .navigation_icon .fa-bars:hover, header .navigation_bar ul .navigation_icon .fa-xmark:hover {
   transform: scale(1.1);
   cursor: pointer;
-}
-header .header_container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-header .header_container h1 {
-  text-align: center;
-}
-header .header_container h1 a {
-  text-decoration: none;
-  text-shadow: 0px 0px 5px #000;
-  color: #fff;
-  animation: fade_in_animation 2s ease-out;
-  transition: letter-spacing 0.3s ease;
-  font-family: "Bungee", sans-serif;
-  font-size: 4em;
-}
-header .header_container h1 a:hover, header .header_container h1 a:active {
-  letter-spacing: 0.5px;
 }
 header .move_down {
   position: absolute;
@@ -218,7 +187,8 @@ header .move_down img {
 }
 
 main {
-  padding: 50px 0px;
+  min-height: 100vh;
+  align-content: center;
   background: radial-gradient(circle, rgb(25.5, 25.5, 25.5) 0%, #000 100%);
   color: #fff;
 }
@@ -288,6 +258,10 @@ main {
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
+}
+
+.content {
+  padding-top: 67px;
 }
 
 .content h2 {

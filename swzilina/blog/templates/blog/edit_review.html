@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'blog/css/edit_review.css' %}">
 {% endblock style %}
 
-{% block heading %}Moje&nbsp;hodnotenie{% endblock heading %}
+{% comment %} {% block heading %}Moje&nbsp;hodnotenie{% endblock heading %} {% endcomment %}
 
 {% block content %}
     {% if request.session.logged_in_user_id %}

@@ -13,7 +13,7 @@
     </li>
 {% endblock navigation_bar_items %}
 
-{% block heading %}Prihlásenie{% endblock heading %}
+{% comment %} {% block heading %}Prihlásenie{% endblock heading %} {% endcomment %}
 
 {% block content %}
     <form class="login_form" action="{% url 'login_url' %}" method="POST">

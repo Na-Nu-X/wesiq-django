@@ -39,7 +39,7 @@
     </li>
 {% endblock navigation_bar_items %}
 
-{% block heading %}Registrácia{% endblock heading %}
+{% comment %} {% block heading %}Registrácia{% endblock heading %} {% endcomment %}
 
 {% block content %}
     <form class="registration_form" action="{% url 'registration_url' %}" method="POST">

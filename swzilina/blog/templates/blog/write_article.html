@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'blog/css/write_article.css' %}">
 {% endblock style %}
 
-{% block heading %}Pridať článok{% endblock heading %}
+{% comment %} {% block heading %}Pridať článok{% endblock heading %} {% endcomment %}
 
 {% block content %}
     <form class="write_article_form" action="{% url 'write_article_url' %}" method="POST" enctype="multipart/form-data">

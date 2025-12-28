@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'blog/css/training_session.css' %}">
 {% endblock style %}
 
-{% block heading %}Tréning{% endblock heading %}
+{% comment %} {% block heading %}Tréning{% endblock heading %} {% endcomment %}
 
 {% block content %}
     <div class="activity">
@@ -22,14 +22,26 @@
         </div>
 
         <div class="training_plan">
+            <div class="start_training active">
+                <h3>Začať tréning</h3>
+
+                <p>Váš tréning podľa plánu na deň pondelok.</p>
+
+                <p>Pull</p>
+
+                <div class="start_training_button">
+                    <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
+                </div>
+            </div>
+
             {% for one_exercise in training_plan %}
                 <div 
                     class="
                         exercise
 
-                        {% if forloop.counter == 1 %}
+                        {% comment %} {% if forloop.counter == 1 %}
                             active
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                     "
                 >
                     <h3>{{ one_exercise.exercise }}</h3>
@@ -53,15 +65,27 @@
 
             {% endfor %}
 
+            <div class="finish_training">
+                <h3>Dokončiť tréning</h3>
+
+                <p>Váš tréning podľa plánu na deň pondelok.</p>
+
+                <p>Pull</p>
+
+                <div class="finish_training_button">
+                    <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
+                </div>
+            </div>
+
             <div class="progress_bar">
                 {% for one_exercise in training_plan %}
                     <div 
                         class="
                             bar
 
-                            {% if forloop.counter == 1 %}
+                            {% comment %} {% if forloop.counter == 1 %}
                                 active
-                            {% endif %}
+                            {% endif %} {% endcomment %}
                         "
                     >
 
@@ -134,9 +158,9 @@
             const activity_report = document.querySelector(".activity .activity_report")
 
             let timer_interval = null
-            
-            // Play / Resume Buttons
-            play.addEventListener("click", function() {
+
+            // Function For Start Timer
+            function startTimer() {
                 if(play_icon.classList.contains("fa-play")) {
                     // Changes Icons
                     play_icon.classList.remove("fa-play")
@@ -195,10 +219,10 @@
                     clearInterval(timer_interval)
                     timer_interval = null
                 }
-            })
+            }
 
-            // Stop Button
-            stop.addEventListener("click", function() {
+            // Function For Stop Timer
+            function stopTimer() {
                 // Only Executed If A Timer Has Been Started
                 if(elapsed_time >= 1) {
                     // Stops Timer
@@ -252,47 +276,99 @@
                     elapsed_time = 0 // Set Elapsed Time To Default Value
                     gained_xp = 0 // Set Gained XP To Default Value
                 }
+            }
+            
+            // Playback
+            const training_plan = document.querySelector(".training_plan")
+            const exercises = training_plan.querySelectorAll(".exercise")
+            const progress_bar = training_plan.querySelectorAll(".progress_bar .bar")
+            const start_training = document.querySelector(".start_training")
+
+            let first_play = true // Protection For Hiding Training Plan
+
+            // Play / Resume Buttons
+            play.addEventListener("click", function() {
+                startTimer()
+
+                // Hides Training Plan If User Start The Timer With Play Button
+                if(play_icon.classList.contains("fa-pause") && first_play === true) {
+                    training_plan.style.display = "none"
+                    first_play = false
+                }
+            })
+
+            // Stop Button
+            stop.addEventListener("click", function() {
+                stopTimer()
+
+                training_plan.style.display = "block"
+
+                // Removes Active Class From Exercises
+                exercises.forEach(function(one_exercise) {
+                    one_exercise.classList.remove("active")
+                })
+
+                // Removes Active Class From Progress Bar
+                progress_bar.forEach(function(one_bar) {
+                    one_bar.classList.remove("active")
+                })
+
+                // Shows Start Training Tab
+                finish_training.classList.remove("active")
+                start_training.classList.add("active")
+
+                first_play = true
             })
 
             // Training Plan
 
-            const training_plan = document.querySelector(".training_plan")
-            const exercises = training_plan.querySelectorAll(".exercise")
-            const progress_bar = training_plan.querySelectorAll(".progress_bar .bar")
+            // Start Training
+            const start_training_button = start_training.querySelector(".start_training_button")
 
+            start_training_button.addEventListener("click", function() {
+                startTimer()
+
+                // Shows First Exercise In Training Plan
+                start_training.classList.remove("active")
+                exercises[0].classList.add("active")
+                progress_bar[0].classList.add("active")
+
+                first_play = false
+            })
+
+            // Finish Training
+            const finish_training = document.querySelector(".finish_training")
+            const finish_training_button = finish_training.querySelector(".finish_training_button")
+
+            finish_training_button.addEventListener("click", function() {
+                stopTimer()
+
+                // Shows Start Training Tab
+                finish_training.classList.remove("active")
+                start_training.classList.add("active")
+            })
+
+            // Next Exercise
             exercises.forEach(function(one_exercise, index) {
                 // Skip Exercise By Button
                 const skip_exercise = one_exercise.querySelector(".skip_exercise")
 
                 skip_exercise.addEventListener("click", function(one_button) {
-                    if(index + 1 > exercises.length - 1) return // Do Nothing, If There Isn't Any Next Exercise
+                    // Shows Finish Training Tab, If There Isn't Any Next Exercise
+                    if(index + 1 == exercises.length) {
+                        exercises[index].classList.remove("active")
+                        progress_bar[index].classList.remove("active")
+                        finish_training.classList.add("active")
+                        return
+                    }
 
-                    // Adds Active Class To Exercise
+                    // Adds Active Class To Next Exercise
                     exercises[index].classList.remove("active")
                     exercises[index + 1].classList.add("active")
 
-                    // Adds Active Class To Progress Bar
+                    // Adds Active Class To Next Bar In Progress Bar
                     progress_bar[index].classList.remove("active")
                     progress_bar[index + 1].classList.add("active")
-                })
-            })
-
-            progress_bar.forEach(function(one_bar, index) {
-                // Select Exercise By Progress Bar
-                one_bar.addEventListener("click", function() {
-                    // Adds Active Class To Exercise
-                    [...exercises].filter(function(one_exercise) {
-                        one_exercise.classList.remove("active")
-                    })
-
-                    exercises[index].classList.add("active")
-
-                    // Adds Active Class To Progress Bar
-                    progress_bar.forEach(function(one_bar) {
-                        one_bar.classList.remove("active")
-                    })
-
-                    one_bar.classList.add("active")
                 })
             })
         })

@@ -12,9 +12,61 @@
     top: 125px + 5px;
 }
 
+/**************
+ Header Styles
+**************/
+
+header {
+    min-height: 100vh;
+    // background: linear-gradient(transparentize($main-color, 0.8), transparentize($main-color, 0.2)), url("../images/background.png"); // https://chatgpt.com/
+    background: linear-gradient(transparentize($main-color, 1), transparentize($main-color, 0.8)), url("../../images/background.png"); // https://chatgpt.com/
+    color: $secondary-color;
+
+    background: {
+        size: cover;
+        position: center;
+        repeat: no-repeat;
+        attachment: fixed;
+    }
+}
+
+.header_container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+        text-align: center;
+
+        a {
+            text-decoration: none;
+            text-shadow: 0px 0px 5px $main-color;
+            color: $secondary-color;
+            animation: fade_in_animation 2s ease-out;
+            transition: letter-spacing 0.3s ease;
+
+            font: {
+                family: $heading-font;
+                size: 4em;
+            }
+
+            &:hover,
+            &:active {
+                letter-spacing: 0.5px;
+            }
+        }
+    }
+}
+
 /************
  Main Styles
 ************/
+
+main {
+    padding: 50px 0px;
+}
 
 // Banner
 
@@ -1969,7 +2021,7 @@
                     &:hover,
                     &:focus {
                         background-color: lighten($success-color, 10%);
-                        transform: scale(1.1);
+                        transform: scale(1.05);
                         letter-spacing: 1px;
                         cursor: pointer;
                     }

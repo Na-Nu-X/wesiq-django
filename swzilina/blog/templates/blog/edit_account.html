@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'blog/css/edit_account.css' %}">
 {% endblock style %}
 
-{% block heading %}Môj&nbsp;účet{% endblock heading %}
+{% comment %} {% block heading %}Môj&nbsp;účet{% endblock heading %} {% endcomment %}
 
 {% block content %}
     {% if request.session.logged_in_user_id %}
