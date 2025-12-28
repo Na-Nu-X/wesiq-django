@@ -6,9 +6,49 @@
   top: 130px;
 }
 
+/**************
+ Header Styles
+**************/
+header {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)), url("../../images/background.png");
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.header_container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.header_container h1 {
+  text-align: center;
+}
+.header_container h1 a {
+  text-decoration: none;
+  text-shadow: 0px 0px 5px #000;
+  color: #fff;
+  animation: fade_in_animation 2s ease-out;
+  transition: letter-spacing 0.3s ease;
+  font-family: "Bungee", sans-serif;
+  font-size: 4em;
+}
+.header_container h1 a:hover, .header_container h1 a:active {
+  letter-spacing: 0.5px;
+}
+
 /************
  Main Styles
 ************/
+main {
+  padding: 50px 0px;
+}
+
 .banner {
   height: 125px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -1573,7 +1613,7 @@
 }
 .content .reviews .write_review_form_container .write_review_form input[type=submit]:hover, .content .reviews .write_review_form_container .write_review_form input[type=submit]:focus {
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
-  transform: scale(1.1);
+  transform: scale(1.05);
   letter-spacing: 1px;
   cursor: pointer;
 }

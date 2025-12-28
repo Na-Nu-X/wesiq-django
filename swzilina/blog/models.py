@@ -124,4 +124,4 @@ class TrainingPlan(models.Model):
 
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     sets = models.IntegerField(verbose_name="Sets", default=1, null=False)
-    reps = models.IntegerField(verbose_name="Reps", default=1, null=False)
+    reps = models.IntegerField(verbose_name="Reps", default=0, null=False) # 0 = To Failute / Max. Reps
