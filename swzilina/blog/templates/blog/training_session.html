@@ -56,7 +56,7 @@
                         {% endif %}
                     </p>
 
-                    <p>1 / {{ one_exercise.sets }}</p>
+                    <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p>
 
                     <div class="skip_exercise">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
@@ -297,6 +297,16 @@
                 }
             })
 
+            // Progress Bar Color
+            let all_sets = 0
+            
+            exercises.forEach(function(one_exercise) {
+                all_sets += (parseInt(one_exercise.querySelectorAll(".sets span")[1].textContent))
+            })
+
+            // let red = 255 - (255 / all_sets)
+            let red = 255
+
             // Stop Button
             stop.addEventListener("click", function() {
                 stopTimer()
@@ -309,8 +319,31 @@
                 })
 
                 // Removes Active Class From Progress Bar
-                progress_bar.forEach(function(one_bar) {
+                progress_bar.forEach(function(one_bar, index) {
                     one_bar.classList.remove("active")
+
+                    // Sets Progress To Default Values
+
+                    // Sets Current Set Default Value
+                    const sets = exercises[index].querySelectorAll(".sets span")
+                    sets[0].textContent = "1"
+
+                    // Sets Current Progress Default Value
+                    let current_set = parseInt(sets[0].textContent)
+                    const sets_amount = parseInt(sets[1].textContent)
+
+                    if(sets_amount >= 1 && current_set < sets_amount) {
+                        // Shows Progress
+                        let progress_percentage = current_set / sets_amount * 100
+                        one_bar.style.setProperty("--progress", `${progress_percentage}%`)
+
+                        // Updates Progress Bar Color
+                        red = 255
+
+                        progress_bar.forEach(function(one_bar) {
+                            one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
+                        })
+                    }
                 })
 
                 // Shows Start Training Tab
@@ -346,6 +379,34 @@
                 // Shows Start Training Tab
                 finish_training.classList.remove("active")
                 start_training.classList.add("active")
+
+                // Removes Active Class From Progress Bar
+                progress_bar.forEach(function(one_bar, index) {
+                    one_bar.classList.remove("active")
+
+                    // Sets Progress To Default Values
+
+                    // Sets Current Set Default Value
+                    const sets = exercises[index].querySelectorAll(".sets span")
+                    sets[0].textContent = "1"
+
+                    // Sets Current Progress Default Value
+                    let current_set = parseInt(sets[0].textContent)
+                    const sets_amount = parseInt(sets[1].textContent)
+
+                    if(sets_amount >= 1 && current_set < sets_amount) {
+                        // Shows Progress
+                        let progress_percentage = current_set / sets_amount * 100
+                        one_bar.style.setProperty("--progress", `${progress_percentage}%`)
+                        
+                        // Updates Progress Bar Color
+                        red = 255
+
+                        progress_bar.forEach(function(one_bar) {
+                            one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
+                        })
+                    }
+                })
             })
 
             // Next Exercise
@@ -353,22 +414,61 @@
                 // Skip Exercise By Button
                 const skip_exercise = one_exercise.querySelector(".skip_exercise")
 
+                // Shows Default Progress Percentage
+                progress_bar.forEach(function(one_bar, index) {
+                    // Current Set Value
+                    const sets = exercises[index].querySelectorAll(".sets span")
+                    let current_set = parseInt(sets[0].textContent)
+                    const sets_amount = parseInt(sets[1].textContent)
+
+                    if(sets_amount >= 1 && current_set < sets_amount) {
+                        // Shows Progress
+                        let progress_percentage = current_set / sets_amount * 100
+                        one_bar.style.setProperty("--progress", `${progress_percentage}%`)
+                    }
+                })
+
                 skip_exercise.addEventListener("click", function(one_button) {
-                    // Shows Finish Training Tab, If There Isn't Any Next Exercise
-                    if(index + 1 == exercises.length) {
-                        exercises[index].classList.remove("active")
-                        progress_bar[index].classList.remove("active")
-                        finish_training.classList.add("active")
-                        return
+                    // Updates Progress Bar Color
+                    red -= 255 / all_sets
+
+                    progress_bar.forEach(function(one_bar) {
+                        one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
+                    })
+
+                    // Current Set Value
+                    const sets = one_exercise.querySelectorAll(".sets span")
+                    let current_set = parseInt(sets[0].textContent)
+                    const sets_amount = parseInt(sets[1].textContent)
+
+                    if(sets_amount >= 1 && current_set < sets_amount) {
+                        // Increments Current Set Value
+                        current_set += 1
+                        sets[0].textContent = current_set
+
+                        // Shows Progress
+                        let progress_percentage = current_set / sets_amount * 100
+                        progress_bar[index].style.setProperty("--progress", `${progress_percentage}%`)
                     }
 
-                    // Adds Active Class To Next Exercise
-                    exercises[index].classList.remove("active")
-                    exercises[index + 1].classList.add("active")
+                    // Continues If All Sets Are Done
+                    else {
+                        // Shows Finish Training Tab, If There Isn't Any Next Exercise
+                        if(index + 1 == exercises.length) {
+                            exercises[index].classList.remove("active")
+                            // progress_bar[index].classList.remove("active")
+                            finish_training.classList.add("active")
+                            return
+                        }
 
-                    // Adds Active Class To Next Bar In Progress Bar
-                    progress_bar[index].classList.remove("active")
-                    progress_bar[index + 1].classList.add("active")
+                        // Adds Active Class To Next Exercise
+                        exercises[index].classList.remove("active")
+                        exercises[index + 1].classList.add("active")
+
+                        // Adds Active Class To Next Bar In Progress Bar
+                        // progress_bar[index].classList.remove("active") // To Hide Previous Progress In Progress Bar
+                        progress_bar[index + 1].classList.add("active")
+                    }
                 })
             })
         })

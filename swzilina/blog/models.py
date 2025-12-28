@@ -122,6 +122,18 @@ class TrainingPlan(models.Model):
         null=True,
     )
 
+    day_choices = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+        ("Sunday", "Sunday"),
+    ]
+
+    day = models.CharField(verbose_name="Day", choices=day_choices, null=False)
+    type = models.CharField(verbose_name="Type", max_length=50, null=False)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     sets = models.IntegerField(verbose_name="Sets", default=1, null=False)
     reps = models.IntegerField(verbose_name="Reps", default=0, null=False) # 0 = To Failute / Max. Reps
