@@ -304,7 +304,7 @@
                 all_sets += (parseInt(one_exercise.querySelectorAll(".sets span")[1].textContent))
             })
 
-            // let red = 255 - (255 / all_sets)
+            const min_red = 82
             let red = 255
 
             // Stop Button
@@ -430,11 +430,13 @@
 
                 skip_exercise.addEventListener("click", function(one_button) {
                     // Updates Progress Bar Color
-                    red -= 255 / all_sets
+                    if(red >= min_red) {
+                        red -= (255 - min_red) / (all_sets - 1) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
 
-                    progress_bar.forEach(function(one_bar) {
-                        one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
-                    })
+                        progress_bar.forEach(function(one_bar) {
+                            one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
+                        })
+                    }
 
                     // Current Set Value
                     const sets = one_exercise.querySelectorAll(".sets span")
