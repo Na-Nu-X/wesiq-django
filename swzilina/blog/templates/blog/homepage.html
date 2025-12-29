@@ -413,8 +413,8 @@
                             <span class="star">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
                                     <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
-                                        <stop offset="0" stop-color="rgba(235, 185, 20, 1)"></stop>
-                                        <stop offset="0%" stop-color="rgba(235, 185, 20, 1)"></stop>
+                                        <stop offset="0" stop-color="rgb(235, 185, 20)"></stop>
+                                        <stop offset="0%" stop-color="rgb(235, 185, 20)"></stop>
                                         <stop offset="0%" stop-color="#cccccc"></stop>
                                     </linearGradient>
                                     <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></polygon>
@@ -1185,13 +1185,13 @@
                         total_reviews_amount += parseInt(counter.dataset.amount) // Adds Amount Of Reviews From Each Column To Total Amount
                     })
 
+                    const max_green = 185 // Color With Maximum Of Green Is rgb(235, 185, 20)
+
                     // Review Graph Animation
                     reviews_graph_columns.forEach(function(one_column) {
                         // HTML Tags
                         const bar = one_column.querySelector(".review_bar")
                         const counter = one_column.querySelector(".counter")
-
-                        bar.style.setProperty("--animation", "review_bar_color_animation 0.5s ease forwards") // Sets Animation To Variable In CSS In Order To Start It When User Scrolls To Reviews
 
                         const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
 
@@ -1212,6 +1212,10 @@
                             const elapsed_time = time - start_time // Animation Elapsed Time
                             const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
                             const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+                            
+                            // Makes Color Transition For Progress Bars From rgb(235, 0, 20) To rgb(235, 185, 20)
+                            let bars_color = max_green * eased
+                            bar.style.setProperty("--color", `rgb(235, ${bars_color}, 20)`)
 
                             // Each Progress Bar Rendering
                             // Sets Values To Graph In Each Frame Of The Animation
@@ -1239,8 +1243,7 @@
                     const animation_duration = 3000 // 3 Seconds Animation
                     let start_time = null // Sets Start Time Default Value / Delay For Animation Start
 
-                    let green = 0 // Start Color Of Stars Is rgba(235, 0, 20, 1)
-                    const max_green = 185 // Color With Maximum Of Green Is rgba(235, 185, 20, 1)
+                    let green = 0 // Start Color Of Stars Is rgb(235, 0, 20)
 
                     // Function For Ease Out Animation Effect
                     function easeOutEffect(t) {
@@ -1277,8 +1280,8 @@
                                 let star_color_2 = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
 
                                 // Set Color Value To Stars
-                                star_color_1.setAttribute("stop-color", `rgba(235, ${green}, 20, 1)`)
-                                star_color_2.setAttribute("stop-color", `rgba(235, ${green}, 20, 1)`)
+                                star_color_1.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
+                                star_color_2.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
 
                                 green = (max_green / 5) * average_rating_number // Changes Color Of Stars By Average Rating (Lower Average Rating - Stars Are More To Red, Higher Average Rating - Stars Are More To Yellow)
 
