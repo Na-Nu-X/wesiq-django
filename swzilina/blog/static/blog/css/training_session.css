@@ -5,7 +5,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   max-width: 500px;
+  min-height: calc(100vh - 67px);
   margin: 0px auto;
 }
 .activity .record_activity {
@@ -226,27 +228,65 @@
 .activity .previous_activity p span:nth-child(2) {
   color: #52cf20;
 }
-.activity .activity_report {
+
+.activity_summary {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 100vh;
   text-align: center;
 }
-.activity .training_plan_activity_report_graph {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  margin: 0px auto 20px;
-  border-radius: 50px;
+.activity_summary .main_summary {
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 1.2em;
 }
-.activity .training_plan_activity_report_graph svg {
+.activity_summary .main_summary span {
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 1em;
+  color: #52cf20;
+}
+.activity_summary .training_plan_summary {
+  display: none;
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 1.2em;
+}
+.activity_summary .training_plan_summary span {
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 1em;
+}
+.activity_summary .training_plan_summary_chart {
+  position: relative;
+  display: none;
+  width: 250px;
+  height: 250px;
+}
+.activity_summary .training_plan_summary_chart::before {
+  content: "%";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: rotate(-90deg) translate(50%, -50%);
+  transform: translate(-50%, -50%);
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 2.5em;
+  font-weight: bold;
 }
-.activity .training_plan_activity_report_graph svg .part {
-  fill: none;
-  stroke: #999999;
-  stroke-width: 3;
-  stroke-dasharray: 251;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.activity_summary .training_plan_summary_chart canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/***********
+ Key Frames
+***********/
+@keyframes fade_in_scale_animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }/*# sourceMappingURL=training_session.css.map */

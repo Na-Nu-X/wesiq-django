@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="{% static 'blog/css/training_session.css' %}">
 {% endblock style %}
 
-{% comment %} {% block heading %}Tréning{% endblock heading %} {% endcomment %}
-
 {% block content %}
     <div class="activity">
         <div class="record_activity">
@@ -35,15 +33,7 @@
             </div>
 
             {% for one_exercise in training_plan %}
-                <div 
-                    class="
-                        exercise
-
-                        {% comment %} {% if forloop.counter == 1 %}
-                            active
-                        {% endif %} {% endcomment %}
-                    "
-                >
+                <div class="exercise">
                     <h3>{{ one_exercise.exercise }}</h3>
 
                     <p>
@@ -56,7 +46,8 @@
                         {% endif %}
                     </p>
 
-                    <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p>
+                    <p class="sets"><span>1</span> / <span>1</span></p>
+                    {% comment %} <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p> {% endcomment %}
 
                     <div class="skip_exercise">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
@@ -79,17 +70,7 @@
 
             <div class="progress_bar">
                 {% for one_exercise in training_plan %}
-                    <div 
-                        class="
-                            bar
-
-                            {% comment %} {% if forloop.counter == 1 %}
-                                active
-                            {% endif %} {% endcomment %}
-                        "
-                    >
-
-                    </div>
+                    <div class="bar"></div>
 
                 {% endfor %}
             </div>
@@ -101,25 +82,13 @@
             <p>Posledná aktivita: <span>{{ latest_activity.formatted_elapsed_time }}</span><span>{{ latest_activity.gained_xp }}XP</span><span>{{ latest_activity.end_time|date:"d.m. Y" }}</span></p>
             <p>Najdlhšia aktivita: <span>{{ longest_activity.formatted_elapsed_time }}</span><span>{{ longest_activity.gained_xp }}XP</span><span>{{ longest_activity.end_time|date:"d.m. Y" }}</span></p>
         </div>
-
-        <p class="activity_report"></p>
-        <p class="training_plan_activity_report"></p>
-        
-        <div class="training_plan_activity_report_graph">
-            {% for one_exercise in training_plan %}
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                    <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        class="part"
-                        stroke-dashoffset="0"
-                    />
-                </svg>
-            {% endfor %}
-        </div>
     </div>
-    
+
+    <div class="activity_summary">
+        <p class="main_summary"></p>
+        <p class="training_plan_summary"></p>
+        <div class="training_plan_summary_chart"><canvas>Graf sa nepodarilo načítať.</canvas></div>
+    </div>
 {% endblock content %}
 
 {% block script %}
@@ -183,12 +152,16 @@
             }
 
             // Activity Report
-            const activity_report = document.querySelector(".activity .activity_report")
-            const training_plan_activity_report = document.querySelector(".activity .training_plan_activity_report")
+            const activity_summary = document.querySelector(".activity_summary")
+            const main_summary = activity_summary.querySelector(".main_summary")
+            const training_plan_summary = activity_summary.querySelector(".training_plan_summary")
+            const training_plan_summary_chart = activity_summary.querySelector(".training_plan_summary_chart")
+            let chart = null
 
             // Timer For Exercises Summary
             let exercises_elapsed_time = 0
             let exercises_summary = []
+            let total_exercises_elapsed_time = 0
 
             let timer_interval = null
 
@@ -199,9 +172,20 @@
                     play_icon.classList.remove("fa-play")
                     play_icon.classList.add("fa-pause")
 
-                    // Deletes Previous Activity Report
-                    if(activity_report.innerHTML !== "") {
-                        activity_report.innerHTML = ""
+                    // Deletes Activity Summary
+                    if(activity_summary.innerText !== "") {
+                        main_summary.innerHTML = ""
+                        training_plan_summary.innerHTML = ""
+
+                        activity_summary.style.display = "none" // Hides Activity Summary
+                        training_plan_summary.style.display = "none" // Hides Training Plan Summary
+                        training_plan_summary_chart.style.display = "none" // Hides Training Plan Summary Chart
+                    }
+
+                    // Deletes Training Plan Activity Chart
+                    if(chart) {
+                        chart.destroy()
+                        chart = null
                     }
 
                     // Starts Timer With 1 Second Interval
@@ -248,6 +232,7 @@
                                 const exercise_name = one_exercise.querySelector("h3").textContent // Gets Active Exercise Name
 
                                 exercises_elapsed_time += 1 // Increments Exercises Elapsed Time
+                                total_exercises_elapsed_time += 1 // Increments Total Exercises Elapsed Time
 
                                 // Returns Exercise Name Which Is Already In Exercises Summary Array
                                 const existing_exercise = exercises_summary.find(function(one_exercise) {
@@ -261,13 +246,24 @@
 
                                 // Creates New Object For Unexisting Exercise
                                 else {
-                                    exercises_elapsed_time = 1
+                                    // Function For Generate Random Color (Lighter Tone)
+                                    function randomColor() {
+                                        return `rgb(
+                                            ${Math.floor(Math.random() * (256 - 128) + 128)},
+                                            ${Math.floor(Math.random() * (256 - 128) + 128)},
+                                            ${Math.floor(Math.random() * (256 - 128) + 128)}
+                                        )` // Random Number From 128 (Included) To 255 (Included)
+                                    }
 
+                                    exercises_elapsed_time = 1 // Reset Exercise Elapsed Time
+
+                                    // Creates Exercise Object
                                     const exercise_object = {}
                                     exercise_object.exercise = exercise_name
                                     exercise_object.elapsed_time = exercises_elapsed_time
+                                    exercise_object.color = randomColor()
 
-                                    exercises_summary.push(exercise_object)
+                                    exercises_summary.push(exercise_object) // Fills Exercise Summary Array With Object
                                 }                                
                             }
                         })
@@ -294,28 +290,78 @@
                     timer_interval = null
 
                     // Calculates Gained XP
-                    // const gained_xp = Math.round(((elapsed_time / 3600) * 100) * xp_boost) // 1 Hour Of Activity Is 100XP Without XP Boost
                     gained_xp = Math.round(gained_xp) // Final Rounded Amount Of XP
-
-                    // Exercises Summary
-                    training_plan_activity_report.innerHTML = "Strávený čas v daných cvičeniach"
-
-                    exercises_summary.forEach(function(one_exercise) {
-                        training_plan_activity_report.innerHTML += `<br>${one_exercise.exercise}: ${getTimerHours(one_exercise.elapsed_time)}h ${getTimerMinutes(one_exercise.elapsed_time)}m ${getTimerSeconds(one_exercise.elapsed_time)}s`
-                    })
-
-                    exercises_summary = [] // Sets Exercises Summary To Default
 
                     // Renders Completed Activity Informations
                     if(gained_xp == 0) {
-                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Nezískali ste žiadne XP.`
-                        // activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>${gained_xp} XP`
+                        main_summary.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>Nezískali ste žiadne XP`
                     }
                     
                     else {
-                        activity_report.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span>.<br>Získali ste <span>${gained_xp}XP</span>!`
-                        // activity_report.innerHTML = `<span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br><span>${gained_xp}XP</span>`
+                        main_summary.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>Získali ste <span>${gained_xp}XP</span>`
                     }
+
+                    // Exercises Summary
+                    if(exercises_summary.length > 0) {
+                        training_plan_summary.style.display = "block" // Shows Training Plan Summary
+                        training_plan_summary_chart.style.display = "block" // Shows Training Plan Summary Chart
+                        training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Adds Animation For Training Plan Summary Chart
+
+                        // Training Plan Activity Report
+                        training_plan_summary.innerText = "Strávený čas v daných cvičeniach"
+
+                        exercises_summary.forEach(function(one_exercise) {
+                            training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getTimerHours(one_exercise.elapsed_time)}h ${getTimerMinutes(one_exercise.elapsed_time)}m ${getTimerSeconds(one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2)}%)</span>`
+                        })
+
+                        // Chart
+                        function drawChart() {
+                            // Gets Data From Exercise Summary Array
+                            const labels = exercises_summary.map(one_item => one_item.exercise)
+                            const data = exercises_summary.map(one_item => one_item.elapsed_time)
+                            const colors = exercises_summary.map(one_item => one_item.color)
+
+                            // Creates Chart
+                            chart = new Chart(training_plan_summary_chart.querySelector("canvas"), {
+                                type: "doughnut",
+
+                                data: {
+                                    datasets: [{
+                                        data: data,
+                                        backgroundColor: colors,
+                                        hoverBackgroundColor: colors,
+                                        borderColor: "#ffffff",
+                                        hoverBorderColor: "#ffffff",
+                                        borderWidth: 2,
+                                        hoverBorderWidth: 2,
+                                        borderRadius: 5,
+                                        offset: 10,
+                                    }],
+
+                                    labels: false,
+                                },
+
+                                options: {
+                                    plugins: {
+                                        legend: false,
+                                        tooltip: false,
+                                    },
+
+                                    cutout: "50%",
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    animation: false,
+                                },                      
+                            })
+                        }
+
+                        drawChart()
+
+                        exercises_summary = [] // Sets Exercises Summary To Default
+                        total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
+                    }
+
+                    activity_summary.style.display = "flex" // Shows Activity Summary
 
                     // Sends POST Data
                     const post_data = new FormData()
@@ -349,6 +395,12 @@
                     elapsed_time = 0 // Set Elapsed Time To Default Value
                     gained_xp = 0 // Set Gained XP To Default Value
                 }
+
+                // Auto Scroll To Activity Summary After Finish Activity
+                window.scrollTo({
+                    top: activity_summary.offsetTop,
+                    behavior: "smooth"
+                })
             }
             
             // Playback

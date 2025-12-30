@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const navigation_icon = document.querySelector(".navigation_icon")
     const navigation_bar_item = document.querySelectorAll(".navigation_bar ul li")
 
-    navigation_icon.addEventListener("click", function(event) {
+    navigation_icon.addEventListener("click", function() {
         if(document.querySelector(".fa-solid").classList[1] === "fa-bars") {
             document.querySelector(".fa-solid").classList.remove("fa-bars")
             document.querySelector(".fa-solid").classList.add("fa-xmark")
