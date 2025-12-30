@@ -278,4 +278,30 @@
     .activity_report {
         text-align: center;
     }
+
+    .training_plan_activity_report_graph {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0px auto 20px;
+        border-radius: 50px;
+
+        svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: rotate(-90deg) translate(50%, -50%);
+
+            .part {
+                fill: none;
+                // fill: red;
+                stroke: darken($secondary-color, 40%);
+                stroke-width: 3;
+                stroke-dasharray: 251;
+                // stroke-dashoffset: 50;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+        }
+    }
 }

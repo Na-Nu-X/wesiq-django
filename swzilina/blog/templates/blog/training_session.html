@@ -103,6 +103,21 @@
         </div>
 
         <p class="activity_report"></p>
+        <p class="training_plan_activity_report"></p>
+        
+        <div class="training_plan_activity_report_graph">
+            {% for one_exercise in training_plan %}
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        class="part"
+                        stroke-dashoffset="0"
+                    />
+                </svg>
+            {% endfor %}
+        </div>
     </div>
     
 {% endblock content %}
@@ -135,9 +150,22 @@
             let elapsed_time = 0 // Current Elapsed Time In Seconds
             let gained_xp = 0
 
+            // Timer Values
             let timer_seconds = 0 // Current Elapsed Seconds In Timer
             let timer_minutes = 0 // Current Elapsed Minutes In Timer 
             let timer_hours = 0 // Current Elapsed Hours In Timer
+
+            function getTimerSeconds(elapsed_time) {
+                return elapsed_time % 60
+            }
+
+            function getTimerMinutes(elapsed_time) {
+                return (Math.floor(elapsed_time / 60)) % 60
+            }
+
+            function getTimerHours(elapsed_time) {
+                return (Math.floor(elapsed_time / 3600)) % 60
+            }
 
             // XP Boost
             const activity_info = document.querySelector(".activity .activity_info")
@@ -156,6 +184,11 @@
 
             // Activity Report
             const activity_report = document.querySelector(".activity .activity_report")
+            const training_plan_activity_report = document.querySelector(".activity .training_plan_activity_report")
+
+            // Timer For Exercises Summary
+            let exercises_elapsed_time = 0
+            let exercises_summary = []
 
             let timer_interval = null
 
@@ -188,9 +221,9 @@
                         }
 
                         // Calculates Every Unit For Timer
-                        timer_seconds = elapsed_time % 60
-                        timer_minutes = (Math.floor(elapsed_time / 60)) % 60
-                        timer_hours = (Math.floor(elapsed_time / 3600)) % 60
+                        timer_seconds = getTimerSeconds(elapsed_time)
+                        timer_minutes = getTimerMinutes(elapsed_time)
+                        timer_hours = getTimerHours(elapsed_time)
 
                         // Timer Rendering
                         function timerFormat(timer_units, timer_units_tag) {
@@ -207,7 +240,38 @@
                         timerFormat(timer_seconds, timer_seconds_tag) // Renders Current Seconds In Timer
                         timerFormat(timer_minutes, timer_minutes_tag) // Renders Current Minutes In Timer
                         timerFormat(timer_hours, timer_hours_tag) // Renders Current Hours In Timer
-                    }, 1000)
+
+                        // Timer For Exercises Summary
+                        exercises.forEach(function(one_exercise) {
+                            // Gets Active Exercise
+                            if(one_exercise.classList.contains("active")) {
+                                const exercise_name = one_exercise.querySelector("h3").textContent // Gets Active Exercise Name
+
+                                exercises_elapsed_time += 1 // Increments Exercises Elapsed Time
+
+                                // Returns Exercise Name Which Is Already In Exercises Summary Array
+                                const existing_exercise = exercises_summary.find(function(one_exercise) {
+                                    return one_exercise.exercise === exercise_name
+                                })
+
+                                // Updated Only Elapsed Time For Existing Exercise
+                                if(existing_exercise) {
+                                    existing_exercise.elapsed_time = exercises_elapsed_time
+                                }
+
+                                // Creates New Object For Unexisting Exercise
+                                else {
+                                    exercises_elapsed_time = 1
+
+                                    const exercise_object = {}
+                                    exercise_object.exercise = exercise_name
+                                    exercise_object.elapsed_time = exercises_elapsed_time
+
+                                    exercises_summary.push(exercise_object)
+                                }                                
+                            }
+                        })
+                    }, 10)
                 }
 
                 else if(play_icon.classList.contains("fa-pause")) {
@@ -232,6 +296,15 @@
                     // Calculates Gained XP
                     // const gained_xp = Math.round(((elapsed_time / 3600) * 100) * xp_boost) // 1 Hour Of Activity Is 100XP Without XP Boost
                     gained_xp = Math.round(gained_xp) // Final Rounded Amount Of XP
+
+                    // Exercises Summary
+                    training_plan_activity_report.innerHTML = "Strávený čas v daných cvičeniach"
+
+                    exercises_summary.forEach(function(one_exercise) {
+                        training_plan_activity_report.innerHTML += `<br>${one_exercise.exercise}: ${getTimerHours(one_exercise.elapsed_time)}h ${getTimerMinutes(one_exercise.elapsed_time)}m ${getTimerSeconds(one_exercise.elapsed_time)}s`
+                    })
+
+                    exercises_summary = [] // Sets Exercises Summary To Default
 
                     // Renders Completed Activity Informations
                     if(gained_xp == 0) {
@@ -411,9 +484,6 @@
 
             // Next Exercise
             exercises.forEach(function(one_exercise, index) {
-                // Skip Exercise By Button
-                const skip_exercise = one_exercise.querySelector(".skip_exercise")
-
                 // Shows Default Progress Percentage
                 progress_bar.forEach(function(one_bar, index) {
                     // Current Set Value
@@ -428,7 +498,15 @@
                     }
                 })
 
+                // Skip Exercise By Button
+                const skip_exercise = one_exercise.querySelector(".skip_exercise")
+
                 skip_exercise.addEventListener("click", function(one_button) {
+                    // Starts Timer If Is Paused And User Skip The Exercise
+                    if(play_icon.classList.contains("fa-play")) {
+                        startTimer()
+                    }
+
                     // Updates Progress Bar Color
                     if(red >= min_red) {
                         red -= (255 - min_red) / (all_sets - 1) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
