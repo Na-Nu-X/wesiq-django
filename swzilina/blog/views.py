@@ -1050,6 +1050,10 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+        average_activity_time = math.floor(activities.aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) # Gets Average Logged In User's Activity Time
+        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" # Formats Average Activity Time
+        total_activities = None
+        activities_amount = activities.count() # Counts Amount Of Logged In User's Activities
 
         training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets Logged In User's Training Plan
         
@@ -1082,6 +1086,9 @@ def trainingSessionView(request):
         return render(request, "blog/training_session.html", {
             "latest_activity": latest_activity,
             "longest_activity": longest_activity,
+            "average_activity_time": average_activity_time,
+            "average_activity_time_formatted": average_activity_time_formatted,
+            "activities_amount": activities_amount,
             "training_plan": training_plan,
         })
 

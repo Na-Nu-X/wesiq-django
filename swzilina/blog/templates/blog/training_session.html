@@ -80,6 +80,8 @@
         <div class="previous_activity">
             <p>Posledná aktivita: <span>{{ latest_activity.formatted_elapsed_time }}</span><span>{{ latest_activity.gained_xp }}XP</span><span>{{ latest_activity.end_time|date:"d.m. Y" }}</span></p>
             <p>Najdlhšia aktivita: <span>{{ longest_activity.formatted_elapsed_time }}</span><span>{{ longest_activity.gained_xp }}XP</span><span>{{ longest_activity.end_time|date:"d.m. Y" }}</span></p>
+            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">Priemerný čas aktivity: <span>{{ average_activity_time_formatted }}</span></p>
+            <p>Zaznamenané aktivity: <span>{{ activities_amount }}</span></p>
         </div>
     </div>
 
@@ -266,7 +268,7 @@
                                 }                                
                             }
                         })
-                    }, 1000)
+                    }, 1)
                 }
 
                 else if(play_icon.classList.contains("fa-pause")) {
@@ -298,13 +300,11 @@
                     gained_xp = Math.round(gained_xp) // Final Rounded Amount Of XP
 
                     // Renders Completed Activity Informations
-                    if(gained_xp == 0) {
-                        main_summary.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>Nezískali ste žiadne XP`
-                    }
-                    
-                    else {
-                        main_summary.innerHTML = `Aktuálna aktivita trvala <span>${timer_hours}h ${timer_minutes}m ${timer_seconds}s</span><br>Získali ste <span>${gained_xp}XP</span>`
-                    }
+                    const average_activity_time = parseInt(document.querySelector(".average_activity_time").dataset.average_activity_time) // Gets Average Activity Time
+
+                    elapsed_time < average_activity_time ? main_summary.innerHTML = `Aktuálna aktivita trvala <span style="color: #df3535">${timer_hours}h ${timer_minutes}m ${timer_seconds}s (-${(100 - (elapsed_time / average_activity_time * 100)).toFixed(2)}%)</span>` : main_summary.innerHTML = `Aktuálna aktivita trvala <span style="color: #52cf20">${timer_hours}h ${timer_minutes}m ${timer_seconds}s (+${((elapsed_time / average_activity_time * 100) - 100).toFixed(2)}%)</span>` // Renders Text For Activity Elapsed Time And Percentage From Average Activity Time
+
+                    gained_xp == 0 ? main_summary.innerHTML += `<br>Nezískali ste žiadne XP` : main_summary.innerHTML += `<br>Získali ste <span style="color: #52cf20">${gained_xp}XP</span>` // Renders Text For Earned XP
 
                     // Exercises Summary
                     if(exercises_summary.length > 0) {
