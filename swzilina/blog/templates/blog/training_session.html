@@ -46,8 +46,7 @@
                         {% endif %}
                     </p>
 
-                    <p class="sets"><span>1</span> / <span>1</span></p>
-                    {% comment %} <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p> {% endcomment %}
+                    <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p>
 
                     <div class="skip_exercise">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
@@ -267,7 +266,7 @@
                                 }                                
                             }
                         })
-                    }, 10)
+                    }, 1000)
                 }
 
                 else if(play_icon.classList.contains("fa-pause")) {
@@ -283,12 +282,18 @@
 
             // Function For Stop Timer
             function stopTimer() {
+                // Stops Timer
+                clearInterval(timer_interval)
+                timer_interval = null
+
+                // Set Play Icon If Is Set As Pause
+                if(play_icon.classList.contains("fa-pause")) {
+                    play_icon.classList.remove("fa-pause")
+                    play_icon.classList.add("fa-play")
+                }
+
                 // Only Executed If A Timer Has Been Started
                 if(elapsed_time >= 1) {
-                    // Stops Timer
-                    clearInterval(timer_interval)
-                    timer_interval = null
-
                     // Calculates Gained XP
                     gained_xp = Math.round(gained_xp) // Final Rounded Amount Of XP
 
@@ -386,21 +391,15 @@
                     timer_minutes_tag.textContent = "00"
                     timer_hours_tag.textContent = "00"
 
-                    // Set Play Icon If Is Set As Pause
-                    if(play_icon.classList.contains("fa-pause")) {
-                        play_icon.classList.remove("fa-pause")
-                        play_icon.classList.add("fa-play")
-                    }
-
                     elapsed_time = 0 // Set Elapsed Time To Default Value
                     gained_xp = 0 // Set Gained XP To Default Value
-                }
 
-                // Auto Scroll To Activity Summary After Finish Activity
-                window.scrollTo({
-                    top: activity_summary.offsetTop,
-                    behavior: "smooth"
-                })
+                    // Auto Scroll To Activity Summary After Finish Activity
+                    window.scrollTo({
+                        top: activity_summary.offsetTop,
+                        behavior: "smooth"
+                    })
+                }
             }
             
             // Playback
