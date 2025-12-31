@@ -298,6 +298,17 @@
         }
     }
 
+    .main_summary_chart {
+        display: none;
+        width: 500px;
+        height: 250px;
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
     .training_plan_summary {
         display: none;
         font-family: $article-heading-font;
@@ -309,7 +320,7 @@
 
         span {
             font-family: $article-heading-font;
-            font-size: 1em;
+            font-size: 0.833333em;
         }
     }
 
@@ -350,5 +361,15 @@
     100% {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+@keyframes fade_in_animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }
