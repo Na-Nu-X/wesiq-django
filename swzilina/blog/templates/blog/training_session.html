@@ -46,7 +46,8 @@
                         {% endif %}
                     </p>
 
-                    <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p>
+                    <p class="sets"><span>1</span> / <span>1</span></p>
+                    {% comment %} <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p> {% endcomment %}
 
                     <div class="skip_exercise">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
@@ -80,13 +81,25 @@
         <div class="previous_activity">
             <p>Posledná aktivita: <span>{{ latest_activity.formatted_elapsed_time }}</span><span>{{ latest_activity.gained_xp }}XP</span><span>{{ latest_activity.end_time|date:"d.m. Y" }}</span></p>
             <p>Najdlhšia aktivita: <span>{{ longest_activity.formatted_elapsed_time }}</span><span>{{ longest_activity.gained_xp }}XP</span><span>{{ longest_activity.end_time|date:"d.m. Y" }}</span></p>
-            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">Priemerný čas aktivity: <span>{{ average_activity_time_formatted }}</span></p>
-            <p>Zaznamenané aktivity: <span>{{ activities_amount }}</span></p>
+            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">Priemerný čas aktivity za posledných 7 dní: <span>{{ average_activity_time_formatted }}</span></p>
+            <p>Počet aktivít za posledných 7 dní: <span>{{ activities_amount }}</span></p>
         </div>
     </div>
 
     <div class="activity_summary">
         <p class="main_summary"></p>
+        <div 
+            class="main_summary_chart" 
+            data-activities='{
+                {% for one_activity in weekly_activity %}
+                    {{ one_activity.elapsed_time }}
+
+                {% endfor %}
+            }'
+        >
+            <canvas>Graf sa nepodarilo načítať.</canvas>
+        </div>
+
         <p class="training_plan_summary"></p>
         <div class="training_plan_summary_chart"><canvas>Graf sa nepodarilo načítať.</canvas></div>
     </div>
@@ -156,8 +169,10 @@
             const activity_summary = document.querySelector(".activity_summary")
             const main_summary = activity_summary.querySelector(".main_summary")
             const training_plan_summary = activity_summary.querySelector(".training_plan_summary")
+            const main_summary_chart = activity_summary.querySelector(".main_summary_chart")
             const training_plan_summary_chart = activity_summary.querySelector(".training_plan_summary_chart")
-            let chart = null
+            let bar_chart = null
+            let doughnut_chart = null
 
             // Timer For Exercises Summary
             let exercises_elapsed_time = 0
@@ -165,6 +180,15 @@
             let total_exercises_elapsed_time = 0
 
             let timer_interval = null
+
+            // Function For Generate Random Color (Lighter Tone)
+            function randomColor() {
+                return `rgb(
+                    ${Math.floor(Math.random() * (256 - 128) + 128)},
+                    ${Math.floor(Math.random() * (256 - 128) + 128)},
+                    ${Math.floor(Math.random() * (256 - 128) + 128)}
+                )` // Random Number From 128 (Included) To 255 (Included)
+            }
 
             // Function For Start Timer
             function startTimer() {
@@ -180,13 +204,19 @@
 
                         activity_summary.style.display = "none" // Hides Activity Summary
                         training_plan_summary.style.display = "none" // Hides Training Plan Summary
+                        main_summary_chart.style.display = "none" // Hides Main Summary Summary Chart
                         training_plan_summary_chart.style.display = "none" // Hides Training Plan Summary Chart
                     }
 
                     // Deletes Training Plan Activity Chart
-                    if(chart) {
-                        chart.destroy()
-                        chart = null
+                    if(bar_chart) {
+                        bar_chart.destroy()
+                        bar_chart = null
+                    }
+
+                    if(doughnut_chart) {
+                        doughnut_chart.destroy()
+                        doughnut_chart = null
                     }
 
                     // Starts Timer With 1 Second Interval
@@ -247,15 +277,6 @@
 
                                 // Creates New Object For Unexisting Exercise
                                 else {
-                                    // Function For Generate Random Color (Lighter Tone)
-                                    function randomColor() {
-                                        return `rgb(
-                                            ${Math.floor(Math.random() * (256 - 128) + 128)},
-                                            ${Math.floor(Math.random() * (256 - 128) + 128)},
-                                            ${Math.floor(Math.random() * (256 - 128) + 128)}
-                                        )` // Random Number From 128 (Included) To 255 (Included)
-                                    }
-
                                     exercises_elapsed_time = 1 // Reset Exercise Elapsed Time
 
                                     // Creates Exercise Object
@@ -299,12 +320,95 @@
                     // Calculates Gained XP
                     gained_xp = Math.round(gained_xp) // Final Rounded Amount Of XP
 
-                    // Renders Completed Activity Informations
+                    // Renders Completed Activity Summary
                     const average_activity_time = parseInt(document.querySelector(".average_activity_time").dataset.average_activity_time) // Gets Average Activity Time
 
-                    elapsed_time < average_activity_time ? main_summary.innerHTML = `Aktuálna aktivita trvala <span style="color: #df3535">${timer_hours}h ${timer_minutes}m ${timer_seconds}s (-${(100 - (elapsed_time / average_activity_time * 100)).toFixed(2)}%)</span>` : main_summary.innerHTML = `Aktuálna aktivita trvala <span style="color: #52cf20">${timer_hours}h ${timer_minutes}m ${timer_seconds}s (+${((elapsed_time / average_activity_time * 100) - 100).toFixed(2)}%)</span>` // Renders Text For Activity Elapsed Time And Percentage From Average Activity Time
+                    main_summary.innerHTML = "Informácie o aktuálnej aktivite<br>Aktuálna aktivita trvala: "
 
-                    gained_xp == 0 ? main_summary.innerHTML += `<br>Nezískali ste žiadne XP` : main_summary.innerHTML += `<br>Získali ste <span style="color: #52cf20">${gained_xp}XP</span>` // Renders Text For Earned XP
+                    elapsed_time < average_activity_time ? 
+                        main_summary.innerHTML += `
+                            <span style="color: #df3535">
+                                ${timer_hours}h ${timer_minutes}m ${timer_seconds}s 
+                                <span title="Čas aktuálnej aktivity bol o ${(100 - (elapsed_time / average_activity_time * 100)).toFixed(2)}% kratší ako priemer za posledných 7 dní">
+                                    (-${(100 - (elapsed_time / average_activity_time * 100)).toFixed(2)}%)
+                                </span>
+                            </span>
+                        ` 
+                        
+                        : 
+                        
+                        main_summary.innerHTML += ` 
+                            <span style="color: #52cf20">
+                                ${timer_hours}h ${timer_minutes}m ${timer_seconds}s 
+                                <span title="Čas aktuálnej aktivity bol o ${((elapsed_time / average_activity_time * 100) - 100).toFixed(2)}% dlhší ako priemer za posledných 7 dní">
+                                    (+${((elapsed_time / average_activity_time * 100) - 100).toFixed(2)}%)
+                                </span>
+                            </span>
+                        `
+
+                    gained_xp == 0 ? main_summary.innerHTML += `<br>Nezískali ste žiadne XP` : main_summary.innerHTML += `<br>Získali ste: <span style="color: #52cf20">${gained_xp}XP</span>` // Renders Text For Earned XP
+
+                    let test = main_summary_chart.dataset.activities
+                    //let test_pa = JSON.parse(test)
+                    //console.log(test_pa)
+                    console.log(test)
+
+                    // Creates Chart
+                    bar_chart = new Chart(main_summary_chart.querySelector("canvas"), {
+                        type: "bar",
+                        data: {
+                            labels: ["pondelok", "utorok", "streda", "štvrtok", "piatok", "sobota", "nedeľa"],
+                            datasets: [{
+                                data: [1400, 2000, 800, 5100, 2480, 1320, 0], // Seconds
+                                backgroundColor: "#52cf20",
+                                hoverBackgroundColor: "#52cf20",
+                                borderColor: "#ffffff",
+                                hoverBorderColor: "#ffffff",
+                                borderWidth: 2,
+                                hoverBorderWidth: 2,
+                                borderRadius: 5,
+                            }]
+                        },
+                        options: {
+                            animation: false,
+
+                            scales: {
+                                y: {
+                                    display: false,
+                                },
+                                x: {
+                                    ticks: {
+                                        color: "#ffffff"
+                                    },
+                                    grid: {
+                                        display: false,
+                                    }
+                                }
+                            },
+
+                            plugins: {
+                                legend: false,
+                                tooltip: false,
+
+                                datalabels: {
+                                    anchor: "end",
+                                    align: "top",
+                                    color: "#ffffff",
+                                    font: {
+                                        weight: "bold",
+                                        size: 15
+                                    },
+                                    formatter: function(value) {
+                                        if (value === 0) return ""   // nezobrazí 0h
+                                        return `${(value / 3600).toFixed(1)}h`
+                                    }
+                                },
+                            }
+                        },
+
+                        plugins: [ChartDataLabels]
+                    })
+
 
                     // Exercises Summary
                     if(exercises_summary.length > 0) {
@@ -320,53 +424,51 @@
                         })
 
                         // Chart
-                        function drawChart() {
-                            // Gets Data From Exercise Summary Array
-                            const labels = exercises_summary.map(one_item => one_item.exercise)
-                            const data = exercises_summary.map(one_item => one_item.elapsed_time)
-                            const colors = exercises_summary.map(one_item => one_item.color)
+                        // Gets Data From Exercise Summary Array
+                        const labels = exercises_summary.map(one_item => one_item.exercise)
+                        const data = exercises_summary.map(one_item => one_item.elapsed_time)
+                        const colors = exercises_summary.map(one_item => one_item.color)
 
-                            // Creates Chart
-                            chart = new Chart(training_plan_summary_chart.querySelector("canvas"), {
-                                type: "doughnut",
+                        // Creates Chart
+                        doughnut_chart = new Chart(training_plan_summary_chart.querySelector("canvas"), {
+                            type: "doughnut",
 
-                                data: {
-                                    datasets: [{
-                                        data: data,
-                                        backgroundColor: colors,
-                                        hoverBackgroundColor: colors,
-                                        borderColor: "#ffffff",
-                                        hoverBorderColor: "#ffffff",
-                                        borderWidth: 2,
-                                        hoverBorderWidth: 2,
-                                        borderRadius: 5,
-                                        offset: 10,
-                                    }],
+                            data: {
+                                datasets: [{
+                                    data: data,
+                                    backgroundColor: colors,
+                                    hoverBackgroundColor: colors,
+                                    borderColor: "#ffffff",
+                                    hoverBorderColor: "#ffffff",
+                                    borderWidth: 2,
+                                    hoverBorderWidth: 2,
+                                    borderRadius: 5,
+                                    offset: 10,
+                                }],
 
-                                    labels: false,
+                                labels: false,
+                            },
+
+                            options: {
+                                plugins: {
+                                    legend: false,
+                                    tooltip: false,
                                 },
 
-                                options: {
-                                    plugins: {
-                                        legend: false,
-                                        tooltip: false,
-                                    },
-
-                                    cutout: "50%",
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    animation: false,
-                                },                      
-                            })
-                        }
-
-                        drawChart()
+                                cutout: "50%",
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: false,
+                            },                      
+                        })
 
                         exercises_summary = [] // Sets Exercises Summary To Default
                         total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
                     }
 
                     activity_summary.style.display = "flex" // Shows Activity Summary
+                    main_summary_chart.style.display = "block" // Shows Main Summary Chart
+                    main_summary_chart.style.animation = "fade_in_animation 1s ease-out" // Adds Animation For Main Summary Summary Chart
 
                     // Sends POST Data
                     const post_data = new FormData()
@@ -604,4 +706,6 @@
             })
         })
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script>
 {% endblock script %}
