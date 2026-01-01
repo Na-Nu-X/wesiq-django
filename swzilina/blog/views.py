@@ -1054,9 +1054,6 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
-
-        print(longest_activity)
-
         average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) # Gets Last 7 Days Average Logged In User's Activity Time
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
@@ -1094,9 +1091,6 @@ def trainingSessionView(request):
                 "day": label,
                 "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
             })
-
-        # labels = [one_day["day"] for one_day in weekly_activity_result]
-        # data = [one_day["total_elapsed_time"] for one_day in weekly_activity_result]
 
         training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets Logged In User's Training Plan
         

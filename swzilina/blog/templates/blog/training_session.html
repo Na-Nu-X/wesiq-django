@@ -67,6 +67,40 @@
                 </div>
             </div>
 
+            <div class="break">
+                <div class="add_time">
+                    <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half -->
+
+                    <p class="add_time_message">+30s</p>
+                </div>
+
+                <div class="break_timer">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            class="progress"
+                        />
+                    </svg>
+
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            class="progress_background"
+                        />
+                    </svg>
+
+                    <h3></h3>
+                </div>
+
+                <div class="skip_exercise">
+                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+            </div>
+
             <div class="progress_bar">
                 {% for one_exercise in training_plan %}
                     <div class="bar"></div>
@@ -651,7 +685,7 @@
                     let current_set = parseInt(sets[0].textContent)
                     const sets_amount = parseInt(sets[1].textContent)
 
-                    if(sets_amount >= 1 && current_set < sets_amount) {
+                    if(sets_amount >= 1 && current_set <= sets_amount) {
                         // Shows Progress
                         let progress_percentage = current_set / sets_amount * 100
                         one_bar.style.setProperty("--progress", `${progress_percentage}%`)
@@ -661,7 +695,7 @@
                 // Skip Exercise By Button
                 const skip_exercise = one_exercise.querySelector(".skip_exercise")
 
-                skip_exercise.addEventListener("click", function(one_button) {
+                skip_exercise.addEventListener("click", function() {
                     // Starts Timer If Is Paused And User Skip The Exercise
                     if(play_icon.classList.contains("fa-play")) {
                         startTimer()
@@ -702,15 +736,116 @@
                         }
 
                         // Adds Active Class To Next Exercise
-                        exercises[index].classList.remove("active")
-                        exercises[index + 1].classList.add("active")
+                        // exercises[index].classList.remove("active")
+                        // exercises[index + 1].classList.add("active")
 
                         // Adds Active Class To Next Bar In Progress Bar
-                        // progress_bar[index].classList.remove("active") // To Hide Previous Progress In Progress Bar
-                        progress_bar[index + 1].classList.add("active")
+                        // progress_bar[index + 1].classList.add("active")
+
+                        // Adds Active Class To Break Timer
+                        exercises[index].classList.remove("active")
+                        breakTimer(index)
                     }
                 })
             })
+            
+            // Break Timer
+
+            function breakTimer(exercise_index) {
+                const training_plan_break = document.querySelector(".break")
+                training_plan_break.classList.add("active") // Adds Active Class To Training Plan Break In Order To Show It
+
+                const break_timer = document.querySelector(".break .break_timer h3")
+                let break_timer_remaining_time = 1800 // 3 Minutes
+                let max_break_timer_remaining_time = 1800 // 3 Minutes
+
+                // Progress Circle
+                const progress = document.querySelector(".break .break_timer svg .progress")
+                const radius = parseInt(progress.getAttribute("r"))
+                const circum_ference = 2 * Math.PI * radius // 251.32741228718345
+                progress.style.strokeDasharray = circum_ference
+
+                // Timer Interval (100MS)
+                let break_timer_interval = null
+
+                break_timer_interval = setInterval(function() {
+                    // Timer's Numbers
+
+                    let remaining_minutes = Math.floor((break_timer_remaining_time / 10) / 60)
+                    let remaining_seconds = Math.floor((break_timer_remaining_time / 10) % 60)
+
+                    // Checks If There Is Still Some Remaining Time
+                    if(break_timer_remaining_time <= 0) {
+                        // Skip To Next Exercise
+
+                        // Stops Timer
+                        clearInterval(break_timer_interval)
+                        break_timer_interval = null
+
+                        return
+                    }
+
+                    // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
+                    if(break_timer_remaining_time <= 100) {
+                        break_timer.style.color = "#df3535"
+                    }
+
+                    break_timer.innerText = `${remaining_minutes}:${remaining_seconds.toString().padStart(2, "0")}` // Updates Numbers In Timer
+
+                    // Progress Circle
+
+                    // Length
+                    progress.style.strokeDashoffset = circum_ference / max_break_timer_remaining_time * break_timer_remaining_time // Updates Progress Circle Length
+
+                    // Color
+                    const red = 255 - (255 / max_break_timer_remaining_time * break_timer_remaining_time) // Increases Red Color In Palette
+                    const green = 255 / max_break_timer_remaining_time * break_timer_remaining_time // Decreases Green Color In Palette
+
+                    progress.style.stroke = `rgb(${red}, ${green}, 0)` // Updates Progress Circle Color
+                    progress.style.filter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+                    progress.style.webkitFilter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+
+                    break_timer_remaining_time -= 1 // Decreases Remaining Time By 100MS Every 100MS Interval
+
+                    if(break_timer_remaining_time > max_break_timer_remaining_time) {
+                        progress.style.strokeDashoffset = circum_ference // Sets Progress In Progress Circle On The Start
+
+                        max_break_timer_remaining_time = break_timer_remaining_time // Changes Maximum Value Of Break Timer Remaining Time
+                    }
+                }, 100)
+
+                // Add Time Button
+                const add_time = document.querySelector(".break .add_time")
+                const add_time_message = add_time.querySelector(".add_time_message")
+
+                add_time.addEventListener("click", function() {
+                    break_timer_remaining_time += 300 // Adds 30 Seconds On Timer
+
+                    // Shows Animated Text
+                    add_time_message.classList.remove("animate")
+                    void add_time_message.offsetWidth
+                    add_time_message.classList.add("animate")
+                })
+
+                // Skip To Next Exercise Button
+                const skip_exercise = document.querySelector(".break .skip_exercise")
+
+                skip_exercise.addEventListener("click", function() {
+                    // Stops Timer
+                    clearInterval(break_timer_interval)
+                    break_timer_interval = null
+
+                    // Change Slides
+                    training_plan_break.classList.remove("active") // Removes Active Class From Training Plan Break In Order To Hide It
+
+                    // Adds Active Class To Next Exercise
+                    exercises[exercise_index].classList.remove("active")
+                    exercises[exercise_index + 1].classList.add("active")
+
+                    // Adds Active Class To Next Bar In Progress Bar
+                    progress_bar[exercise_index + 1].classList.add("active")
+                })
+            }
         })
     </script>
 
