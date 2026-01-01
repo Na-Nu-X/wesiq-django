@@ -240,11 +240,9 @@
 }
 .activity_summary .main_summary {
   font-family: "Balsamiq Sans", sans-serif;
-  font-size: 1.2em;
 }
 .activity_summary .main_summary span {
   font-family: "Balsamiq Sans", sans-serif;
-  font-size: 1em;
 }
 .activity_summary .main_summary_chart {
   display: none;
@@ -258,11 +256,12 @@
 .activity_summary .training_plan_summary {
   display: none;
   font-family: "Balsamiq Sans", sans-serif;
-  font-size: 1.2em;
 }
 .activity_summary .training_plan_summary span {
   font-family: "Balsamiq Sans", sans-serif;
-  font-size: 0.833333em;
+}
+.activity_summary .training_plan_summary br:nth-child(1) {
+  display: none;
 }
 .activity_summary .training_plan_summary_chart {
   position: relative;

@@ -289,12 +289,9 @@
 
     .main_summary {
         font-family: $article-heading-font;
-        font-size: 1.2em;
 
         span {
             font-family: $article-heading-font;
-            font-size: 1em;
-            // color: $success-color;
         }
     }
 
@@ -312,15 +309,13 @@
     .training_plan_summary {
         display: none;
         font-family: $article-heading-font;
-        font-size: 1.2em;
-
-        // br:nth-child(1) {
-        //     display: none;
-        // }
 
         span {
             font-family: $article-heading-font;
-            font-size: 0.833333em;
+        }
+
+        br:nth-child(1) {
+            display: none;
         }
     }
 
