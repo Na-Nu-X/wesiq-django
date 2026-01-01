@@ -23,7 +23,7 @@
             <div class="start_training active">
                 <h3>Začať tréning</h3>
 
-                <p>Váš tréning podľa plánu na deň pondelok.</p>
+                {% comment %} <p>Váš tréning podľa plánu na deň pondelok.</p> {% endcomment %}
 
                 <p>Pull</p>
 
@@ -58,7 +58,7 @@
             <div class="finish_training">
                 <h3>Dokončiť tréning</h3>
 
-                <p>Váš tréning podľa plánu na deň pondelok.</p>
+                {% comment %} <p>Váš tréning podľa plánu na deň pondelok.</p> {% endcomment %}
 
                 <p>Pull</p>
 
@@ -69,7 +69,8 @@
 
             <div class="break">
                 <div class="add_time">
-                    <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half -->
+                    {% comment %} <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half --> {% endcomment %}
+                    <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
 
                     <p class="add_time_message">+30s</p>
                 </div>
@@ -216,6 +217,102 @@
                     ${Math.floor(Math.random() * (256 - 128) + 128)},
                     ${Math.floor(Math.random() * (256 - 128) + 128)}
                 )` // Random Number From 128 (Included) To 255 (Included)
+            }
+
+            // Training Plan Break
+            const training_plan_break = document.querySelector(".training_plan .break")
+            let break_timer_interval = null
+
+            // Training Plan Break Function
+            function breakTimer(exercise_index) {
+                const break_timer = document.querySelector(".break .break_timer h3")
+                let break_timer_remaining_time = 1800 // 3 Minutes
+                let max_break_timer_remaining_time = 1800 // 3 Minutes
+
+                // Progress Circle
+                const progress = document.querySelector(".break .break_timer svg .progress")
+                const radius = parseInt(progress.getAttribute("r"))
+                const circum_ference = 2 * Math.PI * radius // 251.32741228718345
+                progress.style.strokeDasharray = circum_ference
+
+                // Timer Interval (100MS)
+                break_timer_interval = setInterval(function() {
+                    // Timer's Numbers
+
+                    let remaining_minutes = Math.floor((break_timer_remaining_time / 10) / 60)
+                    let remaining_seconds = Math.floor((break_timer_remaining_time / 10) % 60)
+
+                    // Checks If There Is Still Some Remaining Time
+                    if(break_timer_remaining_time <= 0) {
+                        // Skip To Next Exercise
+
+                        // Stops Timer
+                        clearInterval(break_timer_interval)
+                        break_timer_interval = null
+
+                        // return
+                    }
+
+                    // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
+                    if(break_timer_remaining_time <= 100) {
+                        break_timer.style.color = "#df3535"
+                    }
+
+                    break_timer.innerText = `${remaining_minutes}:${remaining_seconds.toString().padStart(2, "0")}` // Updates Numbers In Timer
+
+                    // Progress Circle
+
+                    // Length
+                    progress.style.strokeDashoffset = circum_ference / max_break_timer_remaining_time * break_timer_remaining_time // Updates Progress Circle Length
+
+                    // Color
+                    const red = 255 - (255 / max_break_timer_remaining_time * break_timer_remaining_time) // Increases Red Color In Palette
+                    const green = 255 / max_break_timer_remaining_time * break_timer_remaining_time // Decreases Green Color In Palette
+
+                    progress.style.stroke = `rgb(${red}, ${green}, 0)` // Updates Progress Circle Color
+                    progress.style.filter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+                    progress.style.webkitFilter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+
+                    break_timer_remaining_time -= 1 // Decreases Remaining Time By 100MS Every 100MS Interval
+
+                    if(break_timer_remaining_time > max_break_timer_remaining_time) {
+                        progress.style.strokeDashoffset = circum_ference // Sets Progress In Progress Circle On The Start
+
+                        max_break_timer_remaining_time = break_timer_remaining_time // Changes Maximum Value Of Break Timer Remaining Time
+                    }
+                }, 100)
+
+                // Add Time Button
+                const add_time = document.querySelector(".break .add_time")
+                const add_time_message = add_time.querySelector(".add_time_message")
+
+                add_time.addEventListener("click", function() {
+                    break_timer_remaining_time += 300 // Adds 30 Seconds On Timer
+
+                    // Shows Animated Text
+                    add_time_message.classList.remove("animate")
+                    void add_time_message.offsetWidth
+                    add_time_message.classList.add("animate")
+                })
+
+                // Skip To Next Exercise Button
+                const skip_exercise = document.querySelector(".break .skip_exercise")
+                
+                skip_exercise.addEventListener("click", function() {
+                    // Stops Timer
+                    clearInterval(break_timer_interval)
+                    break_timer_interval = null
+
+                    // Change Slides
+                    training_plan_break.classList.remove("active") // Removes Active Class From Training Plan Break In Order To Hide It
+
+                    // Adds Active Class To Next Exercise
+                    exercises[exercise_index].classList.remove("active")
+                    exercises[exercise_index + 1].classList.add("active")
+
+                    // Adds Active Class To Next Bar In Progress Bar
+                    progress_bar[exercise_index + 1].classList.add("active")
+                }, { once: true }) // Once Option Is Turned On Because There Are Multiple Event Listeners On The Skip Exercise Button
             }
 
             // Function For Start Timer
@@ -558,7 +655,7 @@
                 startTimer()
 
                 // Hides Training Plan If User Start The Timer With Play Button
-                if(play_icon.classList.contains("fa-pause") && first_play === true) {
+                if(play_icon.classList.contains("fa-pause") && first_play === true || play_icon.classList.contains("fa-pause") && start_training.classList.contains("active")) {
                     training_plan.style.display = "none"
                     first_play = false
                 }
@@ -618,6 +715,11 @@
                 start_training.classList.add("active")
 
                 first_play = true
+
+                // Stops Training Plan Timer
+                clearInterval(break_timer_interval)
+                break_timer_interval = null
+                training_plan_break.classList.remove("active") // Removes Active Class From Training Plan Break In Order To Hide It
             })
 
             // Training Plan
@@ -742,112 +844,15 @@
                         // Adds Active Class To Next Bar In Progress Bar
                         // progress_bar[index + 1].classList.add("active")
 
-                        // Adds Active Class To Break Timer
+                        // Change Slides
                         exercises[index].classList.remove("active")
+                        training_plan_break.classList.add("active") // Adds Active Class To Training Plan Break In Order To Show It
                         breakTimer(index)
                     }
                 })
             })
-            
-            // Break Timer
-
-            function breakTimer(exercise_index) {
-                const training_plan_break = document.querySelector(".break")
-                training_plan_break.classList.add("active") // Adds Active Class To Training Plan Break In Order To Show It
-
-                const break_timer = document.querySelector(".break .break_timer h3")
-                let break_timer_remaining_time = 1800 // 3 Minutes
-                let max_break_timer_remaining_time = 1800 // 3 Minutes
-
-                // Progress Circle
-                const progress = document.querySelector(".break .break_timer svg .progress")
-                const radius = parseInt(progress.getAttribute("r"))
-                const circum_ference = 2 * Math.PI * radius // 251.32741228718345
-                progress.style.strokeDasharray = circum_ference
-
-                // Timer Interval (100MS)
-                let break_timer_interval = null
-
-                break_timer_interval = setInterval(function() {
-                    // Timer's Numbers
-
-                    let remaining_minutes = Math.floor((break_timer_remaining_time / 10) / 60)
-                    let remaining_seconds = Math.floor((break_timer_remaining_time / 10) % 60)
-
-                    // Checks If There Is Still Some Remaining Time
-                    if(break_timer_remaining_time <= 0) {
-                        // Skip To Next Exercise
-
-                        // Stops Timer
-                        clearInterval(break_timer_interval)
-                        break_timer_interval = null
-
-                        return
-                    }
-
-                    // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
-                    if(break_timer_remaining_time <= 100) {
-                        break_timer.style.color = "#df3535"
-                    }
-
-                    break_timer.innerText = `${remaining_minutes}:${remaining_seconds.toString().padStart(2, "0")}` // Updates Numbers In Timer
-
-                    // Progress Circle
-
-                    // Length
-                    progress.style.strokeDashoffset = circum_ference / max_break_timer_remaining_time * break_timer_remaining_time // Updates Progress Circle Length
-
-                    // Color
-                    const red = 255 - (255 / max_break_timer_remaining_time * break_timer_remaining_time) // Increases Red Color In Palette
-                    const green = 255 / max_break_timer_remaining_time * break_timer_remaining_time // Decreases Green Color In Palette
-
-                    progress.style.stroke = `rgb(${red}, ${green}, 0)` // Updates Progress Circle Color
-                    progress.style.filter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
-                    progress.style.webkitFilter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
-
-                    break_timer_remaining_time -= 1 // Decreases Remaining Time By 100MS Every 100MS Interval
-
-                    if(break_timer_remaining_time > max_break_timer_remaining_time) {
-                        progress.style.strokeDashoffset = circum_ference // Sets Progress In Progress Circle On The Start
-
-                        max_break_timer_remaining_time = break_timer_remaining_time // Changes Maximum Value Of Break Timer Remaining Time
-                    }
-                }, 100)
-
-                // Add Time Button
-                const add_time = document.querySelector(".break .add_time")
-                const add_time_message = add_time.querySelector(".add_time_message")
-
-                add_time.addEventListener("click", function() {
-                    break_timer_remaining_time += 300 // Adds 30 Seconds On Timer
-
-                    // Shows Animated Text
-                    add_time_message.classList.remove("animate")
-                    void add_time_message.offsetWidth
-                    add_time_message.classList.add("animate")
-                })
-
-                // Skip To Next Exercise Button
-                const skip_exercise = document.querySelector(".break .skip_exercise")
-
-                skip_exercise.addEventListener("click", function() {
-                    // Stops Timer
-                    clearInterval(break_timer_interval)
-                    break_timer_interval = null
-
-                    // Change Slides
-                    training_plan_break.classList.remove("active") // Removes Active Class From Training Plan Break In Order To Hide It
-
-                    // Adds Active Class To Next Exercise
-                    exercises[exercise_index].classList.remove("active")
-                    exercises[exercise_index + 1].classList.add("active")
-
-                    // Adds Active Class To Next Bar In Progress Bar
-                    progress_bar[exercise_index + 1].classList.add("active")
-                })
-            }
         })
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script> <!-- Chart JS Plugin For Floating Labels -->
 {% endblock script %}
