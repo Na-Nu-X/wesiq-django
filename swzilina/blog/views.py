@@ -18,6 +18,10 @@ from django.db.models import Q
 import math
 from django.http import JsonResponse
 from django.db.models import Max
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
+from collections import OrderedDict
+import json
 
 # Functions
 def captureError(message):
@@ -1050,10 +1054,49 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+
+        print(longest_activity)
+
         average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) # Gets Last 7 Days Average Logged In User's Activity Time
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
-        weekly_activity = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7)))
+
+        today = timezone.now().date() # Determines Today's Date
+        start_date = today - timedelta(days=6) # Determines Previous 7th Date
+
+        # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+        weekly_activity = (
+            Activity.objects
+            .filter(
+                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
+            )
+            .annotate(day=TruncDate("end_time"))
+            .values("day")
+            .annotate(total_elapsed_time=Sum("elapsed_time"))
+        )
+
+        # Creates Dictionary From Weekly Activity
+        weekly_activity_dictionary = {
+            one_day["day"]: one_day["total_elapsed_time"]
+            for one_day in weekly_activity
+        }
+
+        weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
+
+        weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
+
+        # Fills And Sorts Result From The Oldest Date To Today's Date 
+        for i in range(6, -1, -1):
+            day = today - timedelta(days=i)
+            label = weekday_labels[day.weekday()]
+
+            weekly_activity_result.append({
+                "day": label,
+                "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
+            })
+
+        # labels = [one_day["day"] for one_day in weekly_activity_result]
+        # data = [one_day["total_elapsed_time"] for one_day in weekly_activity_result]
 
         training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets Logged In User's Training Plan
         
@@ -1090,7 +1133,7 @@ def trainingSessionView(request):
             "average_activity_time_formatted": average_activity_time_formatted,
             "activities_amount": activities_amount,
             "training_plan": training_plan,
-            "weekly_activity": weekly_activity,
+            "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
         })
 
     return render(request, "blog/training_session.html")
