@@ -43,22 +43,58 @@ document.addEventListener("DOMContentLoaded", function() {
     let max_break_remaining_time = 180 // 3 Minutes
     let break_remaining_time = 180
 
+    // Summary
+    const average_activity_time = document.querySelector(".activity .previous_activity .average_activity_time") // Gets Average Activity Value
+
+    const activity_summary = document.querySelector(".activity_summary") // Gets Activity Summary
+
+    const main_summary = activity_summary.querySelector(".main_summary") // Gets Main Summary
+    const weekly_activity_chart = activity_summary.querySelector(".weekly_activity_chart") // Gets Weekly Summary Chart
+    let bar_chart = null
+
+    const training_plan_summary = activity_summary.querySelector(".training_plan_summary") // Gets Training Plan Summary
+    const training_plan_summary_chart = activity_summary.querySelector(".training_plan_summary_chart") // Gets Training Plan Summary Chart
+    let doughnut_chart = null
+
+    let exercises_summary = []
+    let exercises_elapsed_time = 0
+    let total_exercises_elapsed_time = 0
+
     // FUNCTIONS
 
     // General Functions
-    function getFormattedSeconds(elapsed_seconds) {
+    function getFormattedSeconds(elapsed_seconds, leading_zero=false) {
         const result = elapsed_seconds % 60 // Number Value Of Elapsed Seconds
-        return result.toString().padStart(2, "0") // Returns Formatted Style Of Elapsed Seconds
+
+        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Seconds If Format Parameter Is Set As True
     }
 
-    function getFormattedMinutes(elapsed_seconds) {
+    function getFormattedMinutes(elapsed_seconds, leading_zero=false) {
         const result = (Math.floor(elapsed_seconds / 60)) % 60 // Number Value Of Elapsed Minutes
-        return result.toString().padStart(2, "0") // Returns Formatted Style Of Elapsed Minutes
+
+        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Minutes If Format Parameter Is Set As True
     }
 
-    function getFormattedHours(elapsed_seconds) {
+    function getFormattedHours(elapsed_seconds, leading_zero=false) {
         const result = (Math.floor(elapsed_seconds / 3600)) % 60 // Number Value Of Elapsed Hours
-        return result.toString().padStart(2, "0") // Returns Formatted Style Of Elapsed Hours
+
+        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Hours If Format Parameter Is Set As True
+    }
+
+    // Function For Generate Random Color
+    function randomColor(from=0, to=255) {
+        return `rgb(
+            ${Math.floor(Math.random() * ((to + 1) - from) + from)},
+            ${Math.floor(Math.random() * ((to + 1) - from) + from)},
+            ${Math.floor(Math.random() * ((to + 1) - from) + from)}
+        )`
+    }
+
+    // Function For Get Cookie by Its Name
+    function getCookie(cookie_name) {
+        const value = `; ${document.cookie}`
+        const parts = value.split(`; ${cookie_name}=`)
+        if (parts.length === 2) return parts.pop().split(";")[0]
     }
 
     function trainingPlanProgress() {
@@ -100,15 +136,26 @@ document.addEventListener("DOMContentLoaded", function() {
         
         activity_summary.style.display = "none" // Hides Activity Summary
 
+        // Deletes Existing Summary Charts
+        if(bar_chart) {
+            bar_chart.destroy()
+            bar_chart = null
+        }
+
+        if(doughnut_chart) {
+            doughnut_chart.destroy()
+            doughnut_chart = null
+        }
+
         activity_timer_interval = setInterval(function() {
             // Activity Timer
 
             activity_timer_elapsed_time += 1 // Counts The Elapsed Time Since The Start Of The Activity
 
             // Renders Elapsed Time Values To The Activity Timer
-            activity_timer.querySelector(".hours").textContent = getFormattedHours(activity_timer_elapsed_time)
-            activity_timer.querySelector(".minutes").textContent = getFormattedMinutes(activity_timer_elapsed_time)
-            activity_timer.querySelector(".seconds").textContent = getFormattedSeconds(activity_timer_elapsed_time)
+            activity_timer.querySelector(".hours").textContent = getFormattedHours(activity_timer_elapsed_time, true)
+            activity_timer.querySelector(".minutes").textContent = getFormattedMinutes(activity_timer_elapsed_time, true)
+            activity_timer.querySelector(".seconds").textContent = getFormattedSeconds(activity_timer_elapsed_time, true)
 
             // Gained XP
 
@@ -126,7 +173,38 @@ document.addEventListener("DOMContentLoaded", function() {
                 // If There Is An Active XP Boost
                 current_activity_info.textContent = `${xp_boost}x XP`
             }
-        }, 1000)
+
+            // Starts Counting Elapsed Time For The Current Active Exercise In The Training Plan
+            if(exercises[active_exercise_index].classList.contains("active")) {
+                const exercise_name = exercises[active_exercise_index].querySelector("h3").textContent // Gets Active Exercise Name
+
+                exercises_elapsed_time += 1 // Increments Exercises Elapsed Time
+                total_exercises_elapsed_time += 1 // Increments Total Exercises Elapsed Time
+
+                // Returns Exercise Name Which Is Already In Exercises Summary Array
+                const existing_exercise = exercises_summary.find(function(one_exercise) {
+                    return one_exercise.exercise === exercise_name
+                })
+                
+                // Updated Only Elapsed Time For Existing Exercise
+                if(existing_exercise) {
+                    existing_exercise.elapsed_time = exercises_elapsed_time
+                }
+
+                // Creates New Object For Unexisting Exercise
+                else {
+                    exercises_elapsed_time = 1 // Reset Exercise Elapsed Time
+
+                    // Creates Exercise Object
+                    const exercise_object = {}
+                    exercise_object.exercise = exercise_name
+                    exercise_object.elapsed_time = exercises_elapsed_time
+                    exercise_object.color = randomColor(128, 255)
+
+                    exercises_summary.push(exercise_object) // Fills Exercise Summary Array With Object
+                }
+            }
+        }, 1)
     }
 
     function pauseActivity() {
@@ -134,9 +212,6 @@ document.addEventListener("DOMContentLoaded", function() {
         clearInterval(activity_timer_interval)
         activity_timer_interval = null
     }
-
-    const average_activity_time = document.querySelector(".activity .previous_activity .average_activity_time")
-    const activity_summary = document.querySelector(".activity_summary") // Gets Activity Summary
 
     function stopActivity() {
         // Stops Activity Timer
@@ -174,21 +249,45 @@ document.addEventListener("DOMContentLoaded", function() {
 
         active_exercise_index = 0 // Sets Active Exercise Index To Default
 
+        // Sets Training Plan Summary To Default
+        training_plan_summary.style.display = "none" // Hides Training Plan Summary
+        training_plan_summary_chart.style.display = "none" // Hides Training Plan Summary Chart
+        training_plan_summary.innerHTML = "" // Deletes Everything From Training Plan Summary
+
         // Only Executed If The Activity Timer Has Been Started
         if(activity_timer_elapsed_time >= 1) {
-            // Sends POST Data
-
             gained_xp = Math.round(gained_xp) // Rounds Gained XP Value
+
+            // Sends POST Data
+            const post_data = new FormData()
+            post_data.append("formatted_elapsed_time", `${getFormattedHours(activity_timer_elapsed_time, true)}h ${getFormattedMinutes(activity_timer_elapsed_time, true)}m ${getFormattedSeconds(activity_timer_elapsed_time, true)}s`)
+            post_data.append("elapsed_time", activity_timer_elapsed_time)
+            post_data.append("gained_xp", gained_xp)
+
+            fetch("/training-session", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: post_data
+            })
+            .then(res => res.json())
+            .then(data => {
+                data.gained_xp = gained_xp
+            })
 
             // Activity Summary
 
             activity_summary.style.display = "flex" // Shows Activity Summary
 
-            activity_summary.querySelector(".main_summary").innerHTML = "<br>Aktuálna aktivita trvala: "
+            // Main Summary Text
+            gained_xp == 0 ? main_summary.innerHTML = `Nezískali ste žiadne XP` : main_summary.innerHTML = `Získali ste: <span style="color: #52cf20">${gained_xp}XP</span>` // Renders Text For Earned XP
+            
+            main_summary.innerHTML += "<br>Aktuálna aktivita trvala: "
 
             // Displays The Main Summary Text Of The Activity Summary In Green
             if(activity_timer_elapsed_time >= parseInt(average_activity_time.dataset.average_activity_time)) {
-                activity_summary.querySelector(".main_summary").innerHTML += `
+                main_summary.innerHTML += `
                     <span style="color: #52cf20">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
@@ -201,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Displays The Main Summary Text Of The Activity Summary In Red
             else {
-                activity_summary.querySelector(".main_summary").innerHTML += `
+                main_summary.innerHTML += `
                     <span style="color: #df3535">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
@@ -210,6 +309,138 @@ document.addEventListener("DOMContentLoaded", function() {
                         </span>
                     </span>
                 `
+            }
+
+            // Weekly Activity Chart
+            let weekly_activity = JSON.parse(weekly_activity_chart.dataset.activities) // Gets Weekly Activity Parsed Data
+
+            // Gets Each Data From Weekly Activity Parsed Data
+            const labels = weekly_activity.map(one_item => one_item.day) // Gets Days As Labels
+            const data = weekly_activity.map(one_item => one_item.total_elapsed_time) // Gets Data As Total Elapsed Time Value For Each Day
+
+            // Creates Chart
+            bar_chart = new Chart(weekly_activity_chart.querySelector("canvas"), {
+                type: "bar",
+
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data, // Seconds
+                        backgroundColor: "rgb(195, 240, 175)",
+                        hoverBackgroundColor: "rgb(195, 240, 175)",
+                        borderColor: "#52cf20",
+                        hoverBorderColor: "#52cf20",
+                        borderWidth: 1,
+                        hoverBorderWidth: 1,
+                        borderRadius: 0,
+                    }],
+                },
+
+                options: {
+                    animation: false,
+
+                    scales: {
+                        y: {
+                            display: false,
+                        },
+
+                        x: {
+                            ticks: {
+                                color: "#ffffff",
+
+                                font: {
+                                    family: "'Balsamiq Sans', sans-serif",
+                                    size: 15,
+                                },
+                            },
+
+                            grid: {
+                                display: false,
+                            },
+                        },
+                    },
+
+                    plugins: {
+                        legend: false,
+                        tooltip: false,
+
+                        datalabels: {
+                            anchor: "end",
+                            align: "bottom",
+                            color: "#52cf20",
+
+                            font: {
+                                family: "'Balsamiq Sans', sans-serif",
+                                size: 12
+                            },
+                            
+                            formatter: function(value) {
+                                if(value === 0) return ""
+
+                                return `${getFormattedHours(value)}h ${getFormattedMinutes(value)}m`
+                            },
+                        },
+                    },
+                },
+
+                plugins: [ChartDataLabels],
+            })
+
+            weekly_activity_chart.style.display = "block" // Shows Weekly Summary Chart
+            weekly_activity_chart.style.animation = "fade_in_animation 1s ease-out" // Adds Animation For Weekly Summary Summary Chart
+
+            // Training Plan Summary
+            if(exercises_summary.length > 0) {
+                training_plan_summary.style.display = "block" // Shows Training Plan Summary
+                training_plan_summary_chart.style.display = "block" // Shows Training Plan Summary Chart
+                training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Adds Animation For Training Plan Summary Chart
+
+                // Training Plan Summary Text
+                // training_plan_summary.innerText = "Strávený čas v daných cvičeniach"
+                exercises_summary.forEach(function(one_exercise) {
+                    training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getFormattedHours(one_exercise.elapsed_time)}h ${getFormattedMinutes(one_exercise.elapsed_time)}m ${getFormattedSeconds(one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2)}%)</span>`
+                })
+
+                // Training Plan Summary Chart
+                // Gets Data From Exercise Summary Array
+                const data = exercises_summary.map(one_item => one_item.elapsed_time) // Gets Elapsed Time For Each Exercise From Exercises Summary
+                const colors = exercises_summary.map(one_item => one_item.color) // Gets Color For Each Exercise From Exercises Summary
+
+                // Creates Chart
+                doughnut_chart = new Chart(training_plan_summary_chart.querySelector("canvas"), {
+                    type: "doughnut",
+
+                    data: {
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                            hoverBackgroundColor: colors,
+                            borderColor: "#ffffff",
+                            hoverBorderColor: "#ffffff",
+                            borderWidth: 2,
+                            hoverBorderWidth: 2,
+                            borderRadius: 5,
+                            offset: 10,
+                        }],
+
+                        labels: false,
+                    },
+
+                    options: {
+                        plugins: {
+                            legend: false,
+                            tooltip: false,
+                        },
+
+                        cutout: "50%",
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: false,
+                    },                      
+                })
+
+                exercises_summary = [] // Sets Exercises Summary To Default
+                total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
             }
 
             // Auto Scroll To Activity Summary After Finish Activity
@@ -278,8 +509,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 // Break Timer
-                break_timer.querySelector(".minutes").textContent = Math.floor(break_remaining_time / 60)
-                break_timer.querySelector(".seconds").textContent = getFormattedSeconds(Math.floor(break_remaining_time))
+                break_timer.querySelector(".minutes").textContent = getFormattedMinutes(Math.round(break_remaining_time))
+                break_timer.querySelector(".seconds").textContent = getFormattedSeconds(Math.round(break_remaining_time), true)
 
                 // Progress Circle
                 progress_circle.style.strokeDashoffset = circum_ference / max_break_remaining_time * break_remaining_time // Updates Progress Circle Length
