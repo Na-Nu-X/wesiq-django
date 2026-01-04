@@ -318,6 +318,24 @@ document.addEventListener("DOMContentLoaded", function() {
             const labels = weekly_activity.map(one_item => one_item.day) // Gets Days As Labels
             const data = weekly_activity.map(one_item => one_item.total_elapsed_time) // Gets Data As Total Elapsed Time Value For Each Day
 
+            // Function To Set Theme Of Bars In The Chart Based On Values
+            function setBarTheme(value) {
+                // Sets Bar Theme To Green
+                return value !== 0
+                ? {
+                    backgroundColor: "rgb(195, 240, 175)",
+                    borderColor: "#52cf20",
+                    borderWidth: 1,
+                }
+                
+                // Sets Bar Theme To Red
+                : {
+                    backgroundColor: "#df3535",
+                    borderColor: "#df3535",
+                    borderWidth: 0,
+                }
+            }
+
             // Creates Chart
             bar_chart = new Chart(weekly_activity_chart.querySelector("canvas"), {
                 type: "bar",
@@ -326,13 +344,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     labels: labels,
                     datasets: [{
                         data: data, // Seconds
-                        backgroundColor: "rgb(195, 240, 175)",
-                        hoverBackgroundColor: "rgb(195, 240, 175)",
-                        borderColor: "#52cf20",
-                        hoverBorderColor: "#52cf20",
-                        borderWidth: 1,
-                        hoverBorderWidth: 1,
                         borderRadius: 0,
+                        minBarLength: 2,
+                        backgroundColor: chart => setBarTheme(chart.raw).backgroundColor,
+                        hoverBackgroundColor: chart => setBarTheme(chart.raw).backgroundColor,
+                        borderColor: chart => setBarTheme(chart.raw).borderColor,
+                        hoverBorderColor: chart => setBarTheme(chart.raw).borderColor,
+                        borderWidth: chart => setBarTheme(chart.raw).borderWidth,
+                        hoverBorderWidth: chart => setBarTheme(chart.raw).borderWidth,
                     }],
                 },
 
@@ -374,10 +393,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                 size: 12
                             },
                             
+                            // Creates Floating Labels
                             formatter: function(value) {
-                                if(value === 0) return ""
-
-                                return `${getFormattedHours(value)}h ${getFormattedMinutes(value)}m`
+                                return value === 0 ? "" : `${getFormattedHours(value)}h ${getFormattedMinutes(value)}m`
                             },
                         },
                     },
