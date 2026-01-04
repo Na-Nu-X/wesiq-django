@@ -6,7 +6,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 500px;
   min-height: calc(100vh - 67px);
   margin: 0px auto;
 }
@@ -80,17 +79,48 @@
 .activity .record_activity .buttons a .fa-play {
   left: calc(50% + 2.5px);
 }
-.activity .training_plan {
+.activity .training_plan_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.activity .training_plan_container .previous_training_plan, .activity .training_plan_container .next_training_plan {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background-color: #999999;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0px 0px 5px 0px #999999;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.activity .training_plan_container .previous_training_plan:hover, .activity .training_plan_container .next_training_plan:hover {
+  transform: scale(1.05);
+  background-color: #cccccc;
+  cursor: pointer;
+}
+.activity .training_plan_container .previous_training_plan .fa-angles-left, .activity .training_plan_container .previous_training_plan .fa-angles-right, .activity .training_plan_container .next_training_plan .fa-angles-left, .activity .training_plan_container .next_training_plan .fa-angles-right {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  color: #fff;
+}
+.activity .training_plan_container .training_plan {
   position: relative;
   max-width: 500px;
   width: 100%;
-  margin-bottom: 20px;
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid #fff;
   border-radius: 5px;
   overflow: hidden;
 }
-.activity .training_plan .start_training, .activity .training_plan .finish_training {
+.activity .training_plan_container .training_plan .start_training, .activity .training_plan_container .training_plan .finish_training {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,16 +132,16 @@
   padding: 10px;
   transition: transform 0.5s ease;
 }
-.activity .training_plan .start_training:not(.active), .activity .training_plan .finish_training:not(.active) {
+.activity .training_plan_container .training_plan .start_training:not(.active), .activity .training_plan_container .training_plan .finish_training:not(.active) {
   position: absolute;
   top: 0px;
   transform: translateX(100%);
 }
-.activity .training_plan .start_training h3, .activity .training_plan .finish_training h3 {
+.activity .training_plan_container .training_plan .start_training h3, .activity .training_plan_container .training_plan .finish_training h3 {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
 }
-.activity .training_plan .start_training .start_training_button, .activity .training_plan .finish_training .start_training_button {
+.activity .training_plan_container .training_plan .start_training .start_training_button, .activity .training_plan_container .training_plan .finish_training .start_training_button {
   position: relative;
   width: 50px;
   height: 50px;
@@ -122,15 +152,15 @@
   box-shadow: 0px 0px 5px 0px #52cf20;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.activity .training_plan .start_training .start_training_button:not(:hover), .activity .training_plan .finish_training .start_training_button:not(:hover) {
+.activity .training_plan_container .training_plan .start_training .start_training_button:not(:hover), .activity .training_plan_container .training_plan .finish_training .start_training_button:not(:hover) {
   animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
 }
-.activity .training_plan .start_training .start_training_button:hover, .activity .training_plan .finish_training .start_training_button:hover {
+.activity .training_plan_container .training_plan .start_training .start_training_button:hover, .activity .training_plan_container .training_plan .finish_training .start_training_button:hover {
   transform: scale(1.05);
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
   cursor: pointer;
 }
-.activity .training_plan .start_training .start_training_button .fa-play, .activity .training_plan .finish_training .start_training_button .fa-play {
+.activity .training_plan_container .training_plan .start_training .start_training_button .fa-play, .activity .training_plan_container .training_plan .finish_training .start_training_button .fa-play {
   position: absolute;
   top: 50%;
   left: calc(50% + 2.5px);
@@ -138,7 +168,7 @@
   font-size: 30px;
   color: #fff;
 }
-.activity .training_plan .start_training .finish_training_button, .activity .training_plan .finish_training .finish_training_button {
+.activity .training_plan_container .training_plan .start_training .finish_training_button, .activity .training_plan_container .training_plan .finish_training .finish_training_button {
   position: relative;
   width: 50px;
   height: 50px;
@@ -149,15 +179,15 @@
   box-shadow: 0px 0px 5px 0px #df3535;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.activity .training_plan .start_training .finish_training_button:not(:hover), .activity .training_plan .finish_training .finish_training_button:not(:hover) {
+.activity .training_plan_container .training_plan .start_training .finish_training_button:not(:hover), .activity .training_plan_container .training_plan .finish_training .finish_training_button:not(:hover) {
   animation: red_pulse_button_animation 1s linear alternate infinite 0.3s;
 }
-.activity .training_plan .start_training .finish_training_button:hover, .activity .training_plan .finish_training .finish_training_button:hover {
+.activity .training_plan_container .training_plan .start_training .finish_training_button:hover, .activity .training_plan_container .training_plan .finish_training .finish_training_button:hover {
   transform: scale(1.05);
   background-color: rgb(229.9743589744, 97.0256410256, 97.0256410256);
   cursor: pointer;
 }
-.activity .training_plan .start_training .finish_training_button .fa-stop, .activity .training_plan .finish_training .finish_training_button .fa-stop {
+.activity .training_plan_container .training_plan .start_training .finish_training_button .fa-stop, .activity .training_plan_container .training_plan .finish_training .finish_training_button .fa-stop {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -165,7 +195,7 @@
   font-size: 30px;
   color: #fff;
 }
-.activity .training_plan .exercise {
+.activity .training_plan_container .training_plan .exercise {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -177,24 +207,24 @@
   padding: 10px;
   transition: transform 0.5s ease;
 }
-.activity .training_plan .exercise:not(.active) {
+.activity .training_plan_container .training_plan .exercise:not(.active) {
   position: absolute;
   top: 0px;
   transform: translateX(100%);
 }
-.activity .training_plan .exercise h3 {
+.activity .training_plan_container .training_plan .exercise h3 {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
 }
-.activity .training_plan .exercise p, .activity .training_plan .exercise .sets {
+.activity .training_plan_container .training_plan .exercise p, .activity .training_plan_container .training_plan .exercise .sets {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 1.2em;
 }
-.activity .training_plan .exercise p span, .activity .training_plan .exercise .sets span {
+.activity .training_plan_container .training_plan .exercise p span, .activity .training_plan_container .training_plan .exercise .sets span {
   font-family: inherit;
   font-size: inherit;
 }
-.activity .training_plan .exercise .next_exercise_button {
+.activity .training_plan_container .training_plan .exercise .next_exercise_button {
   position: relative;
   width: 50px;
   height: 50px;
@@ -205,15 +235,15 @@
   box-shadow: 0px 0px 5px 0px #52cf20;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.activity .training_plan .exercise .next_exercise_button:not(:hover) {
+.activity .training_plan_container .training_plan .exercise .next_exercise_button:not(:hover) {
   animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
 }
-.activity .training_plan .exercise .next_exercise_button:hover {
+.activity .training_plan_container .training_plan .exercise .next_exercise_button:hover {
   transform: scale(1.05);
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
   cursor: pointer;
 }
-.activity .training_plan .exercise .next_exercise_button .fa-angle-right {
+.activity .training_plan_container .training_plan .exercise .next_exercise_button .fa-angle-right {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -221,7 +251,7 @@
   font-size: 30px;
   color: #fff;
 }
-.activity .training_plan .break {
+.activity .training_plan_container .training_plan .break {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -233,12 +263,12 @@
   padding: 10px;
   transition: transform 0.5s ease;
 }
-.activity .training_plan .break:not(.active) {
+.activity .training_plan_container .training_plan .break:not(.active) {
   position: absolute;
   top: 0px;
   transform: translateX(100%);
 }
-.activity .training_plan .break .add_time {
+.activity .training_plan_container .training_plan .break .add_time {
   position: relative;
   width: 50px;
   height: 50px;
@@ -248,12 +278,12 @@
   box-shadow: 0px 0px 5px 1px #58a6e6;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.activity .training_plan .break .add_time:hover {
+.activity .training_plan_container .training_plan .break .add_time:hover {
   transform: scale(1.05);
   background-color: rgb(110.1796875, 177.8203125, 233.3203125);
   cursor: pointer;
 }
-.activity .training_plan .break .add_time .fa-plus {
+.activity .training_plan_container .training_plan .break .add_time .fa-plus {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -261,7 +291,7 @@
   font-size: 30px;
   color: #fff;
 }
-.activity .training_plan .break .add_time .add_time_message {
+.activity .training_plan_container .training_plan .break .add_time .add_time_message {
   visibility: hidden;
   opacity: 0;
   position: absolute;
@@ -272,37 +302,37 @@
   color: #52cf20;
   z-index: 200;
 }
-.activity .training_plan .break .add_time .add_time_message.animate {
+.activity .training_plan_container .training_plan .break .add_time .add_time_message.animate {
   animation: fade_out_animation 1s ease-out forwards;
 }
-.activity .training_plan .break .break_timer {
+.activity .training_plan_container .training_plan .break .break_timer {
   position: relative;
   width: 100px;
   height: 100px;
   border-radius: 50px;
 }
-.activity .training_plan .break .break_timer svg {
+.activity .training_plan_container .training_plan .break .break_timer svg {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: rotate(-90deg) translate(50%, -50%);
 }
-.activity .training_plan .break .break_timer svg:nth-child(1) {
+.activity .training_plan_container .training_plan .break .break_timer svg:nth-child(1) {
   z-index: 10;
 }
-.activity .training_plan .break .break_timer svg .progress {
+.activity .training_plan_container .training_plan .break .break_timer svg .progress {
   fill: none;
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.activity .training_plan .break .break_timer svg .progress_background {
+.activity .training_plan_container .training_plan .break .break_timer svg .progress_background {
   fill: none;
   stroke: #999999;
   stroke-width: 3;
   stroke-dasharray: 2 4;
 }
-.activity .training_plan .break .break_timer p {
+.activity .training_plan_container .training_plan .break .break_timer p {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -311,11 +341,11 @@
   font-family: "Orbitron", sans-serif;
   font-size: 1.2em;
 }
-.activity .training_plan .break .break_timer p span {
+.activity .training_plan_container .training_plan .break .break_timer p span {
   font-family: inherit;
   font-size: inherit;
 }
-.activity .training_plan .break .skip_break_button {
+.activity .training_plan_container .training_plan .break .skip_break_button {
   position: relative;
   width: 50px;
   height: 50px;
@@ -325,15 +355,15 @@
   box-shadow: 0px 0px 5px 0px #52cf20;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.activity .training_plan .break .skip_break_button:not(:hover) {
+.activity .training_plan_container .training_plan .break .skip_break_button:not(:hover) {
   animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
 }
-.activity .training_plan .break .skip_break_button:hover {
+.activity .training_plan_container .training_plan .break .skip_break_button:hover {
   transform: scale(1.05);
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
   cursor: pointer;
 }
-.activity .training_plan .break .skip_break_button .fa-angle-right {
+.activity .training_plan_container .training_plan .break .skip_break_button .fa-angle-right {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -341,14 +371,14 @@
   font-size: 30px;
   color: #fff;
 }
-.activity .training_plan .progress_bar {
+.activity .training_plan_container .training_plan .progress_bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
   margin: 0px 10px 10px;
 }
-.activity .training_plan .progress_bar .bar {
+.activity .training_plan_container .training_plan .progress_bar .bar {
   --progress: 0%;
   --progress-color: rgb(255, 207, 32);
   position: relative;
@@ -357,7 +387,7 @@
   border: 1px solid #999999;
   border-radius: 5px;
 }
-.activity .training_plan .progress_bar .bar:before {
+.activity .training_plan_container .training_plan .progress_bar .bar:before {
   content: "";
   position: absolute;
   top: 0px;
@@ -366,7 +396,7 @@
   height: 100%;
   border-radius: inherit;
 }
-.activity .training_plan .progress_bar .bar.active:before {
+.activity .training_plan_container .training_plan .progress_bar .bar.active:before {
   width: var(--progress);
   background-color: var(--progress-color);
   box-shadow: 0px 0px 10px var(--progress-color);

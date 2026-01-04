@@ -9,7 +9,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 500px;
+    // max-width: 500px;
     min-height: calc(100vh - 67px);
     margin: 0px auto;
 
@@ -100,267 +100,161 @@
         }
     }
 
-    .training_plan {
-        position: relative;
-        max-width: 500px;
+    .training_plan_container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
         width: 100%;
         margin-bottom: 20px;
-        background-color: transparentize($secondary-color, 0.95);
-        border: 2px solid $secondary-color;
-        border-radius: $small-border-radius;
-        overflow: hidden;
 
-        .start_training, .finish_training {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 5px;
-            width: 100%;
-            height: 185px;
-            margin-bottom: 10px;
-            padding: 10px;
-            transition: transform 0.5s ease;
+        .previous_training_plan, .next_training_plan {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background-color: darken($secondary-color, 40%);
+            border: 1px solid $secondary-color;
+            border-radius: 50%;
+            box-shadow: 0px 0px 5px 0px darken($secondary-color, 40%);
+            transition: transform 0.3s ease, background-color 0.3s ease;
 
-            &:not(.active) {
+            &:hover {
+                transform: scale(1.05);
+                background-color: darken($secondary-color, 20%);
+                cursor: pointer;
+            }
+
+            .fa-angles-left, .fa-angles-right {
                 position: absolute;
-                top: 0px;
-                transform: translateX(100%);
-            }
-
-            h3 {
-                font-family: $article-heading-font;
-                font-size: 2em;
-            }
-
-            .start_training_button {
-                position: relative;
-                width: 50px;
-                height: 50px;
-                margin-top: 10px;
-                background-color: $success-color;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:not(:hover) {
-                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                    background-color: lighten($success-color, 10%);
-                    cursor: pointer;
-                }
-
-                .fa-play {
-                    position: absolute;
-                    top: 50%;
-                    left: calc(50% + 2.5px);
-                    transform: translate(-50%, -50%);
-                    font-size: 30px;
-                    color: $secondary-color;
-                }
-            }
-
-            .finish_training_button {
-                position: relative;
-                width: 50px;
-                height: 50px;
-                margin-top: 10px;
-                background-color: $error-color;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                box-shadow: 0px 0px 5px 0px $error-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:not(:hover) {
-                    animation: red_pulse_button_animation 1s linear alternate infinite 0.3s;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                    background-color: lighten($error-color, 10%);
-                    cursor: pointer;
-                }
-
-                .fa-stop {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-size: 30px;
-                    color: $secondary-color;
-                }
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 30px;
+                color: $secondary-color;
             }
         }
 
-        .exercise {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            gap: 5px;
+        .training_plan {
+            position: relative;
+            max-width: 500px;
             width: 100%;
-            height: 185px;
-            margin-bottom: 10px;
-            padding: 10px;
-            transition: transform 0.5s ease;
+            background-color: transparentize($secondary-color, 0.95);
+            border: 2px solid $secondary-color;
+            border-radius: $small-border-radius;
+            overflow: hidden;
 
-            &:not(.active) {
-                position: absolute;
-                top: 0px;
-                transform: translateX(100%);
-            }
+            .start_training, .finish_training {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 5px;
+                width: 100%;
+                height: 185px;
+                margin-bottom: 10px;
+                padding: 10px;
+                transition: transform 0.5s ease;
 
-            h3 {
-                font-family: $article-heading-font;
-                font-size: 2em;
-            }
-
-            p, .sets {
-                font-family: $article-heading-font;
-                font-size: 1.2em;
-
-                span {
-                    font-family: inherit;
-                    font-size: inherit;
-                }
-            }
-
-            .next_exercise_button {
-                position: relative;
-                width: 50px;
-                height: 50px;
-                margin-top: 10px;
-                background-color: $success-color;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:not(:hover) {
-                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                    background-color: lighten($success-color, 10%);
-                    cursor: pointer;
-                }
-
-                .fa-angle-right {
+                &:not(.active) {
                     position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-size: 30px;
-                    color: $secondary-color;
-                }
-            }
-        }
-
-        .break {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 40px;
-            width: 100%;
-            height: 185px;
-            margin-bottom: 10px;
-            padding: 10px;
-            transition: transform 0.5s ease;
-
-            &:not(.active) {
-                position: absolute;
-                top: 0px;
-                transform: translateX(100%);
-            }
-
-            .add_time {
-                position: relative;
-                width: 50px;
-                height: 50px;
-                background-color: #58a6e6;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                box-shadow: 0px 0px 5px 1px #58a6e6;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:hover {
-                    transform: scale(1.05);
-                    background-color: lighten(#58a6e6, 5%);
-                    cursor: pointer;
+                    top: 0px;
+                    transform: translateX(100%);
                 }
 
-                .fa-plus {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-size: 30px;
-                    color: $secondary-color;
+                h3 {
+                    font-family: $article-heading-font;
+                    font-size: 2em;
                 }
 
-                .add_time_message {
-                    visibility: hidden;
-                    opacity: 0;
-                    position: absolute;
-                    top: 0%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    text-align: center;
-                    color: $success-color;
-                    z-index: 200;
+                .start_training_button {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    margin-top: 10px;
+                    background-color: $success-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: 50%;
+                    box-shadow: 0px 0px 5px 0px $success-color;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
 
-                    &.animate {
-                        animation: fade_out_animation 1s ease-out forwards;
+                    &:not(:hover) {
+                        animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
+                    }
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: lighten($success-color, 10%);
+                        cursor: pointer;
+                    }
+
+                    .fa-play {
+                        position: absolute;
+                        top: 50%;
+                        left: calc(50% + 2.5px);
+                        transform: translate(-50%, -50%);
+                        font-size: 30px;
+                        color: $secondary-color;
+                    }
+                }
+
+                .finish_training_button {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    margin-top: 10px;
+                    background-color: $error-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: 50%;
+                    box-shadow: 0px 0px 5px 0px $error-color;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+
+                    &:not(:hover) {
+                        animation: red_pulse_button_animation 1s linear alternate infinite 0.3s;
+                    }
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: lighten($error-color, 10%);
+                        cursor: pointer;
+                    }
+
+                    .fa-stop {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 30px;
+                        color: $secondary-color;
                     }
                 }
             }
 
-            // Timer
+            .exercise {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                gap: 5px;
+                width: 100%;
+                height: 185px;
+                margin-bottom: 10px;
+                padding: 10px;
+                transition: transform 0.5s ease;
 
-            .break_timer {
-                position: relative;
-                width: 100px;
-                height: 100px;
-                border-radius: 50px;
-
-                svg {
+                &:not(.active) {
                     position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: rotate(-90deg) translate(50%, -50%);
-
-                    &:nth-child(1) {
-                        z-index: 10;
-                    }
-
-                    .progress {
-                        fill: none;
-                        stroke-width: 5;
-                        stroke-linecap: round;
-                        stroke-linejoin: round;
-                    }
-
-                    .progress_background {
-                        fill: none;
-                        stroke: darken($secondary-color, 40%);
-                        stroke-width: 3;
-                        stroke-dasharray: 2 4;
-                    }
+                    top: 0px;
+                    transform: translateX(100%);
                 }
 
-                p {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    color: $secondary-color;
-                    font-family: $timer-font;
+                h3 {
+                    font-family: $article-heading-font;
+                    font-size: 2em;
+                }
+
+                p, .sets {
+                    font-family: $article-heading-font;
                     font-size: 1.2em;
 
                     span {
@@ -368,72 +262,213 @@
                         font-size: inherit;
                     }
                 }
+
+                .next_exercise_button {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    margin-top: 10px;
+                    background-color: $success-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: 50%;
+                    box-shadow: 0px 0px 5px 0px $success-color;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+
+                    &:not(:hover) {
+                        animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
+                    }
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: lighten($success-color, 10%);
+                        cursor: pointer;
+                    }
+
+                    .fa-angle-right {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 30px;
+                        color: $secondary-color;
+                    }
+                }
             }
 
-            .skip_break_button {
-                position: relative;
-                width: 50px;
-                height: 50px;
-                background-color: $success-color;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:not(:hover) {
-                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                    background-color: lighten($success-color, 10%);
-                    cursor: pointer;
-                }
-
-                .fa-angle-right {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    font-size: 30px;
-                    color: $secondary-color;
-                }
-            }
-        }
-
-        .progress_bar {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 0px 10px 10px;
-
-            .bar {
-                --progress: 0%;
-                --progress-color: rgb(255, 207, 32);
-
-                position: relative;
+            .break {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
                 width: 100%;
-                height: 10px;
-                border: 1px solid darken($secondary-color, 40%);
-                border-radius: calc(10px / 2);
+                height: 185px;
+                margin-bottom: 10px;
+                padding: 10px;
+                transition: transform 0.5s ease;
 
-                &:before {
-                    content: "";
+                &:not(.active) {
                     position: absolute;
                     top: 0px;
-                    left: 0px;
-                    width: 0%;
-                    height: 100%;
-                    border-radius: inherit;
+                    transform: translateX(100%);
                 }
 
-                &.active {
+                .add_time {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    background-color: #58a6e6;
+                    border: 1px solid $secondary-color;
+                    border-radius: 50%;
+                    box-shadow: 0px 0px 5px 1px #58a6e6;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: lighten(#58a6e6, 5%);
+                        cursor: pointer;
+                    }
+
+                    .fa-plus {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 30px;
+                        color: $secondary-color;
+                    }
+
+                    .add_time_message {
+                        visibility: hidden;
+                        opacity: 0;
+                        position: absolute;
+                        top: 0%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        text-align: center;
+                        color: $success-color;
+                        z-index: 200;
+
+                        &.animate {
+                            animation: fade_out_animation 1s ease-out forwards;
+                        }
+                    }
+                }
+
+                // Timer
+
+                .break_timer {
+                    position: relative;
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 50px;
+
+                    svg {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: rotate(-90deg) translate(50%, -50%);
+
+                        &:nth-child(1) {
+                            z-index: 10;
+                        }
+
+                        .progress {
+                            fill: none;
+                            stroke-width: 5;
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                        }
+
+                        .progress_background {
+                            fill: none;
+                            stroke: darken($secondary-color, 40%);
+                            stroke-width: 3;
+                            stroke-dasharray: 2 4;
+                        }
+                    }
+
+                    p {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        color: $secondary-color;
+                        font-family: $timer-font;
+                        font-size: 1.2em;
+
+                        span {
+                            font-family: inherit;
+                            font-size: inherit;
+                        }
+                    }
+                }
+
+                .skip_break_button {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    background-color: $success-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: 50%;
+                    box-shadow: 0px 0px 5px 0px $success-color;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+
+                    &:not(:hover) {
+                        animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
+                    }
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: lighten($success-color, 10%);
+                        cursor: pointer;
+                    }
+
+                    .fa-angle-right {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 30px;
+                        color: $secondary-color;
+                    }
+                }
+            }
+
+            .progress_bar {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 10px;
+                margin: 0px 10px 10px;
+
+                .bar {
+                    --progress: 0%;
+                    --progress-color: rgb(255, 207, 32);
+
+                    position: relative;
+                    width: 100%;
+                    height: 10px;
+                    border: 1px solid darken($secondary-color, 40%);
+                    border-radius: calc(10px / 2);
+
                     &:before {
-                        width: var(--progress);
-                        background-color: var(--progress-color);
-                        box-shadow: 0px 0px 10px var(--progress-color);
-                        transition: width 1s ease, background-color 0.3s ease;
+                        content: "";
+                        position: absolute;
+                        top: 0px;
+                        left: 0px;
+                        width: 0%;
+                        height: 100%;
+                        border-radius: inherit;
+                    }
+
+                    &.active {
+                        &:before {
+                            width: var(--progress);
+                            background-color: var(--progress-color);
+                            box-shadow: 0px 0px 10px var(--progress-color);
+                            transition: width 1s ease, background-color 0.3s ease;
+                        }
                     }
                 }
             }
