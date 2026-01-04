@@ -109,9 +109,11 @@ document.addEventListener("DOMContentLoaded", function() {
         progress_bar[active_exercise_index].style.setProperty("--progress", `${progress_percentage}%`) // Shows Progress In Progress Bar
 
         // Changes Progress Bar Color
+        red = Math.ceil(red) // Rounds Red Color
+
         if(red >= min_red) {
             progress_bar.forEach(function(one_bar) {
-                one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`)
+                one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`) // Changes Color For Every Bar
             })
         }
 
@@ -590,6 +592,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Updates Set Progress
         if(current_set < sets_amount) {
+            // Updates Reps Amount For Every Set
+            const reps = exercises[active_exercise_index].querySelector(".reps")
+            const periods = JSON.parse(reps.dataset.periods)
+
+            periods[current_set] === 0 ? reps.textContent = "Do zlyhania" : reps.textContent = `${periods[current_set]}x`
+
+            // Updates Set Amount
             current_set += 1 // Increases Current Set Value
             set_progress[0].textContent = current_set // Displays Current Set Value
 
