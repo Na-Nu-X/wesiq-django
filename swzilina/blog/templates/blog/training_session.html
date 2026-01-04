@@ -23,8 +23,6 @@
             <div class="start_training active">
                 <h3>Začať tréning</h3>
 
-                {% comment %} <p>Váš tréning podľa plánu na deň pondelok.</p> {% endcomment %}
-
                 <p>Pull</p>
 
                 <div class="start_training_button">
@@ -37,14 +35,6 @@
                     <h3>{{ one_exercise.exercise }}</h3>
 
                     <p class="reps" data-periods="{{ one_exercise.periods }}">
-                        {% comment %} {% if one_exercise.reps == 0 %}
-                            Do zlyhania
-
-                        {% else %}
-                            {{ one_exercise.reps }}x
-                        
-                        {% endif %} {% endcomment %}
-                        
                         {% if one_exercise.periods.0 == 0 %}
                             Do zlyhania
 
@@ -54,11 +44,8 @@
                         {% endif %}
                     </p>
 
-                    {% comment %} <p class="sets"><span>1</span> / <span>{{ one_exercise.sets }}</span></p> {% endcomment %}
-
                     <p class="sets"><span>1</span> / <span>{{ one_exercise.periods|length }}</span></p>
 
-                    {% comment %} <div class="skip_exercise"> {% endcomment %}
                     <div class="next_exercise_button">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                     </div>

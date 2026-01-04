@@ -52,7 +52,7 @@
                 height: 50px;
                 border: 1px solid $secondary-color;
                 border-radius: $small-border-radius;
-                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:hover,
                 &:focus {
@@ -65,7 +65,7 @@
                     box-shadow: 0px 0px 5px $success-color;
 
                     &:not(:hover) {
-                        animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                        animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
                     }
 
                     &:hover,
@@ -78,13 +78,9 @@
                     background-color: $error-color;
                     box-shadow: 0px 0px 5px $error-color;
 
-                    &:not(:hover) {
-                        animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
-                    }
-
                     &:hover,
                     &:focus {
-                        background-color: lighten($error-color, 5%);
+                        background-color: lighten($error-color, 10%);
                     }
                 }
 
@@ -146,10 +142,10 @@
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
                 box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:not(:hover) {
-                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
                 }
 
                 &:hover {
@@ -177,15 +173,15 @@
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
                 box-shadow: 0px 0px 5px 0px $error-color;
-                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:not(:hover) {
-                    animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    animation: red_pulse_button_animation 1s linear alternate infinite 0.3s;
                 }
 
                 &:hover {
                     transform: scale(1.05);
-                    background-color: lighten($error-color, 5%);
+                    background-color: lighten($error-color, 10%);
                     cursor: pointer;
                 }
 
@@ -242,10 +238,10 @@
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
                 box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:not(:hover) {
-                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
                 }
 
                 &:hover {
@@ -382,10 +378,10 @@
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
                 box-shadow: 0px 0px 5px 0px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease;
 
                 &:not(:hover) {
-                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
                 }
 
                 &:hover {
@@ -437,7 +433,7 @@
                         width: var(--progress);
                         background-color: var(--progress-color);
                         box-shadow: 0px 0px 10px var(--progress-color);
-                        transition: width 1s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+                        transition: width 1s ease, background-color 0.3s ease;
                     }
                 }
             }
@@ -480,7 +476,56 @@
         font-family: $article-heading-font;
 
         span {
+            position: relative;
             font-family: inherit;
+
+            // Activity Improvement From Average Tooltip
+
+            .tooltip {
+                &::before,
+                &::after {
+                    --scale: 0;
+
+                    position: absolute;
+                    top: -5px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(var(--translate-y, 0)) scale(var(--scale));
+                    transform-origin: bottom center;
+                    transition: 0.3s transform 0s;
+                }
+
+                &::before {
+                    --translate-y: calc(-100% - 10px);
+
+                    content: attr(data-tooltip);
+                    width: fit-content;
+                    max-width: 100%;
+                    padding: 5px;
+                    text-align: center;
+                    border-radius: $small-border-radius;
+                    font-size: 0.8em;
+                    background-color: transparentize($secondary-color, 0.8);
+                    color: $secondary-color;
+                    text-shadow: 0px 0px 5px $main-color;
+                }
+
+                &::after {
+                    --translate-y: calc(-1 * 10px);
+                    
+                    content: "";
+                    border: 10px solid transparent;
+                    border-top-color: transparentize($secondary-color, 0.8);
+                    transform-origin: top center;
+                }
+
+                &:hover {
+                    &::before,
+                    &::after {
+                        --scale: 1;
+                        transition: 0.3s transform 1s;
+                    }
+                }
+            }
         }
     }
 
@@ -575,23 +620,19 @@
 @keyframes green_pulse_button_animation {
     0% {
         background-color: $success-color;
-        box-shadow: 0px 0px 5px 0px $success-color;
     }
 
     100% {
         background-color: lighten($success-color, 10%);
-        box-shadow: 0px 0px 5px 1px $success-color;
     }
 }
 
 @keyframes red_pulse_button_animation {
     0% {
         background-color: $error-color;
-        box-shadow: 0px 0px 5px 0px $error-color;
     }
 
     100% {
-        background-color: lighten($error-color, 5%);
-        box-shadow: 0px 0px 5px 1px $error-color;
+        background-color: lighten($error-color, 10%);
     }
 }
