@@ -109,9 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
         progress_bar[active_exercise_index].style.setProperty("--progress", `${progress_percentage}%`) // Shows Progress In Progress Bar
 
         // Changes Progress Bar Color
-        red = Math.ceil(red) // Rounds Red Color
-
-        if(red >= min_red) {
+        if(Math.ceil(red) >= min_red) {
             progress_bar.forEach(function(one_bar) {
                 one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`) // Changes Color For Every Bar
             })
@@ -293,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span style="color: #52cf20">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
-                        <span title="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
+                        <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
                             (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}%)
                         </span>
                     </span>
@@ -306,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span style="color: #df3535">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
-                        <span title="Čas aktuálnej aktivity bol o ${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}% kratší ako priemer za posledných 7 dní">
+                        <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}% kratší ako priemer za posledných 7 dní">
                             (-${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}%)
                         </span>
                     </span>
