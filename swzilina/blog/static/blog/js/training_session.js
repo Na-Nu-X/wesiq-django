@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Break Timer
     let break_timer_interval = null
 
-    let max_break_remaining_time = 180 // 3 Minutes
-    let break_remaining_time = 180
+    let max_break_remaining_time = 120 // 2 Minutes
+    let break_remaining_time = 120
 
     // Summary
     const average_activity_time = document.querySelector(".activity .previous_activity .average_activity_time") // Gets Average Activity Value
@@ -231,8 +231,8 @@ document.addEventListener("DOMContentLoaded", function() {
         clearInterval(break_timer_interval)
         break_timer_interval = null
 
-        max_break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
-        break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
+        max_break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
+        break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
 
         // Sets Current Set Back To 1
         exercises.forEach(function(one_exercise) {
@@ -291,8 +291,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span style="color: #52cf20">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
-                        <span title="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2)}% dlhší ako priemer za posledných 7 dní">
-                            (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2)}%)
+                        <span title="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
+                            (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}%)
                         </span>
                     </span>
                 `
@@ -304,8 +304,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <span style="color: #df3535">
                         ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
-                        <span title="Čas aktuálnej aktivity bol o ${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2)}% kratší ako priemer za posledných 7 dní">
-                            (-${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2)}%)
+                        <span title="Čas aktuálnej aktivity bol o ${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}% kratší ako priemer za posledných 7 dní">
+                            (-${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}%)
                         </span>
                     </span>
                 `
@@ -396,10 +396,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Adds Animation For Training Plan Summary Chart
 
                 // Training Plan Summary Text
-                // training_plan_summary.innerText = "Strávený čas v daných cvičeniach"
                 exercises_summary.forEach(function(one_exercise) {
-                    training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getFormattedHours(one_exercise.elapsed_time)}h ${getFormattedMinutes(one_exercise.elapsed_time)}m ${getFormattedSeconds(one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2)}%)</span>`
+                    training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getFormattedHours(one_exercise.elapsed_time)}h ${getFormattedMinutes(one_exercise.elapsed_time)}m ${getFormattedSeconds(one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2).replace(".", ",")}%)</span>`
                 })
+
+                // If The Training Plan Wasn't Completed By The End
+                if(exercises_summary.length < exercises.length) {
+                    // Gets An Array Of All Exercise Names In A Training Plan
+                    const exercises_names = Array.from(exercises).map(function(one_exercise) {
+                        return one_exercise.querySelector("h3").textContent
+                    })
+                    
+                    // Gets An Array Of All Exercise Names From The Exercises Summary
+                    const exercises_summary_names = exercises_summary.map(function(one_exercise) {
+                        return one_exercise.exercise
+                    })
+
+                    // Gets An Array Of All Unfinished Exercises From The Training Plan
+                    const unfinished_exercises = exercises_names.filter(function(one_exercise) {
+                        return !exercises_summary_names.includes(one_exercise)
+                    })
+
+                    unfinished_exercises.forEach(function(one_exercise) {
+                        training_plan_summary.innerHTML += `<br>${one_exercise}: 0h 0m 0s (0,00%)`
+                    })
+                }
 
                 // Training Plan Summary Chart
                 // Gets Data From Exercise Summary Array
@@ -499,8 +520,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 clearInterval(break_timer_interval)
                 break_timer_interval = null
 
-                max_break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
-                break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
+                max_break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
+                break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
 
                 nextExercise()
 
@@ -665,8 +686,8 @@ document.addEventListener("DOMContentLoaded", function() {
         clearInterval(break_timer_interval)
         break_timer_interval = null
 
-        max_break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
-        break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
+        max_break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
+        break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
 
         nextExercise()
 
