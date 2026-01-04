@@ -27,8 +27,8 @@
   display: inline-block;
   width: 65px;
   margin-left: 2.5px;
-  font-family: "Orbitron", sans-serif;
-  font-size: 1em;
+  font-family: inherit;
+  font-size: inherit;
 }
 .activity .record_activity .timer span:nth-child(1) {
   margin-left: 0px;
@@ -46,11 +46,18 @@
   height: 50px;
   border: 1px solid #fff;
   border-radius: 5px;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.activity .record_activity .buttons a:hover, .activity .record_activity .buttons a:focus {
+  transform: scale(1.05);
+  cursor: pointer;
 }
 .activity .record_activity .buttons a:nth-child(1) {
   background-color: #52cf20;
   box-shadow: 0px 0px 5px #52cf20;
+}
+.activity .record_activity .buttons a:nth-child(1):not(:hover) {
+  animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
 }
 .activity .record_activity .buttons a:nth-child(1):hover, .activity .record_activity .buttons a:nth-child(1):focus {
   background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
@@ -59,12 +66,11 @@
   background-color: #df3535;
   box-shadow: 0px 0px 5px #df3535;
 }
+.activity .record_activity .buttons a:nth-child(2):not(:hover) {
+  animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+}
 .activity .record_activity .buttons a:nth-child(2):hover, .activity .record_activity .buttons a:nth-child(2):focus {
   background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
-}
-.activity .record_activity .buttons a:hover, .activity .record_activity .buttons a:focus {
-  transform: scale(1.05);
-  cursor: pointer;
 }
 .activity .record_activity .buttons a .fa-play, .activity .record_activity .buttons a .fa-pause, .activity .record_activity .buttons a .fa-stop {
   position: absolute;
@@ -116,8 +122,11 @@
   background-color: #52cf20;
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 0px 5px 1px #52cf20;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0px 0px 5px 0px #52cf20;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.activity .training_plan .start_training .start_training_button:not(:hover), .activity .training_plan .finish_training .start_training_button:not(:hover) {
+  animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
 }
 .activity .training_plan .start_training .start_training_button:hover, .activity .training_plan .finish_training .start_training_button:hover {
   transform: scale(1.05);
@@ -140,8 +149,11 @@
   background-color: #df3535;
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 0px 5px 1px #df3535;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0px 0px 5px 0px #df3535;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.activity .training_plan .start_training .finish_training_button:not(:hover), .activity .training_plan .finish_training .finish_training_button:not(:hover) {
+  animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
 }
 .activity .training_plan .start_training .finish_training_button:hover, .activity .training_plan .finish_training .finish_training_button:hover {
   transform: scale(1.05);
@@ -182,8 +194,8 @@
   font-size: 1.2em;
 }
 .activity .training_plan .exercise p span, .activity .training_plan .exercise .sets span {
-  font-family: "Balsamiq Sans", sans-serif;
-  font-size: 1em;
+  font-family: inherit;
+  font-size: inherit;
 }
 .activity .training_plan .exercise .next_exercise_button {
   position: relative;
@@ -193,8 +205,11 @@
   background-color: #52cf20;
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 0px 5px 1px #52cf20;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0px 0px 5px 0px #52cf20;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.activity .training_plan .exercise .next_exercise_button:not(:hover) {
+  animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
 }
 .activity .training_plan .exercise .next_exercise_button:hover {
   transform: scale(1.05);
@@ -295,12 +310,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color: #fff;
   font-family: "Orbitron", sans-serif;
   font-size: 1.2em;
 }
 .activity .training_plan .break .break_timer p span {
-  font-family: "Orbitron", sans-serif;
-  font-size: 1em;
+  font-family: inherit;
+  font-size: inherit;
 }
 .activity .training_plan .break .skip_break_button {
   position: relative;
@@ -309,8 +325,11 @@
   background-color: #52cf20;
   border: 1px solid #fff;
   border-radius: 50%;
-  box-shadow: 0px 0px 5px 1px #52cf20;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0px 0px 5px 0px #52cf20;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.activity .training_plan .break .skip_break_button:not(:hover) {
+  animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
 }
 .activity .training_plan .break .skip_break_button:hover {
   transform: scale(1.05);
@@ -367,7 +386,7 @@
 }
 .activity .previous_activity p span {
   margin: 0px 5px;
-  font-family: "Balsamiq Sans", sans-serif;
+  font-family: inherit;
 }
 .activity .previous_activity p span:nth-child(2) {
   color: #52cf20;
@@ -386,7 +405,7 @@
   font-family: "Balsamiq Sans", sans-serif;
 }
 .activity_summary .main_summary span {
-  font-family: "Balsamiq Sans", sans-serif;
+  font-family: inherit;
 }
 .activity_summary .weekly_activity_chart {
   display: none;
@@ -402,7 +421,7 @@
   font-family: "Balsamiq Sans", sans-serif;
 }
 .activity_summary .training_plan_summary span {
-  font-family: "Balsamiq Sans", sans-serif;
+  font-family: inherit;
 }
 .activity_summary .training_plan_summary br:nth-child(1) {
   display: none;
@@ -459,5 +478,25 @@
     opacity: 0;
     visibility: hidden;
     top: -100%;
+  }
+}
+@keyframes green_pulse_button_animation {
+  0% {
+    background-color: #52cf20;
+    box-shadow: 0px 0px 5px 0px #52cf20;
+  }
+  100% {
+    background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+    box-shadow: 0px 0px 5px 1px #52cf20;
+  }
+}
+@keyframes red_pulse_button_animation {
+  0% {
+    background-color: #df3535;
+    box-shadow: 0px 0px 5px 0px #df3535;
+  }
+  100% {
+    background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
+    box-shadow: 0px 0px 5px 1px #df3535;
   }
 }/*# sourceMappingURL=training_session.css.map */

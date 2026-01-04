@@ -30,8 +30,8 @@
                 display: inline-block;
                 width: 65px;
                 margin-left: 2.5px;
-                font-family: $timer-font;
-                font-size: 1em;
+                font-family: inherit;
+                font-size: inherit;
 
                 &:nth-child(1) {
                     margin-left: 0px;
@@ -52,11 +52,21 @@
                 height: 50px;
                 border: 1px solid $secondary-color;
                 border-radius: $small-border-radius;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:hover,
+                &:focus {
+                    transform: scale(1.05);
+                    cursor: pointer;
+                }
 
                 &:nth-child(1) {
                     background-color: $success-color;
                     box-shadow: 0px 0px 5px $success-color;
+
+                    &:not(:hover) {
+                        animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    }
 
                     &:hover,
                     &:focus {
@@ -68,16 +78,14 @@
                     background-color: $error-color;
                     box-shadow: 0px 0px 5px $error-color;
 
+                    &:not(:hover) {
+                        animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                    }
+
                     &:hover,
                     &:focus {
                         background-color: lighten($error-color, 5%);
                     }
-                }
-
-                &:hover,
-                &:focus {
-                    transform: scale(1.05);
-                    cursor: pointer;
                 }
 
                 .fa-play, .fa-pause, .fa-stop {
@@ -137,8 +145,12 @@
                 background-color: $success-color;
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
-                box-shadow: 0px 0px 5px 1px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                box-shadow: 0px 0px 5px 0px $success-color;
+                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:not(:hover) {
+                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                }
 
                 &:hover {
                     transform: scale(1.05);
@@ -164,8 +176,12 @@
                 background-color: $error-color;
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
-                box-shadow: 0px 0px 5px 1px $error-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                box-shadow: 0px 0px 5px 0px $error-color;
+                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:not(:hover) {
+                    animation: red_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                }
 
                 &:hover {
                     transform: scale(1.05);
@@ -212,8 +228,8 @@
                 font-size: 1.2em;
 
                 span {
-                    font-family: $article-heading-font;
-                    font-size: 1em;
+                    font-family: inherit;
+                    font-size: inherit;
                 }
             }
 
@@ -223,16 +239,18 @@
                 height: 50px;
                 margin-top: 10px;
                 background-color: $success-color;
-                // background-color: #4242ec;
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
-                box-shadow: 0px 0px 5px 1px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                box-shadow: 0px 0px 5px 0px $success-color;
+                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:not(:hover) {
+                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                }
 
                 &:hover {
                     transform: scale(1.05);
                     background-color: lighten($success-color, 10%);
-                    // background-color: lighten(#4242ec, 10%);
                     cursor: pointer;
                 }
 
@@ -345,12 +363,13 @@
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
+                    color: $secondary-color;
                     font-family: $timer-font;
                     font-size: 1.2em;
 
                     span {
-                        font-family: $timer-font;
-                        font-size: 1em;
+                        font-family: inherit;
+                        font-size: inherit;
                     }
                 }
             }
@@ -362,8 +381,12 @@
                 background-color: $success-color;
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
-                box-shadow: 0px 0px 5px 1px $success-color;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                box-shadow: 0px 0px 5px 0px $success-color;
+                transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:not(:hover) {
+                    animation: green_pulse_button_animation 2s ease-out alternate infinite 0.3s;
+                }
 
                 &:hover {
                     transform: scale(1.05);
@@ -434,7 +457,7 @@
 
             span {
                 margin: 0px 5px;
-                font-family: $article-heading-font;
+                font-family: inherit;
 
                 &:nth-child(2) {
                     color: $success-color;
@@ -457,7 +480,7 @@
         font-family: $article-heading-font;
 
         span {
-            font-family: $article-heading-font;
+            font-family: inherit;
         }
     }
 
@@ -477,7 +500,7 @@
         font-family: $article-heading-font;
 
         span {
-            font-family: $article-heading-font;
+            font-family: inherit;
         }
 
         br:nth-child(1) {
@@ -546,5 +569,29 @@
         opacity: 0;
         visibility: hidden;
         top: -100%;
+    }
+}
+
+@keyframes green_pulse_button_animation {
+    0% {
+        background-color: $success-color;
+        box-shadow: 0px 0px 5px 0px $success-color;
+    }
+
+    100% {
+        background-color: lighten($success-color, 10%);
+        box-shadow: 0px 0px 5px 1px $success-color;
+    }
+}
+
+@keyframes red_pulse_button_animation {
+    0% {
+        background-color: $error-color;
+        box-shadow: 0px 0px 5px 0px $error-color;
+    }
+
+    100% {
+        background-color: lighten($error-color, 5%);
+        box-shadow: 0px 0px 5px 1px $error-color;
     }
 }

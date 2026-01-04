@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     exercises_summary.push(exercise_object) // Fills Exercise Summary Array With Object
                 }
             }
-        }, 1)
+        }, 1000)
     }
 
     function pauseActivity() {
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Main Summary Text
             gained_xp == 0 ? main_summary.innerHTML = `Nezískali ste žiadne XP` : main_summary.innerHTML = `Získali ste: <span style="color: #52cf20">${gained_xp}XP</span>` // Renders Text For Earned XP
-            
+
             main_summary.innerHTML += "<br>Aktuálna aktivita trvala: "
 
             // Displays The Main Summary Text Of The Activity Summary In Green
@@ -495,18 +495,21 @@ document.addEventListener("DOMContentLoaded", function() {
         break_timer_interval = setInterval(function() {
             // Checks If There Is Still Some Remaining Time
             if(break_remaining_time <= 0) {
-                // Skip To Next Exercise
-
                 // Stops Break Timer
                 clearInterval(break_timer_interval)
                 break_timer_interval = null
+
+                max_break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
+                break_remaining_time = 180 // Sets Max Break Remaining Time Back To Default
+
+                nextExercise()
+
+                break_between_sets.classList.remove("active") // Hides Break Between Sets Tab
             }
 
             else {
                 // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
-                if(break_remaining_time <= 10) {
-                    break_timer.style.color = "#df3535"
-                }
+                break_remaining_time <= 10 ? break_timer.style.color = "#df3535" : break_timer.style.color = "#ffffff"
 
                 // Break Timer
                 break_timer.querySelector(".minutes").textContent = getFormattedMinutes(Math.round(break_remaining_time))
