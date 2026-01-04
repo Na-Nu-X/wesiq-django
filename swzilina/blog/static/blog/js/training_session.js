@@ -8,14 +8,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const play_appearance = play.querySelector("i") // Gets Play Button Icon (fa-play / fa-pause)
 
     // Training Plan
-    const training_plan = document.querySelector(".activity .training_plan") // Gets Training Plan
+    const training_plan = document.querySelector(".activity .training_plan_container .training_plan") // Gets Training Plan
 
     const start_training = training_plan.querySelector(".start_training") // Gets Start Training Tab
     const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises Tabs
     const break_between_sets = training_plan.querySelector(".break") // Gets Break Between Sets Tab
     const finish_training = training_plan.querySelector(".finish_training") // Gets Finish Training Tab
 
-    const progress_bar = document.querySelectorAll(".activity .training_plan .progress_bar .bar") // Gets All Bars From Progress Bar
+    const progress_bar = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From Progress Bar
 
     const all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0) // Gets Total Amount Of Sets From All Exercises
 
@@ -730,5 +730,17 @@ document.addEventListener("DOMContentLoaded", function() {
         add_time_message.classList.remove("animate")
         void add_time_message.offsetWidth
         add_time_message.classList.add("animate")
+    })
+
+    // Choose Training Plan
+    const previous_training_plan = document.querySelector(".training_plan_container .previous_training_plan")
+    const next_training_plan = document.querySelector(".training_plan_container .next_training_plan")
+
+    previous_training_plan.addEventListener("click", function() {
+        console.log("previous")
+    })
+
+    next_training_plan.addEventListener("click", function() {
+        console.log("next")
     })
 })
