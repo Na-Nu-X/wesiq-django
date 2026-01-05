@@ -11,13 +11,29 @@ document.addEventListener("DOMContentLoaded", function() {
     const training_plan = document.querySelector(".activity .training_plan_container .training_plan") // Gets Training Plan
 
     const start_training = training_plan.querySelector(".start_training") // Gets Start Training Tab
-    const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises Tabs
     const break_between_sets = training_plan.querySelector(".break") // Gets Break Between Sets Tab
     const finish_training = training_plan.querySelector(".finish_training") // Gets Finish Training Tab
 
-    const progress_bar = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From Progress Bar
+    // Exercises
+    const all_exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From All Training Plans
 
-    const all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0) // Gets Total Amount Of Sets From All Exercises
+    // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
+    let all_training_plan_types = [
+        ...new Set([...all_exercises].map(function(one_exercise) {
+            return one_exercise.dataset.type
+        }))
+    ]
+
+    let active_training_plan_type_index = 0 // Index Key From All Training Plan Types Array (By Default Is Selected First Training Plan Type With Index Of 0)
+    let training_plan_type = all_training_plan_types[active_training_plan_type_index] // Selected Training Plan Type (For Example "Pull")
+
+    let exercises = null // All Exercises From The Selected Training Plan
+
+    // Progress Bar
+    const progress_bar = document.querySelector(".activity .training_plan_container .training_plan .progress_bar") // Gets Progress Bar
+    let progress_bars = null // Gets All Bars From The Progress Bar
+
+    let all_sets = null // Gets Total Amount Of Sets From All Exercises
 
     const min_red = 82 // Final Progress Bar Color rgb(82, 207, 32)
     let red = 255 // Start Progress Bar Color rgb(255, 207, 32)
@@ -105,12 +121,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let progress_percentage = current_set / sets_amount * 100 // Calculates Set Progress Percentage
 
         // Progress Bar
-        progress_bar[active_exercise_index].classList.add("active") // Shows Progress Bar
-        progress_bar[active_exercise_index].style.setProperty("--progress", `${progress_percentage}%`) // Shows Progress In Progress Bar
+        progress_bars[active_exercise_index].classList.add("active") // Shows Progress Bar
+        progress_bars[active_exercise_index].style.setProperty("--progress", `${progress_percentage}%`) // Shows Progress In Progress Bar
 
         // Changes Progress Bar Color
         if(Math.ceil(red) >= min_red) {
-            progress_bar.forEach(function(one_bar) {
+            progress_bars.forEach(function(one_bar) {
                 one_bar.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`) // Changes Color For Every Bar
             })
         }
@@ -240,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         // Progress Bar
-        progress_bar.forEach(function(one_bar) {
+        progress_bars.forEach(function(one_bar) {
             one_bar.classList.add("active") // Deletes Active Class From Progress Bars
             one_bar.style.setProperty("--progress", "0%") // Set Progress Bar Progress Back to 0%
         })
@@ -677,22 +693,87 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Training Plan
 
-    const start_training_button = start_training.querySelector(".start_training_button")
-    const finish_training_button = finish_training.querySelector(".finish_training_button")
+    // Choose Training Plan
+    const previous_training_plan = document.querySelector(".training_plan_container .previous_training_plan") // Gets Previous Training Plan Button
+    const next_training_plan = document.querySelector(".training_plan_container .next_training_plan") // Gets Next Training Plan Button
 
-    // Start Training
-    start_training_button.addEventListener("click", startTraining)
-
-    // Next Exercise
-    exercises.forEach(function(one_exercise) {
-        const next_exercise_button = one_exercise.querySelector(".next_exercise_button") // Gets Next Exercise Button Of One Exercise
-
-        next_exercise_button.addEventListener("click", function() {
-            nextExercise()
+    // Function For Set Training Plan
+    function setTrainingPlanType() {
+        exercises = [] // Deletes Every Exercise From Exercises
+        
+        // Sets New Exercises For Selected Training Plan Type
+        all_exercises.forEach(function(one_exercise) {
+            if(one_exercise.dataset.type === training_plan_type) {
+                exercises.push(one_exercise)
+            }
         })
+
+        progress_bar.innerHTML = "" // Deletes All Bars From Progress Bar
+
+        // Creates Bars By Amount Of Total Exercises In Selected Training
+        for(let i = 0; i <= exercises.length - 1; i++) {
+            const bar = document.createElement("div")
+            bar.classList.add("bar")
+            progress_bar.appendChild(bar)
+        }
+
+        start_training.querySelector(".type").textContent = training_plan_type // Sets Training Plan Type In The Start Training Tab
+        finish_training.querySelector(".type").textContent = training_plan_type // Sets Training Plan Type In The Finish Training Tab
+        
+        progress_bars = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
+
+        all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0) // Gets Total Amount Of Sets From All Exercises
+
+        // Next Exercise
+        exercises.forEach(function(one_exercise) {
+            const next_exercise_button = one_exercise.querySelector(".next_exercise_button") // Gets Next Exercise Button Of One Exercise
+
+            next_exercise_button.addEventListener("click", function() {
+                nextExercise()
+            })
+        })
+    }
+
+    setTrainingPlanType() // Sets Default Training Plan
+
+    // Previous Training Plan
+    previous_training_plan.addEventListener("click", function() {
+        // Decreases Index Value If Index Of Active Training Plan Type Is Higher Than Minimum Possible Index
+        active_training_plan_type_index > 0 ? active_training_plan_type_index -= 1 : active_training_plan_type_index = all_training_plan_types.length - 1
+
+        training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
+
+        // Shows Blur Animation Between Change Of Training Plans
+        training_plan.classList.remove("blur")
+        void training_plan.offsetWidth
+        training_plan.classList.add("blur")
+
+        setTrainingPlanType() // Sets New Training Plan
     })
 
+    // Next Training Plan
+    next_training_plan.addEventListener("click", function() {
+        // Increases Index Value If Index Of Active Training Plan Type Is Less Than Maximum Possible Index
+        active_training_plan_type_index < all_training_plan_types.length - 1 ? active_training_plan_type_index += 1 : active_training_plan_type_index = 0
+
+        training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
+
+        // Shows Blur Animation Between Change Of Training Plans
+        training_plan.classList.remove("blur")
+        void training_plan.offsetWidth
+        training_plan.classList.add("blur")
+
+        setTrainingPlanType() // Sets New Training Plan
+    })
+
+    // Start Training
+    const start_training_button = start_training.querySelector(".start_training_button")
+    
+    start_training_button.addEventListener("click", startTraining)
+
     // Finish Training
+    const finish_training_button = finish_training.querySelector(".finish_training_button")
+
     finish_training_button.addEventListener("click", function() {
         // Change Buttons - Shows Play Button
         play_appearance.classList.remove("fa-pause")
@@ -730,17 +811,5 @@ document.addEventListener("DOMContentLoaded", function() {
         add_time_message.classList.remove("animate")
         void add_time_message.offsetWidth
         add_time_message.classList.add("animate")
-    })
-
-    // Choose Training Plan
-    const previous_training_plan = document.querySelector(".training_plan_container .previous_training_plan")
-    const next_training_plan = document.querySelector(".training_plan_container .next_training_plan")
-
-    previous_training_plan.addEventListener("click", function() {
-        console.log("previous")
-    })
-
-    next_training_plan.addEventListener("click", function() {
-        console.log("next")
     })
 })
