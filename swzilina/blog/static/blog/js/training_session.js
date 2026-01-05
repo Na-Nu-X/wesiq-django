@@ -427,6 +427,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if(exercises_summary.length > 0) {
                 training_plan_summary.style.display = "block" // Shows Training Plan Summary
                 training_plan_summary_chart.style.display = "block" // Shows Training Plan Summary Chart
+                training_plan_summary_chart.dataset.trainingPlanType = training_plan_type // Shows Training Plan Type In The Chart
                 training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Adds Animation For Training Plan Summary Chart
 
                 // Training Plan Summary Text
@@ -712,13 +713,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Creates Bars By Amount Of Total Exercises In Selected Training
         for(let i = 0; i <= exercises.length - 1; i++) {
+            // Creates Containers
+            const container = document.createElement("div")
+            container.classList.add("container")
+            progress_bar.appendChild(container)
+
+            // Creates Bars
             const bar = document.createElement("div")
             bar.classList.add("bar")
-            progress_bar.appendChild(bar)
+            container.appendChild(bar)
+
+            // Creates Labels
+            const label = document.createElement("p")
+            label.classList.add("label")
+            label.textContent = exercises[i].querySelector("h3").textContent // Gets Exercise Name
+            container.appendChild(label)
         }
 
-        start_training.querySelector(".type").textContent = training_plan_type // Sets Training Plan Type In The Start Training Tab
-        finish_training.querySelector(".type").textContent = training_plan_type // Sets Training Plan Type In The Finish Training Tab
+        start_training.querySelector(".type").textContent = training_plan_type.toUpperCase() // Sets Training Plan Type In The Start Training Tab
+        finish_training.querySelector(".type").textContent = training_plan_type.toUpperCase() // Sets Training Plan Type In The Finish Training Tab
         
         progress_bars = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
 
