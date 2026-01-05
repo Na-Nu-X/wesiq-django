@@ -144,6 +144,10 @@
             border-radius: $small-border-radius;
             overflow: hidden;
 
+            &.blur {
+                animation: blur_animation 0.5s ease-out;
+            }
+
             .start_training, .finish_training {
                 display: flex;
                 flex-direction: column;
@@ -669,5 +673,15 @@
 
     100% {
         background-color: lighten($error-color, 10%);
+    }
+}
+
+@keyframes blur_animation {
+    0% {
+        filter: blur(5px);
+    }
+
+    100% {
+        filter: blur(0px);
     }
 }

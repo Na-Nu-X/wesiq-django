@@ -28,15 +28,15 @@
                 <div class="start_training active">
                     <h3>Začať tréning</h3>
 
-                    <p>Pull</p>
+                    <p class="type"></p>
 
                     <div class="start_training_button">
                         <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
                     </div>
                 </div>
 
-                {% for one_exercise in training_plan %}
-                    <div class="exercise">
+                {% for one_exercise in training_plan|dictsort:"order" %}
+                    <div class="exercise" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}">
                         <h3>{{ one_exercise.exercise }}</h3>
 
                         <p class="reps" data-periods="{{ one_exercise.periods }}">
@@ -98,7 +98,7 @@
 
                     {% comment %} <p>Váš tréning podľa plánu na deň pondelok.</p> {% endcomment %}
 
-                    <p>Pull</p>
+                    <p class="type"></p>
 
                     <div class="finish_training_button">
                         <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
@@ -106,10 +106,10 @@
                 </div>
 
                 <div class="progress_bar">
-                    {% for one_exercise in training_plan %}
-                        <div class="bar"></div>
+                    {% comment %} {% for one_exercise in training_plan|dictsort:"order" %}
+                        <div class="bar" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}"></div>
 
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                 </div>
             </div>
 

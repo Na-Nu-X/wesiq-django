@@ -120,6 +120,9 @@
   border-radius: 5px;
   overflow: hidden;
 }
+.activity .training_plan_container .training_plan.blur {
+  animation: blur_animation 0.5s ease-out;
+}
 .activity .training_plan_container .training_plan .start_training, .activity .training_plan_container .training_plan .finish_training {
   display: flex;
   flex-direction: column;
@@ -556,5 +559,13 @@
   }
   100% {
     background-color: rgb(229.9743589744, 97.0256410256, 97.0256410256);
+  }
+}
+@keyframes blur_animation {
+  0% {
+    filter: blur(5px);
+  }
+  100% {
+    filter: blur(0px);
   }
 }/*# sourceMappingURL=training_session.css.map */
