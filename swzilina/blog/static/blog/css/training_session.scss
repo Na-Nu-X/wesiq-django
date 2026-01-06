@@ -4,13 +4,120 @@
  Main Styles
 ************/
 
+// Banner
+
+.banner {
+    height: 125px;
+    background-color: transparentize($main-color, 0.1);
+    backdrop-filter: blur(5px);
+
+    .manage_training_plans {
+        position: absolute;
+        top: 83.5px;
+        left: 10px;
+        height: 25px;
+
+        a {
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // User's Account
+
+    .account {
+        position: absolute;
+        top: 77px;
+        right: 10px;
+        height: 38px;
+
+        a {
+            &:has(.profile_picture) {
+                display: inline-block;
+                width: 38px;
+                height: 38px;
+                margin-right: 6px;
+            }
+
+            .profile_picture {
+                width: 38px;
+                height: 38px;
+                padding: 2px;
+                border: 1px solid $secondary-color;
+                border-radius: 50%;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+        }
+
+        .user_name {
+            margin-right: 6px;
+            position: relative;
+            top: -13px;
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+
+        .logout {
+            position: relative;
+            top: -13px;
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .no_account {
+        position: absolute;
+        top: 83.5px;
+        right: 10px;
+        height: 25px;
+
+        .login {
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+main {
+    min-height: calc(100vh - 125px);
+}
+
+.content {
+    padding: 0px;
+}
+
+// Activity
+
 .activity {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    // max-width: 500px;
-    min-height: calc(100vh - 67px);
+    min-height: calc(100vh - 125px);
     margin: 0px auto;
 
     .record_activity {
@@ -481,6 +588,7 @@
                     }
 
                     .label {
+                        pointer-events: none;
                         opacity: 0;
                         position: absolute;
                         top: -5px;
