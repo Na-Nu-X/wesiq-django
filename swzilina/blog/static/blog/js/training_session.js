@@ -296,6 +296,7 @@ document.addEventListener("DOMContentLoaded", function() {
             post_data.append("formatted_elapsed_time", `${getFormattedHours(activity_timer_elapsed_time, true)}h ${getFormattedMinutes(activity_timer_elapsed_time, true)}m ${getFormattedSeconds(activity_timer_elapsed_time, true)}s`)
             post_data.append("elapsed_time", activity_timer_elapsed_time)
             post_data.append("gained_xp", gained_xp)
+            post_data.append("type", exercises[0].dataset.type) // Sends Type Of Training
 
             fetch("/training-session", {
                 method: "POST",
@@ -320,15 +321,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Displays The Main Summary Text Of The Activity Summary In Green
             if(activity_timer_elapsed_time >= parseInt(average_activity_time.dataset.average_activity_time)) {
-                main_summary.innerHTML += `
-                    <span style="color: #52cf20">
-                        ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
+                if(parseInt(average_activity_time.dataset.average_activity_time) === 0) {
+                    main_summary.innerHTML += `
+                        <span style="color: #52cf20">
+                            ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
 
-                        <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
-                            (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}%)
+                            <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní">
+                                (+100%)
+                            </span>
                         </span>
-                    </span>
-                `
+                    `
+                }
+
+                else {
+                    main_summary.innerHTML += `
+                        <span style="color: #52cf20">
+                            ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
+
+                            <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
+                                (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}%)
+                            </span>
+                        </span>
+                    `
+                }
             }
 
             // Displays The Main Summary Text Of The Activity Summary In Red
@@ -444,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if(exercises_summary.length > 0) {
                 training_plan_summary.style.display = "block" // Shows Training Plan Summary
                 training_plan_summary_chart.style.display = "block" // Shows Training Plan Summary Chart
-                training_plan_summary_chart.dataset.trainingPlanType = training_plan_type // Shows Training Plan Type In The Chart
+                // training_plan_summary_chart.dataset.trainingPlanType = training_plan_type // Shows Training Plan Type In The Chart
                 training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Adds Animation For Training Plan Summary Chart
 
                 // Training Plan Summary Text

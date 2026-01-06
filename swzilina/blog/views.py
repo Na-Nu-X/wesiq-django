@@ -1055,7 +1055,7 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
-        average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) if activities else "" # Gets Last 7 Days Average Logged In User's Activity Time
+        average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) if activities else 0 # Gets Last 7 Days Average Logged In User's Activity Time
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" if activities else "" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
@@ -1113,8 +1113,10 @@ def trainingSessionView(request):
                 gained_xp = request.POST.get("gained_xp") # Gets Gained XP From POST Data
 
                 # Increments Gained XP For The User In The Database
-                # logged_in_user.xp += int(gained_xp)
-                # logged_in_user.save()
+                logged_in_user = Users.objects.get(id=logged_in_user_id)
+
+                logged_in_user.xp += int(gained_xp)
+                logged_in_user.save()
 
                 # Saves New Activity To Database
                 new_activity = Activity(
@@ -1122,14 +1124,12 @@ def trainingSessionView(request):
                     formatted_elapsed_time = request.POST.get("formatted_elapsed_time"),
                     elapsed_time = int(request.POST.get("elapsed_time")),
                     gained_xp = int(gained_xp),
+                    type = request.POST.get("type")
                 )
-                # new_activity.save()
 
-                # messages.add_message(request, messages.SUCCESS, f"Aktuálna aktivita trvala {request.POST.get("formatted_elapsed_time")}.<br>Získali ste {gained_xp}XP!")
+                new_activity.save()
 
                 return JsonResponse({"success": "XP boli pridané."})
-            
-                # return HttpResponseRedirect(reverse("training_session_url"))
 
             except:
                 pass
