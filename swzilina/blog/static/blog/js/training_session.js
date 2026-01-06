@@ -17,17 +17,20 @@ document.addEventListener("DOMContentLoaded", function() {
     // Exercises
     const all_exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From All Training Plans
 
+    // Function For Get Day Name From Weekday Index In User's Country's Language (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+    function getDayName(day_index, format = "short") {
+        const locale = navigator.languages?.[0] || navigator.language || "en-US"
+        const date = new Date(2024, 0, 7 + day_index)
+
+        return new Intl.DateTimeFormat(locale, { weekday: format }).format(date)
+    }
+
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     let all_training_plan_types = [
         ...new Set([...all_exercises].map(function(one_exercise) {
-            return `${one_exercise.dataset.type} - ${one_exercise.dataset.day}`
+            return `${one_exercise.dataset.type} - ${getDayName(one_exercise.dataset.day)}`
         }))
     ]
-
-    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    const current_date = new Date()
-    let day_index = current_date.getDay()
-    const training_plan_day = weekdays[day_index]
 
     let active_training_plan_type_index = 0 // Index Key From All Training Plan Types Array (By Default Is Selected First Training Plan Type With Index Of 0)
     let training_plan_type = all_training_plan_types[active_training_plan_type_index] // Selected Training Plan Type (For Example "Pull")
@@ -732,7 +735,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Sets New Exercises For Selected Training Plan Type
         all_exercises.forEach(function(one_exercise) {
-            if(`${one_exercise.dataset.type} - ${one_exercise.dataset.day}` === training_plan_type) {
+            if(`${one_exercise.dataset.type} - ${getDayName(one_exercise.dataset.day)}` === training_plan_type) {
                 exercises.push(one_exercise)
             }
         })
@@ -768,15 +771,6 @@ document.addEventListener("DOMContentLoaded", function() {
         progress_bars[active_exercise_index].nextSibling.style.opacity = 1
 
         all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0) // Gets Total Amount Of Sets From All Exercises
-
-        let test = [
-            ...new Set([...all_exercises].map(function(one_exercise) {
-                return `${one_exercise.dataset.day}`
-            }))
-        ]
-
-        console.log(test)
-        console.log(training_plan_day)
     }
 
     setTrainingPlanType() // Sets Default Training Plan

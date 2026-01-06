@@ -22,6 +22,8 @@ from django.db.models import Sum
 from django.db.models.functions import TruncDate
 from collections import OrderedDict
 import json
+from django.db.models import F, IntegerField, ExpressionWrapper, Value
+from django.db.models.functions import Mod
 
 # Functions
 def captureError(message):
@@ -1091,7 +1093,20 @@ def trainingSessionView(request):
                 "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
             })
 
-        training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets Logged In User's Training Plan
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+
+        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        training_plan = (
+            TrainingPlan.objects
+            .filter(user_id=logged_in_user_id)
+            .annotate(
+                sorted_days=ExpressionWrapper(
+                    Mod(F("day") - Value(day_index) + Value(7), Value(7)),
+                    output_field=IntegerField()
+                )
+            )
+            .order_by("sorted_days")
+        )
         
         if request.method == "POST":
             try:
