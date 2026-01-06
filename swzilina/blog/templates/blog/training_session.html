@@ -7,6 +7,41 @@
     <link rel="stylesheet" href="{% static 'blog/css/training_session.css' %}">
 {% endblock style %}
 
+{% block banner %}
+    <div class="manage_training_plans">
+        <a href="#" title="Moje tréningové plány" target="_self">Moje tréningové plány</a>
+    </div>
+
+    {% if request.session.logged_in_user_id %}
+        <div class="account">
+            <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                <img 
+                    class="profile_picture skeleton_loading" 
+                    src="
+                        {% if profile_picture_name %}
+                            ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+            </a>
+
+            <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+
+            <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+        </div>
+
+    {% else %}
+        <div class="no_account">
+            <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+        </div>
+
+    {% endif %}
+{% endblock banner %}
+
 {% block content %}
     <div class="activity">
         <div class="record_activity">
@@ -26,6 +61,9 @@
 
             <div class="training_plan">
                 <div class="start_training active">
+                    {% comment %} <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
+                    <i class="fa-solid fa-border-all"></i> <!-- https://fontawesome.com/icons/border-all --> {% endcomment %}
+
                     <h3>Začať tréning</h3>
 
                     <p class="type"></p>
@@ -175,8 +213,6 @@
 {% endblock content %}
 
 {% block script %}
-    
-
     <script src="{% static 'blog/js/training_session.js' %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script> <!-- Chart JS Plugin For Floating Labels -->
 {% endblock script %}

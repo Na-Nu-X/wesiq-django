@@ -1052,6 +1052,8 @@ def trainingSessionView(request):
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
@@ -1113,8 +1115,6 @@ def trainingSessionView(request):
                 gained_xp = request.POST.get("gained_xp") # Gets Gained XP From POST Data
 
                 # Increments Gained XP For The User In The Database
-                logged_in_user = Users.objects.get(id=logged_in_user_id)
-
                 logged_in_user.xp += int(gained_xp)
                 logged_in_user.save()
 
@@ -1135,6 +1135,9 @@ def trainingSessionView(request):
                 pass
 
         return render(request, "blog/training_session.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "profile_picture_name": logged_in_user.profile_picture_name,
             "latest_activity": latest_activity,
             "longest_activity": longest_activity,
             "average_activity_time": average_activity_time,
