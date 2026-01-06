@@ -508,7 +508,7 @@ main {
   transition: opacity 0.3s ease;
 }
 .activity .current_activity_info {
-  margin-bottom: 20px;
+  margin-bottom: 50px;
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 1.2em;
 }

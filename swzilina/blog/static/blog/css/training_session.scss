@@ -607,12 +607,15 @@ main {
     }
 
     .current_activity_info {
-        margin-bottom: 20px;
+        // margin-bottom: 20px;
+        margin-bottom: 50px;
         font-family: $article-heading-font;
         font-size: 1.2em;
     }
 
     .previous_activity {
+        // margin-top: 30px;
+
         p {
             text-align: center;
             font-family: $article-heading-font;

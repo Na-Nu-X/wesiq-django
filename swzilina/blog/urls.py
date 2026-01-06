@@ -33,6 +33,9 @@ urlpatterns = [
     path('trening', views.trainingSessionView, name='training_session_url'),
     path('training-session', views.trainingSessionView),
 
+    path('moje-treningove-plany', views.manageTrainingPlansView, name='manage_training_plans_url'),
+    path('my-training-plans', views.manageTrainingPlansView),
+
     # URLs For JS POST Data
     path('like-comment/<int:comment_id>', views.likeComment, name='like_comment_url'),
     path('cancel-like-comment/<int:comment_id>', views.cancelLikeComment, name='cancel_like_comment_url'),

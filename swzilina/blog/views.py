@@ -1148,3 +1148,6 @@ def trainingSessionView(request):
         })
 
     return render(request, "blog/training_session.html")
+
+def manageTrainingPlansView(request):
+    return render(request, "blog/manage_training_plans.html")
