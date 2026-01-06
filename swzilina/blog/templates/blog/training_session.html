@@ -116,10 +116,47 @@
         <p class="current_activity_info"></p>
 
         <div class="previous_activity">
-            <p>Posledná aktivita: <span>{{ latest_activity.formatted_elapsed_time }}</span><span>{{ latest_activity.gained_xp }}XP</span><span>{{ latest_activity.end_time|date:"d.m. Y" }}</span></p>
-            <p>Najdlhšia aktivita: <span>{{ longest_activity.formatted_elapsed_time }}</span><span>{{ longest_activity.gained_xp }}XP</span><span>{{ longest_activity.end_time|date:"d.m. Y" }}</span></p>
-            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">Priemerný čas aktivity za posledných 7 dní: <span>{{ average_activity_time_formatted }}</span></p>
-            <p>Zaznamenané aktivity za posledných 7 dní: <span>{{ activities_amount }}</span></p>
+            <p>
+                Posledná aktivita: 
+
+                {% if latest_activity %}
+                    <span>{{ latest_activity.formatted_elapsed_time }}</span>
+                    <span>{{ latest_activity.gained_xp }}XP</span>
+                    <span>{{ latest_activity.end_time|date:"d.m. Y" }}</span>
+
+                {% else %}
+                    žiadna
+
+                {% endif %}
+            </p>
+
+            <p>
+                Najdlhšia aktivita: 
+
+                {% if longest_activity %}
+                    <span>{{ longest_activity.formatted_elapsed_time }}</span>
+                    <span>{{ longest_activity.gained_xp }}XP</span>
+                    <span>{{ longest_activity.end_time|date:"d.m. Y" }}</span>
+
+                {% else %}
+                    žiadna
+
+                {% endif %}
+            </p>
+
+            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">
+                Priemerný čas aktivity za posledných 7 dní:
+                
+                {% if average_activity_time %}
+                    <span>{{ average_activity_time_formatted }}</span>
+
+                {% else %}
+                    0
+
+                {% endif %}
+            </p>
+
+            <p>Zaznamenané aktivity za posledných 7 dní:<span>{{ activities_amount }}</span></p>
         </div>
     </div>
 

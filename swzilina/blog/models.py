@@ -41,6 +41,7 @@ class Activity(models.Model):
     formatted_elapsed_time = models.CharField(verbose_name="Formatted Elapsed Time", max_length=11, default="00h 00m 01s", null=False)
     elapsed_time = models.IntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
     gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
+    type = models.CharField(verbose_name="Type", max_length=50, null=True)
 
 class Reviews(models.Model):
     user = models.ForeignKey(
@@ -122,18 +123,8 @@ class TrainingPlan(models.Model):
         null=True,
     )
 
-    day_choices = [
-        (1, "Monday"),
-        (2, "Tuesday"),
-        (3, "Wednesday"),
-        (4, "Thursday"),
-        (5, "Friday"),
-        (6, "Saturday"),
-        (7, "Sunday"),
-    ]
-
-    day = models.IntegerField(verbose_name="Day", choices=day_choices, null=True)
-    type = models.CharField(verbose_name="Type", max_length=50, null=False)
+    day = models.IntegerField(verbose_name="Day", null=True)
+    type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=[0], null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
     order = models.IntegerField(verbose_name="Order", default=0, null=False)
