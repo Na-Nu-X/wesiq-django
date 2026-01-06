@@ -9,7 +9,7 @@
 
 {% block banner %}
     <div class="manage_training_plans">
-        <a href="#" title="Moje tréningové plány" target="_self">Moje tréningové plány</a>
+        <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Moje tréningové plány</a>
     </div>
 
     {% if request.session.logged_in_user_id %}
@@ -181,6 +181,8 @@
 
                 {% endif %}
             </p>
+
+            <br>
 
             <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">
                 Priemerný čas aktivity za posledných 7 dní:
