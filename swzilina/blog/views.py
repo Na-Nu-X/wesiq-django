@@ -1051,11 +1051,11 @@ def trainingSessionView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
-        latest_activity = activities.latest("end_time") # Gets The Latest Logged In User's Activity
+        latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
-        average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) # Gets Last 7 Days Average Logged In User's Activity Time
-        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" # Formats Average Activity Time
-        activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=7))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
+        average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) if activities else "" # Gets Last 7 Days Average Logged In User's Activity Time
+        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" if activities else "" # Formats Average Activity Time
+        activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
         today = timezone.now().date() # Determines Today's Date
         start_date = today - timedelta(days=6) # Determines Previous 7th Date

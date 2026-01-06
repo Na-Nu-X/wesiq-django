@@ -20,9 +20,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     let all_training_plan_types = [
         ...new Set([...all_exercises].map(function(one_exercise) {
-            return one_exercise.dataset.type
+            return `${one_exercise.dataset.type} - ${one_exercise.dataset.day}`
         }))
     ]
+
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    const current_date = new Date()
+    let day_index = current_date.getDay()
+    const training_plan_day = weekdays[day_index]
 
     let active_training_plan_type_index = 0 // Index Key From All Training Plan Types Array (By Default Is Selected First Training Plan Type With Index Of 0)
     let training_plan_type = all_training_plan_types[active_training_plan_type_index] // Selected Training Plan Type (For Example "Pull")
@@ -141,6 +146,53 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function setDefaults() {
+        // Stops Activity Timer
+        clearInterval(activity_timer_interval)
+        activity_timer_interval = null 
+
+        // Resets Default Values
+
+        training_plan.style.display = "block" // Shows Training Plan
+        // exercises[active_exercise_index].classList.remove("active") // Hides Exercise With Active Class
+
+        exercises.forEach(function(one_exercise) {
+            one_exercise.classList.remove("active") // Hides All Exercises
+        })
+
+        finish_training.classList.remove("active") // Hides Finish Training Tab
+        start_training.classList.add("active") // Shows Start Training Tab
+        
+        break_between_sets.classList.remove("active") // Hides Break Between Sets Tab
+
+        // Stops Break Timer
+        clearInterval(break_timer_interval)
+        break_timer_interval = null
+
+        max_break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
+        break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
+
+        // Sets Current Set Back To 1
+        exercises.forEach(function(one_exercise) {
+            one_exercise.querySelectorAll(".sets span")[0].textContent = "1"
+        })
+
+        // Progress Bar
+        progress_bars.forEach(function(one_bar) {
+            one_bar.classList.add("active") // Deletes Active Class From Progress Bars
+            one_bar.style.setProperty("--progress", "0%") // Set Progress Bar Progress Back to 0%
+        })
+
+        red = 255
+
+        active_exercise_index = 0 // Sets Active Exercise Index To Default
+
+        // Sets Training Plan Summary To Default
+        training_plan_summary.style.display = "none" // Hides Training Plan Summary
+        training_plan_summary_chart.style.display = "none" // Hides Training Plan Summary Chart
+        training_plan_summary.innerHTML = "" // Deletes Everything From Training Plan Summary
+    }
+
     // Activity
     const activity_timer = document.querySelector(".activity .record_activity .timer") // Gets Activity Timer
 
@@ -230,45 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function stopActivity() {
-        // Stops Activity Timer
-        clearInterval(activity_timer_interval)
-        activity_timer_interval = null
-
-        // Resets Default Values
-
-        training_plan.style.display = "block" // Shows Training Plan
-        exercises[active_exercise_index].classList.remove("active") // Hides Exercise With Active Class
-        finish_training.classList.remove("active") // Hides Finish Training Tab
-        start_training.classList.add("active") // Shows Start Training Tab
-        
-        break_between_sets.classList.remove("active") // Hides Break Between Sets Tab
-
-        // Stops Break Timer
-        clearInterval(break_timer_interval)
-        break_timer_interval = null
-
-        max_break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
-        break_remaining_time = 120 // Sets Max Break Remaining Time Back To Default
-
-        // Sets Current Set Back To 1
-        exercises.forEach(function(one_exercise) {
-            one_exercise.querySelectorAll(".sets span")[0].textContent = "1"
-        })
-
-        // Progress Bar
-        progress_bars.forEach(function(one_bar) {
-            one_bar.classList.add("active") // Deletes Active Class From Progress Bars
-            one_bar.style.setProperty("--progress", "0%") // Set Progress Bar Progress Back to 0%
-        })
-
-        red = 255
-
-        active_exercise_index = 0 // Sets Active Exercise Index To Default
-
-        // Sets Training Plan Summary To Default
-        training_plan_summary.style.display = "none" // Hides Training Plan Summary
-        training_plan_summary_chart.style.display = "none" // Hides Training Plan Summary Chart
-        training_plan_summary.innerHTML = "" // Deletes Everything From Training Plan Summary
+        setDefaults()
 
         // Only Executed If The Activity Timer Has Been Started
         if(activity_timer_elapsed_time >= 1) {
@@ -528,6 +542,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         startActivity()
 
+        progress_bars[active_exercise_index].nextSibling.style.opacity = 0 // Hides Progress Bar Label
+
         // Shows Progress In Progress Bar
         let { progress_percentage } = trainingPlanProgress()
         red -= (255 - min_red) / (all_sets - 1) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
@@ -628,6 +644,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Shows Break Between Sets Only If There Is No Active Break Between Sets Tab, Only If There Is Still Any Exercise Left And If Current Set Is Equal Sets Amount In Current Active Exercise
                 if(!break_between_sets.classList.contains("active")) {
                     breakBetweenSets()
+
+                    // Shows Progress Bar Label
+                    progress_bars[active_exercise_index + 1].nextSibling.textContent = exercises[active_exercise_index + 1].querySelector("h3").textContent
+                    progress_bars[active_exercise_index + 1].nextSibling.style.opacity = 1
                 }
 
                 else {
@@ -635,6 +655,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     exercises[active_exercise_index].classList.remove("active") // Hides Current Active Exercise
                     exercises[active_exercise_index + 1].classList.add("active") // Shows Next Exercise
                     active_exercise_index += 1 // Changes Active Exercise Index
+
+                    progress_bars[active_exercise_index].nextSibling.style.opacity = 0 // Hides Progress Bar Label
 
                     // Shows Progress In Progress Bar
                     let { progress_percentage } = trainingPlanProgress()
@@ -701,10 +723,16 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function For Set Training Plan
     function setTrainingPlanType() {
         exercises = [] // Deletes Every Exercise From Exercises
+
+        if(play_appearance.classList.contains("fa-pause")) {
+            // Change Buttons - Shows Play Button
+            play_appearance.classList.remove("fa-pause")
+            play_appearance.classList.add("fa-play")
+        }
         
         // Sets New Exercises For Selected Training Plan Type
         all_exercises.forEach(function(one_exercise) {
-            if(one_exercise.dataset.type === training_plan_type) {
+            if(`${one_exercise.dataset.type} - ${one_exercise.dataset.day}` === training_plan_type) {
                 exercises.push(one_exercise)
             }
         })
@@ -726,7 +754,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Creates Labels
             const label = document.createElement("p")
             label.classList.add("label")
-            label.textContent = exercises[i].querySelector("h3").textContent // Gets Exercise Name
+            // label.textContent = exercises[i].querySelector("h3").textContent // Gets Exercise Name
             container.appendChild(label)
         }
 
@@ -735,16 +763,20 @@ document.addEventListener("DOMContentLoaded", function() {
         
         progress_bars = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
 
+        // Shows Progress Bar Label
+        progress_bars[active_exercise_index].nextSibling.textContent = exercises[active_exercise_index].querySelector("h3").textContent
+        progress_bars[active_exercise_index].nextSibling.style.opacity = 1
+
         all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0) // Gets Total Amount Of Sets From All Exercises
 
-        // Next Exercise
-        exercises.forEach(function(one_exercise) {
-            const next_exercise_button = one_exercise.querySelector(".next_exercise_button") // Gets Next Exercise Button Of One Exercise
+        let test = [
+            ...new Set([...all_exercises].map(function(one_exercise) {
+                return `${one_exercise.dataset.day}`
+            }))
+        ]
 
-            next_exercise_button.addEventListener("click", function() {
-                nextExercise()
-            })
-        })
+        console.log(test)
+        console.log(training_plan_day)
     }
 
     setTrainingPlanType() // Sets Default Training Plan
@@ -761,6 +793,20 @@ document.addEventListener("DOMContentLoaded", function() {
         void training_plan.offsetWidth
         training_plan.classList.add("blur")
 
+        // Resets Default Values
+        setDefaults()
+
+        activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
+        gained_xp = 0 // Sets Gained XP Back To 0
+
+        // Sets Activity Timer Default Texts
+        activity_timer.querySelector(".hours").textContent = "00"
+        activity_timer.querySelector(".minutes").textContent = "00"
+        activity_timer.querySelector(".seconds").textContent = "00"
+
+        exercises_summary = [] // Sets Exercises Summary To Default
+        total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
+
         setTrainingPlanType() // Sets New Training Plan
     })
 
@@ -775,6 +821,20 @@ document.addEventListener("DOMContentLoaded", function() {
         training_plan.classList.remove("blur")
         void training_plan.offsetWidth
         training_plan.classList.add("blur")
+
+        // Resets Default Values
+        setDefaults()
+
+        activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
+        gained_xp = 0 // Sets Gained XP Back To 0
+
+        // Sets Activity Timer Default Texts
+        activity_timer.querySelector(".hours").textContent = "00"
+        activity_timer.querySelector(".minutes").textContent = "00"
+        activity_timer.querySelector(".seconds").textContent = "00"
+
+        exercises_summary = [] // Sets Exercises Summary To Default
+        total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
 
         setTrainingPlanType() // Sets New Training Plan
     })
@@ -793,6 +853,14 @@ document.addEventListener("DOMContentLoaded", function() {
         play_appearance.classList.add("fa-play")
 
         finishTraining()
+    })
+
+    // Next Exercise
+    training_plan.addEventListener("click", function(event) {
+        const next_exercise_button = event.target.closest(".next_exercise_button")
+        if(!next_exercise_button) return
+
+        nextExercise()
     })
 
     // Break Between Sets

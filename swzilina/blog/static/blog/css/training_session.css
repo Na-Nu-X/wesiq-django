@@ -390,8 +390,9 @@
   --progress-color: rgb(255, 207, 32);
   position: relative;
   width: 100%;
-  height: 14px;
+  height: 10px;
   border: 1px solid #999999;
+  border-radius: 5px;
 }
 .activity .training_plan_container .training_plan .progress_bar .container .bar:before {
   content: "";
@@ -401,7 +402,6 @@
   width: 0%;
   height: 100%;
   border-radius: inherit;
-  z-index: 10;
 }
 .activity .training_plan_container .training_plan .progress_bar .container .bar.active:before {
   width: var(--progress);
@@ -410,13 +410,18 @@
   transition: width 1s ease, background-color 0.3s ease;
 }
 .activity .training_plan_container .training_plan .progress_bar .container .label {
+  opacity: 0;
   position: absolute;
-  top: 50%;
+  top: -5px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -100%);
+  width: -moz-fit-content;
+  width: fit-content;
+  text-align: center;
   font-size: 12px;
   line-height: 12px;
   color: #999999;
+  transition: opacity 0.3s ease;
 }
 .activity .current_activity_info {
   margin-bottom: 20px;
@@ -511,7 +516,7 @@
   height: 250px;
 }
 .activity_summary .training_plan_summary_chart::before {
-  content: attr(data-training-plan-type);
+  content: "%";
   position: absolute;
   top: 50%;
   left: 50%;

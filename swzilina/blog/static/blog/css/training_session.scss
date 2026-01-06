@@ -456,9 +456,9 @@
 
                         position: relative;
                         width: 100%;
-                        height: 14px;
+                        height: 10px;
                         border: 1px solid darken($secondary-color, 40%);
-                        // border-radius: calc(14px / 2);
+                        border-radius: calc(10px / 2);
 
                         &:before {
                             content: "";
@@ -468,7 +468,6 @@
                             width: 0%;
                             height: 100%;
                             border-radius: inherit;
-                            z-index: 10;
                         }
 
                         &.active {
@@ -482,13 +481,17 @@
                     }
 
                     .label {
+                        opacity: 0;
                         position: absolute;
-                        top: 50%;
+                        top: -5px;
                         left: 50%;
-                        transform: translate(-50%, -50%);
+                        transform: translate(-50%, -100%);
+                        width: fit-content;
+                        text-align: center;
                         font-size: 12px;
                         line-height: 12px;
                         color: darken($secondary-color, 40%);
+                        transition: opacity 0.3s ease;
                     }
                 }
             }
@@ -615,8 +618,8 @@
         height: 250px;
 
         &::before {
-            // content: "%";
-            content: attr(data-training-plan-type);
+            content: "%";
+            // content: attr(data-training-plan-type);
             position: absolute;
             top: 50%;
             left: 50%;
