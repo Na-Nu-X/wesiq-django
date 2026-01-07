@@ -604,6 +604,12 @@ main {
                 }
             }
         }
+
+        .change_training_plan {
+            display: none;
+            max-width: 500px;
+            width: 100%;
+        }
     }
 
     .current_activity_info {
@@ -614,24 +620,20 @@ main {
     }
 
     .previous_activity {
-        // margin-top: 30px;
+        max-width: $main-width;
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+        background: radial-gradient(circle, transparentize($secondary-color, 0.95) 0%, transparent 100%);
 
         p {
-            text-align: center;
             font-family: $article-heading-font;
 
             span {
-                margin: 0px 5px;
                 font-family: inherit;
-
-                &:nth-child(2) {
-                    color: $success-color;
-                }
             }
-        }
 
-        .average_activity_time, .activities_amount {
-            span {
+            .xp, .average_activity_time, .activities_amount {
                 color: $success-color;
             }
         }
@@ -819,4 +821,36 @@ main {
         opacity: 0.5;
         background-color: $success-color;
     }
+}
+
+/**************
+ Media Queries
+**************/
+
+@media (max-width: 800px) {
+    .training_plan_container {
+        flex-direction: column !important;
+        gap: 20px !important;
+
+        .previous_training_plan, .next_training_plan {
+            display: none !important;
+        }
+
+        .change_training_plan {
+            display: flex !important;
+            justify-content: center;
+            gap: 150px;
+
+            .previous_training_plan, .next_training_plan {
+                display: block !important;
+            }
+        }
+
+    }
+
+    // .current_activity_info {
+    //     position: absolute;
+    //     transform: translateY(112.5px);
+    //     margin-bottom: 0px !important;
+    // }
 }

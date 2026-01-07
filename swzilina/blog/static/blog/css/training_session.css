@@ -507,23 +507,30 @@ main {
   color: #999999;
   transition: opacity 0.3s ease;
 }
+.activity .training_plan_container .change_training_plan {
+  display: none;
+  max-width: 500px;
+  width: 100%;
+}
 .activity .current_activity_info {
   margin-bottom: 50px;
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 1.2em;
 }
-.activity .previous_activity p {
+.activity .previous_activity {
+  max-width: 1580px;
+  width: 100%;
+  padding: 10px;
   text-align: center;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+}
+.activity .previous_activity p {
   font-family: "Balsamiq Sans", sans-serif;
 }
 .activity .previous_activity p span {
-  margin: 0px 5px;
   font-family: inherit;
 }
-.activity .previous_activity p span:nth-child(2) {
-  color: #52cf20;
-}
-.activity .previous_activity .average_activity_time span, .activity .previous_activity .activities_amount span {
+.activity .previous_activity p .xp, .activity .previous_activity p .average_activity_time, .activity .previous_activity p .activities_amount {
   color: #52cf20;
 }
 
@@ -671,5 +678,25 @@ main {
     filter: blur(5px);
     opacity: 0.5;
     background-color: #52cf20;
+  }
+}
+/**************
+ Media Queries
+**************/
+@media (max-width: 800px) {
+  .training_plan_container {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  .training_plan_container .previous_training_plan, .training_plan_container .next_training_plan {
+    display: none !important;
+  }
+  .training_plan_container .change_training_plan {
+    display: flex !important;
+    justify-content: center;
+    gap: 150px;
+  }
+  .training_plan_container .change_training_plan .previous_training_plan, .training_plan_container .change_training_plan .next_training_plan {
+    display: block !important;
   }
 }/*# sourceMappingURL=training_session.css.map */

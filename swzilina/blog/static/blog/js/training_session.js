@@ -159,8 +159,10 @@ document.addEventListener("DOMContentLoaded", function() {
         training_plan.style.display = "block" // Shows Training Plan
         // exercises[active_exercise_index].classList.remove("active") // Hides Exercise With Active Class
 
-        previous_training_plan.style.display = "block" // Hides Previous Training Plan Button
-        next_training_plan.style.display = "block" // Hides Next Next Training Button
+        previous_training_plan[0].style.display = "block" // Hides Previous Training Plan Button
+        previous_training_plan[1].style.display = "block" // Hides Previous Training Plan Button
+        next_training_plan[0].style.display = "block" // Hides Next Next Training Button
+        next_training_plan[1].style.display = "block" // Hides Next Next Training Button
 
         exercises.forEach(function(one_exercise) {
             one_exercise.classList.remove("active") // Hides All Exercises
@@ -208,8 +210,10 @@ document.addEventListener("DOMContentLoaded", function() {
             training_plan.style.display = "none" // Hides Training Plan
         }
 
-        previous_training_plan.style.display = "none" // Hides Previous Training Plan Button
-        next_training_plan.style.display = "none" // Hides Next Next Training Button
+        previous_training_plan[0].style.display = "none" // Hides Previous Training Plan Button
+        previous_training_plan[1].style.display = "none" // Hides Previous Training Plan Button
+        next_training_plan[0].style.display = "none" // Hides Next Next Training Button
+        next_training_plan[1].style.display = "none" // Hides Next Next Training Button
         
         activity_summary.style.display = "none" // Hides Activity Summary
 
@@ -741,8 +745,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Training Plan
 
     // Choose Training Plan
-    const previous_training_plan = document.querySelector(".training_plan_container .previous_training_plan") // Gets Previous Training Plan Button
-    const next_training_plan = document.querySelector(".training_plan_container .next_training_plan") // Gets Next Training Plan Button
+    const previous_training_plan = document.querySelectorAll(".training_plan_container .previous_training_plan") // Gets Previous Training Plan Button
+    const next_training_plan = document.querySelectorAll(".training_plan_container .next_training_plan") // Gets Next Training Plan Button
 
     // Function For Set Training Plan
     function setTrainingPlanType() {
@@ -797,61 +801,65 @@ document.addEventListener("DOMContentLoaded", function() {
     setTrainingPlanType() // Sets Default Training Plan
 
     // Previous Training Plan
-    previous_training_plan.addEventListener("click", function() {
-        // Decreases Index Value If Index Of Active Training Plan Type Is Higher Than Minimum Possible Index
-        active_training_plan_type_index > 0 ? active_training_plan_type_index -= 1 : active_training_plan_type_index = all_training_plan_types.length - 1
+    previous_training_plan.forEach(function(one_button) {
+        one_button.addEventListener("click", function() {
+            // Decreases Index Value If Index Of Active Training Plan Type Is Higher Than Minimum Possible Index
+            active_training_plan_type_index > 0 ? active_training_plan_type_index -= 1 : active_training_plan_type_index = all_training_plan_types.length - 1
 
-        training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
+            training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
 
-        // Shows Blur Animation Between Change Of Training Plans
-        training_plan.classList.remove("blur")
-        void training_plan.offsetWidth
-        training_plan.classList.add("blur")
+            // Shows Blur Animation Between Change Of Training Plans
+            training_plan.classList.remove("blur")
+            void training_plan.offsetWidth
+            training_plan.classList.add("blur")
 
-        // Resets Default Values
-        setDefaults()
+            // Resets Default Values
+            setDefaults()
 
-        activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
-        gained_xp = 0 // Sets Gained XP Back To 0
+            activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
+            gained_xp = 0 // Sets Gained XP Back To 0
 
-        // Sets Activity Timer Default Texts
-        activity_timer.querySelector(".hours").textContent = "00"
-        activity_timer.querySelector(".minutes").textContent = "00"
-        activity_timer.querySelector(".seconds").textContent = "00"
+            // Sets Activity Timer Default Texts
+            activity_timer.querySelector(".hours").textContent = "00"
+            activity_timer.querySelector(".minutes").textContent = "00"
+            activity_timer.querySelector(".seconds").textContent = "00"
 
-        exercises_summary = [] // Sets Exercises Summary To Default
-        total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
+            exercises_summary = [] // Sets Exercises Summary To Default
+            total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
 
-        setTrainingPlanType() // Sets New Training Plan
+            setTrainingPlanType() // Sets New Training Plan
+        })
     })
 
     // Next Training Plan
-    next_training_plan.addEventListener("click", function() {
-        // Increases Index Value If Index Of Active Training Plan Type Is Less Than Maximum Possible Index
-        active_training_plan_type_index < all_training_plan_types.length - 1 ? active_training_plan_type_index += 1 : active_training_plan_type_index = 0
+    next_training_plan.forEach(function(one_button) {
+        one_button.addEventListener("click", function() {
+            // Increases Index Value If Index Of Active Training Plan Type Is Less Than Maximum Possible Index
+            active_training_plan_type_index < all_training_plan_types.length - 1 ? active_training_plan_type_index += 1 : active_training_plan_type_index = 0
 
-        training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
+            training_plan_type = all_training_plan_types[active_training_plan_type_index] // Sets New Training Plan Type
 
-        // Shows Blur Animation Between Change Of Training Plans
-        training_plan.classList.remove("blur")
-        void training_plan.offsetWidth
-        training_plan.classList.add("blur")
+            // Shows Blur Animation Between Change Of Training Plans
+            training_plan.classList.remove("blur")
+            void training_plan.offsetWidth
+            training_plan.classList.add("blur")
 
-        // Resets Default Values
-        setDefaults()
+            // Resets Default Values
+            setDefaults()
 
-        activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
-        gained_xp = 0 // Sets Gained XP Back To 0
+            activity_timer_elapsed_time = 0 // Sets Elapsed Time Back To 0
+            gained_xp = 0 // Sets Gained XP Back To 0
 
-        // Sets Activity Timer Default Texts
-        activity_timer.querySelector(".hours").textContent = "00"
-        activity_timer.querySelector(".minutes").textContent = "00"
-        activity_timer.querySelector(".seconds").textContent = "00"
+            // Sets Activity Timer Default Texts
+            activity_timer.querySelector(".hours").textContent = "00"
+            activity_timer.querySelector(".minutes").textContent = "00"
+            activity_timer.querySelector(".seconds").textContent = "00"
 
-        exercises_summary = [] // Sets Exercises Summary To Default
-        total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
+            exercises_summary = [] // Sets Exercises Summary To Default
+            total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default
 
-        setTrainingPlanType() // Sets New Training Plan
+            setTrainingPlanType() // Sets New Training Plan
+        })
     })
 
     // Start Training
