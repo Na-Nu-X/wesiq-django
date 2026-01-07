@@ -154,49 +154,55 @@
         <p class="current_activity_info"></p>
 
         <div class="previous_activity">
-            <p>
-                Posledná aktivita: 
+            {% spaceless %}
+                <p>
+                    Posledná aktivita: 
 
-                {% if latest_activity %}
-                    <span>{{ latest_activity.formatted_elapsed_time }}</span>
-                    <span>{{ latest_activity.gained_xp }}XP</span>
-                    <span>{{ latest_activity.end_time|date:"d.m. Y" }}</span>
+                    {% if latest_activity %}
+                        <span>{{ latest_activity.formatted_elapsed_time }}</span>
+                        <span>{{ latest_activity.gained_xp }}XP</span>
+                        <span>{{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
-                {% else %}
-                    žiadna
+                    {% else %}
+                        žiadna
 
-                {% endif %}
-            </p>
+                    {% endif %}
+                </p>
+            {% endspaceless %}
+            
+            {% spaceless %}
+                <p>
+                    Najdlhšia aktivita: 
 
-            <p>
-                Najdlhšia aktivita: 
+                    {% if longest_activity %}
+                        <span>{{ longest_activity.formatted_elapsed_time }}</span>
+                        <span>{{ longest_activity.gained_xp }}XP</span>
+                        <span>{{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
-                {% if longest_activity %}
-                    <span>{{ longest_activity.formatted_elapsed_time }}</span>
-                    <span>{{ longest_activity.gained_xp }}XP</span>
-                    <span>{{ longest_activity.end_time|date:"d.m. Y" }}</span>
+                    {% else %}
+                        žiadna
 
-                {% else %}
-                    žiadna
-
-                {% endif %}
-            </p>
+                    {% endif %}
+                </p>
+            {% endspaceless %}
 
             <br>
 
-            <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">
-                Priemerný čas aktivity za posledných 7 dní:
-                
-                {% if average_activity_time %}
-                    <span>{{ average_activity_time_formatted }}</span>
+            {% spaceless %}
+                <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">
+                    Priemerný čas aktivity za posledných 7 dní:
+                    
+                    {% if average_activity_time %}
+                        <span>{{ average_activity_time_formatted }}</span>
 
-                {% else %}
-                    0
+                    {% else %}
+                        <span>0</span>
 
-                {% endif %}
-            </p>
+                    {% endif %}
+                </p>
+            {% endspaceless %}
 
-            <p>Zaznamenané aktivity za posledných 7 dní:<span>{{ activities_amount }}</span></p>
+            <p class="activities_amount">Zaznamenané aktivity za posledných 7 dní:<span>{{ activities_amount }}</span></p>
         </div>
     </div>
 

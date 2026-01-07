@@ -128,3 +128,7 @@ class TrainingPlan(models.Model):
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=[0], null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
     order = models.IntegerField(verbose_name="Order", default=0, null=False)
+
+class Exercises(models.Model):
+    exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
+    categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)

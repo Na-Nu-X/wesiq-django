@@ -523,6 +523,9 @@ main {
 .activity .previous_activity p span:nth-child(2) {
   color: #52cf20;
 }
+.activity .previous_activity .average_activity_time span, .activity .previous_activity .activities_amount span {
+  color: #52cf20;
+}
 
 .activity_summary {
   display: none;
