@@ -149,19 +149,47 @@
             <div class="next_training_plan">
                 <i class="fa-solid fa-angles-right"></i> <!-- https://fontawesome.com/icons/angles-right -->
             </div>
+
+            <div class="change_training_plan">
+                <div class="previous_training_plan">
+                    <i class="fa-solid fa-angles-left"></i> <!-- https://fontawesome.com/icons/angles-left -->
+                </div>
+
+                <div class="next_training_plan">
+                    <i class="fa-solid fa-angles-right"></i> <!-- https://fontawesome.com/icons/angles-right -->
+                </div>
+            </div>
         </div>
 
         <p class="current_activity_info"></p>
 
         <div class="previous_activity">
             {% spaceless %}
+                <p data-average_activity_time="{{ average_activity_time }}">
+                    Priemerný čas aktivity za posledných 7 dní:
+
+                    {% if average_activity_time %}
+                        <span class="average_activity_time">{{ average_activity_time_formatted }}</span>
+
+                    {% else %}
+                        <span>0</span>
+
+                    {% endif %}
+                </p>
+            {% endspaceless %}
+
+            <p>Zaznamenané aktivity za posledných 7 dní: <span class="activities_amount">{{ activities_amount }}</span></p>
+
+            <br>
+
+            {% spaceless %}
                 <p>
-                    Posledná aktivita: 
+                    Posledná aktivita:
 
                     {% if latest_activity %}
                         <span>{{ latest_activity.formatted_elapsed_time }}</span>
-                        <span>{{ latest_activity.gained_xp }}XP</span>
-                        <span>{{ latest_activity.end_time|date:"d.m. Y" }}</span>
+                        <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
+                        <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
                     {% else %}
                         žiadna
@@ -172,12 +200,12 @@
             
             {% spaceless %}
                 <p>
-                    Najdlhšia aktivita: 
+                    Najdlhšia aktivita:
 
                     {% if longest_activity %}
                         <span>{{ longest_activity.formatted_elapsed_time }}</span>
-                        <span>{{ longest_activity.gained_xp }}XP</span>
-                        <span>{{ longest_activity.end_time|date:"d.m. Y" }}</span>
+                        <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
+                        <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
                     {% else %}
                         žiadna
@@ -185,24 +213,6 @@
                     {% endif %}
                 </p>
             {% endspaceless %}
-
-            <br>
-
-            {% spaceless %}
-                <p class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">
-                    Priemerný čas aktivity za posledných 7 dní:
-                    
-                    {% if average_activity_time %}
-                        <span>{{ average_activity_time_formatted }}</span>
-
-                    {% else %}
-                        <span>0</span>
-
-                    {% endif %}
-                </p>
-            {% endspaceless %}
-
-            <p class="activities_amount">Zaznamenané aktivity za posledných 7 dní:<span>{{ activities_amount }}</span></p>
         </div>
     </div>
 
