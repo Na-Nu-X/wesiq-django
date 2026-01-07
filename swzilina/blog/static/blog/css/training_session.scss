@@ -629,6 +629,12 @@ main {
                 }
             }
         }
+
+        .average_activity_time, .activities_amount {
+            span {
+                color: $success-color;
+            }
+        }
     }
 }
 

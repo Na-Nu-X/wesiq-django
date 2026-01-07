@@ -159,6 +159,9 @@ document.addEventListener("DOMContentLoaded", function() {
         training_plan.style.display = "block" // Shows Training Plan
         // exercises[active_exercise_index].classList.remove("active") // Hides Exercise With Active Class
 
+        previous_training_plan.style.display = "block" // Hides Previous Training Plan Button
+        next_training_plan.style.display = "block" // Hides Next Next Training Button
+
         exercises.forEach(function(one_exercise) {
             one_exercise.classList.remove("active") // Hides All Exercises
         })
@@ -204,6 +207,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if(play_appearance.classList.contains("fa-pause") && start_training.classList.contains("active")) {
             training_plan.style.display = "none" // Hides Training Plan
         }
+
+        previous_training_plan.style.display = "none" // Hides Previous Training Plan Button
+        next_training_plan.style.display = "none" // Hides Next Next Training Button
         
         activity_summary.style.display = "none" // Hides Activity Summary
 
@@ -296,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function() {
             post_data.append("formatted_elapsed_time", `${getFormattedHours(activity_timer_elapsed_time, true)}h ${getFormattedMinutes(activity_timer_elapsed_time, true)}m ${getFormattedSeconds(activity_timer_elapsed_time, true)}s`)
             post_data.append("elapsed_time", activity_timer_elapsed_time)
             post_data.append("gained_xp", gained_xp)
-            post_data.append("type", exercises[0].dataset.type) // Sends Type Of Training
+            exercises_summary.length > 0 ? post_data.append("type", exercises[0].dataset.type) : null // Sends Type Of Training If Activity Was Started With Training Plan
 
             fetch("/training-session", {
                 method: "POST",

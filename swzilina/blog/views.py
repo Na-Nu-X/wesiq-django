@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan
+from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises
 from django.contrib.auth import authenticate, login, logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1150,4 +1150,8 @@ def trainingSessionView(request):
     return render(request, "blog/training_session.html")
 
 def manageTrainingPlansView(request):
-    return render(request, "blog/manage_training_plans.html")
+    exercises = Exercises.objects.all()
+
+    return render(request, "blog/manage_training_plans.html", {
+        "exercises": exercises,
+    })

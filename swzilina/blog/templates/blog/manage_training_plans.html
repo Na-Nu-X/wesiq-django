@@ -3,7 +3,34 @@
 
 {% block title %}Street Workout Žilina - Moje tréningové plány{% endblock title %}
 
+{% block style %}
+    <link rel="stylesheet" href="{% static 'blog/css/manage_training_plans.css' %}">
+{% endblock style %}
+
 {% block content %}
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis aliquam molestias aliquid a voluptatum atque distinctio eaque, et eos deleniti, incidunt ea architecto deserunt totam, pariatur suscipit dolores? Dicta, amet.</p>
+    <div class="training_plan_container">
+        <div class="training_plan">
+            <div class="add_exercise">
+                <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+            </div>
+
+            <div class="progress_bar">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercises">
+        {% for one_exercise in exercises %}
+            <div class="exercise" draggable="true">
+                <p>{{ one_exercise.exercise }}</p>
+            </div>
+
+        {% endfor %}
+    </div>
 
 {% endblock content %}
