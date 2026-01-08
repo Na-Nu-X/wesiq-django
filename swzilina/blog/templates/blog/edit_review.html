@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="{% static 'blog/css/edit_review.css' %}">
 {% endblock style %}
 
-{% comment %} {% block heading %}Moje&nbsp;hodnotenie{% endblock heading %} {% endcomment %}
-
 {% block content %}
     {% if request.session.logged_in_user_id %}
         <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
@@ -87,30 +85,6 @@
 {% endblock content %}
 
 {% block script %}
-    <script defer>
-        "use strict"
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Delete Review Warning
-
-            const delete_review_checkbox = document.querySelector("#delete_review")
-            const delete_review_image = document.querySelector(".delete_review")
-            const form_report = document.querySelector(".form_report")
-
-            delete_review_checkbox.addEventListener("click", function() {
-                if(delete_review_checkbox.checked) {
-                    delete_review_image.style.opacity = 1
-                    form_report.textContent = "Vaše hodnotenie bude odstránené"
-                    form_report.classList.add("error")
-                }
-
-                else {
-                    delete_review_image.style.opacity = 0.6
-                    form_report.textContent = ""
-                }
-            })
-        })
-    </script>
-
+    <script src="{% static 'blog/js/edit_review.js' %}" defer></script>
     <script src="{% static 'blog/js/reviews.js' %}" defer></script>
 {% endblock script %}
