@@ -1,7 +1,7 @@
 import { getFormattedTime } from "../utils/timer.js"
 import { getDayName } from "../utils/getDayName.js"
 import { randomColor } from "../utils/randomColor.js"
-import { getCookie } from "../utils/getCookie.js"
+import { sendPOST } from "../services/sendPOST.js"
 
 "use strict"
 
@@ -266,22 +266,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Sends POST Data
             const post_data = new FormData()
+            
             post_data.append("formatted_elapsed_time", `${getFormattedTime("hours", activity_timer_elapsed_time, true)}h ${getFormattedTime("minutes", activity_timer_elapsed_time, true)}m ${getFormattedTime("seconds", activity_timer_elapsed_time, true)}s`)
             post_data.append("elapsed_time", activity_timer_elapsed_time)
             post_data.append("gained_xp", gained_xp)
             exercises_summary.length > 0 ? post_data.append("type", exercises[0].dataset.type) : null // Sends Type Of Training If Activity Was Started With Training Plan
 
-            fetch("/training-session", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
-                body: post_data
-            })
-            .then(res => res.json())
-            .then(data => {
-                data.gained_xp = gained_xp
-            })
+            sendPOST("/training-session", post_data)
 
             // Activity Summary
 
