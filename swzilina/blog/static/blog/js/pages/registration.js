@@ -55,11 +55,14 @@ document.addEventListener("DOMContentLoaded", function() {
             paste(password_check_input, copied_password) // Paste Password To The Password Check Input
             passwordVerification(password_input, password_check_input, form_report) // Password Verification
         }
-
     })
 
     // Password Verification
-    document.addEventListener("input", function() {
+    password_input.addEventListener("input", function() {
+        passwordVerification(password_input, password_check_input, form_report)
+    })
+
+    password_check_input.addEventListener("input", function() {
         passwordVerification(password_input, password_check_input, form_report)
     })
 })

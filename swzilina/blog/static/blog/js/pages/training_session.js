@@ -1,9 +1,4 @@
-import {
-    getFormattedSeconds, 
-    getFormattedMinutes, 
-    getFormattedHours
-} from "../utils/timer.js"
-
+import { getFormattedTime } from "../utils/timer.js"
 import { getDayName } from "../utils/getDayName.js"
 import { randomColor } from "../utils/randomColor.js"
 import { getCookie } from "../utils/getCookie.js"
@@ -202,9 +197,9 @@ document.addEventListener("DOMContentLoaded", function() {
             activity_timer_elapsed_time += 1 // Counts The Elapsed Time Since The Start Of The Activity
 
             // Renders Elapsed Time Values To The Activity Timer
-            activity_timer.querySelector(".hours").textContent = getFormattedHours(activity_timer_elapsed_time, true)
-            activity_timer.querySelector(".minutes").textContent = getFormattedMinutes(activity_timer_elapsed_time, true)
-            activity_timer.querySelector(".seconds").textContent = getFormattedSeconds(activity_timer_elapsed_time, true)
+            activity_timer.querySelector(".hours").textContent = getFormattedTime("hours", activity_timer_elapsed_time, true)
+            activity_timer.querySelector(".minutes").textContent = getFormattedTime("minutes", activity_timer_elapsed_time, true)
+            activity_timer.querySelector(".seconds").textContent = getFormattedTime("seconds", activity_timer_elapsed_time, true)
 
             // Gained XP
 
@@ -271,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Sends POST Data
             const post_data = new FormData()
-            post_data.append("formatted_elapsed_time", `${getFormattedHours(activity_timer_elapsed_time, true)}h ${getFormattedMinutes(activity_timer_elapsed_time, true)}m ${getFormattedSeconds(activity_timer_elapsed_time, true)}s`)
+            post_data.append("formatted_elapsed_time", `${getFormattedTime("hours", activity_timer_elapsed_time, true)}h ${getFormattedTime("minutes", activity_timer_elapsed_time, true)}m ${getFormattedTime("seconds", activity_timer_elapsed_time, true)}s`)
             post_data.append("elapsed_time", activity_timer_elapsed_time)
             post_data.append("gained_xp", gained_xp)
             exercises_summary.length > 0 ? post_data.append("type", exercises[0].dataset.type) : null // Sends Type Of Training If Activity Was Started With Training Plan
@@ -302,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(parseInt(average_activity_time.dataset.average_activity_time) === 0) {
                     main_summary.innerHTML += `
                         <span style="color: #52cf20">
-                            ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
+                            ${getFormattedTime("hours", activity_timer_elapsed_time)}h ${getFormattedTime("minutes", activity_timer_elapsed_time)}m ${getFormattedTime("seconds", activity_timer_elapsed_time)}s
 
                             <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní">
                                 (+100%)
@@ -314,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 else {
                     main_summary.innerHTML += `
                         <span style="color: #52cf20">
-                            ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
+                            ${getFormattedTime("hours", activity_timer_elapsed_time)}h ${getFormattedTime("minutes", activity_timer_elapsed_time)}m ${getFormattedTime("seconds", activity_timer_elapsed_time)}s
 
                             <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
                                 (+${((activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100) - 100).toFixed(2).replace(".", ",")}%)
@@ -328,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function() {
             else {
                 main_summary.innerHTML += `
                     <span style="color: #df3535">
-                        ${getFormattedHours(activity_timer_elapsed_time)}h ${getFormattedMinutes(activity_timer_elapsed_time)}m ${getFormattedSeconds(activity_timer_elapsed_time)}s
+                        ${getFormattedTime("hours", activity_timer_elapsed_time)}h ${getFormattedTime("minutes", activity_timer_elapsed_time)}m ${getFormattedTime("seconds", activity_timer_elapsed_time)}s
 
                         <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}% kratší ako priemer za posledných 7 dní">
                             (-${(100 - (activity_timer_elapsed_time / parseInt(average_activity_time.dataset.average_activity_time) * 100)).toFixed(2).replace(".", ",")}%)
@@ -421,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             
                             // Creates Floating Labels
                             formatter: function(value) {
-                                return value === 0 ? "" : `${getFormattedHours(value)}h ${getFormattedMinutes(value)}m`
+                                return value === 0 ? "" : `${getFormattedTime("hours", value)}h ${getFormattedTime("minutes", value)}m`
                             },
                         },
                     },
@@ -442,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // Training Plan Summary Text
                 exercises_summary.forEach(function(one_exercise) {
-                    training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getFormattedHours(one_exercise.elapsed_time)}h ${getFormattedMinutes(one_exercise.elapsed_time)}m ${getFormattedSeconds(one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2).replace(".", ",")}%)</span>`
+                    training_plan_summary.innerHTML += `<br><span style="color: ${one_exercise.color}">${one_exercise.exercise}: ${getFormattedTime("hours", one_exercise.elapsed_time)}h ${getFormattedTime("minutes", one_exercise.elapsed_time)}m ${getFormattedTime("seconds", one_exercise.elapsed_time)}s (${(one_exercise.elapsed_time / total_exercises_elapsed_time * 100).toFixed(2).replace(".", ",")}%)</span>`
                 })
 
                 // If The Training Plan Wasn't Completed By The End
@@ -580,8 +575,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 break_remaining_time <= 10 ? break_timer.style.color = "#df3535" : break_timer.style.color = "#ffffff"
 
                 // Break Timer
-                break_timer.querySelector(".minutes").textContent = getFormattedMinutes(Math.round(break_remaining_time))
-                break_timer.querySelector(".seconds").textContent = getFormattedSeconds(Math.round(break_remaining_time), true)
+                break_timer.querySelector(".minutes").textContent = getFormattedTime("minutes", Math.round(break_remaining_time))
+                break_timer.querySelector(".seconds").textContent = getFormattedTime("seconds", Math.round(break_remaining_time), true)
 
                 // Progress Circle
                 progress_circle.style.strokeDashoffset = circum_ference / max_break_remaining_time * break_remaining_time // Updates Progress Circle Length
