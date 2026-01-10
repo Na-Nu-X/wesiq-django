@@ -55,8 +55,7 @@
         <div class="password_container">
             <i class="fa-solid fa-key" title="Navrhnúť heslo"></i> <!-- https://fontawesome.com/icons/key -->
             {{ registration_form.password }}
-            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
-            <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
             <i class="fa-solid fa-copy copy_password" title="Skopírovať"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
@@ -65,7 +64,7 @@
             <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
-        <p class="form_report" style="bottom: 241px;"></p>
+        <p class="form_report error" style="bottom: 241px;"></p>
         <input type="submit" value="Vytvoriť účet">
 
         <div class="form_questions">
@@ -79,6 +78,5 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/js/registration.js' %}" defer></script>
-    <script src="{% static 'blog/js/password.js' %}" defer></script>
+    <script src="{% static 'blog/js/pages/registration.js' %}" type="module"></script>
 {% endblock script %}

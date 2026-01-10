@@ -1,8 +1,12 @@
+import {
+    setSortParameter,
+    setCategoryParameter
+} from "../utils/setParameters.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
     // Search Bar
-
     const search_bar = document.querySelector(".search_bar")
     const delete_search_bar = document.querySelector(".fa-xmark")
     const article_tags = document.querySelectorAll("article") // Gets Every Article HTML Tags From Page
@@ -126,15 +130,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Custom Select Menu
 
-    // Fuction For Setting Sort Parameter to URL Address
-    function setSortParameter(sort_value) {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        page_url.searchParams.set("sort", sort_value) // Adds Parameter With Value to The URL
-
-        window.location.href = page_url // Redirects Page
-    }
-
     const sort_select = document.querySelector(".sort_select_menu .select")
     const sort_options_list = document.querySelector(".sort_select_menu .options_list")
     const sort_options = document.querySelectorAll(".sort_select_menu .option")
@@ -157,15 +152,6 @@ document.addEventListener("DOMContentLoaded", function() {
             sort_select.querySelector("span").textContent = option.querySelector("span").textContent
         }
     })
-
-    // Fuction For Setting Category Parameter to URL Address
-    function setCategoryParameter(category_value) {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        page_url.searchParams.set("category", category_value) // Adds Parameter With Value to The URL
-
-        window.location.href = page_url // Redirects Page
-    }
 
     const category_select = document.querySelector(".category_select_menu .select")
     const category_options_list = document.querySelector(".category_select_menu .options_list")

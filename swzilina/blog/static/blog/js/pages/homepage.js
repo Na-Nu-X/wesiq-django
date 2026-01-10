@@ -1,3 +1,5 @@
+import { setSortParameter, setRatingParameter } from "../utils/setParameters.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -110,52 +112,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
-    // Form
-    login_form.addEventListener("click", function() {
-        // Toggle Show / Hide Password
-
-        const password = login_form.querySelector(".password")
-        const show_password = login_form.querySelector(".fa-eye-slash")
-        const hide_password = login_form.querySelector(".fa-eye")
-
-        show_password.addEventListener("click", function() {
-            show_password.style.display = "none"
-            hide_password.style.display = "block"
-
-            password.style.webkitTextSecurity = "none"
-        })
-
-        hide_password.addEventListener("click", function() {
-            hide_password.style.display = "none"
-            show_password.style.display = "block"
-
-            password.style.webkitTextSecurity = "disc"
-        })
-    })
-
-    // Password Reset
-
-    const password_reset = login_form.querySelector(".password_reset")
-    const email_address = login_form.querySelector(".email_address")
-    const form_report = login_form.querySelector(".form_report")
-
-    password_reset.addEventListener("click", function() {
-        if(email_address.value !== "" && email_address.value.includes("@") && email_address.value.includes(".")) {
-            form_report.textContent = ""
-
-            document.cookie = `email_address=${email_address.value}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
-
-            document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
-        }
-
-        else {
-            event.preventDefault()
-
-            form_report.textContent = "Zadajte váš e-mail"
-            form_report.classList.add("error")
-        }
-    })
-
     // Registration Form
 
     // Registration Form Dialog
@@ -178,101 +134,6 @@ document.addEventListener("DOMContentLoaded", function() {
         ) {
             registration_form_dialog.close()
         }
-    })
-    
-    // Form
-    registration_form.addEventListener("click", function() {
-        // Toggle Show / Hide Password
-
-        const password = registration_form.querySelector(".password")
-        const show_password = registration_form.querySelector(".fa-eye-slash")
-        const hide_password = registration_form.querySelector(".fa-eye")
-
-        show_password.addEventListener("click", function() {
-            show_password.style.display = "none"
-            hide_password.style.display = "block"
-
-            password.style.webkitTextSecurity = "none"
-        })
-
-        hide_password.addEventListener("click", function() {
-            hide_password.style.display = "none"
-            show_password.style.display = "block"
-
-            password.style.webkitTextSecurity = "disc"
-        })
-
-        // Random Password Generator
-
-        const generate_password = registration_form.querySelector(".fa-key")
-
-        const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-        const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        const special_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', ',', '.', '<', '>', '/', '?', '\\', '|', '`', '~']
-
-        generate_password.addEventListener("click", function() {
-            function shuffleString(string) {
-                let array = string.split("")
-
-                for(let i = array.length - 1; i > 0; i--) {
-                    let j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]]
-                }
-
-                return array.join("");
-            }
-
-            let generated_password = ""
-
-            for(let x = 0; x < 5; x++) {
-                generated_password = generated_password + alphabet[Math.floor(Math.random() * alphabet.length)] + numbers[Math.floor(Math.random() * numbers.length)] + special_chars[Math.floor(Math.random() * special_chars.length)]
-            }
-
-            password.value = shuffleString(generated_password)
-        })
-
-        // Copy Password To Clipboard
-
-        const copy_password = registration_form.querySelector(".copy_password")
-
-        copy_password.addEventListener("click", function() {
-            password.select()
-            password.setSelectionRange(0, password.value.length)
-            document.execCommand("copy")
-            // navigator.clipboard.writeText(password.value) // Only HTTPS
-        })
-
-        // Paste From Clipboard
-
-        const password_check = registration_form.querySelector(".password_check")
-        const paste_password = registration_form.querySelector(".paste_password")
-
-        paste_password.addEventListener("click", function() {
-            // password_check_input.value = navigator.clipboard.readText() // Only HTTPS
-            password_check.value = password.value
-        })
-
-        // Password Verification
-
-        const form_report = registration_form.querySelector(".form_report")
-        
-        document.addEventListener("input", function() {
-            if(password.value == password_check.value && password.value != "") {
-                form_report.textContent = "Heslá sa zhodujú"
-                form_report.classList.remove("error")
-                form_report.classList.add("success")
-            }
-
-            else if(password.value != password_check.value) {
-                form_report.textContent = "Heslá sa nezhodujú"
-                form_report.classList.remove("success")
-                form_report.classList.add("error")
-            }
-
-            else {
-                form_report.textContent = ""
-            }
-        })
     })
 
     // Profile Dialog
@@ -393,15 +254,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Custom Select Menu - Reviews
 
-    // Fuction For Setting Sort Parameter to URL Address
-    function setSortParameter(sort_value) {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        page_url.searchParams.set("sort", sort_value) // Adds Parameter With Value to The URL
-
-        window.location.href = page_url // Redirects Page
-    }
-
     const sort_select = document.querySelector(".sort_select_menu .select")
     const sort_options_list = document.querySelector(".sort_select_menu .options_list")
     const sort_options = document.querySelectorAll(".sort_select_menu .option")
@@ -424,15 +276,6 @@ document.addEventListener("DOMContentLoaded", function() {
             sort_select.querySelector("span").textContent = option.querySelector("span").textContent
         }
     })
-
-    // Fuction For Setting Rating Parameter to URL Address
-    function setRatingParameter(rating_value) {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        page_url.searchParams.set("rating", rating_value) // Adds Parameter With Value to The URL
-
-        window.location.href = page_url // Redirects Page
-    }
 
     const rating_select = document.querySelector(".rating_select_menu .select")
     const rating_options_list = document.querySelector(".rating_select_menu .options_list")

@@ -1,16 +1,42 @@
+import { 
+    showPassword,
+    hidePassword,
+    generatePassword
+} from "../utils/password.js"
+
+import { getCookie } from "../utils/getCookie.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    const password_container = document.querySelector(".password_container") // Gets Password Container
+    const password_input = password_container.querySelector(".password") // Gets Password Input
+
+    // Password Container Event Listener
+    password_container.addEventListener("click", function(event) {
+        switch(true) {
+            // Toggle Show / Hide Password
+            case event.target.matches(".fa-eye-slash"):
+                showPassword(event.target, password_input)
+                break
+                
+            case event.target.matches(".fa-eye"):
+                hidePassword(event.target, password_input)
+                break
+
+            // Random Password Generator
+            case event.target.matches(".fa-key"):
+                password_input.value = generatePassword() // Sets Generated Password To The Password Input
+                break
+
+            default:
+                return
+        }
+    })
+
     // Timer
 
     const timer = document.querySelector(".timer h3") // Gets Timer's Text From HTML
-
-    // Function For Get Cookie by Its Name
-    function getCookie(cookie_name) {
-        const value = `; ${document.cookie}`
-        const parts = value.split(`; ${cookie_name}=`)
-        if (parts.length === 2) return parts.pop().split(";")[0]
-    }
 
     const password_reset_timer = parseInt(getCookie("password_reset_timer")) // Time From Cookie Value
     let max_remaining_time = 600000 // 10 Minutes

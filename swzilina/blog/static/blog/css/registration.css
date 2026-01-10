@@ -114,9 +114,6 @@
   cursor: pointer;
   transition: color 0.3s ease, left 0.3s ease;
 }
-.registration_form .password_container .fa-eye {
-  display: none;
-}
 .registration_form .password_container .fa-eye, .registration_form .password_container .fa-eye-slash {
   right: 20px;
   transition: right 0.3s ease;

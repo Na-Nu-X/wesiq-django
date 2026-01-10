@@ -1,3 +1,13 @@
+import {
+    getFormattedSeconds, 
+    getFormattedMinutes, 
+    getFormattedHours
+} from "../utils/timer.js"
+
+import { getDayName } from "../utils/getDayName.js"
+import { randomColor } from "../utils/randomColor.js"
+import { getCookie } from "../utils/getCookie.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -16,14 +26,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Exercises
     const all_exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From All Training Plans
-
-    // Function For Get Day Name From Weekday Index In User's Country's Language (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
-    function getDayName(day_index, format = "short") {
-        const locale = navigator.languages?.[0] || navigator.language || "en-US"
-        const date = new Date(2024, 0, 7 + day_index)
-
-        return new Intl.DateTimeFormat(locale, { weekday: format }).format(date)
-    }
 
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     let all_training_plan_types = [
@@ -87,40 +89,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // FUNCTIONS
 
     // General Functions
-    function getFormattedSeconds(elapsed_seconds, leading_zero=false) {
-        const result = elapsed_seconds % 60 // Number Value Of Elapsed Seconds
-
-        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Seconds If Format Parameter Is Set As True
-    }
-
-    function getFormattedMinutes(elapsed_seconds, leading_zero=false) {
-        const result = (Math.floor(elapsed_seconds / 60)) % 60 // Number Value Of Elapsed Minutes
-
-        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Minutes If Format Parameter Is Set As True
-    }
-
-    function getFormattedHours(elapsed_seconds, leading_zero=false) {
-        const result = (Math.floor(elapsed_seconds / 3600)) % 60 // Number Value Of Elapsed Hours
-
-        return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Hours If Format Parameter Is Set As True
-    }
-
-    // Function For Generate Random Color
-    function randomColor(from=0, to=255) {
-        return `rgb(
-            ${Math.floor(Math.random() * ((to + 1) - from) + from)},
-            ${Math.floor(Math.random() * ((to + 1) - from) + from)},
-            ${Math.floor(Math.random() * ((to + 1) - from) + from)}
-        )`
-    }
-
-    // Function For Get Cookie by Its Name
-    function getCookie(cookie_name) {
-        const value = `; ${document.cookie}`
-        const parts = value.split(`; ${cookie_name}=`)
-        if (parts.length === 2) return parts.pop().split(";")[0]
-    }
-
     function trainingPlanProgress() {
         const set_progress = exercises[active_exercise_index].querySelectorAll(".sets span") // Gets Set Progress Of Active Exercise
         let current_set = parseInt(set_progress[0].textContent) // Gets Current Set Value

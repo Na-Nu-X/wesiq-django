@@ -1,14 +1,9 @@
+import { getCookie } from "../utils/getCookie.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
     // Comments
-
-    // Function For Get Cookie by Its Name
-    function getCookie(cookie_name) {
-        const value = `; ${document.cookie}`
-        const parts = value.split(`; ${cookie_name}=`)
-        if (parts.length === 2) return parts.pop().split(";")[0]
-    }
 
     const comments = document.querySelectorAll(".one_comment")
 
