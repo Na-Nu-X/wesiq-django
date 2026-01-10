@@ -25,8 +25,7 @@
         
         <div class="password_container">
             {{ login_form.password }}
-            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash -->
-            <i class="fa-regular fa-eye" title="Skryť heslo"></i> <!-- https://fontawesome.com/icons/eye -->
+            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
         </div>
 
         <p class="form_report" style="bottom: 287px;"></p>
@@ -50,6 +49,5 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/js/login.js' %}" defer></script>
-    <script src="{% static 'blog/js/password.js' %}" defer></script>
+    <script src="{% static 'blog/js/pages/login.js' %}" type="module"></script>
 {% endblock script %}
