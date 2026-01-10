@@ -1,4 +1,4 @@
-import { setSortParameter, setRatingParameter } from "../utils/setParameters.js"
+import { setURLParameter } from "../utils/setURLParameter.js"
 
 "use strict"
 
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     sort_options.forEach(function(option) {
         option.addEventListener("click", function() {
-            setSortParameter(option.dataset.sort) // Sets sort URL Parameter With Value From data in Options
+            setURLParameter("sort", option.dataset.sort) // Sets sort URL Parameter With Value From data in Options
 
             sort_options_list.classList.toggle("active")
             sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     rating_options.forEach(function(option) {
         option.addEventListener("click", function() {
-            setRatingParameter(option.dataset.rating) // Sets rating URL Parameter With Value From data in Options
+            setURLParameter("rating", option.dataset.rating) // Sets rating URL Parameter With Value From data in Options
 
             rating_options_list.classList.toggle("active")
             rating_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")

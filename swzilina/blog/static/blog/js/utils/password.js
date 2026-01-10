@@ -29,6 +29,19 @@ export function hidePassword(icon, input) {
     input.style.webkitTextSecurity = "disc" // Hides Password
 }
 
+// Function For Shuffle String
+export function shuffleString(string) {
+    let array = string.split("") // Creates An Array From A String
+
+    // Shuffles Array
+    for(let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]
+    }
+
+    return array.join("") // Converts An Array Back To A String
+}
+
 // Function For Generating Random Password
 export function generatePassword() {
     // Possible Characters
@@ -43,15 +56,7 @@ export function generatePassword() {
         generated_password = generated_password + alphabet[Math.floor(Math.random() * alphabet.length)] + numbers[Math.floor(Math.random() * numbers.length)] + special_chars[Math.floor(Math.random() * special_chars.length)] // Generates Pattern Of Letter, Number, Character
     }
 
-    // Creates Random Shuffled String
-    let shuffled_generated_password = generated_password.split("")
-
-    for(let i = shuffled_generated_password.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [shuffled_generated_password[i], shuffled_generated_password[j]] = [shuffled_generated_password[j], shuffled_generated_password[i]]
-    }
-
-    return shuffled_generated_password.join("") // Returns Shuffled Generated Password Value
+    return shuffleString(generated_password) // Returns Shuffled Generated Password Value
 }
 
 // Function For Copying Value From The Input
@@ -61,7 +66,7 @@ export function copy(input) {
 }
 
 // Function For Paste Value To The Input
-export function paste(input, copied_text = null) {
+export function paste(input, copied_text=null) {
     input.value = copied_text
 }
 
