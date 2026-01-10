@@ -1000,7 +1000,7 @@ def likeComment(request, comment_id):
         except:
             pass
 
-    return HttpResponse("Lajk bol pridaný.")
+    return JsonResponse({"success": "Like Has Been Recorded."})
 
 def cancelLikeComment(request, comment_id):
     if request.method == "POST":
@@ -1021,7 +1021,7 @@ def cancelLikeComment(request, comment_id):
         except:
             pass
 
-    return HttpResponse("Lajk bol odobraný.")
+    return JsonResponse({"success": "Like Has Been Removed."})
 
 def reportComment(request, comment_id):
     if request.method == "POST":
@@ -1045,7 +1045,7 @@ def reportComment(request, comment_id):
         except:
             pass
 
-    return HttpResponse("Nahlásenie bolo odoslané.")
+    return JsonResponse({"success": "Report Has Been Sent."})
 
 def trainingSessionView(request):
     # Gets Logged In User
@@ -1129,7 +1129,7 @@ def trainingSessionView(request):
 
                 new_activity.save()
 
-                return JsonResponse({"success": "XP boli pridané."})
+                return JsonResponse({"success": "Amount Of XP Has Been Increased."})
 
             except:
                 pass
