@@ -373,6 +373,7 @@ header {
         }
 
         article {
+            opacity: 0;
             position: relative;
             max-width: 500px;
             width: 100%;
@@ -389,6 +390,10 @@ header {
                 size: cover !important;
                 position: center !important;
                 repeat: no-repeat !important;
+            }
+
+            &.animate {
+                animation: fade_in_animation 1s ease-out forwards;
             }
 
             &:hover {

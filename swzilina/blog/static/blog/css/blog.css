@@ -298,6 +298,7 @@ header {
   color: #fff;
 }
 .content .articles article {
+  opacity: 0;
   position: relative;
   max-width: 500px;
   width: 100%;
@@ -312,6 +313,9 @@ header {
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+}
+.content .articles article.animate {
+  animation: fade_in_animation 1s ease-out forwards;
 }
 .content .articles article:hover {
   transform: scale(1.01);

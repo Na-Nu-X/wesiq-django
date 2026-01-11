@@ -1502,6 +1502,9 @@ main {
   box-shadow: 5px 5px 10px #333333;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
+.content .reviews .all_reviews .one_review.animate {
+  animation: fade_in_animation 1s ease-out forwards;
+}
 .content .reviews .all_reviews .one_review:hover {
   transform: scale(1.01);
   background-color: rgba(255, 255, 255, 0.1);

@@ -1,4 +1,4 @@
-import { commentFunctionality } from "../utils/forum.js"
+import { commentFunctionality } from "../components/forum.js"
 
 "use strict"
 
