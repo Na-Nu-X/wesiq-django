@@ -1,4 +1,6 @@
-import { setURLParameter } from "../utils/setURLParameter.js"
+import { setObserverAnimation } from "../utils/setObserverAnimation.js"
+import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
+import { customSelectMenu } from "../components/customSelectMenu.js"
 
 "use strict"
 
@@ -252,243 +254,22 @@ document.addEventListener("DOMContentLoaded", function() {
         plugins: [plugin],
     })
 
-    // Custom Select Menu - Reviews
+    // Custom Select Menus - Reviews
 
-    const sort_select = document.querySelector(".sort_select_menu .select")
-    const sort_options_list = document.querySelector(".sort_select_menu .options_list")
-    const sort_options = document.querySelectorAll(".sort_select_menu .option")
+    const sort_select_menu = document.querySelector(".reviews .select_menus .sort_select_menu") // Gets Sort Select Menu
+    const rating_select_menu = document.querySelector(".reviews .select_menus .rating_select_menu") // Gets Rating Select Menu
 
-    sort_select.addEventListener("click", function() {
-        sort_options_list.classList.toggle("active")
-        sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
-    })
-
-    sort_options.forEach(function(option) {
-        option.addEventListener("click", function() {
-            setURLParameter("sort", option.dataset.sort) // Sets sort URL Parameter With Value From data in Options
-
-            sort_options_list.classList.toggle("active")
-            sort_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
-        })
-
-        // Shows Current Selected Option From List Without Icon
-        if(option.classList[1] === "selected") {
-            sort_select.querySelector("span").textContent = option.querySelector("span").textContent
-        }
-    })
-
-    const rating_select = document.querySelector(".rating_select_menu .select")
-    const rating_options_list = document.querySelector(".rating_select_menu .options_list")
-    const rating_options = document.querySelectorAll(".rating_select_menu .option")
-
-    rating_select.addEventListener("click", function() {
-        rating_options_list.classList.toggle("active")
-        rating_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
-    })
-
-    rating_options.forEach(function(option) {
-        option.addEventListener("click", function() {
-            setURLParameter("rating", option.dataset.rating) // Sets rating URL Parameter With Value From data in Options
-
-            rating_options_list.classList.toggle("active")
-            rating_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
-        })
-
-        // Shows Current Selected Option From List Without Icon
-        if(option.classList[1] === "selected") {
-            rating_select.querySelector("span").innerHTML = option.querySelector("span").innerHTML
-        }
-    })
-
-    // Refresh Select Menus
-
-    const sort_select_menu_refresh = document.querySelector(".sort_select_menu .refresh .fa-arrow-rotate-right")
-    const rating_select_menu_refresh = document.querySelector(".rating_select_menu .refresh .fa-arrow-rotate-right")
-
-    sort_select_menu_refresh.addEventListener("click", function() {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        // Deletes Parameters In URL
-        page_url.searchParams.delete("sort")
-
-        window.location.href = page_url // Redirects Page
-    })
-
-    rating_select_menu_refresh.addEventListener("click", function() {
-        const page_url = new URL(window.location.href) // Gets Current URL
-
-        // Deletes Parameters In URL
-        page_url.searchParams.delete("rating")
-
-        window.location.href = page_url // Redirects Page
-    })
+    customSelectMenu(sort_select_menu, "sort") // Adds Functionality For Sort Select Menu That Sets The Sort URL Parameter
+    customSelectMenu(rating_select_menu, "rating") // Adds Functionality For Rating Select Menu That Sets The Rating URL Parameter
 
     // Reviews
 
-    let run_again = true // Protection Against Multiple Execution Of If Statement
+    // Animate Reviews
+    const reviews_info_container = document.querySelector(".reviews .reviews_info_container") // Gets Reviews Info
+    setObserverAnimation(reviews_info_container, false, 1, reviewsInfoAnimation) // Animates Reviews Info
 
-    window.addEventListener("scroll", function() {
-        const reviews = document.querySelector(".reviews") // Gets Reviews From HTML
-        const reviews_dimensions = reviews.getBoundingClientRect() // Gets Reviews Dimensions
-        const navigation_bar = document.querySelector(".navigation_bar") // Gets Navigation Bar From HTML
-
-        // Starts Only If User Scrolls To Reviews To See Them
-        if(reviews_dimensions.top - navigation_bar.offsetHeight <= 0 && run_again == true) {
-            document.querySelector(".reviews_info_container .average_rating").style.animation = "fade_in_animation 0.5s ease 3s forwards" // Sets Animation In CSS And Makes Average Rating Appear
-
-            // Sets Animation In CSS For Each Review And Makes Them Appear
-            const all_reviews = document.querySelectorAll(".reviews .all_reviews .one_review")
-            all_reviews.forEach(function(one_review) {
-                one_review.style.animation = "fade_in_animation 1s ease-out forwards"
-            })
-
-            // Review Graph
-
-            const reviews_graph_columns = document.querySelectorAll(".reviews_info_container .graph .one_column")
-            
-            // Gets Total Amount Of Reviews
-            let total_reviews_amount = 0 // Saves Total Amount Of All Reviews
-
-            reviews_graph_columns.forEach(function(one_column) {
-                // HTML Tags
-                const counter = one_column.querySelector(".counter")
-
-                total_reviews_amount += parseInt(counter.dataset.amount) // Adds Amount Of Reviews From Each Column To Total Amount
-            })
-
-            const max_green = 185 // Color With Maximum Of Green Is rgb(235, 185, 20)
-
-            // Review Graph Animation
-            reviews_graph_columns.forEach(function(one_column) {
-                // HTML Tags
-                const bar = one_column.querySelector(".review_bar")
-                const counter = one_column.querySelector(".counter")
-
-                const progress_percentage = ((parseInt(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
-
-                // Animation's Settings
-                const bar_target = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
-                const animation_duration = 3000 // 3 Seconds Animation
-                let start_time = null // Sets Start Time Default Value
-
-                // Function For Ease Out Animation Effect
-                function easeOutEffect(t) {
-                    return 1 - Math.pow(1 - t, 3)
-                }
-
-                // Function For Animation
-                function reviewGraphAnimation(time) {
-                    if(!start_time) start_time = time
-
-                    const elapsed_time = time - start_time // Animation Elapsed Time
-                    const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
-                    const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
-                    
-                    // Makes Color Transition For Progress Bars From rgb(235, 0, 20) To rgb(235, 185, 20)
-                    let bars_color = max_green * eased
-                    bar.style.setProperty("--color", `rgb(235, ${bars_color}, 20)`)
-
-                    // Each Progress Bar Rendering
-                    // Sets Values To Graph In Each Frame Of The Animation
-                    bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
-
-                    // Each Review Counter Rendering
-                    counter.textContent = parseInt(eased * counter.dataset.amount) // Sets Each Column's Reviews Amount To Its Counter
-
-                    // Calls The Animation Until Its Duration Ends
-                    if(progress < 1) {
-                        requestAnimationFrame(reviewGraphAnimation)
-                    }
-                }
-
-                requestAnimationFrame(reviewGraphAnimation) // Calls The Animation For The First Time
-            })
-
-            // Average Rating
-
-            // Average Rating Animation
-            const average_rating_number_tag = document.querySelector(".reviews_info_container .average_rating .average_rating_number") // Gets Average Rating Number HTML Tag
-
-            // Animation's Settings
-            const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
-            const animation_duration = 3000 // 3 Seconds Animation
-            let start_time = null // Sets Start Time Default Value / Delay For Animation Start
-
-            let green = 0 // Start Color Of Stars Is rgb(235, 0, 20)
-
-            // Function For Ease Out Animation Effect
-            function easeOutEffect(t) {
-                return 1 - Math.pow(1 - t, 3)
-            }
-
-            // Function For Animation
-            function averageRatingAnimation(time) {
-                if(!start_time) start_time = time + 3000 // Starts After 3 Seconds Delay
-
-                const elapsed_time = time - start_time // Animation Elapsed Time
-                const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
-                const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
-
-                // average_rating_number_tag.innerHTML = "0<span>00</span>" // Renders Start Values To HTML
-
-                // Starts The Animation After Delay Set In Start Time Expires
-                if(progress >= 0) {
-                    // Average Rating Number Rendering
-                    const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
-                    // Splits Array
-                    average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
-
-                    // Stars Rendering
-                    const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
-                    const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
-
-                    let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
-
-                    average_rating_stars.forEach(function(one_star, index) {
-                        // Colors Of Stars
-
-                        let star_color_1 = one_star.querySelectorAll("svg linearGradient stop")[0] // Gets Part Of Star Icon
-                        let star_color_2 = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
-
-                        // Set Color Value To Stars
-                        star_color_1.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
-                        star_color_2.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
-
-                        green = (max_green / 5) * average_rating_number // Changes Color Of Stars By Average Rating (Lower Average Rating - Stars Are More To Red, Higher Average Rating - Stars Are More To Yellow)
-
-                        // Filling Stars
-                        
-                        let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
-
-                        // Fills Full Stars
-                        if(index + 1 <= parseInt(average_rating_number)) {
-                            filled_part.setAttribute("offset", "100%")
-
-                            // Saves Rest From Average Rating
-                            rest_from_average_rating_number = average_rating_number
-                            rest_from_average_rating_number -= index + 1
-                        }
-
-                        // Fills Rest From Average Rating
-                        else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                            filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
-
-                            rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
-                        }
-                    })
-                }
-                
-                // Calls The Animation Until Its Duration Ends
-                if(progress < 1) {
-                    requestAnimationFrame(averageRatingAnimation)
-                }
-            }
-
-            requestAnimationFrame(averageRatingAnimation) // Calls The Animation For The First Time
-
-            run_again = false // Ends If Statement
-        }
-    })
+    const all_reviews = document.querySelectorAll(".reviews .all_reviews .one_review") // Gets All Reviews
+    setObserverAnimation(all_reviews) // Animates Each Review From All Reviews
 
     // Custom Select Menu - Contact Form
 

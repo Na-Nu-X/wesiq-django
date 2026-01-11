@@ -1878,6 +1878,10 @@ main {
                 box-shadow: 5px 5px 10px lighten($main-color, 20%);
                 transition: transform 0.3s ease, background-color 0.3s ease;
 
+                &.animate {
+                    animation: fade_in_animation 1s ease-out forwards;
+                }
+
                 &:hover {
                     transform: scale(1.01);
                     background-color: transparentize($secondary-color, 0.9);
