@@ -165,11 +165,11 @@
 
         <div class="previous_activity">
             {% spaceless %}
-                <p data-average_activity_time="{{ average_activity_time }}">
+                <p>
                     Priemerný čas aktivity za posledných 7 dní:
 
                     {% if average_activity_time %}
-                        <span class="average_activity_time">{{ average_activity_time_formatted }}</span>
+                        <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
 
                     {% else %}
                         <span>0</span>
