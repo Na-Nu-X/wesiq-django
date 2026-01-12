@@ -15,6 +15,7 @@
         background-color: transparentize($secondary-color, 0.95);
         border: 2px solid $secondary-color;
         border-radius: $small-border-radius;
+        overflow: hidden;
 
         .add_exercise {
             display: flex;
@@ -22,6 +23,16 @@
             justify-content: center;
             align-items: center;
             height: 185px;
+
+            &:not(.active) {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                // left: 60px;
+                transform: translateY(-50%);
+                display: block;
+                height: auto;
+            }
 
             .fa-compress {
                 font-size: 2em;
@@ -40,26 +51,60 @@
             padding: 10px;
             transition: transform 0.5s ease;
 
-            // &:not(.active) {
-            //     position: absolute;
-            //     top: 0px;
-            //     transform: translateX(100%);
-            // }
+            &:not(.active) {
+                position: absolute;
+                top: 0px;
+                transform: translateX(100%);
+            }
 
             h3 {
                 font-family: $article-heading-font;
                 font-size: 2em;
             }
 
-            // p, .sets {
-            //     font-family: $article-heading-font;
-            //     font-size: 1.2em;
+            .periods_container {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 10px;
 
-            //     span {
-            //         font-family: inherit;
-            //         font-size: inherit;
-            //     }
-            // }
+                .exercise_reps_container, .exercise_sets_container {
+                    display: flex;
+                    flex-direction: row;
+                    border: 1px solid $secondary-color;
+                    border-radius: $small-border-radius;
+
+                    .decrease_exercise_reps,
+                    .decrease_exercise_sets,
+                    .increase_exercise_reps,
+                    .increase_exercise_sets {
+                        width: 30px;
+                        background: none;
+                        color: $secondary-color;
+                        border: none;
+                        outline: none;
+                        cursor: pointer;
+                    }
+
+                    input {
+                        width: 100px;
+                        height: 30px;
+                        text-align: center;
+                        background: none;
+                        color: $secondary-color;
+                        border: none;
+                        outline: none;
+
+                        &::-webkit-inner-spin-button,
+                        &::-webkit-outer-spin-button {
+                            -webkit-appearance: none;
+                            -moz-appearance: none;
+                            appearance: none;
+                        }
+                    }
+                }
+            }
         }
 
         .progress_bar {
@@ -71,9 +116,6 @@
             margin: 0px 10px 10px;
 
             .bar {
-                --progress: 0%;
-                --progress-color: rgb(255, 207, 32);
-
                 position: relative;
                 width: 100%;
                 height: 10px;
@@ -85,17 +127,20 @@
                     position: absolute;
                     top: 0px;
                     left: 0px;
-                    width: 0%;
+                    width: 100%;
                     height: 100%;
                     border-radius: inherit;
+                    transition: background-color 0.3s ease;
                 }
 
-                &.active {
+                &.active,
+                &:hover {
+                    cursor: pointer;
+
                     &:before {
-                        width: var(--progress);
-                        background-color: var(--progress-color);
-                        box-shadow: 0px 0px 10px var(--progress-color);
-                        transition: width 1s ease, background-color 0.3s ease;
+                        width: 100%;
+                        background-color: rgb(82, 207, 32);
+                        box-shadow: 0px 0px 10px rgb(82, 207, 32);
                     }
                 }
             }
