@@ -1,128 +1,67 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    const exercise_template = document.querySelector(".exercise_template")
+
     // Function For Create And Append Exercise To Training Plan
     function createExercise(exercise_name) {
         const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
 
-        // Creates Exercise
-        const exercise = document.createElement("div")
-        exercise.classList.add("exercise")
-        training_plan.appendChild(exercise)
+        const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones Exercise Template
 
-        // Creates Exercise Title
-        const exercise_title = document.createElement("h3")
-        exercise_title.textContent = exercise_name
-        exercise.appendChild(exercise_title)
+        exercise_template_clone.querySelector(".title").textContent = exercise_name // Adds Exercise Name As A Title
 
-        // Creates Reps Title
-        const exercise_reps_title = document.createElement("p")
-        exercise_reps_title.textContent = "Počet opakovaní"
-        // exercise.appendChild(exercise_reps_title)
+        const reps = exercise_template_clone.querySelector(".reps") // Gets Reps Input
+        const sets = exercise_template_clone.querySelector(".sets") // Gets Sets Input
 
-        // Creates Periods (Sets & Reps) Container
-        const periods_container = document.createElement("div")
-        periods_container.classList.add("periods_container")
-        exercise.appendChild(periods_container)
+        const decrease_reps = exercise_template_clone.querySelector(".decrease_reps") // Gets Decrease Reps Button
+        const increase_reps = exercise_template_clone.querySelector(".increase_reps") // Gets Increase Reps Button
+        const decrease_sets = exercise_template_clone.querySelector(".decrease_sets") // Gets Decrease Sets Button
+        const increase_sets = exercise_template_clone.querySelector(".increase_sets") // Gets Increase Sets Button
 
-        // Creates Exercise Reps Container
-        const exercise_reps_container = document.createElement("div")
-        exercise_reps_container.classList.add("exercise_reps_container")
-        periods_container.appendChild(exercise_reps_container)
-
-        // Creates Exercise Reps Decrease Button
-        const decrease_exercise_reps = document.createElement("button")
-        decrease_exercise_reps.classList.add("decrease_exercise_reps")
-        decrease_exercise_reps.innerHTML = "<i class='fa-solid fa-minus'></i>" // https://fontawesome.com/icons/minus
-        exercise_reps_container.appendChild(decrease_exercise_reps)
-
-        // Creates Exercise Reps Input
-        const exercise_reps = document.createElement("input")
-        exercise_reps.classList.add("reps")
-        exercise_reps.type = "number"
-        exercise_reps.value = 0
-        exercise_reps.min = 0
-        exercise_reps.max = 100
-        exercise_reps_container.appendChild(exercise_reps)
-
-        // Creates Exercise Reps Increase Button
-        const increase_exercise_reps = document.createElement("button")
-        increase_exercise_reps.classList.add("increase_exercise_reps")
-        increase_exercise_reps.innerHTML = "<i class='fa-solid fa-plus'></i>" // https://fontawesome.com/icons/plus
-        exercise_reps_container.appendChild(increase_exercise_reps)
+        training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template
 
         // Adds Decrease Exercise Reps Functionality
-        decrease_exercise_reps.addEventListener("click", function() {
-            let reps = parseInt(exercise_reps.value) // Gets Current Reps Amount In Number Format
-            reps -= 1 // Decreases Reps Amount By 1
+        decrease_reps.addEventListener("click", function() {
+            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+            reps_number -= 1 // Decreases Reps Amount By 1
 
-            if(reps < 0) return // Do Nothing
-            exercise_reps.value = reps // Updates Exercise Reps Amount
+            if(reps_number < 0) return // Do Nothing
+            reps.value = reps_number // Updates Exercise Reps Amount
         })
         
         // Adds Increase Exercise Reps Functionality
-        increase_exercise_reps.addEventListener("click", function() {
-            let reps = parseInt(exercise_reps.value) // Gets Current Reps Amount In Number Format
-            reps += 1 // Increases Reps Amount By 1
+        increase_reps.addEventListener("click", function() {
+            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+            reps_number += 1 // Increases Reps Amount By 1
 
-            if(reps > 100) return // Do Nothing
-            exercise_reps.value = reps // Updates Exercise Reps Amount
+            if(reps_number > 100) return // Do Nothing
+            reps.value = reps_number // Updates Exercise Reps Amount
         })
 
-        // Creates Exercise Sets Container
-        const exercise_sets_container = document.createElement("div")
-        exercise_sets_container.classList.add("exercise_sets_container")
-        periods_container.appendChild(exercise_sets_container)
-
-        // Creates Exercise Sets Decrease Button
-        const decrease_exercise_sets = document.createElement("button")
-        decrease_exercise_sets.classList.add("decrease_exercise_sets")
-        decrease_exercise_sets.innerHTML = "<i class='fa-solid fa-minus'></i>" // https://fontawesome.com/icons/minus
-        exercise_sets_container.appendChild(decrease_exercise_sets)
-
-        // Creates Exercise Sets Input
-        const exercise_sets = document.createElement("input")
-        exercise_sets.classList.add("sets")
-        exercise_sets.type = "number"
-        exercise_sets.value = 1
-        exercise_sets.min = 1
-        exercise_sets.max = 100
-        exercise_sets_container.appendChild(exercise_sets)
-
-        // Creates Exercise Sets Increase Button
-        const increase_exercise_sets = document.createElement("button")
-        increase_exercise_sets.classList.add("increase_exercise_sets")
-        increase_exercise_sets.innerHTML = "<i class='fa-solid fa-plus'></i>" // https://fontawesome.com/icons/plus
-        exercise_sets_container.appendChild(increase_exercise_sets)
-
         // Adds Decrease Exercise Sets Functionality
-        decrease_exercise_sets.addEventListener("click", function() {
-            let sets = parseInt(exercise_sets.value) // Gets Current Sets Amount In Number Format
-            sets -= 1 // Decreases Sets Amount By 1
+        decrease_sets.addEventListener("click", function() {
+            let sets_number = parseInt(sets.value) // Gets Current Sets Amount In Number Format
+            sets_number -= 1 // Decreases Sets Amount By 1
 
-            if(sets < 1) return // Do Nothing
-            exercise_sets.value = sets // Updates Exercise Sets Amount
+            if(sets_number < 1) return // Do Nothing
+            sets.value = sets_number // Updates Exercise Sets Amount
         })
         
         // Adds Increase Exercise Sets Functionality
-        increase_exercise_sets.addEventListener("click", function() {
-            let sets = parseInt(exercise_sets.value) // Gets Current Sets Amount In Number Format
-            sets += 1 // Increases Sets Amount By 1
+        increase_sets.addEventListener("click", function() {
+            let sets_number = parseInt(sets.value) // Gets Current Sets Amount In Number Format
+            sets_number += 1 // Increases Sets Amount By 1
 
-            if(sets > 100) return // Do Nothing
-            exercise_sets.value = sets // Updates Exercise Sets Amount
+            if(sets_number > 100) return // Do Nothing
+            sets.value = sets_number // Updates Exercise Sets Amount
         })
 
-        updateProgressBar()
+        updateProgressBar() // Updates Progress Bar
 
         const exercises = document.querySelectorAll(".training_plan_container .training_plan .exercise") // Gets All Exercises
         changeExercises(exercises.length - 1) // Shows The Last Added Exercise
-        // updateReps(exercises.length - 1) // Calls Update Reps Function On Every Added Exercise
     }
-
-    // function updateReps(exercise_index) {
-        
-    // }
 
     // Function For Add Bar To The Progress Bar
     function updateProgressBar() {
@@ -168,8 +107,6 @@ document.addEventListener("DOMContentLoaded", function() {
             one_exercise.classList.remove("active")
         })
 
-        // exercises[exercises.length - 1].classList.add("active") // Shows The Last Exercise
-        // exercises[0].classList.add("active") // Shows The Last Added Exercise
         exercises[exercise_index].classList.add("active") // Shows Exercise With The Chosen Index
 
         const bars = document.querySelectorAll(".training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
