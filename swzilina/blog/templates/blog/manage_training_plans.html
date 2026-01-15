@@ -37,6 +37,8 @@
                             <p>Počet sérií</p>
                         </div>
 
+                        <button class="add_period">Pridať sériu</button>
+
                         <div class="period_selection">
                             <div class="reps_container">
                                 <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
@@ -50,9 +52,25 @@
                                 <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
                             </div>
                         </div>
-
-                        <button class="add_period">Pridať sériu</button>
                     </div>
+                </div>
+            </template>
+
+            <template class="period_selection_template">
+                <div class="period_selection">
+                    <div class="reps_container">
+                        <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        <input type="number" class="reps" value="0" min="0" max="100">
+                        <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                    </div>
+
+                    <div class="sets_container">
+                        <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        <input type="number" class="sets" value="1" min="1" max="100">
+                        <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                    </div>
+
+                    <button class="delete_period"><i class="fa-solid fa-trash"></i></button> <!-- https://fontawesome.com/icons/trash -->
                 </div>
             </template>
         </div>

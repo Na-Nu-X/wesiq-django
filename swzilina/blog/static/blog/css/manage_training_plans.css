@@ -37,13 +37,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 5px;
   width: 100%;
   height: 185px;
   margin-bottom: 10px;
   padding: 10px;
   transition: transform 0.5s ease;
+  overflow-y: auto;
 }
 .training_plan_container .training_plan .exercise:not(.active) {
   position: absolute;
@@ -68,12 +69,22 @@
   width: 100%;
   text-align: center;
 }
+.training_plan_container .training_plan .exercise .periods_container .add_period {
+  width: 100%;
+  height: 30px;
+  background: none;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
 .training_plan_container .training_plan .exercise .periods_container .period_selection {
   width: 100%;
   display: flex;
   flex-direction: row;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container, .training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container {
   display: flex;
@@ -115,15 +126,22 @@
   -moz-appearance: none;
   appearance: none;
 }
-.training_plan_container .training_plan .exercise .periods_container .add_period {
-  width: 100%;
-  height: 30px;
+.training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period {
   background: none;
-  color: #fff;
-  border: 1px solid #fff;
-  border-radius: 5px;
+  border: none;
   outline: none;
+}
+.training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period .fa-trash {
+  color: #df3535;
+  font-size: 20px;
+  margin-left: 5.25px;
+  transition: color 0.3s ease;
+}
+.training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period:hover, .training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period:focus {
   cursor: pointer;
+}
+.training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period:hover .fa-trash, .training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period:focus .fa-trash {
+  color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
 }
 .training_plan_container .training_plan .progress_bar {
   position: relative;
