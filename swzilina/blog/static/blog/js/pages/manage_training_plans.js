@@ -1,12 +1,11 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
     const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
 
     // Function For Create And Append Exercise To Training Plan
     function createExercise(exercise_name) {
-        const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
-
         const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones Exercise Template
 
         exercise_template_clone.querySelector(".title").textContent = exercise_name // Adds Exercise Name As A Title
@@ -82,11 +81,37 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const exercises = document.querySelectorAll(".training_plan_container .training_plan .exercise") // Gets All Exercises
         changeExercises(exercises.length - 1) // Shows The Last Added Exercise
+
+        // Drop Zone (On Exercise)
+        exercises.forEach(function(one_exercise) {
+            one_exercise.addEventListener("dragover", function(event) {
+                event.preventDefault()
+
+                training_plan.classList.add("animate") // Adds Animation
+            })
+
+            one_exercise.addEventListener("drop", function() {
+                if(!dragged_exercise) return
+
+                dragged_exercise.remove() // Deletes Dragged Exercise From Exercises
+
+                const exercise_name = dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+                createExercise(exercise_name) // Appends Dragged Exercise
+
+                dragged_exercise.classList.remove("dragging") // Removes Dragging Class
+                dragged_exercise = null // Deletes Stored Dragged Exercise
+
+                training_plan.classList.remove("animate") // Removes Animation
+            })
+
+            one_exercise.addEventListener("dragleave", function() {
+                training_plan.classList.remove("animate") // Removes Animation
+            })
+        })
     }
 
     // Function For Add Bar To The Progress Bar
     function updateProgressBar() {
-        const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
         const progress_bar = document.querySelector(".training_plan_container .training_plan .progress_bar") // Gets Progress Bar
 
         training_plan.appendChild(progress_bar) // Appends Progress Bar To The End Of The Training Plan
@@ -157,11 +182,13 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     })
 
-    // Drop Zone
+    // Drop Zone (For First Exercise)
     const add_exercise = document.querySelector(".training_plan_container .training_plan .add_exercise") // Gets Add Exercise Drop Zone
 
     add_exercise.addEventListener("dragover", function(event) {
         event.preventDefault()
+
+        training_plan.classList.add("animate") // Adds Animation
     })
 
     add_exercise.addEventListener("drop", function() {
@@ -174,5 +201,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         dragged_exercise.classList.remove("dragging") // Removes Dragging Class
         dragged_exercise = null // Deletes Stored Dragged Exercise
+
+        training_plan.classList.remove("animate") // Removes Animation
+    })
+
+    add_exercise.addEventListener("dragleave", function() {
+        training_plan.classList.remove("animate") // Removes Animation
     })
 })
