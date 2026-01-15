@@ -4,55 +4,66 @@ document.addEventListener("DOMContentLoaded", function() {
     const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
     const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
 
+    // Event Delegation For Global Events
+    training_plan.addEventListener("click", function(event) {
+        // CHANGE SETS & REPS VALUES
+
+        // Adds Decrease Exercise Reps Functionality
+        if(event.target.classList.contains("decrease_reps")) {
+            const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+
+            reps_number -= 1 // Decreases Reps Amount By 1
+
+            if(reps_number < 0) return // Do Nothing
+            reps.value = reps_number // Updates Exercise Reps Amount
+        }
+
+        // Adds Increase Exercise Reps Functionality
+        if(event.target.classList.contains("increase_reps")) {
+            const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+
+            reps_number += 1 // Increases Reps Amount By 1
+
+            if(reps_number > 100) return // Do Nothing
+            reps.value = reps_number // Updates Exercise Reps Amount
+        }
+
+        // Adds Decrease Exercise Sets Functionality
+        if(event.target.classList.contains("decrease_sets")) {
+            const sets = event.target.closest(".sets_container").querySelector(".sets") // Gets Reps Input
+            let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
+
+            sets_number -= 1 // Decreases Sets Amount By 1
+
+            if(sets_number < 1) return // Do Nothing
+            sets.value = sets_number // Updates Exercise Sets Amount
+        }
+
+        // Adds Increase Exercise Sets Functionality
+        if(event.target.classList.contains("increase_sets")) {
+            const sets = event.target.closest(".sets_container").querySelector(".sets") // Gets Reps Input
+            let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
+
+            sets_number += 1 // Increases Sets Amount By 1
+
+            if(sets_number > 100) return // Do Nothing
+            sets.value = sets_number // Updates Exercise Sets Amount
+        }
+
+        // DELETE PERIOD
+
+        if(event.target.classList.contains("delete_period")) {
+            event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
+        }
+    })
+
     // Function For Create And Append Exercise To Training Plan
     function createExercise(exercise_name) {
         const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones Exercise Template
 
         exercise_template_clone.querySelector(".title").textContent = exercise_name // Adds Exercise Name As A Title
-
-        const reps = exercise_template_clone.querySelector(".reps") // Gets Reps Input
-        const sets = exercise_template_clone.querySelector(".sets") // Gets Sets Input
-
-        const decrease_reps = exercise_template_clone.querySelector(".decrease_reps") // Gets Decrease Reps Button
-        const increase_reps = exercise_template_clone.querySelector(".increase_reps") // Gets Increase Reps Button
-        const decrease_sets = exercise_template_clone.querySelector(".decrease_sets") // Gets Decrease Sets Button
-        const increase_sets = exercise_template_clone.querySelector(".increase_sets") // Gets Increase Sets Button
-
-        // Adds Decrease Exercise Reps Functionality
-        decrease_reps.addEventListener("click", function() {
-            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
-            reps_number -= 1 // Decreases Reps Amount By 1
-
-            if(reps_number < 0) return // Do Nothing
-            reps.value = reps_number // Updates Exercise Reps Amount
-        })
-        
-        // Adds Increase Exercise Reps Functionality
-        increase_reps.addEventListener("click", function() {
-            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
-            reps_number += 1 // Increases Reps Amount By 1
-
-            if(reps_number > 100) return // Do Nothing
-            reps.value = reps_number // Updates Exercise Reps Amount
-        })
-
-        // Adds Decrease Exercise Sets Functionality
-        decrease_sets.addEventListener("click", function() {
-            let sets_number = parseInt(sets.value) // Gets Current Sets Amount In Number Format
-            sets_number -= 1 // Decreases Sets Amount By 1
-
-            if(sets_number < 1) return // Do Nothing
-            sets.value = sets_number // Updates Exercise Sets Amount
-        })
-        
-        // Adds Increase Exercise Sets Functionality
-        increase_sets.addEventListener("click", function() {
-            let sets_number = parseInt(sets.value) // Gets Current Sets Amount In Number Format
-            sets_number += 1 // Increases Sets Amount By 1
-
-            if(sets_number > 100) return // Do Nothing
-            sets.value = sets_number // Updates Exercise Sets Amount
-        })
 
         // ADD PERIOD
         const add_period = exercise_template_clone.querySelector(".add_period") // Gets Add Period Button
@@ -63,16 +74,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
             
             event.target.closest(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
-
-            // DELETE PERIOD
-            const delete_period = document.querySelectorAll(".delete_period") // Gets All Delete Period Buttons
-
-            // Adds Event Listener To Every Delete Period Button
-            delete_period.forEach(function(one_button) {
-                one_button.addEventListener("click", function(event) {
-                    event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
-                }, { once: true })
-            })
         })
 
         training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template

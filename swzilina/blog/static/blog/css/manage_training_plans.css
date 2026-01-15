@@ -104,6 +104,15 @@
   outline: none;
   cursor: pointer;
 }
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets i, .training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets i,
+.training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets i {
+  pointer-events: none;
+}
 .training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .reps,
 .training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .sets, .training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .reps,
 .training_plan_container .training_plan .exercise .periods_container .period_selection .sets_container .sets {
@@ -130,6 +139,7 @@
   outline: none;
 }
 .training_plan_container .training_plan .exercise .periods_container .period_selection .delete_period .fa-trash {
+  pointer-events: none;
   color: #df3535;
   font-size: 20px;
   margin-left: 5.25px;
