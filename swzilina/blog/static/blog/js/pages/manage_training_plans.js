@@ -1,7 +1,7 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
-    const exercise_template = document.querySelector(".exercise_template")
+    const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
 
     // Function For Create And Append Exercise To Training Plan
     function createExercise(exercise_name) {
@@ -18,8 +18,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const increase_reps = exercise_template_clone.querySelector(".increase_reps") // Gets Increase Reps Button
         const decrease_sets = exercise_template_clone.querySelector(".decrease_sets") // Gets Decrease Sets Button
         const increase_sets = exercise_template_clone.querySelector(".increase_sets") // Gets Increase Sets Button
-
-        training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template
 
         // Adds Decrease Exercise Reps Functionality
         decrease_reps.addEventListener("click", function() {
@@ -56,6 +54,29 @@ document.addEventListener("DOMContentLoaded", function() {
             if(sets_number > 100) return // Do Nothing
             sets.value = sets_number // Updates Exercise Sets Amount
         })
+
+        // ADD PERIOD
+        const add_period = exercise_template_clone.querySelector(".add_period") // Gets Add Period Button
+
+        const period_selection_template = document.querySelector(".period_selection_template") // Gets Period Selection Template
+        
+        add_period.addEventListener("click", function(event) {
+            const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
+            
+            event.target.closest(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
+
+            // DELETE PERIOD
+            const delete_period = document.querySelectorAll(".delete_period") // Gets All Delete Period Buttons
+
+            // Adds Event Listener To Every Delete Period Button
+            delete_period.forEach(function(one_button) {
+                one_button.addEventListener("click", function(event) {
+                    event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
+                }, { once: true })
+            })
+        })
+
+        training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template
 
         updateProgressBar() // Updates Progress Bar
 

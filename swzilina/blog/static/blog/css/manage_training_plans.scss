@@ -43,13 +43,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            // justify-content: space-between;
+            justify-content: flex-start;
             gap: 5px;
             width: 100%;
             height: 185px;
             margin-bottom: 10px;
             padding: 10px;
             transition: transform 0.5s ease;
+            overflow-y: auto;
 
             &:not(.active) {
                 position: absolute;
@@ -80,13 +82,24 @@
                     }
                 }
 
+                .add_period {
+                    width: 100%;
+                    height: 30px;
+                    background: none;
+                    color: $secondary-color;
+                    border: 1px solid $secondary-color;
+                    border-radius: $small-border-radius;
+                    outline: none;
+                    cursor: pointer;
+                }
+
                 .period_selection {
                     width: 100%;
                     display: flex;
                     flex-direction: row;
                     // justify-content: center;
                     gap: 10px;
-                    margin-bottom: 10px;
+                    margin-top: 10px;
 
                     .reps_container, .sets_container {
                         display: flex;
@@ -125,17 +138,28 @@
                             }
                         }
                     }
-                }
 
-                .add_period {
-                    width: 100%;
-                    height: 30px;
-                    background: none;
-                    color: $secondary-color;
-                    border: 1px solid $secondary-color;
-                    border-radius: $small-border-radius;
-                    outline: none;
-                    cursor: pointer;
+                    .delete_period {
+                        background: none;
+                        border: none;
+                        outline: none;
+
+                        .fa-trash {
+                            color: $error-color;
+                            font-size: 20px;
+                            margin-left: 5.25px;
+                            transition: color 0.3s ease;
+                        }
+
+                        &:hover,
+                        &:focus {
+                            cursor: pointer;
+
+                            .fa-trash {
+                                color: lighten($error-color, 5%);
+                            }
+                        }
+                    }
                 }
             }
         }
