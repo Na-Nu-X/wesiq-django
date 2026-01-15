@@ -11,22 +11,40 @@ document.addEventListener("DOMContentLoaded", function() {
         // Adds Decrease Exercise Reps Functionality
         if(event.target.classList.contains("decrease_reps")) {
             const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+            const to_failure = event.target.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
             let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
+            reps.style.visibility = "visible" // Shows Reps Input
+            to_failure.style.visibility = "hidden" // Hides To Failure Text
+            
             reps_number -= 1 // Decreases Reps Amount By 1
 
-            if(reps_number < 0) return // Do Nothing
+            if(reps_number === 0) {
+                reps.style.visibility = "hidden" // Hides Reps Input
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+            }
+
+            if(reps_number < 0) {
+                reps.style.visibility = "hidden" // Hides Reps Input
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+                return // Do Nothing
+            }
+
             reps.value = reps_number // Updates Exercise Reps Amount
         }
 
         // Adds Increase Exercise Reps Functionality
         if(event.target.classList.contains("increase_reps")) {
             const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+            const to_failure = event.target.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
             let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
             reps_number += 1 // Increases Reps Amount By 1
 
             if(reps_number > 100) return // Do Nothing
+
+            reps.style.visibility = "visible" // Shows Reps Input
+            to_failure.style.visibility = "hidden" // Hides To Failure Text
             reps.value = reps_number // Updates Exercise Reps Amount
         }
 
@@ -73,7 +91,8 @@ document.addEventListener("DOMContentLoaded", function() {
         add_period.addEventListener("click", function(event) {
             const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
             
-            event.target.closest(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
+            event.target.parentNode.querySelector(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
+            // event.target.closest(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
         })
 
         training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template

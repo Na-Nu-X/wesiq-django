@@ -19,20 +19,22 @@
             <template class="exercise_template">
                 <div class="exercise">
                     <h3 class="title"></h3>
+                    
+                    <div class="labels">
+                        <p>Počet opakovaní</p>
+                        <p>Počet sérií</p>
+                    </div>
+
+                    <button class="add_period">Pridať sériu</button>
 
                     <div class="periods_container">
-                        <div class="labels">
-                            <p>Počet opakovaní</p>
-                            <p>Počet sérií</p>
-                        </div>
-
-                        <button class="add_period">Pridať sériu</button>
-
                         <div class="period_selection">
                             <div class="reps_container">
                                 <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
                                 <input type="number" class="reps" value="0" min="0" max="100">
                                 <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                                <p class="to_failure">Do zlyhania</p>
                             </div>
 
                             <div class="sets_container">
@@ -40,6 +42,8 @@
                                 <input type="number" class="sets" value="1" min="1" max="100">
                                 <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
                             </div>
+
+                            {% comment %} <button class="delete_period"><i class="fa-solid fa-trash"></i></button> <!-- https://fontawesome.com/icons/trash --> {% endcomment %}
                         </div>
                     </div>
                 </div>
@@ -51,6 +55,8 @@
                         <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
                         <input type="number" class="reps" value="0" min="0" max="100">
                         <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                        <p class="to_failure">Do zlyhania</p>
                     </div>
 
                     <div class="sets_container">
