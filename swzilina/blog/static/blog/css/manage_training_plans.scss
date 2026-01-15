@@ -17,6 +17,10 @@
         border-radius: $small-border-radius;
         overflow: hidden;
 
+        &.animate {
+            animation: drag_animation 1s infinite alternate;
+        }
+
         .add_exercise {
             display: flex;
             flex-direction: row;
@@ -25,13 +29,7 @@
             height: 185px;
 
             &:not(.active) {
-                position: absolute;
-                top: 50%;
-                right: 10px;
-                // left: 60px;
-                transform: translateY(-50%);
-                display: block;
-                height: auto;
+                display: none;
             }
 
             .fa-compress {
@@ -233,5 +231,16 @@
         p {
             transition: filter 0.3s ease;
         }
+    }
+}
+
+/***********
+ Key Frames
+***********/
+
+@keyframes drag_animation {
+    100% {
+        background-color: transparentize($secondary-color, 0.85);
+        filter: blur(1px);
     }
 }

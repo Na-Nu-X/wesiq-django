@@ -15,6 +15,9 @@
   border-radius: 5px;
   overflow: hidden;
 }
+.training_plan_container .training_plan.animate {
+  animation: drag_animation 1s infinite alternate;
+}
 .training_plan_container .training_plan .add_exercise {
   display: flex;
   flex-direction: row;
@@ -23,12 +26,7 @@
   height: 185px;
 }
 .training_plan_container .training_plan .add_exercise:not(.active) {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  display: block;
-  height: auto;
+  display: none;
 }
 .training_plan_container .training_plan .add_exercise .fa-compress {
   font-size: 2em;
@@ -201,4 +199,14 @@
 }
 .exercises .exercise p {
   transition: filter 0.3s ease;
+}
+
+/***********
+ Key Frames
+***********/
+@keyframes drag_animation {
+  100% {
+    background-color: rgba(255, 255, 255, 0.15);
+    filter: blur(1px);
+  }
 }/*# sourceMappingURL=manage_training_plans.css.map */
