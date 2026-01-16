@@ -55,7 +55,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
             sets_number -= 1 // Decreases Sets Amount By 1
 
+            // DELETE PERIOD
+            if(sets_number === 0 && event.target.closest(".exercise").querySelectorAll(".period_selection").length > 1) {
+                console.log(event.target.closest(".exercise"))
+
+                event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
+            }
+
             if(sets_number < 1) return // Do Nothing
+
             sets.value = sets_number // Updates Exercise Sets Amount
         }
 
@@ -68,12 +76,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if(sets_number > 100) return // Do Nothing
             sets.value = sets_number // Updates Exercise Sets Amount
-        }
-
-        // DELETE PERIOD
-
-        if(event.target.classList.contains("delete_period")) {
-            event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
         }
     })
 
@@ -91,8 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
         add_period.addEventListener("click", function(event) {
             const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
             
-            event.target.parentNode.querySelector(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
-            // event.target.closest(".periods_container").appendChild(period_selection_template_clone) // Appends Period Selection Template
+            event.target.parentNode.querySelector(".periods_container").prepend(period_selection_template_clone) // Prepends Period Selection Template
         })
 
         training_plan.appendChild(exercise_template_clone) // Appends New Exercise Cloned From The Exercise Template
