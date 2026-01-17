@@ -26,6 +26,10 @@
             outline: none;
             transition: border 0.3s ease;
 
+            &.error_animation {
+                animation: training_title_error_animation 0.2s linear 3;
+            }
+
             &:hover,
             &:focus {
                 border-bottom: 1px solid darken($secondary-color, 20%);
@@ -154,6 +158,10 @@
 
             .fa-compress {
                 font-size: 2em;
+
+                &.error_animation {
+                    animation: training_plan_error_animation 0.2s linear 3;
+                }
             }
         }
 
@@ -404,5 +412,25 @@
     100% {
         background-color: transparentize($secondary-color, 0.85);
         filter: blur(1px);
+    }
+}
+
+@keyframes training_plan_error_animation {
+    0% {
+        color: $secondary-color;
+    }
+
+    100% {
+        color: $error-color;
+    }
+}
+
+@keyframes training_title_error_animation {
+    0% {
+        border-bottom: 1px solid darken($secondary-color, 40%);
+    }
+
+    100% {
+        border-bottom: 1px solid $error-color;
     }
 }

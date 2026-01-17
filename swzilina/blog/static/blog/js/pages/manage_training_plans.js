@@ -129,6 +129,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 training_plan.classList.remove("animate") // Removes Animation
             })
         })
+
+        removeExercise()
     }
 
     // Function For Add Bar To The Progress Bar
@@ -184,6 +186,54 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         bars[exercise_index].classList.add("active") // Adds Active Class To The Bar Of The Current Active Exercise
+    }
+
+    // Function For Remove Added Exercise From The Training Plan
+    function removeExercise() {
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From The Training Plan
+        let dragged_exercise = null // Stores Dragged Exercise
+
+        exercises.forEach(function(one_exercise) {
+            // Drag Start
+            one_exercise.addEventListener("dragstart", function() {
+                dragged_exercise = one_exercise // Saves Dragged Exercise
+                one_exercise.classList.add("dragging") // Adds Dragging Class
+                console.log(one_exercise)
+            })
+
+            // Drag End
+            one_exercise.addEventListener("dragend", function() {
+                one_exercise.classList.remove("dragging") // Removes Dragging Class
+                console.log(one_exercise)
+            })
+        })
+
+        // Drop Zone
+        // const body = document.querySelector("body")
+
+        // body.addEventListener("dragover", function(event) {
+        //     event.preventDefault()
+
+        //     body.classList.add("animate") // Adds Animation
+        // })
+
+        // body.addEventListener("drop", function() {
+        //     if(!dragged_exercise) return
+
+        //     dragged_exercise.remove() // Deletes Dragged Exercise From Exercises
+
+        //     const exercise_name = dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+        //     createExercise(exercise_name) // Appends Dragged Exercise
+
+        //     dragged_exercise.classList.remove("dragging") // Removes Dragging Class
+        //     dragged_exercise = null // Deletes Stored Dragged Exercise
+
+        //     body.classList.remove("animate") // Removes Animation
+        // })
+
+        // body.addEventListener("dragleave", function() {
+        //     body.classList.remove("animate") // Removes Animation
+        // })
     }
 
     // Exercises
@@ -267,63 +317,77 @@ document.addEventListener("DOMContentLoaded", function() {
     const save = document.querySelector(".training_plan_container .save") // Gets Save Button
 
     save.addEventListener("click", function() {
-        const training_plan_data = [] // Stores All Training Plan Data
-
+        const training_title = document.querySelector(".training_title") // Gets Training Title
         const all_exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From Created Training Plan
-        const training_title = document.querySelector(".training_title").value // Gets Training Title Value
 
-        // Gets Info From Every Exercise
-        all_exercises.forEach(function(one_exercise) {
-            const exercise_name = one_exercise.querySelector(".title").textContent // Gets Exercise Title
+        if(training_title.value === "") {
+            // Shows Error Animation
+            training_title.classList.remove("error_animation")
+            void training_title.offsetWidth
+            training_title.classList.add("error_animation")
+        }
 
-            const all_reps_inputs = one_exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
-            const all_sets_inputs = one_exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
+        if(all_exercises.length === 0) {
+            // Shows Error Animation
+            training_plan.querySelector(".fa-compress").classList.remove("error_animation")
+            void training_plan.querySelector(".fa-compress").offsetWidth
+            training_plan.querySelector(".fa-compress").classList.add("error_animation")
+        }
 
-            // Gets All Reps Inputs Values
-            const all_reps_inputs_values = [...all_reps_inputs].map(function(one_input) {
-                return one_input.value
-            })
+        else {
+            const training_plan_data = [] // Stores All Training Plan Data
 
-            // Gets All Sets Inputs Values
-            const all_sets_inputs_values = [...all_sets_inputs].map(function(one_input) {
-                return one_input.value
-            })
-            
-            let periods = [] // Stores Periods Of Sets And Reps
+            // Gets Info From Every Exercise
+            all_exercises.forEach(function(one_exercise) {
+                const exercise_name = one_exercise.querySelector(".title").textContent // Gets Exercise Title
 
-            // Generates Periods Of Sets And Reps Values
-            for(let i = 0; i < all_sets_inputs_values.length; i++) {
-                for(let j = 0; j < all_sets_inputs_values[i]; j++) {
-                    periods.unshift(parseInt(all_reps_inputs_values[i])) // Saves To An Array
+                const all_reps_inputs = one_exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
+                const all_sets_inputs = one_exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
+
+                // Gets All Reps Inputs Values
+                const all_reps_inputs_values = [...all_reps_inputs].map(function(one_input) {
+                    return one_input.value
+                })
+
+                // Gets All Sets Inputs Values
+                const all_sets_inputs_values = [...all_sets_inputs].map(function(one_input) {
+                    return one_input.value
+                })
+                
+                let periods = [] // Stores Periods Of Sets And Reps
+
+                // Generates Periods Of Sets And Reps Values
+                for(let i = 0; i < all_sets_inputs_values.length; i++) {
+                    for(let j = 0; j < all_sets_inputs_values[i]; j++) {
+                        periods.unshift(parseInt(all_reps_inputs_values[i])) // Saves Numbers To An Array
+                    }
                 }
-            }
 
-            // Creates Object For One Exercise For Training Plan
-            const training_plan_object = {}
+                // Creates Object For One Exercise For Training Plan
+                const training_plan_object = {}
 
-            // training_plan_object.user = null
+                // training_plan_object.user = null
 
-            // Finds Selected Day For Training Plan
-            const selected_day = [...day_options].find(function(one_option) {
-                return one_option.classList.contains("selected")
+                // Finds Selected Day For Training Plan
+                const selected_day = [...day_options].find(function(one_option) {
+                    return one_option.classList.contains("selected")
+                })
+                
+                if(selected_day?.dataset?.day) {
+                    Number.isNaN(parseInt(selected_day.dataset.day)) ? training_plan_object.day = null : training_plan_object.day = parseInt(selected_day.dataset.day)
+                } else {
+                    training_plan_object.day = null
+                }
+
+                training_plan_object.type = training_title.value
+                training_plan_object.exercise = exercise_name
+                training_plan_object.periods = periods
+                training_plan_object.order = [...all_exercises].indexOf(one_exercise) + 1
+
+                training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Object
             })
-            
-            if(selected_day?.dataset?.day) {
-                Number.isNaN(parseInt(selected_day.dataset.day)) ? training_plan_object.day = null : training_plan_object.day = parseInt(selected_day.dataset.day)
-            } else {
-                training_plan_object.day = null
-            }
 
-            training_plan_object.type = training_title
-            training_plan_object.exercise = exercise_name
-            training_plan_object.periods = periods
-            training_plan_object.order = [...all_exercises].indexOf(one_exercise) + 1
-
-            training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Object
-        })
-
-        console.log(training_plan_data)
-
-        sendPOST("/my-training-plans", training_plan_data)
+            sendPOST("/my-training-plans", training_plan_data)
+        }
     })
 })

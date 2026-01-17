@@ -24,6 +24,9 @@
   outline: none;
   transition: border 0.3s ease;
 }
+.training_plan_container .additional_info .training_title.error_animation {
+  animation: training_title_error_animation 0.2s linear 3;
+}
 .training_plan_container .additional_info .training_title:hover, .training_plan_container .additional_info .training_title:focus {
   border-bottom: 1px solid #cccccc;
 }
@@ -132,6 +135,9 @@
 }
 .training_plan_container .training_plan .add_exercise .fa-compress {
   font-size: 2em;
+}
+.training_plan_container .training_plan .add_exercise .fa-compress.error_animation {
+  animation: training_plan_error_animation 0.2s linear 3;
 }
 .training_plan_container .training_plan .exercise {
   display: flex;
@@ -355,5 +361,21 @@
   100% {
     background-color: rgba(255, 255, 255, 0.15);
     filter: blur(1px);
+  }
+}
+@keyframes training_plan_error_animation {
+  0% {
+    color: #fff;
+  }
+  100% {
+    color: #df3535;
+  }
+}
+@keyframes training_title_error_animation {
+  0% {
+    border-bottom: 1px solid #999999;
+  }
+  100% {
+    border-bottom: 1px solid #df3535;
   }
 }/*# sourceMappingURL=manage_training_plans.css.map */
