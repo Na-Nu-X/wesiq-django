@@ -10,19 +10,19 @@
 {% block content %}
     <div class="training_plan_container">
         <div class="additional_info">
-            <input type="text" class="training_title" placeholder="Vytvorte názov">
+            <input type="text" class="training_title" placeholder="Názov">
 
             <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
             <div class="day_select_menu">
                 <input type="hidden" name="day" value="not_selected">
 
                 <div class="select">
-                    <span>Vyberte deň</span>
+                    <span>Nepriradiť deň</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Vyberte deň</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
                     <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
                     <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
                     <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
@@ -91,18 +91,25 @@
             </template>
         </div>
 
-        <button class="save">Uložiť</button>
+        <button class="save">Pridať tréningový plán</button>
     </div>
 
-    <div class="exercises">
-        {% for one_exercise in exercises %}
-            <div class="exercise" draggable="true" data-id="{{ one_exercise.id }}">
-                <p class="exercise_name">{{ one_exercise.exercise }}</p>
-            </div>
+    <div class="exercises_container">
+        <div class="search_bar_menu">
+            <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+            <input class="search_bar" placeholder="Nájsť cvik" autocomplete="off">
+        </div>
 
-        {% endfor %}
+        <div class="exercises">
+            {% for one_exercise in exercises %}
+                <div class="exercise" draggable="true" data-id="{{ one_exercise.id }}">
+                    <p class="exercise_name">{{ one_exercise.exercise }}</p>
+                </div>
+    
+            {% endfor %}
+        </div>
     </div>
-
 {% endblock content %}
 
 {% block script %}

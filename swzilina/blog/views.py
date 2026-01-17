@@ -1057,7 +1057,15 @@ def trainingSessionView(request):
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
-        average_activity_time = math.floor(Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).aggregate(Avg("elapsed_time"))["elapsed_time__avg"]) if activities else 0 # Gets Last 7 Days Average Logged In User's Activity Time
+
+        # Gets Last 7 Days Average Logged In User's Activity Time
+        average_activity_elapsed_time = Activity.objects.filter(
+            user_id=logged_in_user_id,
+            end_time__gte=timezone.now() - timedelta(days=6)
+        ).aggregate(avg=Avg("elapsed_time"))["avg"]
+
+        average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0
+
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" if activities else "" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
@@ -1150,12 +1158,12 @@ def trainingSessionView(request):
     return render(request, "blog/training_session.html")
 
 def manageTrainingPlansView(request):
-    if request.method == "POST":
-        # Gets Logged In User
-        if "logged_in_user_id" in request.session:
-            # Gets Logged In User ID From Session
-            logged_in_user_id = request.session.get("logged_in_user_id")
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
+        training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets All User's Training Plans
+
+        if request.method == "POST":
             training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
             
             # Saves Each Object In The Training Plan Data To The Database
@@ -1171,10 +1179,11 @@ def manageTrainingPlansView(request):
 
                 new_training_plan.save()
 
-        return JsonResponse({"success": "Training Plan Has Been Saved."})
+            return JsonResponse({"success": "Training Plan Has Been Saved."})
 
     exercises = Exercises.objects.all() # Gets All Exercises
 
     return render(request, "blog/manage_training_plans.html", {
         "exercises": exercises,
+        "training_plan": training_plan,
     })
