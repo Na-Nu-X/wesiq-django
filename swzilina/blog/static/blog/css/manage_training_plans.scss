@@ -8,6 +8,126 @@
     width: 100%;
     min-height: calc(100vh - 67px);
 
+    .additional_info {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        max-width: 500px;
+        margin-bottom: 10px;
+
+        .training_title {
+            width: 245px;
+            height: 50px;
+            padding: 0px 10px;
+            background: transparent;
+            color: $secondary-color;
+            border: none;
+            border-bottom: 1px solid darken($secondary-color, 40%);
+            outline: none;
+            transition: border 0.3s ease;
+
+            &:hover,
+            &:focus {
+                border-bottom: 1px solid darken($secondary-color, 20%);
+            }
+
+            &::placeholder {
+                color: darken($secondary-color, 40%);
+            }
+
+            &:-webkit-autofill {
+                -webkit-text-fill-color: rgb(255, 255, 255);
+                transition: width 0.3s ease, background-color 9999s ease;
+
+                &:hover,
+                &:focus {
+                    -webkit-text-fill-color: rgb(255, 255, 255);
+                    transition: width 0.3s ease, background-color 9999s ease;
+                }
+            }
+        }
+
+        // Custom Select Menu
+
+        .day_select_menu {
+            position: relative;
+            width: 245px;
+            cursor: pointer;
+
+            .select {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                height: 50px;
+                margin: 0px auto;
+                padding: 0px 10px;
+                background: transparent;
+                color: $secondary-color;
+                border-bottom: 1px solid darken($secondary-color, 40%);
+                transition: border 0.3s ease;
+
+                &:hover {
+                    border-bottom: 1px solid darken($secondary-color, 20%);
+
+                    .fa-angle-down {
+                        color: $article-color;
+                    }
+                }
+
+                span {
+                    margin-left: 5px;
+                }
+
+                .fa-angle-down {
+                    color: darken($secondary-color, 10%);
+                    transition: color 0.3s ease,
+                }
+            }
+
+            .options_list {
+                interpolate-size: allow-keywords;
+                position: absolute;
+                width: 100%;
+                height: 0px;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: left;
+                padding: 0px 15px;
+                color: $secondary-color;
+                background-color: transparentize($main-color, 0.2);
+                border-radius: 0px 0px 5px 5px;
+                overflow: hidden;
+                transition: height 0.3s ease;
+                z-index: 100;
+
+                &.active {
+                    height: auto;
+                }
+
+                .option {
+                    padding: 5px 0px;
+                    transition: color 0.3s ease;
+
+                    &:hover,
+                    &.selected {
+                        color: $article-color !important;
+                    }
+
+                    i {
+                        width: 1em;
+                        margin-right: 10px;
+                        color: $article-color;
+                    }
+                }
+            }
+
+            &:has(.select:hover) .options_list {
+                width: 100%;
+            }
+        }
+    }
+
     .training_plan {
         position: relative;
         max-width: 500px;

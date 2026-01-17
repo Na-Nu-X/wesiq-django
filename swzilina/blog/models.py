@@ -123,7 +123,7 @@ class TrainingPlan(models.Model):
         null=True,
     )
 
-    day = models.IntegerField(verbose_name="Day", null=True)
+    day = models.IntegerField(verbose_name="Day", null=True, blank=True)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=[0], null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
