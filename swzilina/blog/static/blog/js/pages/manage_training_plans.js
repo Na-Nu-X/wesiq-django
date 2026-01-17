@@ -388,6 +388,73 @@ document.addEventListener("DOMContentLoaded", function() {
             })
 
             sendPOST("/my-training-plans", training_plan_data)
+
+            location.reload() // Reloads Page
         }
+    })
+    
+    // Search Bar
+    const search_bar = document.querySelector(".exercises_container .search_bar_menu .search_bar") // Gets Search Bar Input
+
+    const all_exercises = document.querySelectorAll(".exercises_container .exercises .exercise") // Gets All Exercises
+
+    function fillExercisesData(all_exercises) {
+        let result = []
+        
+        all_exercises.forEach(function(one_exercise) {
+            // Gets Data From HTML Tags
+            const one_exercise_id = one_exercise.dataset.id // For Example: 1
+            const one_exercise_title = one_exercise.querySelector(".exercise_name").textContent // For Example: Front Lever
+            
+            // Creates And Fill One Object With Values
+            const one_exercise_object = {} // For Example: { id: 1, title: "Front Lever" }
+            one_exercise_object.id = one_exercise_id
+            one_exercise_object.title = one_exercise_title
+
+            // Saves Filled Object With Values To Data Array
+            result.push(one_exercise_object)
+        })
+
+        return result
+    }
+
+    let exercises_data = [] // Data - Array of Objects of Exercises
+    exercises_data = fillExercisesData(all_exercises) // Fills Exercises Data
+
+    function renderExercises(search_bar, exercises_data) {
+        let searched_text = search_bar.value // Searched Text Value
+        
+        // Every Exercise Is Visible By Default
+        exercises_data.forEach(function(one_exercise) {
+            // Executes Only If The Exercises Wasn't Removed From DOM By Dragging
+            if(document.querySelector(`[data-id="${one_exercise.id}"]`) !== null) {
+                document.querySelector(`[data-id="${one_exercise.id}"]`).style.display = "flex"
+            }
+        })
+
+        // Filters Exercises by Searched Text Value
+        let filtered_exercises = exercises_data.filter(function(one_exercise) {
+            return !one_exercise.title.toLowerCase().includes(searched_text.toLowerCase())
+        })
+
+        // Hides Mismatched Exercises
+        filtered_exercises.forEach(function(one_exercise) {
+            // Executes Only If The Exercises Wasn't Removed From DOM By Dragging
+            if(document.querySelector(`[data-id="${one_exercise.id}"]`) !== null) {
+                document.querySelector(`[data-id="${one_exercise.id}"]`).style.display = "none"
+            }
+        })
+    }
+
+    search_bar.addEventListener("input", function() {
+        renderExercises(search_bar, exercises_data) // Renders Exercises
+    })
+
+    // Delete Search Bar
+    const delete_search_bar = document.querySelector(".fa-xmark") // Gets Delete Search Bar Icon
+
+    delete_search_bar.addEventListener("click", function() {
+        search_bar.value = "" // Deletes Search Bar Value
+        renderExercises(search_bar, exercises_data) // Renders Exercises
     })
 })
