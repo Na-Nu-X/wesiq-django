@@ -8,7 +8,7 @@ export function sendPOST(url_path=new URL(window.location.href).pathname, data=n
             "X-CSRFToken": getCookie("csrftoken"),
             "Accept": "application/json"
         },
-        body: data
+        body: JSON.stringify(data)
     }).then(
         response => response.json()
     ).catch(

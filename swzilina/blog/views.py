@@ -1150,7 +1150,30 @@ def trainingSessionView(request):
     return render(request, "blog/training_session.html")
 
 def manageTrainingPlansView(request):
-    exercises = Exercises.objects.all()
+    if request.method == "POST":
+        # Gets Logged In User
+        if "logged_in_user_id" in request.session:
+            # Gets Logged In User ID From Session
+            logged_in_user_id = request.session.get("logged_in_user_id")
+
+            training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+            
+            # Saves Each Object In The Training Plan Data To The Database
+            for one_object in training_plan_data:
+                new_training_plan = TrainingPlan(
+                    user_id = logged_in_user_id,
+                    day = one_object["day"],
+                    type = one_object["type"],
+                    exercise = one_object["exercise"],
+                    periods = one_object["periods"],
+                    order = one_object["order"],
+                )
+
+                new_training_plan.save()
+
+        return JsonResponse({"success": "Training Plan Has Been Saved."})
+
+    exercises = Exercises.objects.all() # Gets All Exercises
 
     return render(request, "blog/manage_training_plans.html", {
         "exercises": exercises,

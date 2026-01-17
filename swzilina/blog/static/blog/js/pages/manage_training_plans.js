@@ -1,3 +1,5 @@
+import { sendPOST } from "../services/sendPOST.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -57,8 +59,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // DELETE PERIOD
             if(sets_number === 0 && event.target.closest(".exercise").querySelectorAll(".period_selection").length > 1) {
-                console.log(event.target.closest(".exercise"))
-
                 event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
             }
 
@@ -228,5 +228,102 @@ document.addEventListener("DOMContentLoaded", function() {
 
     add_exercise.addEventListener("dragleave", function() {
         training_plan.classList.remove("animate") // Removes Animation
+    })
+
+    // Day Select Menu
+    const day_select_menu = document.querySelector(".day_select_menu")
+    const day_select = document.querySelector(".day_select_menu .select")
+    const day_options_list = document.querySelector(".day_select_menu .options_list")
+    const day_options = document.querySelectorAll(".day_select_menu .option")
+
+    day_select.addEventListener("click", function() {
+        day_options_list.classList.toggle("active")
+        day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+    })
+
+    day_options.forEach(function(option) {
+        option.addEventListener("click", function() {
+            sessionStorage.setItem("day", option.dataset.day)
+
+            day_options_list.classList.toggle("active")
+            day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+
+            // Remove Selected Class From Options
+            day_options.forEach(function(remove_selected) {
+                remove_selected.classList.remove("selected")
+            })
+
+            // Shows Current Selected Option From List Without Icon
+            if(option.dataset.day === sessionStorage.getItem("day")) {
+                day_select.querySelector("span").textContent = option.querySelector("span").textContent
+                day_select_menu.querySelector("input").value = option.querySelector("span").textContent
+
+                option.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
+    })
+
+    // Save
+    const save = document.querySelector(".training_plan_container .save") // Gets Save Button
+
+    save.addEventListener("click", function() {
+        const training_plan_data = [] // Stores All Training Plan Data
+
+        const all_exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From Created Training Plan
+        const training_title = document.querySelector(".training_title").value // Gets Training Title Value
+
+        // Gets Info From Every Exercise
+        all_exercises.forEach(function(one_exercise) {
+            const exercise_name = one_exercise.querySelector(".title").textContent // Gets Exercise Title
+
+            const all_reps_inputs = one_exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
+            const all_sets_inputs = one_exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
+
+            // Gets All Reps Inputs Values
+            const all_reps_inputs_values = [...all_reps_inputs].map(function(one_input) {
+                return one_input.value
+            })
+
+            // Gets All Sets Inputs Values
+            const all_sets_inputs_values = [...all_sets_inputs].map(function(one_input) {
+                return one_input.value
+            })
+            
+            let periods = [] // Stores Periods Of Sets And Reps
+
+            // Generates Periods Of Sets And Reps Values
+            for(let i = 0; i < all_sets_inputs_values.length; i++) {
+                for(let j = 0; j < all_sets_inputs_values[i]; j++) {
+                    periods.unshift(parseInt(all_reps_inputs_values[i])) // Saves To An Array
+                }
+            }
+
+            // Creates Object For One Exercise For Training Plan
+            const training_plan_object = {}
+
+            // training_plan_object.user = null
+
+            // Finds Selected Day For Training Plan
+            const selected_day = [...day_options].find(function(one_option) {
+                return one_option.classList.contains("selected")
+            })
+            
+            if(selected_day?.dataset?.day) {
+                Number.isNaN(parseInt(selected_day.dataset.day)) ? training_plan_object.day = null : training_plan_object.day = parseInt(selected_day.dataset.day)
+            } else {
+                training_plan_object.day = null
+            }
+
+            training_plan_object.type = training_title
+            training_plan_object.exercise = exercise_name
+            training_plan_object.periods = periods
+            training_plan_object.order = [...all_exercises].indexOf(one_exercise) + 1
+
+            training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Object
+        })
+
+        console.log(training_plan_data)
+
+        sendPOST("/my-training-plans", training_plan_data)
     })
 })
