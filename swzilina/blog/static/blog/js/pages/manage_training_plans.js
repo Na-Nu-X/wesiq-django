@@ -3,13 +3,50 @@ import { sendPOST } from "../services/sendPOST.js"
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function() {
+    const all_exercise_selection = document.querySelectorAll(".exercises .exercise") // Gets All Exercises From The Selection
+
+    // TRAINING PLAN
+
+    // Day Select Menu
+    const day_select_menu = document.querySelector(".day_select_menu")
+    const day_select = document.querySelector(".day_select_menu .select")
+    const day_options_list = document.querySelector(".day_select_menu .options_list")
+    const day_options = document.querySelectorAll(".day_select_menu .option")
+
+    day_select.addEventListener("click", function() {
+        day_options_list.classList.toggle("active")
+        day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+    })
+
+    day_options.forEach(function(option) {
+        option.addEventListener("click", function() {
+            sessionStorage.setItem("day", option.dataset.day)
+
+            day_options_list.classList.toggle("active")
+            day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+
+            // Remove Selected Class From Options
+            day_options.forEach(function(remove_selected) {
+                remove_selected.classList.remove("selected")
+            })
+
+            // Shows Current Selected Option From List Without Icon
+            if(option.dataset.day === sessionStorage.getItem("day")) {
+                day_select.querySelector("span").textContent = option.querySelector("span").textContent
+                day_select_menu.querySelector("input").value = option.querySelector("span").textContent
+
+                option.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
+    })
+
     const training_plan = document.querySelector(".training_plan_container .training_plan") // Gets Training Plan
+
     const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
+    const period_selection_template = document.querySelector(".period_selection_template") // Gets Period Selection Template
 
     // Event Delegation For Global Events
     training_plan.addEventListener("click", function(event) {
-        // CHANGE SETS & REPS VALUES
-
         // Adds Decrease Exercise Reps Functionality
         if(event.target.classList.contains("decrease_reps")) {
             const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
@@ -82,17 +119,15 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function For Create And Append Exercise To Training Plan
     function createExercise(exercise_name) {
         const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones Exercise Template
-
+        
         exercise_template_clone.querySelector(".title").textContent = exercise_name // Adds Exercise Name As A Title
 
-        // ADD PERIOD
+        // Add Period Functionality
         const add_period = exercise_template_clone.querySelector(".add_period") // Gets Add Period Button
 
-        const period_selection_template = document.querySelector(".period_selection_template") // Gets Period Selection Template
+        const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
         
         add_period.addEventListener("click", function(event) {
-            const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones Period Selection Template
-            
             event.target.parentNode.querySelector(".periods_container").prepend(period_selection_template_clone) // Prepends Period Selection Template
         })
 
@@ -100,10 +135,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         updateProgressBar() // Updates Progress Bar
 
-        const exercises = document.querySelectorAll(".training_plan_container .training_plan .exercise") // Gets All Exercises
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises
         changeExercises(exercises.length - 1) // Shows The Last Added Exercise
 
-        // Drop Zone (On Exercise)
+        // Drop Zone (On Each Exercise)
         exercises.forEach(function(one_exercise) {
             one_exercise.addEventListener("dragover", function(event) {
                 event.preventDefault()
@@ -130,39 +165,30 @@ document.addEventListener("DOMContentLoaded", function() {
             })
         })
 
-        removeExercise()
+        removeExercise(exercises[exercises.length - 1]) // Adds Remove Exercise Functionality To New Created Exercise
     }
 
     // Function For Add Bar To The Progress Bar
     function updateProgressBar() {
-        const progress_bar = document.querySelector(".training_plan_container .training_plan .progress_bar") // Gets Progress Bar
+        const progress_bar = training_plan.querySelector(".progress_bar") // Gets Progress Bar
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises
 
+        progress_bar.innerHTML = "" // Deletes Bars From The Progress Bar
+        
         training_plan.appendChild(progress_bar) // Appends Progress Bar To The End Of The Training Plan
 
-        // Creates Bar
-        const bar = document.createElement("div")
-        bar.classList.add("bar")
-        progress_bar.appendChild(bar)
+        // Creates Bars Depands On Amount Of Exercises In The Training Plan
+        for(let i = 0; i < exercises.length; i++) {
+            // Creates Bar
+            const bar = document.createElement("div")
+            bar.classList.add("bar")
+            progress_bar.appendChild(bar)
 
-        // Adds Click Event Listener To The New Bar In The Progress Bar
-        bar.addEventListener("click", function(event) {
-            chooseExerciseWithProgressBar(event.target)
-        })
-    }
-
-    // Function For Choose Exercise With Bars In The Progress Bar
-    function chooseExerciseWithProgressBar(clicked_bar) {
-        const bars = document.querySelectorAll(".training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
-
-        // Removes Active Class From Every Bar In The Progress Bar
-        bars.forEach(function(one_bar) {
-            one_bar.classList.remove("active")
-        })
-
-        clicked_bar.classList.add("active") // Adds Active Class To The Clicked Bar
-
-        const clicked_bar_index = [...bars].indexOf(clicked_bar) // Gets Index Of Clicked Bar
-        changeExercises(clicked_bar_index) // Shows Exercise With Equal Index
+            // Adds Click Event Listener To The New Bar In The Progress Bar
+            bar.addEventListener("click", function(event) {
+                chooseExerciseWithProgressBar(event.target)
+            })
+        }
     }
 
     // Function For Change Exercises In Training Plan
@@ -178,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         exercises[exercise_index].classList.add("active") // Shows Exercise With The Chosen Index
 
-        const bars = document.querySelectorAll(".training_plan_container .training_plan .progress_bar .bar") // Gets All Bars From The Progress Bar
+        const bars = training_plan.querySelectorAll(".progress_bar .bar") // Gets All Bars From The Progress Bar
 
         // Removes Active Class From Every Bar In The Progress Bar
         bars.forEach(function(one_bar) {
@@ -188,130 +214,88 @@ document.addEventListener("DOMContentLoaded", function() {
         bars[exercise_index].classList.add("active") // Adds Active Class To The Bar Of The Current Active Exercise
     }
 
-    // Function For Remove Added Exercise From The Training Plan
-    function removeExercise() {
-        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From The Training Plan
-        let dragged_exercise = null // Stores Dragged Exercise
+    // Function For Choose Exercise With Bars In The Progress Bar
+    function chooseExerciseWithProgressBar(clicked_bar) {
+        const bars = training_plan.querySelectorAll(".progress_bar .bar") // Gets All Bars From The Progress Bar
 
-        exercises.forEach(function(one_exercise) {
-            // Drag Start
-            one_exercise.addEventListener("dragstart", function() {
-                dragged_exercise = one_exercise // Saves Dragged Exercise
-                one_exercise.classList.add("dragging") // Adds Dragging Class
-                console.log(one_exercise)
-            })
-
-            // Drag End
-            one_exercise.addEventListener("dragend", function() {
-                one_exercise.classList.remove("dragging") // Removes Dragging Class
-                console.log(one_exercise)
-            })
+        // Removes Active Class From Every Bar In The Progress Bar
+        bars.forEach(function(one_bar) {
+            one_bar.classList.remove("active")
         })
 
-        // Drop Zone
-        // const body = document.querySelector("body")
+        clicked_bar.classList.add("active") // Adds Active Class To The Clicked Bar
 
-        // body.addEventListener("dragover", function(event) {
-        //     event.preventDefault()
-
-        //     body.classList.add("animate") // Adds Animation
-        // })
-
-        // body.addEventListener("drop", function() {
-        //     if(!dragged_exercise) return
-
-        //     dragged_exercise.remove() // Deletes Dragged Exercise From Exercises
-
-        //     const exercise_name = dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
-        //     createExercise(exercise_name) // Appends Dragged Exercise
-
-        //     dragged_exercise.classList.remove("dragging") // Removes Dragging Class
-        //     dragged_exercise = null // Deletes Stored Dragged Exercise
-
-        //     body.classList.remove("animate") // Removes Animation
-        // })
-
-        // body.addEventListener("dragleave", function() {
-        //     body.classList.remove("animate") // Removes Animation
-        // })
+        const clicked_bar_index = [...bars].indexOf(clicked_bar) // Gets Index Of Clicked Bar
+        changeExercises(clicked_bar_index) // Shows Exercise With Equal Index
     }
 
-    // Exercises
-    const exercises_selection = document.querySelectorAll(".exercises .exercise") // Gets All Exercises From Selection
-    let dragged_exercise = null // Stores Dragged Exercise
+    // Function For Remove Added Exercise From The Training Plan
+    function removeExercise(exercise) {
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From The Training Plan
+        let dragged_training_plan_exercise = null // Stores Dragged Exercise
 
-    exercises_selection.forEach(function(one_exercise) {
         // Drag Start
-        one_exercise.addEventListener("dragstart", function() {
-            dragged_exercise = one_exercise // Saves Dragged Exercise
-            one_exercise.classList.add("dragging") // Adds Dragging Class
+        exercise.addEventListener("dragstart", function() {
+            dragged_training_plan_exercise = exercise // Saves Dragged Exercise
+            exercise.classList.add("dragging") // Adds Dragging Class
         })
 
         // Drag End
-        one_exercise.addEventListener("dragend", function() {
-            one_exercise.classList.remove("dragging") // Removes Dragging Class
+        exercise.addEventListener("dragend", function() {
+            exercise.classList.remove("dragging") // Removes Dragging Class
         })
-    })
 
-    // Drop Zone (For First Exercise)
-    const add_exercise = document.querySelector(".training_plan_container .training_plan .add_exercise") // Gets Add Exercise Drop Zone
+        // Drop Zone
+        const body = document.querySelector("body")
 
-    add_exercise.addEventListener("dragover", function(event) {
-        event.preventDefault()
+        body.addEventListener("dragover", function(event) {
+            event.preventDefault()
 
-        training_plan.classList.add("animate") // Adds Animation
-    })
+            // body.classList.add("animate") // Adds Animation
+        })
 
-    add_exercise.addEventListener("drop", function() {
-        if(!dragged_exercise) return
+        body.addEventListener("drop", function(event) {
+            if(!dragged_training_plan_exercise) return
 
-        dragged_exercise.remove() // Deletes Dragged Exercise From Exercises
+            if(!event.target.closest(".training_plan")) {
+                const exercises = training_plan.querySelectorAll(".exercise") // Gets All Exercises From The Training Plan
 
-        const exercise_name = dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
-        createExercise(exercise_name) // Appends Dragged Exercise
+                // console.log(exercise_selection[0].querySelector(".exercise_name").textContent)
+                // console.log(dragged_exercise.querySelector(".title").textContent)
 
-        dragged_exercise.classList.remove("dragging") // Removes Dragging Class
-        dragged_exercise = null // Deletes Stored Dragged Exercise
+                let test = [...all_exercise_selection].find(function(one_exercise) {
+                    return one_exercise.querySelector(".exercise_name").textContent === dragged_training_plan_exercise.querySelector(".title").textContent
+                })
 
-        training_plan.classList.remove("animate") // Removes Animation
-    })
+                test.classList.remove("hidden")
 
-    add_exercise.addEventListener("dragleave", function() {
-        training_plan.classList.remove("animate") // Removes Animation
-    })
+                dragged_training_plan_exercise.remove() // Deletes Dragged Exercise From Exercises
+                updateProgressBar() // Updates Progress Bar
 
-    // Day Select Menu
-    const day_select_menu = document.querySelector(".day_select_menu")
-    const day_select = document.querySelector(".day_select_menu .select")
-    const day_options_list = document.querySelector(".day_select_menu .options_list")
-    const day_options = document.querySelectorAll(".day_select_menu .option")
+                if(exercises.length === 1) {
+                    add_exercise.classList.add("active") // Shows Add Exercise Drop Zone
+                }
 
-    day_select.addEventListener("click", function() {
-        day_options_list.classList.toggle("active")
-        day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
-    })
+                else {
+                    const dragged_exercise_index = [...exercises].indexOf(dragged_training_plan_exercise)
 
-    day_options.forEach(function(option) {
-        option.addEventListener("click", function() {
-            sessionStorage.setItem("day", option.dataset.day)
+                    if(dragged_exercise_index > 0) {
+                        changeExercises(dragged_exercise_index - 1) // Shows Previous Exercise After Deletion
+                    }
 
-            day_options_list.classList.toggle("active")
-            day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+                    if(dragged_exercise_index === 0) {
+                        changeExercises(dragged_exercise_index) // Shows Next Exercise After Deletion
+                    }
+                }
 
-            // Remove Selected Class From Options
-            day_options.forEach(function(remove_selected) {
-                remove_selected.classList.remove("selected")
-            })
-
-            // Shows Current Selected Option From List Without Icon
-            if(option.dataset.day === sessionStorage.getItem("day")) {
-                day_select.querySelector("span").textContent = option.querySelector("span").textContent
-                day_select_menu.querySelector("input").value = option.querySelector("span").textContent
-
-                option.classList.add("selected") // Adds Selected Class To Selected Option
+                // body.classList.remove("animate") // Removes Animation
             }
         })
-    })
+
+        body.addEventListener("dragleave", function() {
+            // body.classList.remove("animate") // Removes Animation
+        })
+    }
 
     // Save
     const save = document.querySelector(".training_plan_container .save") // Gets Save Button
@@ -334,7 +318,8 @@ document.addEventListener("DOMContentLoaded", function() {
             training_plan.querySelector(".fa-compress").classList.add("error_animation")
         }
 
-        else {
+        // Only Saves If Everything Is Filled
+        if(training_title.value !== "" && all_exercises.length !== 0) {
             const training_plan_data = [] // Stores All Training Plan Data
 
             // Gets Info From Every Exercise
@@ -387,10 +372,57 @@ document.addEventListener("DOMContentLoaded", function() {
                 training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Object
             })
 
-            sendPOST("/my-training-plans", training_plan_data)
+            sendPOST("/my-training-plans", training_plan_data) // Sends Data With POST
 
             location.reload() // Reloads Page
         }
+    })
+
+    // EXERCISE SELECTION
+
+    const exercise_selection = document.querySelectorAll(".exercises .exercise") // Gets All Exercises From The Selection
+    let dragged_exercise = null // Stores Dragged Exercise
+
+    exercise_selection.forEach(function(one_exercise) {
+        // Drag Start
+        one_exercise.addEventListener("dragstart", function() {
+            dragged_exercise = one_exercise // Saves Dragged Exercise
+            one_exercise.classList.add("dragging") // Adds Dragging Class
+        })
+
+        // Drag End
+        one_exercise.addEventListener("dragend", function() {
+            one_exercise.classList.remove("dragging") // Removes Dragging Class
+        })
+    })
+
+    // Drop Zone (For First Exercise)
+    const add_exercise = training_plan.querySelector(".add_exercise") // Gets Add Exercise Drop Zone
+
+    add_exercise.addEventListener("dragover", function(event) {
+        event.preventDefault()
+
+        training_plan.classList.add("animate") // Adds Animation
+    })
+
+    add_exercise.addEventListener("drop", function() {
+        if(!dragged_exercise) return
+
+        // dragged_exercise.remove() // Deletes Dragged Exercise From Exercises
+        // dragged_exercise.style.display = "none" // Hides Dragged Exercise From Exercise Selection
+        dragged_exercise.classList.add("hidden")
+
+        const exercise_name = dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+        createExercise(exercise_name) // Appends Dragged Exercise
+
+        dragged_exercise.classList.remove("dragging") // Removes Dragging Class
+        dragged_exercise = null // Deletes Stored Dragged Exercise
+
+        training_plan.classList.remove("animate") // Removes Animation
+    })
+
+    add_exercise.addEventListener("dragleave", function() {
+        training_plan.classList.remove("animate") // Removes Animation
     })
     
     // Search Bar
