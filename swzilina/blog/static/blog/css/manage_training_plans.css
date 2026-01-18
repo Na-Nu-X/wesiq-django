@@ -411,6 +411,9 @@
   border-radius: 5px;
   cursor: move;
 }
+.exercises_container .exercises .exercise.hidden {
+  display: none;
+}
 .exercises_container .exercises .exercise:hover p {
   filter: blur(2px);
 }

@@ -461,6 +461,10 @@
             border-radius: $small-border-radius;
             cursor: move;
 
+            &.hidden {
+                display: none;
+            }
+
             &:hover {
                 p {
                     filter: blur(2px);
