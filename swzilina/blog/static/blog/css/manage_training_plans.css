@@ -148,6 +148,7 @@
   height: 185px;
   padding: 10px;
   transition: transform 0.5s ease;
+  cursor: move;
 }
 .training_plan_container .training_plan .exercise:not(.active) {
   position: absolute;
