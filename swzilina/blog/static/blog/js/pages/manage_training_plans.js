@@ -45,9 +45,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
             exercise_template_clone.querySelector(".exercise .title").textContent = selection_dragged_exercise.querySelector(".exercise_name").textContent // Sets Exercise Name
 
+            // Checks If Selection Dragged Exercise Is Custom Exercise
+            if(selection_dragged_exercise.classList.contains("custom_exercise")) {
+                // Creates Exercise Title Input
+                const exercise_title_input = document.createElement("input")
+                exercise_title_input.classList.add("exercise_title_input")
+                exercise_title_input.type = "text"
+
+                exercise_template_clone.querySelector(".exercise").prepend(exercise_title_input) // Prepends Exercise Title Input
+            }
+
             training_plan.appendChild(exercise_template_clone) // Appends Exercise To The Training Plan
 
-            selection_dragged_exercise.classList.add("hidden") // Hides Dragged Exercise From The Selection
+            if(!selection_dragged_exercise.classList.contains("custom_exercise")) selection_dragged_exercise.classList.add("hidden") // Hides Dragged Exercise From The Selection (Doesn't Hide Custom Exercise)
 
             changeTrainingPlanSlides() // Changes Slides In The Training Plan
         }
@@ -183,13 +193,24 @@ document.addEventListener("DOMContentLoaded", function() {
             training_plan.querySelector(".fa-compress").classList.add("error_animation")
         }
 
+        // Checks For Empty Exercise Title Inputs In Custom Exercises In The Training Plan
+        const custom_exercises_without_name = [...training_plan_exercises].filter(function(one_exercise) {
+            return one_exercise?.querySelector(".exercise_title_input")?.value?.trim() === ""
+        })
+
+        if(custom_exercises_without_name.length > 0) {
+            const first_custom_exercise_without_name_index = [...training_plan_exercises].indexOf(custom_exercises_without_name[0]) // Gets Index Of The First Custom Exercise Without Filled Title Input
+
+            changeTrainingPlanExercises(first_custom_exercise_without_name_index) // Shows The Exercise Of The First Custom Exercise Without Filled Title Input Index
+        }
+
         // Only Saves If Everything Required Is Filled
-        if(training_plan_title.value !== "" && training_plan_exercises.length !== 0) {
+        if(training_plan_title.value !== "" && training_plan_exercises.length !== 0 && custom_exercises_without_name.length === 0) {
             const new_training_plan_data = [] // Stores All New Saved Training Plan Data
 
             // Gets Info From Every Exercise
             training_plan_exercises.forEach(function(one_exercise) {
-                const exercise_name = one_exercise.querySelector(".title").textContent // Gets Exercise Name
+                const exercise_name = one_exercise.querySelector(".exercise_title_input") ? one_exercise.querySelector(".exercise_title_input").value : one_exercise.querySelector(".title").textContent // Gets Exercise Name
 
                 const all_reps_inputs = one_exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
                 const all_sets_inputs = one_exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
