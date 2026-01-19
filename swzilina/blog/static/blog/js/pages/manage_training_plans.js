@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let selection_dragged_exercise = null // Gets Dragged Exercise From Exercise Selection
     let training_plan_dragged_exercise = null // Gets Dragged Exercise From The Training Plan
+    let training_plan_dragged_bar = null // Gets Dragged Bar From The Training Plan
 
     const training_plan_drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
 
@@ -113,6 +114,31 @@ document.addEventListener("DOMContentLoaded", function() {
         updateBars(training_plan_exercises.length) // Updates Bars
     }
 
+    function changeTrainingPlanExercisePosition(dropped_bar_index) {
+        // Executes Only If The Dragged Element Is Training Plan Dragged Bar
+        if(training_plan_dragged_bar) {
+            const dragged_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(training_plan_dragged_bar) // Gets Index Of The Dragged Bar In The Training Plan
+
+            const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+            // Changes DOM Position Of Exercises
+            if(dragged_bar_index < dropped_bar_index) {
+                training_plan.insertBefore(training_plan_exercises[dragged_bar_index], training_plan_exercises[dropped_bar_index].nextSibling)
+            }
+
+            else {
+                training_plan.insertBefore(training_plan_exercises[dragged_bar_index], training_plan_exercises[dropped_bar_index])
+            }
+
+            // Hides All Possible Options For Active Exercise In The Training Plan
+            training_plan_exercises[active_training_plan_exercise_index].classList.remove("active") // Hides Previous Active Exercise
+            training_plan_exercises[dropped_bar_index].classList.remove("active") // Hides Previous Active Exercise
+            training_plan_exercises[dragged_bar_index].classList.remove("active") // Hides Previous Active Exercise
+
+            changeTrainingPlanExercises(dropped_bar_index) // Shows The Exercise Of Dropped Bar Index
+        }
+    }
+
     function updateBars(training_plan_exercises_amount) {
         bar_container.innerHTML = "" // Deletes All Bars From The Bar Container
 
@@ -121,6 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Creates Bar
             const bar = document.createElement("div")
             bar.classList.add("bar")
+            bar.setAttribute("draggable", "true")
             bar_container.appendChild(bar)
         }
 
@@ -232,6 +259,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if(selection_dragged_exercise) {
             training_plan.classList.add("animate") // Adds Drag Animation
         }
+
+        // Drop Zone On Bars In The Bar Container
+        if(event.target.classList.contains("bar")) {
+            event.preventDefault() // Makes The Drop Zone Functional
+        }
     })
 
     training_plan.addEventListener("drop", function(event) {
@@ -248,6 +280,12 @@ document.addEventListener("DOMContentLoaded", function() {
         // Executes Only If The Dragged Element Is Selection Dragged Exercise
         if(selection_dragged_exercise) {
             training_plan.classList.remove("animate") // Removes Drag Animation
+        }
+
+        // Drop Zone On Bars In The Bar Container
+        if(event.target.classList.contains("bar")) {
+            const dropped_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Bar From The Bar Container Where The Dragged Bar Was Dropped
+            changeTrainingPlanExercisePosition(dropped_bar_index) // Changes Training Plan Exercise Position By Position Of Bars In The Bar Container
         }
     })
 
@@ -343,13 +381,22 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
-    // Training Plan Exercises Drag Functionality
+    // Training Plan Drag Start Events
     training_plan.addEventListener("dragstart", function(event) {
-        training_plan_dragged_exercise = event.target.closest(".exercise") // Sets Training Plan Dragged Exercise
+        // Training Plan Exercises Drag Functionality
+        if(event.target.classList.contains("exercise")) {
+            training_plan_dragged_exercise = event.target // Sets Training Plan Dragged Exercise
+        }
+
+        // Training Plan Exercises Drag With Bars Functionality
+        if(event.target.classList.contains("bar")) {
+            training_plan_dragged_bar = event.target // Sets Training Plan Dragged Bar
+        }
     })
 
     training_plan.addEventListener("dragend", function(event) {
         training_plan_dragged_exercise = null // Deletes Training Plan Dragged Exercise
+        training_plan_dragged_bar = null // Deletes Training Plan Dragged Bar
     })
 
     // Training Plan Container Drop Zone Functionality (Remove The Exercise From The Training Plan)
