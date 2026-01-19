@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 updateBars(training_plan_exercises.length) // Updates Bars
             }
+
+            searchBar() // Refreshes Exercise Selection Exercises (Refreshes Search Bar Results)
         }
     }
 
@@ -381,6 +383,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
+    // Removes Exercise From The Training Plan On Double Click
+    training_plan.addEventListener("dblclick", function(event) {
+        if(event.target.classList.contains("exercise")) {
+            training_plan_dragged_exercise = event.target // Sets Training Plan Dragged Exercise
+            removeExerciseFromTrainingPlan() // Removes Dragged Exercise From The Training Plan
+            training_plan_dragged_exercise = null // Deletes Training Plan Dragged Exercise
+        }
+    })
+
     // Training Plan Drag Start Events
     training_plan.addEventListener("dragstart", function(event) {
         // Training Plan Exercises Drag Functionality
@@ -477,7 +488,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function deleteSearchBar() {
         search_bar.value = "" // Deletes Search Bar Value
-        searchBar() // Refreshes Exercise Selection Exercises
+        searchBar() // Refreshes Exercise Selection Exercises (Refreshes Search Bar Results)
     }
 
     // Events
@@ -493,6 +504,13 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         one_exercise.addEventListener("dragend", function() {
+            selection_dragged_exercise = null // Deletes Selection Dragged Exercise
+        })
+        
+        // Add Exercise To The Training Plan On Double Click
+        one_exercise.addEventListener("dblclick", function() {
+            selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
+            addExerciseToTrainingPlan() // Adds Dragged Exercise From Exercise Selection To The Training Plan
             selection_dragged_exercise = null // Deletes Selection Dragged Exercise
         })
     })
