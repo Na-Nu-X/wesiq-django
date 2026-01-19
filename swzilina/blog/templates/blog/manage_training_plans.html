@@ -102,6 +102,10 @@
         </div>
 
         <div class="exercises">
+            <div class="custom_exercise">
+                <i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+            </div>
+
             {% for one_exercise in exercises %}
                 <div class="exercise" draggable="true" data-id="{{ one_exercise.id }}">
                     <p class="exercise_name">{{ one_exercise.exercise }}</p>

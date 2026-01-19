@@ -6,6 +6,7 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    // min-height: calc(100vh - 67px - 310px);
     min-height: calc(100vh - 67px);
 
     .additional_info {
@@ -157,7 +158,7 @@
             }
 
             .fa-compress {
-                font-size: 2em;
+                font-size: 2.5em;
 
                 &.error_animation {
                     animation: training_plan_error_animation 0.2s linear 3;
@@ -448,15 +449,54 @@
         gap: 10px;
         max-width: 500px;
         width: 100%;
+        max-height: 200px;
         margin: 0px auto 50px;
+        padding-right: 5px;
+        text-align: center;
+        overflow-y: auto;
 
-        .exercise {
-            position: relative;
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: darken($secondary-color, 40%);
+            border-radius: 2.5px;
+
+            &:hover {
+                background-color: darken($secondary-color, 20%);
+                cursor: pointer;
+            }
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: lighten($main-color, 20%);
+            border-radius: 2.5px;
+        }
+
+        .custom_exercise {
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
             aspect-ratio: 1 / 1;
+            background-color: transparentize($secondary-color, 0.95);
+            border: 1px solid $secondary-color;
+            border-radius: $small-border-radius;
+            cursor: pointer;
+
+            .fa-plus {
+                font-size: 2.5em;
+            }
+        }
+
+        .exercise {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            padding: 10px;
             background-color: transparentize($secondary-color, 0.95);
             border: 1px solid $secondary-color;
             border-radius: $small-border-radius;
