@@ -412,7 +412,7 @@
   cursor: move;
 }
 .exercises_container .exercises .exercise.hidden {
-  display: none;
+  display: none !important;
 }
 .exercises_container .exercises .exercise:hover p {
   filter: blur(2px);
