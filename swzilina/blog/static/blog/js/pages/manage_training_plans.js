@@ -227,6 +227,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if(event.target === training_plan.querySelectorAll(".exercise")[active_training_plan_exercise_index]) {
             event.preventDefault() // Makes The Drop Zone Functional
         }
+
+        // Executes Only If The Dragged Element Is Selection Dragged Exercise
+        if(selection_dragged_exercise) {
+            training_plan.classList.add("animate") // Adds Drag Animation
+        }
     })
 
     training_plan.addEventListener("drop", function(event) {
@@ -238,6 +243,18 @@ document.addEventListener("DOMContentLoaded", function() {
         // Drop Zone On Active Exercise In The Training Plan
         if(event.target === training_plan.querySelectorAll(".exercise")[active_training_plan_exercise_index]) {
             addExerciseToTrainingPlan() // Adds Dragged Exercise From Exercise Selection To The Training Plan
+        }
+
+        // Executes Only If The Dragged Element Is Selection Dragged Exercise
+        if(selection_dragged_exercise) {
+            training_plan.classList.remove("animate") // Removes Drag Animation
+        }
+    })
+
+    training_plan.addEventListener("dragleave", function() {
+        // Executes Only If The Dragged Element Is Selection Dragged Exercise
+        if(selection_dragged_exercise) {
+            training_plan.classList.remove("animate") // Removes Drag Animation
         }
     })
 
@@ -379,17 +396,48 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     // Save New Training Plan Button
-    save.addEventListener("click", function() {
-        saveNewTrainingPlan()
-    })
+    save.addEventListener("click", saveNewTrainingPlan)
 
     // EXERCISE SELECTION
+
+    // Variables
+    const search_bar = exercise_selection_container.querySelector(".search_bar_menu .search_bar") // Gets Search Bar Input
+    const delete_search_bar = exercise_selection_container.querySelector(".search_bar_menu .fa-xmark") // Gets Delete Search Bar Button
 
     // Functions
 
     function searchBar() {
+        // Gets Only Exercises In The Exercise Selection Which Are Not Already Put In The New Training Plan
+        const not_used_exercise_selection_exercises = [...exercise_selection_exercises].filter(function(one_exercise) {
+            return !one_exercise.classList.contains("hidden")
+        })
 
+        // Exercises In The Exercise Selection Are Visible By Default
+        not_used_exercise_selection_exercises.forEach(function(one_exercise) {
+            one_exercise.style.display = "flex"
+        })
+
+        // Filters Exercises by Searched Bar Value (Returns Not Corresponding Exercises)
+        const filtered_exercise_selection_exercises = [...not_used_exercise_selection_exercises].filter(function(one_exercise) {
+            return !one_exercise.querySelector(".exercise_name").textContent.toLocaleLowerCase().includes(search_bar.value.toLocaleLowerCase())
+        })
+
+        // Hides Filtered Exercises In The Exercise Selection
+        filtered_exercise_selection_exercises.forEach(function(one_exercise) {
+            one_exercise.style.display = "none"
+        })
     }
+
+    function deleteSearchBar() {
+        search_bar.value = "" // Deletes Search Bar Value
+        searchBar() // Refreshes Exercise Selection Exercises
+    }
+
+    // Events
+
+    // Exercise Selection Search Bar Functionality
+    search_bar.addEventListener("input", searchBar)
+    delete_search_bar.addEventListener("click", deleteSearchBar)
 
     // Exercise Selection Drag Functionality
     exercise_selection_exercises.forEach(function(one_exercise) {

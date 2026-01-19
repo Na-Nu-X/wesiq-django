@@ -462,7 +462,7 @@
             cursor: move;
 
             &.hidden {
-                display: none;
+                display: none !important;
             }
 
             &:hover {
