@@ -1174,6 +1174,7 @@ def manageTrainingPlansView(request):
                     type = one_object["type"],
                     exercise = one_object["exercise"],
                     periods = one_object["periods"],
+                    unit = one_object["unit"],
                     order = one_object["order"],
                 )
 

@@ -609,7 +609,20 @@ document.addEventListener("DOMContentLoaded", function() {
             const reps = exercises[active_exercise_index].querySelector(".reps")
             const periods = JSON.parse(reps.dataset.periods)
 
-            periods[current_set] === 0 ? reps.textContent = "Do zlyhania" : reps.textContent = `${periods[current_set]}x`
+            if(periods[current_set] === 0) {
+                reps.textContent = "Do zlyhania"
+            }
+            
+            // Sets The Correct Unit Based On The Reps Or Seconds
+            else {
+                if(reps.dataset.unit === "reps") {
+                    reps.textContent = `${periods[current_set]}x`
+                }
+
+                if(reps.dataset.unit === "seconds") {
+                    reps.textContent = `${periods[current_set]}s`
+                }
+            }
 
             // Updates Set Amount
             current_set += 1 // Increases Current Set Value
