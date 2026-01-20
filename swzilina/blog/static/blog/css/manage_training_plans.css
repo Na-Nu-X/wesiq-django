@@ -121,7 +121,7 @@
   overflow: hidden;
 }
 .training_plan_container .training_plan.animate {
-  animation: drag_animation 1s infinite alternate;
+  animation: training_plan_drag_animation 1s infinite alternate;
 }
 .training_plan_container .training_plan .add_exercise {
   display: flex;
@@ -291,6 +291,9 @@
   border: 1px solid #999999;
   border-radius: 5px;
 }
+.training_plan_container .training_plan .progress_bar .bar.animate:not(.training_plan_container .training_plan .progress_bar .bar.active) {
+  animation: bar_drag_animation 1s infinite alternate;
+}
 .training_plan_container .training_plan .progress_bar .bar:before {
   content: "";
   position: absolute;
@@ -304,10 +307,13 @@
 .training_plan_container .training_plan .progress_bar .bar.active, .training_plan_container .training_plan .progress_bar .bar:hover {
   cursor: pointer;
 }
+.training_plan_container .training_plan .progress_bar .bar.active.animate:before, .training_plan_container .training_plan .progress_bar .bar:hover.animate:before {
+  animation: bar_drag_animation 1s infinite alternate;
+}
 .training_plan_container .training_plan .progress_bar .bar.active:before, .training_plan_container .training_plan .progress_bar .bar:hover:before {
   width: 100%;
-  background-color: rgb(82, 207, 32);
-  box-shadow: 0px 0px 10px rgb(82, 207, 32);
+  background-color: #52cf20;
+  box-shadow: 0px 0px 10px #52cf20;
 }
 .training_plan_container .save {
   max-width: 500px;
@@ -419,19 +425,12 @@
   background-color: #333333;
   border-radius: 2.5px;
 }
-.exercises_container .exercises .custom_exercise {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: 1/1;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid #fff;
-  border-radius: 5px;
-  cursor: pointer;
+.exercises_container .exercises .custom_exercise:hover .fa-plus {
+  filter: blur(2px);
 }
 .exercises_container .exercises .custom_exercise .fa-plus {
   font-size: 2.5em;
+  transition: filter 0.3s ease;
 }
 .exercises_container .exercises .exercise {
   display: flex;
@@ -458,10 +457,18 @@
 /***********
  Key Frames
 ***********/
-@keyframes drag_animation {
+@keyframes training_plan_drag_animation {
   100% {
     background-color: rgba(255, 255, 255, 0.15);
     filter: blur(1px);
+  }
+}
+@keyframes bar_drag_animation {
+  0% {
+    background-color: #52cf20;
+  }
+  100% {
+    background-color: rgba(82, 207, 32, 0.8);
   }
 }
 @keyframes training_plan_error_animation {

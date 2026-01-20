@@ -307,6 +307,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Drop Zone On Bars In The Bar Container
         if(event.target.classList.contains("bar")) {
+            // Removes Animation From All Of The Bars Except Of The Dragged One
+            bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
+                if(one_bar !== training_plan_dragged_bar) {
+                    one_bar.classList.remove("animate") // Removes Drag Animation
+                }
+            })
+
             const dropped_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Bar From The Bar Container Where The Dragged Bar Was Dropped
             changeTrainingPlanExercisePosition(dropped_bar_index) // Changes Training Plan Exercise Position By Position Of Bars In The Bar Container
         }
@@ -423,12 +430,23 @@ document.addEventListener("DOMContentLoaded", function() {
         // Training Plan Exercises Drag With Bars Functionality
         if(event.target.classList.contains("bar")) {
             training_plan_dragged_bar = event.target // Sets Training Plan Dragged Bar
+
+            // Animates All Of The Bars Except Of The Dragged One
+            bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
+                if(one_bar !== training_plan_dragged_bar) {
+                    one_bar.classList.add("animate") // Adds Drag Animation
+                }
+            })
         }
     })
 
     training_plan.addEventListener("dragend", function(event) {
         training_plan_dragged_exercise = null // Deletes Training Plan Dragged Exercise
         training_plan_dragged_bar = null // Deletes Training Plan Dragged Bar
+
+        bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
+            one_bar.classList.remove("animate") // Removes Drag Animation
+        })
     })
 
     // Training Plan Container Drop Zone Functionality (Remove The Exercise From The Training Plan)
@@ -501,9 +519,11 @@ document.addEventListener("DOMContentLoaded", function() {
             return !one_exercise.querySelector(".exercise_name").textContent.toLocaleLowerCase().includes(search_bar.value.toLocaleLowerCase())
         })
 
-        // Hides Filtered Exercises In The Exercise Selection
+        // Hides Filtered Exercises Except Of Custom Exercise In The Exercise Selection
         filtered_exercise_selection_exercises.forEach(function(one_exercise) {
-            one_exercise.style.display = "none"
+            if(!one_exercise.classList.contains("custom_exercise")) {
+                one_exercise.style.display = "none"
+            }
         })
     }
 
