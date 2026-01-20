@@ -108,8 +108,15 @@
             </div>
 
             {% for one_exercise in exercises %}
-                <div class="exercise" draggable="true" data-unit="{{ one_exercise.unit }}">
+                <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0">
                     <p class="exercise_name">{{ one_exercise.exercise }}</p>
+
+                    <div class="weight_selection">
+                        <button class="increase_weight"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                        {% comment %} <input type="number" class="weight" value="0" min="-100" max="1000"> {% endcomment %}
+                        <p class="weight"><span>0</span><span>kg</span></p>
+                        <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    </div>
                 </div>
     
             {% endfor %}
