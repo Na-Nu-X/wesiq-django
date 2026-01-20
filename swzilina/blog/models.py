@@ -144,3 +144,4 @@ class Exercises(models.Model):
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     unit = models.CharField(verbose_name="Unit", choices=unit_choices, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
+    requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)

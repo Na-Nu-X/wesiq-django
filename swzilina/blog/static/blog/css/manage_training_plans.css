@@ -404,10 +404,11 @@
   gap: 10px;
   max-width: 500px;
   width: 100%;
-  max-height: 200px;
+  max-height: 440px;
   margin: 0px auto 50px;
   padding-right: 5px;
   text-align: center;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 .exercises_container .exercises::-webkit-scrollbar {
@@ -433,6 +434,7 @@
   transition: filter 0.3s ease;
 }
 .exercises_container .exercises .exercise {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -447,11 +449,51 @@
 .exercises_container .exercises .exercise.hidden {
   display: none !important;
 }
-.exercises_container .exercises .exercise:hover p {
+.exercises_container .exercises .exercise:hover, .exercises_container .exercises .exercise:focus {
+  outline: none;
+}
+.exercises_container .exercises .exercise:hover .exercise_name, .exercises_container .exercises .exercise:focus .exercise_name {
   filter: blur(2px);
 }
-.exercises_container .exercises .exercise p {
+.exercises_container .exercises .exercise:hover .weight_selection, .exercises_container .exercises .exercise:focus .weight_selection {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.exercises_container .exercises .exercise:hover .weight_selection .decrease_weight,
+.exercises_container .exercises .exercise:hover .weight_selection .increase_weight, .exercises_container .exercises .exercise:focus .weight_selection .decrease_weight,
+.exercises_container .exercises .exercise:focus .weight_selection .increase_weight {
+  background: none;
+  color: #fff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.exercises_container .exercises .exercise:hover .weight_selection .decrease_weight i,
+.exercises_container .exercises .exercise:hover .weight_selection .increase_weight i, .exercises_container .exercises .exercise:focus .weight_selection .decrease_weight i,
+.exercises_container .exercises .exercise:focus .weight_selection .increase_weight i {
+  pointer-events: none;
+  font-size: 1.2em;
+}
+.exercises_container .exercises .exercise:hover .weight_selection .weight, .exercises_container .exercises .exercise:focus .weight_selection .weight {
+  font-size: 2em;
+  cursor: default;
+}
+.exercises_container .exercises .exercise:hover .weight_selection .weight span, .exercises_container .exercises .exercise:focus .weight_selection .weight span {
+  font-size: inherit;
+}
+.exercises_container .exercises .exercise .exercise_name {
   transition: filter 0.3s ease;
+}
+.exercises_container .exercises .exercise .weight_selection {
+  display: none;
 }
 
 /***********
@@ -468,7 +510,7 @@
     background-color: #52cf20;
   }
   100% {
-    background-color: rgba(82, 207, 32, 0.8);
+    background-color: rgb(255, 207, 32);
   }
 }
 @keyframes training_plan_error_animation {

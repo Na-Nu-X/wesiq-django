@@ -38,12 +38,23 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Functions
 
+    function isExistingExercise() {
+        const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+        // Gets Every Exercise Which Is Already In The Training Plan
+        const existing_exercise_title = [...training_plan_exercises].filter(function(one_exercise) {
+            return one_exercise.querySelector(".title").textContent === `${selection_dragged_exercise.dataset.weight}kg ${selection_dragged_exercise.querySelector(".exercise_name").textContent}` || one_exercise.querySelector(".title").textContent === selection_dragged_exercise.querySelector(".exercise_name").textContent && selection_dragged_exercise.dataset.weight == 0
+        })
+
+        return existing_exercise_title.length === 0 ? false : true // Returns True If There Is Any Same Exercise Title
+    }
+
     function addExerciseToTrainingPlan() {
-        // Executes Only If The Dragged Element Is Selection Dragged Exercise
-        if(selection_dragged_exercise) {
+        // Executes Only If The Dragged Element Is Selection Dragged Exercise And Doesn't Already Exist In The Training Plan (Except Of The Custom Exercise)
+        if(selection_dragged_exercise && !isExistingExercise() || selection_dragged_exercise.classList.contains("custom_exercise")) {
             const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
 
-            exercise_template_clone.querySelector(".exercise .title").textContent = selection_dragged_exercise.querySelector(".exercise_name").textContent // Sets Exercise Name
+            selection_dragged_exercise.dataset.weight == 0 ? exercise_template_clone.querySelector(".exercise .title").textContent = selection_dragged_exercise.querySelector(".exercise_name").textContent : exercise_template_clone.querySelector(".exercise .title").textContent = `${selection_dragged_exercise.dataset.weight}kg ${selection_dragged_exercise.querySelector(".exercise_name").textContent}` // Sets Exercise Name With Added Or Subtracted Weight Value
 
             // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
             exercise_template_clone.querySelector(".labels .unit_amount").dataset.unit = selection_dragged_exercise.dataset.unit
@@ -68,7 +79,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             training_plan.appendChild(exercise_template_clone) // Appends Exercise To The Training Plan
 
-            if(!selection_dragged_exercise.classList.contains("custom_exercise")) selection_dragged_exercise.classList.add("hidden") // Hides Dragged Exercise From The Selection (Doesn't Hide Custom Exercise)
+            // Hides Dragged Exercise From The Selection (Doesn't Hide Custom Exercise And Exercises With Changed Weight Values)
+            // if(!selection_dragged_exercise.classList.contains("custom_exercise") && selection_dragged_exercise.dataset.weight == 0) {
+            //     selection_dragged_exercise.classList.add("hidden")
+            // }
 
             changeTrainingPlanSlides() // Changes Slides In The Training Plan
         }
@@ -546,6 +560,18 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBar() // Refreshes Exercise Selection Exercises (Refreshes Search Bar Results)
     }
 
+    function changeWeight(exercise_name, operation) {
+        const current_weight = exercise_name.dataset.weight // Gets Current Added Or Subtracted Weight
+        const weight = exercise_name.querySelector(".weight_selection .weight span:first-child") // Gets Weight Print
+
+        let current_weight_number = parseInt(current_weight) // Converts Current Weight Into Number Format
+
+        operation === "increase" ? current_weight_number += 1 : current_weight_number -= 1 // Increases Or Decreases Weight Value Based On The Operation
+
+        exercise_name.dataset.weight = current_weight_number // Updates Current Weight Value In Exercise
+        weight.textContent = current_weight_number // Shows Weight Value In The Input
+    }
+
     // Events
 
     // Exercise Selection Search Bar Functionality
@@ -563,10 +589,24 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         
         // Add Exercise To The Training Plan On Double Click
-        one_exercise.addEventListener("dblclick", function() {
-            selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
-            addExerciseToTrainingPlan() // Adds Dragged Exercise From Exercise Selection To The Training Plan
-            selection_dragged_exercise = null // Deletes Selection Dragged Exercise
+        one_exercise.addEventListener("dblclick", function(event) {
+            // Executes Only If The Click Is Outside The Increase Weight Button, Decrease Weight Button And Weight Print
+            if(!event.target.classList.contains("increase_weight") && !event.target.classList.contains("decrease_weight") && !event.target.parentNode.classList.contains("weight")) {
+                selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
+                addExerciseToTrainingPlan() // Adds Dragged Exercise From Exercise Selection To The Training Plan
+                selection_dragged_exercise = null // Deletes Selection Dragged Exercise
+            }
+        })
+
+        // Increase And Decrease Weight Functionality
+        one_exercise.addEventListener("click", function(event) {
+            if(event.target.classList.contains("increase_weight")) {
+                changeWeight(one_exercise, "increase") // Increases Weight
+            }
+
+            if(event.target.classList.contains("decrease_weight")) {
+                changeWeight(one_exercise, "decrease") // Decreases Weight
+            }
         })
     })
 })
