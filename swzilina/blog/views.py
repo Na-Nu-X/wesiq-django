@@ -1181,7 +1181,7 @@ def manageTrainingPlansView(request):
 
             return JsonResponse({"success": "Training Plan Has Been Saved."})
 
-    exercises = Exercises.objects.all() # Gets All Exercises
+    exercises = Exercises.objects.all().order_by("exercise") # Gets All Exercises
 
     return render(request, "blog/manage_training_plans.html", {
         "exercises": exercises,
