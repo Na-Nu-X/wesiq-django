@@ -77,13 +77,13 @@
                     <div class="exercise" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}">
                         <h3>{{ one_exercise.exercise }}</h3>
 
-                        <p class="reps" data-periods="{{ one_exercise.periods }}">
+                        <p class="reps" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}">
                             {% if one_exercise.periods.0 == 0 %}
                                 Do zlyhania
 
                             {% else %}
-                                {{ one_exercise.periods.0 }}x
-                            
+                                {{ one_exercise.periods.0 }}{% if one_exercise.unit == "reps" %}x{% elif one_exercise.unit == "seconds" %}s{% endif %}
+
                             {% endif %}
                         </p>
 

@@ -45,6 +45,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
             exercise_template_clone.querySelector(".exercise .title").textContent = selection_dragged_exercise.querySelector(".exercise_name").textContent // Sets Exercise Name
 
+            // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
+            exercise_template_clone.querySelector(".labels .unit_amount").dataset.unit = selection_dragged_exercise.dataset.unit
+
+            if(selection_dragged_exercise.dataset.unit === "reps") {
+                exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet opakovaní"
+            }
+
+            if(selection_dragged_exercise.dataset.unit === "seconds") {
+                exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet sekúnd"
+            }
+
             // Checks If Selection Dragged Exercise Is Custom Exercise
             if(selection_dragged_exercise.classList.contains("custom_exercise")) {
                 // Creates Exercise Title Input
@@ -234,6 +245,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
 
+                const exercise_unit = one_exercise.querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
+
                 // Creates Object Of One Exercise For New Saved Training Plan
                 const new_training_plan_object = {}
 
@@ -253,6 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 new_training_plan_object.type = training_plan_title.value
                 new_training_plan_object.exercise = exercise_name
                 new_training_plan_object.periods = periods
+                new_training_plan_object.unit = exercise_unit
                 new_training_plan_object.order = [...training_plan_exercises].indexOf(one_exercise) + 1
 
                 new_training_plan_data.push(new_training_plan_object) // Fills New Training Plan Data Array With Objects Of Exercises

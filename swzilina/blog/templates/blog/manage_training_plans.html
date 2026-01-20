@@ -46,7 +46,7 @@
                     <h3 class="title"></h3>
                     
                     <div class="labels">
-                        <p>Počet opakovaní</p>
+                        <p class="unit_amount"></p>
                         <p>Počet sérií</p>
                     </div>
 
@@ -108,7 +108,7 @@
             </div>
 
             {% for one_exercise in exercises %}
-                <div class="exercise" draggable="true" data-id="{{ one_exercise.id }}">
+                <div class="exercise" draggable="true" data-unit="{{ one_exercise.unit }}">
                     <p class="exercise_name">{{ one_exercise.exercise }}</p>
                 </div>
     

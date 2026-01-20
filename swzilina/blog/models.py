@@ -115,6 +115,11 @@ class ArticleForum(models.Model):
     reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users"), default=list, null=False)
 
 class TrainingPlan(models.Model):
+    unit_choices = [
+        ("reps", "reps"),
+        ("seconds", "seconds"),
+    ]
+
     user = models.ForeignKey(
         Users,
         verbose_name="User ID",
@@ -127,8 +132,15 @@ class TrainingPlan(models.Model):
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=[0], null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
+    unit = models.CharField(verbose_name="Unit", choices=unit_choices, default="reps", null=False)
     order = models.IntegerField(verbose_name="Order", default=0, null=False)
 
 class Exercises(models.Model):
+    unit_choices = [
+        ("reps", "reps"),
+        ("seconds", "seconds"),
+    ]
+
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
+    unit = models.CharField(verbose_name="Unit", choices=unit_choices, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
