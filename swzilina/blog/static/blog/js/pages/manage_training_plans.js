@@ -38,15 +38,46 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Functions
 
+    // Checks If Selection Dragged Exercise Is Already In The Training Plan
     function isExistingExercise() {
         const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
         // Gets Every Exercise Which Is Already In The Training Plan
         const existing_exercise_title = [...training_plan_exercises].filter(function(one_exercise) {
-            return one_exercise.querySelector(".title").textContent === `${selection_dragged_exercise.dataset.weight}kg ${selection_dragged_exercise.querySelector(".exercise_name").textContent}` || one_exercise.querySelector(".title").textContent === selection_dragged_exercise.querySelector(".exercise_name").textContent && selection_dragged_exercise.dataset.weight == 0
+            const exercise_title = one_exercise.querySelector(".title").textContent // Gets Title Of The Exercise In The Training Plan
+            const selection_dragged_exercise_name = selection_dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+            const selection_dragged_exercise_weight = selection_dragged_exercise.dataset.weight // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+
+            // Checks All The Combinations Of Exercise Title Formats
+            return (
+                exercise_title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
+
+                exercise_title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
+
+                exercise_title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
+
+                exercise_title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` // For Example: Front Lever -10kg
+            )
         })
 
         return existing_exercise_title.length === 0 ? false : true // Returns True If There Is Any Same Exercise Title
+    }
+
+    // Creates Exercise Title With Combination Of Exercise Name And Added Or Subtracted Weight Of The Dragged Exercise
+    function createExerciseTitle(exercise_name, exercise_weight) {
+        if(selection_dragged_exercise.classList.contains("custom_exercise")) return // Skips Custom Exercise
+
+        // Formats Exercise Title
+        if(exercise_weight != 0) {
+            // Returns Title With Appended Weight If The Exercise Doesn't Require Weight
+            if(selection_dragged_exercise.dataset.requires_weight == "False") {
+                return exercise_weight > 0 ? `${exercise_name} +${exercise_weight}kg` : `${exercise_name} ${exercise_weight}kg` // Returns Plus Symbol Before Weight Value If The Weigh Is A Positive Number
+            }
+
+            return `${exercise_weight}kg ${exercise_name}` // Returns Title With Prepended Weight If The Exercise Requires Weight
+        }
+
+        return exercise_name // Returns Unchanged Exercise Title If The Weight Is Set On 0
     }
 
     function addExerciseToTrainingPlan() {
@@ -54,7 +85,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if(selection_dragged_exercise && !isExistingExercise() || selection_dragged_exercise.classList.contains("custom_exercise")) {
             const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
 
-            selection_dragged_exercise.dataset.weight == 0 ? exercise_template_clone.querySelector(".exercise .title").textContent = selection_dragged_exercise.querySelector(".exercise_name").textContent : exercise_template_clone.querySelector(".exercise .title").textContent = `${selection_dragged_exercise.dataset.weight}kg ${selection_dragged_exercise.querySelector(".exercise_name").textContent}` // Sets Exercise Name With Added Or Subtracted Weight Value
+            const selection_dragged_exercise_name = selection_dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+            const selection_dragged_exercise_weight = selection_dragged_exercise.dataset.weight // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+
+            exercise_template_clone.querySelector(".exercise .title").textContent = createExerciseTitle(selection_dragged_exercise_name, selection_dragged_exercise_weight) // Sets Formatted Title Value To The Exercise Title
 
             // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
             exercise_template_clone.querySelector(".labels .unit_amount").dataset.unit = selection_dragged_exercise.dataset.unit
@@ -560,15 +594,17 @@ document.addEventListener("DOMContentLoaded", function() {
         searchBar() // Refreshes Exercise Selection Exercises (Refreshes Search Bar Results)
     }
 
-    function changeWeight(exercise_name, operation) {
-        const current_weight = exercise_name.dataset.weight // Gets Current Added Or Subtracted Weight
-        const weight = exercise_name.querySelector(".weight_selection .weight span:first-child") // Gets Weight Print
+    function changeWeight(exercise, operation) {
+        const current_weight = exercise.dataset.weight // Gets Current Added Or Subtracted Weight
+        const weight = exercise.querySelector(".weight_selection .weight span:first-child") // Gets Weight Print
 
         let current_weight_number = parseInt(current_weight) // Converts Current Weight Into Number Format
 
+        if(exercise.dataset.requires_weight == "True" && operation === "decrease" && current_weight_number <= 0) return // Can't Get Negative Number If The Exercise Has Required Weight
+
         operation === "increase" ? current_weight_number += 1 : current_weight_number -= 1 // Increases Or Decreases Weight Value Based On The Operation
 
-        exercise_name.dataset.weight = current_weight_number // Updates Current Weight Value In Exercise
+        exercise.dataset.weight = current_weight_number // Updates Current Weight Value In Exercise
         weight.textContent = current_weight_number // Shows Weight Value In The Input
     }
 
