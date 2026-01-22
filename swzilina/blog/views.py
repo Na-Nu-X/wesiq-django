@@ -1186,5 +1186,5 @@ def manageTrainingPlansView(request):
 
     return render(request, "blog/manage_training_plans.html", {
         "exercises": exercises,
-        "training_plan": training_plan,
+        # "training_plan": training_plan,
     })
