@@ -22,3 +22,13 @@ export function getFormattedTime(unit="seconds", elapsed_seconds=0, leading_zero
         return leading_zero === true ? "00" : "0" // Default Values
     }
 }
+
+// Function For Formatting Time To Minimalist Format
+export function getMinimalistFormattedTime(elapsed_time) {
+    // For Example Converts 3600 To 1h
+    return (
+        `${getFormattedTime("hours", elapsed_time) !== 0 ? getFormattedTime("hours", elapsed_time) + "h" : ""}
+        ${getFormattedTime("minutes", elapsed_time) !== 0 ? getFormattedTime("minutes", elapsed_time) + "m" : ""}
+        ${getFormattedTime("seconds", elapsed_time) !== 0 ? getFormattedTime("seconds", elapsed_time) + "s" : ""}`
+    )
+}

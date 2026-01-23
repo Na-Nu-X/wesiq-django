@@ -284,13 +284,16 @@
   position: relative;
   margin-right: 5px;
 }
-.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .to_failure {
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .to_failure, .training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .time {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   height: 100%;
   line-height: 30px;
+}
+.training_plan_container .training_plan .exercise .periods_container .period_selection .reps_container .time {
+  visibility: hidden;
 }
 .training_plan_container .training_plan .progress_bar {
   position: relative;
