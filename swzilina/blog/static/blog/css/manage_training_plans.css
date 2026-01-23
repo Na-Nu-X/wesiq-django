@@ -155,6 +155,22 @@
   top: 0px;
   transform: translateX(100%);
 }
+.training_plan_container .training_plan .exercise .exercise_title_input {
+  width: 400px;
+  text-align: center;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: "Balsamiq Sans", sans-serif;
+  font-size: 2em;
+}
+.training_plan_container .training_plan .exercise .exercise_title_input::-moz-placeholder {
+  color: #999999;
+}
+.training_plan_container .training_plan .exercise .exercise_title_input::placeholder {
+  color: #999999;
+}
 .training_plan_container .training_plan .exercise .title {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;

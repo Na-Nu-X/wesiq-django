@@ -35,52 +35,62 @@ document.addEventListener("DOMContentLoaded", function() {
     const exercise_selection_container = document.querySelector(".exercises_container") // Gets Exercise Selection Container
 
     const exercise_selection_exercises = exercise_selection_container.querySelectorAll(".exercises .exercise") // Gets All Exercise From The Exercise Selection
+
+    // Hold Button Events
+    let hold_interval = null
+    let hold_timeout = null
+
+    const HOLD_INTERVAL_SPEED = 100 // 10-Times Per Second
+    const HOLD_START_DELAY = 250 // Starts Hold Interval After 250MS Of Hold Time, Everything Above Is Just A Click
+
+    function stopHold() {
+        clearInterval(hold_interval)
+        clearTimeout(hold_timeout)
+    }
     
     // Functions
 
-    // Checks If Selection Dragged Exercise Is Already In The Training Plan
-    function isExistingExercise() {
-        const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+    function addExerciseToTrainingPlan() {
+        // Checks If Selection Dragged Exercise Is Already In The Training Plan
+        function isExistingExercise() {
+            const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
-        // Gets Every Exercise Which Is Already In The Training Plan
-        const existing_exercise_title = [...training_plan_exercises].filter(function(one_exercise) {
-            const exercise_title = one_exercise.querySelector(".title").textContent // Gets Title Of The Exercise In The Training Plan
-            const selection_dragged_exercise_name = selection_dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
-            const selection_dragged_exercise_weight = selection_dragged_exercise.dataset.weight // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+            // Returns True If The Exercise Is Already In The Training Plan
+            return [...training_plan_exercises].some(function(one_exercise) {
+                const exercise_title = one_exercise.querySelector(".title").textContent // Gets Title Of The Exercise In The Training Plan
+                const selection_dragged_exercise_name = selection_dragged_exercise.querySelector(".exercise_name").textContent // Gets Dragged Exercise Name
+                const selection_dragged_exercise_weight = selection_dragged_exercise.dataset.weight // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
 
-            // Checks All The Combinations Of Exercise Title Formats
-            return (
-                exercise_title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
+                // Checks All The Combinations Of Exercise Title Formats
+                return (
+                    exercise_title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
 
-                exercise_title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
+                    exercise_title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
 
-                exercise_title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
+                    exercise_title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
 
-                exercise_title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` // For Example: Front Lever -10kg
-            )
-        })
-
-        return existing_exercise_title.length === 0 ? false : true // Returns True If There Is Any Same Exercise Title
-    }
-
-    // Creates Exercise Title With Combination Of Exercise Name And Added Or Subtracted Weight Of The Dragged Exercise
-    function createExerciseTitle(exercise_name, exercise_weight) {
-        if(selection_dragged_exercise.classList.contains("custom_exercise")) return // Skips Custom Exercise
-
-        // Formats Exercise Title
-        if(exercise_weight != 0) {
-            // Returns Title With Appended Weight If The Exercise Doesn't Require Weight
-            if(selection_dragged_exercise.dataset.requires_weight == "False") {
-                return exercise_weight > 0 ? `${exercise_name} +${exercise_weight}kg` : `${exercise_name} ${exercise_weight}kg` // Returns Plus Symbol Before Weight Value If The Weigh Is A Positive Number
-            }
-
-            return `${exercise_weight}kg ${exercise_name}` // Returns Title With Prepended Weight If The Exercise Requires Weight
+                    exercise_title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` // For Example: Front Lever -10kg
+                )
+            })
         }
 
-        return exercise_name // Returns Unchanged Exercise Title If The Weight Is Set On 0
-    }
+        // Creates Exercise Title With Combination Of Exercise Name And Added Or Subtracted Weight Of The Dragged Exercise
+        function createExerciseTitle(exercise_name, exercise_weight) {
+            if(selection_dragged_exercise.classList.contains("custom_exercise")) return // Skips Custom Exercise
 
-    function addExerciseToTrainingPlan() {
+            // Formats Exercise Title
+            if(exercise_weight != 0) {
+                // Returns Title With Appended Weight If The Exercise Doesn't Require Weight
+                if(selection_dragged_exercise.dataset.requires_weight == "False") {
+                    return exercise_weight > 0 ? `${exercise_name} +${exercise_weight}kg` : `${exercise_name} ${exercise_weight}kg` // Returns Plus Symbol Before Weight Value If The Weigh Is A Positive Number
+                }
+
+                return `${exercise_weight}kg ${exercise_name}` // Returns Title With Prepended Weight If The Exercise Requires Weight
+            }
+
+            return exercise_name // Returns Unchanged Exercise Title If The Weight Is Set On 0
+        }
+
         // Executes Only If The Dragged Element Is Selection Dragged Exercise And Doesn't Already Exist In The Training Plan (Except Of The Custom Exercise)
         if(selection_dragged_exercise && !isExistingExercise() || selection_dragged_exercise.classList.contains("custom_exercise")) {
             const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
@@ -101,12 +111,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet sekúnd"
             }
 
-            // Checks If Selection Dragged Exercise Is Custom Exercise
+            // Adds Custom Exercise To The Training Plan
             if(selection_dragged_exercise.classList.contains("custom_exercise")) {
                 // Creates Exercise Title Input
                 const exercise_title_input = document.createElement("input")
+
                 exercise_title_input.classList.add("exercise_title_input")
                 exercise_title_input.type = "text"
+                exercise_title_input.placeholder = "Pridajte názov cviku"
 
                 exercise_template_clone.querySelector(".exercise").prepend(exercise_title_input) // Prepends Exercise Title Input
             }
@@ -326,6 +338,76 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function changeReps(button, operation) {
+        const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+        const to_failure = button.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
+        let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+
+        if(operation === "decrease") {
+            reps.style.visibility = "visible" // Shows Reps Input
+            to_failure.style.visibility = "hidden" // Hides To Failure Text
+            
+            reps_number -= 1 // Decreases Reps Amount By 1
+
+            if(reps_number === 0) {
+                reps.style.visibility = "hidden" // Hides Reps Input
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+            }
+
+            if(reps_number < 0) {
+                reps.style.visibility = "hidden" // Hides Reps Input
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+                return // Do Nothing
+            }
+
+            reps.value = reps_number // Updates Exercise Reps Amount
+        }
+
+        if(operation === "increase") {
+            const exercise_unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
+
+            reps_number += 1 // Increases Reps Amount By 1
+
+            // Sets Maximum Value For Each Exercise Unit Type
+            if(exercise_unit === "reps") {
+                if(reps_number > 100) return // Do Nothing
+            }
+
+            if(exercise_unit === "seconds") {
+                if(reps_number > 3600) return // Do Nothing
+            }
+
+            reps.style.visibility = "visible" // Shows Reps Input
+            to_failure.style.visibility = "hidden" // Hides To Failure Text
+            reps.value = reps_number // Updates Exercise Reps Amount
+        }
+    }
+
+    function changeSets(button, operation) {
+        const sets = button.closest(".sets_container").querySelector(".sets") // Gets Reps Input
+        let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
+
+        if(operation === "decrease") {
+            sets_number -= 1 // Decreases Sets Amount By 1
+
+            // DELETE PERIOD
+            if(sets_number === 0 && button.closest(".exercise").querySelectorAll(".period_selection").length > 1) {
+                button.closest(".period_selection").remove() // Removes Period Selection From DOM
+            }
+
+            if(sets_number < 1) return // Do Nothing
+
+            sets.value = sets_number // Updates Exercise Sets Amount
+        }
+
+        if(operation === "increase") {
+            sets_number += 1 // Increases Sets Amount By 1
+
+            if(sets_number > 100) return // Do Nothing
+            sets.value = sets_number // Updates Exercise Sets Amount
+        }
+    }
+
     // Global Event Delegations
 
     // Training Plan Drop Zone Functionality
@@ -403,74 +485,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
             addPeriod(clicked_add_period_exercise) // Adds Period For Given Exercise
         }
-
-        // Add Decrease Exercise Reps Functionality
-        if(event.target.classList.contains("decrease_reps")) {
-            const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
-            const to_failure = event.target.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
-            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
-
-            reps.style.visibility = "visible" // Shows Reps Input
-            to_failure.style.visibility = "hidden" // Hides To Failure Text
-            
-            reps_number -= 1 // Decreases Reps Amount By 1
-
-            if(reps_number === 0) {
-                reps.style.visibility = "hidden" // Hides Reps Input
-                to_failure.style.visibility = "visible" // Shows To Failure Text
-            }
-
-            if(reps_number < 0) {
-                reps.style.visibility = "hidden" // Hides Reps Input
-                to_failure.style.visibility = "visible" // Shows To Failure Text
-                return // Do Nothing
-            }
-
-            reps.value = reps_number // Updates Exercise Reps Amount
-        }
-
-        // Add Increase Exercise Reps Functionality
-        if(event.target.classList.contains("increase_reps")) {
-            const reps = event.target.closest(".reps_container").querySelector(".reps") // Gets Reps Input
-            const to_failure = event.target.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
-            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
-
-            reps_number += 1 // Increases Reps Amount By 1
-
-            if(reps_number > 100) return // Do Nothing
-
-            reps.style.visibility = "visible" // Shows Reps Input
-            to_failure.style.visibility = "hidden" // Hides To Failure Text
-            reps.value = reps_number // Updates Exercise Reps Amount
-        }
-
-        // Add Decrease Exercise Sets Functionality
-        if(event.target.classList.contains("decrease_sets")) {
-            const sets = event.target.closest(".sets_container").querySelector(".sets") // Gets Reps Input
-            let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
-
-            sets_number -= 1 // Decreases Sets Amount By 1
-
-            // DELETE PERIOD
-            if(sets_number === 0 && event.target.closest(".exercise").querySelectorAll(".period_selection").length > 1) {
-                event.target.closest(".period_selection").remove() // Removes Period Selection From DOM
-            }
-
-            if(sets_number < 1) return // Do Nothing
-
-            sets.value = sets_number // Updates Exercise Sets Amount
-        }
-
-        // Add Increase Exercise Sets Functionality
-        if(event.target.classList.contains("increase_sets")) {
-            const sets = event.target.closest(".sets_container").querySelector(".sets") // Gets Reps Input
-            let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
-
-            sets_number += 1 // Increases Sets Amount By 1
-
-            if(sets_number > 100) return // Do Nothing
-            sets.value = sets_number // Updates Exercise Sets Amount
-        }
     })
 
     // Removes Exercise From The Training Plan On Double Click
@@ -481,6 +495,61 @@ document.addEventListener("DOMContentLoaded", function() {
             training_plan_dragged_exercise = null // Deletes Training Plan Dragged Exercise
         }
     })
+
+    // Increase And Decrease Sets & Reps Functionality
+    training_plan.addEventListener("pointerdown", function(event) {
+        // Add Decrease Exercise Reps Functionality
+        if(event.target.classList.contains("decrease_reps")) {
+            changeReps(event.target, "decrease")
+
+            // Decreases Amount Of Reps On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeReps(event.target, "decrease")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Increase Exercise Reps Functionality
+        if(event.target.classList.contains("increase_reps")) {
+            changeReps(event.target, "increase")
+
+            // Increases Amount Of Reps On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeReps(event.target, "increase")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Decrease Exercise Sets Functionality
+        if(event.target.classList.contains("decrease_sets")) {
+            changeSets(event.target, "decrease")
+
+            // Decreases Amount Of Sets On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeSets(event.target, "decrease")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Increase Exercise Sets Functionality
+        if(event.target.classList.contains("increase_sets")) {
+            changeSets(event.target, "increase")
+
+            // Increases Amount Of Sets On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeSets(event.target, "increase")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+    })
+
+    training_plan.addEventListener("pointerup", stopHold)
+    training_plan.addEventListener("pointercancel", stopHold)
+    training_plan.addEventListener("pointerleave", stopHold)
 
     // Training Plan Drag Start Events
     training_plan.addEventListener("dragstart", function(event) {
@@ -635,14 +704,34 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         // Increase And Decrease Weight Functionality
-        one_exercise.addEventListener("click", function(event) {
+        one_exercise.addEventListener("pointerdown", function(event) {
+            // Increase Weight
             if(event.target.classList.contains("increase_weight")) {
                 changeWeight(one_exercise, "increase") // Increases Weight
+
+                // Increases Weight On Hold
+                hold_timeout = setTimeout(function() {
+                    hold_interval = setInterval(function() {
+                        changeWeight(one_exercise, "increase")
+                    }, HOLD_INTERVAL_SPEED)
+                }, HOLD_START_DELAY)
             }
 
+            // Decrease Weight
             if(event.target.classList.contains("decrease_weight")) {
                 changeWeight(one_exercise, "decrease") // Decreases Weight
+
+                // Decreases Weight On Hold
+                hold_timeout = setTimeout(function() {
+                    hold_interval = setInterval(function() {
+                        changeWeight(one_exercise, "decrease")
+                    }, HOLD_INTERVAL_SPEED)
+                }, HOLD_START_DELAY)
             }
         })
+
+        one_exercise.addEventListener("pointerup", stopHold)
+        one_exercise.addEventListener("pointercancel", stopHold)
+        one_exercise.addEventListener("pointerleave", stopHold)
     })
 })
