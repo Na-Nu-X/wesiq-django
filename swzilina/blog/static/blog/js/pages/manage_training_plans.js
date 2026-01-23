@@ -1,4 +1,5 @@
 import { sendPOST } from "../services/sendPOST.js"
+import { getMinimalistFormattedTime } from "../utils/timer.js"
 
 "use strict"
 
@@ -339,45 +340,63 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function changeReps(button, operation) {
+        const exercise_unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
         const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
         const to_failure = button.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
+        const time = button.closest(".reps_container").querySelector(".time") // Gets Time Text
         let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
         if(operation === "decrease") {
-            reps.style.visibility = "visible" // Shows Reps Input
-            to_failure.style.visibility = "hidden" // Hides To Failure Text
-            
             reps_number -= 1 // Decreases Reps Amount By 1
 
-            if(reps_number === 0) {
-                reps.style.visibility = "hidden" // Hides Reps Input
-                to_failure.style.visibility = "visible" // Shows To Failure Text
-            }
-
             if(reps_number < 0) {
-                reps.style.visibility = "hidden" // Hides Reps Input
-                to_failure.style.visibility = "visible" // Shows To Failure Text
                 return // Do Nothing
             }
 
+            if(reps_number === 0) {
+                reps.style.visibility = "hidden" // Hides Reps Input
+                time.style.visibility = "hidden" // Hides Time Text
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+            }
+
+            else {
+                // Checks Exercise Unit Type
+                if(exercise_unit === "reps") {
+                    reps.style.visibility = "visible" // Shows Reps Input
+                }
+
+                if(exercise_unit === "seconds") {
+                    time.style.visibility = "visible" // Shows Time Text
+                    reps.style.visibility = "hidden" // Hides Reps Input
+                    
+                    time.textContent = getMinimalistFormattedTime(reps_number)
+                }
+                
+                to_failure.style.visibility = "hidden" // Hides To Failure Text
+            }
+            
             reps.value = reps_number // Updates Exercise Reps Amount
         }
 
         if(operation === "increase") {
-            const exercise_unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
-
             reps_number += 1 // Increases Reps Amount By 1
 
-            // Sets Maximum Value For Each Exercise Unit Type
+            // Checks Exercise Unit Type
             if(exercise_unit === "reps") {
                 if(reps_number > 100) return // Do Nothing
+
+                reps.style.visibility = "visible" // Shows Reps Input
             }
 
             if(exercise_unit === "seconds") {
                 if(reps_number > 3600) return // Do Nothing
+
+                time.style.visibility = "visible" // Shows Time Text
+                reps.style.visibility = "hidden" // Hides Reps Input
+
+                time.textContent = getMinimalistFormattedTime(reps_number)
             }
 
-            reps.style.visibility = "visible" // Shows Reps Input
             to_failure.style.visibility = "hidden" // Hides To Failure Text
             reps.value = reps_number // Updates Exercise Reps Amount
         }
