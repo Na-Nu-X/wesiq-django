@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let hold_interval = null
     let hold_timeout = null
 
-    const HOLD_INTERVAL_SPEED = 100 // 10-Times Per Second
+    const HOLD_INTERVAL_SPEED = 50 // 20-Times Per Second
     const HOLD_START_DELAY = 250 // Starts Hold Interval After 250MS Of Hold Time, Everything Above Is Just A Click
 
     function stopHold() {
@@ -351,6 +351,35 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function updateUnitTypes(unit) {
+        const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+        const all_reps_inputs = training_plan_exercises[active_training_plan_exercise_index].querySelectorAll(".periods_container .reps") // Gets All Reps Inputs From The Active Exercise
+
+        // Updates Unit Type For Every Reps Container
+        all_reps_inputs.forEach(function(one_input) {
+            const reps = one_input.closest(".reps_container").querySelector(".reps") // Gets Reps Input
+            const time = one_input.closest(".reps_container").querySelector(".time") // Gets Time Text
+            let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+
+            reps.style.visibility = "hidden" // Hides Reps Input
+            time.style.visibility = "hidden" // Hides Time Text
+
+            if(unit === "reps") {
+                if(reps_number > 100) {
+                    reps.value = 100 // Sets The Maximum Value For The Amount Of Reps
+                }
+
+                reps.style.visibility = "visible" // Shows Reps Input
+            }
+
+            if(unit === "seconds") {
+                time.style.visibility = "visible" // Shows Time Text
+                time.textContent = getMinimalistFormattedTime(reps_number)
+            }
+        })
+    }
+
     function changeReps(button, operation) {
         const exercise_unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
         const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
@@ -358,7 +387,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const time = button.closest(".reps_container").querySelector(".time") // Gets Time Text
         let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
-        console.log(exercise_unit)
+        reps.style.visibility = "hidden" // Hides Reps Input
+        time.style.visibility = "hidden" // Hides Time Text
 
         if(operation === "decrease") {
             reps_number -= 1 // Decreases Reps Amount By 1
@@ -368,8 +398,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             if(reps_number === 0) {
-                reps.style.visibility = "hidden" // Hides Reps Input
-                time.style.visibility = "hidden" // Hides Time Text
                 to_failure.style.visibility = "visible" // Shows To Failure Text
             }
 
@@ -381,8 +409,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 if(exercise_unit === "seconds") {
                     time.style.visibility = "visible" // Shows Time Text
-                    reps.style.visibility = "hidden" // Hides Reps Input
-                    
                     time.textContent = getMinimalistFormattedTime(reps_number)
                 }
                 
@@ -397,16 +423,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Checks Exercise Unit Type
             if(exercise_unit === "reps") {
-                if(reps_number > 100) return // Do Nothing
-
                 reps.style.visibility = "visible" // Shows Reps Input
+
+                if(reps_number > 100) return // Do Nothing
             }
 
             if(exercise_unit === "seconds") {
-                if(reps_number > 3600) return // Do Nothing
-
                 time.style.visibility = "visible" // Shows Time Text
-                reps.style.visibility = "hidden" // Hides Reps Input
+
+                if(reps_number > 3600) return // Do Nothing
 
                 time.textContent = getMinimalistFormattedTime(reps_number)
             }
@@ -546,6 +571,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
                 }
+
+                updateUnitTypes(clicked_option.dataset.unit_option) // Updates Unit Type For Every Reps Container
             }
         }
     })
