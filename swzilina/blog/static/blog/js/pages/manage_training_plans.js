@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const exercise_template = training_plan.querySelector(".exercise_template") // Gets Training Plan Exercise Template
     const period_selection_template = training_plan.querySelector(".period_selection_template")
+    const unit_select_menu_template = training_plan.querySelector(".unit_select_menu_template")
 
     let active_training_plan_exercise_index = 0 // Stores Index Of Active Exercise In Training Plan
 
@@ -92,6 +93,24 @@ document.addEventListener("DOMContentLoaded", function() {
             return exercise_name // Returns Unchanged Exercise Title If The Weight Is Set On 0
         }
 
+        function addCustomExerciseToTrainingPlan(exercise) {
+            // Creates Exercise Title Input
+            const exercise_title_input = document.createElement("input")
+
+            exercise_title_input.classList.add("exercise_title_input")
+            exercise_title_input.type = "text"
+            exercise_title_input.placeholder = "Pridajte názov cviku"
+
+            exercise.prepend(exercise_title_input) // Prepends Exercise Title Input
+
+            // Creates Custom Unit Select Menu
+            const unit_select_menu_template_clone = unit_select_menu_template.content.cloneNode(true) // Clones The Custom Unit Select Template Content
+
+            exercise.querySelector(".labels").prepend(unit_select_menu_template_clone) // Prepends Custom Unit Select To The Exercise Labels
+
+            exercise.querySelector(".labels .unit_amount").style.display = "none" // Hides Unit Amount Label
+        }
+
         // Executes Only If The Dragged Element Is Selection Dragged Exercise And Doesn't Already Exist In The Training Plan (Except Of The Custom Exercise)
         if(selection_dragged_exercise && !isExistingExercise() || selection_dragged_exercise.classList.contains("custom_exercise")) {
             const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
@@ -114,14 +133,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Adds Custom Exercise To The Training Plan
             if(selection_dragged_exercise.classList.contains("custom_exercise")) {
-                // Creates Exercise Title Input
-                const exercise_title_input = document.createElement("input")
-
-                exercise_title_input.classList.add("exercise_title_input")
-                exercise_title_input.type = "text"
-                exercise_title_input.placeholder = "Pridajte názov cviku"
-
-                exercise_template_clone.querySelector(".exercise").prepend(exercise_title_input) // Prepends Exercise Title Input
+                addCustomExerciseToTrainingPlan(exercise_template_clone.querySelector(".exercise"))
             }
 
             training_plan.appendChild(exercise_template_clone) // Appends Exercise To The Training Plan
@@ -346,6 +358,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const time = button.closest(".reps_container").querySelector(".time") // Gets Time Text
         let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
+        console.log(exercise_unit)
+
         if(operation === "decrease") {
             reps_number -= 1 // Decreases Reps Amount By 1
 
@@ -503,6 +517,36 @@ document.addEventListener("DOMContentLoaded", function() {
             const clicked_add_period_exercise = event.target.closest(".exercise") // Gets Exercise From Training Plan Of Clicked Add Period Button
 
             addPeriod(clicked_add_period_exercise) // Adds Period For Given Exercise
+        }
+
+        // Unit Select Menu
+        if(event.target.closest(".unit_select_menu")) {
+            const unit_select_menu = event.target.closest(".unit_select_menu") // Gets Unit Select Menu
+            const unit_select = unit_select_menu.querySelector(".select") // Gets Selected Option Print
+            const unit_options_list = unit_select_menu.querySelector(".options_list") // Gets Unit Options List
+            const unit_options = unit_options_list.querySelectorAll(".option") // Gets All Unit Options
+
+            unit_options_list.classList.toggle("active")
+		    unit_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+
+            if(event.target.closest(".option")) {
+                const clicked_option = event.target.closest(".option")
+
+                unit_select_menu.dataset.unit = clicked_option.dataset.unit_option
+
+                // Remove Selected Class From Options
+                unit_options.forEach(function(one_option) {
+                    one_option.classList.remove("selected")
+                })
+
+                // Shows Current Selected Option From List Without Icon
+                if(clicked_option.dataset.unit_option === unit_select_menu.dataset.unit) {
+                    unit_select.querySelector("span").textContent = clicked_option.querySelector("span").textContent
+                    unit_select_menu.querySelector("input").value = clicked_option.querySelector("span").textContent
+
+                    clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
+                }
+            }
         }
     })
 

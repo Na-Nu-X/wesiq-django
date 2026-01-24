@@ -46,7 +46,7 @@
                     <h3 class="title"></h3>
                     
                     <div class="labels">
-                        <p class="unit_amount"></p>
+                        <p class="unit_amount">Počet opakovaní</p>
                         <p>Počet sérií</p>
                     </div>
 
@@ -60,7 +60,7 @@
                                 <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
 
                                 <p class="to_failure">Do zlyhania</p>
-                                <p class="time">00:00:00</p>
+                                <p class="time"></p>
                             </div>
 
                             <div class="sets_container">
@@ -87,6 +87,23 @@
                         <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
                         <input type="number" class="sets" value="1" min="1" max="100">
                         <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                    </div>
+                </div>
+            </template>
+
+            <template class="unit_select_menu_template">
+                <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                <div class="unit_select_menu" data-unit="reps">
+                    <input type="hidden" name="unit" value="reps">
+
+                    <div class="select">
+                        <span>Počet opakovaní</span>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+
+                    <div class="options_list">
+                        <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>Počet opakovaní</span></div> <!-- https://fontawesome.com/icons/repeat -->
+                        <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>Počet sekúnd</span></div> <!-- https://fontawesome.com/icons/clock -->
                     </div>
                 </div>
             </template>
