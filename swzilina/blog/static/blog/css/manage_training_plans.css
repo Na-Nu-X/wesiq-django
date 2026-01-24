@@ -181,6 +181,65 @@
   width: 400px;
   margin-bottom: 5px;
 }
+.training_plan_container .training_plan .exercise .labels .unit_select_menu {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0px auto;
+  background: transparent;
+  color: #fff;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .select:hover .fa-angle-down {
+  color: #ebb914;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .select span {
+  margin-left: 5px;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .select .fa-angle-down {
+  color: rgb(229.5, 229.5, 229.5);
+  transition: color 0.3s ease;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list {
+  interpolate-size: allow-keywords;
+  position: absolute;
+  width: 100%;
+  height: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: left;
+  padding: 0px 15px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0px 0px 5px 5px;
+  overflow: hidden;
+  transition: height 0.3s ease;
+  z-index: 100;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list.active {
+  height: auto;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list .option {
+  padding: 5px 0px;
+  transition: color 0.3s ease;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list .option:hover, .training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list .option.selected {
+  color: #ebb914 !important;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu .options_list .option i {
+  width: 1em;
+  margin-right: 10px;
+  color: #ebb914;
+}
+.training_plan_container .training_plan .exercise .labels .unit_select_menu:has(.select:hover) .options_list {
+  width: 100%;
+}
 .training_plan_container .training_plan .exercise .labels p {
   width: 100%;
   text-align: center;
