@@ -346,9 +346,26 @@ document.addEventListener("DOMContentLoaded", function() {
             })
 
             sendPOST("/my-training-plans", new_training_plan_data) // Sends The Data With POST
+            sendNotification(training_plan_title.value) // Sends The Notification For The User
 
             location.reload() // Reloads The Page
         }
+    }
+    
+    function sendNotification(training_plan_title) {
+        Notification.requestPermission().then(function(response) {
+            if(response === "granted") {
+                const notification = new Notification("Street Workout Žilina", {
+                    body: `Tréningový plán ${training_plan_title} bol úspešne pridaný.`,
+                    icon: "../../../static/images/favicon.png",
+                    tag: "Aktivita",
+                })
+
+                notification.addEventListener("error", function() {
+                    alert("Notifikácia sa nepodarila odoslať.")
+                })
+            }
+        })
     }
 
     function updateUnitTypes(unit) {
