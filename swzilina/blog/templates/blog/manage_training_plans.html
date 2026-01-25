@@ -143,10 +143,52 @@
     </div>
 
     <div class="all_training_plans_container">
-        
+        {% for one_exercise in training_plan %}
+            <div class="one_exercise_data" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}"></div>
+
+        {% endfor %}
+
+        <div class="training_plan">
+            <template class="exercise_template">
+                <div class="exercise" draggable="true">
+                    <h3 class="title"></h3>
+                    
+                    <div class="labels">
+                        <p class="unit_amount"></p>
+                        <p>Počet sérií</p>
+                    </div>
+
+                    <button class="add_period">Pridať sériu</button>
+
+                    <div class="periods_container"></div>
+                </div>
+            </template>
+
+            <template class="period_selection_template">
+                <div class="period_selection">
+                    <div class="reps_container">
+                        <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        <input type="number" class="reps" value="0" min="0">
+                        <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                        <p class="to_failure"></p>
+                        <p class="time"></p>
+                    </div>
+
+                    <div class="sets_container">
+                        <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        <input type="number" class="sets" value="1" min="1" max="100">
+                        <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                    </div>
+                </div>
+            </template>
+
+            <div class="progress_bar"></div>
+        </div>
     </div>
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/js/pages/manage_training_plans.js' %}" type="module"></script>
+    <script src="{% static 'blog/js/pages/manage_training_plans/create_training_plan.js' %}" type="module"></script>
+    <script src="{% static 'blog/js/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 {% endblock script %}

@@ -1119,28 +1119,26 @@ def trainingSessionView(request):
         )
         
         if request.method == "POST":
-            try:
-                gained_xp = request.POST.get("gained_xp") # Gets Gained XP From POST Data
+            new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
 
-                # Increments Gained XP For The User In The Database
-                logged_in_user.xp += int(gained_xp)
-                logged_in_user.save()
+            gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
-                # Saves New Activity To Database
-                new_activity = Activity(
-                    user_id = logged_in_user_id,
-                    formatted_elapsed_time = request.POST.get("formatted_elapsed_time"),
-                    elapsed_time = int(request.POST.get("elapsed_time")),
-                    gained_xp = int(gained_xp),
-                    type = request.POST.get("type")
-                )
+            # Increments Gained XP For The User In The Database
+            logged_in_user.xp += int(gained_xp)
+            logged_in_user.save()
 
-                new_activity.save()
+            # Saves New Activity To Database
+            new_activity = Activity(
+                user_id = logged_in_user_id,
+                formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
+                elapsed_time = int(new_activity_data["elapsed_time"]),
+                gained_xp = int(gained_xp),
+                type = new_activity_data["type"]
+            )
 
-                return JsonResponse({"success": "Amount Of XP Has Been Increased."})
+            new_activity.save()
 
-            except:
-                pass
+            return JsonResponse({"success": "Amount Of XP Has Been Increased."})
 
         return render(request, "blog/training_session.html", {
             "first_name": logged_in_user.first_name,
@@ -1158,10 +1156,25 @@ def trainingSessionView(request):
     return render(request, "blog/training_session.html")
 
 def manageTrainingPlansView(request):
+    exercises = Exercises.objects.all().order_by("exercise") # Gets All Exercises
+
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
-        training_plan = TrainingPlan.objects.filter(user_id=logged_in_user_id) # Gets All User's Training Plans
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+
+        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        training_plan = (
+            TrainingPlan.objects
+            .filter(user_id=logged_in_user_id)
+            .annotate(
+                sorted_days=ExpressionWrapper(
+                    Mod(F("day") - Value(day_index) + Value(7), Value(7)),
+                    output_field=IntegerField()
+                )
+            )
+            .order_by("sorted_days")
+        )
 
         if request.method == "POST":
             training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
@@ -1181,10 +1194,12 @@ def manageTrainingPlansView(request):
                 new_training_plan.save()
 
             return JsonResponse({"success": "Training Plan Has Been Saved."})
-
-    exercises = Exercises.objects.all().order_by("exercise") # Gets All Exercises
+        
+        return render(request, "blog/manage_training_plans.html", {
+            "exercises": exercises,
+            "training_plan": training_plan,
+        })
 
     return render(request, "blog/manage_training_plans.html", {
         "exercises": exercises,
-        # "training_plan": training_plan,
     })
