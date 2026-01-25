@@ -1,5 +1,5 @@
-import { sendPOST } from "../services/sendPOST.js"
-import { getMinimalistFormattedTime } from "../utils/timer.js"
+import { sendPOST } from "../../services/sendPOST.js"
+import { getMinimalistFormattedTime } from "../../utils/timer.js"
 
 "use strict"
 
@@ -736,6 +736,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // EXERCISE SELECTION
 
     // Variables
+
     const search_bar = exercise_selection_container.querySelector(".search_bar_menu .search_bar") // Gets Search Bar Input
     const delete_search_bar = exercise_selection_container.querySelector(".search_bar_menu .fa-xmark") // Gets Delete Search Bar Button
 

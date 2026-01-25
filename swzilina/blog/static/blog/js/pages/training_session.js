@@ -265,14 +265,14 @@ document.addEventListener("DOMContentLoaded", function() {
             gained_xp = Math.round(gained_xp) // Rounds Gained XP Value
 
             // Sends POST Data
-            const post_data = new FormData()
+            const new_activity_data = {} // Stores All New Activity Data
             
-            post_data.append("formatted_elapsed_time", `${getFormattedTime("hours", activity_timer_elapsed_time, true)}h ${getFormattedTime("minutes", activity_timer_elapsed_time, true)}m ${getFormattedTime("seconds", activity_timer_elapsed_time, true)}s`)
-            post_data.append("elapsed_time", activity_timer_elapsed_time)
-            post_data.append("gained_xp", gained_xp)
-            exercises_summary.length > 0 ? post_data.append("type", exercises[0].dataset.type) : null // Sends Type Of Training If Activity Was Started With Training Plan
+            new_activity_data.formatted_elapsed_time = `${getFormattedTime("hours", activity_timer_elapsed_time, true)}h ${getFormattedTime("minutes", activity_timer_elapsed_time, true)}m ${getFormattedTime("seconds", activity_timer_elapsed_time, true)}s`
+            new_activity_data.elapsed_time = activity_timer_elapsed_time
+            new_activity_data.gained_xp = gained_xp
+            exercises_summary.length > 0 ? new_activity_data.type =  exercises[0].dataset.type : null // Sends Type Of Training If Activity Was Started With Training Plan
 
-            sendPOST("/training-session", post_data)
+            sendPOST("/training-session", new_activity_data)
 
             // Activity Summary
 
