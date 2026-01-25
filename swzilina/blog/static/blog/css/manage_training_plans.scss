@@ -1,6 +1,7 @@
 @import "../../../../static/css/partials/variables";
 
-.training_plan_container {
+.training_plan_container,
+.all_training_plans_container {
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Variables
 
     const training_plan_container = document.querySelector(".training_plan_container") // Gets Training Plan Container
-    const training_plan = training_plan_container.querySelector(".training_plan")
+    const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
 
     let selection_dragged_exercise = null // Gets Dragged Exercise From Exercise Selection
     let training_plan_dragged_exercise = null // Gets Dragged Exercise From The Training Plan
