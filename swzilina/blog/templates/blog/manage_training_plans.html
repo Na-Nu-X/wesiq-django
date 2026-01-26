@@ -123,8 +123,13 @@
         <div class="exercises">
             <div class="custom_exercise exercise" draggable="true">
                 <p class="exercise_name"></p>
-                <i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
             </div>
+
+            {% comment %} <div class="warm_up exercise" draggable="true">
+                <p class="exercise_name"></p>
+                <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+            </div> {% endcomment %}
 
             {% for one_exercise in exercises %}
                 <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0" data-requires_weight="{{ one_exercise.requires_weight }}">
@@ -182,8 +187,6 @@
                     </div>
                 </div>
             </template>
-
-            <div class="progress_bar"></div>
         </div>
     </div>
 {% endblock content %}

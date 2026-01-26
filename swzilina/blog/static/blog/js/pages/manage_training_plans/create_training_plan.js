@@ -151,11 +151,11 @@ document.addEventListener("DOMContentLoaded", function() {
         // Executes Only If The Dragged Element Is Training Plan Dragged Exercise
         if(training_plan_dragged_exercise) {
             // Finds Hidden Exercise In The Exercise Selection
-            const hidden_exercise = [...exercise_selection_exercises].find(function(one_exercise) {
-                return one_exercise.querySelector(".exercise_name").textContent === training_plan_dragged_exercise.querySelector(".title").textContent
-            })
+            // const hidden_exercise = [...exercise_selection_exercises].find(function(one_exercise) {
+            //     return one_exercise.querySelector(".exercise_name").textContent === training_plan_dragged_exercise.querySelector(".title").textContent
+            // })
 
-            hidden_exercise.classList.remove("hidden") // Shows Hidden Exercise Again In The Exercise Selection
+            // hidden_exercise.classList.remove("hidden") // Shows Hidden Exercise Again In The Exercise Selection
 
             training_plan_dragged_exercise.remove() // Removes Training Plan Dragged Exercise From DOM
 

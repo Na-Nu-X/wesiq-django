@@ -1,6 +1,9 @@
 import { sendPOST } from "../../services/sendPOST.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
 import { getDayName } from "../../utils/getDayName.js"
+import { createBars, renderBars } from "./functions/bars.js"
+import { changeExercises } from "./functions/changeExercises.js"
+import { edit_training_plan_state } from "./state.js"
 
 "use strict"
 
@@ -16,8 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const exercise_template = training_plan.querySelector(".exercise_template") // Gets Exercise Template
     const period_selection_template = training_plan.querySelector(".period_selection_template") // Gets Period Selection Template
-
-    let active_exercise_index = 0 // Stores Index Of Active Exercise In Training Plan
 
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     const all_training_plan_types = [
@@ -60,16 +61,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container")) // Generates Exact Amount Of Period Selections For Exercise
 
                     training_plan.appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
-
-                    // console.log("TEST" + " " + periods_data)
-                    // console.log("TEST" + " " + getTotalPeriodSelections(periods_data))
                 }
             }
         })
 
         const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
-        exercises[active_exercise_index].classList.add("active") // Shows Active Exercise
+        exercises[edit_training_plan_state.active_exercise_index].classList.add("active") // Shows Active Exercise
+
+        // Creates And Renders Bars
+        const bar_container = createBars(exercises.length, edit_training_plan_state)
+        renderBars(training_plan, bar_container)
     }
 
     // Function Which Converts Exercise Period To An Array With Amounts Of The Similar Sets
@@ -112,4 +114,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if(exercises_data.length > 0) {
         generateTrainingPlan(exercises_data)
     }
+
+    // Global Event Delegations
+
+    // Training Plan Click Events
+    training_plan.addEventListener("click", function(event) {
+        // Change Exercise In Training Plan With Bars Functionality
+        if(event.target.classList.contains("bar")) {
+            const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
+
+            changeExercises(clicked_bar_index, training_plan) // Changes Exercises In The Training Plan
+        }
+    })
 })
