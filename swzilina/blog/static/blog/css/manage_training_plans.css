@@ -550,6 +550,10 @@
   cursor: pointer;
 }
 
+.all_training_plans_container {
+  min-height: 100vh;
+}
+
 .exercises_container {
   display: flex;
   flex-direction: column;
@@ -620,7 +624,7 @@
   max-width: 500px;
   width: 100%;
   max-height: 440px;
-  margin: 0px auto 50px;
+  margin: 0px auto;
   padding-right: 5px;
   text-align: center;
   overflow-x: hidden;
