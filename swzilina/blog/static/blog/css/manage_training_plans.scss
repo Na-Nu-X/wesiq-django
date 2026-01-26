@@ -406,7 +406,8 @@
             }
         }
 
-        .progress_bar {
+        .progress_bar, 
+        .bar_container {
             position: relative;
             display: flex;
             flex-direction: row;
