@@ -4,6 +4,7 @@ import { getDayName } from "../../utils/getDayName.js"
 import { createBars, renderBars } from "./functions/bars.js"
 import { changeExercises } from "./functions/changeExercises.js"
 import { edit_training_plan_state } from "./state.js"
+import { addPeriod, changeReps, changeSets } from "./functions/periods.js"
 
 "use strict"
 
@@ -19,6 +20,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const exercise_template = training_plan.querySelector(".exercise_template") // Gets Exercise Template
     const period_selection_template = training_plan.querySelector(".period_selection_template") // Gets Period Selection Template
+
+    // Hold Button Events
+    let hold_interval = null
+    let hold_timeout = null
+
+    const HOLD_INTERVAL_SPEED = 50 // 20-Times Per Second
+    const HOLD_START_DELAY = 250 // Starts Hold Interval After 250MS Of Hold Time, Everything Above Is Just A Click
+
+    function stopHold() {
+        clearInterval(hold_interval)
+        clearTimeout(hold_timeout)
+    }
 
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     const all_training_plan_types = [
@@ -57,6 +70,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
 
                     unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
+
+                    exercise_template_clone.querySelector(".exercise .labels .unit_amount").dataset.unit = unit_data
 
                     generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container")) // Generates Exact Amount Of Period Selections For Exercise
 
@@ -106,6 +121,28 @@ document.addEventListener("DOMContentLoaded", function() {
             reps.value = periods_data[index] // Replaces Reps Input Value
             sets.value = one_unit // Replaces Sets Input Value
 
+            // Shows Reps Content
+            const to_failure = period_selection_template_clone.querySelector(".period_selection .reps_container .to_failure") // Gets To Failure Text
+            const time = period_selection_template_clone.querySelector(".period_selection .reps_container .time") // Gets Time Text
+
+            if(periods_data[index] === 0) {
+                to_failure.style.visibility = "visible" // Shows To Failure Text
+            }
+
+            else {
+                // Checks Exercise Unit Type
+                if(unit === "reps") {
+                    reps.style.visibility = "visible" // Shows Reps Input
+                }
+
+                if(unit === "seconds") {
+                    time.style.visibility = "visible" // Shows Time Text
+                    time.textContent = getMinimalistFormattedTime(periods_data[index])
+                }
+                
+                to_failure.style.visibility = "hidden" // Hides To Failure Text
+            }
+
             parent_element.appendChild(period_selection_template_clone) // Appends Period Selection To The Exercise
         })
     }
@@ -125,5 +162,67 @@ document.addEventListener("DOMContentLoaded", function() {
 
             changeExercises(clicked_bar_index, training_plan) // Changes Exercises In The Training Plan
         }
+
+        // Add Sets & Reps Period Of Exercises In The Training Plan Functionality
+        if(event.target.classList.contains("add_period")) {
+            const clicked_add_period_exercise = event.target.closest(".exercise") // Gets Exercise From Training Plan Of Clicked Add Period Button
+
+            addPeriod(clicked_add_period_exercise, period_selection_template) // Adds Period For Given Exercise
+        }
     })
+
+    // Increase And Decrease Sets & Reps Functionality
+    training_plan.addEventListener("pointerdown", function(event) {
+        // Add Decrease Exercise Reps Functionality
+        if(event.target.classList.contains("decrease_reps")) {
+            changeReps(event.target, "decrease")
+
+            // Decreases Amount Of Reps On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeReps(event.target, "decrease")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Increase Exercise Reps Functionality
+        if(event.target.classList.contains("increase_reps")) {
+            changeReps(event.target, "increase")
+
+            // Increases Amount Of Reps On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeReps(event.target, "increase")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Decrease Exercise Sets Functionality
+        if(event.target.classList.contains("decrease_sets")) {
+            changeSets(event.target, "decrease")
+
+            // Decreases Amount Of Sets On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeSets(event.target, "decrease")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+
+        // Add Increase Exercise Sets Functionality
+        if(event.target.classList.contains("increase_sets")) {
+            changeSets(event.target, "increase")
+
+            // Increases Amount Of Sets On Hold
+            hold_timeout = setTimeout(function() {
+                hold_interval = setInterval(function() {
+                    changeSets(event.target, "increase")
+                }, HOLD_INTERVAL_SPEED)
+            }, HOLD_START_DELAY)
+        }
+    })
+
+    training_plan.addEventListener("pointerup", stopHold)
+    training_plan.addEventListener("pointercancel", stopHold)
+    training_plan.addEventListener("pointerleave", stopHold)
 })

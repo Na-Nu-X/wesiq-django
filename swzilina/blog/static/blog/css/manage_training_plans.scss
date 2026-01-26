@@ -480,6 +480,23 @@
     }
 }
 
+.all_training_plans_container {
+    min-height: calc(100vh);
+    // .training_plan {
+    //     .exercise {
+    //         .periods_container {
+    //             .period_selection {
+    //                 .reps_container {
+    //                     .reps {
+    //                         visibility: visible;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+}
+
 .exercises_container {
     display: flex;
     flex-direction: column;
@@ -554,9 +571,8 @@
         gap: 10px;
         max-width: 500px;
         width: 100%;
-        // max-height: 200px;
         max-height: 440px;
-        margin: 0px auto 50px;
+        margin: 0px auto;
         padding-right: 5px;
         text-align: center;
         overflow-x: hidden;
