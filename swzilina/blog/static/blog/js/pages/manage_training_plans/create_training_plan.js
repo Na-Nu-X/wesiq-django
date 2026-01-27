@@ -1,5 +1,6 @@
 import { sendPOST } from "../../services/sendPOST.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
+import { HOLD_INTERVAL_SPEED, HOLD_START_DELAY } from "./state.js"
 
 "use strict"
 
@@ -41,9 +42,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Hold Button Events
     let hold_interval = null
     let hold_timeout = null
-
-    const HOLD_INTERVAL_SPEED = 50 // 20-Times Per Second
-    const HOLD_START_DELAY = 250 // Starts Hold Interval After 250MS Of Hold Time, Everything Above Is Just A Click
 
     function stopHold() {
         clearInterval(hold_interval)

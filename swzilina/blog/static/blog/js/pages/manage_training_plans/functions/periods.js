@@ -9,7 +9,7 @@ export function addPeriod(exercise, template) {
 }
 
 export function changeReps(button, operation) {
-    const unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
+    const unit = button.closest(".exercise").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
     const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
     const to_failure = button.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
     const time = button.closest(".reps_container").querySelector(".time") // Gets Time Text

@@ -3,7 +3,7 @@ import { getMinimalistFormattedTime } from "../../utils/timer.js"
 import { getDayName } from "../../utils/getDayName.js"
 import { createBars, renderBars } from "./functions/bars.js"
 import { changeExercises } from "./functions/changeExercises.js"
-import { edit_training_plan_state } from "./state.js"
+import { edit_training_plan_state, HOLD_INTERVAL_SPEED, HOLD_START_DELAY } from "./state.js"
 import { addPeriod, changeReps, changeSets } from "./functions/periods.js"
 
 "use strict"
@@ -21,12 +21,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const exercise_template = training_plan.querySelector(".exercise_template") // Gets Exercise Template
     const period_selection_template = training_plan.querySelector(".period_selection_template") // Gets Period Selection Template
 
+    const save = all_training_plans_container.querySelector(".save") // Gets Training Plan Save Button
+
     // Hold Button Events
     let hold_interval = null
     let hold_timeout = null
-
-    const HOLD_INTERVAL_SPEED = 50 // 20-Times Per Second
-    const HOLD_START_DELAY = 250 // Starts Hold Interval After 250MS Of Hold Time, Everything Above Is Just A Click
 
     function stopHold() {
         clearInterval(hold_interval)
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Functions
 
     // Function For Render Exercises Of The Selected Training Plan
-    function generateTrainingPlan(exercises_data) {
+    function generateTrainingPlan(exercises_data, container) {
         // Extracts Data For Every Exercise
         exercises_data.forEach(function(one_exercise_data) {
             const day_data = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
@@ -66,16 +65,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Shows Exercises Only Of The Selected Training Plan Day
                 if(training_plan_day === day_data) {
                     const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
+
+                    container.querySelector(".additional_info .training_title").value = type_data
                 
                     exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
 
                     unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
 
-                    exercise_template_clone.querySelector(".exercise .labels .unit_amount").dataset.unit = unit_data
+                    exercise_template_clone.querySelector(".exercise").dataset.unit = unit_data // Stores Unit Type Data To The Exercise
 
                     generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container")) // Generates Exact Amount Of Period Selections For Exercise
 
-                    training_plan.appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
+                    container.querySelector(".training_plan").appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
                 }
             }
         })
@@ -147,9 +148,48 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     }
 
+    function saveEditedTrainingPlan() {
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+        const edited_training_plan_data = [] // Stores All New Saved Training Plan Data
+
+        // Gets Info From Every Exercise
+        exercises.forEach(function(one_exercise) {
+            const periods = updatePeriods(one_exercise)
+
+            console.log(periods)
+        })
+    }
+
+    function updatePeriods(exercise) {
+        const reps_inputs = exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
+        const sets_inputs = exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
+
+        // Gets All Reps Inputs Values
+        const reps_inputs_values = [...reps_inputs].map(function(one_input) {
+            return one_input.value
+        })
+
+        // Gets All Sets Inputs Values
+        const sets_inputs_values = [...sets_inputs].map(function(one_input) {
+            return one_input.value
+        })
+        
+        let periods = [] // Stores Periods Of Sets & Reps
+
+        // Generates Periods Of Sets & Reps Values
+        for(let i = 0; i < sets_inputs_values.length; i++) {
+            for(let j = 0; j < sets_inputs_values[i]; j++) {
+                periods.unshift(parseInt(reps_inputs_values[i])) // Saves Numbers To An Array
+            }
+        }
+
+        return periods
+    }
+
     // Renders User's Training Plan If Has Any
     if(exercises_data.length > 0) {
-        generateTrainingPlan(exercises_data)
+        generateTrainingPlan(exercises_data, all_training_plans_container)
     }
 
     // Global Event Delegations
@@ -225,4 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("pointerup", stopHold)
     training_plan.addEventListener("pointercancel", stopHold)
     training_plan.addEventListener("pointerleave", stopHold)
+
+    // Save New Training Plan Button
+    save.addEventListener("click", saveEditedTrainingPlan)
 })

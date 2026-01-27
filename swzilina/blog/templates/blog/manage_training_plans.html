@@ -153,6 +153,31 @@
 
         {% endfor %}
 
+        <div class="additional_info">
+            <input type="text" class="training_title" placeholder="Názov">
+
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="day_select_menu">
+                <input type="hidden" name="day" value="not_selected">
+
+                <div class="select">
+                    <span>Nepriradiť deň</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                </div>
+            </div>
+        </div>
+
         <div class="training_plan">
             <template class="exercise_template">
                 <div class="exercise" draggable="true">
@@ -188,6 +213,8 @@
                 </div>
             </template>
         </div>
+
+        <button class="save">Uložiť zmeny</button>
     </div>
 {% endblock content %}
 
