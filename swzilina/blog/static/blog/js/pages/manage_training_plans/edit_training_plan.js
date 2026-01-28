@@ -4,7 +4,8 @@ import { getDayName } from "../../utils/getDayName.js"
 import { createBars, renderBars } from "./functions/bars.js"
 import { changeExercises } from "./functions/changeExercises.js"
 import { edit_training_plan_state, HOLD_INTERVAL_SPEED, HOLD_START_DELAY } from "./state.js"
-import { addPeriod, changeReps, changeSets } from "./functions/periods.js"
+import { addPeriod, changeReps, changeSets, getPeriods } from "./functions/periods.js"
+import { getSelectedDay } from "./functions/getSelectedDay.js"
 
 "use strict"
 
@@ -20,6 +21,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const exercise_template = training_plan.querySelector(".exercise_template") // Gets Exercise Template
     const period_selection_template = training_plan.querySelector(".period_selection_template") // Gets Period Selection Template
+
+    const training_plan_title = all_training_plans_container.querySelector(".additional_info .title") // Gets Training Plan Title
+
+    const day_select_menu = all_training_plans_container.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
+    const day_select = day_select_menu.querySelector(".select") // Gets Selected Option Print
+    const day_options_list = day_select_menu.querySelector(".options_list") // Gets Day Options List
+    const day_options = day_options_list.querySelectorAll(".option") // Gets All Day Options
 
     const save = all_training_plans_container.querySelector(".save") // Gets Training Plan Save Button
 
@@ -66,9 +74,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(training_plan_day === day_data) {
                     const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
 
-                    container.querySelector(".additional_info .training_title").value = type_data
+                    container.querySelector(".additional_info .title").value = type_data
                 
-                    exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
+                    exercise_template_clone.querySelector(".exercise .title_input").value = exercise_data // Sets Title To The Exercise Title
 
                     unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
 
@@ -151,45 +159,30 @@ document.addEventListener("DOMContentLoaded", function() {
     function saveEditedTrainingPlan() {
         const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
-        const edited_training_plan_data = [] // Stores All New Saved Training Plan Data
+        const day = getSelectedDay(day_options) // Gets Training Plan Day
+        const type = training_plan_title.value // Gets Training Plan Title
+
+        const edited_training_plan_data = [] // Stores All Saved Edited Training Plan Data
 
         // Gets Info From Every Exercise
         exercises.forEach(function(one_exercise) {
-            const periods = updatePeriods(one_exercise)
+            const exercise = one_exercise.querySelector(".title_input").value // Gets Exercise Title
+            const periods = getPeriods(one_exercise) // Gets Exercise Periods
+            const unit = one_exercise.dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
 
-            console.log(periods)
+            // Creates Object Of One Exercise For Saved Edited Training Plan
+            let edited_training_plan_object = {}
+
+            edited_training_plan_object.day = day
+            edited_training_plan_object.type = type
+            edited_training_plan_object.exercise = exercise
+            edited_training_plan_object.periods = periods
+            edited_training_plan_object.unit = unit
+
+            edited_training_plan_data.push(edited_training_plan_object) // Fills Edited Training Plan Data Array With Objects Of Exercises
         })
-    }
 
-    function updatePeriods(exercise) {
-        const reps_inputs = exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
-        const sets_inputs = exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
-
-        // Gets All Reps Inputs Values
-        const reps_inputs_values = [...reps_inputs].map(function(one_input) {
-            return one_input.value
-        })
-
-        // Gets All Sets Inputs Values
-        const sets_inputs_values = [...sets_inputs].map(function(one_input) {
-            return one_input.value
-        })
-        
-        let periods = [] // Stores Periods Of Sets & Reps
-
-        // Generates Periods Of Sets & Reps Values
-        for(let i = 0; i < sets_inputs_values.length; i++) {
-            for(let j = 0; j < sets_inputs_values[i]; j++) {
-                periods.unshift(parseInt(reps_inputs_values[i])) // Saves Numbers To An Array
-            }
-        }
-
-        return periods
-    }
-
-    // Renders User's Training Plan If Has Any
-    if(exercises_data.length > 0) {
-        generateTrainingPlan(exercises_data, all_training_plans_container)
+        console.log(edited_training_plan_data)
     }
 
     // Global Event Delegations
@@ -266,6 +259,43 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("pointercancel", stopHold)
     training_plan.addEventListener("pointerleave", stopHold)
 
+    // Events
+
+    // Day Select Menu
+    day_select.addEventListener("click", function() {
+        day_options_list.classList.toggle("active")
+        day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+    })
+
+    day_options.forEach(function(option) {
+        option.addEventListener("click", function() {
+            sessionStorage.setItem("edit_training_plan_day", option.dataset.day)
+
+            day_options_list.classList.toggle("active")
+            day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+
+            // Remove Selected Class From Options
+            day_options.forEach(function(remove_selected) {
+                remove_selected.classList.remove("selected")
+            })
+
+            // Shows Current Selected Option From List Without Icon
+            if(option.dataset.day === sessionStorage.getItem("edit_training_plan_day")) {
+                day_select.querySelector("span").textContent = option.querySelector("span").textContent
+                day_select_menu.querySelector("input").value = option.querySelector("span").textContent
+
+                option.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
+    })
+
     // Save New Training Plan Button
     save.addEventListener("click", saveEditedTrainingPlan)
+
+    // MAIN
+
+    // Renders User's Training Plan If Has Any
+    if(exercises_data.length > 0) {
+        generateTrainingPlan(exercises_data, all_training_plans_container)
+    }
 })
