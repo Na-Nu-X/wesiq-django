@@ -343,10 +343,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 new_training_plan_data.push(new_training_plan_object) // Fills New Training Plan Data Array With Objects Of Exercises
             })
 
-            sendPOST("/my-training-plans", new_training_plan_data) // Sends The Data With POST
-            sendNotification(training_plan_title.value) // Sends The Notification For The User
+            // sendPOST("/my-training-plans", new_training_plan_data) // Sends The Data With POST
+            // sendNotification(training_plan_title.value) // Sends The Notification For The User
 
-            location.reload() // Reloads The Page
+            console.log(new_training_plan_data)
+
+            // location.reload() // Reloads The Page
         }
     }
     

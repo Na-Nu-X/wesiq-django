@@ -1,5 +1,6 @@
 import { getMinimalistFormattedTime } from "../../../utils/timer.js"
 
+// Function For Clone And Add Period To The Exercise
 export function addPeriod(exercise, template) {
     const periods_container = exercise.querySelector(".periods_container") // Gets Periods Container Of Exercise
 
@@ -8,6 +9,7 @@ export function addPeriod(exercise, template) {
     periods_container.prepend(period_selection_template_clone) // Prepends New Period To The Exercise In The Training Plan
 }
 
+// Function For Change The Reps Value
 export function changeReps(button, operation) {
     const unit = button.closest(".exercise").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
     const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
@@ -47,6 +49,7 @@ export function changeReps(button, operation) {
     reps.value = reps_number // Updates Exercise Reps Amount
 }
 
+// Function For Change The Sets Value
 export function changeSets(button, operation) {
     const sets = button.closest(".sets_container").querySelector(".sets") // Gets Sets Input
     let sets_number = parseInt(sets.value) // Gets Current Sets Amount In Number Format
@@ -62,4 +65,31 @@ export function changeSets(button, operation) {
     if(sets_number < 1 || sets_number > 100) return // Do Nothing
 
     sets.value = sets_number // Updates Exercise Sets Amount
+}
+
+// Function For Update Periods
+export function getPeriods(exercise) {
+    const reps_inputs = exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
+    const sets_inputs = exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
+
+    // Gets All Reps Inputs Values
+    const reps_inputs_values = [...reps_inputs].map(function(one_input) {
+        return one_input.value
+    })
+
+    // Gets All Sets Inputs Values
+    const sets_inputs_values = [...sets_inputs].map(function(one_input) {
+        return one_input.value
+    })
+    
+    let periods = [] // Stores Periods Of Sets & Reps
+
+    // Generates Periods Of Sets & Reps Values
+    for(let i = 0; i < sets_inputs_values.length; i++) {
+        for(let j = 0; j < sets_inputs_values[i]; j++) {
+            periods.unshift(parseInt(reps_inputs_values[i])) // Saves Numbers To An Array
+        }
+    }
+
+    return periods
 }
