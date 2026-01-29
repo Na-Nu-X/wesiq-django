@@ -6,7 +6,7 @@ export function getSelectedDay(day_options) {
     })
     
     if(selected_day?.dataset?.day) {
-        return Number.isNaN(parseInt(selected_day.dataset.day)) ? null : parseInt(selected_day.dataset.day) // Saves The Value Of The Selected Day Number Only If The User Has Selected Any
+        return Number.isNaN(parseInt(selected_day.dataset.day)) ? null : parseInt(selected_day.dataset.day) // Returns The Value Of The Selected Day Number Only If The User Has Selected Any
     }
     
     else {
