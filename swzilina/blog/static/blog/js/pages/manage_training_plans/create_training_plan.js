@@ -1,6 +1,10 @@
 import { sendPOST } from "../../services/sendPOST.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
-import { HOLD_INTERVAL_SPEED, HOLD_START_DELAY } from "./state.js"
+import { createBars, renderBars } from "./functions/bars.js"
+import { changeExercises } from "./functions/changeExercises.js"
+import { getSelectedDay } from "./functions/getSelectedDay.js"
+import { addPeriod, changeReps, changeSets, getPeriods } from "./functions/periods.js"
+import { new_training_plan_state, HOLD_INTERVAL_SPEED, HOLD_START_DELAY } from "./state.js"
 
 "use strict"
 
@@ -22,9 +26,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const period_selection_template = training_plan.querySelector(".period_selection_template")
     const unit_select_menu_template = training_plan.querySelector(".unit_select_menu_template")
 
-    let active_training_plan_exercise_index = 0 // Stores Index Of Active Exercise In Training Plan
+    // let active_training_plan_exercise_index = 0 // Stores Index Of Active Exercise In Training Plan
 
-    const bar_container = training_plan.querySelector(".progress_bar") // Gets Bar Container
+    // const bar_container = training_plan.querySelector(".bar_container") // Gets Bar Container
 
     const training_plan_title = training_plan_container.querySelector(".additional_info .training_title") // Gets Training Plan Title
 
@@ -129,6 +133,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet sekúnd"
             }
 
+            exercise_template_clone.querySelector(".exercise").dataset.unit = selection_dragged_exercise.dataset.unit // Stores Unit Type Data To The Exercise
+
             // Adds Custom Exercise To The Training Plan
             if(selection_dragged_exercise.classList.contains("custom_exercise")) {
                 addCustomExerciseToTrainingPlan(exercise_template_clone.querySelector(".exercise"))
@@ -161,18 +167,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Checks If There Will Be Still Any Exercise In The Training Plan After Removal
             if(training_plan_exercises.length >= 1) {
-                active_training_plan_exercise_index = training_plan_exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+                new_training_plan_state.active_exercise_index = training_plan_exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
 
-                training_plan_exercises[active_training_plan_exercise_index].classList.add("active") // Shows Active Exercise
-
-                updateBars(training_plan_exercises.length) // Updates Bars
+                training_plan_exercises[new_training_plan_state.active_exercise_index].classList.add("active") // Shows Active Exercise
             }
 
             else {
                 training_plan_drop_zone.classList.add("active") // Shows Training Plan Drop Zone
-
-                updateBars(training_plan_exercises.length) // Updates Bars
             }
+            
+            // Creates And Renders Bars
+            const bar_container = createBars(training_plan_exercises.length, new_training_plan_state)
+            renderBars(training_plan, bar_container)
 
             searchBar() // Refreshes Exercise Selection Exercises (Refreshes Search Bar Results)
         }
@@ -188,30 +194,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Other Exercises Change
         else {
-            training_plan_exercises[active_training_plan_exercise_index].classList.remove("active") // Hides Previous Active Exercise
+            training_plan_exercises[new_training_plan_state.active_exercise_index].classList.remove("active") // Hides Previous Active Exercise
             // active_training_plan_exercise_index += 1 // Increases Index Of Active Exercise In Training Plan (Shows Next Exercise)
-            active_training_plan_exercise_index = training_plan_exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+            new_training_plan_state.active_exercise_index = training_plan_exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
         }
 
-        training_plan_exercises[active_training_plan_exercise_index].classList.add("active") // Shows Active Exercise
+        training_plan_exercises[new_training_plan_state.active_exercise_index].classList.add("active") // Shows Active Exercise
 
-        updateBars(training_plan_exercises.length) // Updates Bars
-    }
-
-    function changeTrainingPlanExercises(clicked_bar_index) {
-        const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
-
-        training_plan_exercises[active_training_plan_exercise_index].classList.remove("active") // Hides Previous Active Exercise
-        active_training_plan_exercise_index = clicked_bar_index // Sets Index Of Active Exercise In Training Plan To Clicked Bar Index Value
-        training_plan_exercises[active_training_plan_exercise_index].classList.add("active") // Shows Active Exercise
-        
-        updateBars(training_plan_exercises.length) // Updates Bars
+        // Creates And Renders Bars
+        const bar_container = createBars(training_plan_exercises.length, new_training_plan_state)
+        renderBars(training_plan, bar_container)
     }
 
     function changeTrainingPlanExercisePosition(dropped_bar_index) {
         // Executes Only If The Dragged Element Is Training Plan Dragged Bar
         if(training_plan_dragged_bar) {
-            const dragged_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(training_plan_dragged_bar) // Gets Index Of The Dragged Bar In The Training Plan
+            const dragged_bar_index = [...training_plan_dragged_bar.parentNode.querySelectorAll(".bar")].indexOf(training_plan_dragged_bar) // Gets Index Of The Dragged Bar In The Training Plan
 
             const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
@@ -225,37 +223,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Hides All Possible Options For Active Exercise In The Training Plan
-            training_plan_exercises[active_training_plan_exercise_index].classList.remove("active") // Hides Previous Active Exercise
+            training_plan_exercises[new_training_plan_state.active_exercise_index].classList.remove("active") // Hides Previous Active Exercise
             training_plan_exercises[dropped_bar_index].classList.remove("active") // Hides Previous Active Exercise
             training_plan_exercises[dragged_bar_index].classList.remove("active") // Hides Previous Active Exercise
-
-            changeTrainingPlanExercises(dropped_bar_index) // Shows The Exercise Of Dropped Bar Index
+            
+            changeExercises(dropped_bar_index, training_plan, new_training_plan_state) // Shows The Exercise Of Dropped Bar Index
         }
-    }
-
-    function updateBars(training_plan_exercises_amount) {
-        bar_container.innerHTML = "" // Deletes All Bars From The Bar Container
-
-        // Creates Bars By Amount Of Exercises In The Training Plan
-        for(let i = 0; i < training_plan_exercises_amount; i++) {
-            // Creates Bar
-            const bar = document.createElement("div")
-            bar.classList.add("bar")
-            bar.setAttribute("draggable", "true")
-            bar_container.appendChild(bar)
-        }
-
-        training_plan.appendChild(bar_container) // Appends Bar Container At The End Of The Training Plan
-
-        bar_container?.querySelectorAll(".bar")[active_training_plan_exercise_index]?.classList?.add("active") // Adds Active Class For Bar Of Active Exercise
-    }
-
-    function addPeriod(clicked_add_period_exercise) {
-        const periods_container = clicked_add_period_exercise.querySelector(".periods_container") // Gets Periods Container Of Exercise
-
-        const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones The Period Selection Template Content
-
-        periods_container.prepend(period_selection_template_clone) // Prepends New Period To The Exercise In The Training Plan
     }
 
     function saveNewTrainingPlan() {
@@ -283,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if(custom_exercises_without_name.length > 0) {
             const first_custom_exercise_without_name_index = [...training_plan_exercises].indexOf(custom_exercises_without_name[0]) // Gets Index Of The First Custom Exercise Without Filled Title Input
 
-            changeTrainingPlanExercises(first_custom_exercise_without_name_index) // Shows The Exercise Of The First Custom Exercise Without Filled Title Input Index
+            changeExercises(first_custom_exercise_without_name_index, training_plan, new_training_plan_state) // Shows The Exercise Of The First Custom Exercise Without Filled Title Input Index
         }
 
         // Only Saves If Everything Required Is Filled
@@ -293,47 +266,16 @@ document.addEventListener("DOMContentLoaded", function() {
             // Gets Info From Every Exercise
             training_plan_exercises.forEach(function(one_exercise) {
                 const exercise_name = one_exercise.querySelector(".exercise_title_input") ? one_exercise.querySelector(".exercise_title_input").value : one_exercise.querySelector(".title").textContent // Gets Exercise Name
-
-                const all_reps_inputs = one_exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
-                const all_sets_inputs = one_exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
-
-                // Gets All Reps Inputs Values
-                const all_reps_inputs_values = [...all_reps_inputs].map(function(one_input) {
-                    return one_input.value
-                })
-
-                // Gets All Sets Inputs Values
-                const all_sets_inputs_values = [...all_sets_inputs].map(function(one_input) {
-                    return one_input.value
-                })
-                
-                let periods = [] // Stores Periods Of Sets & Reps
-
-                // Generates Periods Of Sets & Reps Values
-                for(let i = 0; i < all_sets_inputs_values.length; i++) {
-                    for(let j = 0; j < all_sets_inputs_values[i]; j++) {
-                        periods.unshift(parseInt(all_reps_inputs_values[i])) // Saves Numbers To An Array
-                    }
-                }
+                const periods = getPeriods(one_exercise) // Gets Exercise Periods
 
                 const exercise_unit = one_exercise.querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
 
                 // Creates Object Of One Exercise For New Saved Training Plan
                 const new_training_plan_object = {}
 
-                // Finds Selected Day For Training Plan
-                const selected_day = [...day_options].find(function(one_option) {
-                    return one_option.classList.contains("selected")
-                })
-                
-                if(selected_day?.dataset?.day) {
-                    Number.isNaN(parseInt(selected_day.dataset.day)) ? new_training_plan_object.day = null : new_training_plan_object.day = parseInt(selected_day.dataset.day) // Saves The Value Of The Selected Day Number Only If The User Has Selected Any
-                }
-                
-                else {
-                    new_training_plan_object.day = null
-                }
+                const day = getSelectedDay(day_options) // Gets Training Plan Day
 
+                new_training_plan_object.day = day
                 new_training_plan_object.type = training_plan_title.value
                 new_training_plan_object.exercise = exercise_name
                 new_training_plan_object.periods = periods
@@ -371,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateUnitTypes(unit) {
         const training_plan_exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
-        const all_reps_inputs = training_plan_exercises[active_training_plan_exercise_index].querySelectorAll(".periods_container .reps") // Gets All Reps Inputs From The Active Exercise
+        const all_reps_inputs = training_plan_exercises[new_training_plan_state.active_exercise_index].querySelectorAll(".periods_container .reps") // Gets All Reps Inputs From The Active Exercise
 
         // Updates Unit Type For Every Reps Container
         all_reps_inputs.forEach(function(one_input) {
@@ -397,92 +339,6 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     }
 
-    function changeReps(button, operation) {
-        const exercise_unit = button.closest(".exercise").querySelector("[data-unit]").dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
-        const reps = button.closest(".reps_container").querySelector(".reps") // Gets Reps Input
-        const to_failure = button.closest(".reps_container").querySelector(".to_failure") // Gets To Failure Text
-        const time = button.closest(".reps_container").querySelector(".time") // Gets Time Text
-        let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
-
-        reps.style.visibility = "hidden" // Hides Reps Input
-        time.style.visibility = "hidden" // Hides Time Text
-
-        if(operation === "decrease") {
-            reps_number -= 1 // Decreases Reps Amount By 1
-
-            if(reps_number < 0) {
-                return // Do Nothing
-            }
-
-            if(reps_number === 0) {
-                to_failure.style.visibility = "visible" // Shows To Failure Text
-            }
-
-            else {
-                // Checks Exercise Unit Type
-                if(exercise_unit === "reps") {
-                    reps.style.visibility = "visible" // Shows Reps Input
-                }
-
-                if(exercise_unit === "seconds") {
-                    time.style.visibility = "visible" // Shows Time Text
-                    time.textContent = getMinimalistFormattedTime(reps_number)
-                }
-                
-                to_failure.style.visibility = "hidden" // Hides To Failure Text
-            }
-            
-            reps.value = reps_number // Updates Exercise Reps Amount
-        }
-
-        if(operation === "increase") {
-            reps_number += 1 // Increases Reps Amount By 1
-
-            // Checks Exercise Unit Type
-            if(exercise_unit === "reps") {
-                reps.style.visibility = "visible" // Shows Reps Input
-
-                if(reps_number > 100) return // Do Nothing
-            }
-
-            if(exercise_unit === "seconds") {
-                time.style.visibility = "visible" // Shows Time Text
-
-                if(reps_number > 3600) return // Do Nothing
-
-                time.textContent = getMinimalistFormattedTime(reps_number)
-            }
-
-            to_failure.style.visibility = "hidden" // Hides To Failure Text
-            reps.value = reps_number // Updates Exercise Reps Amount
-        }
-    }
-
-    function changeSets(button, operation) {
-        const sets = button.closest(".sets_container").querySelector(".sets") // Gets Reps Input
-        let sets_number = parseInt(sets.value) // Gets Current Reps Amount In Number Format
-
-        if(operation === "decrease") {
-            sets_number -= 1 // Decreases Sets Amount By 1
-
-            // DELETE PERIOD
-            if(sets_number === 0 && button.closest(".exercise").querySelectorAll(".period_selection").length > 1) {
-                button.closest(".period_selection").remove() // Removes Period Selection From DOM
-            }
-
-            if(sets_number < 1) return // Do Nothing
-
-            sets.value = sets_number // Updates Exercise Sets Amount
-        }
-
-        if(operation === "increase") {
-            sets_number += 1 // Increases Sets Amount By 1
-
-            if(sets_number > 100) return // Do Nothing
-            sets.value = sets_number // Updates Exercise Sets Amount
-        }
-    }
-
     // Global Event Delegations
 
     // Training Plan Drop Zone Functionality
@@ -493,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Drop Zone On Active Exercise In The Training Plan
-        if(event.target === training_plan.querySelectorAll(".exercise")[active_training_plan_exercise_index]) {
+        if(event.target === training_plan.querySelectorAll(".exercise")[new_training_plan_state.active_exercise_index]) {
             event.preventDefault() // Makes The Drop Zone Functional
         }
 
@@ -515,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Drop Zone On Active Exercise In The Training Plan
-        if(event.target === training_plan.querySelectorAll(".exercise")[active_training_plan_exercise_index]) {
+        if(event.target === training_plan.querySelectorAll(".exercise")[new_training_plan_state.active_exercise_index]) {
             addExerciseToTrainingPlan() // Adds Dragged Exercise From Exercise Selection To The Training Plan
         }
 
@@ -526,6 +382,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Drop Zone On Bars In The Bar Container
         if(event.target.classList.contains("bar")) {
+            const bar_container = training_plan.querySelector(".bar_container") // Gets Bar Container
+
             // Removes Animation From All Of The Bars Except Of The Dragged One
             bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
                 if(one_bar !== training_plan_dragged_bar) {
@@ -533,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
 
-            const dropped_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Bar From The Bar Container Where The Dragged Bar Was Dropped
+            const dropped_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Bar From The Bar Container Where The Dragged Bar Was Dropped
             changeTrainingPlanExercisePosition(dropped_bar_index) // Changes Training Plan Exercise Position By Position Of Bars In The Bar Container
         }
     })
@@ -549,16 +407,16 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("click", function(event) {
         // Change Exercise In Training Plan With Bars Functionality
         if(event.target.classList.contains("bar")) {
-            const clicked_bar_index = [...bar_container.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
+            const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
 
-            changeTrainingPlanExercises(clicked_bar_index) // Changes Training Plan Exercises
+            changeExercises(clicked_bar_index, training_plan, new_training_plan_state) // Changes Training Plan Exercises
         }
 
         // Add Sets & Reps Period Of Exercises In The Training Plan Functionality
         if(event.target.classList.contains("add_period")) {
             const clicked_add_period_exercise = event.target.closest(".exercise") // Gets Exercise From Training Plan Of Clicked Add Period Button
 
-            addPeriod(clicked_add_period_exercise) // Adds Period For Given Exercise
+            addPeriod(clicked_add_period_exercise, period_selection_template) // Adds Period For Given Exercise
         }
 
         // Unit Select Menu
@@ -669,6 +527,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if(event.target.classList.contains("bar")) {
             training_plan_dragged_bar = event.target // Sets Training Plan Dragged Bar
 
+            const bar_container = training_plan.querySelector(".bar_container") // Gets Bar Container
+
             // Animates All Of The Bars Except Of The Dragged One
             bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
                 if(one_bar !== training_plan_dragged_bar) {
@@ -681,6 +541,8 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("dragend", function(event) {
         training_plan_dragged_exercise = null // Deletes Training Plan Dragged Exercise
         training_plan_dragged_bar = null // Deletes Training Plan Dragged Bar
+
+        const bar_container = training_plan.querySelector(".bar_container") // Gets Bar Container
 
         bar_container.querySelectorAll(".bar").forEach(function(one_bar) {
             one_bar.classList.remove("animate") // Removes Drag Animation

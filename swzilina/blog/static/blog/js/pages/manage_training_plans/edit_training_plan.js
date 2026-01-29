@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if(event.target.classList.contains("bar")) {
             const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
 
-            changeExercises(clicked_bar_index, training_plan) // Changes Exercises In The Training Plan
+            changeExercises(clicked_bar_index, training_plan, edit_training_plan_state) // Changes Exercises In The Training Plan
         }
 
         // Add Sets & Reps Period Of Exercises In The Training Plan Functionality
