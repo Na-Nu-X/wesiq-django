@@ -1,0 +1,73 @@
+import { changeExercises } from "./exercises.js"
+import { getSelectedDay } from "./getSelectedDay.js"
+import { getPeriods } from "./periods.js"
+import { sendNotification } from "../../../utils/sendNotification.js"
+
+export function saveTrainingPlan(training_plan_container, state) {
+    const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+    const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+    const day_options = training_plan_container.querySelectorAll(".additional_info .day_select_menu .options_list .option") // Gets All Day Options
+    const training_plan_title = training_plan_container.querySelector(".additional_info .title") // Gets Training Plan Title
+
+    if(training_plan_title.value === "") {
+        // Shows Error Animation
+        training_plan_title.classList.remove("error_animation")
+        void training_plan_title.offsetWidth
+        training_plan_title.classList.add("error_animation")
+    }
+
+    if(exercises.length === 0) {
+        // Shows Error Animation
+        training_plan.querySelector(".fa-compress").classList.remove("error_animation")
+        void training_plan.querySelector(".fa-compress").offsetWidth
+        training_plan.querySelector(".fa-compress").classList.add("error_animation")
+    }
+
+    // Checks For Empty Exercise Title Inputs In Custom Exercises In The Training Plan
+    const custom_exercises_without_name = [...exercises].filter(function(one_exercise) {
+        return one_exercise?.querySelector(".title_input")?.value?.trim() === ""
+    })
+
+    if(custom_exercises_without_name.length > 0) {
+        const first_custom_exercise_without_name_index = [...exercises].indexOf(custom_exercises_without_name[0]) // Gets Index Of The First Custom Exercise Without Filled Title Input
+
+        changeExercises(first_custom_exercise_without_name_index, training_plan, state) // Shows The Exercise Of The First Custom Exercise Without Filled Title Input Index
+    }
+
+    // Only Saves If Everything Required Is Filled
+    if(training_plan_title.value !== "" && exercises.length !== 0 && custom_exercises_without_name.length === 0) {
+        const training_plan_data = [] // Stores All New Saved Training Plan Data
+
+        const is_new = training_plan_container.classList.contains("training_plan_container") // Checks If Saved Training Plan Is New Or Edited
+        const day = getSelectedDay(day_options) // Gets Training Plan Day
+        const type = training_plan_title.value // Gets Training Plan Title Value
+
+        // Gets Info From Every Exercise
+        exercises.forEach(function(one_exercise) {
+            const exercise = one_exercise.querySelector(".title").textContent !== "" ? one_exercise.querySelector(".title").textContent : one_exercise.querySelector(".title_input").value // Gets Exercise Title
+            const periods = getPeriods(one_exercise) // Gets Exercise Periods
+            const unit = one_exercise.dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
+
+            // Creates Object Of One Exercise For Saved Training Plan
+            const training_plan_object = {}
+
+            training_plan_object.is_new = is_new
+            training_plan_object.day = day
+            training_plan_object.type = type
+            training_plan_object.exercise = exercise
+            training_plan_object.periods = periods
+            training_plan_object.unit = unit
+            training_plan_object.order = [...exercises].indexOf(one_exercise) + 1
+
+            training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
+        })
+
+        // sendPOST("/my-training-plans", new_training_plan_data) // Sends The Data With POST
+
+        is_new ? sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`) : sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`) // Sends The Notification For The User
+
+        console.log(training_plan_data)
+
+        // location.reload() // Reloads The Page
+    }
+}
