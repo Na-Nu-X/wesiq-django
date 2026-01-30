@@ -15,9 +15,7 @@
   max-width: 500px;
   margin-bottom: 10px;
 }
-.training_plan_container .additional_info .training_title,
 .training_plan_container .additional_info .title,
-.all_training_plans_container .additional_info .training_title,
 .all_training_plans_container .additional_info .title {
   width: 245px;
   height: 50px;
@@ -29,43 +27,29 @@
   outline: none;
   transition: border 0.3s ease;
 }
-.training_plan_container .additional_info .training_title.error_animation,
 .training_plan_container .additional_info .title.error_animation,
-.all_training_plans_container .additional_info .training_title.error_animation,
 .all_training_plans_container .additional_info .title.error_animation {
   animation: training_title_error_animation 0.2s linear 3;
 }
-.training_plan_container .additional_info .training_title:hover, .training_plan_container .additional_info .training_title:focus,
-.training_plan_container .additional_info .title:hover,
-.training_plan_container .additional_info .title:focus,
-.all_training_plans_container .additional_info .training_title:hover,
-.all_training_plans_container .additional_info .training_title:focus,
+.training_plan_container .additional_info .title:hover, .training_plan_container .additional_info .title:focus,
 .all_training_plans_container .additional_info .title:hover,
 .all_training_plans_container .additional_info .title:focus {
   border-bottom: 1px solid #cccccc;
 }
-.training_plan_container .additional_info .training_title::-moz-placeholder, .training_plan_container .additional_info .title::-moz-placeholder, .all_training_plans_container .additional_info .training_title::-moz-placeholder, .all_training_plans_container .additional_info .title::-moz-placeholder {
+.training_plan_container .additional_info .title::-moz-placeholder, .all_training_plans_container .additional_info .title::-moz-placeholder {
   color: #999999;
 }
-.training_plan_container .additional_info .training_title::placeholder,
 .training_plan_container .additional_info .title::placeholder,
-.all_training_plans_container .additional_info .training_title::placeholder,
 .all_training_plans_container .additional_info .title::placeholder {
   color: #999999;
 }
-.training_plan_container .additional_info .training_title:-webkit-autofill,
 .training_plan_container .additional_info .title:-webkit-autofill,
-.all_training_plans_container .additional_info .training_title:-webkit-autofill,
 .all_training_plans_container .additional_info .title:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.training_plan_container .additional_info .training_title:-webkit-autofill:hover, .training_plan_container .additional_info .training_title:-webkit-autofill:focus,
-.training_plan_container .additional_info .title:-webkit-autofill:hover,
-.training_plan_container .additional_info .title:-webkit-autofill:focus,
-.all_training_plans_container .additional_info .training_title:-webkit-autofill:hover,
-.all_training_plans_container .additional_info .training_title:-webkit-autofill:focus,
+.training_plan_container .additional_info .title:-webkit-autofill:hover, .training_plan_container .additional_info .title:-webkit-autofill:focus,
 .all_training_plans_container .additional_info .title:-webkit-autofill:hover,
 .all_training_plans_container .additional_info .title:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
@@ -654,6 +638,23 @@
   border: 1px solid #fff;
   border-radius: 5px;
   cursor: move;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.exercises_container .exercises .exercise::-webkit-scrollbar {
+  width: 5px;
+}
+.exercises_container .exercises .exercise::-webkit-scrollbar-thumb {
+  background-color: #999999;
+  border-radius: 2.5px;
+}
+.exercises_container .exercises .exercise::-webkit-scrollbar-thumb:hover {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+.exercises_container .exercises .exercise::-webkit-scrollbar-track {
+  background-color: #333333;
+  border-radius: 2.5px;
 }
 .exercises_container .exercises .exercise.hidden {
   display: none !important;

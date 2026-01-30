@@ -16,7 +16,6 @@
         max-width: 500px;
         margin-bottom: 10px;
 
-        .training_title,
         .title {
             width: 245px;
             height: 50px;
@@ -184,7 +183,6 @@
                 transform: translateX(100%);
             }
 
-            .exercise_title_input,
             .title_input {
                 width: 400px;
                 text-align: center;
@@ -483,19 +481,6 @@
 
 .all_training_plans_container {
     min-height: calc(100vh);
-    // .training_plan {
-    //     .exercise {
-    //         .periods_container {
-    //             .period_selection {
-    //                 .reps_container {
-    //                     .reps {
-    //                         visibility: visible;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 .exercises_container {
@@ -617,12 +602,34 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
+            // height: 115px;
             aspect-ratio: 1 / 1;
             padding: 10px;
             background-color: transparentize($secondary-color, 0.95);
             border: 1px solid $secondary-color;
             border-radius: $small-border-radius;
             cursor: move;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: darken($secondary-color, 40%);
+                border-radius: 2.5px;
+
+                &:hover {
+                    background-color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                }
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: lighten($main-color, 20%);
+                border-radius: 2.5px;
+            }
 
             &.hidden {
                 display: none !important;

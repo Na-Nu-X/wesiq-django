@@ -1,10 +1,11 @@
 import { getMinimalistFormattedTime } from "../../../utils/timer.js"
 
-// Function For Clone And Add Period To The Exercise
-export function addPeriod(exercise, template) {
+// Function Add Period To The Exercise
+export function addPeriod(exercise) {
+    const period_selection_template = document.querySelector(".period_selection_template") // Gets Period Selection Template
     const periods_container = exercise.querySelector(".periods_container") // Gets Periods Container Of Exercise
 
-    const period_selection_template_clone = template.content.cloneNode(true) // Clones The Period Selection Template Content
+    const period_selection_template_clone = period_selection_template.content.cloneNode(true) // Clones The Period Selection Template Content
 
     periods_container.prepend(period_selection_template_clone) // Prepends New Period To The Exercise In The Training Plan
 }
@@ -18,7 +19,6 @@ export function changeReps(button, operation) {
     let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
 
     reps.style.visibility = "hidden" // Hides Reps Input
-    // to_failure.style.visibility = "hidden" // Hides To Failure Text
     time.style.visibility = "hidden" // Hides Time Text
 
     if(operation === "decrease") reps_number -= 1 // Decreases Reps Amount By 1
@@ -31,17 +31,14 @@ export function changeReps(button, operation) {
     else {
         to_failure.style.visibility = "hidden" // Hides To Failure Text
 
-        // Checks Exercise Unit Type
         if(unit === "reps") {
             reps.style.visibility = "visible" // Shows Reps Input
-
             if(reps_number > 100) return // Do Nothing
         }
 
         if(unit === "seconds") {
             time.style.visibility = "visible" // Shows Time Text
-            time.textContent = getMinimalistFormattedTime(reps_number)
-            
+            time.textContent = getMinimalistFormattedTime(reps_number) // Shows Exercise Time Amount
             if(reps_number > 3600) return // Do Nothing
         }
     }
@@ -67,7 +64,39 @@ export function changeSets(button, operation) {
     sets.value = sets_number // Updates Exercise Sets Amount
 }
 
-// Function For Update Periods
+// Function For Convert Current Values To Selected Unit Type
+export function updateUnitTypes(unit, training_plan, state) {
+    const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+    const reps_inputs = exercises[state.active_exercise_index].querySelectorAll(".periods_container .reps") // Gets All Reps Inputs From The Active Exercise
+
+    // Updates Unit Type For Every Reps Container
+    reps_inputs.forEach(function(one_input) {
+        const exercise = one_input.closest(".exercise") // Gets Exercise
+        const reps = exercise.querySelector(".periods_container .period_selection .reps_container .reps") // Gets Reps Input
+        const time = exercise.querySelector(".periods_container .period_selection .reps_container .time") // Gets Time Text
+        let reps_number = parseInt(reps.value) // Gets Current Reps Amount In Number Format
+
+        exercise.dataset.unit = unit // Stores Unit Type Data To The Exercise
+
+        reps.style.visibility = "hidden" // Hides Reps Input
+        time.style.visibility = "hidden" // Hides Time Text
+
+        if(unit === "reps") {
+            if(reps_number > 100) {
+                reps.value = 100 // Sets The Maximum Value For The Amount Of Reps
+            }
+
+            reps.style.visibility = "visible" // Shows Reps Input
+        }
+
+        if(unit === "seconds") {
+            time.style.visibility = "visible" // Shows Time Text
+            time.textContent = getMinimalistFormattedTime(reps_number) // Shows Exercise Time Amount
+        }
+    })
+}
+
+// Function For Get Periods Values
 export function getPeriods(exercise) {
     const reps_inputs = exercise.querySelectorAll(".periods_container .reps") // Gets All Reps Inputs
     const sets_inputs = exercise.querySelectorAll(".periods_container .sets") // Gets All Sets Inputs
@@ -82,14 +111,14 @@ export function getPeriods(exercise) {
         return one_input.value
     })
     
-    let periods = [] // Stores Periods Of Sets & Reps
+    const periods = [] // Stores Periods Of Sets & Reps / Seconds
 
     // Generates Periods Of Sets & Reps Values
     for(let i = 0; i < sets_inputs_values.length; i++) {
         for(let j = 0; j < sets_inputs_values[i]; j++) {
-            periods.unshift(parseInt(reps_inputs_values[i])) // Saves Numbers To An Array
+            periods.unshift(parseInt(reps_inputs_values[i])) // Saves Values To Periods
         }
     }
 
-    return periods
+    return periods // Returns Periods
 }
