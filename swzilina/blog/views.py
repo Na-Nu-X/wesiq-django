@@ -1161,8 +1161,7 @@ def manageTrainingPlansView(request):
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
-        day_index = 2 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
-        # day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
 
         # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
         training_plan = (

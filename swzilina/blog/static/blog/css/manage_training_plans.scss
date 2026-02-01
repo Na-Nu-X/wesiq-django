@@ -1,5 +1,19 @@
 @import "../../../../static/css/partials/variables";
 
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: calc(100vh - 67px);
+}
+
 .training_plan_container,
 .all_training_plans_container {
     display: flex;
@@ -7,7 +21,8 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: calc(100vh - 67px);
+    // margin-bottom: 50px;
+    // min-height: calc(100vh - 67px);
 
     .additional_info {
         display: flex;
@@ -418,7 +433,8 @@
                 position: relative;
                 width: 100%;
                 height: 10px;
-                border: 1px solid darken($secondary-color, 40%);
+                // border: 1px solid darken($secondary-color, 40%);
+                border: 1px solid transparentize($success-color, 0.5);
                 border-radius: calc(10px / 2);
                 
                 &.animate:not(&.active) {
@@ -480,13 +496,39 @@
 }
 
 .all_training_plans_container {
-    min-height: calc(100vh);
+    // min-height: calc(100vh);
+    .training_plan_bar_container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        margin-top: 10px;
+
+        .bar {
+            width: 100%;
+            height: 10px;
+            // border: 1px solid darken($secondary-color, 40%);
+            border: 1px solid transparentize(#4b4bfa, 0.5);
+            border-radius: calc(10px / 2);
+            transition: background-color 0.3s ease;
+
+            &.active,
+            &:hover {
+                cursor: pointer;
+                background-color: #4b4bfa;
+                box-shadow: 0px 0px 10px #4b4bfa;
+            }
+        }
+    }
 }
 
 .exercises_container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 500px;
+    // margin-bottom: 50px;
 
     .search_bar_menu {
         position: relative;
@@ -558,6 +600,7 @@
         max-width: 500px;
         width: 100%;
         max-height: 440px;
+        // max-height: calc(100vh - 67px - 60px - 100px);
         margin: 0px auto;
         padding-right: 5px;
         text-align: center;
@@ -635,10 +678,11 @@
                 display: none !important;
             }
 
-            &:hover, &:focus {
+            &:hover, 
+            &:focus {
                 outline: none;
 
-                .exercise_name {
+                .name {
                     filter: blur(2px);
                 }
 
@@ -679,7 +723,7 @@
                 }
             }
 
-            .exercise_name {
+            .name {
                 transition: filter 0.3s ease;
             }
 

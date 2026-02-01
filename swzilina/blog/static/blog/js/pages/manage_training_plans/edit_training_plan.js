@@ -45,12 +45,28 @@ document.addEventListener("DOMContentLoaded", function() {
         }))
     ]
 
-    let training_plan_day = training_plan_days_order[0] // Gets The First Value From Training Plan Days Order (Current Or Upcoming Day By Default)
-
     // Functions
 
     // Function For Render Exercises Of The Selected Training Plan
     function generateTrainingPlan(exercises_data, container) {
+        edit_training_plan_state.active_exercise_index = 0 // Sets Active Exercise Index Back To 0
+
+        // Removes Exercises
+        container.querySelectorAll(".exercise").forEach(function(one_exercise) {
+            one_exercise.remove()
+        })
+
+        // Removes Training Plan Bar Container
+        container.querySelectorAll(".training_plan_bar_container").forEach(function(one_bar_container) {
+            one_bar_container.remove()
+        })
+
+        let training_plan_day = training_plan_days_order[edit_training_plan_state.active_training_plan_index] // Gets The First Value From Training Plan Days Order (Current Or Upcoming Day By Default)
+
+        // Creates And Renders Training Plan Bars
+        const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
+        renderTrainingPlanBars(all_training_plans_container, training_plan_bar_container)
+
         // Extracts Data For Every Exercise
         exercises_data.forEach(function(one_exercise_data) {
             const day_data = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
@@ -150,7 +166,52 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     }
 
+    // Function For Creating Bar Container With Amount Of Bars By Training Plans Amount
+    function createTrainingPlanBars(amount) {
+        // Creates Bar Container
+        const training_plan_bar_container = document.createElement("div")
+        training_plan_bar_container.classList.add("training_plan_bar_container")
+
+        // Creates Bars By Amount Of Training Plans
+        for(let i = 0; i < amount; i++) {
+            // Creates Bar
+            const bar = document.createElement("div")
+            bar.classList.add("bar")
+            training_plan_bar_container.appendChild(bar)
+
+            if(i === edit_training_plan_state.active_training_plan_index) {
+                bar.classList.add("active") // Adds Active Class For Bar Of Active Training Plan
+            }
+        }
+
+        return training_plan_bar_container // Returns Bar Container
+    }
+
+    // Function For Render Training Plan Bar Container With Bars
+    function renderTrainingPlanBars(parent, container) {
+        // Removes Previous Bar Container
+        const previous_bar_container = parent.querySelector(".bar_container")
+        if(previous_bar_container) previous_bar_container.remove()
+
+        parent.insertBefore(container, parent.querySelector(".save")) // Appends New Training Plan Bar Container Before Save Button
+    }
+
+    // Function For Change Training Plans
+    function changeTrainingPlans(bar_index) {
+        edit_training_plan_state.active_training_plan_index = bar_index // Changes Active Training Plan Index
+        generateTrainingPlan(exercises_data, all_training_plans_container)
+    }
+
     // Global Event Delegations
+
+    // All Training Plans Container Click Events
+    all_training_plans_container.addEventListener("click", function(event) {
+        // Training Plan Bars
+        if(event.target.classList.contains("bar") && event.target.parentNode.classList.contains("training_plan_bar_container")) {
+            const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
+            changeTrainingPlans(clicked_bar_index, training_plan) // Changes Training Plan Exercises
+        }
+    })
 
     // All Training Plans Container Drop Events (Remove The Exercise From The Training Plan)
     all_training_plans_container.addEventListener("dragover", function(event) {
