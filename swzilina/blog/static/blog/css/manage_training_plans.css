@@ -1,3 +1,17 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: calc(100vh - 67px);
+}
+
 .training_plan_container,
 .all_training_plans_container {
   display: flex;
@@ -5,7 +19,6 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: calc(100vh - 67px);
 }
 .training_plan_container .additional_info,
 .all_training_plans_container .additional_info {
@@ -186,9 +199,7 @@
   top: 0px;
   transform: translateX(100%);
 }
-.training_plan_container .training_plan .exercise .exercise_title_input,
 .training_plan_container .training_plan .exercise .title_input,
-.all_training_plans_container .training_plan .exercise .exercise_title_input,
 .all_training_plans_container .training_plan .exercise .title_input {
   width: 400px;
   text-align: center;
@@ -199,12 +210,10 @@
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
 }
-.training_plan_container .training_plan .exercise .exercise_title_input::-moz-placeholder, .training_plan_container .training_plan .exercise .title_input::-moz-placeholder, .all_training_plans_container .training_plan .exercise .exercise_title_input::-moz-placeholder, .all_training_plans_container .training_plan .exercise .title_input::-moz-placeholder {
+.training_plan_container .training_plan .exercise .title_input::-moz-placeholder, .all_training_plans_container .training_plan .exercise .title_input::-moz-placeholder {
   color: #999999;
 }
-.training_plan_container .training_plan .exercise .exercise_title_input::placeholder,
 .training_plan_container .training_plan .exercise .title_input::placeholder,
-.all_training_plans_container .training_plan .exercise .exercise_title_input::placeholder,
 .all_training_plans_container .training_plan .exercise .title_input::placeholder {
   color: #999999;
 }
@@ -464,7 +473,7 @@
   position: relative;
   width: 100%;
   height: 10px;
-  border: 1px solid #999999;
+  border: 1px solid rgba(82, 207, 32, 0.5);
   border-radius: 5px;
 }
 .training_plan_container .training_plan .bar_container .bar.animate:not(.training_plan_container .training_plan .bar_container .bar.active,
@@ -524,14 +533,32 @@
   cursor: pointer;
 }
 
-.all_training_plans_container {
-  min-height: 100vh;
+.all_training_plans_container .training_plan_bar_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+.all_training_plans_container .training_plan_bar_container .bar {
+  width: 100%;
+  height: 10px;
+  border: 1px solid rgba(75, 75, 250, 0.5);
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+.all_training_plans_container .training_plan_bar_container .bar.active, .all_training_plans_container .training_plan_bar_container .bar:hover {
+  cursor: pointer;
+  background-color: #4b4bfa;
+  box-shadow: 0px 0px 10px #4b4bfa;
 }
 
 .exercises_container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 500px;
 }
 .exercises_container .search_bar_menu {
   position: relative;
@@ -662,7 +689,7 @@
 .exercises_container .exercises .exercise:hover, .exercises_container .exercises .exercise:focus {
   outline: none;
 }
-.exercises_container .exercises .exercise:hover .exercise_name, .exercises_container .exercises .exercise:focus .exercise_name {
+.exercises_container .exercises .exercise:hover .name, .exercises_container .exercises .exercise:focus .name {
   filter: blur(2px);
 }
 .exercises_container .exercises .exercise:hover .weight_selection, .exercises_container .exercises .exercise:focus .weight_selection {
@@ -699,7 +726,7 @@
 .exercises_container .exercises .exercise:hover .weight_selection .weight span, .exercises_container .exercises .exercise:focus .weight_selection .weight span {
   font-size: inherit;
 }
-.exercises_container .exercises .exercise .exercise_name {
+.exercises_container .exercises .exercise .name {
   transition: filter 0.3s ease;
 }
 .exercises_container .exercises .exercise .weight_selection {

@@ -76,39 +76,81 @@
         </div>
     </template>
 
-    <div class="training_plan_container">
-        <div class="additional_info">
-            <input type="text" class="title" placeholder="Názov">
+    <div class="top">
+        <div class="training_plan_container">
+            <div class="additional_info">
+                <input type="text" class="title" placeholder="Názov">
 
-            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-            <div class="day_select_menu">
-                <input type="hidden" name="day" value="not_selected">
+                <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                <div class="day_select_menu">
+                    <input type="hidden" name="day" value="not_selected">
 
-                <div class="select">
-                    <span>Nepriradiť deň</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
+                    <div class="select">
+                        <span>Nepriradiť deň</span>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
 
-                <div class="options_list">
-                    <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                    <div class="options_list">
+                        <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="training_plan">
-            <div class="add_exercise active">
-                <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+            <div class="training_plan">
+                <div class="add_exercise active">
+                    <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                </div>
             </div>
+
+            <button class="save">Pridať tréningový plán</button>
         </div>
 
-        <button class="save">Pridať tréningový plán</button>
+        <div class="all_training_plans_container">
+            {% for one_exercise in training_plan %}
+                <div class="one_exercise_data" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}"></div>
+
+            {% endfor %}
+
+            <div class="additional_info">
+                <input type="text" class="title" placeholder="Názov">
+
+                <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                <div class="day_select_menu">
+                    <input type="hidden" name="day" value="not_selected">
+
+                    <div class="select">
+                        <span>Nepriradiť deň</span>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+
+                    <div class="options_list">
+                        <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
+                        <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="training_plan">
+                <div class="add_exercise">
+                    <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                </div>
+            </div>
+
+            <button class="save">Uložiť zmeny</button>
+        </div>
     </div>
 
     <div class="exercises_container">
@@ -143,46 +185,6 @@
     
             {% endfor %}
         </div>
-    </div>
-
-    <div class="all_training_plans_container">
-        {% for one_exercise in training_plan %}
-            <div class="one_exercise_data" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}"></div>
-
-        {% endfor %}
-
-        <div class="additional_info">
-            <input type="text" class="title" placeholder="Názov">
-
-            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-            <div class="day_select_menu">
-                <input type="hidden" name="day" value="not_selected">
-
-                <div class="select">
-                    <span>Nepriradiť deň</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list">
-                    <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
-                    <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
-                </div>
-            </div>
-        </div>
-
-        <div class="training_plan">
-            <div class="add_exercise">
-                <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
-            </div>
-        </div>
-
-        <button class="save">Uložiť zmeny</button>
     </div>
 {% endblock content %}
 

@@ -13,5 +13,6 @@ export const new_training_plan_state = {
 }
 
 export const edit_training_plan_state = {
-    active_exercise_index: 0 // 0 By Default
+    active_exercise_index: 0, // 0 By Default
+    active_training_plan_index: 0 // 0 By Default
 }
