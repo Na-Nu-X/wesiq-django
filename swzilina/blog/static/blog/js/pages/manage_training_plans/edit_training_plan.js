@@ -197,8 +197,24 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Function For Change Training Plans
-    function changeTrainingPlans(bar_index) {
-        edit_training_plan_state.active_training_plan_index = bar_index // Changes Active Training Plan Index
+    function changeTrainingPlans(training_plan_index) {
+        // Shows Blur Animation Between Change Of Training Plans
+        training_plan.classList.remove("blur")
+        void training_plan.offsetWidth
+        training_plan.classList.add("blur")
+
+        if(training_plan_index < 0) {
+            edit_training_plan_state.active_training_plan_index = training_plan_days_order.length - 1 // Shows The Last Training Plan
+        }
+
+        else if(training_plan_index > training_plan_days_order.length - 1) {
+            edit_training_plan_state.active_training_plan_index = 0 // Shows The First Training Plan
+        }
+
+        else {
+            edit_training_plan_state.active_training_plan_index = training_plan_index // Changes Active Training Plan Index
+        }
+
         generateTrainingPlan(exercises_data, all_training_plans_container)
     }
 
@@ -209,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Training Plan Bars
         if(event.target.classList.contains("bar") && event.target.parentNode.classList.contains("training_plan_bar_container")) {
             const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
-            changeTrainingPlans(clicked_bar_index, training_plan) // Changes Training Plan Exercises
+            changeTrainingPlans(clicked_bar_index, training_plan) // Changes Training Plans
         }
     })
 
@@ -404,6 +420,45 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("pointerleave", stopHold)
 
     // Events
+
+    // Key Events
+    all_training_plans_container.addEventListener("mouseover", function(event) {
+        // Sets Hovered Element For Bar Container
+        if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
+            global_state.hovered_element = "bar_container"
+        }
+
+        // Sets Hovered Element For Training Plan Bar Container
+        else if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) {
+            global_state.hovered_element = "training_plan_bar_container"
+        }
+    })
+
+    all_training_plans_container.addEventListener("mouseout", function() {
+        global_state.hovered_element = null
+    })
+
+    document.addEventListener("keydown", function(event) {
+        // Shows Previous Exercise
+        if(event.key === "ArrowLeft" && global_state.hovered_element === "bar_container") {
+            changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
+        }
+
+        // Shows Next Exercise
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "bar_container") {
+            changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
+        }
+
+        // Shows Previous Training Plan
+        else if(event.key === "ArrowLeft" && global_state.hovered_element === "training_plan_bar_container") {
+            changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans
+        }
+
+        // Shows Next Training Plan
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "training_plan_bar_container") {
+            changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans
+        }
+    })
 
     // Day Select Menu
     day_select.addEventListener("click", function() {

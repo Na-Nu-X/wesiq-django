@@ -109,7 +109,19 @@ export function changeExercises(exercise_index, training_plan, state) {
     const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
 
     exercises[state.active_exercise_index].classList.remove("active") // Hides Previous Active Exercise
-    state.active_exercise_index = exercise_index // Updates Index Of Active Exercise
+
+    if(exercise_index < 0) {
+        state.active_exercise_index = exercises.length - 1 // Shows The Last Exercise
+    }
+
+    else if(exercise_index > exercises.length - 1) {
+        state.active_exercise_index = 0 // Shows The First Exercise
+    }
+    
+    else {
+        state.active_exercise_index = exercise_index // Updates Index Of Active Exercise
+    }
+    
     exercises[state.active_exercise_index].classList.add("active") // Shows New Active Exercise
 
     // Creates And Renders Bars
