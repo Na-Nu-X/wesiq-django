@@ -81,8 +81,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
         renderTrainingPlanBars(all_training_plans_container, training_plan_bar_container)
 
+        // Orders Exercises By Order Value In Exercises Data
+        const ordered_exercises_data = [...exercises_data].sort(function(a, b) {
+            return Number(a.dataset.order) - Number(b.dataset.order)
+        })
+
         // Extracts Data For Every Exercise
-        exercises_data.forEach(function(one_exercise_data) {
+        ordered_exercises_data.forEach(function(one_exercise_data) {
             const day_data = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
             const type_data = one_exercise_data.dataset.type // Gets Training Title Of The Exercise
             const exercise_data = one_exercise_data.dataset.exercise // Gets Exercise Name
