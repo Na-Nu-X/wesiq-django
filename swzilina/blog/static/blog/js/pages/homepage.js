@@ -290,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function() {
             subject_options_list.classList.toggle("active")
             subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
 
-            // Remove Selected Class From Options
+            // Removes Selected Class From Options
             subject_options.forEach(function(remove_selected) {
                 remove_selected.classList.remove("selected")
             })

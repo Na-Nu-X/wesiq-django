@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const clicked_option = event.target.closest(".option") // Gets Clicked Option
                 unit_select_menu.closest(".exercise").dataset.unit = clicked_option.dataset.unit_option // Sets Unit Data To The Exercise
 
-                // Remove Selected Class From Options
+                // Removes Selected Class From Options
                 unit_options.forEach(function(one_option) {
                     one_option.classList.remove("selected")
                 })
@@ -219,6 +219,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Events
 
+    // Key Events
+    training_plan_container.addEventListener("mouseover", function(event) {
+        // Sets Hovered Element For Bar Container
+        if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
+            global_state.hovered_element = "new_training_plan_exercises_bars"
+        }
+    })
+
+    training_plan_container.addEventListener("mouseout", function() {
+        global_state.hovered_element = null
+    })
+
+    document.addEventListener("keydown", function(event) {
+        // Shows Previous Exercise
+        if(event.key === "ArrowLeft" && global_state.hovered_element === "new_training_plan_exercises_bars") {
+            changeExercises(new_training_plan_state.active_exercise_index - 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises
+        }
+
+        // Shows Next Exercise
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "new_training_plan_exercises_bars") {
+            changeExercises(new_training_plan_state.active_exercise_index + 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises
+        }
+    })
+
     // Day Select Menu
     day_select.addEventListener("click", function() {
         day_options_list.classList.toggle("active") // Shows / Hides Options List
@@ -232,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
             day_options_list.classList.toggle("active") // Shows / Hides Options List
             day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up") // Toggle Icons
 
-            // Remove Selected Class From Options
+            // Removes Selected Class From Options
             day_options.forEach(function(remove_selected) {
                 remove_selected.classList.remove("selected")
             })

@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function For Render Exercises Of The Selected Training Plan
     function generateTrainingPlan(exercises_data, container) {
+        // Set Defaults
         edit_training_plan_state.active_exercise_index = 0 // Sets Active Exercise Index Back To 0
 
         // Removes Exercises
@@ -61,7 +62,20 @@ document.addEventListener("DOMContentLoaded", function() {
             one_bar_container.remove()
         })
 
+        // Day
         let training_plan_day = training_plan_days_order[edit_training_plan_state.active_training_plan_index] // Gets The First Value From Training Plan Days Order (Current Or Upcoming Day By Default)
+
+        day_options.forEach(function(remove_selected) {
+            remove_selected.classList.remove("selected") // Removes Selected Class From Day Options
+        })
+
+        day_options.forEach(function(one_option) {
+            // Shows Current Selected Option From List Without Icon
+            if(one_option.dataset.day === training_plan_day) {
+                day_select.querySelector("span").textContent = one_option.querySelector("span").textContent // Shows Current Selected Option From List Without Icon
+                one_option.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
 
         // Creates And Renders Training Plan Bars
         const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
@@ -99,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
-
         exercises[edit_training_plan_state.active_exercise_index].classList.add("active") // Shows Active Exercise
 
         // Creates And Renders Bars
@@ -364,7 +377,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const clicked_option = event.target.closest(".option") // Gets Clicked Option
                 unit_select_menu.closest(".exercise").dataset.unit = clicked_option.dataset.unit_option // Sets Unit Data To The Exercise
 
-                // Remove Selected Class From Options
+                // Removes Selected Class From Options
                 unit_options.forEach(function(one_option) {
                     one_option.classList.remove("selected")
                 })
@@ -425,12 +438,12 @@ document.addEventListener("DOMContentLoaded", function() {
     all_training_plans_container.addEventListener("mouseover", function(event) {
         // Sets Hovered Element For Bar Container
         if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
-            global_state.hovered_element = "bar_container"
+            global_state.hovered_element = "edit_training_plan_exercises_bars"
         }
 
         // Sets Hovered Element For Training Plan Bar Container
         else if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) {
-            global_state.hovered_element = "training_plan_bar_container"
+            global_state.hovered_element = "edit_training_plan_bars"
         }
     })
 
@@ -440,22 +453,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.addEventListener("keydown", function(event) {
         // Shows Previous Exercise
-        if(event.key === "ArrowLeft" && global_state.hovered_element === "bar_container") {
+        if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_exercises_bars") {
             changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
         }
 
         // Shows Next Exercise
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "bar_container") {
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_exercises_bars") {
             changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
         }
 
         // Shows Previous Training Plan
-        else if(event.key === "ArrowLeft" && global_state.hovered_element === "training_plan_bar_container") {
+        else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") {
             changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans
         }
 
         // Shows Next Training Plan
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "training_plan_bar_container") {
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") {
             changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans
         }
     })
@@ -473,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function() {
             day_options_list.classList.toggle("active") // Shows / Hides Options List
             day_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up") // Toggle Icons
 
-            // Remove Selected Class From Options
+            // Removes Selected Class From Options
             day_options.forEach(function(remove_selected) {
                 remove_selected.classList.remove("selected")
             })
