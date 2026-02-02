@@ -3,6 +3,8 @@
 export const global_state = {
     selection_dragged_exercise: null, // Gets Dragged Exercise From Exercise Selection
 
+    hovered_element: null, // Gets Current Hovered Element
+
     // Hold Button Interval
     hold_interval: null,
     hold_timeout: null
