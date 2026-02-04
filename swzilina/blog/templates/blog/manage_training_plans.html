@@ -114,7 +114,7 @@
 
         <div class="all_training_plans_container">
             {% for one_exercise in training_plan %}
-                <div class="one_exercise_data" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+                <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
 
             {% endfor %}
 
@@ -149,7 +149,10 @@
                 </div>
             </div>
 
-            <button class="save">Uložiť zmeny</button>
+            <div class="buttons">
+                <button class="save">Uložiť zmeny</button>
+                <button class="delete">Vymazať</button>
+            </div>
         </div>
     </div>
 

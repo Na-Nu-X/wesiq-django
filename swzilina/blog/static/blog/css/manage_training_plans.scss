@@ -536,6 +536,34 @@
             }
         }
     }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        width: 100%;
+
+        .delete {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            height: 50px;
+            outline: none;
+            background-color: $error-color;
+            color: $main-color;
+            border: 1px solid $main-color;
+            border-radius: $small-border-radius;
+            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+
+            &:hover,
+            &:focus {
+                background-color: lighten($error-color, 5%);
+                transform: scale(1.05);
+                letter-spacing: 1px;
+                cursor: pointer;
+            }
+        }
+    }
 }
 
 .exercises_container {

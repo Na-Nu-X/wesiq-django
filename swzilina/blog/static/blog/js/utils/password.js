@@ -29,36 +29,6 @@ export function hidePassword(icon, input) {
     input.style.webkitTextSecurity = "disc" // Hides Password
 }
 
-// Function For Shuffle String
-export function shuffleString(string) {
-    let array = string.split("") // Creates An Array From A String
-
-    // Shuffles Array
-    for(let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]
-    }
-
-    return array.join("") // Converts An Array Back To A String
-}
-
-// Function For Generating Random Password
-export function generatePassword() {
-    // Possible Characters
-    const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    const special_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', ';', ':', "'", '"', ',', '.', '<', '>', '/', '?', '\\', '|', '`', '~']
-
-    let generated_password = "" // Sets Generated Password To An Empty String
-
-    // Creates Random 15 Characters Long Password (5 Letters, 5 Numbers, 5 Characters)
-    for(let i = 0; i < 5; i++) {
-        generated_password = generated_password + alphabet[Math.floor(Math.random() * alphabet.length)] + numbers[Math.floor(Math.random() * numbers.length)] + special_chars[Math.floor(Math.random() * special_chars.length)] // Generates Pattern Of Letter, Number, Character
-    }
-
-    return shuffleString(generated_password) // Returns Shuffled Generated Password Value
-}
-
 // Function For Copying Value From The Input
 export function copy(input) {
     input.select() // Selects Everything In The Input

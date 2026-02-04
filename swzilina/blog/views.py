@@ -1181,17 +1181,39 @@ def manageTrainingPlansView(request):
             
             # Saves Each Object In The Training Plan Data To The Database
             for one_object in training_plan_data:
-                new_training_plan = TrainingPlan(
-                    user_id = logged_in_user_id,
-                    day = one_object["day"],
-                    type = one_object["type"],
-                    exercise = one_object["exercise"],
-                    periods = one_object["periods"],
-                    unit = one_object["unit"],
-                    order = one_object["order"],
-                )
+                # New Training Plan
+                if one_object["is_new"] == True:
+                    # Stores Data
+                    new_training_plan = TrainingPlan(
+                        user_id = logged_in_user_id,
+                        training_plan_key = one_object["training_plan_key"],
+                        day = one_object["day"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                    )
 
-                new_training_plan.save()
+                    new_training_plan.save() # Saves New Training Plan
+
+                # Edited Training Plan
+                else:
+                    training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
+
+                    # Stores Data
+                    edited_training_plan = TrainingPlan(
+                        user_id = logged_in_user_id,
+                        training_plan_key = one_object["training_plan_key"],
+                        day = one_object["day"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                    )
+
+                    edited_training_plan.save() # Saves Edited Training Plan
 
             return JsonResponse({"success": "Training Plan Has Been Saved."})
         
