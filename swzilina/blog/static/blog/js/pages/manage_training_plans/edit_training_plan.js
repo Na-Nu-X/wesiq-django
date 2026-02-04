@@ -1,10 +1,34 @@
-import { global_state, edit_training_plan_state } from "./state.js"
-import { addExercise, changeExercises, changeExercisePosition, removeExercise } from "./functions/exercises.js"
-import { addPeriod, changeReps, changeSets, updateUnitTypes } from "./functions/periods.js"
-import { startHold, stopHold } from "./functions/holdButton.js"
+import { 
+    global_state, 
+    edit_training_plan_state 
+} from "./state.js"
+
+import { 
+    addExercise, 
+    changeExercises, 
+    changeExercisePosition, 
+    removeExercise 
+} from "./functions/exercises.js"
+
+import { 
+    addPeriod, 
+    changeReps, 
+    changeSets, 
+    updateUnitTypes 
+} from "./functions/periods.js"
+
+import { 
+    startHold, 
+    stopHold 
+} from "./functions/holdButton.js"
+
+import { 
+    createBars, 
+    renderBars 
+} from "./functions/bars.js"
+
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
-import { createBars, renderBars } from "./functions/bars.js"
 
 "use strict"
 
@@ -29,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const day_options_list = day_select_menu.querySelector(".options_list") // Gets Day Options List
     const day_options = day_options_list.querySelectorAll(".option") // Gets All Day Options
 
-    const save = all_training_plans_container.querySelector(".save") // Gets Training Plan Save Button
+    const save = all_training_plans_container.querySelector(".buttons .save") // Gets Training Plan Save Button
+    const delete_button = all_training_plans_container.querySelector(".buttons .delete") // Gets Training Plan Delete Button
 
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     // const all_training_plan_types = [
@@ -88,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Extracts Data For Every Exercise
         ordered_exercises_data.forEach(function(one_exercise_data) {
+            const training_plan_key = one_exercise_data.dataset.training_plan_key // Gets Training Plan Key
             const day_data = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
             const type_data = one_exercise_data.dataset.type // Gets Training Title Of The Exercise
             const exercise_data = one_exercise_data.dataset.exercise // Gets Exercise Name
@@ -106,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
 
+                    exercise_template_clone.querySelector(".exercise").dataset.training_plan_key = training_plan_key // Stores Training Plan Key Data To The Exercise
                     exercise_template_clone.querySelector(".exercise").dataset.unit = unit_data // Stores Unit Type Data To The Exercise
 
                     exercise_template_clone.querySelector(".exercise .periods_container").innerHTML = "" // Deletes All Period Selections
@@ -211,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const previous_bar_container = parent.querySelector(".bar_container")
         if(previous_bar_container) previous_bar_container.remove()
 
-        parent.insertBefore(container, parent.querySelector(".save")) // Appends New Training Plan Bar Container Before Save Button
+        parent.insertBefore(container, parent.querySelector(".buttons")) // Appends New Training Plan Bar Container Before Save Button
     }
 
     // Function For Change Training Plans
@@ -234,6 +261,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         generateTrainingPlan(exercises_data, all_training_plans_container)
+    }
+
+    function deleteTrainingPlan() {
+        console.log("TEST")
     }
 
     // Global Event Delegations
@@ -508,6 +539,9 @@ document.addEventListener("DOMContentLoaded", function() {
     save.addEventListener("click", function() {
         saveTrainingPlan(all_training_plans_container, edit_training_plan_state)
     })
+
+    // Delete Training Plan
+    delete_button.addEventListener("click", deleteTrainingPlan)
 
     // MAIN
 

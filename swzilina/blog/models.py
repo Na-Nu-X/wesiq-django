@@ -128,6 +128,7 @@ class TrainingPlan(models.Model):
         null=True,
     )
 
+    training_plan_key = models.CharField(verbose_name="Training Plan Key", max_length=50, default="None", null=False, blank=False)
     day = models.IntegerField(verbose_name="Day", null=True, blank=True)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)

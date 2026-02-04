@@ -1,7 +1,27 @@
-import { global_state, new_training_plan_state } from "./state.js"
-import { addExercise, changeExercises, changeExercisePosition, removeExercise } from "./functions/exercises.js"
-import { addPeriod, changeReps, changeSets, updateUnitTypes } from "./functions/periods.js"
-import { startHold, stopHold } from "./functions/holdButton.js"
+import { 
+    global_state, 
+    new_training_plan_state 
+} from "./state.js"
+
+import { 
+    addExercise, 
+    changeExercises, 
+    changeExercisePosition, 
+    removeExercise 
+} from "./functions/exercises.js"
+
+import { 
+    addPeriod, 
+    changeReps, 
+    changeSets, 
+    updateUnitTypes 
+} from "./functions/periods.js"
+
+import { 
+    startHold, 
+    stopHold 
+} from "./functions/holdButton.js"
+
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 
 "use strict"

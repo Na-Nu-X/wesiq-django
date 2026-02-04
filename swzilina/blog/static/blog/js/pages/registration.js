@@ -2,10 +2,11 @@ import {
     passwordVerification,
     showPassword,
     hidePassword,
-    generatePassword,
     copy,
     paste
 } from "../utils/password.js"
+
+import { generateKey } from "../utils/generateKey.js"
 
 "use strict"
 
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Random Password Generator
             case event.target.matches(".fa-key"):
-                password_input.value = generatePassword() // Sets Generated Password To The Password Input
+                password_input.value = generateKey(15) // Sets Generated Password To The Password Input
                 passwordVerification(password_input, password_check_input, form_report) // Password Verification
                 break
 

@@ -1,6 +1,8 @@
 import { changeExercises } from "./exercises.js"
+import { generateKey } from "../../../utils/generateKey.js"
 import { getSelectedDay } from "./getSelectedDay.js"
 import { getPeriods } from "./periods.js"
+import { sendPOST } from "../../../services/sendPOST.js"
 import { sendNotification } from "../../../utils/sendNotification.js"
 
 export function saveTrainingPlan(training_plan_container, state) {
@@ -38,12 +40,14 @@ export function saveTrainingPlan(training_plan_container, state) {
     if(training_plan_title.value !== "" && exercises.length !== 0 && custom_exercises_without_name.length === 0) {
         const training_plan_data = [] // Stores All New Saved Training Plan Data
 
+        const training_plan_key = generateKey(50) // Gets Random 50 Characters Long Generated Key
         const is_new = training_plan_container.classList.contains("training_plan_container") // Checks If Saved Training Plan Is New Or Edited
         const day = getSelectedDay(day_options) // Gets Training Plan Day
         const type = training_plan_title.value // Gets Training Plan Title Value
 
         // Gets Info From Every Exercise
         exercises.forEach(function(one_exercise) {
+            const previous_training_plan_key = one_exercise.dataset.training_plan_key ?? null // Gets Previous Training Plan Key If POST Is From Edited Training Plan
             const exercise = one_exercise.querySelector(".title").textContent !== "" ? one_exercise.querySelector(".title").textContent : one_exercise.querySelector(".title_input").value // Gets Exercise Title
             const periods = getPeriods(one_exercise) // Gets Exercise Periods
             const unit = one_exercise.dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
@@ -51,6 +55,8 @@ export function saveTrainingPlan(training_plan_container, state) {
             // Creates Object Of One Exercise For Saved Training Plan
             const training_plan_object = {}
 
+            training_plan_object.previous_training_plan_key = previous_training_plan_key
+            training_plan_object.training_plan_key = training_plan_key
             training_plan_object.is_new = is_new
             training_plan_object.day = day
             training_plan_object.type = type
@@ -62,12 +68,10 @@ export function saveTrainingPlan(training_plan_container, state) {
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        // sendPOST("/my-training-plans", new_training_plan_data) // Sends The Data With POST
+        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST
 
         is_new ? sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`) : sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`) // Sends The Notification For The User
 
-        console.log(training_plan_data)
-
-        // location.reload() // Reloads The Page
+        location.reload() // Reloads The Page
     }
 }

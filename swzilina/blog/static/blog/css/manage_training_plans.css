@@ -559,6 +559,30 @@
   background-color: #4b4bfa;
   box-shadow: 0px 0px 10px #4b4bfa;
 }
+.all_training_plans_container .buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+}
+.all_training_plans_container .buttons .delete {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  height: 50px;
+  outline: none;
+  background-color: #df3535;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+}
+.all_training_plans_container .buttons .delete:hover, .all_training_plans_container .buttons .delete:focus {
+  background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
+  transform: scale(1.05);
+  letter-spacing: 1px;
+  cursor: pointer;
+}
 
 .exercises_container {
   display: flex;
