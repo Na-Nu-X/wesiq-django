@@ -564,6 +564,7 @@
   flex-direction: row;
   gap: 10px;
   width: 100%;
+  margin-top: 10px;
 }
 .all_training_plans_container .buttons .delete {
   max-width: 500px;

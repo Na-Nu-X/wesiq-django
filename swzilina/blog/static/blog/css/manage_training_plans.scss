@@ -20,10 +20,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    // gap: 10px;
     width: 100%;
-    // margin-bottom: 50px;
-    // min-height: calc(100vh - 67px);
 
     .additional_info {
         display: flex;
@@ -360,7 +357,6 @@
                         display: flex;
                         flex-direction: row;
                         border: 1px solid $secondary-color;
-                        // border-radius: $small-border-radius;
 
                         .decrease_reps,
                         .increase_reps,
@@ -434,7 +430,6 @@
                 position: relative;
                 width: 100%;
                 height: 10px;
-                // border: 1px solid darken($secondary-color, 40%);
                 border: 1px solid transparentize($success-color, 0.5);
                 border-radius: calc(10px / 2);
                 
@@ -478,7 +473,6 @@
         width: 100%;
         text-align: center;
         height: 50px;
-        // margin-top: 10px;
         outline: none;
         background-color: $success-color;
         color: $main-color;
@@ -503,8 +497,6 @@
 }
 
 .all_training_plans_container {
-    // min-height: calc(100vh);
-
     .training_plan {
         &.blur {
             animation: blur_animation 0.3s ease-out;
@@ -517,13 +509,11 @@
         justify-content: space-between;
         gap: 10px;
         width: 100%;
-        // margin-top: 10px;
         margin: 10px 0px;
 
         .bar {
             width: 100%;
             height: 10px;
-            // border: 1px solid darken($secondary-color, 40%);
             border: 1px solid transparentize(#4b4bfa, 0.5);
             border-radius: calc(10px / 2);
             transition: background-color 0.3s ease;
@@ -542,6 +532,7 @@
         flex-direction: row;
         gap: 10px;
         width: 100%;
+        margin-top: 10px;
 
         .delete {
             max-width: 500px;
@@ -571,7 +562,6 @@
     flex-direction: column;
     align-items: center;
     width: 500px;
-    // margin-bottom: 50px;
 
     .search_bar_menu {
         position: relative;
@@ -643,7 +633,6 @@
         max-width: 500px;
         width: 100%;
         max-height: 440px;
-        // max-height: calc(100vh - 67px - 60px - 100px);
         margin: 0px auto;
         padding-right: 5px;
         text-align: center;
@@ -688,7 +677,6 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            // height: 115px;
             aspect-ratio: 1 / 1;
             padding: 10px;
             background-color: transparentize($secondary-color, 0.95);

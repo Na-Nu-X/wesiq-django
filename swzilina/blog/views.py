@@ -1179,11 +1179,10 @@ def manageTrainingPlansView(request):
         if request.method == "POST":
             training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
             
-            # Saves Each Object In The Training Plan Data To The Database
+            # Gets Each Object From The Training Plan Data
             for one_object in training_plan_data:
                 # New Training Plan
-                if one_object["is_new"] == True:
-                    # Stores Data
+                if one_object["action"] == "new_training_plan":
                     new_training_plan = TrainingPlan(
                         user_id = logged_in_user_id,
                         training_plan_key = one_object["training_plan_key"],
@@ -1197,11 +1196,12 @@ def manageTrainingPlansView(request):
 
                     new_training_plan.save() # Saves New Training Plan
 
+                    return JsonResponse({"success": "Training Plan Has Been Saved."})
+
                 # Edited Training Plan
-                else:
+                elif one_object["action"] == "edited_training_plan":
                     training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
 
-                    # Stores Data
                     edited_training_plan = TrainingPlan(
                         user_id = logged_in_user_id,
                         training_plan_key = one_object["training_plan_key"],
@@ -1215,7 +1215,12 @@ def manageTrainingPlansView(request):
 
                     edited_training_plan.save() # Saves Edited Training Plan
 
-            return JsonResponse({"success": "Training Plan Has Been Saved."})
+                    return JsonResponse({"success": "Training Plan Has Been Edited."})
+
+                elif one_object["action"] == "delete_training_plan":
+                    training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
+
+                    return JsonResponse({"success": "Training Plan Has Been Deleted."})
         
         return render(request, "blog/manage_training_plans.html", {
             "exercises": exercises,
