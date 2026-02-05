@@ -41,7 +41,12 @@ export function saveTrainingPlan(training_plan_container, state) {
         const training_plan_data = [] // Stores All New Saved Training Plan Data
 
         const training_plan_key = generateKey(50) // Gets Random 50 Characters Long Generated Key
-        const is_new = training_plan_container.classList.contains("training_plan_container") // Checks If Saved Training Plan Is New Or Edited
+        
+        // Gets Action (New Or Edited)
+        let action = null
+        if(training_plan_container.classList.contains("training_plan_container")) action = "new_training_plan"
+        if(training_plan_container.classList.contains("all_training_plans_container")) action = "edited_training_plan"
+
         const day = getSelectedDay(day_options) // Gets Training Plan Day
         const type = training_plan_title.value // Gets Training Plan Title Value
 
@@ -57,7 +62,7 @@ export function saveTrainingPlan(training_plan_container, state) {
 
             training_plan_object.previous_training_plan_key = previous_training_plan_key
             training_plan_object.training_plan_key = training_plan_key
-            training_plan_object.is_new = is_new
+            training_plan_object.action = action
             training_plan_object.day = day
             training_plan_object.type = type
             training_plan_object.exercise = exercise
@@ -68,9 +73,11 @@ export function saveTrainingPlan(training_plan_container, state) {
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST
+        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST 
 
-        is_new ? sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`) : sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`) // Sends The Notification For The User
+        // Sends The Notification For The User
+        if(action === "new_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`)
+        if(action === "edited_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`)
 
         location.reload() // Reloads The Page
     }

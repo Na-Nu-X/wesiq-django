@@ -29,6 +29,8 @@ import {
 
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
+import { sendPOST } from "../../services/sendPOST.js"
+import { sendNotification } from "../../utils/sendNotification.js"
 
 "use strict"
 
@@ -53,8 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const day_options_list = day_select_menu.querySelector(".options_list") // Gets Day Options List
     const day_options = day_options_list.querySelectorAll(".option") // Gets All Day Options
 
-    const save = all_training_plans_container.querySelector(".buttons .save") // Gets Training Plan Save Button
-    const delete_button = all_training_plans_container.querySelector(".buttons .delete") // Gets Training Plan Delete Button
+    const buttons_container = all_training_plans_container.querySelector(".buttons") // Gets Buttons Container
+    const save = buttons_container.querySelector(".save") // Gets Training Plan Save Button
+    const delete_button = buttons_container.querySelector(".delete") // Gets Training Plan Delete Button
 
     // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
     // const all_training_plan_types = [
@@ -102,9 +105,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
 
-        // Creates And Renders Training Plan Bars
-        const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
-        renderTrainingPlanBars(all_training_plans_container, training_plan_bar_container)
+        // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
+        if(training_plan_days_order.length > 1) {
+            const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
+            renderTrainingPlanBars(all_training_plans_container, training_plan_bar_container)
+
+            buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
+        }
 
         // Orders Exercises By Order Value In Exercises Data
         const ordered_exercises_data = [...exercises_data].sort(function(a, b) {
@@ -263,8 +270,28 @@ document.addEventListener("DOMContentLoaded", function() {
         generateTrainingPlan(exercises_data, all_training_plans_container)
     }
 
-    function deleteTrainingPlan() {
-        console.log("TEST")
+    function deleteTrainingPlan(training_plan_container) {
+        const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+        const training_plan_title = training_plan_container.querySelector(".additional_info .title") // Gets Training Plan Title
+
+        const training_plan_data = [] // Stores All Delete Training Plan Data
+
+        exercises.forEach(function(one_exercise) {
+            const training_plan_key = one_exercise.dataset.training_plan_key // Gets Training Plan Key
+
+            // Creates Object Of One Exercise For Delete Training Plan
+            const delete_training_plan_object = {}
+
+            delete_training_plan_object.training_plan_key = training_plan_key
+            delete_training_plan_object.action = "delete_training_plan"
+
+            training_plan_data.push(delete_training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
+        })
+
+        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST
+
+        sendNotification(`Tréningový plán ${training_plan_title.value} bol odstránený.`) // Sends The Notification For The User
     }
 
     // Global Event Delegations
@@ -541,12 +568,11 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     // Delete Training Plan
-    delete_button.addEventListener("click", deleteTrainingPlan)
+    delete_button.addEventListener("click", function() {
+        deleteTrainingPlan(all_training_plans_container)
+    })
 
     // MAIN
 
-    // Renders User's Training Plan If Has Any
-    if(exercises_data.length > 0) {
-        generateTrainingPlan(exercises_data, all_training_plans_container)
-    }
+    generateTrainingPlan(exercises_data, all_training_plans_container) // Renders User's Training Plan If Has Any
 })
