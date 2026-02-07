@@ -79,6 +79,6 @@ export function saveTrainingPlan(training_plan_container, state) {
         if(action === "new_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`)
         if(action === "edited_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`)
 
-        location.reload() // Reloads The Page
+        // location.reload() // Reloads The Page
     }
 }

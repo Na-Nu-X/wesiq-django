@@ -142,14 +142,14 @@ main {
   animation: green_pulse_button_animation 1s linear alternate infinite 0.3s;
 }
 .activity .record_activity .buttons a:nth-child(1):hover, .activity .record_activity .buttons a:nth-child(1):focus {
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
 }
 .activity .record_activity .buttons a:nth-child(2) {
   background-color: #df3535;
   box-shadow: 0px 0px 5px #df3535;
 }
 .activity .record_activity .buttons a:nth-child(2):hover, .activity .record_activity .buttons a:nth-child(2):focus {
-  background-color: rgb(229.9743589744, 97.0256410256, 97.0256410256);
+  background-color: #e66161;
 }
 .activity .record_activity .buttons a .fa-play, .activity .record_activity .buttons a .fa-pause, .activity .record_activity .buttons a .fa-stop {
   position: absolute;
@@ -175,7 +175,7 @@ main {
   position: relative;
   width: 50px;
   height: 50px;
-  background-color: rgb(25.5, 25.5, 25.5);
+  background-color: #1a1a1a;
   border: 2px solid #fff;
   border-radius: 50%;
   box-shadow: 0px 0px 5px 0px #999999;
@@ -243,7 +243,7 @@ main {
 }
 .activity .training_plan_container .training_plan .start_training .start_training_button:hover, .activity .training_plan_container .training_plan .finish_training .start_training_button:hover {
   transform: scale(1.05);
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
   cursor: pointer;
 }
 .activity .training_plan_container .training_plan .start_training .start_training_button .fa-play, .activity .training_plan_container .training_plan .finish_training .start_training_button .fa-play {
@@ -270,7 +270,7 @@ main {
 }
 .activity .training_plan_container .training_plan .start_training .finish_training_button:hover, .activity .training_plan_container .training_plan .finish_training .finish_training_button:hover {
   transform: scale(1.05);
-  background-color: rgb(229.9743589744, 97.0256410256, 97.0256410256);
+  background-color: #e66161;
   cursor: pointer;
 }
 .activity .training_plan_container .training_plan .start_training .finish_training_button .fa-stop, .activity .training_plan_container .training_plan .finish_training .finish_training_button .fa-stop {
@@ -326,7 +326,7 @@ main {
 }
 .activity .training_plan_container .training_plan .exercise .next_exercise_button:hover {
   transform: scale(1.05);
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
   cursor: pointer;
 }
 .activity .training_plan_container .training_plan .exercise .next_exercise_button .fa-angle-right {
@@ -366,7 +366,7 @@ main {
 }
 .activity .training_plan_container .training_plan .break .add_time:hover {
   transform: scale(1.05);
-  background-color: rgb(110.1796875, 177.8203125, 233.3203125);
+  background-color: #6eb2e9;
   cursor: pointer;
 }
 .activity .training_plan_container .training_plan .break .add_time .fa-plus {
@@ -446,7 +446,7 @@ main {
 }
 .activity .training_plan_container .training_plan .break .skip_break_button:hover {
   transform: scale(1.05);
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
   cursor: pointer;
 }
 .activity .training_plan_container .training_plan .break .skip_break_button .fa-angle-right {
@@ -662,7 +662,7 @@ main {
     background-color: #52cf20;
   }
   100% {
-    background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+    background-color: #6ee240;
   }
 }
 @keyframes red_pulse_button_animation {
@@ -670,7 +670,7 @@ main {
     background-color: #df3535;
   }
   100% {
-    background-color: rgb(229.9743589744, 97.0256410256, 97.0256410256);
+    background-color: #e66161;
   }
 }
 @keyframes blur_animation {
