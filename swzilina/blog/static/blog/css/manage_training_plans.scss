@@ -14,8 +14,8 @@
     min-height: calc(100vh - 67px);
 }
 
-.training_plan_container,
-.all_training_plans_container {
+.new_training_plan,
+.edit_training_plan {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -441,6 +441,7 @@
 
                     .fa-plus,
                     .fa-minus {
+                        pointer-events: none;
                         position: absolute;
                         top: 50%;
                         left: 50%;
@@ -572,13 +573,13 @@
     }
 }
 
-.training_plan_container {
+.new_training_plan {
     .save {
         margin-top: 10px;
     }
 }
 
-.all_training_plans_container {
+.edit_training_plan {
     .training_plan {
         &.blur {
             animation: blur_animation 0.3s ease-out;
@@ -639,7 +640,7 @@
     }
 }
 
-.exercises_container {
+.exercise_selection {
     display: flex;
     flex-direction: column;
     align-items: center;

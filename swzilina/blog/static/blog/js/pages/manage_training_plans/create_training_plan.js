@@ -7,7 +7,7 @@ import {
     addExercise, 
     changeExercises, 
     changeExercisePosition, 
-    removeExercise 
+    removeExercise
 } from "./functions/exercises.js"
 
 import { 
@@ -22,6 +22,7 @@ import {
     stopHold 
 } from "./functions/holdButton.js"
 
+import { changeWarmUpTime } from "./functions/changeWarmUpTime.js"
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 
 "use strict"
@@ -32,29 +33,29 @@ document.addEventListener("DOMContentLoaded", function() {
     let dragged_exercise = null // Gets Dragged Exercise From The Training Plan
     let dragged_bar = null // Gets Dragged Bar From The Training Plan
 
-    const training_plan_container = document.querySelector(".training_plan_container") // Gets Training Plan Container
-    const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+    const new_training_plan = document.querySelector(".new_training_plan") // Gets New Training Plan
+    const training_plan = new_training_plan.querySelector(".training_plan") // Gets Training Plan
 
     const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
 
-    const day_select_menu = training_plan_container.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
+    const day_select_menu = new_training_plan.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
     const day_select = day_select_menu.querySelector(".select") // Gets Selected Option Print
     const day_options_list = day_select_menu.querySelector(".options_list") // Gets Day Options List
     const day_options = day_options_list.querySelectorAll(".option") // Gets All Day Options
 
-    const save = training_plan_container.querySelector(".save") // Gets Training Plan Save Button
+    const save = new_training_plan.querySelector(".save") // Gets Training Plan Save Button
 
     // Global Event Delegations
 
     // Training Plan Container Drop Events (Remove The Exercise From The Training Plan)
-    training_plan_container.addEventListener("dragover", function(event) {
-        if(event.target === training_plan_container) {
+    new_training_plan.addEventListener("dragover", function(event) {
+        if(event.target === new_training_plan) {
             event.preventDefault() // Makes The Drop Zone Functional
         }
     })
 
-    training_plan_container.addEventListener("drop", function(event) {
-        if(event.target === training_plan_container) {
+    new_training_plan.addEventListener("drop", function(event) {
+        if(event.target === new_training_plan) {
             removeExercise(dragged_exercise, training_plan, new_training_plan_state) // Removes Dragged Exercise From The Training Plan
         }
     })
@@ -194,6 +195,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateUnitTypes(clicked_option.dataset.unit_option, training_plan, new_training_plan_state) // Updates Unit Type For Every Reps Container
             }
         }
+
+        // Subtract Warm Up Time Functionality
+        if(event.target.classList.contains("subtract_time") || event.target.parentNode.classList.contains("subtract_time")) {
+            const warm_up = event.target.closest(".exercise") // Gets Warm Up From The Training Plan
+            changeWarmUpTime(warm_up, "subtract") // Subtracts Time
+        }
+
+        // Add Warm Up Time Functionality
+        if(event.target.classList.contains("add_time") || event.target.parentNode.classList.contains("add_time")) {
+            const warm_up = event.target.closest(".exercise") // Gets Warm Up From The Training Plan
+            changeWarmUpTime(warm_up, "add") // Adds Time
+        }
     })
 
     // Training Plan Double Click Events
@@ -240,14 +253,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // Events
 
     // Key Events
-    training_plan_container.addEventListener("mouseover", function(event) {
+    new_training_plan.addEventListener("mouseover", function(event) {
         // Sets Hovered Element For Bar Container
         if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
             global_state.hovered_element = "new_training_plan_exercises_bars"
         }
     })
 
-    training_plan_container.addEventListener("mouseout", function() {
+    new_training_plan.addEventListener("mouseout", function() {
         global_state.hovered_element = null
     })
 
@@ -291,6 +304,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Save New Training Plan
     save.addEventListener("click", function() {
-        saveTrainingPlan(training_plan_container, new_training_plan_state)
+        saveTrainingPlan(new_training_plan, new_training_plan_state)
     })
 })

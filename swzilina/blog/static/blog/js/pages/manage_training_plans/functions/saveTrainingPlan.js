@@ -5,11 +5,11 @@ import { getPeriods } from "./periods.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 import { sendNotification } from "../../../utils/sendNotification.js"
 
-export function saveTrainingPlan(training_plan_container, state) {
-    const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+export function saveTrainingPlan(container, state) {
+    const training_plan = container.querySelector(".training_plan") // Gets Training Plan
     const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
-    const day_options = training_plan_container.querySelectorAll(".additional_info .day_select_menu .options_list .option") // Gets All Day Options
-    const training_plan_title = training_plan_container.querySelector(".additional_info .title") // Gets Training Plan Title
+    const day_options = container.querySelectorAll(".additional_info .day_select_menu .options_list .option") // Gets All Day Options
+    const training_plan_title = container.querySelector(".additional_info .title") // Gets Training Plan Title
 
     if(training_plan_title.value === "") {
         // Shows Error Animation
@@ -43,9 +43,9 @@ export function saveTrainingPlan(training_plan_container, state) {
         const training_plan_key = generateKey(50) // Gets Random 50 Characters Long Generated Key
         
         // Gets Action (New Or Edited)
-        let action = null
-        if(training_plan_container.classList.contains("training_plan_container")) action = "new_training_plan"
-        if(training_plan_container.classList.contains("all_training_plans_container")) action = "edited_training_plan"
+        let action = null // Stores Action Value
+        if(container.classList.contains("new_training_plan")) action = "new_training_plan"
+        if(container.classList.contains("edit_training_plan")) action = "edited_training_plan"
 
         const day = getSelectedDay(day_options) // Gets Training Plan Day
         const type = training_plan_title.value // Gets Training Plan Title Value
@@ -54,7 +54,7 @@ export function saveTrainingPlan(training_plan_container, state) {
         exercises.forEach(function(one_exercise) {
             const previous_training_plan_key = one_exercise.dataset.training_plan_key ?? null // Gets Previous Training Plan Key If POST Is From Edited Training Plan
             const exercise = one_exercise.querySelector(".title").textContent !== "" ? one_exercise.querySelector(".title").textContent : one_exercise.querySelector(".title_input").value // Gets Exercise Title
-            const periods = getPeriods(one_exercise) // Gets Exercise Periods
+            const periods = getPeriods(one_exercise) // Stores Periods Value
             const unit = one_exercise.dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
 
             // Creates Object Of One Exercise For Saved Training Plan
@@ -73,12 +73,14 @@ export function saveTrainingPlan(training_plan_container, state) {
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
+        // console.log(training_plan_data)
+
         sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST 
 
         // Sends The Notification For The User
         if(action === "new_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`)
         if(action === "edited_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`)
 
-        // location.reload() // Reloads The Page
+        location.reload() // Reloads The Page
     }
 }

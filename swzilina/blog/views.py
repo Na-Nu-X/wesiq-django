@@ -1196,8 +1196,6 @@ def manageTrainingPlansView(request):
 
                     new_training_plan.save() # Saves New Training Plan
 
-                    return JsonResponse({"success": "Training Plan Has Been Saved."})
-
                 # Edited Training Plan
                 elif one_object["action"] == "edited_training_plan":
                     training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
@@ -1215,12 +1213,10 @@ def manageTrainingPlansView(request):
 
                     edited_training_plan.save() # Saves Edited Training Plan
 
-                    return JsonResponse({"success": "Training Plan Has Been Edited."})
-
                 elif one_object["action"] == "delete_training_plan":
                     training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
 
-                    return JsonResponse({"success": "Training Plan Has Been Deleted."})
+            return JsonResponse({"success": "true"}) # Returns Success Response
         
         return render(request, "blog/manage_training_plans.html", {
             "exercises": exercises,

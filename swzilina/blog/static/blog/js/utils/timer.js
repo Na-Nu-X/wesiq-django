@@ -32,3 +32,11 @@ export function getMinimalistFormattedTime(elapsed_time) {
         ${getFormattedTime("seconds", elapsed_time) !== 0 ? getFormattedTime("seconds", elapsed_time) + "s" : ""}`
     )
 }
+
+// Function For Convert Time String To Elapsed Seconds (For Example: From 5:00 To 300)
+export function getElapsedSeconds(string) {
+    let minutes = parseInt(string.split(":")[0]) // Gets Minutes From The Timer
+    let seconds = parseInt(string.split(":")[1]) // Gets Seconds From The Timer
+
+    return minutes * 60 + seconds // Returns Elapsed Seconds
+}

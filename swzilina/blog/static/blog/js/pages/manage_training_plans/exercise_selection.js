@@ -15,14 +15,14 @@ import { addExercise } from "./functions/exercises.js"
 document.addEventListener("DOMContentLoaded", function() {
     // Variables
 
-    const training_plan_container = document.querySelector(".training_plan_container") // Gets Training Plan Container
-    const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+    const new_training_plan = document.querySelector(".new_training_plan") // Gets New Training Plan
+    const training_plan = new_training_plan.querySelector(".training_plan") // Gets Training Plan
 
-    const exercise_selection_container = document.querySelector(".exercises_container") // Gets Exercise Selection Container
-    const selection_exercises = exercise_selection_container.querySelectorAll(".exercises .exercise") // Gets All Exercises From The Exercise Selection
+    const exercise_selection = document.querySelector(".exercise_selection") // Gets Exercise Selection
+    const selection_exercises = exercise_selection.querySelectorAll(".exercises .exercise") // Gets All Exercises From The Exercise Selection
 
-    const search_bar = exercise_selection_container.querySelector(".search_bar_menu .search_bar") // Gets Search Bar Input
-    const delete_search_bar = exercise_selection_container.querySelector(".search_bar_menu .fa-xmark") // Gets Delete Search Bar Button
+    const search_bar = exercise_selection.querySelector(".search_bar_menu .search_bar") // Gets Search Bar Input
+    const delete_search_bar = exercise_selection.querySelector(".search_bar_menu .fa-xmark") // Gets Delete Search Bar Button
 
     // Functions
 
@@ -43,9 +43,9 @@ document.addEventListener("DOMContentLoaded", function() {
             return !one_exercise.querySelector(".name").textContent.toLocaleLowerCase().includes(search_bar.value.toLocaleLowerCase())
         })
 
-        // Hides Filtered Exercises Except Of Custom Exercise In The Exercise Selection
+        // Hides Filtered Exercises Except Of Custom Exercise And Warm Up In The Exercise Selection
         filtered_selection_exercises.forEach(function(one_exercise) {
-            if(!one_exercise.classList.contains("custom_exercise")) {
+            if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) {
                 one_exercise.style.display = "none"
             }
         })
