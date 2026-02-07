@@ -16,7 +16,9 @@ function isExistingExercise(training_plan) {
             title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
             title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
             title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
-            title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` // For Example: Front Lever -10kg
+            title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` ||  // For Example: Front Lever -10kg
+
+            title === "Warm Up" // If Exercise Is Warm Up
         )
     })
 }
@@ -24,6 +26,7 @@ function isExistingExercise(training_plan) {
 // Creates Exercise Title With Combinated Selection Dragged Exercise Name And Added Or Subtracted Weight Of The Selection Dragged Exercise
 function createExerciseTitle(exercise_name, exercise_weight) {
     if(global_state.selection_dragged_exercise.classList.contains("custom_exercise")) return // Skips Custom Exercise
+    if(global_state.selection_dragged_exercise.classList.contains("warm_up")) return // Skips Warm Up
 
     if(exercise_weight != 0) {
         // Returns Title With Appended Weight If The Exercise Doesn't Require Weight (For Example: Front Lever +10kg Or Front Lever -10kg)
@@ -56,10 +59,20 @@ function addCustomExercise(exercise) {
     exercise.querySelector(".labels .unit_amount").style.display = "none" // Hides Unit Amount Label
 }
 
+// Function For Add Warm Up To The Training Plan
+function addWarmUp(training_plan, state) {
+    const warm_up_template = document.querySelector(".warm_up_template") // Gets Warm Up Template
+    const warm_up_template_clone = warm_up_template.content.cloneNode(true) // Clones The Warm Up Template Content
+
+    training_plan.appendChild(warm_up_template_clone) // Appends Exercise To The Training Plan
+
+    changeSlides(training_plan, state) // Changes Slides In The Training Plan
+}
+
 // Function For Add Exercise To The Training Plan
 export function addExercise(training_plan, state) {
     // Executes Only If The Dragged Element Is Selection Dragged Exercise And Doesn't Already Exist In The Training Plan (Except Of The Custom Exercise)
-    if(global_state.selection_dragged_exercise && !isExistingExercise(training_plan) || global_state?.selection_dragged_exercise?.classList?.contains("custom_exercise")) {
+    if(global_state.selection_dragged_exercise && !isExistingExercise(training_plan) && !global_state?.selection_dragged_exercise?.classList?.contains("warm_up") || global_state?.selection_dragged_exercise?.classList?.contains("custom_exercise")) {
         const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
         const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
 
@@ -74,14 +87,15 @@ export function addExercise(training_plan, state) {
 
         exercise_template_clone.querySelector(".exercise").dataset.unit = global_state.selection_dragged_exercise.dataset.unit || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
 
-        // Adds Custom Exercise To The Training Plan
-        if(global_state.selection_dragged_exercise.classList.contains("custom_exercise")) {
-            addCustomExercise(exercise_template_clone.querySelector(".exercise"))
-        }
+        if(global_state.selection_dragged_exercise.classList.contains("custom_exercise")) addCustomExercise(exercise_template_clone.querySelector(".exercise")) // Adds Custom Exercise To The Training Plan
 
         training_plan.appendChild(exercise_template_clone) // Appends Exercise To The Training Plan
 
         changeSlides(training_plan, state) // Changes Slides In The Training Plan
+    }
+
+    else if(global_state?.selection_dragged_exercise?.classList?.contains("warm_up") && !isExistingExercise(training_plan)) {
+        addWarmUp(training_plan, state) // Adds Warm Up To The Training Plan
     }
 }
 

@@ -189,7 +189,7 @@ header .move_down img {
 main {
   min-height: 100vh;
   align-content: center;
-  background: radial-gradient(circle, rgb(25.5, 25.5, 25.5) 0%, #000 100%);
+  background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
   color: #fff;
 }
 
@@ -237,7 +237,7 @@ main {
   margin-right: 10px;
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_accept:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_accept:focus {
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
@@ -254,7 +254,7 @@ main {
   margin-left: 10px;
 }
 .privacy_policy .privacy_policy_buttons .privacy_policy_reject:hover, .privacy_policy .privacy_policy_buttons .privacy_policy_reject:focus {
-  background-color: rgb(226.4871794872, 75.0128205128, 75.0128205128);
+  background-color: #e24b4b;
   transform: scale(1.1);
   letter-spacing: 1px;
   cursor: pointer;
@@ -307,7 +307,7 @@ main {
 footer {
   text-align: center;
   padding: 10px;
-  background: radial-gradient(circle, rgb(25.5, 25.5, 25.5) 0%, #000 100%);
+  background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
   border-top: 1px solid #fff;
 }
 footer h2 {

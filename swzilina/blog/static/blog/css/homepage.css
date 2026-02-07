@@ -82,7 +82,7 @@ main {
   left: 8.5px;
   transform: translateY(-50%);
   font-size: 20px;
-  color: rgb(229.5, 229.5, 229.5);
+  color: #e6e6e6;
   transition: color 0.3s ease;
 }
 .banner .search_bar_container div:nth-child(1) .fa-xmark {
@@ -92,7 +92,7 @@ main {
   transform: translateY(-50%);
   padding: 9px 8.5px 9px 0px;
   font-size: 20px;
-  color: rgb(229.5, 229.5, 229.5);
+  color: #e6e6e6;
   transition: color 0.3s ease;
 }
 .banner .search_bar_container div:nth-child(1) .fa-xmark:hover {
@@ -106,7 +106,7 @@ main {
   background-color: rgba(0, 0, 0, 0.1);
   color: #fff;
   border: none;
-  border: 1px solid rgb(229.5, 229.5, 229.5);
+  border: 1px solid #e6e6e6;
   border-radius: 5px;
   text-align: center;
   outline: none;
@@ -1254,7 +1254,7 @@ main {
   transition: box-shadow 0.3s ease;
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar:hover {
-  background-color: rgb(229.5, 229.5, 229.5);
+  background-color: #e6e6e6;
   cursor: pointer;
 }
 .content .reviews .reviews_info_container .graph .one_column .tooltip .review_bar:hover::before {
@@ -1405,7 +1405,7 @@ main {
   left: 0px;
   transform: translateY(-50%);
   padding: 12.5px 0px 12.5px 8.5px;
-  color: rgb(229.5, 229.5, 229.5);
+  color: #e6e6e6;
   transition: color 0.3s ease;
   z-index: 50;
 }
@@ -1423,7 +1423,7 @@ main {
   background-color: rgba(0, 0, 0, 0.2);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
-  border: 2px solid rgb(229.5, 229.5, 229.5);
+  border: 2px solid #e6e6e6;
   border-radius: 5px;
   transition: border 0.3s ease;
 }
@@ -1431,7 +1431,7 @@ main {
   margin-left: 21.5px;
 }
 .content .reviews .select_menus .sort_select_menu .select .fa-angle-down, .content .reviews .select_menus .rating_select_menu .select .fa-angle-down {
-  color: rgb(229.5, 229.5, 229.5);
+  color: #e6e6e6;
   transition: color 0.3s ease;
 }
 .content .reviews .select_menus .sort_select_menu .select:hover, .content .reviews .select_menus .rating_select_menu .select:hover {
@@ -1609,7 +1609,7 @@ main {
   transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
 .content .reviews .write_review_form_container .write_review_form input[type=submit]:hover, .content .reviews .write_review_form_container .write_review_form input[type=submit]:focus {
-  background-color: rgb(110.4811715481, 225.5439330544, 64.4560669456);
+  background-color: #6ee240;
   transform: scale(1.05);
   letter-spacing: 1px;
   cursor: pointer;
@@ -1712,7 +1712,7 @@ main {
   margin-left: 5px;
 }
 .content .contact_form .subject_select_menu .select .fa-angle-down {
-  color: rgb(229.5, 229.5, 229.5);
+  color: #e6e6e6;
   transition: color 0.3s ease;
 }
 .content .contact_form .subject_select_menu .options_list {
