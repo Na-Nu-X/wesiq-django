@@ -16,9 +16,9 @@ function isExistingExercise(training_plan) {
             title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
             title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
             title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
-            title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg` ||  // For Example: Front Lever -10kg
+            title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg`  // For Example: Front Lever -10kg
 
-            title === "Warm Up" // If Exercise Is Warm Up
+            // title === "Warm Up" // If Exercise Is Warm Up
         )
     })
 }
@@ -64,9 +64,9 @@ function addWarmUp(training_plan, state) {
     const warm_up_template = document.querySelector(".warm_up_template") // Gets Warm Up Template
     const warm_up_template_clone = warm_up_template.content.cloneNode(true) // Clones The Warm Up Template Content
 
-    training_plan.appendChild(warm_up_template_clone) // Appends Exercise To The Training Plan
+    training_plan.prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
 
-    changeSlides(training_plan, state) // Changes Slides In The Training Plan
+    changeSlides(training_plan, state, true) // Changes Slides In The Training Plan
 }
 
 // Function For Add Exercise To The Training Plan
@@ -94,21 +94,44 @@ export function addExercise(training_plan, state) {
         changeSlides(training_plan, state) // Changes Slides In The Training Plan
     }
 
-    else if(global_state?.selection_dragged_exercise?.classList?.contains("warm_up") && !isExistingExercise(training_plan)) {
-        addWarmUp(training_plan, state) // Adds Warm Up To The Training Plan
+    else if(global_state?.selection_dragged_exercise?.classList?.contains("warm_up")) {
+        const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+        // Checks If The Warm Up Is Already In The Training Plan
+        const is_existing_warm_up = [...exercises].some(function(one_exercise) {
+            const title = one_exercise.querySelector(".title").textContent // Gets Title Of The Exercise In The Training Plan
+
+            return title === "Warm Up"
+        })
+
+        if(!is_existing_warm_up) {
+            addWarmUp(training_plan, state) // Adds Warm Up To The Training Plan
+        }
     }
 }
 
 // Function For Change Slides Of Training Plan
-export function changeSlides(training_plan, state) {
+export function changeSlides(training_plan, state, show_first=false) {
     const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
     const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
 
     if(drop_zone.classList.contains("active")) drop_zone.classList.remove("active") // Hides Training Plan Drop Zone On First Exercise Change
 
     else {
-        exercises[state.active_exercise_index].classList.remove("active") // Hides Previous Active Exercise
-        state.active_exercise_index = exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+        if(show_first) {
+            // Removes Active Class From All Exercises In The Training Plan
+            exercises.forEach(function(one_exercise) {
+                one_exercise.classList.remove("active")
+            })
+
+            state.active_exercise_index = 0 // Sets Index Of Active Exercise In Training Plan To First Index (Shows The Warm Up)
+        }
+
+        else {
+            exercises[state.active_exercise_index].classList.remove("active") // Hides Previous Active Exercise
+
+            state.active_exercise_index = exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+        }
     }
 
     exercises[state.active_exercise_index].classList.add("active") // Shows Active Exercise
@@ -149,6 +172,8 @@ export function changeExercisePosition(dropped_bar_index, dragged_bar, training_
     if(dragged_bar) {
         const dragged_bar_index = [...dragged_bar.parentNode.querySelectorAll(".bar")].indexOf(dragged_bar) // Gets Index Of The Dragged Bar In The Training Plan
         const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+
+        if(exercises[dragged_bar_index].querySelector(".title").textContent === "Warm Up" || exercises[dropped_bar_index].querySelector(".title").textContent === "Warm Up") return // Do Nothing If Exercise Of Dropped Bar Index Or Dragged Bar Index Is Warm Up
 
         dragged_bar_index < dropped_bar_index ? training_plan.insertBefore(exercises[dragged_bar_index], exercises[dropped_bar_index].nextSibling) : training_plan.insertBefore(exercises[dragged_bar_index], exercises[dropped_bar_index]) // Changes DOM Position Of Exercises
 

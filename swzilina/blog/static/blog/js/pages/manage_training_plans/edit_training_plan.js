@@ -27,6 +27,7 @@ import {
     renderBars 
 } from "./functions/bars.js"
 
+import { changeWarmUpTime } from "./functions/changeWarmUpTime.js"
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 import { getMinimalistFormattedTime } from "../../utils/timer.js"
 import { sendPOST } from "../../services/sendPOST.js"
@@ -40,22 +41,23 @@ document.addEventListener("DOMContentLoaded", function() {
     let dragged_exercise = null // Gets Dragged Exercise From The Training Plan
     let dragged_bar = null // Gets Dragged Bar From The Training Plan
 
-    const all_training_plans_container = document.querySelector(".all_training_plans_container") // Gets All Training Plans Container
-    const training_plan = all_training_plans_container.querySelector(".training_plan") // Gets Training Plan
+    const edit_training_plan = document.querySelector(".edit_training_plan") // Gets Edit Training Plan
+    const training_plan = edit_training_plan.querySelector(".training_plan") // Gets Training Plan
 
+    const warm_up_template = document.querySelector(".warm_up_template") // Gets Warm Up Template
     const exercise_template = document.querySelector(".exercise_template") // Gets Exercise Template
     const period_selection_template = document.querySelector(".period_selection_template") // Gets Period Selection Template
 
-    const exercises_data = all_training_plans_container.querySelectorAll(".one_exercise_data") // Gets Data From Every User's Exercise
+    const exercises_data = edit_training_plan.querySelectorAll(".one_exercise_data") // Gets Data From Every User's Exercise
 
     const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
 
-    const day_select_menu = all_training_plans_container.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
+    const day_select_menu = edit_training_plan.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
     const day_select = day_select_menu.querySelector(".select") // Gets Selected Option Print
     const day_options_list = day_select_menu.querySelector(".options_list") // Gets Day Options List
     const day_options = day_options_list.querySelectorAll(".option") // Gets All Day Options
 
-    const buttons_container = all_training_plans_container.querySelector(".buttons") // Gets Buttons Container
+    const buttons_container = edit_training_plan.querySelector(".buttons") // Gets Buttons Container
     const save = buttons_container.querySelector(".save") // Gets Training Plan Save Button
     const delete_button = buttons_container.querySelector(".delete") // Gets Training Plan Delete Button
 
@@ -108,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
         if(training_plan_days_order.length > 1) {
             const training_plan_bar_container = createTrainingPlanBars(training_plan_days_order.length)
-            renderTrainingPlanBars(all_training_plans_container, training_plan_bar_container)
+            renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
 
             buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
         }
@@ -131,22 +133,31 @@ document.addEventListener("DOMContentLoaded", function() {
             if(day_data !== null) {
                 // Shows Exercises Only Of The Selected Training Plan Day
                 if(training_plan_day === day_data) {
-                    const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
+                    // Creates Warm Up
+                    if(exercise_data === "Warm Up") {
+                        const warm_up_template_clone = warm_up_template.content.cloneNode(true) // Clones The Warm Up Template Content
+                        container.querySelector(".training_plan").prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
+                    }
 
-                    container.querySelector(".additional_info .title").value = type_data
-                
-                    exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
+                    // Creates Exercises
+                    else {
+                        const exercise_template_clone = exercise_template.content.cloneNode(true) // Clones The Exercise Template Content
 
-                    unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
+                        container.querySelector(".additional_info .title").value = type_data
+                    
+                        exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
 
-                    exercise_template_clone.querySelector(".exercise").dataset.training_plan_key = training_plan_key // Stores Training Plan Key Data To The Exercise
-                    exercise_template_clone.querySelector(".exercise").dataset.unit = unit_data // Stores Unit Type Data To The Exercise
+                        unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
 
-                    exercise_template_clone.querySelector(".exercise .periods_container").innerHTML = "" // Deletes All Period Selections
+                        exercise_template_clone.querySelector(".exercise").dataset.training_plan_key = training_plan_key // Stores Training Plan Key Data To The Exercise
+                        exercise_template_clone.querySelector(".exercise").dataset.unit = unit_data // Stores Unit Type Data To The Exercise
 
-                    generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container")) // Generates Exact Amount Of Period Selections For Exercise
+                        exercise_template_clone.querySelector(".exercise .periods_container").innerHTML = "" // Deletes All Period Selections
 
-                    container.querySelector(".training_plan").appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
+                        generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container")) // Generates Exact Amount Of Period Selections For Exercise
+
+                        container.querySelector(".training_plan").appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
+                    }
                 }
             }
         })
@@ -267,13 +278,13 @@ document.addEventListener("DOMContentLoaded", function() {
             edit_training_plan_state.active_training_plan_index = training_plan_index // Changes Active Training Plan Index
         }
 
-        generateTrainingPlan(exercises_data, all_training_plans_container)
+        generateTrainingPlan(exercises_data, edit_training_plan)
     }
 
-    function deleteTrainingPlan(training_plan_container) {
-        const training_plan = training_plan_container.querySelector(".training_plan") // Gets Training Plan
+    function deleteTrainingPlan(container) {
+        const training_plan = container.querySelector(".training_plan") // Gets Training Plan
         const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
-        const training_plan_title = training_plan_container.querySelector(".additional_info .title") // Gets Training Plan Title
+        const training_plan_title = container.querySelector(".additional_info .title") // Gets Training Plan Title
 
         const training_plan_data = [] // Stores All Delete Training Plan Data
 
@@ -290,14 +301,14 @@ document.addEventListener("DOMContentLoaded", function() {
         })
 
         sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST
-
         sendNotification(`Tréningový plán ${training_plan_title.value} bol odstránený.`) // Sends The Notification For The User
+        location.reload() // Reloads The Page
     }
 
     // Global Event Delegations
 
     // All Training Plans Container Click Events
-    all_training_plans_container.addEventListener("click", function(event) {
+    edit_training_plan.addEventListener("click", function(event) {
         // Training Plan Bars
         if(event.target.classList.contains("bar") && event.target.parentNode.classList.contains("training_plan_bar_container")) {
             const clicked_bar_index = [...event.target.parentNode.querySelectorAll(".bar")].indexOf(event.target) // Gets Index Of The Clicked Bar
@@ -306,14 +317,14 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     // All Training Plans Container Drop Events (Remove The Exercise From The Training Plan)
-    all_training_plans_container.addEventListener("dragover", function(event) {
-        if(event.target === all_training_plans_container) {
+    edit_training_plan.addEventListener("dragover", function(event) {
+        if(event.target === edit_training_plan) {
             event.preventDefault() // Makes The Drop Zone Functional
         }
     })
 
-    all_training_plans_container.addEventListener("drop", function(event) {
-        if(event.target === all_training_plans_container) {
+    edit_training_plan.addEventListener("drop", function(event) {
+        if(event.target === edit_training_plan) {
             removeExercise(dragged_exercise, training_plan, edit_training_plan_state) // Removes Dragged Exercise From The Training Plan
         }
     })
@@ -453,6 +464,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateUnitTypes(clicked_option.dataset.unit_option, training_plan, edit_training_plan_state) // Updates Unit Type For Every Reps Container
             }
         }
+
+        // Subtract Warm Up Time Functionality
+        if(event.target.classList.contains("subtract_time") || event.target.parentNode.classList.contains("subtract_time")) {
+            const warm_up = event.target.closest(".exercise") // Gets Warm Up From The Training Plan
+            changeWarmUpTime(warm_up, "subtract") // Subtracts Time
+        }
+
+        // Add Warm Up Time Functionality
+        if(event.target.classList.contains("add_time") || event.target.parentNode.classList.contains("add_time")) {
+            const warm_up = event.target.closest(".exercise") // Gets Warm Up From The Training Plan
+            changeWarmUpTime(warm_up, "add") // Adds Time
+        }
     })
 
     // Training Plan Double Click Events
@@ -498,7 +521,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Events
 
     // Key Events
-    all_training_plans_container.addEventListener("mouseover", function(event) {
+    edit_training_plan.addEventListener("mouseover", function(event) {
         // Sets Hovered Element For Bar Container
         if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
             global_state.hovered_element = "edit_training_plan_exercises_bars"
@@ -510,7 +533,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
-    all_training_plans_container.addEventListener("mouseout", function() {
+    edit_training_plan.addEventListener("mouseout", function() {
         global_state.hovered_element = null
     })
 
@@ -564,15 +587,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Save Edited Training Plan
     save.addEventListener("click", function() {
-        saveTrainingPlan(all_training_plans_container, edit_training_plan_state)
+        saveTrainingPlan(edit_training_plan, edit_training_plan_state)
     })
 
     // Delete Training Plan
     delete_button.addEventListener("click", function() {
-        deleteTrainingPlan(all_training_plans_container)
+        deleteTrainingPlan(edit_training_plan)
     })
 
     // MAIN
 
-    generateTrainingPlan(exercises_data, all_training_plans_container) // Renders User's Training Plan If Has Any
+    generateTrainingPlan(exercises_data, edit_training_plan) // Renders User's Training Plan If Has Any
 })

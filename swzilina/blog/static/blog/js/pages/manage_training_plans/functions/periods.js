@@ -1,4 +1,7 @@
-import { getMinimalistFormattedTime } from "../../../utils/timer.js"
+import { 
+    getMinimalistFormattedTime, 
+    getElapsedSeconds 
+} from "../../../utils/timer.js"
 
 // Function Add Period To The Exercise
 export function addPeriod(exercise) {
@@ -119,6 +122,8 @@ export function getPeriods(exercise) {
             periods.unshift(parseInt(reps_inputs_values[i])) // Saves Values To Periods
         }
     }
+
+    if(periods.length === 0) periods.push(getElapsedSeconds(exercise.querySelector(".timer_container .timer h3").textContent)) // Elapsed Seconds Of The Warm Up Timer
 
     return periods // Returns Periods
 }

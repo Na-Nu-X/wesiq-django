@@ -41,7 +41,7 @@
     </template>
 
     <template class="warm_up_template">
-        <div class="exercise" draggable="true">
+        <div class="exercise" draggable="true" data-unit="seconds">
             <h3 class="title">Warm Up</h3>
             
             <div class="timer_container">
@@ -106,7 +106,7 @@
     </template>
 
     <div class="top">
-        <div class="training_plan_container">
+        <div class="new_training_plan">
             <div class="additional_info">
                 <input type="text" class="title" placeholder="Názov">
 
@@ -142,7 +142,7 @@
         </div>
 
         {% if training_plan|length != 0 %}
-            <div class="all_training_plans_container">
+            <div class="edit_training_plan">
                 <script src="{% static 'blog/js/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 
                 {% for one_exercise in training_plan %}
@@ -190,7 +190,7 @@
         {% endif %}
     </div>
 
-    <div class="exercises_container">
+    <div class="exercise_selection">
         <div class="search_bar_menu">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
             <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
