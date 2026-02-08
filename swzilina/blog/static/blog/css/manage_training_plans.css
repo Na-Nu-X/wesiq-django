@@ -3,34 +3,35 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+  gap: 20px;
+  padding: 0px 20px;
 }
-
-.top {
+.content .top {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   min-height: calc(100vh - 67px);
 }
-
-.new_training_plan,
-.edit_training_plan {
+.content .top .new_training_plan,
+.content .top .edit_training_plan {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 500px;
   width: 100%;
 }
-.new_training_plan .additional_info,
-.edit_training_plan .additional_info {
+.content .top .new_training_plan .additional_info,
+.content .top .edit_training_plan .additional_info {
   display: flex;
   flex-direction: row;
   gap: 10px;
-  max-width: 500px;
+  width: 500px;
   margin-bottom: 10px;
 }
-.new_training_plan .additional_info .title,
-.edit_training_plan .additional_info .title {
-  width: 245px;
+.content .top .new_training_plan .additional_info .title,
+.content .top .edit_training_plan .additional_info .title {
+  width: 50%;
   height: 50px;
   padding: 0px 10px;
   background: transparent;
@@ -40,43 +41,43 @@
   outline: none;
   transition: border 0.3s ease;
 }
-.new_training_plan .additional_info .title.error_animation,
-.edit_training_plan .additional_info .title.error_animation {
+.content .top .new_training_plan .additional_info .title.error_animation,
+.content .top .edit_training_plan .additional_info .title.error_animation {
   animation: training_title_error_animation 0.2s linear 3;
 }
-.new_training_plan .additional_info .title:hover, .new_training_plan .additional_info .title:focus,
-.edit_training_plan .additional_info .title:hover,
-.edit_training_plan .additional_info .title:focus {
+.content .top .new_training_plan .additional_info .title:hover, .content .top .new_training_plan .additional_info .title:focus,
+.content .top .edit_training_plan .additional_info .title:hover,
+.content .top .edit_training_plan .additional_info .title:focus {
   border-bottom: 1px solid #cccccc;
 }
-.new_training_plan .additional_info .title::-moz-placeholder, .edit_training_plan .additional_info .title::-moz-placeholder {
+.content .top .new_training_plan .additional_info .title::-moz-placeholder, .content .top .edit_training_plan .additional_info .title::-moz-placeholder {
   color: #999999;
 }
-.new_training_plan .additional_info .title::placeholder,
-.edit_training_plan .additional_info .title::placeholder {
+.content .top .new_training_plan .additional_info .title::placeholder,
+.content .top .edit_training_plan .additional_info .title::placeholder {
   color: #999999;
 }
-.new_training_plan .additional_info .title:-webkit-autofill,
-.edit_training_plan .additional_info .title:-webkit-autofill {
+.content .top .new_training_plan .additional_info .title:-webkit-autofill,
+.content .top .edit_training_plan .additional_info .title:-webkit-autofill {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.new_training_plan .additional_info .title:-webkit-autofill:hover, .new_training_plan .additional_info .title:-webkit-autofill:focus,
-.edit_training_plan .additional_info .title:-webkit-autofill:hover,
-.edit_training_plan .additional_info .title:-webkit-autofill:focus {
+.content .top .new_training_plan .additional_info .title:-webkit-autofill:hover, .content .top .new_training_plan .additional_info .title:-webkit-autofill:focus,
+.content .top .edit_training_plan .additional_info .title:-webkit-autofill:hover,
+.content .top .edit_training_plan .additional_info .title:-webkit-autofill:focus {
   -webkit-text-fill-color: rgb(255, 255, 255);
   -webkit-transition: width 0.3s ease, background-color 9999s ease;
   transition: width 0.3s ease, background-color 9999s ease;
 }
-.new_training_plan .additional_info .day_select_menu,
-.edit_training_plan .additional_info .day_select_menu {
+.content .top .new_training_plan .additional_info .day_select_menu,
+.content .top .edit_training_plan .additional_info .day_select_menu {
   position: relative;
-  width: 245px;
+  width: 50%;
   cursor: pointer;
 }
-.new_training_plan .additional_info .day_select_menu .select,
-.edit_training_plan .additional_info .day_select_menu .select {
+.content .top .new_training_plan .additional_info .day_select_menu .select,
+.content .top .edit_training_plan .additional_info .day_select_menu .select {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -89,25 +90,25 @@
   border-bottom: 1px solid #999999;
   transition: border 0.3s ease;
 }
-.new_training_plan .additional_info .day_select_menu .select:hover,
-.edit_training_plan .additional_info .day_select_menu .select:hover {
+.content .top .new_training_plan .additional_info .day_select_menu .select:hover,
+.content .top .edit_training_plan .additional_info .day_select_menu .select:hover {
   border-bottom: 1px solid #cccccc;
 }
-.new_training_plan .additional_info .day_select_menu .select:hover .fa-angle-down,
-.edit_training_plan .additional_info .day_select_menu .select:hover .fa-angle-down {
+.content .top .new_training_plan .additional_info .day_select_menu .select:hover .fa-angle-down,
+.content .top .edit_training_plan .additional_info .day_select_menu .select:hover .fa-angle-down {
   color: #ebb914;
 }
-.new_training_plan .additional_info .day_select_menu .select span,
-.edit_training_plan .additional_info .day_select_menu .select span {
+.content .top .new_training_plan .additional_info .day_select_menu .select span,
+.content .top .edit_training_plan .additional_info .day_select_menu .select span {
   margin-left: 5px;
 }
-.new_training_plan .additional_info .day_select_menu .select .fa-angle-down,
-.edit_training_plan .additional_info .day_select_menu .select .fa-angle-down {
+.content .top .new_training_plan .additional_info .day_select_menu .select .fa-angle-down,
+.content .top .edit_training_plan .additional_info .day_select_menu .select .fa-angle-down {
   color: #e6e6e6;
   transition: color 0.3s ease;
 }
-.new_training_plan .additional_info .day_select_menu .options_list,
-.edit_training_plan .additional_info .day_select_menu .options_list {
+.content .top .new_training_plan .additional_info .day_select_menu .options_list,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list {
   interpolate-size: allow-keywords;
   position: absolute;
   width: 100%;
@@ -123,66 +124,75 @@
   transition: height 0.3s ease;
   z-index: 100;
 }
-.new_training_plan .additional_info .day_select_menu .options_list.active,
-.edit_training_plan .additional_info .day_select_menu .options_list.active {
+.content .top .new_training_plan .additional_info .day_select_menu .options_list.active,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list.active {
   height: auto;
 }
-.new_training_plan .additional_info .day_select_menu .options_list .option,
-.edit_training_plan .additional_info .day_select_menu .options_list .option {
+.content .top .new_training_plan .additional_info .day_select_menu .options_list .option,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list .option {
   padding: 5px 0px;
   transition: color 0.3s ease;
 }
-.new_training_plan .additional_info .day_select_menu .options_list .option:hover, .new_training_plan .additional_info .day_select_menu .options_list .option.selected,
-.edit_training_plan .additional_info .day_select_menu .options_list .option:hover,
-.edit_training_plan .additional_info .day_select_menu .options_list .option.selected {
+.content .top .new_training_plan .additional_info .day_select_menu .options_list .option:hover, .content .top .new_training_plan .additional_info .day_select_menu .options_list .option.selected,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list .option:hover,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list .option.selected {
   color: #ebb914 !important;
 }
-.new_training_plan .additional_info .day_select_menu .options_list .option i,
-.edit_training_plan .additional_info .day_select_menu .options_list .option i {
+.content .top .new_training_plan .additional_info .day_select_menu .options_list .option i,
+.content .top .edit_training_plan .additional_info .day_select_menu .options_list .option i {
   width: 1em;
   margin-right: 10px;
   color: #ebb914;
 }
-.new_training_plan .additional_info .day_select_menu:has(.select:hover) .options_list,
-.edit_training_plan .additional_info .day_select_menu:has(.select:hover) .options_list {
+.content .top .new_training_plan .additional_info .day_select_menu:has(.select:hover) .options_list,
+.content .top .edit_training_plan .additional_info .day_select_menu:has(.select:hover) .options_list {
   width: 100%;
 }
-.new_training_plan .training_plan,
-.edit_training_plan .training_plan {
+.content .top .new_training_plan .training_plan,
+.content .top .edit_training_plan .training_plan {
   position: relative;
-  max-width: 500px;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid #fff;
   border-radius: 5px;
   overflow: hidden;
 }
-.new_training_plan .training_plan.animate,
-.edit_training_plan .training_plan.animate {
+.content .top .new_training_plan .training_plan.animate,
+.content .top .edit_training_plan .training_plan.animate {
   animation: training_plan_drag_animation 1s infinite alternate;
 }
-.new_training_plan .training_plan .add_exercise,
-.edit_training_plan .training_plan .add_exercise {
+.content .top .new_training_plan .training_plan .drop_zone,
+.content .top .edit_training_plan .training_plan .drop_zone {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 10px;
   height: 185px;
 }
-.new_training_plan .training_plan .add_exercise:not(.active),
-.edit_training_plan .training_plan .add_exercise:not(.active) {
+.content .top .new_training_plan .training_plan .drop_zone:not(.active),
+.content .top .edit_training_plan .training_plan .drop_zone:not(.active) {
   display: none;
 }
-.new_training_plan .training_plan .add_exercise .fa-compress,
-.edit_training_plan .training_plan .add_exercise .fa-compress {
-  font-size: 2.5em;
+.content .top .new_training_plan .training_plan .drop_zone:hover,
+.content .top .edit_training_plan .training_plan .drop_zone:hover {
+  cursor: pointer;
 }
-.new_training_plan .training_plan .add_exercise .fa-compress.error_animation,
-.edit_training_plan .training_plan .add_exercise .fa-compress.error_animation {
+.content .top .new_training_plan .training_plan .drop_zone:hover .fa-compress,
+.content .top .edit_training_plan .training_plan .drop_zone:hover .fa-compress {
+  transform: scale(1.1);
+}
+.content .top .new_training_plan .training_plan .drop_zone .fa-compress,
+.content .top .edit_training_plan .training_plan .drop_zone .fa-compress {
+  font-size: 2.5em;
+  transition: transform 0.3s ease;
+}
+.content .top .new_training_plan .training_plan .drop_zone .fa-compress.error_animation,
+.content .top .edit_training_plan .training_plan .drop_zone .fa-compress.error_animation {
   animation: training_plan_error_animation 0.2s linear 3;
 }
-.new_training_plan .training_plan .exercise,
-.edit_training_plan .training_plan .exercise {
+.content .top .new_training_plan .training_plan .exercise,
+.content .top .edit_training_plan .training_plan .exercise {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -193,14 +203,14 @@
   transition: transform 0.5s ease;
   cursor: move;
 }
-.new_training_plan .training_plan .exercise:not(.active),
-.edit_training_plan .training_plan .exercise:not(.active) {
+.content .top .new_training_plan .training_plan .exercise:not(.active),
+.content .top .edit_training_plan .training_plan .exercise:not(.active) {
   position: absolute;
   top: 0px;
   transform: translateX(100%);
 }
-.new_training_plan .training_plan .exercise .title_input,
-.edit_training_plan .training_plan .exercise .title_input {
+.content .top .new_training_plan .training_plan .exercise .title_input,
+.content .top .edit_training_plan .training_plan .exercise .title_input {
   width: 400px;
   text-align: center;
   background: none;
@@ -210,33 +220,33 @@
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
 }
-.new_training_plan .training_plan .exercise .title_input::-moz-placeholder, .edit_training_plan .training_plan .exercise .title_input::-moz-placeholder {
+.content .top .new_training_plan .training_plan .exercise .title_input::-moz-placeholder, .content .top .edit_training_plan .training_plan .exercise .title_input::-moz-placeholder {
   color: #999999;
 }
-.new_training_plan .training_plan .exercise .title_input::placeholder,
-.edit_training_plan .training_plan .exercise .title_input::placeholder {
+.content .top .new_training_plan .training_plan .exercise .title_input::placeholder,
+.content .top .edit_training_plan .training_plan .exercise .title_input::placeholder {
   color: #999999;
 }
-.new_training_plan .training_plan .exercise .title,
-.edit_training_plan .training_plan .exercise .title {
+.content .top .new_training_plan .training_plan .exercise .title,
+.content .top .edit_training_plan .training_plan .exercise .title {
   font-family: "Balsamiq Sans", sans-serif;
   font-size: 2em;
 }
-.new_training_plan .training_plan .exercise .labels,
-.edit_training_plan .training_plan .exercise .labels {
+.content .top .new_training_plan .training_plan .exercise .labels,
+.content .top .edit_training_plan .training_plan .exercise .labels {
   display: flex;
   flex-direction: row;
   width: 400px;
   margin-bottom: 5px;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu {
   position: relative;
   width: 100%;
   cursor: pointer;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .select,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .select {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .select,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .select {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,21 +256,21 @@
   background: transparent;
   color: #fff;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .select:hover .fa-angle-down,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .select:hover .fa-angle-down {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .select:hover .fa-angle-down,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .select:hover .fa-angle-down {
   color: #ebb914;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .select span,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .select span {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .select span,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .select span {
   margin-left: 5px;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .select .fa-angle-down,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .select .fa-angle-down {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .select .fa-angle-down,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .select .fa-angle-down {
   color: #e6e6e6;
   transition: color 0.3s ease;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list {
   interpolate-size: allow-keywords;
   position: absolute;
   width: 100%;
@@ -276,37 +286,37 @@
   transition: height 0.3s ease;
   z-index: 100;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list.active,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list.active {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list.active,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list.active {
   height: auto;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option {
   padding: 5px 0px;
   transition: color 0.3s ease;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option:hover, .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option.selected,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option:hover,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option.selected {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option:hover, .content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option.selected,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option:hover,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option.selected {
   color: #ebb914 !important;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option i,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option i {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option i,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu .options_list .option i {
   width: 1em;
   margin-right: 10px;
   color: #ebb914;
 }
-.new_training_plan .training_plan .exercise .labels .unit_select_menu:has(.select:hover) .options_list,
-.edit_training_plan .training_plan .exercise .labels .unit_select_menu:has(.select:hover) .options_list {
+.content .top .new_training_plan .training_plan .exercise .labels .unit_select_menu:has(.select:hover) .options_list,
+.content .top .edit_training_plan .training_plan .exercise .labels .unit_select_menu:has(.select:hover) .options_list {
   width: 100%;
 }
-.new_training_plan .training_plan .exercise .labels p,
-.edit_training_plan .training_plan .exercise .labels p {
+.content .top .new_training_plan .training_plan .exercise .labels p,
+.content .top .edit_training_plan .training_plan .exercise .labels p {
   width: 100%;
   text-align: center;
 }
-.new_training_plan .training_plan .exercise .add_period,
-.edit_training_plan .training_plan .exercise .add_period {
+.content .top .new_training_plan .training_plan .exercise .add_period,
+.content .top .edit_training_plan .training_plan .exercise .add_period {
   width: 400px;
   height: 35px;
   margin-bottom: 10px;
@@ -318,67 +328,67 @@
   outline: none;
   cursor: pointer;
 }
-.new_training_plan .training_plan .exercise .periods_container,
-.edit_training_plan .training_plan .exercise .periods_container {
+.content .top .new_training_plan .training_plan .exercise .periods_container,
+.content .top .edit_training_plan .training_plan .exercise .periods_container {
   display: flex;
   flex-direction: column;
   width: 400px;
   overflow-x: hidden;
   overflow-y: auto;
 }
-.new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar,
-.edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar {
+.content .top .new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar,
+.content .top .edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar {
   width: 5px;
 }
-.new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb,
-.edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb {
+.content .top .new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb,
+.content .top .edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb {
   background-color: #999999;
   border-radius: 2.5px;
 }
-.new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb:hover,
-.edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb:hover {
+.content .top .new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb:hover,
+.content .top .edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-thumb:hover {
   background-color: #cccccc;
   cursor: pointer;
 }
-.new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-track,
-.edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-track {
+.content .top .new_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-track,
+.content .top .edit_training_plan .training_plan .exercise .periods_container::-webkit-scrollbar-track {
   background-color: #333333;
   border-radius: 2.5px;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection {
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   margin-top: 5px;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection:first-child,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection:first-child {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection:first-child,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection:first-child {
   margin-top: 0px;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container {
   display: flex;
   flex-direction: row;
   border: 1px solid #fff;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets {
   width: 30px;
   background: none;
   color: #fff;
@@ -386,30 +396,30 @@
   outline: none;
   cursor: pointer;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets i, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets i,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets i,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets i {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets i, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets i,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_reps i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_reps i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .decrease_sets i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .increase_sets i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_reps i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_reps i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .decrease_sets i,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .increase_sets i {
   pointer-events: none;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets {
   width: 128px;
   height: 30px;
   text-align: center;
@@ -418,36 +428,36 @@
   border: none;
   outline: none;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-inner-spin-button, .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-outer-spin-button,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-inner-spin-button,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-outer-spin-button, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-inner-spin-button, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-outer-spin-button,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-inner-spin-button,
-.new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-outer-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-inner-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-outer-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-inner-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-outer-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-inner-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-outer-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-inner-spin-button,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-outer-spin-button {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-inner-spin-button, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-outer-spin-button,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-inner-spin-button,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-outer-spin-button, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-inner-spin-button, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-outer-spin-button,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-inner-spin-button,
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-outer-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-inner-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps::-webkit-outer-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-inner-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .sets::-webkit-outer-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-inner-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps::-webkit-outer-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-inner-spin-button,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .sets::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps, .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .reps,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .sets_container .reps {
   visibility: hidden;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container {
   position: relative;
   margin-right: 5px;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .to_failure, .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .to_failure,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .to_failure, .content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .to_failure,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -455,21 +465,21 @@
   height: 100%;
   line-height: 30px;
 }
-.new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time,
-.edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time {
+.content .top .new_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time,
+.content .top .edit_training_plan .training_plan .exercise .periods_container .period_selection .reps_container .time {
   visibility: hidden;
 }
-.new_training_plan .training_plan .exercise .timer_container,
-.edit_training_plan .training_plan .exercise .timer_container {
+.content .top .new_training_plan .training_plan .exercise .timer_container,
+.content .top .edit_training_plan .training_plan .exercise .timer_container {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 40px;
 }
-.new_training_plan .training_plan .exercise .timer_container .add_time,
-.new_training_plan .training_plan .exercise .timer_container .subtract_time,
-.edit_training_plan .training_plan .exercise .timer_container .add_time,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time {
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time,
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time {
   position: relative;
   width: 50px;
   height: 50px;
@@ -477,21 +487,21 @@
   border-radius: 50%;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.new_training_plan .training_plan .exercise .timer_container .add_time:hover,
-.new_training_plan .training_plan .exercise .timer_container .subtract_time:hover,
-.edit_training_plan .training_plan .exercise .timer_container .add_time:hover,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time:hover {
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time:hover,
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time:hover,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time:hover,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time:hover {
   transform: scale(1.05);
   cursor: pointer;
 }
-.new_training_plan .training_plan .exercise .timer_container .add_time .fa-plus,
-.new_training_plan .training_plan .exercise .timer_container .add_time .fa-minus,
-.new_training_plan .training_plan .exercise .timer_container .subtract_time .fa-plus,
-.new_training_plan .training_plan .exercise .timer_container .subtract_time .fa-minus,
-.edit_training_plan .training_plan .exercise .timer_container .add_time .fa-plus,
-.edit_training_plan .training_plan .exercise .timer_container .add_time .fa-minus,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time .fa-plus,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time .fa-minus {
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time .fa-plus,
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time .fa-minus,
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time .fa-plus,
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time .fa-minus,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time .fa-plus,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time .fa-minus,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time .fa-plus,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time .fa-minus {
   pointer-events: none;
   position: absolute;
   top: 50%;
@@ -500,47 +510,47 @@
   font-size: 30px;
   color: #fff;
 }
-.new_training_plan .training_plan .exercise .timer_container .add_time,
-.edit_training_plan .training_plan .exercise .timer_container .add_time {
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time {
   background-color: #52cf20;
   box-shadow: 0px 0px 5px 0px #52cf20;
 }
-.new_training_plan .training_plan .exercise .timer_container .add_time:hover,
-.edit_training_plan .training_plan .exercise .timer_container .add_time:hover {
+.content .top .new_training_plan .training_plan .exercise .timer_container .add_time:hover,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .add_time:hover {
   background-color: #6ee240;
 }
-.new_training_plan .training_plan .exercise .timer_container .subtract_time,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time {
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time {
   background-color: #df3535;
   box-shadow: 0px 0px 5px 0px #df3535;
 }
-.new_training_plan .training_plan .exercise .timer_container .subtract_time:hover,
-.edit_training_plan .training_plan .exercise .timer_container .subtract_time:hover {
+.content .top .new_training_plan .training_plan .exercise .timer_container .subtract_time:hover,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .subtract_time:hover {
   background-color: #e66161;
 }
-.new_training_plan .training_plan .exercise .timer_container .timer,
-.edit_training_plan .training_plan .exercise .timer_container .timer {
+.content .top .new_training_plan .training_plan .exercise .timer_container .timer,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .timer {
   position: relative;
   width: 100px;
   height: 100px;
   border-radius: 50px;
 }
-.new_training_plan .training_plan .exercise .timer_container .timer svg,
-.edit_training_plan .training_plan .exercise .timer_container .timer svg {
+.content .top .new_training_plan .training_plan .exercise .timer_container .timer svg,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .timer svg {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: rotate(-90deg) translate(50%, -50%);
 }
-.new_training_plan .training_plan .exercise .timer_container .timer svg .progress_background,
-.edit_training_plan .training_plan .exercise .timer_container .timer svg .progress_background {
+.content .top .new_training_plan .training_plan .exercise .timer_container .timer svg .progress_background,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .timer svg .progress_background {
   fill: none;
   stroke: #999999;
   stroke-width: 3;
   stroke-dasharray: 2 4;
 }
-.new_training_plan .training_plan .exercise .timer_container .timer h3,
-.edit_training_plan .training_plan .exercise .timer_container .timer h3 {
+.content .top .new_training_plan .training_plan .exercise .timer_container .timer h3,
+.content .top .edit_training_plan .training_plan .exercise .timer_container .timer h3 {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -548,8 +558,8 @@
   font-family: "Orbitron", sans-serif;
   font-size: 1.2em;
 }
-.new_training_plan .training_plan .bar_container,
-.edit_training_plan .training_plan .bar_container {
+.content .top .new_training_plan .training_plan .bar_container,
+.content .top .edit_training_plan .training_plan .bar_container {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -557,22 +567,22 @@
   gap: 10px;
   margin: 0px 10px 10px;
 }
-.new_training_plan .training_plan .bar_container .bar,
-.edit_training_plan .training_plan .bar_container .bar {
+.content .top .new_training_plan .training_plan .bar_container .bar,
+.content .top .edit_training_plan .training_plan .bar_container .bar {
   position: relative;
   width: 100%;
   height: 10px;
   border: 1px solid rgba(82, 207, 32, 0.5);
   border-radius: 5px;
 }
-.new_training_plan .training_plan .bar_container .bar.animate:not(.new_training_plan .training_plan .bar_container .bar.active,
-.edit_training_plan .training_plan .bar_container .bar.active),
-.edit_training_plan .training_plan .bar_container .bar.animate:not(.new_training_plan .training_plan .bar_container .bar.active,
-.edit_training_plan .training_plan .bar_container .bar.active) {
+.content .top .new_training_plan .training_plan .bar_container .bar.animate:not(.content .top .new_training_plan .training_plan .bar_container .bar.active,
+.content .top .edit_training_plan .training_plan .bar_container .bar.active),
+.content .top .edit_training_plan .training_plan .bar_container .bar.animate:not(.content .top .new_training_plan .training_plan .bar_container .bar.active,
+.content .top .edit_training_plan .training_plan .bar_container .bar.active) {
   animation: bar_drag_animation 1s infinite alternate;
 }
-.new_training_plan .training_plan .bar_container .bar:before,
-.edit_training_plan .training_plan .bar_container .bar:before {
+.content .top .new_training_plan .training_plan .bar_container .bar:before,
+.content .top .edit_training_plan .training_plan .bar_container .bar:before {
   content: "";
   position: absolute;
   top: 0px;
@@ -582,26 +592,25 @@
   border-radius: inherit;
   transition: background-color 0.3s ease;
 }
-.new_training_plan .training_plan .bar_container .bar.active, .new_training_plan .training_plan .bar_container .bar:hover,
-.edit_training_plan .training_plan .bar_container .bar.active,
-.edit_training_plan .training_plan .bar_container .bar:hover {
+.content .top .new_training_plan .training_plan .bar_container .bar.active, .content .top .new_training_plan .training_plan .bar_container .bar:hover,
+.content .top .edit_training_plan .training_plan .bar_container .bar.active,
+.content .top .edit_training_plan .training_plan .bar_container .bar:hover {
   cursor: pointer;
 }
-.new_training_plan .training_plan .bar_container .bar.active.animate:before, .new_training_plan .training_plan .bar_container .bar:hover.animate:before,
-.edit_training_plan .training_plan .bar_container .bar.active.animate:before,
-.edit_training_plan .training_plan .bar_container .bar:hover.animate:before {
+.content .top .new_training_plan .training_plan .bar_container .bar.active.animate:before, .content .top .new_training_plan .training_plan .bar_container .bar:hover.animate:before,
+.content .top .edit_training_plan .training_plan .bar_container .bar.active.animate:before,
+.content .top .edit_training_plan .training_plan .bar_container .bar:hover.animate:before {
   animation: bar_drag_animation 1s infinite alternate;
 }
-.new_training_plan .training_plan .bar_container .bar.active:before, .new_training_plan .training_plan .bar_container .bar:hover:before,
-.edit_training_plan .training_plan .bar_container .bar.active:before,
-.edit_training_plan .training_plan .bar_container .bar:hover:before {
+.content .top .new_training_plan .training_plan .bar_container .bar.active:before, .content .top .new_training_plan .training_plan .bar_container .bar:hover:before,
+.content .top .edit_training_plan .training_plan .bar_container .bar.active:before,
+.content .top .edit_training_plan .training_plan .bar_container .bar:hover:before {
   width: 100%;
   background-color: #52cf20;
   box-shadow: 0px 0px 10px #52cf20;
 }
-.new_training_plan .save,
-.edit_training_plan .save {
-  max-width: 500px;
+.content .top .new_training_plan .save,
+.content .top .edit_training_plan .save {
   width: 100%;
   text-align: center;
   height: 50px;
@@ -612,23 +621,21 @@
   border-radius: 5px;
   transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-.new_training_plan .save:hover, .new_training_plan .save:focus,
-.edit_training_plan .save:hover,
-.edit_training_plan .save:focus {
+.content .top .new_training_plan .save:hover, .content .top .new_training_plan .save:focus,
+.content .top .edit_training_plan .save:hover,
+.content .top .edit_training_plan .save:focus {
   background-color: #6ee240;
   transform: scale(1.05);
   letter-spacing: 1px;
   cursor: pointer;
 }
-
-.new_training_plan .save {
+.content .top .new_training_plan .save {
   margin-top: 10px;
 }
-
-.edit_training_plan .training_plan.blur {
+.content .top .edit_training_plan .training_plan.blur {
   animation: blur_animation 0.3s ease-out;
 }
-.edit_training_plan .training_plan_bar_container {
+.content .top .edit_training_plan .training_plan_bar_container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -636,27 +643,26 @@
   width: 100%;
   margin: 10px 0px;
 }
-.edit_training_plan .training_plan_bar_container .bar {
+.content .top .edit_training_plan .training_plan_bar_container .bar {
   width: 100%;
   height: 10px;
   border: 1px solid rgba(75, 75, 250, 0.5);
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-.edit_training_plan .training_plan_bar_container .bar.active, .edit_training_plan .training_plan_bar_container .bar:hover {
+.content .top .edit_training_plan .training_plan_bar_container .bar.active, .content .top .edit_training_plan .training_plan_bar_container .bar:hover {
   cursor: pointer;
   background-color: #4b4bfa;
   box-shadow: 0px 0px 10px #4b4bfa;
 }
-.edit_training_plan .buttons {
+.content .top .edit_training_plan .buttons {
   display: flex;
   flex-direction: row;
   gap: 10px;
   width: 100%;
   margin-top: 10px;
 }
-.edit_training_plan .buttons .delete {
-  max-width: 500px;
+.content .top .edit_training_plan .buttons .delete {
   width: 100%;
   text-align: center;
   height: 50px;
@@ -667,25 +673,26 @@
   border-radius: 5px;
   transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 }
-.edit_training_plan .buttons .delete:hover, .edit_training_plan .buttons .delete:focus {
+.content .top .edit_training_plan .buttons .delete:hover, .content .top .edit_training_plan .buttons .delete:focus {
   background-color: #e24b4b;
   transform: scale(1.05);
   letter-spacing: 1px;
   cursor: pointer;
 }
-
-.exercise_selection {
+.content .exercise_selection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 500px;
+  max-width: 500px;
+  width: 100%;
   min-height: 500px;
 }
-.exercise_selection .search_bar_menu {
+.content .exercise_selection .search_bar_menu {
   position: relative;
+  width: 100%;
   margin-bottom: 20px;
 }
-.exercise_selection .search_bar_menu .fa-magnifying-glass {
+.content .exercise_selection .search_bar_menu .fa-magnifying-glass {
   position: absolute;
   top: 50%;
   left: 8.5px;
@@ -695,7 +702,7 @@
   transition: color 0.3s ease;
   z-index: 50;
 }
-.exercise_selection .search_bar_menu .fa-xmark {
+.content .exercise_selection .search_bar_menu .fa-xmark {
   position: absolute;
   top: 50%;
   right: 0px;
@@ -706,12 +713,12 @@
   transition: color 0.3s ease;
   z-index: 50;
 }
-.exercise_selection .search_bar_menu .fa-xmark:hover {
+.content .exercise_selection .search_bar_menu .fa-xmark:hover {
   color: #fff;
   cursor: pointer;
 }
-.exercise_selection .search_bar_menu .search_bar {
-  width: 500px;
+.content .exercise_selection .search_bar_menu .search_bar {
+  width: 100%;
   height: 40px;
   background-color: rgba(0, 0, 0, 0.1);
   -webkit-backdrop-filter: blur(5px);
@@ -723,27 +730,25 @@
   text-align: center;
   outline: none;
   font-size: 1.2em;
-  transition: width 0.3s ease, border 0.3s ease;
+  transition: border 0.3s ease;
   z-index: 50;
 }
-.exercise_selection .search_bar_menu .search_bar:hover, .exercise_selection .search_bar_menu .search_bar:focus {
-  width: 520px;
+.content .exercise_selection .search_bar_menu .search_bar:hover, .content .exercise_selection .search_bar_menu .search_bar:focus {
   border-color: #fff !important;
 }
-.exercise_selection .search_bar_menu .search_bar::-moz-placeholder {
+.content .exercise_selection .search_bar_menu .search_bar::-moz-placeholder {
   color: #cccccc;
 }
-.exercise_selection .search_bar_menu .search_bar::placeholder {
+.content .exercise_selection .search_bar_menu .search_bar::placeholder {
   color: #cccccc;
 }
-.exercise_selection .search_bar_menu:has(.search_bar:hover) .fa-magnifying-glass, .exercise_selection .search_bar_menu:has(.search_bar:focus) .fa-magnifying-glass {
+.content .exercise_selection .search_bar_menu:has(.search_bar:hover) .fa-magnifying-glass, .content .exercise_selection .search_bar_menu:has(.search_bar:focus) .fa-magnifying-glass {
   color: #fff;
 }
-.exercise_selection .exercises {
+.content .exercise_selection .exercises {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 10px;
-  max-width: 500px;
   width: 100%;
   max-height: 440px;
   margin: 0px auto;
@@ -752,35 +757,35 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
-.exercise_selection .exercises::-webkit-scrollbar {
+.content .exercise_selection .exercises::-webkit-scrollbar {
   width: 5px;
 }
-.exercise_selection .exercises::-webkit-scrollbar-thumb {
+.content .exercise_selection .exercises::-webkit-scrollbar-thumb {
   background-color: #999999;
   border-radius: 2.5px;
 }
-.exercise_selection .exercises::-webkit-scrollbar-thumb:hover {
+.content .exercise_selection .exercises::-webkit-scrollbar-thumb:hover {
   background-color: #cccccc;
   cursor: pointer;
 }
-.exercise_selection .exercises::-webkit-scrollbar-track {
+.content .exercise_selection .exercises::-webkit-scrollbar-track {
   background-color: #333333;
   border-radius: 2.5px;
 }
-.exercise_selection .exercises .custom_exercise:hover .fa-plus,
-.exercise_selection .exercises .custom_exercise:hover .fa-dumbbell,
-.exercise_selection .exercises .warm_up:hover .fa-plus,
-.exercise_selection .exercises .warm_up:hover .fa-dumbbell {
+.content .exercise_selection .exercises .custom_exercise:hover .fa-plus,
+.content .exercise_selection .exercises .custom_exercise:hover .fa-dumbbell,
+.content .exercise_selection .exercises .warm_up:hover .fa-plus,
+.content .exercise_selection .exercises .warm_up:hover .fa-dumbbell {
   filter: blur(2px);
 }
-.exercise_selection .exercises .custom_exercise .fa-plus,
-.exercise_selection .exercises .custom_exercise .fa-dumbbell,
-.exercise_selection .exercises .warm_up .fa-plus,
-.exercise_selection .exercises .warm_up .fa-dumbbell {
+.content .exercise_selection .exercises .custom_exercise .fa-plus,
+.content .exercise_selection .exercises .custom_exercise .fa-dumbbell,
+.content .exercise_selection .exercises .warm_up .fa-plus,
+.content .exercise_selection .exercises .warm_up .fa-dumbbell {
   font-size: 2.5em;
   transition: filter 0.3s ease;
 }
-.exercise_selection .exercises .exercise {
+.content .exercise_selection .exercises .exercise {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -795,31 +800,31 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
-.exercise_selection .exercises .exercise::-webkit-scrollbar {
+.content .exercise_selection .exercises .exercise::-webkit-scrollbar {
   width: 5px;
 }
-.exercise_selection .exercises .exercise::-webkit-scrollbar-thumb {
+.content .exercise_selection .exercises .exercise::-webkit-scrollbar-thumb {
   background-color: #999999;
   border-radius: 2.5px;
 }
-.exercise_selection .exercises .exercise::-webkit-scrollbar-thumb:hover {
+.content .exercise_selection .exercises .exercise::-webkit-scrollbar-thumb:hover {
   background-color: #cccccc;
   cursor: pointer;
 }
-.exercise_selection .exercises .exercise::-webkit-scrollbar-track {
+.content .exercise_selection .exercises .exercise::-webkit-scrollbar-track {
   background-color: #333333;
   border-radius: 2.5px;
 }
-.exercise_selection .exercises .exercise.hidden {
+.content .exercise_selection .exercises .exercise.hidden {
   display: none !important;
 }
-.exercise_selection .exercises .exercise:hover, .exercise_selection .exercises .exercise:focus {
+.content .exercise_selection .exercises .exercise:hover, .content .exercise_selection .exercises .exercise:focus {
   outline: none;
 }
-.exercise_selection .exercises .exercise:hover .name, .exercise_selection .exercises .exercise:focus .name {
+.content .exercise_selection .exercises .exercise:hover .name, .content .exercise_selection .exercises .exercise:focus .name {
   filter: blur(2px);
 }
-.exercise_selection .exercises .exercise:hover .weight_selection, .exercise_selection .exercises .exercise:focus .weight_selection {
+.content .exercise_selection .exercises .exercise:hover .weight_selection, .content .exercise_selection .exercises .exercise:focus .weight_selection {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -831,32 +836,32 @@
   width: 100%;
   height: 100%;
 }
-.exercise_selection .exercises .exercise:hover .weight_selection .decrease_weight,
-.exercise_selection .exercises .exercise:hover .weight_selection .increase_weight, .exercise_selection .exercises .exercise:focus .weight_selection .decrease_weight,
-.exercise_selection .exercises .exercise:focus .weight_selection .increase_weight {
+.content .exercise_selection .exercises .exercise:hover .weight_selection .decrease_weight,
+.content .exercise_selection .exercises .exercise:hover .weight_selection .increase_weight, .content .exercise_selection .exercises .exercise:focus .weight_selection .decrease_weight,
+.content .exercise_selection .exercises .exercise:focus .weight_selection .increase_weight {
   background: none;
   color: #fff;
   border: none;
   outline: none;
   cursor: pointer;
 }
-.exercise_selection .exercises .exercise:hover .weight_selection .decrease_weight i,
-.exercise_selection .exercises .exercise:hover .weight_selection .increase_weight i, .exercise_selection .exercises .exercise:focus .weight_selection .decrease_weight i,
-.exercise_selection .exercises .exercise:focus .weight_selection .increase_weight i {
+.content .exercise_selection .exercises .exercise:hover .weight_selection .decrease_weight i,
+.content .exercise_selection .exercises .exercise:hover .weight_selection .increase_weight i, .content .exercise_selection .exercises .exercise:focus .weight_selection .decrease_weight i,
+.content .exercise_selection .exercises .exercise:focus .weight_selection .increase_weight i {
   pointer-events: none;
   font-size: 1.2em;
 }
-.exercise_selection .exercises .exercise:hover .weight_selection .weight, .exercise_selection .exercises .exercise:focus .weight_selection .weight {
+.content .exercise_selection .exercises .exercise:hover .weight_selection .weight, .content .exercise_selection .exercises .exercise:focus .weight_selection .weight {
   font-size: 2em;
   cursor: default;
 }
-.exercise_selection .exercises .exercise:hover .weight_selection .weight span, .exercise_selection .exercises .exercise:focus .weight_selection .weight span {
+.content .exercise_selection .exercises .exercise:hover .weight_selection .weight span, .content .exercise_selection .exercises .exercise:focus .weight_selection .weight span {
   font-size: inherit;
 }
-.exercise_selection .exercises .exercise .name {
+.content .exercise_selection .exercises .exercise .name {
   transition: filter 0.3s ease;
 }
-.exercise_selection .exercises .exercise .weight_selection {
+.content .exercise_selection .exercises .exercise .weight_selection {
   display: none;
 }
 
@@ -898,5 +903,33 @@
     filter: blur(5px);
     opacity: 0.5;
     background-color: #52cf20;
+  }
+}
+/**************
+ Media Queries
+**************/
+@media (width <= 1060px) {
+  .content {
+    flex-direction: column;
+  }
+  .content .top {
+    justify-content: center;
+    gap: 20px;
+    min-height: 100vh;
+  }
+  .content .exercise_selection {
+    max-width: 800px;
+  }
+  .content .exercise_selection .search_bar_menu {
+    margin-bottom: 10px;
+  }
+  .content .exercise_selection .exercises {
+    max-height: 450px;
+  }
+}
+@media (width <= 600px) {
+  .content .top .new_training_plan .additional_info .title,
+  .content .top .edit_training_plan .additional_info .title {
+    width: 245px !important;
   }
 }/*# sourceMappingURL=manage_training_plans.css.map */

@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const exercises_data = edit_training_plan.querySelectorAll(".one_exercise_data") // Gets Data From Every User's Exercise
 
-    const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
+    const drop_zone = training_plan.querySelector(".drop_zone") // Gets Training Plan Drop Zone
 
     const day_select_menu = edit_training_plan.querySelector(".additional_info .day_select_menu") // Gets Day Select Menu
     const day_select = day_select_menu.querySelector(".select") // Gets Selected Option Print
@@ -316,15 +316,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
-    // All Training Plans Container Drop Events (Remove The Exercise From The Training Plan)
-    edit_training_plan.addEventListener("dragover", function(event) {
-        if(event.target === edit_training_plan) {
+    // Document Drop Events (Remove The Exercise From The Training Plan Functionality)
+    document.addEventListener("dragover", function(event) {
+        // If There Is Dragged Exercise And Dragover Element Isn't Inside The Training Plan
+        if(dragged_exercise && !training_plan.contains(event.target)) {
             event.preventDefault() // Makes The Drop Zone Functional
         }
     })
 
-    edit_training_plan.addEventListener("drop", function(event) {
-        if(event.target === edit_training_plan) {
+    document.addEventListener("drop", function(event) {
+        // If There Is Dragged Exercise And Drop Element Isn't Inside The Training Plan
+        if(dragged_exercise && !training_plan.contains(event.target)) {
             removeExercise(dragged_exercise, training_plan, edit_training_plan_state) // Removes Dragged Exercise From The Training Plan
         }
     })

@@ -113,7 +113,7 @@ export function addExercise(training_plan, state) {
 // Function For Change Slides Of Training Plan
 export function changeSlides(training_plan, state, show_first=false) {
     const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
-    const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
+    const drop_zone = training_plan.querySelector(".drop_zone") // Gets Training Plan Drop Zone
 
     if(drop_zone.classList.contains("active")) drop_zone.classList.remove("active") // Hides Training Plan Drop Zone On First Exercise Change
 
@@ -189,7 +189,7 @@ export function changeExercisePosition(dropped_bar_index, dragged_bar, training_
 export function removeExercise(dragged_exercise, training_plan, state) {
     // Executes Only If The Dragged Element Is Dragged Exercise From The Training Plan
     if(dragged_exercise) {
-        const drop_zone = training_plan.querySelector(".add_exercise") // Gets Training Plan Drop Zone
+        const drop_zone = training_plan.querySelector(".drop_zone") // Gets Training Plan Drop Zone
 
         dragged_exercise.remove() // Removes Training Plan Dragged Exercise From DOM
 
