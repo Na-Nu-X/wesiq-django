@@ -256,6 +256,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Events
 
+    // Sets Focused Element
+    new_training_plan.addEventListener("focus", function() {
+        global_state.focused_element = "new_training_plan"
+    })
+
     // Key Events
     new_training_plan.addEventListener("mouseover", function(event) {
         // Sets Hovered Element For Bar Container

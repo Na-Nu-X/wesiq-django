@@ -61,19 +61,22 @@ document.addEventListener("DOMContentLoaded", function() {
     const save = buttons_container.querySelector(".save") // Gets Training Plan Save Button
     const delete_button = buttons_container.querySelector(".delete") // Gets Training Plan Delete Button
 
-    // Stores All Possible Training Plan Types Of The User To An Array (For Example ["Pull", "Push", "Legs"])
-    // const all_training_plan_types = [
-    //     ...new Set([...exercises_data].map(function(one_exercise_data) {
-    //         return `${one_exercise_data.dataset.type} - ${getDayName(one_exercise_data.dataset.day)}`
-    //     }))
-    // ]
-
     // Gets Current Order Of Training Plans By Day Value
     const training_plan_days_order = [
         ...new Set([...exercises_data].map(function(one_exercise_data) {
             return one_exercise_data.dataset.day
         }))
     ]
+
+    // const training_plan_days_order = [
+    //     ...new Set(
+    //         [...exercises_data].map(el =>
+    //             `${el.dataset.day}__${el.dataset.training_plan_key}`
+    //         )
+    //     )
+    // ].map(key => key.split("__")[0])
+
+    // console.log(training_plan_days_order)
 
     // Functions
 
@@ -101,10 +104,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         day_options.forEach(function(one_option) {
             // Shows Current Selected Option From List Without Icon
+            // if(one_option.dataset.day === training_plan_day && training_plan_day !== "None") {
             if(one_option.dataset.day === training_plan_day) {
                 day_select.querySelector("span").textContent = one_option.querySelector("span").textContent // Shows Current Selected Option From List Without Icon
                 one_option.classList.add("selected") // Adds Selected Class To Selected Option
             }
+
+            // // Shows No Selected Day Option If Training Plan Is Without A Day
+            // if(training_plan_day === "None") {
+            //     if(one_option.dataset.day === "not_selected") {
+            //         day_select.querySelector("span").textContent = one_option.querySelector("span").textContent // Shows Current Selected Option From List Without Icon
+            //         one_option.classList.add("selected") // Adds Selected Class To Selected Option
+            //     }
+            // }
         })
 
         // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
@@ -521,6 +533,11 @@ document.addEventListener("DOMContentLoaded", function() {
     training_plan.addEventListener("pointerleave", stopHold)
 
     // Events
+
+    // Sets Focused Element
+    edit_training_plan.addEventListener("focus", function() {
+        global_state.focused_element = "edit_training_plan"
+    })
 
     // Key Events
     edit_training_plan.addEventListener("mouseover", function(event) {

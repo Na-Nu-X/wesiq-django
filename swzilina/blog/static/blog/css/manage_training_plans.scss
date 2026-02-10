@@ -25,6 +25,12 @@
             max-width: 500px;
             width: 100%;
 
+            &:focus {
+                .training_plan {
+                    border: 2px solid $success-color;
+                }
+            }
+
             .additional_info {
                 display: flex;
                 flex-direction: row;

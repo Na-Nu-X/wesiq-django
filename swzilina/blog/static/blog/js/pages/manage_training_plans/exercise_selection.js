@@ -1,6 +1,7 @@
 import { 
-    global_state, 
-    new_training_plan_state 
+    global_state,
+    new_training_plan_state,
+    edit_training_plan_state
 } from "./state.js"
 
 import { 
@@ -16,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Variables
 
     const new_training_plan = document.querySelector(".new_training_plan") // Gets New Training Plan
-    const training_plan = new_training_plan.querySelector(".training_plan") // Gets Training Plan
+    const edit_training_plan = document.querySelector(".edit_training_plan") // Gets Edit Training Plan
 
     const exercise_selection = document.querySelector(".exercise_selection") // Gets Exercise Selection
     const selection_exercises = exercise_selection.querySelectorAll(".exercises .exercise") // Gets All Exercises From The Exercise Selection
@@ -93,7 +94,13 @@ document.addEventListener("DOMContentLoaded", function() {
             // Executes Only If The Click Is Outside The Increase Weight Button, Decrease Weight Button And Weight Print
             if(!event.target.classList.contains("increase_weight") && !event.target.classList.contains("decrease_weight") && !event.target.parentNode.classList.contains("weight")) {
                 global_state.selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
-                addExercise(training_plan, new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
+
+                // Adds Exercise To The New Training Plan
+                if(global_state.focused_element === "new_training_plan") addExercise(new_training_plan.querySelector(".training_plan"), new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
+
+                // Adds Exercise To The Edit Training Plan
+                if(global_state.focused_element === "edit_training_plan") addExercise(edit_training_plan.querySelector(".training_plan"), edit_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
+
                 global_state.selection_dragged_exercise = null // Deletes Selection Dragged Exercise
             }
         })
