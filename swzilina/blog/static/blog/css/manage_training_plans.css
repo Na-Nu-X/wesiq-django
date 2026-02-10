@@ -21,6 +21,10 @@
   max-width: 500px;
   width: 100%;
 }
+.content .top .new_training_plan:focus .training_plan,
+.content .top .edit_training_plan:focus .training_plan {
+  border: 2px solid #52cf20;
+}
 .content .top .new_training_plan .additional_info,
 .content .top .edit_training_plan .additional_info {
   display: flex;

@@ -106,7 +106,7 @@
     </template>
 
     <div class="top">
-        <div class="new_training_plan">
+        <div class="new_training_plan" tabindex="0">
             <div class="additional_info">
                 <input type="text" class="title" placeholder="Názov">
 
@@ -143,7 +143,7 @@
         </div>
 
         {% if training_plan|length != 0 %}
-            <div class="edit_training_plan">
+            <div class="edit_training_plan" tabindex="0">
                 <script src="{% static 'blog/js/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 
                 {% for one_exercise in training_plan %}
