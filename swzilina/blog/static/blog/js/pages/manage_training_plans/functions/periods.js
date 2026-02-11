@@ -44,6 +44,11 @@ export function changeReps(button, operation) {
             time.textContent = getMinimalistFormattedTime(reps_number) // Shows Exercise Time Amount
             if(reps_number > 3600) return // Do Nothing
         }
+
+        if(unit === "steps") {
+            reps.style.visibility = "visible" // Shows Reps Input
+            if(reps_number > 1000) return // Do Nothing
+        }
     }
 
     reps.value = reps_number // Updates Exercise Reps Amount
@@ -95,6 +100,14 @@ export function updateUnitTypes(unit, training_plan, state) {
         if(unit === "seconds") {
             time.style.visibility = "visible" // Shows Time Text
             time.textContent = getMinimalistFormattedTime(reps_number) // Shows Exercise Time Amount
+        }
+
+        if(unit === "steps") {
+            if(reps_number > 1000) {
+                reps.value = 1000 // Sets The Maximum Value For The Amount Of Steps
+            }
+
+            reps.style.visibility = "visible" // Shows Reps Input
         }
     })
 }

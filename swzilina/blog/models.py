@@ -118,6 +118,7 @@ class TrainingPlan(models.Model):
     unit_choices = [
         ("reps", "reps"),
         ("seconds", "seconds"),
+        ("steps", "steps"),
     ]
 
     user = models.ForeignKey(
@@ -140,6 +141,7 @@ class Exercises(models.Model):
     unit_choices = [
         ("reps", "reps"),
         ("seconds", "seconds"),
+        ("steps", "steps"),
     ]
 
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)

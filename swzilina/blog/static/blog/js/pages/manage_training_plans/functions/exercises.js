@@ -84,6 +84,7 @@ export function addExercise(training_plan, state) {
         // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
         if(global_state.selection_dragged_exercise.dataset.unit === "reps") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet opakovaní"
         if(global_state.selection_dragged_exercise.dataset.unit === "seconds") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet sekúnd"
+        if(global_state.selection_dragged_exercise.dataset.unit === "steps") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet krokov"
 
         exercise_template_clone.querySelector(".exercise").dataset.unit = global_state.selection_dragged_exercise.dataset.unit || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
 
