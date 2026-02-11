@@ -159,7 +159,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     
                         exercise_template_clone.querySelector(".exercise .title").textContent = exercise_data // Sets Title To The Exercise Title
 
-                        unit_data === "reps" ? exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní" : exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd" // Sets Unit Amount Text Value By Unit Of Exercise
+                        // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
+                        if(unit_data === "reps") exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet opakovaní"
+                        if(unit_data === "seconds") exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet sekúnd"
+                        if(unit_data === "steps") exercise_template_clone.querySelector(".exercise .labels .unit_amount").textContent = "Počet krokov"
 
                         exercise_template_clone.querySelector(".exercise").dataset.training_plan_key = training_plan_key // Stores Training Plan Key Data To The Exercise
                         exercise_template_clone.querySelector(".exercise").dataset.unit = unit_data // Stores Unit Type Data To The Exercise
@@ -225,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             else {
                 // Checks Exercise Unit Type
-                if(unit === "reps") {
+                if(unit === "reps" || unit === "steps") {
                     reps.style.visibility = "visible" // Shows Reps Input
                 }
 

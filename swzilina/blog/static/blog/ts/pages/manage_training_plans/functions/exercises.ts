@@ -2,23 +2,21 @@ import { global_state } from "../state.js"
 import { createBars, renderBars } from "./bars.js"
 
 // Checks If Selection Dragged Exercise Is Already In The Training Plan
-function isExistingExercise(training_plan) {
-    const exercises = training_plan.querySelectorAll(".exercise") // Gets All Training Plan Exercises
+function isExistingExercise(training_plan:HTMLDivElement):boolean {
+    const exercises = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
 
     // Returns True If The Exercise Is Already In The Training Plan
     return [...exercises].some(function(one_exercise) {
-        const title = one_exercise.querySelector(".title").textContent // Gets Title Of The Exercise In The Training Plan
+        const title = one_exercise?.querySelector(".title")?.textContent // Gets Title Of The Exercise In The Training Plan
 
-        const selection_dragged_exercise_name = global_state.selection_dragged_exercise.querySelector(".name").textContent // Gets Dragged Exercise Name
-        const selection_dragged_exercise_weight = global_state.selection_dragged_exercise.dataset.weight // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+        const selection_dragged_exercise_name = global_state?.selection_dragged_exercise?.querySelector(".name")?.textContent as string // Gets Dragged Exercise Name
+        const selection_dragged_exercise_weight = global_state.selection_dragged_exercise?.dataset?.weight as string // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
 
         return (
-            title === selection_dragged_exercise_name && selection_dragged_exercise_weight == 0 || // For Example: Front Lever
+            title === selection_dragged_exercise_name && selection_dragged_exercise_weight == "0" || // For Example: Front Lever
             title === `${selection_dragged_exercise_weight}kg ${selection_dragged_exercise_name}` || // For Example: 100kg Deadlift
             title === `${selection_dragged_exercise_name} +${selection_dragged_exercise_weight}kg` || // For Example: Front Lever +10kg
             title === `${selection_dragged_exercise_name} ${selection_dragged_exercise_weight}kg`  // For Example: Front Lever -10kg
-
-            // title === "Warm Up" // If Exercise Is Warm Up
         )
     })
 }
@@ -84,7 +82,6 @@ export function addExercise(training_plan, state) {
         // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
         if(global_state.selection_dragged_exercise.dataset.unit === "reps") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet opakovaní"
         if(global_state.selection_dragged_exercise.dataset.unit === "seconds") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet sekúnd"
-        if(global_state.selection_dragged_exercise.dataset.unit === "steps") exercise_template_clone.querySelector(".labels .unit_amount").textContent = "Počet krokov"
 
         exercise_template_clone.querySelector(".exercise").dataset.unit = global_state.selection_dragged_exercise.dataset.unit || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
 
