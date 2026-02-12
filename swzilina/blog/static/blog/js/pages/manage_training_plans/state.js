@@ -8,7 +8,9 @@ export const global_state = {
 
     // Hold Button Interval
     hold_interval: null,
-    hold_timeout: null
+    hold_timeout: null,
+
+    hovered_exercise_selection_exercise: null
 }
 
 export const new_training_plan_state = {

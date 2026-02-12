@@ -544,15 +544,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Key Events
     edit_training_plan.addEventListener("mouseover", function(event) {
-        // Sets Hovered Element For Bar Container
-        if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) {
-            global_state.hovered_element = "edit_training_plan_exercises_bars"
-        }
-
-        // Sets Hovered Element For Training Plan Bar Container
-        else if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) {
-            global_state.hovered_element = "edit_training_plan_bars"
-        }
+        if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) global_state.hovered_element = "edit_training_plan_exercises_bars" // Sets Hovered Element For Bar Container
+        else if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) global_state.hovered_element = "edit_training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
     })
 
     edit_training_plan.addEventListener("mouseout", function() {
@@ -560,25 +553,10 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     document.addEventListener("keydown", function(event) {
-        // Shows Previous Exercise
-        if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_exercises_bars") {
-            changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
-        }
-
-        // Shows Next Exercise
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_exercises_bars") {
-            changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises
-        }
-
-        // Shows Previous Training Plan
-        else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") {
-            changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans
-        }
-
-        // Shows Next Training Plan
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") {
-            changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans
-        }
+        if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
+        else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans (Shows Previous Training Plan)
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans (Shows Next Training Plan)
     })
 
     // Day Select Menu

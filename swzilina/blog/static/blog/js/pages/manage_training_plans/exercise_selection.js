@@ -123,5 +123,23 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("pointerup", stopHold)
         one_exercise.addEventListener("pointerup", stopHold)
         one_exercise.addEventListener("pointerup", stopHold)
+
+        one_exercise.addEventListener("mouseover", function(event) {
+            if(!event.target.closest(".exercise").classList.contains("custom_exercise") && !event.target.closest(".exercise").classList.contains("warm_up")) global_state.hovered_exercise_selection_exercise = event.target.closest(".exercise") // Sets Hovered Exercise Selection Exercise Element (Except Of Custom Exercise And Warm Up)
+        })
+
+        one_exercise.addEventListener("mouseleave", function() {
+            global_state.hovered_exercise_selection_exercise = null // Deletes Hovered Exercise Selection Exercise Element
+        })
+    })
+
+    // Increase And Decrease Weight With Keys
+    document.addEventListener("keydown", function(event) {
+        if(global_state.hovered_exercise_selection_exercise) {
+            event.preventDefault() // Stop Scrolling
+
+            if(event.key === "ArrowUp") changeWeight(global_state.hovered_exercise_selection_exercise, "increase") // Increases Weight
+            else if(event.key === "ArrowDown") changeWeight(global_state.hovered_exercise_selection_exercise, "decrease") // Decreases Weight
+        }
     })
 })
