@@ -124,6 +124,20 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("pointerup", stopHold)
         one_exercise.addEventListener("pointerup", stopHold)
 
+        // Increase And Decrease Weight With Scroll Wheel
+        one_exercise.addEventListener("wheel", function(event) {
+            event.preventDefault() // Stop Scrolling
+
+            if(event.deltaY === -100) {
+                if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "increase") // Increases Weight (Except Of Custom Exercise And Warm Up)
+            }
+
+            if(event.deltaY === 100) {
+                if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "decrease") // Increases Weight (Except Of Custom Exercise And Warm Up)
+            }
+        })
+
+        // Sets And Deletes Hovered Exercise Selection Exercise Element
         one_exercise.addEventListener("mouseover", function(event) {
             if(!event.target.closest(".exercise").classList.contains("custom_exercise") && !event.target.closest(".exercise").classList.contains("warm_up")) global_state.hovered_exercise_selection_exercise = event.target.closest(".exercise") // Sets Hovered Exercise Selection Exercise Element (Except Of Custom Exercise And Warm Up)
         })
