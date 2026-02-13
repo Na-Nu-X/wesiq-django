@@ -128,11 +128,11 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("wheel", function(event) {
             event.preventDefault() // Stop Scrolling
 
-            if(event.deltaY === -100) {
+            if(event.deltaY < 0) {
                 if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "increase") // Increases Weight (Except Of Custom Exercise And Warm Up)
             }
 
-            if(event.deltaY === 100) {
+            if(event.deltaY > 0) {
                 if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "decrease") // Increases Weight (Except Of Custom Exercise And Warm Up)
             }
         })
