@@ -542,7 +542,26 @@ document.addEventListener("DOMContentLoaded", function() {
         global_state.focused_element = "edit_training_plan"
     })
 
-    // Key Events
+    edit_training_plan.addEventListener("wheel", function(event) {
+        if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) {
+            event.preventDefault() // Stop Scrolling
+
+            if(event.deltaY < 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans (Shows Next Training Plan)
+            if(event.deltaY > 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans (Shows Previous Training Plan)
+        }
+    })
+
+    // Change Training Plan Exercises With Scroll Wheel Functionality
+    training_plan.addEventListener("wheel", function(event) {
+        event.preventDefault() // Stop Scrolling
+
+        if(event.target !== drop_zone) {
+            if(event.deltaY < 0) changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
+            if(event.deltaY > 0) changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
+        }
+    })
+
+    // Change Training Plan Exercises And Training Plans With Arrow Keys Functionality
     edit_training_plan.addEventListener("mouseover", function(event) {
         if(event.target.classList.contains("bar_container") || event.target.parentNode.classList.contains("bar_container")) global_state.hovered_element = "edit_training_plan_exercises_bars" // Sets Hovered Element For Bar Container
         else if(event.target.classList.contains("training_plan_bar_container") || event.target.parentNode.classList.contains("training_plan_bar_container")) global_state.hovered_element = "edit_training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
@@ -555,6 +574,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.addEventListener("keydown", function(event) {
         if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
         else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
+
         else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans (Shows Previous Training Plan)
         else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans (Shows Next Training Plan)
     })
