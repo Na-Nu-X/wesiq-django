@@ -1,0 +1,2 @@
+export declare function setObserverAnimation(element: HTMLDivElement | HTMLDivElement[], multiple_elements: boolean | undefined, threshold: number | undefined, additional_function: () => void | false): void;
+//# sourceMappingURL=setObserverAnimation.d.ts.map

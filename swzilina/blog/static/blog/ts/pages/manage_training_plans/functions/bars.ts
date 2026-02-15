@@ -5,7 +5,7 @@ export function createBars(amount:number, state:{active_exercise_index:number}):
     bar_container.classList.add("bar_container")
 
     // Creates Bars By Amount Of Exercises In The Training Plan
-    for(let i = 0; i < amount; i++) {
+    for(let i:number = 0; i < amount; i++) {
         // Creates Bar
         const bar:HTMLDivElement = document.createElement("div")
         bar.classList.add("bar")
@@ -23,8 +23,8 @@ export function createBars(amount:number, state:{active_exercise_index:number}):
 // Function For Render New Bar Container With Bars
 export function renderBars(parent:HTMLElement, container:HTMLElement):void {
     // Removes Previous Bar Container
-    const previous_bar_container = parent.querySelector<HTMLDivElement>(".bar_container")
-    previous_bar_container?.remove()
+    const previous_bar_container:HTMLDivElement = parent.querySelector(".bar_container") as HTMLDivElement
+    previous_bar_container.remove()
 
     parent.appendChild(container) // Appends New Bar Container
 }
