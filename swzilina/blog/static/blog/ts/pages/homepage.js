@@ -1,6 +1,8 @@
 import { setObserverAnimation } from "../utils/setObserverAnimation.js";
 import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js";
 import { customSelectMenu } from "../components/customSelectMenu.js";
+// Chart
+import { Chart } from "chart.js/auto";
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
     // Search Bar
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderSearchResult();
     });
     // Search Bar Input
-    search_bar.addEventListener("input", function (event) {
+    search_bar.addEventListener("input", function () {
         renderSearchResult();
     });
     // Login Form
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const login_button = document.querySelector(".login_button");
     const no_logged_in_button = document.querySelector(".login");
     const login_form_dialog = document.querySelector(".login_form_dialog");
-    const login_form = document.querySelector(".login_form");
+    const login_form = login_form_dialog.querySelector(".login_form");
     login_button.addEventListener("click", function () {
         login_form_dialog.showModal();
     });
@@ -91,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Registration Form Dialog
     const registration_button = document.querySelector(".registration_button");
     const registration_form_dialog = document.querySelector(".registration_form_dialog");
-    const registration_form = document.querySelector(".registration_form");
+    const registration_form = registration_form_dialog.querySelector(".registration_form");
     registration_button.addEventListener("click", function () {
         registration_form_dialog.showModal();
     });
@@ -107,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Profile Dialog
     const profile_button = document.querySelector(".profile_button");
     const profile_dialog = document.querySelector(".profile_dialog");
-    const profile = document.querySelector(".profile");
+    const profile = profile_dialog.querySelector(".profile");
     if (profile_button) {
         profile_button.addEventListener("click", function () {
             profile_dialog.showModal();
@@ -124,9 +126,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     // Chart
     const activity_chart = document.querySelector(".activity_chart");
-    const plugin = {
+    const customCanvasBackgroundColor = {
         id: 'customCanvasBackgroundColor',
-        beforeDraw: (chart, args, options) => {
+        beforeDraw: (chart, _args, options) => {
             const { ctx } = chart;
             ctx.save();
             ctx.globalCompositeOperation = 'destination-over';
@@ -181,11 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 legend: {
                     display: false,
-                    //labels: {
-                    //    font: {
-                    //        size: 15
-                    //    }
-                    //}
                 },
             },
             elements: {
@@ -199,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         },
-        plugins: [plugin],
+        plugins: [customCanvasBackgroundColor],
     });
     // Custom Select Menus - Reviews
     const sort_select_menu = document.querySelector(".reviews .select_menus .sort_select_menu"); // Gets Sort Select Menu
@@ -211,18 +208,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const reviews_info_container = document.querySelector(".reviews .reviews_info_container"); // Gets Reviews Info
     setObserverAnimation(reviews_info_container, false, 1, reviewsInfoAnimation); // Animates Reviews Info
     const all_reviews = document.querySelectorAll(".reviews .all_reviews .one_review"); // Gets All Reviews
-    setObserverAnimation(all_reviews); // Animates Each Review From All Reviews
+    setObserverAnimation(all_reviews, true, 0.5); // Animates Each Review From All Reviews
     // Custom Select Menu - Contact Form
     const subject_select_menu = document.querySelector(".subject_select_menu");
-    const subject_select = document.querySelector(".subject_select_menu .select");
-    const subject_options_list = document.querySelector(".subject_select_menu .options_list");
-    const subject_options = document.querySelectorAll(".subject_select_menu .option");
+    const subject_select = subject_select_menu.querySelector(".select");
+    const subject_options_list = subject_select_menu.querySelector(".options_list");
+    const subject_options = subject_select_menu.querySelectorAll(".option");
     subject_select.addEventListener("click", function () {
         subject_options_list.classList.toggle("active");
         subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up");
     });
     subject_options.forEach(function (option) {
         option.addEventListener("click", function () {
+            if (!option.dataset.subject)
+                return;
             sessionStorage.setItem("subject", option.dataset.subject);
             subject_options_list.classList.toggle("active");
             subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up");
@@ -242,17 +241,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const attachment = document.querySelector("#select_attachment");
     const attachment_report = document.querySelector(".attachment_report");
     attachment.addEventListener("change", function (event) {
-        const attachment_name = event.target.files[0].name;
-        const attachment_size = event.target.files[0].size;
-        if (attachment_size <= 25000000) {
+        if (!(event.target instanceof HTMLInputElement))
+            return;
+        if (!event.target.files || event.target.files.length === 0)
+            return;
+        const file = event.target.files[0];
+        if (!file)
+            return;
+        const attachment_name = file.name;
+        const attachment_size = file.size;
+        if (attachment_size <= 25000000)
             attachment_report.textContent = `Vybraný súbor: ${attachment_name}`;
-        }
-        else if (attachment_size > 25000000) {
+        else if (attachment_size > 25000000)
             attachment_report.textContent = "Vybraný súbor je príliš veľký.";
-        }
-        else {
+        else
             attachment_report.textContent = "Nie je vybraný žiaden súbor.";
-        }
     });
 });
 //# sourceMappingURL=homepage.js.map

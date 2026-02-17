@@ -1,7 +1,7 @@
 import { getCookie } from "../utils/getCookie.js"
 
 // Function For Send Data By POST Method
-export function sendPOST(url_path:string = new URL(window.location.href).pathname, data:{}[]|null = null):void {
+export function sendPOST(url_path:string = new URL(window.location.href).pathname, data:{}[]|{}|null = null):void {
     fetch(url_path, {
         method: "POST",
         headers: {

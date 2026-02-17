@@ -1,5 +1,5 @@
 // Function For Set Observer Animation
-export function setObserverAnimation(element:HTMLDivElement|HTMLDivElement[], multiple_elements:boolean = true, threshold:number = 0.5, additional_function:() => void|false):void {
+export function setObserverAnimation(element:HTMLDivElement|NodeListOf<HTMLDivElement>, multiple_elements:boolean = true, threshold:number = 0.5, additional_function?:() => void):void {
     const observer:IntersectionObserver = new IntersectionObserver(
         function(entries:IntersectionObserverEntry[], observer:IntersectionObserver):void {
             entries.forEach(function(one_entry:IntersectionObserverEntry):void {

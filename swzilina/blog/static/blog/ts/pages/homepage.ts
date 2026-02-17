@@ -2,20 +2,43 @@ import { setObserverAnimation } from "../utils/setObserverAnimation.js"
 import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
 import { customSelectMenu } from "../components/customSelectMenu.js"
 
+// Chart
+import type {
+    Plugin,
+    ChartType,
+} from "chart.js"
+
+import { Chart } from "chart.js/auto"
+
+type CustomCanvasBackgroundColorOptions = {
+    color?:string
+}
+
+declare module "chart.js" {
+    interface PluginOptionsByType<TType extends ChartType> {
+        customCanvasBackgroundColor?: CustomCanvasBackgroundColorOptions
+    }
+}
+
 "use strict"
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function():void {
     // Search Bar
 
-    const search_bar = document.querySelector(".search_bar")
-    const search_result = document.querySelector(".search_result")
-    const delete_search_bar = document.querySelector(".fa-xmark")
+    const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement
+    const search_result:HTMLDivElement = document.querySelector(".search_result") as HTMLDivElement
+    const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement
 
-    function renderSearchResult() {
-        let searched_text = search_bar.value // Searched Text Value
+    function renderSearchResult():void {
+        interface Pages {
+            url:string,
+            title:string
+        }
+
+        let searched_text:string = search_bar.value // Searched Text Value
 
         // Data - Array of Objects of Pages
-        const pages = [
+        const pages:Pages[] = [
             { url: "/", title: "Hlavná stránka" },
             { url: "/prihlasenie", title: "Prihlásenie" },
             { url: "/obnova-hesla", title: "Obnova hesla" },
@@ -41,13 +64,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         
         // Filters Pages by Searched Text Value
-        const filtered_pages = pages.filter(function(one_page) {
+        const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
             return one_page.title.toLowerCase().includes(searched_text.toLowerCase())
         })
 
         // Renders Result
-        filtered_pages.forEach(function(one_page) {
-            let search_result_link = document.createElement("a")
+        filtered_pages.forEach(function(one_page:Pages):void {
+            let search_result_link:HTMLAnchorElement = document.createElement("a")
             search_result_link.setAttribute("href", one_page.url)
             search_result_link.textContent = one_page.title
             search_result.appendChild(search_result_link)
@@ -73,36 +96,36 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Delete Search Bar Icon
-    delete_search_bar.addEventListener("click", function() {
+    delete_search_bar.addEventListener("click", function():void {
         search_bar.value = ""
         renderSearchResult()
     })
 
     // Search Bar Input
-    search_bar.addEventListener("input", function(event) {
+    search_bar.addEventListener("input", function():void {
         renderSearchResult()
     })
 
     // Login Form
 
     // Login Form Dialog
-    const login_button = document.querySelector(".login_button")
-    const no_logged_in_button = document.querySelector(".login")
-    const login_form_dialog = document.querySelector(".login_form_dialog")
-    const login_form = document.querySelector(".login_form")
+    const login_button:HTMLAnchorElement = document.querySelector(".login_button") as HTMLAnchorElement
+    const no_logged_in_button:HTMLAnchorElement = document.querySelector(".login") as HTMLAnchorElement
+    const login_form_dialog:HTMLDialogElement = document.querySelector(".login_form_dialog") as HTMLDialogElement
+    const login_form:HTMLFormElement = login_form_dialog.querySelector(".login_form") as HTMLFormElement
 
-    login_button.addEventListener("click", function() {
+    login_button.addEventListener("click", function():void {
         login_form_dialog.showModal()
     })
 
     if(no_logged_in_button) {
-        no_logged_in_button.addEventListener("click", function() {
+        no_logged_in_button.addEventListener("click", function():void {
             login_form_dialog.showModal()
         })
     }
 
-    login_form_dialog.addEventListener("click", function(event) {
-        const login_form_dimensions = login_form.getBoundingClientRect()
+    login_form_dialog.addEventListener("click", function(event:PointerEvent):void {
+        const login_form_dimensions:DOMRect = login_form.getBoundingClientRect()
 
         if (
             event.clientX < login_form_dimensions.left ||
@@ -117,16 +140,16 @@ document.addEventListener("DOMContentLoaded", function() {
     // Registration Form
 
     // Registration Form Dialog
-    const registration_button = document.querySelector(".registration_button")
-    const registration_form_dialog = document.querySelector(".registration_form_dialog")
-    const registration_form = document.querySelector(".registration_form")
+    const registration_button:HTMLAnchorElement = document.querySelector(".registration_button") as HTMLAnchorElement
+    const registration_form_dialog:HTMLDialogElement = document.querySelector(".registration_form_dialog") as HTMLDialogElement
+    const registration_form:HTMLFormElement = registration_form_dialog.querySelector(".registration_form") as HTMLFormElement
 
-    registration_button.addEventListener("click", function() {
+    registration_button.addEventListener("click", function():void {
         registration_form_dialog.showModal()
     })
 
-    registration_form_dialog.addEventListener("click", function(event) {
-        const registration_form_dimensions = registration_form.getBoundingClientRect()
+    registration_form_dialog.addEventListener("click", function(event:PointerEvent):void {
+        const registration_form_dimensions:DOMRect = registration_form.getBoundingClientRect()
 
         if (
             event.clientX < registration_form_dimensions.left ||
@@ -140,18 +163,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Profile Dialog
 
-    const profile_button = document.querySelector(".profile_button")
-    const profile_dialog = document.querySelector(".profile_dialog")
-    const profile = document.querySelector(".profile")
+    const profile_button:HTMLAnchorElement = document.querySelector(".profile_button") as HTMLAnchorElement
+    const profile_dialog:HTMLDialogElement = document.querySelector(".profile_dialog") as HTMLDialogElement
+    const profile:HTMLDivElement = profile_dialog.querySelector(".profile") as HTMLDivElement
 
     if(profile_button) {
-        profile_button.addEventListener("click", function() {
+        profile_button.addEventListener("click", function():void {
             profile_dialog.showModal()
         })
     }
 
-    profile_dialog.addEventListener("click", function(event) {
-        const profile_dimensions = profile.getBoundingClientRect()
+    profile_dialog.addEventListener("click", function(event:PointerEvent):void {
+        const profile_dimensions:DOMRect = profile.getBoundingClientRect()
 
         if (
             event.clientX < profile_dimensions.left ||
@@ -164,11 +187,11 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     // Chart
-    const activity_chart = document.querySelector(".activity_chart")
+    const activity_chart:HTMLCanvasElement = document.querySelector(".activity_chart") as HTMLCanvasElement
 
-    const plugin = {
+    const customCanvasBackgroundColor:Plugin<"line"> = {
     id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart, args, options) => {
+    beforeDraw: (chart, _args, options) => {
         const {ctx} = chart;
         ctx.save();
         ctx.globalCompositeOperation = 'destination-over';
@@ -230,11 +253,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 legend: {
                     display: false,
-                    //labels: {
-                    //    font: {
-                    //        size: 15
-                    //    }
-                    //}
                 },
             },
 
@@ -251,13 +269,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         },
 
-        plugins: [plugin],
+        plugins: [customCanvasBackgroundColor],
     })
 
     // Custom Select Menus - Reviews
 
-    const sort_select_menu = document.querySelector(".reviews .select_menus .sort_select_menu") // Gets Sort Select Menu
-    const rating_select_menu = document.querySelector(".reviews .select_menus .rating_select_menu") // Gets Rating Select Menu
+    const sort_select_menu:HTMLDivElement = document.querySelector(".reviews .select_menus .sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
+    const rating_select_menu:HTMLDivElement = document.querySelector(".reviews .select_menus .rating_select_menu") as HTMLDivElement // Gets Rating Select Menu
 
     customSelectMenu(sort_select_menu, "sort") // Adds Functionality For Sort Select Menu That Sets The Sort URL Parameter
     customSelectMenu(rating_select_menu, "rating") // Adds Functionality For Rating Select Menu That Sets The Rating URL Parameter
@@ -265,40 +283,42 @@ document.addEventListener("DOMContentLoaded", function() {
     // Reviews
 
     // Animate Reviews
-    const reviews_info_container = document.querySelector(".reviews .reviews_info_container") // Gets Reviews Info
+    const reviews_info_container:HTMLDivElement = document.querySelector(".reviews .reviews_info_container") as HTMLDivElement // Gets Reviews Info
     setObserverAnimation(reviews_info_container, false, 1, reviewsInfoAnimation) // Animates Reviews Info
 
-    const all_reviews = document.querySelectorAll(".reviews .all_reviews .one_review") // Gets All Reviews
-    setObserverAnimation(all_reviews) // Animates Each Review From All Reviews
+    const all_reviews:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".reviews .all_reviews .one_review") // Gets All Reviews
+    setObserverAnimation(all_reviews, true, 0.5) // Animates Each Review From All Reviews
 
     // Custom Select Menu - Contact Form
 
-    const subject_select_menu = document.querySelector(".subject_select_menu")
-    const subject_select = document.querySelector(".subject_select_menu .select")
-    const subject_options_list = document.querySelector(".subject_select_menu .options_list")
-    const subject_options = document.querySelectorAll(".subject_select_menu .option")
+    const subject_select_menu:HTMLDivElement = document.querySelector(".subject_select_menu") as HTMLDivElement
+    const subject_select:HTMLDivElement = subject_select_menu.querySelector(".select") as HTMLDivElement
+    const subject_options_list:HTMLDivElement = subject_select_menu.querySelector(".options_list") as HTMLDivElement
+    const subject_options:NodeListOf<HTMLDivElement> = subject_select_menu.querySelectorAll<HTMLDivElement>(".option")
 
-    subject_select.addEventListener("click", function() {
-        subject_options_list.classList.toggle("active")
-        subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+    subject_select.addEventListener("click", function():void {
+        subject_options_list.classList.toggle("active");
+        (subject_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
     })
 
-    subject_options.forEach(function(option) {
-        option.addEventListener("click", function() {
+    subject_options.forEach(function(option:HTMLDivElement):void {
+        option.addEventListener("click", function():void {
+            if(!option.dataset.subject) return
+
             sessionStorage.setItem("subject", option.dataset.subject)
 
-            subject_options_list.classList.toggle("active")
-            subject_select.querySelector(".fa-angle-down").classList.toggle("fa-angle-up")
+            subject_options_list.classList.toggle("active");
+            (subject_select.querySelector(".fa-angle-down") as HTMLDivElement).classList.toggle("fa-angle-up")
 
             // Removes Selected Class From Options
-            subject_options.forEach(function(remove_selected) {
+            subject_options.forEach(function(remove_selected:HTMLDivElement):void {
                 remove_selected.classList.remove("selected")
             })
 
             // Shows Current Selected Option From List Without Icon
             if(option.dataset.subject === sessionStorage.getItem("subject")) {
-                subject_select.querySelector("span").textContent = option.querySelector("span").textContent
-                subject_select_menu.querySelector("input").value = option.querySelector("span").textContent
+                (subject_select.querySelector("span") as HTMLSpanElement).textContent = (option.querySelector("span") as HTMLSpanElement).textContent;
+                (subject_select_menu.querySelector("input") as HTMLInputElement).value = (option.querySelector("span") as HTMLSpanElement).textContent
 
                 option.classList.add("selected") // Adds Selected Class To Selected Option
             }
@@ -307,23 +327,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Selected Attachment
         
-    const attachment = document.querySelector("#select_attachment")
-    const attachment_report = document.querySelector(".attachment_report")
+    const attachment:HTMLInputElement = document.querySelector("#select_attachment") as HTMLInputElement
+    const attachment_report:HTMLParagraphElement = document.querySelector(".attachment_report") as HTMLParagraphElement
 
-    attachment.addEventListener("change", function(event) {
-        const attachment_name = event.target.files[0].name
-        const attachment_size = event.target.files[0].size
+    attachment.addEventListener("change", function(event:Event):void {
+        if(!(event.target instanceof HTMLInputElement)) return
+        if(!event.target.files || event.target.files.length === 0) return
 
-        if(attachment_size <= 25000000) {
-            attachment_report.textContent = `Vybraný súbor: ${attachment_name}`
-        }
+        const file = event.target.files[0]
 
-        else if(attachment_size > 25000000) {
-            attachment_report.textContent = "Vybraný súbor je príliš veľký."
-        }
+        if(!file) return
 
-        else {
-            attachment_report.textContent = "Nie je vybraný žiaden súbor."
-        }
+        const attachment_name = file.name
+        const attachment_size = file.size
+
+        if(attachment_size <= 25000000) attachment_report.textContent = `Vybraný súbor: ${attachment_name}`
+        else if(attachment_size > 25000000) attachment_report.textContent = "Vybraný súbor je príliš veľký."
+        else attachment_report.textContent = "Nie je vybraný žiaden súbor."
     })
 })
