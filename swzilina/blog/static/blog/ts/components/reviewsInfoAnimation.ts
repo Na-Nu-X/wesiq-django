@@ -52,40 +52,40 @@ export function reviewsInfoAnimation():void {
     const average_rating_number_tag:HTMLParagraphElement = document.querySelector(".reviews_info_container .average_rating .average_rating_number") as HTMLParagraphElement // Gets Average Rating Number HTML Tag
 
     // Animation's Settings
-    const average_rating_number_target = average_rating_number_tag.textContent // Target Value Of Animation (For Example "425")
-    const animation_duration = 3000 // 3 Seconds Animation
-    let start_time = null // Sets Start Time Default Value / Delay For Animation Start
+    const average_rating_number_target:number = Number(average_rating_number_tag.textContent) // Target Value Of Animation (For Example 425)
+    const animation_duration:number = 3000 // 3 Seconds Animation
+    let start_time:number|null = null // Sets Start Time Default Value / Delay For Animation Start
 
-    let green = 0 // Start Color Of Stars Is rgb(235, 0, 20)
+    let green:number = 0 // Start Color Of Stars Is rgb(235, 0, 20)
 
     // Function For Animation
-    function averageRatingAnimation(time) {
+    function averageRatingAnimation(time:number):void {
         if(!start_time) start_time = time + 3000 // Starts After 3 Seconds Delay
 
-        const elapsed_time = time - start_time // Animation Elapsed Time
-        const progress = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
-        const eased = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
+        const elapsed_time:number = time - start_time // Animation Elapsed Time
+        const progress:number = Math.min(elapsed_time / animation_duration, 1) // Animation Progress From 0 To 1
+        const eased:number = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
 
         // average_rating_number_tag.innerHTML = "0<span>00</span>" // Renders Start Values To HTML
 
         // Starts The Animation After Delay Set In Start Time Expires
         if(progress >= 0) {
             // Average Rating Number Rendering
-            const avg_rating_splitted = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
+            const avg_rating_splitted:string[] = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
             // Splits Array
             average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
 
             // Stars Rendering
-            const average_rating_number = parseFloat(document.querySelector(".reviews_info_container .average_rating .average_rating_number").textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
-            const average_rating_stars = document.querySelectorAll(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
+            const average_rating_number:number = parseFloat((document.querySelector(".reviews_info_container .average_rating .average_rating_number") as HTMLParagraphElement).textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
+            const average_rating_stars:NodeListOf<HTMLSpanElement> = document.querySelectorAll<HTMLSpanElement>(".reviews_info_container .average_rating .stars .star") // Gets All 5 Star Icons
 
-            let rest_from_average_rating_number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
+            let rest_from_average_rating_number:number = average_rating_number // Rest From Average Rating (From 4.25 To 0.25)
 
-            average_rating_stars.forEach(function(one_star, index) {
+            average_rating_stars.forEach(function(one_star:HTMLSpanElement, index:number):void {
                 // Colors Of Stars
 
-                let star_color_1 = one_star.querySelectorAll("svg linearGradient stop")[0] // Gets Part Of Star Icon
-                let star_color_2 = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+                let star_color_1:HTMLElement = one_star.querySelectorAll<HTMLElement>("svg linearGradient stop")[0] as HTMLElement // Gets Part Of Star Icon
+                let star_color_2:HTMLElement = one_star.querySelectorAll<HTMLElement>("svg linearGradient stop")[1] as HTMLElement // Gets Part Of Star Icon
 
                 // Set Color Value To Stars
                 star_color_1.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
@@ -95,10 +95,10 @@ export function reviewsInfoAnimation():void {
 
                 // Filling Stars
                 
-                let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1] // Gets Part Of Star Icon
+                let filled_part:HTMLElement = one_star.querySelectorAll<HTMLElement>("svg linearGradient stop")[1] as HTMLElement // Gets Part Of Star Icon
 
                 // Fills Full Stars
-                if(index + 1 <= parseInt(average_rating_number)) {
+                if(index + 1 <= Math.floor(average_rating_number)) {
                     filled_part.setAttribute("offset", "100%")
 
                     // Saves Rest From Average Rating
@@ -107,8 +107,8 @@ export function reviewsInfoAnimation():void {
                 }
 
                 // Fills Rest From Average Rating
-                else if(index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                    filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`)
+                else if(index + 1 > Math.floor(average_rating_number) && rest_from_average_rating_number !== 0) {
+                    filled_part.setAttribute("offset", `${Number(rest_from_average_rating_number.toFixed(2)) * 100}%`)
 
                     rest_from_average_rating_number = 0 // Sets Rest From Average Rating Number To 0 And Stops The Statement
                 }
@@ -116,9 +116,7 @@ export function reviewsInfoAnimation():void {
         }
         
         // Calls The Animation Until Its Duration Ends
-        if(progress < 1) {
-            requestAnimationFrame(averageRatingAnimation)
-        }
+        if(progress < 1) requestAnimationFrame(averageRatingAnimation)
     }
 
     requestAnimationFrame(averageRatingAnimation) // Calls The Animation For The First Time

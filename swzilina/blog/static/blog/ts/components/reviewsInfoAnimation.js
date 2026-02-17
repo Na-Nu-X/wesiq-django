@@ -38,7 +38,7 @@ export function reviewsInfoAnimation() {
     average_rating.style.animation = "fade_in_animation 0.5s ease 3s forwards"; // Sets Animation In CSS And Makes Average Rating Appear
     const average_rating_number_tag = document.querySelector(".reviews_info_container .average_rating .average_rating_number"); // Gets Average Rating Number HTML Tag
     // Animation's Settings
-    const average_rating_number_target = average_rating_number_tag.textContent; // Target Value Of Animation (For Example "425")
+    const average_rating_number_target = Number(average_rating_number_tag.textContent); // Target Value Of Animation (For Example 425)
     const animation_duration = 3000; // 3 Seconds Animation
     let start_time = null; // Sets Start Time Default Value / Delay For Animation Start
     let green = 0; // Start Color Of Stars Is rgb(235, 0, 20)
@@ -71,23 +71,22 @@ export function reviewsInfoAnimation() {
                 // Filling Stars
                 let filled_part = one_star.querySelectorAll("svg linearGradient stop")[1]; // Gets Part Of Star Icon
                 // Fills Full Stars
-                if (index + 1 <= parseInt(average_rating_number)) {
+                if (index + 1 <= Math.floor(average_rating_number)) {
                     filled_part.setAttribute("offset", "100%");
                     // Saves Rest From Average Rating
                     rest_from_average_rating_number = average_rating_number;
                     rest_from_average_rating_number -= index + 1;
                 }
                 // Fills Rest From Average Rating
-                else if (index + 1 > parseInt(average_rating_number) && rest_from_average_rating_number !== 0) {
-                    filled_part.setAttribute("offset", `${rest_from_average_rating_number.toFixed(2) * 100}%`);
+                else if (index + 1 > Math.floor(average_rating_number) && rest_from_average_rating_number !== 0) {
+                    filled_part.setAttribute("offset", `${Number(rest_from_average_rating_number.toFixed(2)) * 100}%`);
                     rest_from_average_rating_number = 0; // Sets Rest From Average Rating Number To 0 And Stops The Statement
                 }
             });
         }
         // Calls The Animation Until Its Duration Ends
-        if (progress < 1) {
+        if (progress < 1)
             requestAnimationFrame(averageRatingAnimation);
-        }
     }
     requestAnimationFrame(averageRatingAnimation); // Calls The Animation For The First Time
 }
