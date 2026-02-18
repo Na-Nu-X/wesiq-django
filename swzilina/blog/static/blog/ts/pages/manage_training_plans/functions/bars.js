@@ -20,7 +20,8 @@ export function createBars(amount, state) {
 export function renderBars(parent, container) {
     // Removes Previous Bar Container
     const previous_bar_container = parent.querySelector(".bar_container");
-    previous_bar_container.remove();
+    if (previous_bar_container)
+        previous_bar_container.remove();
     parent.appendChild(container); // Appends New Bar Container
 }
 //# sourceMappingURL=bars.js.map

@@ -3,12 +3,12 @@ import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
 import { customSelectMenu } from "../components/customSelectMenu.js"
 
 // Chart
+declare const Chart: typeof import("chart.js").Chart;
+
 import type {
     Plugin,
     ChartType,
 } from "chart.js"
-
-import { Chart } from "chart.js/auto"
 
 type CustomCanvasBackgroundColorOptions = {
     color?:string
@@ -191,17 +191,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const customCanvasBackgroundColor:Plugin<"line"> = {
     id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart, _args, options) => {
-        const {ctx} = chart;
-        ctx.save();
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.fillStyle = options.color || '#99ffff';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.restore();
-    }
+        beforeDraw: (chart, _args, options) => {
+            const {ctx} = chart;
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = options.color || '#99ffff';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
     };
     
-    new Chart(activity_chart, {
+    new Chart<"line">(activity_chart, {
         type: "line",
         data: {
             labels: ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"],

@@ -2,7 +2,6 @@ import { getFormattedTime } from "../utils/timer.js";
 import { getDayName } from "../utils/getDayName.js";
 import { randomColor } from "../utils/randomColor.js";
 import { sendPOST } from "../services/sendPOST.js";
-// Chart
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "chart.js/auto";
 "use strict";
@@ -134,8 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function startActivity() {
         // Hides Training Plan If Activity Was Already Started With The Playback Play Button
         if (play_appearance.classList.contains("fa-pause") && start_training.classList.contains("active"))
-            training_plan.style.display = "none" // Hides Training Plan
-            (previous_training_plan[0]).style.display = "none"; // Hides Previous Training Plan Button
+            training_plan.style.display = "none"; // Hides Training Plan
+        previous_training_plan[0].style.display = "none"; // Hides Previous Training Plan Button
         previous_training_plan[1].style.display = "none"; // Hides Previous Training Plan Button
         next_training_plan[0].style.display = "none"; // Hides Next Next Training Button
         next_training_plan[1].style.display = "none"; // Hides Next Next Training Button
@@ -203,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function stopActivity() {
         setDefaults();
-        if (!average_activity_time.dataset.average_activity_time || !weekly_activity_chart.dataset.activities)
+        if (!average_activity_time.dataset.average_activity_time || !weekly_activity_chart.dataset.activities || !exercises)
             return;
         // Only Executed If The Activity Timer Has Been Started
         if (activity_timer_elapsed_time >= 1) {
@@ -290,12 +289,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             data: data, // Seconds
                             borderRadius: 0,
                             minBarLength: 2,
-                            backgroundColor: chart => setBarTheme(chart.raw).backgroundColor,
-                            hoverBackgroundColor: chart => setBarTheme(chart.raw).backgroundColor,
-                            borderColor: chart => setBarTheme(chart.raw).borderColor,
-                            hoverBorderColor: chart => setBarTheme(chart.raw).borderColor,
-                            borderWidth: chart => setBarTheme(chart.raw).borderWidth,
-                            hoverBorderWidth: chart => setBarTheme(chart.raw).borderWidth,
+                            backgroundColor: (chart) => setBarTheme(chart.raw).backgroundColor,
+                            hoverBackgroundColor: (chart) => setBarTheme(chart.raw).backgroundColor,
+                            borderColor: (chart) => setBarTheme(chart.raw).borderColor,
+                            hoverBorderColor: (chart) => setBarTheme(chart.raw).borderColor,
+                            borderWidth: (chart) => setBarTheme(chart.raw).borderWidth,
+                            hoverBorderWidth: (chart) => setBarTheme(chart.raw).borderWidth,
                         }],
                 },
                 options: {
@@ -318,8 +317,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     },
                     plugins: {
-                        legend: false,
-                        tooltip: false,
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        },
                         datalabels: {
                             anchor: "end",
                             align: "bottom",
@@ -386,12 +389,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 borderRadius: 5,
                                 offset: 10,
                             }],
-                        labels: false,
+                        labels: [],
                     },
                     options: {
                         plugins: {
-                            legend: false,
-                            tooltip: false,
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
                         },
                         cutout: "50%",
                         responsive: true,
@@ -418,18 +425,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // Training Plan
     function startTraining() {
+        if (!exercises || !progress_bars)
+            return;
         start_training.classList.remove("active"); // Hides Start Training Tab
         exercises[0].classList.add("active"); // Shows First Exercise
         // Change Buttons - Shows Pause Button
         play_appearance.classList.remove("fa-play");
         play_appearance.classList.add("fa-pause");
         startActivity();
-        progress_bars[active_exercise_index].nextSibling.style.opacity = 0; // Hides Progress Bar Label
+        progress_bars[active_exercise_index].nextSibling.style.opacity = "0"; // Hides Progress Bar Label
         // Shows Progress In Progress Bar
-        let { progress_percentage } = trainingPlanProgress();
-        red -= (255 - min_red) / (all_sets - 1); // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+        let { progress_percentage } = trainingPlanProgress() ?? {};
+        all_sets ? red -= (255 - min_red) / (all_sets - 1) : red -= 0; // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
     }
     function breakBetweenSets() {
+        if (!exercises)
+            return;
         // Change Tabs
         exercises[active_exercise_index].classList.remove("active"); // Hides Current Active Exercise
         break_between_sets.classList.add("active"); // Shows Break Between Sets Tab
@@ -437,16 +448,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const break_timer = break_between_sets.querySelector(".break_timer p"); // Gets Break Timer
         // Progress Circle
         const progress_circle = break_between_sets.querySelector("svg .progress");
-        const radius = parseInt(progress_circle.getAttribute("r"));
+        const radius = Number(progress_circle.getAttribute("r"));
         const circum_ference = 2 * Math.PI * radius; // 251.32741228718345
-        progress_circle.style.strokeDasharray = circum_ference;
+        progress_circle.style.strokeDasharray = String(circum_ference);
         // Timer Interval (100MS)
         break_timer_interval = setInterval(function () {
             // Checks If There Is Still Some Remaining Time
             if (break_remaining_time <= 0) {
                 // Stops Break Timer
-                clearInterval(break_timer_interval);
-                break_timer_interval = null;
+                if (break_timer_interval) {
+                    clearInterval(break_timer_interval);
+                    break_timer_interval = null;
+                }
                 max_break_remaining_time = 120; // Sets Max Break Remaining Time Back To Default
                 break_remaining_time = 120; // Sets Max Break Remaining Time Back To Default
                 nextExercise();
@@ -459,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break_timer.querySelector(".minutes").textContent = getFormattedTime("minutes", Math.round(break_remaining_time));
                 break_timer.querySelector(".seconds").textContent = getFormattedTime("seconds", Math.round(break_remaining_time), true);
                 // Progress Circle
-                progress_circle.style.strokeDashoffset = circum_ference / max_break_remaining_time * break_remaining_time; // Updates Progress Circle Length
+                progress_circle.style.strokeDashoffset = String(circum_ference / max_break_remaining_time * break_remaining_time); // Updates Progress Circle Length
                 const progress_circle_red = 255 - (255 / max_break_remaining_time * break_remaining_time); // Increases Red Color In Palette
                 const progress_circle_green = 255 / max_break_remaining_time * break_remaining_time; // Decreases Green Color In Palette
                 progress_circle.style.stroke = `rgb(${progress_circle_red}, ${progress_circle_green}, 0)`; // Updates Progress Circle Color
@@ -468,13 +481,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 break_remaining_time -= 0.1;
                 // Changes Preferences After Adding Time
                 if (break_remaining_time > max_break_remaining_time) {
-                    progress_circle.style.strokeDashoffset = circum_ference; // Sets Progress In Progress Circle On The Start
+                    progress_circle.style.strokeDashoffset = String(circum_ference); // Sets Progress In Progress Circle On The Start
                     max_break_remaining_time = break_remaining_time; // Changes Maximum Value Of Break Timer Remaining Time
                 }
             }
         }, 100);
     }
     function nextExercise() {
+        if (!exercises)
+            return;
         // Unpause Activity If Is Paused
         if (play_appearance.classList.contains("fa-play")) {
             // Change Buttons - Shows Pause Button
@@ -482,50 +497,53 @@ document.addEventListener("DOMContentLoaded", function () {
             play_appearance.classList.add("fa-pause");
             startActivity();
         }
-        let { set_progress, current_set, sets_amount } = trainingPlanProgress(); // Gets Current Set Progress
+        let { set_progress, current_set, sets_amount } = trainingPlanProgress() ?? {}; // Gets Current Set Progress
+        if (!set_progress || !current_set || !sets_amount)
+            return;
         // Updates Set Progress
         if (current_set < sets_amount) {
             // Updates Reps Amount For Every Set
             const reps = exercises[active_exercise_index].querySelector(".reps");
+            if (!reps.dataset.periods)
+                return;
             const periods = JSON.parse(reps.dataset.periods);
-            if (periods[current_set] === 0) {
+            if (periods[current_set] === 0)
                 reps.textContent = "Do zlyhania";
-            }
             // Sets The Correct Unit Based On The Reps Or Seconds
             else {
-                if (reps.dataset.unit === "reps") {
+                if (reps.dataset.unit === "reps")
                     reps.textContent = `${periods[current_set]}x`;
-                }
-                if (reps.dataset.unit === "seconds") {
+                if (reps.dataset.unit === "seconds")
                     reps.textContent = `${periods[current_set]}s`;
-                }
             }
             // Updates Set Amount
             current_set += 1; // Increases Current Set Value
-            set_progress[0].textContent = current_set; // Displays Current Set Value
+            set_progress[0].textContent = String(current_set); // Displays Current Set Value
             // Shows Progress In Progress Bar
-            let { progress_percentage } = trainingPlanProgress();
-            red -= (255 - min_red) / (all_sets - 1); // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+            let { progress_percentage } = trainingPlanProgress() ?? {};
+            all_sets ? red -= (255 - min_red) / (all_sets - 1) : red -= 0; // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
         }
         else {
             // Changes Exercises Only If There Is Still Any Left
             if (active_exercise_index < exercises.length - 1) {
+                if (!progress_bars)
+                    return;
                 // Shows Break Between Sets Only If There Is No Active Break Between Sets Tab, Only If There Is Still Any Exercise Left And If Current Set Is Equal Sets Amount In Current Active Exercise
                 if (!break_between_sets.classList.contains("active")) {
                     breakBetweenSets();
                     // Shows Progress Bar Label
                     progress_bars[active_exercise_index + 1].nextSibling.textContent = exercises[active_exercise_index + 1].querySelector("h3").textContent;
-                    progress_bars[active_exercise_index + 1].nextSibling.style.opacity = 1;
+                    progress_bars[active_exercise_index + 1].nextSibling.style.opacity = "1";
                 }
                 else {
                     // Changes Exercises
                     exercises[active_exercise_index].classList.remove("active"); // Hides Current Active Exercise
                     exercises[active_exercise_index + 1].classList.add("active"); // Shows Next Exercise
                     active_exercise_index += 1; // Changes Active Exercise Index
-                    progress_bars[active_exercise_index].nextSibling.style.opacity = 0; // Hides Progress Bar Label
+                    progress_bars[active_exercise_index].nextSibling.style.opacity = "0"; // Hides Progress Bar Label
                     // Shows Progress In Progress Bar
-                    let { progress_percentage } = trainingPlanProgress();
-                    red -= (255 - min_red) / (all_sets - 1); // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+                    let { progress_percentage } = trainingPlanProgress() ?? {};
+                    all_sets ? red -= (255 - min_red) / (all_sets - 1) : red -= 0; // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
                 }
             }
             // Shows Finish Training Tab If There Are No Exercises Left
@@ -573,6 +591,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const next_training_plan = document.querySelectorAll(".training_plan_container .next_training_plan"); // Gets Next Training Plan Button
     // Function For Set Training Plan
     function setTrainingPlanType() {
+        if (!training_plan_type)
+            return;
         exercises = []; // Deletes Every Exercise From Exercises
         if (play_appearance.classList.contains("fa-pause")) {
             // Change Buttons - Shows Play Button
@@ -581,8 +601,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Sets New Exercises For Selected Training Plan Type
         all_exercises.forEach(function (one_exercise) {
-            if (`${one_exercise.dataset.type} - ${getDayName(one_exercise.dataset.day)}` === training_plan_type) {
-                exercises.push(one_exercise);
+            if (`${one_exercise.dataset.type} - ${getDayName(Number(one_exercise.dataset.day))}` === training_plan_type) {
+                if (exercises !== null)
+                    exercises.push(one_exercise);
             }
         });
         progress_bar.innerHTML = ""; // Deletes All Bars From Progress Bar
@@ -607,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function () {
         progress_bars = document.querySelectorAll(".activity .training_plan_container .training_plan .progress_bar .bar"); // Gets All Bars From The Progress Bar
         // Shows Progress Bar Label
         progress_bars[active_exercise_index].nextSibling.textContent = exercises[active_exercise_index].querySelector("h3").textContent;
-        progress_bars[active_exercise_index].nextSibling.style.opacity = 1;
+        progress_bars[active_exercise_index].nextSibling.style.opacity = "1";
         all_sets = [...exercises].reduce((sum, one_exercise) => sum + parseInt(one_exercise.querySelector(".sets span:last-child").textContent), 0); // Gets Total Amount Of Sets From All Exercises
     }
     setTrainingPlanType(); // Sets Default Training Plan
@@ -680,8 +701,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const skip_break_button = break_between_sets.querySelector(".skip_break_button");
     skip_break_button.addEventListener("click", function () {
         // Stops Break Timer
-        clearInterval(break_timer_interval);
-        break_timer_interval = null;
+        if (break_timer_interval) {
+            clearInterval(break_timer_interval);
+            break_timer_interval = null;
+        }
         max_break_remaining_time = 120; // Sets Max Break Remaining Time Back To Default
         break_remaining_time = 120; // Sets Max Break Remaining Time Back To Default
         nextExercise();
