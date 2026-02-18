@@ -144,7 +144,7 @@
 
         {% if training_plan|length != 0 %}
             <div class="edit_training_plan" tabindex="0">
-                <script src="{% static 'blog/js/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
+                <script src="{% static 'blog/ts/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 
                 {% for one_exercise in training_plan %}
                     <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
@@ -228,6 +228,6 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/js/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
-    <script src="{% static 'blog/js/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
 {% endblock script %}

@@ -24,7 +24,7 @@ export function createBars(amount:number, state:{active_exercise_index:number}):
 export function renderBars(parent:HTMLElement, container:HTMLElement):void {
     // Removes Previous Bar Container
     const previous_bar_container:HTMLDivElement = parent.querySelector(".bar_container") as HTMLDivElement
-    previous_bar_container.remove()
+    if(previous_bar_container) previous_bar_container.remove()
 
     parent.appendChild(container) // Appends New Bar Container
 }

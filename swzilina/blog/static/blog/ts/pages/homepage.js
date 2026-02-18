@@ -1,8 +1,6 @@
 import { setObserverAnimation } from "../utils/setObserverAnimation.js";
 import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js";
 import { customSelectMenu } from "../components/customSelectMenu.js";
-// Chart
-import { Chart } from "chart.js/auto";
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
     // Search Bar

@@ -518,16 +518,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                             offset: 10,
                         }],
 
-                        labels: false,
+                        labels: [],
                     },
 
                     options: {
-                        legend: {
-                            display: false
-                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
 
-                        tooltip: {
-                            enabled: false
+                            tooltip: {
+                                enabled: false
+                            }
                         },
 
                         cutout: "50%",
