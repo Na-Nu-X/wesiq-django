@@ -666,9 +666,10 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/ts/pages/homepage.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/pages/login.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/pages/registration.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/components/reviews.js' %}" type="module"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'blog/ts/dist/pages/homepage.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/pages/login.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/pages/registration.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/components/reviews.js' %}" type="module"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
 {% endblock script %}
