@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.clientY < login_form_dimensions.top ||
             event.clientY > login_form_dimensions.bottom
         ) {
-            login_form_dialog.close()
+            this.close()
         }
     })
 
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.clientY < registration_form_dimensions.top ||
             event.clientY > registration_form_dimensions.bottom
         ) {
-            registration_form_dialog.close()
+            this.close()
         }
     })
 
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.clientY < profile_dimensions.top ||
             event.clientY > profile_dimensions.bottom
         ) {
-            profile_dialog.close()
+            this.close()
         }
     })
 
@@ -278,16 +278,16 @@ document.addEventListener("DOMContentLoaded", function():void {
     const rating_select_menu:HTMLDivElement = document.querySelector(".reviews .select_menus .rating_select_menu") as HTMLDivElement // Gets Rating Select Menu
 
     customSelectMenu(sort_select_menu, "sort") // Adds Functionality For Sort Select Menu That Sets The Sort URL Parameter
-    customSelectMenu(rating_select_menu, "rating") // Adds Functionality For Rating Select Menu That Sets The Rating URL Parameter
+    customSelectMenu(rating_select_menu, "rating", true) // Adds Functionality For Rating Select Menu That Sets The Rating URL Parameter
 
     // Reviews
 
     // Animate Reviews
     const reviews_info_container:HTMLDivElement = document.querySelector(".reviews .reviews_info_container") as HTMLDivElement // Gets Reviews Info
-    setObserverAnimation(reviews_info_container, false, 1, reviewsInfoAnimation) // Animates Reviews Info
+    setObserverAnimation(reviews_info_container, 1, reviewsInfoAnimation) // Animates Reviews Info
 
     const all_reviews:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".reviews .all_reviews .one_review") // Gets All Reviews
-    setObserverAnimation(all_reviews, true, 0.5) // Animates Each Review From All Reviews
+    setObserverAnimation(all_reviews) // Animates Each Review From All Reviews
 
     // Custom Select Menu - Contact Form
 
@@ -298,14 +298,14 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     subject_select.addEventListener("click", function():void {
         subject_options_list.classList.toggle("active");
-        (subject_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
+        (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
     })
 
     subject_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
-            if(!option.dataset.subject) return
+            if(!this.dataset.subject) return
 
-            sessionStorage.setItem("subject", option.dataset.subject)
+            sessionStorage.setItem("subject", this.dataset.subject)
 
             subject_options_list.classList.toggle("active");
             (subject_select.querySelector(".fa-angle-down") as HTMLDivElement).classList.toggle("fa-angle-up")
@@ -316,11 +316,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             // Shows Current Selected Option From List Without Icon
-            if(option.dataset.subject === sessionStorage.getItem("subject")) {
-                (subject_select.querySelector("span") as HTMLSpanElement).textContent = (option.querySelector("span") as HTMLSpanElement).textContent;
-                (subject_select_menu.querySelector("input") as HTMLInputElement).value = (option.querySelector("span") as HTMLSpanElement).textContent
+            if(this.dataset.subject === sessionStorage.getItem("subject")) {
+                (subject_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent;
+                (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
 
-                option.classList.add("selected") // Adds Selected Class To Selected Option
+                this.classList.add("selected") // Adds Selected Class To Selected Option
             }
         })
     })

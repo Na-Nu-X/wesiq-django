@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Password Verification
     password_input.addEventListener("input", function():void {
-        passwordVerification(password_input, password_check_input, form_report)
+        passwordVerification(this, password_check_input, form_report)
     })
 
     password_check_input.addEventListener("input", function():void {
-        passwordVerification(password_input, password_check_input, form_report)
+        passwordVerification(password_input, this, form_report)
     })
 })

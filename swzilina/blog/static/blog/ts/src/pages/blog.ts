@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement // Gets Search Bar
 
     search_bar.addEventListener("input", function():void {
-        renderArticles(search_bar, all_articles, articles_data) // Renders Articles
+        renderArticles(this, all_articles, articles_data) // Renders Articles
     })
 
     // Delete Search Bar
@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     share_buttons.forEach(function(one_share_button:HTMLDivElement):void {
         one_share_button.addEventListener("click", async function():Promise<void> {
-            let title:string = one_share_button.dataset.title || "" // Gets Title
-            let link:string = one_share_button.dataset.link || "" // Gets Link
+            let title:string = this.dataset.title || "" // Gets Title
+            let link:string = this.dataset.link || "" // Gets Link
 
             // Creates And Fill Object With Data Values
             let share_data:{

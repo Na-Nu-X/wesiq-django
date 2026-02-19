@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     })
 
     window.addEventListener("scroll", function():void {
-        if(window.scrollY > 0) {
+        if(this.scrollY > 0) {
             move_down.style.opacity = "0"
             move_down.style.visibility = "hidden"
         }

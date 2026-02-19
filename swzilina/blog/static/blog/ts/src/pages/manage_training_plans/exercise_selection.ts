@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Selection Exercises
     selection_exercises.forEach(function(one_exercise:HTMLDivElement):void {
         one_exercise.addEventListener("dragstart", function():void {
-            global_state.selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
+            global_state.selection_dragged_exercise = this // Sets Selection Dragged Exercise
         })
 
         one_exercise.addEventListener("dragend", function():void {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("dblclick", function(event:MouseEvent):void {
             // Executes Only If The Click Is Outside The Increase Weight Button, Decrease Weight Button And Weight Print
             if((event.target instanceof Node) && !(event.target as HTMLDivElement).classList.contains("increase_weight") && !(event.target as HTMLDivElement).classList.contains("decrease_weight") && !(event.target.parentNode as HTMLDivElement).classList.contains("weight")) {
-                global_state.selection_dragged_exercise = one_exercise // Sets Selection Dragged Exercise
+                global_state.selection_dragged_exercise = this // Sets Selection Dragged Exercise
 
                 // Adds Exercise To The New Training Plan
                 if(global_state.focused_element === "new_training_plan") addExercise(new_training_plan.querySelector(".training_plan") as HTMLDivElement, new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
@@ -108,14 +108,14 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("pointerdown", function(event:PointerEvent):void {
             // Increase Weight
             if((event.target as HTMLDivElement).classList.contains("increase_weight")) {
-                changeWeight(one_exercise, "increase") // Increases Weight
-                startHold(() => changeWeight(one_exercise, "increase")) // Increases Weight On Hold
+                changeWeight(this, "increase") // Increases Weight
+                startHold(() => changeWeight(this, "increase")) // Increases Weight On Hold
             }
 
             // Decrease Weight
             if((event.target as HTMLDivElement).classList.contains("decrease_weight")) {
-                changeWeight(one_exercise, "decrease") // Decreases Weight
-                startHold(() => changeWeight(one_exercise, "decrease")) // Decreases Weight On Hold
+                changeWeight(this, "decrease") // Decreases Weight
+                startHold(() => changeWeight(this, "decrease")) // Decreases Weight On Hold
             }
         })
 
@@ -128,11 +128,11 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault() // Stop Scrolling
 
             if(event.deltaY < 0) {
-                if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "increase") // Increases Weight (Except Of Custom Exercise And Warm Up)
+                if(!this.classList.contains("custom_exercise") && !this.classList.contains("warm_up")) changeWeight(this, "increase") // Increases Weight (Except Of Custom Exercise And Warm Up)
             }
 
             if(event.deltaY > 0) {
-                if(!one_exercise.classList.contains("custom_exercise") && !one_exercise.classList.contains("warm_up")) changeWeight(one_exercise, "decrease") // Increases Weight (Except Of Custom Exercise And Warm Up)
+                if(!this.classList.contains("custom_exercise") && !this.classList.contains("warm_up")) changeWeight(this, "decrease") // Increases Weight (Except Of Custom Exercise And Warm Up)
             }
         })
 
