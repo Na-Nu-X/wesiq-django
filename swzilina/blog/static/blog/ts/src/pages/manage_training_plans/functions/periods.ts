@@ -134,7 +134,9 @@ export function getPeriods(exercise:HTMLDivElement):number[] {
         }
     }
 
-    if(periods.length === 0) periods.push(getElapsedSeconds((exercise.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent)) // Elapsed Seconds Of The Warm Up Timer
+    // console.log(periods)
+
+    // if(periods.length === 0) periods.push(getElapsedSeconds((exercise.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent)) // Elapsed Seconds Of The Warm Up Timer
 
     return periods // Returns Periods
 }

@@ -3,11 +3,11 @@ import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
 import { customSelectMenu } from "../components/customSelectMenu.js"
 
 // Chart
-declare const Chart: typeof import("chart.js").Chart;
+declare const Chart: typeof import("chart.js").Chart
 
 import type {
     Plugin,
-    ChartType,
+    ChartType
 } from "chart.js"
 
 type CustomCanvasBackgroundColorOptions = {
