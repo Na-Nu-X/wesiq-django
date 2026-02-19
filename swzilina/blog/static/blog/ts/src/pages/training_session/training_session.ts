@@ -1,12 +1,13 @@
-import { getFormattedTime } from "../utils/timer.js"
-import { getDayName } from "../utils/getDayName.js"
-import { randomColor } from "../utils/randomColor.js"
-import { sendPOST } from "../services/sendPOST.js"
+import { getFormattedTime } from "../../utils/timer.js"
+import { getDayName } from "../../utils/getDayName.js"
+import { randomColor } from "../../utils/randomColor.js"
+import { sendPOST } from "../../services/sendPOST.js"
 
 // Chart
-import type { ScriptableContext } from "chart.js"
-import ChartDataLabels from "chartjs-plugin-datalabels"
-import { Chart } from "chart.js/auto"
+// import ChartDataLabels from "chartjs-plugin-datalabels"
+// import type { Chart as ChartType } from "chart.js"
+// import type { ScriptableContext } from "chart.js"
+// declare const Chart: typeof import("chart.js").Chart
 
 "use strict"
 
@@ -82,11 +83,11 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const main_summary:HTMLParagraphElement = activity_summary.querySelector(".main_summary") as HTMLParagraphElement // Gets Main Summary
     const weekly_activity_chart:HTMLDivElement = activity_summary.querySelector(".weekly_activity_chart") as HTMLDivElement // Gets Weekly Summary Chart
-    let bar_chart:Chart<"bar">|null = null
+    // let bar_chart:ChartType<"bar">|null = null
 
     const training_plan_summary:HTMLParagraphElement = activity_summary.querySelector(".training_plan_summary") as HTMLParagraphElement // Gets Training Plan Summary
     const training_plan_summary_chart:HTMLDivElement = activity_summary.querySelector(".training_plan_summary_chart") as HTMLDivElement // Gets Training Plan Summary Chart
-    let doughnut_chart:Chart<"doughnut">|null = null
+    // let doughnut_chart:ChartType<"doughnut">|null = null
 
     let exercises_summary:exercise[] = []
 
@@ -204,15 +205,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         activity_summary.style.display = "none" // Hides Activity Summary
 
         // Deletes Existing Summary Charts
-        if(bar_chart) {
-            bar_chart.destroy()
-            bar_chart = null
-        }
+        // if(bar_chart) {
+        //     bar_chart.destroy()
+        //     bar_chart = null
+        // }
 
-        if(doughnut_chart) {
-            doughnut_chart.destroy()
-            doughnut_chart = null
-        }
+        // if(doughnut_chart) {
+        //     doughnut_chart.destroy()
+        //     doughnut_chart = null
+        // }
 
         activity_timer_interval = setInterval(function() {
             // Activity Timer
@@ -387,77 +388,77 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
 
             // Creates Chart
-            bar_chart = new Chart<"bar">((weekly_activity_chart.querySelector("canvas") as HTMLCanvasElement), {
-                type: "bar",
+            // bar_chart = new Chart<"bar">((weekly_activity_chart.querySelector("canvas") as HTMLCanvasElement), {
+            //     type: "bar",
 
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data, // Seconds
-                        borderRadius: 0,
-                        minBarLength: 2,
-                        backgroundColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).backgroundColor,
-                        hoverBackgroundColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).backgroundColor,
-                        borderColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderColor,
-                        hoverBorderColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderColor,
-                        borderWidth: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderWidth,
-                        hoverBorderWidth: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderWidth,
-                    }],
-                },
+            //     data: {
+            //         labels: labels,
+            //         datasets: [{
+            //             data: data, // Seconds
+            //             borderRadius: 0,
+            //             minBarLength: 2,
+            //             backgroundColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).backgroundColor,
+            //             hoverBackgroundColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).backgroundColor,
+            //             borderColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderColor,
+            //             hoverBorderColor: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderColor,
+            //             borderWidth: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderWidth,
+            //             hoverBorderWidth: (chart:ScriptableContext<"bar">) => setBarTheme(chart.raw as number).borderWidth,
+            //         }],
+            //     },
 
-                options: {
-                    animation: false,
+            //     options: {
+            //         animation: false,
 
-                    scales: {
-                        y: {
-                            display: false,
-                        },
+            //         scales: {
+            //             y: {
+            //                 display: false,
+            //             },
 
-                        x: {
-                            ticks: {
-                                color: "#ffffff",
+            //             x: {
+            //                 ticks: {
+            //                     color: "#ffffff",
 
-                                font: {
-                                    family: "'Balsamiq Sans', sans-serif",
-                                    size: 15,
-                                },
-                            },
+            //                     font: {
+            //                         family: "'Balsamiq Sans', sans-serif",
+            //                         size: 15,
+            //                     },
+            //                 },
 
-                            grid: {
-                                display: false,
-                            },
-                        },
-                    },
+            //                 grid: {
+            //                     display: false,
+            //                 },
+            //             },
+            //         },
 
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
+            //         plugins: {
+            //             legend: {
+            //                 display: false
+            //             },
 
-                        tooltip: {
-                            enabled: false
-                        },
+            //             tooltip: {
+            //                 enabled: false
+            //             },
 
-                        datalabels: {
-                            anchor: "end",
-                            align: "bottom",
-                            color: "#52cf20",
+            //             datalabels: {
+            //                 anchor: "end",
+            //                 align: "bottom",
+            //                 color: "#52cf20",
 
-                            font: {
-                                family: "'Balsamiq Sans', sans-serif",
-                                size: 12
-                            },
+            //                 font: {
+            //                     family: "'Balsamiq Sans', sans-serif",
+            //                     size: 12
+            //                 },
                             
-                            // Creates Floating Labels
-                            formatter: function(value:number) {
-                                return value === 0 ? "" : `${getFormattedTime("hours", value)}h ${getFormattedTime("minutes", value)}m`
-                            },
-                        },
-                    },
-                },
+            //                 // Creates Floating Labels
+            //                 formatter: function(value:number) {
+            //                     return value === 0 ? "" : `${getFormattedTime("hours", value)}h ${getFormattedTime("minutes", value)}m`
+            //                 },
+            //             },
+            //         },
+            //     },
 
-                plugins: [ChartDataLabels],
-            })
+            //     plugins: [ChartDataLabels],
+            // })
 
             weekly_activity_chart.style.display = "block" // Shows Weekly Summary Chart
             weekly_activity_chart.style.animation = "fade_in_animation 1s ease-out" // Adds Animation For Weekly Summary Summary Chart
@@ -502,42 +503,42 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const colors:string[] = exercises_summary.map(one_item => one_item.color) // Gets Color For Each Exercise From Exercises Summary
 
                 // Creates Chart
-                doughnut_chart = new Chart((training_plan_summary_chart.querySelector("canvas") as HTMLCanvasElement), {
-                    type: "doughnut",
+                // doughnut_chart = new Chart((training_plan_summary_chart.querySelector("canvas") as HTMLCanvasElement), {
+                //     type: "doughnut",
 
-                    data: {
-                        datasets: [{
-                            data: data,
-                            backgroundColor: colors,
-                            hoverBackgroundColor: colors,
-                            borderColor: "#ffffff",
-                            hoverBorderColor: "#ffffff",
-                            borderWidth: 2,
-                            hoverBorderWidth: 2,
-                            borderRadius: 5,
-                            offset: 10,
-                        }],
+                //     data: {
+                //         datasets: [{
+                //             data: data,
+                //             backgroundColor: colors,
+                //             hoverBackgroundColor: colors,
+                //             borderColor: "#ffffff",
+                //             hoverBorderColor: "#ffffff",
+                //             borderWidth: 2,
+                //             hoverBorderWidth: 2,
+                //             borderRadius: 5,
+                //             offset: 10,
+                //         }],
 
-                        labels: [],
-                    },
+                //         labels: [],
+                //     },
 
-                    options: {
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
+                //     options: {
+                //         plugins: {
+                //             legend: {
+                //                 display: false
+                //             },
 
-                            tooltip: {
-                                enabled: false
-                            }
-                        },
+                //             tooltip: {
+                //                 enabled: false
+                //             }
+                //         },
 
-                        cutout: "50%",
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: false,
-                    },                      
-                })
+                //         cutout: "50%",
+                //         responsive: true,
+                //         maintainAspectRatio: false,
+                //         animation: false,
+                //     },                      
+                // })
 
                 exercises_summary = [] // Sets Exercises Summary To Default
                 total_exercises_elapsed_time = 0 // Sets Total Exercises Elapsed Time To Default

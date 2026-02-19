@@ -18,14 +18,16 @@ import {
 } from "./functions/periods.js"
 
 import { 
+    createTrainingPlanBars,
+    renderTrainingPlanBars,
+    createBars, 
+    renderBars 
+} from "../../components/trainingPlanFunctions.js"
+
+import { 
     startHold, 
     stopHold 
 } from "./functions/holdButton.js"
-
-import { 
-    createBars, 
-    renderBars 
-} from "./functions/bars.js"
 
 import { changeWarmUpTime } from "./functions/changeWarmUpTime.js"
 import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
@@ -121,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
         if(training_plan_days_order.length > 1) {
-            const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length)
+            const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length, edit_training_plan_state)
             renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
 
             buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
@@ -233,34 +235,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             parent_element.appendChild(period_selection_template_clone) // Appends Period Selection To The Exercise
         })
-    }
-
-    // Function For Creating Bar Container With Amount Of Bars By Training Plans Amount
-    function createTrainingPlanBars(amount:number):HTMLDivElement {
-        // Creates Bar Container
-        const training_plan_bar_container:HTMLDivElement = document.createElement("div")
-        training_plan_bar_container.classList.add("training_plan_bar_container")
-
-        // Creates Bars By Amount Of Training Plans
-        for(let i:number = 0; i < amount; i++) {
-            // Creates Bar
-            const bar:HTMLDivElement = document.createElement("div")
-            bar.classList.add("bar")
-            training_plan_bar_container.appendChild(bar)
-
-            if(i === edit_training_plan_state.active_training_plan_index) bar.classList.add("active") // Adds Active Class For Bar Of Active Training Plan
-        }
-
-        return training_plan_bar_container // Returns Bar Container
-    }
-
-    // Function For Render Training Plan Bar Container With Bars
-    function renderTrainingPlanBars(parent:HTMLDivElement, container:HTMLDivElement):void {
-        // Removes Previous Bar Container
-        const previous_bar_container:HTMLDivElement = parent.querySelector(".bar_container") as HTMLDivElement
-        if(previous_bar_container) previous_bar_container.remove()
-
-        parent.insertBefore(container, parent.querySelector(".buttons")) // Appends New Training Plan Bar Container Before Save Button
     }
 
     // Function For Change Training Plans

@@ -54,112 +54,113 @@
             </div>
         </div>
 
-        <div class="training_plan_container">
-            <div class="previous_training_plan">
-                <i class="fa-solid fa-angles-left"></i> <!-- https://fontawesome.com/icons/angles-left -->
-            </div>
+        {% if training_plan|length > 0 %}
+            <template class="exercise_template">
+                <div class="exercise">
+                    <h3 class="title"></h3>
+                    
+                    <p class="reps">1x</p>
+                    <p class="sets"><span class="current">1</span>/<span class="total">1</span></p>
 
-            <div class="training_plan">
-                <div class="start_training active">
-                    {% comment %} <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
-                    <i class="fa-solid fa-border-all"></i> <!-- https://fontawesome.com/icons/border-all --> {% endcomment %}
-
-                    <h3>Začať tréning</h3>
-
-                    <p class="type"></p>
-
-                    <div class="start_training_button">
-                        <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
-                    </div>
-                </div>
-
-                {% for one_exercise in training_plan|dictsort:"order" %}
-                    <div class="exercise" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}">
-                        <h3>{{ one_exercise.exercise }}</h3>
-
-                        <p class="reps" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}">
-                            {% if one_exercise.periods.0 == 0 %}
-                                Do zlyhania
-
-                            {% else %}
-                                {{ one_exercise.periods.0 }}{% if one_exercise.unit == "reps" %}x{% elif one_exercise.unit == "seconds" %}s{% endif %}
-
-                            {% endif %}
-                        </p>
-
-                        <p class="sets"><span>1</span> / <span>{{ one_exercise.periods|length }}</span></p>
-
-                        <div class="next_exercise_button">
-                            <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                        </div>
-                    </div>
-
-                {% endfor %}
-
-                <div class="break">
-                    <div class="add_time">
-                        {% comment %} <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half --> {% endcomment %}
-                        <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
-
-                        <p class="add_time_message">+30s</p>
-                    </div>
-
-                    <div class="break_timer">
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                class="progress"
-                            />
-                        </svg>
-
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                class="progress_background"
-                            />
-                        </svg>
-
-                        <p><span class="minutes"></span>:<span class="seconds"></span></p>
-                    </div>
-
-                    <div class="skip_break_button">
+                    <div class="next_exercise_button">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                     </div>
                 </div>
-
-                <div class="finish_training">
-                    <h3>Dokončiť tréning</h3>
-
-                    {% comment %} <p>Váš tréning podľa plánu na deň pondelok.</p> {% endcomment %}
-
-                    <p class="type"></p>
-
-                    <div class="finish_training_button">
-                        <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
+            </template>
+        
+            <template class="warm_up_template">
+                <div class="exercise" data-unit="seconds">
+                    <h3 class="title">Warm Up</h3>
+                    
+                    <div class="timer_container">
+                        <div class="subtract_time">
+                            <i class='fa-solid fa-minus'></i> <!-- https://fontawesome.com/icons/minus -->
+                        </div>
+        
+                        <div class="timer">
+                            <svg width="100" height="100" viewBox="0 0 100 100">
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    class="progress_background"
+                                />
+                            </svg>
+        
+                            <h3>5:00</h3>
+                        </div>
+        
+                        <div class="add_time">
+                            <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                        </div>
                     </div>
                 </div>
+            </template>
 
-                <div class="progress_bar"></div>
-            </div>
+            <div class="training_plan_container">
+                {% for one_exercise in training_plan %}
+                    <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+                
+                {% endfor %}
 
-            <div class="next_training_plan">
-                <i class="fa-solid fa-angles-right"></i> <!-- https://fontawesome.com/icons/angles-right -->
-            </div>
+                <div class="training_plan">
+                    <div class="start_training active">
+                        <h3>Začať tréning</h3>
 
-            <div class="change_training_plan">
-                <div class="previous_training_plan">
-                    <i class="fa-solid fa-angles-left"></i> <!-- https://fontawesome.com/icons/angles-left -->
+                        <p class="title"></p>
+
+                        <div class="start_training_button">
+                            <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
+                        </div>
+                    </div>
+
+                    <div class="finish_training">
+                        <h3>Dokončiť tréning</h3>
+
+                        <p class="title"></p>
+
+                        <div class="finish_training_button">
+                            <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
+                        </div>
+                    </div>
+
+                    <div class="break">
+                        <div class="add_time">
+                            {% comment %} <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half --> {% endcomment %}
+                            <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
+
+                            <p class="add_time_message">+30s</p>
+                        </div>
+
+                        <div class="break_timer">
+                            <svg width="100" height="100" viewBox="0 0 100 100">
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    class="progress"
+                                />
+                            </svg>
+
+                            <svg width="100" height="100" viewBox="0 0 100 100">
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    class="progress_background"
+                                />
+                            </svg>
+
+                            <p><span class="minutes"></span>:<span class="seconds"></span></p>
+                        </div>
+
+                        <div class="skip_break_button">
+                            <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                        </div>
+                    </div>
                 </div>
-
-                <div class="next_training_plan">
-                    <i class="fa-solid fa-angles-right"></i> <!-- https://fontawesome.com/icons/angles-right -->
-                </div>
             </div>
-        </div>
+        {% endif %}
 
         <p class="current_activity_info"></p>
 
@@ -231,7 +232,8 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/ts/dist/pages/training_session.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/pages/training_session/training_session_renewed.js' %}" type="module"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script> <!-- Chart JS Plugin For Floating Labels -->
 {% endblock script %}

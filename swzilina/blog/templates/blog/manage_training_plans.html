@@ -142,7 +142,7 @@
             <button class="save">Pridať tréningový plán</button>
         </div>
 
-        {% if training_plan|length != 0 %}
+        {% if training_plan|length > 0 %}
             <div class="edit_training_plan" tabindex="0">
                 <script src="{% static 'blog/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 

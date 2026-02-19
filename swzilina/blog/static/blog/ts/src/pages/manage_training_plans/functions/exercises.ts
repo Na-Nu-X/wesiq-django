@@ -1,5 +1,5 @@
 import { global_state } from "../state.js"
-import { createBars, renderBars } from "./bars.js"
+import { createBars, renderBars } from "../../../components/trainingPlanFunctions.js"
 
 // Checks If Selection Dragged Exercise Is Already In The Training Plan
 function isExistingExercise(training_plan:HTMLDivElement):boolean {
