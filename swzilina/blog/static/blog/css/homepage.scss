@@ -1785,6 +1785,11 @@ main {
 
                     span {
                         margin-left: 15px + 8.5px - 2px;
+                        
+                        i {
+                            color: $article-color;
+                            margin-right: 8.5px;
+                        }
                     }
 
                     .fa-angle-down {

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const move_up:HTMLDivElement = document.querySelector(".move_up") as HTMLDivElement
 
     window.addEventListener("scroll", function():void {
-        if(window.scrollY >= 1000) {
+        if(this.scrollY >= 1000) {
             move_up.style.opacity = "1"
             move_up.style.visibility = "visible"
         }

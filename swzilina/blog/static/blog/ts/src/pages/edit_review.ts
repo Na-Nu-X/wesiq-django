@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const form_report:HTMLParagraphElement = document.querySelector(".form_report") as HTMLParagraphElement
 
     delete_review_checkbox.addEventListener("click", function():void {
-        if(delete_review_checkbox.checked) {
+        if(this.checked) {
             delete_review_image.style.opacity = "1"
             form_report.textContent = "Vaše hodnotenie bude odstránené"
             form_report.classList.add("error")

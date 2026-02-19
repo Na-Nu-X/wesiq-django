@@ -4,9 +4,9 @@ import { sendPOST } from "../services/sendPOST.js"
 function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string) {
     icon.addEventListener("click", function():void {
         // If The Heart Is Empty
-        if(icon.classList.contains("fa-regular")) {
-            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
-            icon.style.color = "#df3535" // Fills The Heart With Red Color
+        if(this.classList.contains("fa-regular")) {
+            this.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
+            this.style.color = "#df3535" // Fills The Heart With Red Color
 
             counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
 
@@ -14,9 +14,9 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string) {
         }
 
         // If The Heart Is Already Clicked
-        else if(icon.classList.contains("fa-solid")) {
-            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
-            icon.style.color = "#999999" // Fills The Heart With Gray Color
+        else if(this.classList.contains("fa-solid")) {
+            this.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
+            this.style.color = "#999999" // Fills The Heart With Gray Color
 
             counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
             
@@ -30,8 +30,8 @@ function toggleReply(icon:HTMLElement, form:HTMLFormElement):void {
     icon.addEventListener("click", function():void {
         form.classList.toggle("visible") // Shows And Hides The Form
 
-        if(form.classList.contains("visible")) icon.classList.replace("fa-reply", "fa-xmark") // Shows Close Icon
-        else if(!form.classList.contains("visible")) icon.classList.replace("fa-xmark", "fa-reply") // Shows Reply Icon
+        if(form.classList.contains("visible")) this.classList.replace("fa-reply", "fa-xmark") // Shows Close Icon
+        else if(!form.classList.contains("visible")) this.classList.replace("fa-xmark", "fa-reply") // Shows Reply Icon
     })
 }
 

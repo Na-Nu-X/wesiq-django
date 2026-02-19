@@ -61,15 +61,13 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Training Plan Drag & Drop Events
     training_plan.addEventListener("dragstart", function(event:DragEvent):void {
         // Training Plan Exercises Drag Functionality
-        if((event.target as HTMLDivElement).classList.contains("exercise")) {
-            dragged_exercise = event.target as HTMLDivElement // Sets Training Plan Dragged Exercise
-        }
+        if((event.target as HTMLDivElement).classList.contains("exercise")) dragged_exercise = event.target as HTMLDivElement // Sets Training Plan Dragged Exercise
 
         // Training Plan Bars Drag Functionality
         if((event.target as HTMLDivElement).classList.contains("bar")) {
             dragged_bar = event.target as HTMLDivElement // Sets Training Plan Dragged Bar
 
-            const bar_container:HTMLDivElement = training_plan.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
+            const bar_container:HTMLDivElement = this.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
 
             // Animates All Of The Bars Except Of The Dragged One
             bar_container.querySelectorAll<HTMLDivElement>(".bar").forEach(function(one_bar:HTMLDivElement) {
@@ -84,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         dragged_exercise = null // Deletes Training Plan Dragged Exercise
         dragged_bar = null // Deletes Training Plan Dragged Bar
 
-        const bar_container:HTMLDivElement = training_plan.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
+        const bar_container:HTMLDivElement = this.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
 
         bar_container.querySelectorAll<HTMLDivElement>(".bar").forEach(function(one_bar:HTMLDivElement) {
             one_bar.classList.remove("animate") // Removes Drag Animation
@@ -93,19 +91,19 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     training_plan.addEventListener("dragover", function(event:DragEvent):void {
         if(event.target === drop_zone) event.preventDefault() // Drop Zone For The First Exercise (Makes The Drop Zone Functional)
-        if(event.target === training_plan.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) event.preventDefault() // Drop Zone On Active Exercise In The Training Plan (Makes The Drop Zone Functional)
-        if(global_state.selection_dragged_exercise) training_plan.classList.add("animate") // Adds Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
+        if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) event.preventDefault() // Drop Zone On Active Exercise In The Training Plan (Makes The Drop Zone Functional)
+        if(global_state.selection_dragged_exercise) this.classList.add("animate") // Adds Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
         if((event.target as HTMLDivElement).classList.contains("bar")) event.preventDefault() // Drop Zone On Bars In The Bar Container (Makes The Drop Zone Functional)
     })
 
     training_plan.addEventListener("drop", function(event:DragEvent):void {
-        if(event.target === drop_zone) addExercise(training_plan, new_training_plan_state) // Drop Zone For The First Exercise (Adds Dragged Exercise From Exercise Selection To The Training Plan)
-        if(event.target === training_plan.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) addExercise(training_plan, new_training_plan_state) // Drop Zone On Active Exercise In The Training Plan (Adds Dragged Exercise From Exercise Selection To The Training Plan) 
-        if(global_state.selection_dragged_exercise) training_plan.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
+        if(event.target === drop_zone) addExercise(this, new_training_plan_state) // Drop Zone For The First Exercise (Adds Dragged Exercise From Exercise Selection To The Training Plan)
+        if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) addExercise(this, new_training_plan_state) // Drop Zone On Active Exercise In The Training Plan (Adds Dragged Exercise From Exercise Selection To The Training Plan) 
+        if(global_state.selection_dragged_exercise) this.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
 
         // Drop Zone On Bars In The Bar Container
         if((event.target as HTMLDivElement).classList.contains("bar")) {
-            const bar_container:HTMLDivElement = training_plan.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
+            const bar_container:HTMLDivElement = this.querySelector(".bar_container") as HTMLDivElement // Gets Bar Container
 
             // Removes Animation From All Of The Bars Except Of The Dragged One
             bar_container.querySelectorAll<HTMLDivElement>(".bar").forEach(function(one_bar:HTMLDivElement) {
@@ -115,12 +113,12 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(!(event.target instanceof Node) || !event.target.parentNode || !dragged_bar) return // Catch Errors
             
             const dropped_bar_index:number = [...event.target.parentNode.querySelectorAll<HTMLDivElement>(".bar")].indexOf(event.target as HTMLDivElement) // Gets Index Of The Bar From The Bar Container Where The Dragged Bar Was Dropped
-            changeExercisePosition(dropped_bar_index, dragged_bar, training_plan, new_training_plan_state) // Changes Training Plan Exercise Position By Position Of Bars In The Bar Container
+            changeExercisePosition(dropped_bar_index, dragged_bar, this, new_training_plan_state) // Changes Training Plan Exercise Position By Position Of Bars In The Bar Container
         }
     })
 
     training_plan.addEventListener("dragleave", function():void {
-        if(global_state.selection_dragged_exercise) training_plan.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
+        if(global_state.selection_dragged_exercise) this.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
     })
 
     // Training Plan Click Events
@@ -130,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(!(event.target instanceof Node) || !event.target.parentNode) return // Catch Errors
 
             const clicked_bar_index:number = [...event.target.parentNode.querySelectorAll<HTMLDivElement>(".bar")].indexOf(event.target as HTMLDivElement) // Gets Index Of The Clicked Bar
-            changeExercises(clicked_bar_index, training_plan, new_training_plan_state) // Changes Training Plan Exercises
+            changeExercises(clicked_bar_index, this, new_training_plan_state) // Changes Training Plan Exercises
         }
 
         // Add Sets & Reps Period Of Exercises In The Training Plan Functionality
@@ -163,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
                 }
 
-                if(clicked_option.dataset.unit_option) updateUnitTypes(clicked_option.dataset.unit_option, training_plan, new_training_plan_state) // Updates Unit Type For Every Reps Container
+                if(clicked_option.dataset.unit_option) updateUnitTypes(clicked_option.dataset.unit_option, this, new_training_plan_state) // Updates Unit Type For Every Reps Container
             }
         }
 
@@ -185,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Removes Exercise From The Training Plan On Double Click
         if((event.target as HTMLDivElement).classList.contains("exercise")) {
             dragged_exercise = event.target as HTMLDivElement // Sets Training Plan Dragged Exercise
-            removeExercise(dragged_exercise, training_plan, new_training_plan_state) // Removes Dragged Exercise From The Training Plan
+            removeExercise(dragged_exercise, this, new_training_plan_state) // Removes Dragged Exercise From The Training Plan
             dragged_exercise = null // Deletes Training Plan Dragged Exercise
         }
     })
@@ -233,8 +231,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         event.preventDefault() // Stop Scrolling
 
         if(event.target !== drop_zone) {
-            if(event.deltaY < 0) changeExercises(new_training_plan_state.active_exercise_index - 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
-            if(event.deltaY > 0) changeExercises(new_training_plan_state.active_exercise_index + 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
+            if(event.deltaY < 0) changeExercises(new_training_plan_state.active_exercise_index - 1, this, new_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
+            if(event.deltaY > 0) changeExercises(new_training_plan_state.active_exercise_index + 1, this, new_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
         }
     })
 
@@ -255,14 +253,14 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Day Select Menu
     day_select.addEventListener("click", function():void {
         day_options_list.classList.toggle("active"); // Shows / Hides Options List
-        (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
+        (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
     })
 
     day_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
-            if(!option.dataset.day) return
+            if(!this.dataset.day) return
 
-            sessionStorage.setItem("new_training_plan_day", option.dataset.day) // Stores New Training Plan Day To Session Storage
+            sessionStorage.setItem("new_training_plan_day", this.dataset.day) // Stores New Training Plan Day To Session Storage
 
             day_options_list.classList.toggle("active"); // Shows / Hides Options List
             (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
@@ -273,9 +271,9 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             // Shows Current Selected Option From List Without Icon
-            if(option.dataset.day === sessionStorage.getItem("new_training_plan_day")) {
-                (day_select.querySelector("span") as HTMLSpanElement).textContent = (option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
-                option.classList.add("selected") // Adds Selected Class To Selected Option
+            if(this.dataset.day === sessionStorage.getItem("new_training_plan_day")) {
+                (day_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
+                this.classList.add("selected") // Adds Selected Class To Selected Option
             }
         })
     })
