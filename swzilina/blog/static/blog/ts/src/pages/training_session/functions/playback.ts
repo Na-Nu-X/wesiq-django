@@ -1,14 +1,10 @@
-import { getFormattedTime } from "../../../utils/timer.js"
-import { resetTrainingPlan } from "./trainingPlan.js"
-import { sendPOST } from "../../../services/sendPOST.js"
-
 import { 
     type exercise,
-    global_state, 
-    activity_summary, 
-    xp_boost_interval, 
+    training_plan_state, 
     activity_interval, 
-    break_interval 
+    break_interval,
+    xp_boost_interval, 
+    activity_summary
 } from "../state.js"
 
 import { 
@@ -16,6 +12,10 @@ import {
     renderTrainingPlanActivitySummary, 
     deleteActivitySummary 
 } from "./activitySummary.js"
+
+import { getFormattedTime } from "../../../utils/timer.js"
+import { resetTrainingPlan } from "./trainingPlan.js"
+import { sendPOST } from "../../../services/sendPOST.js"
 
 // Finction For Update Activity Summary
 function updateActivitySummary(exercise:HTMLDivElement|null):void {
@@ -57,7 +57,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     // Starts Activity Timer
     if(!activity_interval.interval) {
         activity_interval.interval = setInterval(function():void {
-            (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.contains("active") ? updateActivitySummary(exercises[global_state.active_exercise_index] as HTMLDivElement) : updateActivitySummary(null) // Updates Activity Summary
+            (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.contains("active") ? updateActivitySummary(exercises[training_plan_state.active_exercise_index] as HTMLDivElement) : updateActivitySummary(null) // Updates Activity Summary
             updateTimer(timer) // Shows Elapsed Time On The Playback Timer
         }, activity_interval.SPEED)
     }

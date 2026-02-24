@@ -1,17 +1,29 @@
 import { 
+    type exercise,
+    training_plan_state, 
+    break_interval, 
+    activity_summary
+} from "../state.js"
+
+import { 
+    startActivity, 
+    stopActivity 
+} from "../functions/playback.js"
+
+import { 
     createTrainingPlanBars,
     renderTrainingPlanBars,
     createBars,
     renderBars
 } from "../../../components/trainingPlanFunctions.js"
 
-import { getDayName } from "../../../utils/getDayName.js"
-import { global_state, activity_summary, break_interval, progress_bar } from "../state.js"
-import { getFormattedTime, getMinimalistFormattedTime } from "../../../utils/timer.js"
-import { startActivity, stopActivity } from "../functions/playback.js"
-import { randomColor } from "../../../utils/randomColor.js"
+import { 
+    getFormattedTime, 
+    getMinimalistFormattedTime 
+} from "../../../utils/timer.js"
 
-import type { exercise } from "../state.js"
+import { getDayName } from "../../../utils/getDayName.js"
+import { randomColor } from "../../../utils/randomColor.js"
 
 // Function For Create Bar Labels
 function createBarLabels(bars:NodeListOf<HTMLDivElement>, exercises:NodeListOf<HTMLDivElement>):void {
@@ -26,19 +38,19 @@ function updateProgress(container:HTMLDivElement):void {
     const exercises:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan_container .exercise") // Gets Exercises From All Training Plans
     const bars:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan_container .bar_container .bar") // Gets All Bars
 
-    const set_progress:NodeListOf<HTMLSpanElement> = (exercises[global_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
+    const set_progress:NodeListOf<HTMLSpanElement> = (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
     let current_set:number = parseInt((set_progress[0] as HTMLSpanElement).textContent) || 1 // Gets Current Set Value
     const sets_amount:number = parseInt((set_progress[1] as HTMLSpanElement).textContent) || 1 // Gets Total Amount Of Sets Of The Active Exercise
     let progress_percentage:number = current_set / sets_amount * 100; // Calculates Set Progress Percentage
 
-    (bars[global_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Progress Bar
-    (bars[global_state.active_exercise_index] as HTMLDivElement).style.setProperty("--progress", `${progress_percentage}%`); // Sets Progress
-    (bars[global_state.active_exercise_index] as HTMLDivElement).classList.remove("show") // Hides Bar Label Of The Active Exercise
+    (bars[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Progress Bar
+    (bars[training_plan_state.active_exercise_index] as HTMLDivElement).style.setProperty("--progress", `${progress_percentage}%`); // Sets Progress
+    (bars[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("show") // Hides Bar Label Of The Active Exercise
 
-    if(Math.ceil(progress_bar.red) >= progress_bar.MIN_RED) bars.forEach((one_bar:HTMLDivElement):void => one_bar.style.setProperty("--progress-color", `rgb(${progress_bar.red}, 207, 32)`)) // Changes Progress Bar Color In Every Bar
+    if(Math.ceil(training_plan_state.progress_bar.red) >= training_plan_state.progress_bar.MIN_RED) bars.forEach((one_bar:HTMLDivElement):void => one_bar.style.setProperty("--progress-color", `rgb(${training_plan_state.progress_bar.red}, 207, 32)`)) // Changes Progress Bar Color In Every Bar
 
     const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent), 0) // Gets Total Amount Of Sets From All Exercises
-    all_sets ? progress_bar.red -= (255 - progress_bar.MIN_RED) / (all_sets - 1) : progress_bar.red-= 0 // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+    all_sets ? training_plan_state.progress_bar.red -= (255 - training_plan_state.progress_bar.MIN_RED) / (all_sets - 1) : training_plan_state.progress_bar.red-= 0 // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
 }
 
 // Function For Exercises Break
@@ -156,7 +168,7 @@ export function resetTrainingPlan(container:HTMLDivElement):void {
 
     container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "flex"); // Shows Training Plan Bar Container
 
-    (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
     exercises_break.classList.remove("active") // Hides Exercises Break Slide
     finish_training.classList.remove("active") // Hides Finish Training Slide
     start_training.classList.add("active") // Shows Start Training Slide
@@ -169,9 +181,9 @@ export function resetTrainingPlan(container:HTMLDivElement):void {
 
     resetProgressBars(active_bars, last_active_bar_index) // Resets Progress Bar
 
-    progress_bar.red = 255 // Resets Progress Bar Color
+    training_plan_state.progress_bar.red = 255 // Resets Progress Bar Color
 
-    global_state.active_exercise_index = 0 // Resets Active Exercise Index
+    training_plan_state.active_exercise_index = 0 // Resets Active Exercise Index
 }
 
 // Function For Render Exercises Of The Selected Training Plan
@@ -196,11 +208,11 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
 
     // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plan Available)
     if(days.length > 1) {
-        const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(days.length, global_state)
+        const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(days.length, training_plan_state)
         renderTrainingPlanBars(training_plan_container, training_plan_bar_container)
     }
 
-    const selected_day:string|null = days[global_state.active_training_plan_index] || null // Selects Current Or Upcoming Day Of Training Plan
+    const selected_day:string|null = days[training_plan_state.active_training_plan_index] || null // Selects Current Or Upcoming Day Of Training Plan
     const ordered_exercises:HTMLDivElement[] = [...data].sort((a:HTMLDivElement, b:HTMLDivElement) => Number(a.dataset.order) - Number(b.dataset.order)) // Orders Exercises From All Training Plans By Their Order Value
 
     // Extracts Data For Every Exercise
@@ -246,7 +258,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
 
     // Creates And Renders Bars
-    const bar_container:HTMLDivElement = createBars(exercises.length, global_state)
+    const bar_container:HTMLDivElement = createBars(exercises.length, training_plan_state)
     renderBars(training_plan, bar_container)
 
     createBarLabels(bar_container.querySelectorAll<HTMLDivElement>(".bar"), exercises) // Creates Bar Labels
@@ -261,9 +273,9 @@ export function changeTrainingPlans(container:HTMLDivElement, index:number, days
     void training_plan.offsetWidth
     training_plan.classList.add("blur")
 
-    if(index < 0) global_state.active_training_plan_index = days.length - 1 // Shows The Last Training Plan
-    else if(index > days.length - 1) global_state.active_training_plan_index = 0 // Shows The First Training Plan
-    else global_state.active_training_plan_index = index // Changes Active Training Plan Index
+    if(index < 0) training_plan_state.active_training_plan_index = days.length - 1 // Shows The Last Training Plan
+    else if(index > days.length - 1) training_plan_state.active_training_plan_index = 0 // Shows The First Training Plan
+    else training_plan_state.active_training_plan_index = index // Changes Active Training Plan Index
 
     generateTrainingPlan(container)
 }
@@ -274,15 +286,15 @@ export function startTraining(container:HTMLDivElement):void {
     const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
     const start_training:HTMLDivElement = training_plan.querySelector(".start_training") as HTMLDivElement // Gets The Start Training Slide
     const exercises:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan .exercise") // Gets All Training Plan Exercises
-    const periods_data:number[] = JSON.parse(((exercises[global_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
-    const unit_data:string = ((exercises[global_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
+    const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
+    const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
     container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
 
     start_training.classList.remove("active"); // Hides The Start Training Slide
-    (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
 
-    generateReps(periods_data, 1, unit_data, exercises[global_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount For The First Set Of The First Exercise
+    generateReps(periods_data, 1, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount For The First Set Of The First Exercise
     updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
     startActivity(container, playback) // Starts Activity
     createExerciseObjects(exercises) // Creates Objects Of Exercises In Training Plan Activity Summary
@@ -303,25 +315,25 @@ export function nextExercise(container:HTMLDivElement):void {
     const exercises_break:HTMLDivElement = training_plan.querySelector(".break") as HTMLDivElement // Gets The Break Slide
     const finish_training:HTMLDivElement = training_plan.querySelector(".finish_training") as HTMLDivElement // Gets The Start Training Slide
 
-    const set_progress:NodeListOf<HTMLSpanElement> = (exercises[global_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
+    const set_progress:NodeListOf<HTMLSpanElement> = (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
     let current_set:number = parseInt((set_progress[0] as HTMLSpanElement).textContent) || 1 // Gets Current Set Value
     const sets_amount:number = parseInt((set_progress[1] as HTMLSpanElement).textContent) || 1 // Gets Total Amount Of Sets Of The Active Exercise
 
     // Updates Set Progress
     if(current_set < sets_amount || exercises_break.classList.contains("active")) {
-        const periods_data:number[] = JSON.parse(((exercises[global_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
-        const unit_data:string = ((exercises[global_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
+        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
+        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
         
-        if(!exercises_break.classList.contains("active")) ((exercises[global_state.active_exercise_index] as HTMLDivElement).querySelector(".sets .current") as HTMLSpanElement).textContent = `${current_set += 1}`; // Increments Current Set Value
+        if(!exercises_break.classList.contains("active")) ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".sets .current") as HTMLSpanElement).textContent = `${current_set += 1}`; // Increments Current Set Value
 
-        generateReps(periods_data, current_set, unit_data, exercises[global_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount
+        generateReps(periods_data, current_set, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount
         
         updateProgress(training_plan) // Updates Progress Bar
     }
 
     // Exercises Break Slide
-    else if(current_set === sets_amount && global_state.active_exercise_index < exercises.length - 1) {
-        (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+    else if(current_set === sets_amount && training_plan_state.active_exercise_index < exercises.length - 1) {
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
         exercises_break.classList.add("active") // Shows Exercises Break Slide
 
         exercisesBreak(training_plan)
@@ -329,7 +341,7 @@ export function nextExercise(container:HTMLDivElement):void {
 
     // Finish Training Slide
     else {
-        (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
         finish_training.classList.add("active") // Shows Finish Training Slide
     }
 
@@ -353,8 +365,8 @@ export function skipBreak(container:HTMLDivElement):void {
 
     break_countdown.style.color = "#ffffff" // Sets Break Countdown Color To White
 
-    global_state.active_exercise_index += 1; // Changes Active Exercise Index
-    (exercises[global_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+    training_plan_state.active_exercise_index += 1; // Changes Active Exercise Index
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
     nextExercise(container) // Next Exercise
     exercises_break.classList.remove("active") // Hides Break Between Sets Tab
 }

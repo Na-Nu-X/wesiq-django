@@ -1,18 +1,22 @@
-import { getFormattedTime } from "../../../utils/timer.js"
-
 import { 
     type exercise, 
     charts 
 } from "../state.js"
 
+import { getFormattedTime } from "../../../utils/timer.js"
+
 // Chart JS
-import type { Chart as ChartType, ScriptableContext } from "chart.js"
-declare const Chart: any;
-declare const ChartDataLabels: any;
-import type { ChartTypeRegistry } from "chart.js"
+declare const Chart: any
+declare const ChartDataLabels: any
+
+import type { 
+    ScriptableContext, 
+    ChartTypeRegistry 
+} from "chart.js"
+
 declare module 'chart.js' {
     interface PluginOptionsByType<TType extends keyof ChartTypeRegistry> {
-        datalabels?: any;
+        datalabels?: any
     }
 }
 
