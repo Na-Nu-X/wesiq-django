@@ -1,8 +1,21 @@
-import { global_state, activity_summary, xp_boost_interval, activity_interval, break_interval } from "../state.js"
 import { getFormattedTime } from "../../../utils/timer.js"
 import { resetTrainingPlan } from "./trainingPlan.js"
-import { renderActivitySummary, renderTrainingPlanActivitySummary } from "./activitySummary.js"
-import type { exercise } from "../state.js"
+import { sendPOST } from "../../../services/sendPOST.js"
+
+import { 
+    type exercise,
+    global_state, 
+    activity_summary, 
+    xp_boost_interval, 
+    activity_interval, 
+    break_interval 
+} from "../state.js"
+
+import { 
+    renderActivitySummary, 
+    renderTrainingPlanActivitySummary, 
+    deleteActivitySummary 
+} from "./activitySummary.js"
 
 // Finction For Update Activity Summary
 function updateActivitySummary(exercise:HTMLDivElement|null):void {
@@ -65,6 +78,8 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
             }
         }, xp_boost_interval.SPEED)
     }
+
+    deleteActivitySummary() // Deletes Activity Summary
 }
 
 // Function For Pause Activity
@@ -84,6 +99,21 @@ export function pauseActivity(playback:HTMLDivElement):void {
 export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):void {
     if(activity_summary.elapsed_time > 0) {
         const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
+        const elapsed_time:number = activity_summary.elapsed_time // Gets Activity Elapsed Time
+        const gained_xp:number = Math.round(activity_summary.gained_xp) // Gets Gained XP From Activity
+        const training_plan_summary:exercise[] = activity_summary.training_plan.map((one_exercise:exercise):exercise => ({ ...one_exercise, gained_xp: Math.round(one_exercise.gained_xp) })).filter((one_exercise:exercise):boolean => one_exercise.gained_xp > 0) // Gets Training Plan Summary With Rounded Gained XP Values (Only Exercises With Gained XP)
+
+        const new_activity_data:{
+            formatted_elapsed_time:string,
+            elapsed_time:number,
+            gained_xp:number,
+            type:string|null
+        } = {
+            formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time, true)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
+            elapsed_time, // Stores Formatted Elapsed Time
+            gained_xp, // Stores Gained XP
+            type: null // Stores Training Plan Title
+        }
 
         pauseActivity(playback) // Pauses Activity
 
@@ -93,17 +123,19 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
             break_interval.interval = null
         }
 
-        const elapsed_time:number = activity_summary.elapsed_time // Gets Activity Elapsed Time
-        const gained_xp:number = Math.round(activity_summary.gained_xp) // Gets Gained XP From Activity
-        const training_plan_summary:exercise[] = activity_summary.training_plan.map((one_exercise:exercise):exercise => ({ ...one_exercise, gained_xp: Math.round(one_exercise.gained_xp) })).filter((one_exercise:exercise):boolean => one_exercise.gained_xp > 0) // Gets Training Plan Summary With Rounded Gained XP Values (Only Exercises With Gained XP)
-
+        // Commits Activity
         if(gained_xp > 0) {
             renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
 
             if(training_plan_summary.length > 0) {
                 const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.title || "" // Gets Training Plan Title
+
+                new_activity_data.type = training_plan_title // Stores Training Plan Title
+
                 renderTrainingPlanActivitySummary(training_plan_summary, training_plan_title) // Renders Training Plan Activity Summary
             }
+
+            sendPOST("/training-session", new_activity_data) // Sends POST Data
         }
 
         activity_summary.elapsed_time = 0 // Resets Elapsed Time
@@ -111,7 +143,6 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
         activity_summary.training_plan = [] // Resets Training Plan Activity Summary
 
         updateTimer(timer) // Resets Elapsed Time On The Playback Timer
-
         resetTrainingPlan(container) // Resets Training Plan
     }
 }
