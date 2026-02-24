@@ -78,7 +78,22 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Key Down Events
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
-        if(event.key === "ArrowLeft" && global_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, global_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
+        // Playback
+        if(event.code === "Space") {
+            event.preventDefault() // Stop Scrolling
+
+            if(activity_interval.interval) pauseActivity(playback) // Pauses Activity
+            
+            else {
+                if(activity_summary.elapsed_time === 0) training_plan_container.style.display = "none" // Hides Training Plan
+                startActivity(activity, playback) // Starts Activity
+            }
+        }
+
+        else if(event.key === "Escape") stopActivity(activity, playback) // Stops Activity
+        
+        // Changes Training Plans
+        else if(event.key === "ArrowLeft" && global_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, global_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
         else if(event.key === "ArrowRight" && global_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, global_state.active_training_plan_index + 1, ordered_days) // Changes Training Plans (Shows Next Training Plan)
     })
 
