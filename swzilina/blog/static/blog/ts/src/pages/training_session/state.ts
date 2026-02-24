@@ -1,3 +1,5 @@
+import type { Chart as ChartType } from "chart.js" // Chart JS
+
 // GLOBAL STATES
 
 export interface exercise {
@@ -5,6 +7,14 @@ export interface exercise {
     elapsed_time:number,
     gained_xp:number,
     color:string
+}
+
+export const charts:{
+    bar_chart:ChartType<"bar">|null,
+    doughnut_chart:ChartType<"doughnut">|null
+} = {
+    bar_chart: null, // Sets Bar Chart (Weekly Activity Chart)
+    doughnut_chart: null // Sets Bar Chart (Training Plan Summary Chart)
 }
 
 export const global_state:{
