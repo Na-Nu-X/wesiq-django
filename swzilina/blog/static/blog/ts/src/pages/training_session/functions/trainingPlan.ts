@@ -139,7 +139,7 @@ function resetProgressBars(bars:HTMLDivElement[], index:number):void {
 
         red += red_increasion // Increases Red Color Of Progress Color
         index -= 1 // Decreases Last Active Bar Index
-    }, 1000)
+    }, 500)
 }
 
 // Function For Reset Training Plan
@@ -216,6 +216,8 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
         if(day_data !== null) {
             // Shows Training Plan Exercises Of Selected Day
             if(selected_day === day_data) {
+                training_plan.dataset.title = training_plan_title_data; // Stores Training Plan Title Data
+
                 (start_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}`; // Sets Training Plan Title On The Start Training Slide
                 (finish_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}` // Sets Training Plan Title On The Finish Training Slide
 

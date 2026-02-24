@@ -35,7 +35,7 @@ export const xp_boost_interval:{
     amount:number,
     remaining_time:number
 } = {
-    SPEED: 1000, // 1 Second Interval
+    SPEED: 1, // 1 Second Interval
     interval: null,
     amount: 2, // Double XP Boost
     remaining_time: 600 // 10 Minutes
@@ -45,7 +45,7 @@ export const activity_interval:{
     SPEED:number,
     interval:number|null
 } = {
-    SPEED: 1000, // 1 Second Interval
+    SPEED: 1, // 1 Second Interval
     interval: null
 }
 
