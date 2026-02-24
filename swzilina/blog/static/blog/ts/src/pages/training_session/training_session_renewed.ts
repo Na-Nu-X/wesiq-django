@@ -1,4 +1,9 @@
-import { global_state, break_interval, activity_interval, activity_summary } from "./state.js"
+import { 
+    training_plan_state, 
+    activity_interval, 
+    break_interval, 
+    activity_summary 
+} from "./state.js"
 
 import { 
     generateTrainingPlan,
@@ -61,19 +66,19 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
             event.preventDefault() // Stop Scrolling
 
-            if(event.deltaY < 0) changeTrainingPlans(activity, global_state.active_training_plan_index + 1, ordered_days) // Changes Training Plans (Shows Next Training Plan)
-            if(event.deltaY > 0) changeTrainingPlans(activity, global_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
+            if(event.deltaY < 0) changeTrainingPlans(activity, training_plan_state.active_training_plan_index + 1, ordered_days) // Changes Training Plans (Shows Next Training Plan)
+            if(event.deltaY > 0) changeTrainingPlans(activity, training_plan_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
         }
     })
 
     // Training Plan Container Mouse Over Events
     training_plan_container.addEventListener("mouseover", function(event:MouseEvent):void {
-        if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) global_state.hovered_element = "training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
+        if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) training_plan_state.hovered_element = "training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
     })
 
     // Training Plan Container Mouse Out Events
     training_plan_container.addEventListener("mouseout", ():void => {
-        if(global_state.hovered_element) global_state.hovered_element = null // Removes Value Of Hovered Element
+        if(training_plan_state.hovered_element) training_plan_state.hovered_element = null // Removes Value Of Hovered Element
     })
 
     // Key Down Events
@@ -93,8 +98,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if(event.key === "Escape") stopActivity(activity, playback) // Stops Activity
         
         // Changes Training Plans
-        else if(event.key === "ArrowLeft" && global_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, global_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, global_state.active_training_plan_index + 1, ordered_days) // Changes Training Plans (Shows Next Training Plan)
+        else if(event.key === "ArrowLeft" && training_plan_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, training_plan_state.active_training_plan_index - 1, ordered_days) // Changes Training Plans (Shows Previous Training Plan)
+        else if(event.key === "ArrowRight" && training_plan_state.hovered_element === "training_plan_bars") changeTrainingPlans(activity, training_plan_state.active_training_plan_index + 1, ordered_days) // Changes Training Plans (Shows Next Training Plan)
     })
 
     // Events
