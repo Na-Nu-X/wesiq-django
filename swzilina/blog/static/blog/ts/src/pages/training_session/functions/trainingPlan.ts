@@ -1,7 +1,8 @@
 import { 
     type exercise,
     training_plan_state, 
-    break_interval, 
+    break_interval,
+    xp_boost_interval,
     activity_summary
 } from "../state.js"
 
@@ -195,6 +196,8 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     const training_plan:HTMLDivElement = training_plan_container.querySelector(".training_plan") as HTMLDivElement // Gets The Training Plan
     const start_training:HTMLDivElement = training_plan.querySelector(".start_training") as HTMLDivElement // Gets The Start Training Slide
     const finish_training:HTMLDivElement = training_plan.querySelector(".finish_training") as HTMLDivElement // Gets The Start Training Slide
+
+    xp_boost_interval.amount = xp_boost_interval.amount // Shows Current Activity Info
 
     // Gets Ordered Days From Available Training Plans
     const days:(string|null)[] = [

@@ -1,5 +1,7 @@
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
+const activity:HTMLDivElement = document.querySelector(".activity") as HTMLDivElement // Gets The Activity Container
+
 // GLOBAL STATES
 
 export interface exercise {
@@ -33,7 +35,7 @@ export const activity_interval:{
     SPEED:number,
     interval:number|null
 } = {
-    SPEED: 1, // 1 Second Interval
+    SPEED: 1000, // 1 Second Interval
     interval: null
 }
 
@@ -52,13 +54,26 @@ export const break_interval:{
 export const xp_boost_interval:{
     SPEED:number,
     interval:number|null,
-    amount:number,
-    remaining_time:number
+    _amount:number,
+    remaining_time:number,
+    amount:number
 } = {
-    SPEED: 1, // 1 Second Interval
+    SPEED: 1000, // 1 Second Interval
     interval: null,
-    amount: 2, // Double XP Boost
-    remaining_time: 600 // 10 Minutes
+    _amount: 2, // Double XP Boost
+    remaining_time: 600, // 10 Minutes
+
+    // Getter To Get Current XP Boost Amount
+    get amount():number {
+        return this._amount
+    },
+
+    // Setter To Set Current XP Boost Amount And Render Current Activity Info
+    set amount(value:number) {
+        this._amount = value
+        const current_activity_info = activity.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+        current_activity_info.textContent = value === 1 ? "Zatiaľ žiadne aktívne navýšenie XP" : `${value}x navýšenie XP` // Shows Current Activity Info
+    }
 }
 
 export const activity_summary:{
