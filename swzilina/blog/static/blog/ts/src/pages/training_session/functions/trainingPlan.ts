@@ -1,6 +1,7 @@
 import { 
     type exercise,
-    training_plan_state, 
+    training_plan_state,
+    warm_up_interval, 
     break_interval,
     xp_boost_interval,
     activity_summary
@@ -20,7 +21,8 @@ import {
 
 import { 
     getFormattedTime, 
-    getMinimalistFormattedTime 
+    getMinimalistFormattedTime,
+    getElapsedSeconds
 } from "../../../utils/timer.js"
 
 import { getDayName } from "../../../utils/getDayName.js"
@@ -38,10 +40,10 @@ function createBarLabels(bars:NodeListOf<HTMLDivElement>, exercises:NodeListOf<H
 function updateProgress(container:HTMLDivElement):void {
     const exercises:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan_container .exercise") // Gets Exercises From All Training Plans
     const bars:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan_container .bar_container .bar") // Gets All Bars
-
     const set_progress:NodeListOf<HTMLSpanElement> = (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
-    let current_set:number = parseInt((set_progress[0] as HTMLSpanElement).textContent) || 1 // Gets Current Set Value
-    const sets_amount:number = parseInt((set_progress[1] as HTMLSpanElement).textContent) || 1 // Gets Total Amount Of Sets Of The Active Exercise
+
+    let current_set:number = set_progress.length > 0 ? parseInt((set_progress[0] as HTMLSpanElement).textContent) : 1 // Gets Current Set Value
+    const sets_amount:number = set_progress.length > 0 ? parseInt((set_progress[1] as HTMLSpanElement).textContent) : 1 // Gets Total Amount Of Sets Of The Active Exercise
     let progress_percentage:number = current_set / sets_amount * 100; // Calculates Set Progress Percentage
 
     (bars[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Progress Bar
@@ -50,8 +52,45 @@ function updateProgress(container:HTMLDivElement):void {
 
     if(Math.ceil(training_plan_state.progress_bar.red) >= training_plan_state.progress_bar.MIN_RED) bars.forEach((one_bar:HTMLDivElement):void => one_bar.style.setProperty("--progress-color", `rgb(${training_plan_state.progress_bar.red}, 207, 32)`)) // Changes Progress Bar Color In Every Bar
 
-    const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent), 0) // Gets Total Amount Of Sets From All Exercises
+    const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + (one_exercise.classList.contains("warm_up") ? 1 : parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent)), 0)
     all_sets ? training_plan_state.progress_bar.red -= (255 - training_plan_state.progress_bar.MIN_RED) / (all_sets - 1) : training_plan_state.progress_bar.red-= 0 // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+
+    // const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent), 0) // Gets Total Amount Of Sets From All Exercises
+}
+
+// Function For Warm Up
+function warmUp(container:HTMLDivElement):void {
+    const warm_up:HTMLDivElement = container.querySelector(".training_plan_container .training_plan .warm_up") as HTMLDivElement // Gets Warm Up
+    const warm_up_countdown:HTMLHeadingElement = warm_up.querySelector(".timer_container .timer h3") as HTMLHeadingElement // Gets The Warm Up Countdown
+    
+    warm_up_interval.max_remaining_time = getElapsedSeconds(warm_up_countdown.textContent) // Sets Warm Up Remaining Time
+    warm_up_interval.remaining_time = getElapsedSeconds(warm_up_countdown.textContent) // Sets Warm Up Remaining Time
+
+    const progress_circle:HTMLElement = warm_up.querySelector(".timer_container .timer svg .progress") as HTMLElement // Gets The Progress Circle
+    const radius:number = Number(progress_circle.getAttribute("r")) // Gets The Radius Of The Progress Circle
+    const circum_ference:number = 2 * Math.PI * radius // Gets The Circum Ference Of The Progress Circle (For Example: 251.32741228718345)
+    progress_circle.style.strokeDasharray = String(circum_ference) // Sets Progress Circle Circum Ference
+
+    warm_up_interval.interval = setInterval(function():void {
+        if(warm_up_interval.remaining_time <= 0) skipWarmUp(container) // If The Countdown Has Passed
+
+        else {
+            if(Math.round(warm_up_interval.remaining_time) <= 10) warm_up_countdown.style.color = "#df3535" // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
+
+            warm_up_countdown.textContent = `${getFormattedTime("minutes", Math.round(warm_up_interval.remaining_time))}:${getFormattedTime("seconds", Math.round(warm_up_interval.remaining_time), true)}` // Shows Remaining Time
+
+            progress_circle.style.strokeDashoffset = String(circum_ference / warm_up_interval.max_remaining_time * warm_up_interval.remaining_time) // Updates Progress Circle Length
+
+            const red:number = 255 - (255 / warm_up_interval.max_remaining_time * warm_up_interval.remaining_time) // Increases Red Color In Palette
+            const green:number = 255 / warm_up_interval.max_remaining_time * warm_up_interval.remaining_time // Decreases Green Color In Palette
+
+            progress_circle.style.stroke = `rgb(${red}, ${green}, 0)` // Updates Progress Circle Color
+            progress_circle.style.filter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+            progress_circle.style.webkitFilter = `drop-shadow(0px 0px 5px rgb(${red}, ${green}, 0))` // Updates Progress Circle Shadow Color
+
+            warm_up_interval.remaining_time -= 0.1 // Decreases Remaining Time
+        }
+    }, warm_up_interval.SPEED)
 }
 
 // Function For Exercises Break
@@ -68,7 +107,7 @@ function exercisesBreak(container:HTMLDivElement):void {
         if(break_interval.remaining_time <= 0) skipBreak(container) // If The Countdown Has Passed
 
         else {
-            if(break_interval.remaining_time <= 10) break_countdown.style.color = "#df3535"; // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
+            if(Math.round(break_interval.remaining_time) <= 10) break_countdown.style.color = "#df3535"; // Changes Timer Color To Red If Remaining Time Is Less Than 10 Seconds
 
             (break_countdown.querySelector(".minutes") as HTMLSpanElement).textContent = getFormattedTime("minutes", Math.round(break_interval.remaining_time)); // Shows Remaining Minutes
             (break_countdown.querySelector(".seconds") as HTMLSpanElement).textContent = getFormattedTime("seconds", Math.round(break_interval.remaining_time), true) // Shows Remaining Seconds
@@ -90,7 +129,7 @@ function exercisesBreak(container:HTMLDivElement):void {
                 break_interval.max_remaining_time = break_interval.remaining_time // Changes Maximum Value Of Break Timer Remaining Time
             }
         }
-    }, 100)
+    }, break_interval.SPEED)
 }
 
 // Function For Generate Current Reps, Hold Time, Or Steps Amount
@@ -174,7 +213,10 @@ export function resetTrainingPlan(container:HTMLDivElement):void {
     finish_training.classList.remove("active") // Hides Finish Training Slide
     start_training.classList.add("active") // Shows Start Training Slide
 
-    exercises.forEach((one_exercise:HTMLDivElement) => (one_exercise.querySelector(".sets .current") as HTMLSpanElement).textContent = "1") // Resets Current Set On Exercises
+    // Resets Current Set On Exercises
+    exercises.forEach(function(one_exercise:HTMLDivElement) {
+        if(!one_exercise.classList.contains("warm_up")) (one_exercise.querySelector(".sets .current") as HTMLSpanElement).textContent = "1" // Skips Warm Up
+    })
 
     // Progress Bar
     const active_bars:HTMLDivElement[] = Array.from(bars).filter((one_bar:HTMLDivElement):boolean => one_bar.classList.contains("active")); // Gets Active Bars
@@ -219,7 +261,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     const ordered_exercises:HTMLDivElement[] = [...data].sort((a:HTMLDivElement, b:HTMLDivElement) => Number(a.dataset.order) - Number(b.dataset.order)) // Orders Exercises From All Training Plans By Their Order Value
 
     // Extracts Data For Every Exercise
-    ordered_exercises.forEach(function(one_exercise:HTMLDivElement, index:number):void {
+    ordered_exercises.forEach(function(one_exercise:HTMLDivElement):void {
         const training_plan_key:string = one_exercise.dataset.training_plan_key as string // Gets Training Plan Key
         const day_data:string|null = one_exercise.dataset.day || null // Gets Training Day Of The Exercise If Has Any
         const training_plan_title_data:string = one_exercise.dataset.type as string // Gets Training Title Of The Exercise
@@ -238,7 +280,11 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
 
                 // Creates Warm Up
                 if(exercise_title_data === "Warm Up") {
-                    
+                    const warm_up_template_clone:DocumentFragment = warm_up_template.content.cloneNode(true) as DocumentFragment // Clones The Warm Up Template Content
+
+                    (warm_up_template_clone.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
+
+                    training_plan.prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
                 }
 
                 // Creates Exercise
@@ -289,18 +335,35 @@ export function startTraining(container:HTMLDivElement):void {
     const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
     const start_training:HTMLDivElement = training_plan.querySelector(".start_training") as HTMLDivElement // Gets The Start Training Slide
     const exercises:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan .exercise") // Gets All Training Plan Exercises
-    const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
-    const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
-    container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
+    // First Exercise Is Ordinary
+    if(!(exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.contains("warm_up")) {
+        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
+        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
-    start_training.classList.remove("active"); // Hides The Start Training Slide
-    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+        container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
 
-    generateReps(periods_data, 1, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount For The First Set Of The First Exercise
-    updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
-    startActivity(container, playback) // Starts Activity
-    createExerciseObjects(exercises) // Creates Objects Of Exercises In Training Plan Activity Summary
+        start_training.classList.remove("active"); // Hides The Start Training Slide
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+
+        generateReps(periods_data, 1, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount For The First Set Of The First Exercise
+        updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
+        startActivity(container, playback) // Starts Activity
+        createExerciseObjects(exercises) // Creates Objects Of Exercises In Training Plan Activity Summary
+    }
+
+    // First Exercise Is Warm Up
+    else {
+        container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
+
+        start_training.classList.remove("active"); // Hides The Start Training Slide
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+
+        warmUp(container) // Starts Warm Up
+        updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
+        startActivity(container, playback) // Starts Activity
+        createExerciseObjects(exercises) // Creates Objects Of Exercises In Training Plan Activity Summary
+    }
 }
 
 // Function For Finish Training Plan
@@ -319,18 +382,30 @@ export function nextExercise(container:HTMLDivElement):void {
     const finish_training:HTMLDivElement = training_plan.querySelector(".finish_training") as HTMLDivElement // Gets The Start Training Slide
 
     const set_progress:NodeListOf<HTMLSpanElement> = (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelectorAll<HTMLSpanElement>(".sets span") // Gets Set Progress Of The Active Exercise
-    let current_set:number = parseInt((set_progress[0] as HTMLSpanElement).textContent) || 1 // Gets Current Set Value
-    const sets_amount:number = parseInt((set_progress[1] as HTMLSpanElement).textContent) || 1 // Gets Total Amount Of Sets Of The Active Exercise
+    let current_set:number = set_progress.length > 0 ? parseInt((set_progress[0] as HTMLSpanElement).textContent) : 1 // Gets Current Set Value
+    const sets_amount:number = set_progress.length > 0 ? parseInt((set_progress[1] as HTMLSpanElement).textContent) : 1 // Gets Total Amount Of Sets Of The Active Exercise
 
     // Updates Set Progress
     if(current_set < sets_amount || exercises_break.classList.contains("active")) {
         const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
         const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
-        
-        if(!exercises_break.classList.contains("active")) ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".sets .current") as HTMLSpanElement).textContent = `${current_set += 1}`; // Increments Current Set Value
+
+        if(!exercises_break.classList.contains("active")) {
+            // Warm Up
+            if(exercises[training_plan_state.active_exercise_index - 1] && (exercises[training_plan_state.active_exercise_index - 1] as HTMLDivElement).classList.contains("warm_up")) {
+                if((exercises[training_plan_state.active_exercise_index - 1] as HTMLDivElement).classList.contains("skip")) {
+                    ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".sets .current") as HTMLSpanElement).textContent = `${current_set += 1}` // Increments Current Set Value
+                }
+
+                else (exercises[training_plan_state.active_exercise_index - 1] as HTMLDivElement).classList.add("skip") // Adds Skip Class To Warm Up
+            }
+
+            else {
+                ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".sets .current") as HTMLSpanElement).textContent = `${current_set += 1}` // Increments Current Set Value
+            }
+        }
 
         generateReps(periods_data, current_set, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount
-        
         updateProgress(training_plan) // Updates Progress Bar
     }
 
@@ -338,7 +413,6 @@ export function nextExercise(container:HTMLDivElement):void {
     else if(current_set === sets_amount && training_plan_state.active_exercise_index < exercises.length - 1) {
         (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
         exercises_break.classList.add("active") // Shows Exercises Break Slide
-
         exercisesBreak(training_plan)
     }
 
@@ -349,6 +423,26 @@ export function nextExercise(container:HTMLDivElement):void {
     }
 
     startActivity(container, playback) // Starts Activity
+}
+
+// Function For Skip Warm Up
+export function skipWarmUp(container:HTMLDivElement):void {
+    const exercises:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".training_plan_container .training_plan .exercise"); // Gets All Training Plan Exercises
+    const warm_up:HTMLDivElement = container.querySelector(".training_plan_container .training_plan .warm_up") as HTMLDivElement // Gets Warm Up
+
+    // Stops Warm Up Timer
+    if(warm_up_interval.interval) {
+        clearInterval(warm_up_interval.interval)
+        warm_up_interval.interval = null
+    }
+
+    warm_up_interval.max_remaining_time = 0
+    warm_up_interval.remaining_time = 0
+
+    training_plan_state.active_exercise_index += 1; // Changes Active Exercise Index
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+    nextExercise(container) // Next Exercise
+    warm_up.classList.remove("active") // Hides Warm Up
 }
 
 // Function For Skip Exercises Break

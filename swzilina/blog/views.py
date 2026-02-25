@@ -1125,7 +1125,7 @@ def trainingSessionView(request):
 
             # Increments Gained XP For The User In The Database
             logged_in_user.xp += int(gained_xp)
-            logged_in_user.save()
+            # logged_in_user.save()
 
             # Saves New Activity To Database
             new_activity = Activity(
@@ -1136,7 +1136,7 @@ def trainingSessionView(request):
                 type = new_activity_data["type"]
             )
 
-            new_activity.save()
+            # new_activity.save()
 
             return JsonResponse({"success": "Amount Of XP Has Been Increased."})
 

@@ -103,22 +103,31 @@ export function updateUnitTypes(unit:string, training_plan:HTMLDivElement, state
 
 // Function For Get Periods Values
 export function getPeriods(exercise:HTMLDivElement):number[] {
-    const reps_inputs:NodeListOf<HTMLInputElement> = exercise.querySelectorAll<HTMLInputElement>(".periods_container .reps") // Gets All Reps Inputs
-    const sets_inputs:NodeListOf<HTMLInputElement> = exercise.querySelectorAll<HTMLInputElement>(".periods_container .sets") // Gets All Sets Inputs
+    let periods:number[] = [] // Stores Periods Of Sets & Reps, Hold Time Or Steps
 
-    const reps_inputs_values:number[] = [...reps_inputs].map((one_input:HTMLInputElement) => Number(one_input.value)) // Gets All Reps Inputs Values
-    const sets_inputs_values:number[] = [...sets_inputs].map((one_input:HTMLInputElement) => Number(one_input.value)) // Gets All Sets Inputs Values
+    if(exercise.classList.contains("exercise")) {
+        const reps_inputs:NodeListOf<HTMLInputElement> = exercise.querySelectorAll<HTMLInputElement>(".periods_container .reps") // Gets All Reps Inputs
+        const sets_inputs:NodeListOf<HTMLInputElement> = exercise.querySelectorAll<HTMLInputElement>(".periods_container .sets") // Gets All Sets Inputs
 
-    const periods:number[] = [] // Stores Periods Of Sets & Reps, Hold Time Or Steps
+        const reps_inputs_values:number[] = [...reps_inputs].map((one_input:HTMLInputElement) => Number(one_input.value)) // Gets All Reps Inputs Values
+        const sets_inputs_values:number[] = [...sets_inputs].map((one_input:HTMLInputElement) => Number(one_input.value)) // Gets All Sets Inputs Values
 
-    // Generates Periods Of Sets & Reps, Hold Time Or Steps Values
-    for(let i:number = 0; i < sets_inputs_values.length; i++) {
-        const reps_number:number = reps_inputs_values[i] as number
-        const sets_number:number = sets_inputs_values[i] as number
+        // Generates Periods Of Sets & Reps, Hold Time Or Steps Values
+        for(let i:number = 0; i < sets_inputs_values.length; i++) {
+            const reps_number:number = reps_inputs_values[i] as number
+            const sets_number:number = sets_inputs_values[i] as number
 
-        for(let j:number = 0; j < sets_number; j++) {
-            periods.unshift(reps_number) // Saves Values To Periods
+            for(let j:number = 0; j < sets_number; j++) {
+                periods.unshift(reps_number) // Saves Values To Periods
+            }
         }
+    }
+
+    if(exercise.classList.contains("warm_up")) {
+        const warm_up_time = getElapsedSeconds((exercise.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent) // Gets Elapsed Seconds Of Warm Up
+
+        periods = [] // Deletes Periods
+        periods.push(warm_up_time) // Saves Value To Periods
     }
 
     return periods // Returns Periods
