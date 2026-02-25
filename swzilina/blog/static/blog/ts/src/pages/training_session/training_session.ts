@@ -11,6 +11,7 @@ import {
     startTraining,
     finishTraining,
     nextExercise,
+    skipWarmUp,
     skipBreak
 } from "./functions/trainingPlan.js"
 
@@ -58,6 +59,9 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         if((event.target as HTMLDivElement).classList.contains("next_exercise_button") || ((event.target as HTMLDivElement).parentNode as HTMLDivElement).classList.contains("next_exercise_button")) nextExercise(activity) // Next Exercise
+
+        // Skip Warm Up
+        if((event.target as HTMLDivElement).classList.contains("skip_warm_up_button") || ((event.target as HTMLDivElement).parentNode as HTMLDivElement).classList.contains("skip_warm_up_button")) skipWarmUp(activity)
     })
 
     // Training Plan Container Wheel Events

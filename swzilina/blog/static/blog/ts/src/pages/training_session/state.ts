@@ -39,6 +39,18 @@ export const activity_interval:{
     interval: null
 }
 
+export const warm_up_interval:{
+    SPEED:number,
+    interval:number|null,
+    max_remaining_time:number,
+    remaining_time:number
+} = {
+    SPEED: 100, // 100MS Interval
+    interval: null,
+    max_remaining_time: 30, // 30 Seconds By Default
+    remaining_time: 30 // 30 Seconds By Default
+}
+
 export const break_interval:{
     SPEED:number,
     interval:number|null,
