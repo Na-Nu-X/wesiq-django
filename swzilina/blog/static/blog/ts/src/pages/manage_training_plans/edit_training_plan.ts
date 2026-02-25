@@ -70,16 +70,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         }))
     ]
 
-    // const training_plan_days_order = [
-    //     ...new Set(
-    //         [...exercises_data].map(el =>
-    //             `${el.dataset.day}__${el.dataset.training_plan_key}`
-    //         )
-    //     )
-    // ].map(key => key.split("__")[0])
-
-    // console.log(training_plan_days_order)
-
     // Functions
 
     // Function For Render Exercises Of The Selected Training Plan
@@ -106,19 +96,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         day_options.forEach(function(one_option:HTMLDivElement):void {
             // Shows Current Selected Option From List Without Icon
-            // if(one_option.dataset.day === training_plan_day && training_plan_day !== "None") {
             if(one_option.dataset.day === training_plan_day) {
                 (day_select.querySelector("span") as HTMLSpanElement).textContent = (one_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                 one_option.classList.add("selected") // Adds Selected Class To Selected Option
             }
-
-            // // Shows No Selected Day Option If Training Plan Is Without A Day
-            // if(training_plan_day === "None") {
-            //     if(one_option.dataset.day === "not_selected") {
-            //         day_select.querySelector("span").textContent = one_option.querySelector("span").textContent // Shows Current Selected Option From List Without Icon
-            //         one_option.classList.add("selected") // Adds Selected Class To Selected Option
-            //     }
-            // }
         })
 
         // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
@@ -171,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                         (exercise_template_clone.querySelector(".exercise .periods_container") as HTMLDivElement).innerHTML = "" // Deletes All Period Selections
 
-                        generatePeriodSelections(periods_data, getTotalPeriodSelections(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container") as HTMLDivElement); // Generates Exact Amount Of Period Selections For Exercise
+                        generatePeriodSelections(periods_data, getConsecutiveNumbersCount(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container") as HTMLDivElement); // Generates Exact Amount Of Period Selections For Exercise
 
                         (container.querySelector(".training_plan") as HTMLDivElement).appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
                     }
@@ -187,20 +168,38 @@ document.addEventListener("DOMContentLoaded", function():void {
         renderBars(training_plan, bar_container)
     }
 
-    // Function Which Converts Exercise Period To An Array With Amounts Of The Similar Sets
-    function getTotalPeriodSelections(periods_data:number[]):number[] {
-        // Gets Array Of Similar Sets In Periods
-        let total_period_selections:number[] = []
-        let similar_sets:number = 0
+    // Function For Count Consecutive Numbers In An Array (For Example From [1, 1, 2, 2, 3] To [2, 2, 1])
+    function getConsecutiveNumbersCount(array:number[]):number[] {
+        if(array.length === 0) return []
 
-        periods_data.forEach(function(_, index:number):void {
-            if(periods_data[index] === periods_data[index - 1] || index === 0) similar_sets += 1
-            else total_period_selections.push(similar_sets)
-        })
+        const result:number[] = []
+        let counter:number = 1
 
-        total_period_selections.push(similar_sets)
+        for(let i:number = 1; i <= array.length; i++) {
+            if(array[i] === array[i - 1]) counter += 1 // Increments The Counter
 
-        return total_period_selections
+            else {
+                result.push(counter) // Stores Previous Counter Value
+                counter = 1 // Resets The Counter
+            }
+        }
+
+        return result
+    }
+
+    // Function For Reduce An Array Of Repeating Numbers (For Example From [1, 1, 2, 2, 3] To [1, 2, 3])
+    function compressConsecutiveNumbers(array:number[]):number[] {
+        if(array.length === 0) return []
+    
+        const result:number[] = [array[0] as number] // Stores The First Number
+    
+        for(let i:number = 1; i < array.length; i++) {
+            if(array[i] !== array[i - 1]) {
+                result.push(array[i] as number) // Stores The Number
+            }
+        }
+    
+        return result
     }
 
     // Function For Generate Period Selections
@@ -212,14 +211,14 @@ document.addEventListener("DOMContentLoaded", function():void {
             const reps:HTMLInputElement = period_selection_template_clone.querySelector(".period_selection .reps_container .reps") as HTMLInputElement // Gets Reps Input
             const sets:HTMLInputElement = period_selection_template_clone.querySelector(".period_selection .sets_container .sets") as HTMLInputElement // Gets Sets Input
 
-            reps.value = String(periods_data[index]) // Replaces Reps Input Value
+            reps.value = String(compressConsecutiveNumbers(periods_data)[index]) // Replaces Reps Input Value
             sets.value = String(one_unit) // Replaces Sets Input Value
 
             // Shows Reps Content
             const to_failure:HTMLParagraphElement = period_selection_template_clone.querySelector(".period_selection .reps_container .to_failure") as HTMLParagraphElement // Gets To Failure Text
             const time:HTMLParagraphElement = period_selection_template_clone.querySelector(".period_selection .reps_container .time") as HTMLParagraphElement // Gets Time Text
 
-            if(periods_data[index] === 0) to_failure.style.visibility = "visible" // Shows To Failure Text
+            if(compressConsecutiveNumbers(periods_data)[index] === 0) to_failure.style.visibility = "visible" // Shows To Failure Text
 
             else {
                 // Checks Exercise Unit Type
@@ -227,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 if(unit === "seconds") {
                     time.style.visibility = "visible" // Shows Time Text
-                    if(periods_data[index]) time.textContent = getMinimalistFormattedTime(periods_data[index])
+                    if(compressConsecutiveNumbers(periods_data)[index]) time.textContent = getMinimalistFormattedTime(compressConsecutiveNumbers(periods_data)[index] as number)
                 }
                 
                 to_failure.style.visibility = "hidden" // Hides To Failure Text

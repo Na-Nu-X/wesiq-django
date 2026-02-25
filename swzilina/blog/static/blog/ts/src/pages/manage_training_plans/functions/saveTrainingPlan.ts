@@ -83,8 +83,6 @@ export function saveTrainingPlan(container:HTMLDivElement, state:{active_exercis
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        // console.log(training_plan_data)
-
         sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST 
 
         // Sends The Notification For The User
