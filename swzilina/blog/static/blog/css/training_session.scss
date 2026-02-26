@@ -207,6 +207,21 @@ main {
         }
     }
 
+    .no_training_plan {
+        text-align: center;
+
+        a {
+            color: $secondary-color;
+            text-decoration: none;
+
+            &:hover,
+            &:active,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+    }
+
     .training_plan_container {
         display: flex;
         flex-direction: column;

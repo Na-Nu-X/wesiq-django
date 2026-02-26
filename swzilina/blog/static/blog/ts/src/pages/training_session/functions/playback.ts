@@ -46,8 +46,8 @@ function updateTimer(timer:HTMLHeadingElement):void {
 
 // Function For Start Activity
 export function startActivity(container:HTMLDivElement, playback:HTMLDivElement):void {
-    const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
-    const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
+    const training_plan:HTMLDivElement|null = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement || null // Gets The Training Plan
+    const exercises:NodeListOf<HTMLDivElement>|null = training_plan ? training_plan.querySelectorAll<HTMLDivElement>(".exercise") : null // Gets All Training Plan Exercises
 
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
     const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
@@ -57,7 +57,10 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     // Starts Activity Timer
     if(!activity_interval.interval) {
         activity_interval.interval = setInterval(function():void {
-            (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.contains("active") ? updateActivitySummary(exercises[training_plan_state.active_exercise_index] as HTMLDivElement) : updateActivitySummary(null) // Updates Activity Summary
+            // Updates Activity Summary
+            if(exercises && (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.contains("active")) updateActivitySummary(exercises[training_plan_state.active_exercise_index] as HTMLDivElement)
+            else updateActivitySummary(null)
+
             updateTimer(timer) // Shows Elapsed Time On The Playback Timer
         }, activity_interval.SPEED)
     }
@@ -143,6 +146,6 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
         activity_summary.training_plan = [] // Resets Training Plan Activity Summary
 
         updateTimer(timer) // Resets Elapsed Time On The Playback Timer
-        resetTrainingPlan(container) // Resets Training Plan
+        if(container.querySelector(".training_plan_container")) resetTrainingPlan(container) // Resets Training Plan
     }
 }

@@ -25,7 +25,7 @@ import {
 
 document.addEventListener("DOMContentLoaded", function():void {
     // Variables
-
+    
     const activity:HTMLDivElement = document.querySelector(".activity") as HTMLDivElement // Gets The Activity Container
     const playback:HTMLDivElement = activity.querySelector(".record_activity") as HTMLDivElement // Gets The Activity Playback
     const play_pause:HTMLAnchorElement = playback.querySelector(".buttons .play") as HTMLAnchorElement // Gets The Play / Pause Button
