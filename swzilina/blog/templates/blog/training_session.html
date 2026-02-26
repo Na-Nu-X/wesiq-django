@@ -54,7 +54,15 @@
             </div>
         </div>
 
-        {% if training_plan|length > 0 %}
+        {% if training_plan|length == 0 %}
+            <p class="no_training_plan">
+                Zatiaľ nemáte žiaden tréningový plán.<br>
+                <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Vytvorte si prvý.</a>
+            </p>
+
+            <script src="{% static 'blog/ts/dist/pages/training_session/basic_training_session.js' %}" type="module"></script>
+
+        {% elif training_plan|length > 0 %}
             <template class="exercise_template">
                 <div class="exercise">
                     <h3 class="title"></h3>
@@ -167,6 +175,9 @@
                     </div>
                 </div>
             </div>
+
+            <script src="{% static 'blog/ts/dist/pages/training_session/training_session.js' %}" type="module"></script>
+
         {% endif %}
 
         <p class="current_activity_info"></p>
@@ -239,8 +250,6 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/ts/dist/pages/training_session/training_session.js' %}" type="module"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2" defer></script> <!-- Chart JS Plugin For Floating Labels -->
 {% endblock script %}

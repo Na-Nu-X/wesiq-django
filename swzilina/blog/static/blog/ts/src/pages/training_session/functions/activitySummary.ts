@@ -171,7 +171,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                     
                     // Creates Floating Labels
                     formatter: function(value:number) {
-                        return value === 0 ? "" : `${getFormattedTime("hours", value)}h ${getFormattedTime("minutes", value)}m`
+                        return value < 60 ? "" : `${getFormattedTime("hours", value)}h ${getFormattedTime("minutes", value)}m` // Hides Labels Which Are Lower Than 1 Minute
                     },
                 },
             },
