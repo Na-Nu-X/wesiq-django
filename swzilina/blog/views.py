@@ -44,6 +44,9 @@ def homepageView(request):
                 if check_password(password, user.password):
                     request.session["logged_in_user_id"] = user.id
 
+                    user.last_login = timezone.now() # Stores Last Login Time
+                    user.save()
+
                     messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{user.first_name}&nbsp;{user.last_name}")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
@@ -375,6 +378,9 @@ def loginView(request):
             if check_password(password, user.password):
                 request.session["logged_in_user_id"] = user.id
 
+                user.last_login = timezone.now() # Stores Last Login Time
+                user.save()
+
                 messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{user.first_name}&nbsp;{user.last_name}")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
@@ -599,18 +605,41 @@ def editAccountView(request):
             if edit_account_form.is_valid():
                 delete_account = edit_account_form.cleaned_data["delete_account"]
                 if delete_account:
-                    current_profile_picture_name = logged_in_user.profile_picture_name
-                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                    if current_profile_picture_name != "" and current_profile_picture_name != None:
-                        os.remove(f"{path}/{current_profile_picture_name}")
+                    # current_profile_picture_name = logged_in_user.profile_picture_name
+                    # path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                    # if current_profile_picture_name != "" and current_profile_picture_name != None:
+                    #     os.remove(f"{path}/{current_profile_picture_name}")
+
+                    # messages.add_message(request, messages.ERROR, f"Účet&nbsp;{logged_in_user.first_name}&nbsp;{logged_in_user.last_name}&nbsp;bol&nbsp;odstránený")
+                    # captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
+
+                    # logged_in_user.delete()
+
+                    # # Deletes Previous User ID Session If Was Logged In
+                    # del request.session["logged_in_user_id"]
+
+                    # Send Mail
+                    subject = "SW Žilina - Odstránenie účtu"
+                    text_content = f"Dobrý deň {logged_in_user.first_name} {logged_in_user.last_name},\ndostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina."
+                    sender = settings.EMAIL_HOST_USER
+                    receiver = [logged_in_user.email_address]
+                    html_content = f"""
+                        <h1>Dobrý deň {logged_in_user.first_name} {logged_in_user.last_name},</h1>
+                        <p>dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.<p><br>
+                        Tím Street Workout Žilina.</p>
+                    """
+
+                    mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                    mail_message.attach_alternative(html_content, "text/html")
+                    mail_message.send()
+
+                    logged_in_user.account_status = "suspended" # Changes Account Status
+                    logged_in_user.save()
 
                     messages.add_message(request, messages.ERROR, f"Účet&nbsp;{logged_in_user.first_name}&nbsp;{logged_in_user.last_name}&nbsp;bol&nbsp;odstránený")
                     captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
 
-                    logged_in_user.delete()
-
-                    # Deletes Previous User ID Session If Was Logged In
-                    del request.session["logged_in_user_id"]
+                    del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
                     return HttpResponseRedirect(reverse("homepage_url"))
 

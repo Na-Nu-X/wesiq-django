@@ -1,6 +1,6 @@
 @import "../../../../static/css/partials/variables";
 
-.content {
+.first_section {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -877,6 +877,10 @@
             }
         }
     }
+
+    .training_plan_selection {
+        display: flex;
+    }
 }
 
 /***********
@@ -933,7 +937,7 @@
 **************/
 
 @media (width <= 1060px) {
-    .content {
+    .first_section {
         flex-direction: column;
 
         .top {
@@ -957,7 +961,7 @@
 }
 
 @media (width <= 600px) {
-    .content {
+    .first_section {
         .top {
             .new_training_plan,
             .edit_training_plan {
