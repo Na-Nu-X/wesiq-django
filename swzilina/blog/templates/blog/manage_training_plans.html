@@ -105,52 +105,9 @@
         </div>
     </template>
 
-    <div class="top">
-        <div class="new_training_plan" tabindex="0">
-            <div class="additional_info">
-                <input type="text" class="title" placeholder="Názov">
-
-                <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-                <div class="day_select_menu">
-                    <input type="hidden" name="day" value="not_selected">
-
-                    <div class="select">
-                        <span>Nepriradiť deň</span>
-                        <i class="fas fa-angle-down"></i>
-                    </div>
-
-                    <div class="options_list">
-                        <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
-                        <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="training_plan">
-                <div class="drop_zone active">
-                    {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
-                    <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
-                </div>
-            </div>
-
-            <button class="save">Pridať tréningový plán</button>
-        </div>
-
-        {% if training_plan|length > 0 %}
-            <div class="edit_training_plan" tabindex="0">
-                <script src="{% static 'blog/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
-
-                {% for one_exercise in training_plan %}
-                    <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
-                
-                {% endfor %}
-
+    <div class="first_section">
+        <div class="top">
+            <div class="new_training_plan" tabindex="0">
                 <div class="additional_info">
                     <input type="text" class="title" placeholder="Názov">
 
@@ -177,52 +134,136 @@
                 </div>
 
                 <div class="training_plan">
-                    <div class="drop_zone">
+                    <div class="drop_zone active">
                         {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
                         <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
                     </div>
                 </div>
 
-                <div class="buttons">
-                    <button class="save">Uložiť zmeny</button>
-                    <button class="delete">Vymazať</button>
-                </div>
-            </div>
-            
-        {% endif %}
-    </div>
-
-    <div class="exercise_selection">
-        <div class="search_bar_menu">
-            <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
-            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-            <input class="search_bar" placeholder="Nájsť cvik" autocomplete="off">
-        </div>
-
-        <div class="exercises">
-            <div class="custom_exercise exercise" draggable="true">
-                <p class="name"></p>
-                <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                <button class="save">Pridať tréningový plán</button>
             </div>
 
-            <div class="warm_up exercise" draggable="true">
-                <p class="name"></p>
-                <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
-            </div>
+            {% if training_plan|length > 0 %}
+                <div class="edit_training_plan" tabindex="0">
+                    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 
-            {% for one_exercise in exercises %}
-                <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0" data-requires_weight="{{ one_exercise.requires_weight }}">
-                    <p class="name">{{ one_exercise.exercise }}</p>
+                    {% for one_exercise in training_plan %}
+                        <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+                    
+                    {% endfor %}
 
-                    <div class="weight_selection">
-                        <button class="increase_weight"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
-                        {% comment %} <input type="number" class="weight" value="0" min="-100" max="1000"> {% endcomment %}
-                        <p class="weight"><span>0</span><span>kg</span></p>
-                        <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    <div class="additional_info">
+                        <input type="text" class="title" placeholder="Názov">
+
+                        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                        <div class="day_select_menu">
+                            <input type="hidden" name="day" value="not_selected">
+
+                            <div class="select">
+                                <span>Nepriradiť deň</span>
+                                <i class="fas fa-angle-down"></i>
+                            </div>
+
+                            <div class="options_list">
+                                <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="training_plan">
+                        <div class="drop_zone">
+                            {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
+                            <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="save">Uložiť zmeny</button>
+                        <button class="delete">Vymazať</button>
                     </div>
                 </div>
-    
+                
+            {% endif %}
+        </div>
+
+        <div class="exercise_selection">
+            <div class="search_bar_menu">
+                <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                <input class="search_bar" placeholder="Nájsť cvik" autocomplete="off">
+            </div>
+
+            <div class="exercises">
+                <div class="custom_exercise exercise" draggable="true">
+                    <p class="name"></p>
+                    <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                </div>
+
+                <div class="warm_up exercise" draggable="true">
+                    <p class="name"></p>
+                    <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+                </div>
+
+                {% for one_exercise in exercises %}
+                    <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0" data-requires_weight="{{ one_exercise.requires_weight }}">
+                        <p class="name">{{ one_exercise.exercise }}</p>
+
+                        <div class="weight_selection">
+                            <button class="increase_weight"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                            {% comment %} <input type="number" class="weight" value="0" min="-100" max="1000"> {% endcomment %}
+                            <p class="weight"><span>0</span><span>kg</span></p>
+                            <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        </div>
+                    </div>
+        
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="second_section">
+        {% comment %} <div class="training_plan_selection">
+            <div class="training_plan">
+                <p>Pull</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Push</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Legs</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Upper</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Lower</p>
+            </div>
+        </div> {% endcomment %}
+
+        <div class="training_plan_selection">
+            {% for one_exercise in training_plan %}
+                <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+            
             {% endfor %}
+
+            <template class="exercise_template">
+                <div class="exercise">
+                    <h3 class="title"></h3>
+                </div>
+            </template>
+
+            <div class="training_plan"></div>
         </div>
     </div>
 {% endblock content %}
@@ -230,4 +271,5 @@
 {% block script %}
     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>
 {% endblock script %}
