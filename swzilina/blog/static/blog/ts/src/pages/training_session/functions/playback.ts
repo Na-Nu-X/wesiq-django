@@ -52,6 +52,8 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
     const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
 
+    const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 
     // Starts Activity Timer
@@ -67,19 +69,24 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
 
     // Uses Available XP Boost
     if(xp_boost_interval.amount !== 1) {
-        xp_boost_interval.interval = setInterval(function():void {
-            xp_boost_interval.remaining_time -= 1 // Decreases Remaining Time
+        if(!xp_boost_interval.interval) {
+            xp_boost_interval.interval = setInterval(function():void {
+                xp_boost_interval.remaining_time -= 1 // Decreases Remaining Time
 
-            // Stops XP Boost Timer When Remaining Time Pass
-            if(xp_boost_interval.remaining_time === 0) {
-                if(xp_boost_interval.interval) {
-                    clearInterval(xp_boost_interval.interval)
-                    xp_boost_interval.interval = null
+                const xp_boost_progress = 100 - ((xp_boost_interval.remaining_time / xp_boost_interval.max_remaining_time) * 100) // Gets Current Percentage Of Remaining Time Of XP Boost Progress
+                current_activity_info.style.setProperty("--progress", `${xp_boost_progress}%`)
+
+                // Stops XP Boost Timer When Remaining Time Pass
+                if(xp_boost_interval.remaining_time === 0) {
+                    if(xp_boost_interval.interval) {
+                        clearInterval(xp_boost_interval.interval)
+                        xp_boost_interval.interval = null
+                    }
+
+                    xp_boost_interval.amount = 1 // Resets XP Boost Amount
                 }
-
-                xp_boost_interval.amount = 1 // Resets XP Boost Amount
-            }
-        }, xp_boost_interval.SPEED)
+            }, xp_boost_interval.SPEED)
+        }
     }
 
     deleteActivitySummary() // Deletes Activity Summary
@@ -112,7 +119,7 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
             gained_xp:number,
             type:string|null
         } = {
-            formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time, true)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
+            formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
             elapsed_time, // Stores Formatted Elapsed Time
             gained_xp, // Stores Gained XP
             type: null // Stores Training Plan Title

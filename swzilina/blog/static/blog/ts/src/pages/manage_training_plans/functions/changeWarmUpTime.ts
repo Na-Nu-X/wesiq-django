@@ -2,7 +2,7 @@ import { getFormattedTime, getElapsedSeconds } from "../../../utils/timer.js"
 
 // Function For Changing Warm Up Time
 export function changeWarmUpTime(warm_up:HTMLDivElement, operation:string):void {
-    const timer:HTMLHeadingElement = warm_up.querySelector(".timer_container h3") as HTMLHeadingElement // Gets Timer
+    const timer:HTMLHeadingElement = warm_up.querySelector(".timer .countdown") as HTMLHeadingElement // Gets Timer
     let elapsed_seconds:number = getElapsedSeconds(timer.textContent) // Gets Elapsed Seconds From Timer Value
 
     if(elapsed_seconds <= 30 && operation === "subtract") return // Stop Subtracting When On Timer Is 30 Seconds

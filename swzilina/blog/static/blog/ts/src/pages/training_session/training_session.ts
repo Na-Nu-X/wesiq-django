@@ -136,10 +136,14 @@ document.addEventListener("DOMContentLoaded", function():void {
     add_time.addEventListener("click", function():void {
         break_interval.remaining_time += 30 // Adds 30 Seconds On Countdown
 
-        // Shows Animated Text
-        add_time_message.classList.remove("animate")
-        void add_time_message.offsetWidth
-        add_time_message.classList.add("animate")
+        if(break_interval.remaining_time >= 600) break_interval.remaining_time = 600 // Sets Maximum For Break Countdown Remaining Time To 10 Minutes
+
+        else {
+            // Shows Animated Text
+            add_time_message.classList.remove("animate")
+            void add_time_message.offsetWidth
+            add_time_message.classList.add("animate")
+        }
     })
 
     // Skip Break

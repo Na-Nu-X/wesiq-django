@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(exercise_data === "Warm Up") {
                         const warm_up_template_clone:DocumentFragment = warm_up_template.content.cloneNode(true) as DocumentFragment // Clones The Warm Up Template Content
 
-                        (warm_up_template_clone.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
+                        (warm_up_template_clone.querySelector(".timer .countdown") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
 
                         (container.querySelector(".training_plan") as HTMLDivElement).prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
                     }

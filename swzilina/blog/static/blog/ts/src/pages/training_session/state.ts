@@ -1,6 +1,7 @@
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
-const activity:HTMLDivElement = document.querySelector(".activity") as HTMLDivElement // Gets The Activity Container
+const training_plan:HTMLDivElement = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
+const GLOBAL_SPEED:number = 0.01 // 1 Default (Lower = Faster)
 
 // GLOBAL STATES
 
@@ -35,7 +36,7 @@ export const activity_interval:{
     SPEED:number,
     interval:number|null
 } = {
-    SPEED: 1000, // 1 Second Interval
+    SPEED: 1000 * GLOBAL_SPEED, // 1 Second Interval
     interval: null
 }
 
@@ -45,7 +46,7 @@ export const warm_up_interval:{
     max_remaining_time:number,
     remaining_time:number
 } = {
-    SPEED: 100, // 100MS Interval
+    SPEED: 100 * GLOBAL_SPEED, // 100MS Interval
     interval: null,
     max_remaining_time: 30, // 30 Seconds By Default
     remaining_time: 30 // 30 Seconds By Default
@@ -57,7 +58,7 @@ export const break_interval:{
     max_remaining_time:number,
     remaining_time:number
 } = {
-    SPEED: 100, // 100MS Interval
+    SPEED: 100 * GLOBAL_SPEED, // 100MS Interval
     interval: null,
     max_remaining_time: 120, // 2 Minutes
     remaining_time: 120 // 2 Minutes
@@ -67,12 +68,14 @@ export const xp_boost_interval:{
     SPEED:number,
     interval:number|null,
     _amount:number,
+    max_remaining_time:number,
     remaining_time:number,
     amount:number
 } = {
-    SPEED: 1000, // 1 Second Interval
+    SPEED: 1000 * GLOBAL_SPEED, // 1 Second Interval
     interval: null,
     _amount: 2, // Double XP Boost
+    max_remaining_time: 600, // 10 Minutes
     remaining_time: 600, // 10 Minutes
 
     // Getter To Get Current XP Boost Amount
@@ -83,8 +86,8 @@ export const xp_boost_interval:{
     // Setter To Set Current XP Boost Amount And Render Current Activity Info
     set amount(value:number) {
         this._amount = value
-        const current_activity_info = activity.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
-        current_activity_info.textContent = value === 1 ? "Zatiaľ žiadne aktívne navýšenie XP" : `${value}x navýšenie XP` // Shows Current Activity Info
+        const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+        current_activity_info.innerHTML = value === 1 ? "<span>Žiadne aktívne navýšenie XP</span>" : `<i class="fa-solid fa-bolt"></i> ${value}x` // Shows Current Activity Info https://fontawesome.com/icons/bolt
     }
 }
 

@@ -61,12 +61,12 @@ function updateProgress(container:HTMLDivElement):void {
 // Function For Warm Up
 function warmUp(container:HTMLDivElement):void {
     const warm_up:HTMLDivElement = container.querySelector(".training_plan_container .training_plan .warm_up") as HTMLDivElement // Gets Warm Up
-    const warm_up_countdown:HTMLHeadingElement = warm_up.querySelector(".timer_container .timer h3") as HTMLHeadingElement // Gets The Warm Up Countdown
+    const warm_up_countdown:HTMLHeadingElement = warm_up.querySelector(".warm_up_timer .countdown") as HTMLHeadingElement // Gets The Warm Up Countdown
     
     warm_up_interval.max_remaining_time = getElapsedSeconds(warm_up_countdown.textContent) // Sets Warm Up Remaining Time
     warm_up_interval.remaining_time = getElapsedSeconds(warm_up_countdown.textContent) // Sets Warm Up Remaining Time
 
-    const progress_circle:HTMLElement = warm_up.querySelector(".timer_container .timer svg .progress") as HTMLElement // Gets The Progress Circle
+    const progress_circle:HTMLElement = warm_up.querySelector(".warm_up_timer svg .progress") as HTMLElement // Gets The Progress Circle
     const radius:number = Number(progress_circle.getAttribute("r")) // Gets The Radius Of The Progress Circle
     const circum_ference:number = 2 * Math.PI * radius // Gets The Circum Ference Of The Progress Circle (For Example: 251.32741228718345)
     progress_circle.style.strokeDasharray = String(circum_ference) // Sets Progress Circle Circum Ference
@@ -282,7 +282,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
                 if(exercise_title_data === "Warm Up") {
                     const warm_up_template_clone:DocumentFragment = warm_up_template.content.cloneNode(true) as DocumentFragment // Clones The Warm Up Template Content
 
-                    (warm_up_template_clone.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
+                    (warm_up_template_clone.querySelector(".warm_up_timer .countdown") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
 
                     training_plan.prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
                 }
@@ -311,6 +311,9 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     renderBars(training_plan, bar_container)
 
     createBarLabels(bar_container.querySelectorAll<HTMLDivElement>(".bar"), exercises) // Creates Bar Labels
+
+    const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+    training_plan.appendChild(current_activity_info) // Appends Current Activity Info At The End Of The Training Plan
 }
 
 // Function For Change Training Plans
