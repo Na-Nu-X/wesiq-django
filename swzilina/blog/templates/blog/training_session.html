@@ -65,10 +65,12 @@
         {% elif training_plan|length > 0 %}
             <template class="exercise_template">
                 <div class="exercise">
-                    <h3 class="title"></h3>
-                    
-                    <p class="reps">1x</p>
-                    <p class="sets"><span class="current">1</span>/<span class="total">1</span></p>
+                    <div class="left">
+                        <h3 class="title"></h3>
+                        
+                        <p class="reps">1x</p>
+                        <p class="sets"><span class="current">1</span>/<span class="total">1</span></p>
+                    </div>
 
                     <div class="next_exercise_button">
                         <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
@@ -80,34 +82,30 @@
                 <div class="exercise warm_up" data-unit="seconds">
                     <h3 class="title">Warm Up</h3>
                     
-                    <div class="warm_up_container">
-                        <div class="timer_container">
-                            <div class="timer">
-                                <svg width="100" height="100" viewBox="0 0 100 100">
-                                    <circle
-                                        cx="50"
-                                        cy="50"
-                                        r="40"
-                                        class="progress"
-                                    />
-                                </svg>
-                                
-                                <svg width="100" height="100" viewBox="0 0 100 100">
-                                    <circle
-                                        cx="50"
-                                        cy="50"
-                                        r="40"
-                                        class="progress_background"
-                                    />
-                                </svg>
-            
-                                <h3>5:00</h3>
-                            </div>
-                        </div>
+                    <div class="warm_up_timer">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                class="progress"
+                            />
+                        </svg>
+                        
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                class="progress_background"
+                            />
+                        </svg>
+    
+                        <p class="countdown">5:00</p>
+                    </div>
 
-                        <div class="skip_warm_up_button">
-                            <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                        </div>
+                    <div class="skip_warm_up_button">
+                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                     </div>
                 </div>
             </template>
@@ -120,19 +118,25 @@
 
                 <div class="training_plan">
                     <div class="start_training active">
-                        <h3>Začať tréning</h3>
+                        <div class="left">
+                            <p>Tréningový plán</p>
+                            <h3>Začať tréning</h3>
 
-                        <p class="title"></p>
-
+                            <p class="title"></p>
+                        </div>
+                        
                         <div class="start_training_button">
                             <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
                         </div>
                     </div>
 
                     <div class="finish_training">
-                        <h3>Dokončiť tréning</h3>
+                        <div class="left">
+                            <p>Tréningový plán</p>
+                            <h3>Dokončiť tréning</h3>
 
-                        <p class="title"></p>
+                            <p class="title"></p>
+                        </div>
 
                         <div class="finish_training_button">
                             <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
@@ -173,6 +177,8 @@
                             <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                         </div>
                     </div>
+
+                    <p class="current_activity_info"></p>
                 </div>
             </div>
 
@@ -180,58 +186,64 @@
 
         {% endif %}
 
-        <p class="current_activity_info"></p>
-
         <div class="previous_activity">
-            {% spaceless %}
-                <p>
-                    Priemerný čas aktivity za posledných 7 dní:
+            <div class="top">
+                <div class="average_activity_time_container">
+                    <p>
+                        <span class="title"><i class="fa-regular fa-clock"></i> priemer / 7 dní</span>
 
-                    {% if average_activity_time %}
-                        <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
+                        {% if average_activity_time %}
+                            <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
 
-                    {% else %}
-                        <span class="average_activity_time" data-average_activity_time="0">0</span>
+                        {% else %}
+                            <span class="average_activity_time" data-average_activity_time="0">0</span>
 
-                    {% endif %}
-                </p>
-            {% endspaceless %}
+                        {% endif %}
+                    </p>
+                </div> <!-- https://fontawesome.com/icons/clock -->
 
-            <p>Zaznamenané aktivity za posledných 7 dní: <span class="activities_amount">{{ activities_amount }}</span></p>
+                <div class="activities_amount_container">
+                    <p>
+                        <span class="title"><i class="fa-regular fa-calendar"></i> počet / 7 dní</span>
+                        
+                        <span class="activities_amount">{{ activities_amount }}</span>
+                    </p>
+                </div> <!-- https://fontawesome.com/icons/calendar -->
+            </div>
 
-            <br>
+            <div class="bottom">
+                <div class="latest_activity_container">
+                    <p>
+                        <i class="fa-solid fa-list"></i>
 
-            {% spaceless %}
-                <p>
-                    Posledná aktivita:
+                        {% if latest_activity %}
+                            <span>{{ latest_activity.formatted_elapsed_time }}</span>
+                            <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
+                            <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
-                    {% if latest_activity %}
-                        <span>{{ latest_activity.formatted_elapsed_time }}</span>
-                        <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
-                        <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
+                        {% else %}
+                            posledná aktivita: žiadna
 
-                    {% else %}
-                        žiadna
+                        {% endif %}
+                    </p>
+                </div> <!-- https://fontawesome.com/icons/list -->
+                
+                <div class="longest_activity_container">
+                    <p>
+                        <i class="fa-solid fa-medal"></i>
 
-                    {% endif %}
-                </p>
-            {% endspaceless %}
-            
-            {% spaceless %}
-                <p>
-                    Najdlhšia aktivita:
+                        {% if longest_activity %}
+                            <span>{{ longest_activity.formatted_elapsed_time }}</span>
+                            <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
+                            <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
-                    {% if longest_activity %}
-                        <span>{{ longest_activity.formatted_elapsed_time }}</span>
-                        <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
-                        <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
+                        {% else %}
+                            najdlhšia aktivita: žiadna
 
-                    {% else %}
-                        žiadna
-
-                    {% endif %}
-                </p>
-            {% endspaceless %}
+                        {% endif %}
+                    </p>
+                </div> <!-- https://fontawesome.com/icons/medal -->
+            </div>
         </div>
     </div>
 

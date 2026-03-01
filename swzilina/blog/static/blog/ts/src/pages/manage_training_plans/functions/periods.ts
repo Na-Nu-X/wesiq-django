@@ -124,7 +124,7 @@ export function getPeriods(exercise:HTMLDivElement):number[] {
     }
 
     if(exercise.classList.contains("warm_up")) {
-        const warm_up_time = getElapsedSeconds((exercise.querySelector(".timer_container .timer h3") as HTMLHeadingElement).textContent) // Gets Elapsed Seconds Of Warm Up
+        const warm_up_time = getElapsedSeconds((exercise.querySelector(".timer .countdown") as HTMLHeadingElement).textContent) // Gets Elapsed Seconds Of Warm Up
 
         periods = [] // Deletes Periods
         periods.push(warm_up_time) // Saves Value To Periods

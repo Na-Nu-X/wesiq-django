@@ -512,7 +512,7 @@
                                 }
                             }
 
-                            h3 {
+                            .countdown {
                                 position: absolute;
                                 top: 50%;
                                 left: 50%;
@@ -619,15 +619,15 @@
                 .bar {
                     width: 100%;
                     height: 10px;
-                    border: 1px solid transparentize(#4b4bfa, 0.5);
+                    border: 1px solid transparentize($blue-color, 0.5);
                     border-radius: calc(10px / 2);
                     transition: background-color 0.3s ease;
 
                     &.active,
                     &:hover {
                         cursor: pointer;
-                        background-color: #4b4bfa;
-                        box-shadow: 0px 0px 10px #4b4bfa;
+                        background-color: $blue-color;
+                        box-shadow: 0px 0px 10px $blue-color;
                     }
                 }
             }
