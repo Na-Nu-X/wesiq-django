@@ -274,6 +274,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
             // Shows Training Plan Exercises Of Selected Day
             if(selected_day === day_data) {
                 training_plan.dataset.title = training_plan_title_data; // Stores Training Plan Title Data
+                training_plan.dataset.day = day_data; // Stores Training Plan Day Data
 
                 (start_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}`; // Sets Training Plan Title On The Start Training Slide
                 (finish_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}` // Sets Training Plan Title On The Finish Training Slide

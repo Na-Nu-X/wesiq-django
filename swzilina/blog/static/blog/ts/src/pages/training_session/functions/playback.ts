@@ -117,12 +117,14 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
             formatted_elapsed_time:string,
             elapsed_time:number,
             gained_xp:number,
-            type:string|null
+            type:string|null,
+            day:number|null
         } = {
             formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
             elapsed_time, // Stores Formatted Elapsed Time
             gained_xp, // Stores Gained XP
-            type: null // Stores Training Plan Title
+            type: null, // Stores Training Plan Title
+            day: null // Stores Training Plan Day
         }
 
         pauseActivity(playback) // Pauses Activity
@@ -139,8 +141,10 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
 
             if(training_plan_summary.length > 0) {
                 const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.title || "" // Gets Training Plan Title
+                const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.day) || null // Gets Training Plan Day
 
                 new_activity_data.type = training_plan_title // Stores Training Plan Title
+                new_activity_data.day = training_plan_day // Stores Training Plan Day
 
                 renderTrainingPlanActivitySummary(training_plan_summary, training_plan_title) // Renders Training Plan Activity Summary
             }
