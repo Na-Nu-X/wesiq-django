@@ -1162,7 +1162,8 @@ def trainingSessionView(request):
                 formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
                 elapsed_time = int(new_activity_data["elapsed_time"]),
                 gained_xp = int(gained_xp),
-                type = new_activity_data["type"]
+                type = new_activity_data["type"],
+                training_plan_day = new_activity_data["day"]
             )
 
             new_activity.save()

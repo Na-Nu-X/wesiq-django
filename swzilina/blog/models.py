@@ -48,6 +48,7 @@ class Activity(models.Model):
     elapsed_time = models.IntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
     gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
+    training_plan_day = models.IntegerField(verbose_name="Day", null=True, blank=True)
 
 class Reviews(models.Model):
     user = models.ForeignKey(
