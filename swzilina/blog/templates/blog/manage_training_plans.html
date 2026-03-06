@@ -105,6 +105,13 @@
         </div>
     </template>
 
+    <div class="sidebar">
+        <ul>
+            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i></a><span class="label">Vytvoriť</span></li> <!-- https://fontawesome.com/icons/plus -->
+            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i></a><span class="label">Upraviť</span></li> <!-- https://fontawesome.com/icons/pen -->
+        </ul>
+    </div>
+
     <div class="first_section">
         <div class="top">
             <div class="new_training_plan" tabindex="0">
@@ -144,7 +151,7 @@
             </div>
 
             {% if training_plan|length > 0 %}
-                <div class="edit_training_plan" tabindex="0">
+                <div class="edit_training_plan hidden" tabindex="0">
                     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
 
                     {% for one_exercise in training_plan %}
@@ -228,7 +235,7 @@
         </div>
     </div>
 
-    <div class="second_section">
+    <div class="second_section" style="display: none;">
         {% comment %} <div class="training_plan_selection">
             <div class="training_plan">
                 <p>Pull</p>
@@ -269,6 +276,8 @@
 {% endblock content %}
 
 {% block script %}
+    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>

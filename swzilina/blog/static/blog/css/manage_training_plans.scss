@@ -1,5 +1,73 @@
 @import "../../../../static/css/partials/variables";
 
+.sidebar {
+    position: fixed;
+    height: 100vh;
+    padding: 15px;
+    background-color: transparentize($main-color, 0.2);
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        li {
+            display: flex;
+            align-items: center;
+
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border: 1px solid $blue-color;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: transform 0.2s ease, background-color 0.2s ease;
+                z-index: 50;
+
+                &.active {
+                    background-color: $blue-color;
+
+                    i {
+                        color: $secondary-color;
+                    }
+                }
+
+                &:hover,
+                &:focus {
+                    transform: scale(1.1);
+                    background-color: $blue-color;
+
+                    i {
+                        color: $secondary-color;
+                    }
+                }
+
+                i {
+                    color: $blue-color;
+                    font-size: 1.2em;
+                    transition: color 0.2s ease;
+                }
+            }
+
+            .label {
+                pointer-events: none;
+                position: absolute;
+                transform: translateX(calc(-100% + 55px));
+                opacity: 0;
+                transition: transform 0.2s ease, opacity 0.2s ease;
+
+                &.show {
+                    opacity: 1;
+                    transform: translateX(55px);
+                }
+            }
+        }
+    }
+}
+
 .first_section {
     display: flex;
     flex-direction: row;
@@ -24,6 +92,10 @@
             align-items: center;
             max-width: 500px;
             width: 100%;
+
+            &.hidden {
+                display: none;
+            }
 
             // &:focus {
             //     .training_plan {
