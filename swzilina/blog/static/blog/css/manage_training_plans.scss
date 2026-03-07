@@ -1,10 +1,124 @@
 @import "../../../../static/css/partials/variables";
 
+// Banner
+
+.banner {
+    height: 125px;
+    background-color: transparentize($main-color, 0.1);
+    backdrop-filter: blur(5px);
+
+    .manage_training_plans {
+        position: absolute;
+        top: 83.5px;
+        left: 10px;
+        height: 25px;
+
+        a {
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // User's Account
+
+    .account {
+        position: absolute;
+        top: 77px;
+        right: 10px;
+        height: 38px;
+
+        a {
+            &:has(.profile_picture) {
+                display: inline-block;
+                width: 38px;
+                height: 38px;
+                margin-right: 6px;
+            }
+
+            .profile_picture {
+                width: 38px;
+                height: 38px;
+                padding: 2px;
+                border: 1px solid $secondary-color;
+                border-radius: 50%;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+        }
+
+        .user_name {
+            margin-right: 6px;
+            position: relative;
+            top: -13px;
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+
+        .logout {
+            position: relative;
+            top: -13px;
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .no_account {
+        position: absolute;
+        top: 83.5px;
+        right: 10px;
+        height: 25px;
+
+        .login {
+            text-decoration: none;
+            color: $secondary-color;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+main {
+    min-height: calc(100vh - 125px);
+}
+
+.content {
+    padding: 0px;
+}
+
 .sidebar {
     position: fixed;
-    height: 100vh;
+    top: 50%;
+    transform: translateY(-50%);
+    // height: 100vh;
     padding: 15px;
     background-color: transparentize($main-color, 0.2);
+    // background-color: red;
+    // border-top: 1px solid $secondary-color;
+    // border-right: 1px solid $secondary-color;
+    // border-bottom: 1px solid $secondary-color;
+    border-radius: 0px $big-border-radius $big-border-radius 0px;
+    z-index: 1000;
 
     ul {
         display: flex;
@@ -25,7 +139,7 @@
                 border-radius: 50%;
                 text-decoration: none;
                 transition: transform 0.2s ease, background-color 0.2s ease;
-                z-index: 50;
+                // z-index: 50;
 
                 &.active {
                     background-color: $blue-color;
@@ -74,7 +188,7 @@
     align-items: center;
     justify-content: space-evenly;
     gap: 20px;
-    padding: 0px 20px;
+    padding: 0px 10px;
 
     .top {
         display: flex;
@@ -82,7 +196,8 @@
         justify-content: space-evenly;
         max-width: 500px;
         width: 100%;
-        min-height: calc(100vh - 67px);
+        min-height: calc(100vh - 125px);
+        // padding-bottom: 125px;
 
         // New Training Plan, Edit Training Plan
 
@@ -1081,8 +1196,8 @@
 
         .top {
             justify-content: center;
-            gap: 20px;
-            min-height: 100vh;
+            // gap: 20px;
+            // padding-bottom: 125px;
         }
 
         .exercise_selection {
@@ -1099,15 +1214,26 @@
     }
 }
 
-@media (width <= 500px) {
+@media (width <= 400px) {
     .first_section {
         .top {
+            justify-content: flex-start;
+
             .new_training_plan,
             .edit_training_plan {
                 .training_plan {
+                    justify-content: space-between;
+                    height: calc(100vh - 50px - 10px - 125px - 10px);
+
                     .exercise {
-                        .title {
-                            font-size: 1.2em;
+                        height: calc(100% - 20px);
+                        
+                        // Warm Up Timer
+                        
+                        .timer_container {
+                            height: 100%;
+                            margin-top: 0px;
+                            padding: 0px;
                         }
                     }
                 }

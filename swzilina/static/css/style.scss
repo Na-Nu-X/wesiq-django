@@ -183,7 +183,7 @@ header {
                 }
             }
 
-            .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
+            i {
                 display: none;
                 margin: 10px 0px;
                 color: $secondary-color;
@@ -439,11 +439,7 @@ footer { // Minix
     }
 
     .social_media {
-        // width: 250px;
         margin: 20px 0px;
-        // padding: 10px 0px;
-        // border-top: 1px solid darken($secondary-color, 40%);
-        // border-bottom: 1px solid darken($secondary-color, 40%);
 
         i {
             margin: 0px 5px;
@@ -534,28 +530,35 @@ footer { // Minix
  Media Queries
 **************/
 
-@media (min-width: 801px) {
-    .navigation_bar ul li {
-        display: inline-block !important;
-    }
-}
+// @media (min-width: 801px) {
+//     .navigation_bar {
+//         ul {
+//             li {
+//                 display: inline-block;
+//             }
+//         }
+//     }
+// }
 
 @media (max-width: 800px) {
-    .navigation_bar ul {
-        li {
-            display: none;
+    .navigation_bar {
+        ul {
+            li {
+                // display: none !important;
+                display: none;
 
-            a {
-                display: block;
-                margin: 10px 0px;
+                a {
+                    display: block;
+                    margin: 10px 0px;
+                }
             }
-        }
 
-        .navigation_icon .fa-bars, .navigation_icon .fa-xmark {
-            display: block !important;
-            color: $secondary-color;
-            font-size: 2em;
-            transition: transform 0.3s ease;
+            i {
+                display: block !important;
+                color: $secondary-color;
+                font-size: 2em;
+                transition: transform 0.3s ease;
+            }
         }
     }
 
@@ -567,5 +570,13 @@ footer { // Minix
 @media (max-width: 600px) {
     input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, input[type="submit"] {
         width: 100% !important;
+    }
+}
+
+@media (width <= 400px) {
+    footer {
+        h2 {
+            font-size: 2em;
+        }
     }
 }

@@ -1191,6 +1191,8 @@ def manageTrainingPlansView(request):
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
         day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
 
         # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
@@ -1249,6 +1251,9 @@ def manageTrainingPlansView(request):
             return JsonResponse({"success": "true"}) # Returns Success Response
         
         return render(request, "blog/manage_training_plans.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "profile_picture_name": logged_in_user.profile_picture_name,
             "exercises": exercises,
             "training_plan": training_plan,
         })
