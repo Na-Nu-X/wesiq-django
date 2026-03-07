@@ -46,24 +46,19 @@
     <header>
         <nav class="navigation_bar">
             <ul>
-                <li>
-                    <a href="{% url 'homepage_url' %}" target="_self">DOMOV</a>
-                </li>
-
-                <li>
-                    <a href="{% url 'training_session_url' %}" target="_self">AKTIVITA</a>
-                </li>
-
-                <li>
-                    <a href="{% url 'blog_url' %}" target="_self">BLOG</a>
-                </li>
+                <li><a href="{% url 'homepage_url' %}" target="_self">DOMOV</a></li>
+                <li><a href="{% url 'training_session_url' %}" target="_self">AKTIVITA</a></li>
+                <li><a href="{% url 'blog_url' %}" target="_self">BLOG</a></li>
                 
                 {% block navigation_bar_items %}{% endblock navigation_bar_items %}
 
-                <div class="navigation_icon">
+                {% comment %} <div class="navigation_icon">
                     <i class="fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
                     <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                </div>
+                </div> {% endcomment %}
+
+                <i class="fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
+                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
             </ul>
         </nav>
 
@@ -110,7 +105,8 @@
     </main>
 
     <footer>
-        <h2>Street&nbsp;Workout&nbsp;Žilina</h2>
+        {% comment %} <h2>Street&nbsp;Workout Žilina</h2> {% endcomment %}
+        <h2>Street Workout Žilina</h2>
 
         <div class="contact_us">
             <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="Napísať...">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
@@ -124,12 +120,12 @@
             <a href="https://www.tiktok.com/" title="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a> <!-- https://fontawesome.com/icons/tiktok -->
         </div>
         
-        <div class="navigation">
+        {% comment %} <div class="navigation">
             <a href="{% url 'homepage_url' %}" title="Domov" target="_self">Domov</a>
             <a href="{% url 'login_url' %}" title="Prihlásenie" target="_self">Prihlásenie</a>
             <a href="{% url 'registration_url' %}" title="Registrácia" target="_self">Registrácia</a>
             <a href="{% url 'blog_url' %}" title="Blog" target="_self">Blog</a>
-        </div>
+        </div> {% endcomment %}
         
         <div class="other">
             <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>

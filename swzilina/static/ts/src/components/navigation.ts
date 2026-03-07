@@ -30,33 +30,30 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(window.innerWidth > 800 && window.scrollY > window.innerHeight - navigation_bar.offsetHeight) navigation_bar.style.opacity = "0"
     }
 
-    navigation_bar.addEventListener("mouseover", handleMouseOver);
-    navigation_bar.addEventListener("mouseout", handleMouseOut);
+    navigation_bar.addEventListener("mouseover", handleMouseOver)
+    navigation_bar.addEventListener("mouseout", handleMouseOut)
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll)
 
     // Navigation Bar Icons
 
-    const navigation_icon:HTMLDivElement = document.querySelector(".navigation_icon") as HTMLDivElement
-    const navigation_bar_item:NodeListOf<HTMLLIElement> = document.querySelectorAll<HTMLLIElement>(".navigation_bar ul li")
+    const navigation_icon:HTMLElement = navigation_bar.querySelector("ul i") as HTMLElement
+    const navigation_bar_items:NodeListOf<HTMLLIElement> = document.querySelectorAll<HTMLLIElement>(".navigation_bar ul li")
 
     navigation_icon.addEventListener("click", function():void {
-        if((document.querySelector(".fa-solid") as HTMLElement).classList[1] === "fa-bars") {
-            (document.querySelector(".fa-solid") as HTMLElement).classList.remove("fa-bars");
-            (document.querySelector(".fa-solid") as HTMLElement).classList.add("fa-xmark")
+        if(this.classList[1] === "fa-bars") {
+            this.classList.remove("fa-bars")
+            this.classList.add("fa-xmark")
 
-            navigation_bar_item.forEach(function(one_item:HTMLLIElement):void {
-                one_item.style.display = "block"
-            })
+            navigation_bar_items.forEach((one_item:HTMLLIElement) => one_item.style.display = "block")
+            console.log(navigation_bar_items)
         }
 
-        else if((document.querySelector(".fa-solid") as HTMLElement).classList[1] === "fa-xmark") {
-            (document.querySelector(".fa-solid") as HTMLElement).classList.remove("fa-xmark");
-            (document.querySelector(".fa-solid") as HTMLElement).classList.add("fa-bars")
+        else if(this.classList[1] === "fa-xmark") {
+            this.classList.remove("fa-xmark")
+            this.classList.add("fa-bars")
 
-            navigation_bar_item.forEach(function(one_item:HTMLLIElement):void {
-                one_item.style.display = "none"
-            })
+            navigation_bar_items.forEach((one_item:HTMLLIElement) => one_item.style.display = "none")
         }
     })
 
