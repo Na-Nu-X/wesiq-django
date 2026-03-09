@@ -11,35 +11,6 @@
     <div class="manage_training_plans">
         <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Moje tréningové plány</a>
     </div>
-
-    {% if request.session.logged_in_user_id %}
-        <div class="account">
-            <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
-                <img 
-                    class="profile_picture skeleton_loading" 
-                    src="
-                        {% if profile_picture_name %}
-                            ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                >
-            </a>
-
-            <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
-
-            <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
-        </div>
-
-    {% else %}
-        <div class="no_account">
-            <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
-        </div>
-
-    {% endif %}
 {% endblock banner %}
 
 {% block content %}

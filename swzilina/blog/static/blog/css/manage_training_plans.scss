@@ -3,90 +3,13 @@
 // Banner
 
 .banner {
-    height: 125px;
-    background-color: transparentize($main-color, 0.1);
-    backdrop-filter: blur(5px);
-
-    .manage_training_plans {
+    .training_session {
         position: absolute;
         top: 83.5px;
         left: 10px;
         height: 25px;
 
         a {
-            text-decoration: none;
-            color: $secondary-color;
-
-            &:hover,
-            &:active {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    // User's Account
-
-    .account {
-        position: absolute;
-        top: 77px;
-        right: 10px;
-        height: 38px;
-
-        a {
-            &:has(.profile_picture) {
-                display: inline-block;
-                width: 38px;
-                height: 38px;
-                margin-right: 6px;
-            }
-
-            .profile_picture {
-                width: 38px;
-                height: 38px;
-                padding: 2px;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
-                transition: transform 0.3s ease;
-
-                &:hover {
-                    transform: scale(1.1);
-                }
-            }
-        }
-
-        .user_name {
-            margin-right: 6px;
-            position: relative;
-            top: -13px;
-            text-decoration: none;
-            color: $secondary-color;
-
-            &:hover,
-            &:active {
-                text-decoration: underline;
-            }
-        }
-
-        .logout {
-            position: relative;
-            top: -13px;
-            text-decoration: none;
-            color: $secondary-color;
-
-            &:hover,
-            &:active {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    .no_account {
-        position: absolute;
-        top: 83.5px;
-        right: 10px;
-        height: 25px;
-
-        .login {
             text-decoration: none;
             color: $secondary-color;
 
@@ -237,7 +160,7 @@ main {
                     transition: border 0.3s ease;
 
                     &.error_animation {
-                        animation: training_title_error_animation 0.2s linear 3;
+                        animation: trainingTitleError 0.2s linear 3;
                     }
 
                     &:hover,
@@ -386,7 +309,7 @@ main {
                 }
 
                 &.animate {
-                    animation: training_plan_drag_animation 1s infinite alternate;
+                    animation: trainingPlanDrag 1s infinite alternate;
                 }
 
                 .drop_zone {
@@ -415,7 +338,7 @@ main {
                         transition: transform 0.3s ease;
 
                         &.error_animation {
-                            animation: training_plan_error_animation 0.2s linear 3;
+                            animation: trainingPlanError 0.2s linear 3;
                         }
                     }
                 }
@@ -769,7 +692,7 @@ main {
                         border-radius: calc(10px / 2);
                         
                         &.animate:not(&.active) {
-                            animation: bar_drag_animation 1s infinite alternate;
+                            animation: barDrag 1s infinite alternate;
                         }
 
                         &:before {
@@ -789,7 +712,7 @@ main {
 
                             &.animate {
                                 &:before {
-                                    animation: bar_drag_animation 1s infinite alternate;
+                                    animation: barDrag 1s infinite alternate;
                                 }
                             }
 
@@ -833,7 +756,7 @@ main {
         .edit_training_plan {
             .training_plan {
                 &.blur {
-                    animation: blur_animation 0.3s ease-out;
+                    animation: blur 0.3s ease-out;
                 }
             }
 
@@ -1141,14 +1064,22 @@ main {
     }
 }
 
-@keyframes training_plan_drag_animation {
+@keyframes blur {
+    0% {
+        filter: blur(5px);
+        opacity: 0.5;
+        background-color: $blue-color;
+    }
+}
+
+@keyframes trainingPlanDrag {
     100% {
         background-color: transparentize($secondary-color, 0.85);
         filter: blur(1px);
     }
 }
 
-@keyframes bar_drag_animation {
+@keyframes barDrag {
     0% {
         background-color: $success-color;
     }
@@ -1158,7 +1089,7 @@ main {
     }
 }
 
-@keyframes training_plan_error_animation {
+@keyframes trainingPlanError {
     0% {
         color: $secondary-color;
     }
@@ -1168,21 +1099,13 @@ main {
     }
 }
 
-@keyframes training_title_error_animation {
+@keyframes trainingTitleError {
     0% {
         border-bottom: 1px solid darken($secondary-color, 40%);
     }
 
     100% {
         border-bottom: 1px solid $error-color;
-    }
-}
-
-@keyframes blur_animation {
-    0% {
-        filter: blur(5px);
-        opacity: 0.5;
-        background-color: $success-color;
     }
 }
 

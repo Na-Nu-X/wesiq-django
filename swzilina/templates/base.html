@@ -64,6 +64,35 @@
 
         <div class="banner">
             {% block banner %}{% endblock banner %}
+            
+            {% if request.session.logged_in_user_id %}
+                <div class="account">
+                    <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                        <img 
+                            class="profile_picture skeleton_loading" 
+                            src="
+                                {% if profile_picture_name %}
+                                    ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
+                    </a>
+
+                    <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+
+                    <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+                </div>
+
+            {% else %}
+                <div class="no_account">
+                    <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+                </div>
+
+            {% endif %}
         </div>
         
         <div class="header_container">
@@ -105,8 +134,7 @@
     </main>
 
     <footer>
-        {% comment %} <h2>Street&nbsp;Workout Žilina</h2> {% endcomment %}
-        <h2>Street Workout Žilina</h2>
+        <h2>Street&nbsp;Workout Žilina</h2>
 
         <div class="contact_us">
             <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="Napísať...">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
@@ -120,12 +148,12 @@
             <a href="https://www.tiktok.com/" title="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a> <!-- https://fontawesome.com/icons/tiktok -->
         </div>
         
-        {% comment %} <div class="navigation">
+        <div class="navigation">
             <a href="{% url 'homepage_url' %}" title="Domov" target="_self">Domov</a>
             <a href="{% url 'login_url' %}" title="Prihlásenie" target="_self">Prihlásenie</a>
             <a href="{% url 'registration_url' %}" title="Registrácia" target="_self">Registrácia</a>
             <a href="{% url 'blog_url' %}" title="Blog" target="_self">Blog</a>
-        </div> {% endcomment %}
+        </div>
         
         <div class="other">
             <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
