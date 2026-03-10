@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,12 +44,15 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'blog',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.postgres',
 
     # Google OAuth 2.0
     'allauth',
@@ -94,16 +99,26 @@ WSGI_APPLICATION = 'swzilina.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swzilina',
-        'USER': 'swzilina_admin',
-        'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
-        'HOST': 'localhost',
-        'PORT': '5432',
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Docker
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL)
     }
-}
+
+else:
+    # Localhost
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'swzilina',
+            'USER': 'swzilina_admin',
+            'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
@@ -186,3 +201,15 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_TIMEZONE = 'Europe/Bratislava'
+
+SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
+DEBUG = bool(os.environ.get("DEBUG", True))
+
+# ALLOWED_HOSTS
+hosts = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
+ALLOWED_HOSTS = hosts.split(",")

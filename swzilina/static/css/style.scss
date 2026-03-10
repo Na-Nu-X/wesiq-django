@@ -102,7 +102,7 @@
 // Skeleton Loading
 
 .skeleton_loading {
-    animation: skeleton_loading_animation 1s linear infinite alternate;
+    animation: skeletonLoading 1s linear infinite alternate;
 
     &.skeleton_text {
         border-radius: $medium-border-radius;
@@ -113,7 +113,7 @@
     }
 }
 
-@keyframes skeleton_loading_animation {
+@keyframes skeletonLoading {
     0% {
         // background-color: #a3b8c2;
         background-color: darken($secondary-color, 40%);
@@ -330,7 +330,7 @@ header {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    animation: fade_out_animation 5s ease;
+    animation: fadeOut 5s ease;
     z-index: 200;
 
     &.success {
@@ -583,7 +583,7 @@ footer { // Minix
  Key Frames
 ***********/
 
-@keyframes fade_in_animation {
+@keyframes fadeIn {
     0% {
         opacity: 0;
         transform: scale(0.8);
@@ -595,7 +595,7 @@ footer { // Minix
     }
 }
 
-@keyframes fade_out_animation {
+@keyframes fadeOut {
     0% {
         opacity: 1;
         visibility: visible;

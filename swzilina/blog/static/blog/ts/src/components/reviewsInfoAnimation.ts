@@ -47,7 +47,7 @@ export function reviewsInfoAnimation():void {
     
     // Average Rating Animation
     const average_rating:HTMLDivElement = document.querySelector(".reviews .reviews_info_container .average_rating") as HTMLDivElement // Gets Average Rating
-    average_rating.style.animation = "fade_in_animation 0.5s ease 3s forwards" // Sets Animation In CSS And Makes Average Rating Appear
+    average_rating.style.animation = "fadeIn 0.5s ease 3s forwards" // Sets Animation In CSS And Makes Average Rating Appear
 
     const average_rating_number_tag:HTMLParagraphElement = document.querySelector(".reviews_info_container .average_rating .average_rating_number") as HTMLParagraphElement // Gets Average Rating Number HTML Tag
 

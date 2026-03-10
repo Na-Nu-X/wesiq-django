@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL
+  database:
+    image: postgres:15-alpine
+    container_name: swzilina_database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=swzilina_db
+      - POSTGRES_USER=swzilina_admin
+      - POSTGRES_PASSWORD=Ac7}l|szo98=pK-5-g?R
+
+  # Redis
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # Django
+  swzilina:
+    container_name: swzilina
+    build: 
+      context: ./swzilina
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./swzilina:/usr/src/app/
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=Ac7}l|szo98=pK-5-g?R
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - DATABASE_URL=postgres://swzilina_admin:Ac7}l|szo98=pK-5-g?R@database:5432/swzilina_db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - database
+      - redis
+
+  # Celery Worker
+  celery:
+    container_name: celery
+    build: 
+      context: ./swzilina
+    command: celery -A swzilina worker -l INFO
+    volumes:
+      - ./swzilina:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=Ac7}l|szo98=pK-5-g?R
+      - DATABASE_URL=postgres://swzilina_admin:Ac7}l|szo98=pK-5-g?R@database:5432/swzilina_db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - swzilina
+      - redis
+
+volumes:
+  postgres_data:

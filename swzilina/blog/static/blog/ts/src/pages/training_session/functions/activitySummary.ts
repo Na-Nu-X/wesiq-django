@@ -182,7 +182,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
 
     activity_summary.style.display = "flex" // Shows Activity Summary
     weekly_activity_chart.style.display = "block" // Shows Weekly Summary Chart
-    weekly_activity_chart.style.animation = "fade_in_animation 1s ease-out" // Animates Weekly Summary Chart
+    weekly_activity_chart.style.animation = "fadeIn 1s ease-out" // Animates Weekly Summary Chart
 
     // Auto Scroll To Activity Summary
     window.scrollTo({
@@ -251,7 +251,7 @@ export function renderTrainingPlanActivitySummary(training_plan_summary_data:exe
 
     training_plan_summary.style.display = "block" // Shows Training Plan Summary
     training_plan_summary_chart.style.display = "block" // Shows Training Plan Summary Chart
-    training_plan_summary_chart.style.animation = "fade_in_scale_animation 1s ease-out" // Animates Training Plan Summary Chart
+    training_plan_summary_chart.style.animation = "fadeInScale 1s ease-out" // Animates Training Plan Summary Chart
 }
 
 // Function For Delete Activity Summary

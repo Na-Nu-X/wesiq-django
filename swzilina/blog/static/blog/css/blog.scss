@@ -64,7 +64,7 @@ header {
             text-decoration: none;
             text-shadow: 0px 0px 5px $main-color;
             color: $secondary-color;
-            animation: fade_in_animation 2s ease-out;
+            animation: fadeIn 2s ease-out;
             transition: letter-spacing 0.3s ease;
 
             font: {
@@ -316,7 +316,7 @@ header {
             }
 
             &.animate {
-                animation: fade_in_animation 1s ease-out forwards;
+                animation: fadeIn 1s ease-out forwards;
             }
 
             &:hover {
@@ -573,7 +573,7 @@ header {
  Key Frames
 ***********/
 
-@keyframes fade_in_animation {
+@keyframes fadeIn {
     0% {
         opacity: 0;
     }
