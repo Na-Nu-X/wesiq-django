@@ -43,6 +43,10 @@
 
     <a class="skip_link" href="#">PRESKOČIŤ</a>
 
+    <div class="move_down" title="Posunúť nadol">
+        <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+    </div>
+
     <header>
         <nav class="navigation_bar">
             <ul>
@@ -98,10 +102,6 @@
         <div class="header_container">
             <h1><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
             {% block buttons %}{% endblock buttons %}
-        </div>
-
-        <div class="move_down" title="Posunúť nadol">
-            <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
         </div>
     </header>
 

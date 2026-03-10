@@ -13,6 +13,12 @@
         left: 10px;
         height: 25px;
 
+        &.not_allowed {
+            a {
+                cursor: not-allowed;
+            }
+        }
+
         a {
             text-decoration: none;
             color: $secondary-color;
@@ -138,12 +144,16 @@ main {
         }
     }
 
-    .no_training_plan {
+    .no_training_plan,
+    .no_logged_in {
+        margin-bottom: 20px;
         text-align: center;
 
         a {
             color: $secondary-color;
             text-decoration: none;
+            font-size: 0.9em;
+            font-style: italic;
 
             &:hover,
             &:active,
@@ -579,9 +589,15 @@ main {
                     span {
                         text-align: center;
                         white-space: nowrap;
+
+                        &.no_latest_activity,
+                        &.no_longest_activity {
+                            white-space: normal;
+                        }
                     }
 
-                    .xp {
+                    .xp,
+                    .none {
                         font-size: 1.2em;
                         color: $blue-color;
                         text-shadow: 0px 0px 10px $blue-color;
