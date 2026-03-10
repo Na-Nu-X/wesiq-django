@@ -1,4 +1,18 @@
+# IDE
+.cursor/
+.vscode/
+
+# Python
+.venv/
+__pycache__/
+
+# Django
+db.sqlite3
+
+# Node / TypeScript
 node_modules/
 **/dist/
+
+# CSS
 *.css
 *.css.map
