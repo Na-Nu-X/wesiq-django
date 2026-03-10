@@ -69,34 +69,41 @@
         <div class="banner">
             {% block banner %}{% endblock banner %}
             
-            {% if request.session.logged_in_user_id %}
-                <div class="account">
-                    <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
-                        <img 
-                            class="profile_picture skeleton_loading" 
-                            src="
-                                {% if profile_picture_name %}
-                                    ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+            <div class="right">
+                {% if request.session.logged_in_user_id %}
+                    <div class="notifications">
+                        <p class="label">9+</p>
+                        <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
+                    </div>
 
-                                {% else %}
-                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                
-                                {% endif %}
-                            "
-                        >
-                    </a>
+                    <div class="account">
+                        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                            <img 
+                                class="profile_picture skeleton_loading" 
+                                src="
+                                    {% if profile_picture_name %}
+                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
-                    <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+                        </a>
 
-                    <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
-                </div>
+                        <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
 
-            {% else %}
-                <div class="no_account">
-                    <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
-                </div>
+                        <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+                    </div>
 
-            {% endif %}
+                {% else %}
+                    <div class="no_account">
+                        <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+                    </div>
+
+                {% endif %}
+            </div>
         </div>
         
         <div class="header_container">

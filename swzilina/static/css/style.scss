@@ -244,75 +244,106 @@ header {
         backdrop-filter: blur(5px);
         z-index: 8000;
 
-        // User's Account
-
-        .account {
+        .right {
             position: absolute;
-            top: 77px;
-            right: 10px;
-            height: 38px;
+            top: 67px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+            width: 100%;
+            height: calc(100% - 67px);
+            padding: 0px 10px;
 
-            a {
-                &:has(.profile_picture) {
-                    display: inline-block;
-                    width: 38px;
-                    height: 38px;
-                    margin-right: 6px;
+            // Notifications
+
+            .notifications {
+                position: relative;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
                 }
 
-                .profile_picture {
-                    width: 38px;
-                    height: 38px;
-                    padding: 2px;
-                    border: 1px solid $secondary-color;
-                    border-radius: 50%;
-                    transition: transform 0.3s ease;
+                .label {
+                    position: absolute;
+                    top: -8px;
+                    right: -16px;
+                    font-weight: bold;
+                    color: $error-color;
+                }
 
-                    &:hover {
-                        transform: scale(1.1);
+                .fa-bell {
+                    font-size: 1.2em;
+                    opacity: 0.8;
+                    color: $secondary-color;
+                }
+            }
+
+            // User's Account
+
+            .account {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                height: 38px;
+
+                a {
+                    &:has(.profile_picture) {
+                        display: inline-block;
+                        width: 38px;
+                        height: 38px;
+                    }
+
+                    .profile_picture {
+                        width: 38px;
+                        height: 38px;
+                        padding: 2px;
+                        border: 1px solid $secondary-color;
+                        border-radius: 50%;
+                        transition: transform 0.3s ease;
+
+                        &:hover {
+                            transform: scale(1.1);
+                        }
+                    }
+                }
+
+                .user_name {
+                    position: relative;
+                    text-decoration: none;
+                    color: $secondary-color;
+
+                    &:hover,
+                    &:active {
+                        text-decoration: underline;
+                    }
+                }
+
+                .logout {
+                    position: relative;
+                    text-decoration: none;
+                    color: $secondary-color;
+
+                    &:hover,
+                    &:active {
+                        text-decoration: underline;
                     }
                 }
             }
 
-            .user_name {
-                margin-right: 6px;
-                position: relative;
-                top: -13px;
-                text-decoration: none;
-                color: $secondary-color;
+            .no_account {
+                height: 25px;
 
-                &:hover,
-                &:active {
-                    text-decoration: underline;
-                }
-            }
+                .login {
+                    text-decoration: none;
+                    color: $secondary-color;
 
-            .logout {
-                position: relative;
-                top: -13px;
-                text-decoration: none;
-                color: $secondary-color;
-
-                &:hover,
-                &:active {
-                    text-decoration: underline;
-                }
-            }
-        }
-
-        .no_account {
-            position: absolute;
-            top: 83.5px;
-            right: 10px;
-            height: 25px;
-
-            .login {
-                text-decoration: none;
-                color: $secondary-color;
-
-                &:hover,
-                &:active {
-                    text-decoration: underline;
+                    &:hover,
+                    &:active {
+                        text-decoration: underline;
+                    }
                 }
             }
         }
