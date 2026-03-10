@@ -29,19 +29,44 @@ main {
     padding: 0px;
 }
 
+.no_logged_in {
+    position: fixed;
+    top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc(100vh);
+    backdrop-filter: blur(2px);
+    background-color: transparentize($main-color, 0.5);
+    z-index: 1000;
+
+    p {
+        text-align: center;
+
+        a {
+            color: $secondary-color;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-style: italic;
+
+            &:hover,
+            &:active,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
 .sidebar {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    // height: 100vh;
     padding: 15px;
     background-color: transparentize($main-color, 0.2);
-    // background-color: red;
-    // border-top: 1px solid $secondary-color;
-    // border-right: 1px solid $secondary-color;
-    // border-bottom: 1px solid $secondary-color;
     border-radius: 0px $big-border-radius $big-border-radius 0px;
-    z-index: 1000;
+    z-index: 500;
 
     ul {
         display: flex;

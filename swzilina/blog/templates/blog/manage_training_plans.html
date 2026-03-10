@@ -14,102 +14,116 @@
 {% endblock banner %}
 
 {% block content %}
-    <template class="exercise_template">
-        <div class="exercise" draggable="true">
-            <h3 class="title"></h3>
-            
-            <div class="labels">
-                <p class="unit_amount"></p>
-                <p>Série</p>
+    {% if not request.session.logged_in_user_id %}
+        <div class="no_logged_in">
+            <p>
+                Zdá sa, že nie ste prihlásený.<br>
+                Bez prihlásenia nie je možné vytvoriť tréningový plán.<br>
+                <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihláste sa.</a>
+            </p>
+        </div>
+
+    {% endif %}
+
+    {% if request.session.logged_in_user_id %}
+        <template class="exercise_template">
+            <div class="exercise" draggable="true">
+                <h3 class="title"></h3>
+                
+                <div class="labels">
+                    <p class="unit_amount"></p>
+                    <p>Série</p>
+                </div>
+
+                <button class="add_period">Pridať sériu</button>
+
+                <div class="periods_container">
+                    <div class="period_selection">
+                        <div class="reps_container">
+                            <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                            <input type="number" class="reps" value="0" min="0">
+                            <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                            <p class="to_failure">Do&nbsp;zlyhania</p>
+                            <p class="time"></p>
+                        </div>
+
+                        <div class="sets_container">
+                            <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                            <input type="number" class="sets" value="1" min="1" max="100">
+                            <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                        </div>
+                    </div>
+                </div>
             </div>
+        </template>
 
-            <button class="add_period">Pridať sériu</button>
-
-            <div class="periods_container">
-                <div class="period_selection">
-                    <div class="reps_container">
-                        <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                        <input type="number" class="reps" value="0" min="0">
-                        <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
-
-                        <p class="to_failure">Do&nbsp;zlyhania</p>
-                        <p class="time"></p>
+        <template class="warm_up_template">
+            <div class="exercise warm_up" draggable="true" data-unit="seconds">
+                <h3 class="title">Warm Up</h3>
+                
+                <div class="timer_container">
+                    <div class="subtract_time">
+                        <i class='fa-solid fa-minus'></i> <!-- https://fontawesome.com/icons/minus -->
                     </div>
 
-                    <div class="sets_container">
-                        <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                        <input type="number" class="sets" value="1" min="1" max="100">
-                        <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                    <div class="timer">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                class="progress_background"
+                            />
+                        </svg>
+
+                        <p class="countdown">5:00</p>
+                    </div>
+
+                    <div class="add_time">
+                        <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
                     </div>
                 </div>
             </div>
-        </div>
-    </template>
+        </template>
 
-    <template class="warm_up_template">
-        <div class="exercise warm_up" draggable="true" data-unit="seconds">
-            <h3 class="title">Warm Up</h3>
-            
-            <div class="timer_container">
-                <div class="subtract_time">
-                    <i class='fa-solid fa-minus'></i> <!-- https://fontawesome.com/icons/minus -->
+        <template class="period_selection_template">
+            <div class="period_selection">
+                <div class="reps_container">
+                    <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    <input type="number" class="reps" value="0" min="0">
+                    <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                    <p class="to_failure">Do&nbsp;zlyhania</p>
+                    <p class="time"></p>
                 </div>
 
-                <div class="timer">
-                    <svg width="100" height="100" viewBox="0 0 100 100">
-                        <circle
-                            cx="50"
-                            cy="50"
-                            r="40"
-                            class="progress_background"
-                        />
-                    </svg>
-
-                    <p class="countdown">5:00</p>
-                </div>
-
-                <div class="add_time">
-                    <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                <div class="sets_container">
+                    <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    <input type="number" class="sets" value="1" min="1" max="100">
+                    <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
                 </div>
             </div>
-        </div>
-    </template>
+        </template>
 
-    <template class="period_selection_template">
-        <div class="period_selection">
-            <div class="reps_container">
-                <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                <input type="number" class="reps" value="0" min="0">
-                <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+        <template class="unit_select_menu_template">
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="unit_select_menu">
+                <input type="hidden" name="unit" value="reps">
 
-                <p class="to_failure">Do&nbsp;zlyhania</p>
-                <p class="time"></p>
+                <div class="select">
+                    <span>Počet</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>Opakovaní</span></div> <!-- https://fontawesome.com/icons/repeat -->
+                    <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>Sekúnd</span></div> <!-- https://fontawesome.com/icons/clock -->
+                </div>
             </div>
+        </template>
 
-            <div class="sets_container">
-                <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                <input type="number" class="sets" value="1" min="1" max="100">
-                <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
-            </div>
-        </div>
-    </template>
-
-    <template class="unit_select_menu_template">
-        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-        <div class="unit_select_menu">
-            <input type="hidden" name="unit" value="reps">
-
-            <div class="select">
-                <span>Počet</span>
-                <i class="fas fa-angle-down"></i>
-            </div>
-
-            <div class="options_list">
-                <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>Opakovaní</span></div> <!-- https://fontawesome.com/icons/repeat -->
-                <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>Sekúnd</span></div> <!-- https://fontawesome.com/icons/clock -->
-            </div>
-        </div>
-    </template>
+    {% endif %}
 
     <div class="sidebar">
         <ul>
@@ -282,9 +296,12 @@
 {% endblock content %}
 
 {% block script %}
-    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
-    <script src="{% static 'blog/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>
+    {% if request.session.logged_in_user_id %}
+        <script src="{% static 'blog/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
+        <script src="{% static 'blog/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
+        <script src="{% static 'blog/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
+        <script src="{% static 'blog/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
+        <script src="{% static 'blog/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>
+        
+    {% endif %}
 {% endblock script %}

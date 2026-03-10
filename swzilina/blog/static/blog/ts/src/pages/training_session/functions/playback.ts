@@ -52,7 +52,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
     const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
 
-    const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+    const current_activity_info:HTMLParagraphElement|null = training_plan ? training_plan.querySelector(".current_activity_info") as HTMLParagraphElement : null; // Gets Current Activity Info
 
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 
@@ -74,7 +74,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
                 xp_boost_interval.remaining_time -= 1 // Decreases Remaining Time
 
                 const xp_boost_progress = 100 - ((xp_boost_interval.remaining_time / xp_boost_interval.max_remaining_time) * 100) // Gets Current Percentage Of Remaining Time Of XP Boost Progress
-                current_activity_info.style.setProperty("--progress", `${xp_boost_progress}%`)
+                if(current_activity_info) current_activity_info.style.setProperty("--progress", `${xp_boost_progress}%`)
 
                 // Stops XP Boost Timer When Remaining Time Pass
                 if(xp_boost_interval.remaining_time === 0) {
@@ -110,22 +110,44 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
     if(activity_summary.elapsed_time > 0) {
         const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
         const elapsed_time:number = activity_summary.elapsed_time // Gets Activity Elapsed Time
-        const gained_xp:number = Math.round(activity_summary.gained_xp) // Gets Gained XP From Activity
-        const training_plan_summary:exercise[] = activity_summary.training_plan.map((one_exercise:exercise):exercise => ({ ...one_exercise, gained_xp: Math.round(one_exercise.gained_xp) })).filter((one_exercise:exercise):boolean => one_exercise.gained_xp > 0) // Gets Training Plan Summary With Rounded Gained XP Values (Only Exercises With Gained XP)
 
-        const new_activity_data:{
-            formatted_elapsed_time:string,
-            elapsed_time:number,
-            gained_xp:number,
-            type:string|null,
-            day:number|null
-        } = {
-            formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
-            elapsed_time, // Stores Formatted Elapsed Time
-            gained_xp, // Stores Gained XP
-            type: null, // Stores Training Plan Title
-            day: null // Stores Training Plan Day
+        if(!container.querySelector(".no_logged_in")) {
+            const gained_xp:number = Math.round(activity_summary.gained_xp) // Gets Gained XP From Activity
+            const training_plan_summary:exercise[] = activity_summary.training_plan.map((one_exercise:exercise):exercise => ({ ...one_exercise, gained_xp: Math.round(one_exercise.gained_xp) })).filter((one_exercise:exercise):boolean => one_exercise.gained_xp > 0) // Gets Training Plan Summary With Rounded Gained XP Values (Only Exercises With Gained XP)
+
+            const new_activity_data:{
+                formatted_elapsed_time:string,
+                elapsed_time:number,
+                gained_xp:number,
+                type:string|null,
+                day:number|null
+            } = {
+                formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
+                elapsed_time, // Stores Formatted Elapsed Time
+                gained_xp, // Stores Gained XP
+                type: null, // Stores Training Plan Title
+                day: null // Stores Training Plan Day
+            }
+
+            // Commits Activity
+            if(gained_xp > 0) {
+                renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
+
+                if(training_plan_summary.length > 0) {
+                    const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.title || "" // Gets Training Plan Title
+                    const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.day) || null // Gets Training Plan Day
+
+                    new_activity_data.type = training_plan_title // Stores Training Plan Title
+                    new_activity_data.day = training_plan_day // Stores Training Plan Day
+
+                    renderTrainingPlanActivitySummary(training_plan_summary, training_plan_title) // Renders Training Plan Activity Summary
+                }
+
+                if(!container.querySelector(".no_logged_in")) sendPOST("/training-session", new_activity_data) // Sends POST Data
+            }
         }
+
+        else renderActivitySummary(elapsed_time, 0) // Renders Activity Summary (If The User Isn't Logged In)
 
         pauseActivity(playback) // Pauses Activity
 
@@ -133,23 +155,6 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
         if(break_interval.interval) {
             clearInterval(break_interval.interval)
             break_interval.interval = null
-        }
-
-        // Commits Activity
-        if(gained_xp > 0) {
-            renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
-
-            if(training_plan_summary.length > 0) {
-                const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.title || "" // Gets Training Plan Title
-                const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset.day) || null // Gets Training Plan Day
-
-                new_activity_data.type = training_plan_title // Stores Training Plan Title
-                new_activity_data.day = training_plan_day // Stores Training Plan Day
-
-                renderTrainingPlanActivitySummary(training_plan_summary, training_plan_title) // Renders Training Plan Activity Summary
-            }
-
-            sendPOST("/training-session", new_activity_data) // Sends POST Data
         }
 
         activity_summary.elapsed_time = 0 // Resets Elapsed Time

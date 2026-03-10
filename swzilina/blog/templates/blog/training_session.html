@@ -8,8 +8,31 @@
 {% endblock style %}
 
 {% block banner %}
-    <div class="manage_training_plans">
-        <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Moje tréningové plány</a>
+    <div 
+        class="
+            manage_training_plans
+
+            {% if not request.session.logged_in_user_id %}
+                not_allowed
+
+            {% endif %}
+        "
+    >
+        <a 
+            href="
+                {% if request.session.logged_in_user_id %}
+                    {% url 'manage_training_plans_url' %}
+
+                {% else %}
+                    #
+
+                {% endif %}
+            "
+            title="Moje tréningové plány"
+            target="_self"
+        >
+            Moje tréningové plány
+        </a>
     </div>
 {% endblock banner %}
 
@@ -26,10 +49,20 @@
         </div>
 
         {% if training_plan|length == 0 %}
-            <p class="no_training_plan">
-                Zatiaľ nemáte žiaden tréningový plán.<br>
-                <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Vytvorte si prvý.</a>
-            </p>
+            {% if not request.session.logged_in_user_id %}
+                <p class="no_logged_in">
+                    Zdá sa, že nie ste prihlásený.<br>
+                    Bez prihlásenia nie je možné zaznamenať vašu aktivitu.<br>
+                    <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihláste sa.</a>
+                </p>
+
+            {% else %}
+                <p class="no_training_plan">
+                    Zatiaľ nemáte žiaden tréningový plán.<br>
+                    <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Vytvorte si prvý.</a>
+                </p>
+
+            {% endif %}
 
             <script src="{% static 'blog/ts/dist/pages/training_session/basic_training_session.js' %}" type="module"></script>
 
@@ -177,7 +210,13 @@
                     <p>
                         <span class="title"><i class="fa-regular fa-calendar"></i> počet&nbsp;/ 7&nbsp;dní</span>
                         
-                        <span class="activities_amount">{{ activities_amount }}</span>
+                        {% if activities_amount %}
+                            <span class="activities_amount">{{ activities_amount }}</span>
+                            
+                        {% else %}
+                            <span class="activities_amount">0</span>
+                        
+                        {% endif %}
                     </p>
                 </div> <!-- https://fontawesome.com/icons/calendar -->
             </div>
@@ -193,7 +232,7 @@
                             <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
                         {% else %}
-                            posledná aktivita: žiadna
+                            <span class="no_latest_activity">posledná aktivita: </span><span class="none">žiadna</span>
 
                         {% endif %}
                     </p>
@@ -209,7 +248,7 @@
                             <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
                         {% else %}
-                            najdlhšia aktivita: žiadna
+                            <span class="no_longest_activity">najdlhšia aktivita: </span><span class="none">žiadna</span>
 
                         {% endif %}
                     </p>

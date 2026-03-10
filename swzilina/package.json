@@ -10,7 +10,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "watch": "start cmd /k \"cd swzilina/blog/static/blog/ts && tsc -w --project tsconfig.json\" && start cmd /k \"cd swzilina/static/ts && tsc -w --project tsconfig.json\"",
+    "watch": "start cmd /k \"cd blog/static/blog/ts && tsc -w --project tsconfig.json\" && start cmd /k \"cd static/ts && tsc -w --project tsconfig.json\"",
     "build": "tsc"
   },
   "author": "",
