@@ -1,4 +1,5 @@
 @import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
 
 /**************
  Header Styles
@@ -7,25 +8,12 @@
 // Banner
 
 .banner {
-    .manage_training_plans {
-        position: absolute;
-        top: 83.5px;
-        left: 10px;
-        height: 25px;
-
-        &.not_allowed {
-            a {
-                cursor: not-allowed;
-            }
-        }
-
-        a {
-            text-decoration: none;
-            color: $secondary-color;
-
-            &:hover,
-            &:active {
-                text-decoration: underline;
+    .left {
+        .manage_training_plans {
+            &.not_allowed {
+                a {
+                    cursor: not-allowed;
+                }
             }
         }
     }
@@ -35,32 +23,17 @@
  Main Styles
 ************/
 
-main {
-    min-height: calc(100vh - 125px);
-}
-
-.content {
-    padding: 0px;
-}
-
 // Activity
 
 .activity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    @include flex_center($direction: column);
     max-width: 500px;
     width: 100%;
     min-height: calc(100vh - 125px);
     margin: 0px auto;
-    padding: 0px 10px;
 
     .record_activity {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        @include flex_center($direction: column);
         width: 100%;
         margin-bottom: 20px;
 
@@ -87,28 +60,13 @@ main {
         }
 
         .buttons {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            @include flex_center;
             gap: 20px;
-            // max-width: 500px;
             width: 100%;
 
             a {
+                @include blue_button;
                 position: relative;
-                // width: 240px;
-                width: 100%;
-                height: 50px;
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $big-border-radius;
-                transition: transform 0.3s ease, background-color 0.3s ease;
-
-                &:hover,
-                &:focus {
-                    transform: scale(1.05);
-                    cursor: pointer;
-                }
 
                 &:nth-child(1) {
                     background-color: $blue-color;
@@ -125,10 +83,7 @@ main {
                 }
 
                 .fa-play, .fa-pause, .fa-stop {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
+                    @include position_center;
                     font-size: 30px;
                     color: $secondary-color;
                 }
@@ -164,14 +119,12 @@ main {
     }
 
     .training_plan_container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        @include flex_center($direction: column);
         width: 100%;
         margin-bottom: 20px;
 
         .training_plan {
+            @include animated_border;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -179,34 +132,6 @@ main {
             height: 250px;
             border-radius: $small-border-radius;
             overflow: hidden;
-
-            &::after,
-            &::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: calc(100% + 0px);
-                height: calc(100% + 0px);
-                padding: 2px;
-                border-radius: inherit;
-                mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-                mask-composite: exclude;
-                animation: 5s spin linear infinite;
-
-                background-image: conic-gradient(
-                    from var(--angle), 
-                    $blue-color,
-                    transparent,
-                    $blue-color,
-                );
-            }
-
-            &::before {
-                filter: blur(5px);
-                opacity: 0.5;
-            }
 
             &.blur {
                 animation: blur 0.3s ease-out;
@@ -241,8 +166,6 @@ main {
                     transition: opacity 0.5s ease;
 
                     p {
-                        // line-height: 15px;
-
                         &:first-child {
                             margin-bottom: 5px;
                         }
@@ -260,27 +183,15 @@ main {
                 .add_time,
                 .skip_break_button,
                 .skip_warm_up_button {
+                    @include blue_button(50px);
                     position: relative;
-                    width: 50px;
-                    height: 50px;
                     margin-left: 10px;
-                    border: 1px solid transparentize($blue-color, 0.5);
-                    border-radius: 50%;
-                    transition: transform 0.3s ease;
-
-                    &:hover {
-                        transform: scale(1.05);
-                        cursor: pointer;
-                    }
 
                     .fa-play,
                     .fa-angle-right,
                     .fa-plus,
                     .fa-stop {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
+                        @include position_center;
                         font-size: 30px;
                         color: $blue-color;
                     }
@@ -333,7 +244,6 @@ main {
 
             .warm_up {
                 .title {
-                    // width: 130px;
                     width: 50px;
                     font-family: $article-heading-font;
                     font-size: 2em;
@@ -341,7 +251,6 @@ main {
 
                 .skip_warm_up_button {
                     width: 50px;
-                    // margin-left: 130px - 50px;
                 }
             }
 
@@ -349,50 +258,7 @@ main {
 
             .break .break_timer,
             .warm_up .warm_up_timer {
-                position: relative;
-                width: 100px;
-                height: 100px;
-                border-radius: 50px;
-
-                svg {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: rotate(-90deg) translate(50%, -50%);
-
-                    &:nth-child(1) {
-                        z-index: 10;
-                    }
-
-                    .progress {
-                        fill: none;
-                        stroke-width: 5;
-                        stroke-linecap: round;
-                        stroke-linejoin: round;
-                    }
-
-                    .progress_background {
-                        fill: none;
-                        stroke: darken($secondary-color, 40%);
-                        stroke-width: 3;
-                        stroke-dasharray: 2 4;
-                    }
-                }
-
-                p {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    color: $secondary-color;
-                    font-family: $timer-font;
-                    font-size: 1.2em;
-
-                    span {
-                        font-family: inherit;
-                        font-size: inherit;
-                    }
-                }
+                @include timer;
             }
 
             .bar_container {
@@ -526,7 +392,6 @@ main {
     .previous_activity {
         max-width: 500px;
         width: 100%;
-        margin-bottom: 20px;
 
         .top {
             display: flex;
@@ -609,10 +474,8 @@ main {
 }
 
 .activity_summary {
+    @include flex_center($direction: column);
     display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 20px;
     min-height: 100vh;
     text-align: center;
@@ -625,49 +488,7 @@ main {
             font-family: inherit;
 
             .tooltip {
-                &::before,
-                &::after {
-                    --scale: 0;
-
-                    position: absolute;
-                    top: -5px;
-                    left: 50%;
-                    transform: translateX(-50%) translateY(var(--translate-y, 0)) scale(var(--scale));
-                    transform-origin: bottom center;
-                    transition: 0.3s transform 0s;
-                }
-
-                &::before {
-                    --translate-y: calc(-100% - 10px);
-
-                    content: attr(data-tooltip);
-                    width: fit-content;
-                    max-width: 100%;
-                    padding: 5px;
-                    text-align: center;
-                    border-radius: $small-border-radius;
-                    font-size: 0.8em;
-                    background-color: transparentize($secondary-color, 0.8);
-                    color: $secondary-color;
-                    text-shadow: 0px 0px 5px $main-color;
-                }
-
-                &::after {
-                    --translate-y: calc(-1 * 10px);
-                    
-                    content: "";
-                    border: 10px solid transparent;
-                    border-top-color: transparentize($secondary-color, 0.8);
-                    transform-origin: top center;
-                }
-
-                &:hover {
-                    &::before,
-                    &::after {
-                        --scale: 1;
-                        transition: 0.3s transform 1s;
-                    }
-                }
+                @include tooltip($top: -5px)
             }
         }
     }
@@ -703,11 +524,8 @@ main {
         height: 250px;
 
         &::before {
+            @include position_center;
             content: "%";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-family: $article-heading-font;
             font-size: 2.5em;
             font-weight: bold;
@@ -720,29 +538,9 @@ main {
     }
 }
 
-/*****************
- Custom Properties
-******************/
-
-@property --angle {
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
-}
-
 /***********
  Key Frames
 ***********/
-
-@keyframes spin {
-    0% {
-        --angle: 0deg;
-    }
-
-    100% {
-        --angle: 360deg;
-    }
-}
 
 @keyframes bluePulse {
     0% {
@@ -910,10 +708,7 @@ main {
                     border: none;
         
                     p {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
+                        @include flex_center($direction: column);
                     }
                 }
 

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Timer
 
-    const timer:HTMLHeadingElement = document.querySelector(".timer h3") as HTMLHeadingElement // Gets Timer's Text From HTML
+    const timer:HTMLHeadingElement = document.querySelector(".timer p") as HTMLHeadingElement // Gets Timer's Text From HTML
 
     const password_reset_timer:number = Number(getCookie("password_reset_timer")) // Time From Cookie Value
     let max_remaining_time:number = 600000 // 10 Minutes

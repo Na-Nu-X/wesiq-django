@@ -8,9 +8,7 @@
 {% endblock style %}
 
 {% block banner %}
-    <div class="write_article">
-        <a href="{% url 'write_article_url' %}" title="Pridať článok" target="_self">Pridať článok</a>
-    </div>
+    <a href="{% url 'write_article_url' %}" title="Pridať článok" target="_self">Pridať článok</a>
 {% endblock banner %}
 
 {% block heading %}Témy na čítanie{% endblock heading %}
@@ -89,12 +87,10 @@
     </div>
 
     <div class="articles">
-        <h2 class="no_articles">
-            {% if no_articles %}
-                Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články.
-            
-            {% endif %}
-        </h2>
+        {% if no_articles %}
+            <h2 class="no_articles">Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články.</h2>
+
+        {% endif %}
 
         {% comment %} article class="skeleton_loading" {% endcomment %}
         {% for one_article in articles %}
