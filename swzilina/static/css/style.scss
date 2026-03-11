@@ -1,6 +1,9 @@
 @import "partials/variables";
+@import "partials/mixins";
 
-// General Styles
+/***************
+ General Styles
+***************/
 
 * {
     margin: 0;
@@ -12,30 +15,30 @@
         size: $default-font-size;
     }
 
-    &:before, &:after {
+    &::before, &::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
 }
 
+body {
+    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
+}
+
 // Preloader
 
 .preloader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    color: darken($secondary-color, 20%);
+    @include position_center($position: fixed);
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
     font-size: 10px;
-    width: 1em;
-    height: 1em;
+    color: darken($secondary-color, 20%);
     border-radius: 50%;
-    text-indent: -9999em;
-    animation: mulShdSpin 1.3s infinite linear;
-    transform: translateZ(0);
     transition: opacity 1s ease, visibility 1s ease;
-    z-index: 9999;
+    animation: preloaderSpin 1s infinite linear;
+    z-index: 9000;
 
     &.hidden {
         opacity: 0;
@@ -43,85 +46,84 @@
     }
 }
 
-@keyframes mulShdSpin {
-    0%,
-    100% {
-        box-shadow: 0 -3em 0 0.2em, 
-        2em -2em 0 0em, 3em 0 0 -1em, 
-        2em 2em 0 -1em, 0 3em 0 -1em, 
-        -2em 2em 0 -1em, -3em 0 0 -1em, 
-        -2em -2em 0 0;
+// Privacy Policy
+
+.privacy_policy {
+    @include position_center($position: fixed);
+    max-width: 800px;
+    width: 100%;
+    padding: 30px 50px 50px;
+    text-align: center;
+    background-color: transparentize($main-color, 0.9);
+    color: $secondary-color;
+    backdrop-filter: blur(8px);
+    border: 2px solid $secondary-color;
+    border-radius: $medium-border-radius;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 8000;
+
+    &.hide {
+        opacity: 0;
+        visibility: hidden;
     }
 
-    12.5% {
-        box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
-        3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
-        -2em 2em 0 -1em, -3em 0 0 -1em, 
-        -2em -2em 0 -1em;
+    h2 {
+        margin-bottom: 30px;
+        font-size: 2.5em;
     }
 
-    25% {
-        box-shadow: 0 -3em 0 -0.5em, 
-        2em -2em 0 0, 3em 0 0 0.2em, 
-        2em 2em 0 0, 0 3em 0 -1em, 
-        -2em 2em 0 -1em, -3em 0 0 -1em, 
-        -2em -2em 0 -1em;
-    }
+    .privacy_policy_buttons {
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0px auto;
 
-    37.5% {
-        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-        3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
-        -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
-    }
+        .privacy_policy_accept { // Mixin
+            width: 100%;
+            height: 50px;
+            color: $main-color;
+            background-color: $success-color;
+            border: 1px solid $main-color;
+            border-radius: $medium-border-radius;
+            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
-    50% {
-        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-        3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
-        -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
-    }
+            margin: {
+                top: 40px;
+                right: 10px;
+            }
 
-    62.5% {
-        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-        3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
-        -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
-        3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-        -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
-    }
-    
-    87.5% {
-        box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
-        3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-        -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
-    }
-}
-
-// Skeleton Loading
-
-.skeleton_loading {
-    animation: skeletonLoading 1s linear infinite alternate;
-
-    &.skeleton_text {
-        border-radius: $medium-border-radius;
-
-        .hidden {
-            visibility: hidden;
+            &:hover,
+            &:focus {
+                background-color: lighten($success-color, 10%);
+                transform: scale(1.1);
+                letter-spacing: 1px;
+                cursor: pointer;
+            }
         }
-    }
-}
 
-@keyframes skeletonLoading {
-    0% {
-        // background-color: #a3b8c2;
-        background-color: darken($secondary-color, 40%);
-    }
+        .privacy_policy_reject {
+            width: 100%;
+            height: 50px;
+            color: $main-color;
+            background-color: $error-color;
+            border: 1px solid $main-color;
+            border-radius: $medium-border-radius;
+            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
 
-    100% {
-        // background-color: #f0f3f5;
-        background-color: darken($secondary-color, 20%);
+            margin: {
+                top: 40px;
+                left: 10px;
+            }
+
+            &:hover,
+            &:focus {
+                background-color: lighten($error-color, 5%);
+                transform: scale(1.1);
+                letter-spacing: 1px;
+                cursor: pointer;
+            }
+        }
     }
 }
 
@@ -139,16 +141,16 @@
     color: $secondary-color;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 
-    &:focus {   
+    &:focus {
         opacity: 1;
         outline: none;
     }
 }
 
-// Move Down
+// Move Down & Move Up
 
-.move_down {
-    position: absolute;
+.move_down,
+.move_up {
     bottom: 10px;
     left: 10px;
     width: 50px;
@@ -157,10 +159,8 @@
     backdrop-filter: blur(5px);
     border: 2px solid $secondary-color;
     border-radius: 50%;
-    opacity: 1;
-    visibility: visible;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 9999;
+    z-index: 9000;
 
     &:hover {
         cursor: pointer;
@@ -173,12 +173,67 @@
 
     img {
         position: absolute;
-        top: calc(50% + 3px);
         left: 50%;
-        transform: translate(-50%, -50%) rotate(180deg);
         width: 32px;
         height: 32px;
         transition: width 0.3s ease, height 0.3s ease;
+    }
+}
+
+.move_down {
+    position: absolute;
+    opacity: 1;
+    visibility: visible;
+
+    img {
+        top: calc(50% + 3px);
+        transform: translate(-50%, -50%) rotate(180deg);
+    }
+}
+
+.move_up {
+    position: fixed;
+    opacity: 0;
+    visibility: hidden;
+
+    img {
+        top: calc(50% - 3px);
+        transform: translate(-50%, -50%);
+    }
+}
+
+// Messages
+
+.message {
+    visibility: hidden;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    animation: fadeOutMessage 5s ease;
+    z-index: 200;
+
+    &.success {
+        color: $success-color;
+    }
+
+    &.error {
+        color: $error-color;
+    }
+}
+
+// Skeleton Loading
+
+.skeleton_loading {
+    animation: skeletonLoading 1s linear infinite alternate;
+
+    &.skeleton_text {
+        border-radius: $medium-border-radius;
+
+        .hidden {
+            visibility: hidden;
+        }
     }
 }
 
@@ -195,7 +250,7 @@ header {
         background-color: transparentize($main-color, 0.2);
         border-bottom: 1px solid $secondary-color;
         opacity: 1;
-        z-index: 9999;
+        z-index: 8000;
 
         ul {
             text-align: center;
@@ -238,22 +293,38 @@ header {
     // Banner
 
     .banner {
-        position: relative;
-        height: 125px;
-        background-color: transparentize($main-color, 0.1);
+        position: absolute;
+        top: 67px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        height: calc(125px - 67px);
+        padding: 0px 10px;
+        background-color: transparentize($secondary-color, 0.9);
         backdrop-filter: blur(5px);
-        z-index: 8000;
+        z-index: 7000;
+
+        .left {
+            width: 100%;
+    
+            a {
+                text-decoration: none;
+                color: $secondary-color;
+        
+                &:hover,
+                &:active {
+                    text-decoration: underline;
+                }
+            }
+        }
 
         .right {
-            position: absolute;
-            top: 67px;
             display: flex;
             align-items: center;
             justify-content: flex-end;
             gap: 20px;
             width: 100%;
-            height: calc(100% - 67px);
-            padding: 0px 10px;
 
             // Notifications
 
@@ -354,160 +425,16 @@ header {
  Main Styles
 ************/
 
-// Messages
-
-.message {
-    visibility: hidden;
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    animation: fadeOut 5s ease;
-    z-index: 200;
-
-    &.success {
-        color: $success-color;
-    }
-
-    &.error {
-        color: $error-color;
-    }
-}
-
-main {
-    min-height: 100vh;
+.content {
+    min-height: calc(100vh - 125px);
+    margin-bottom: 20px;
+    padding: 125px + 20px 20px 0px;
     align-content: center;
-    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     color: $secondary-color;
-}
-
-// Privacy Policy Bar
-
-.privacy_policy {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 800px;
-    width: 100%;
-    padding: 30px 50px 50px;
-    text-align: center;
-    background-color: transparentize($main-color, 0.9);
-    backdrop-filter: blur(8px);
-    border: 2px solid $secondary-color;
-    border-radius: $medium-border-radius;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-    z-index: 100;
-
-    &.hide {
-        opacity: 0;
-        visibility: hidden;
-    }
 
     h2 {
-        margin-bottom: 30px;
         font-size: 2.5em;
-    }
-
-    .privacy_policy_buttons {
-        width: 90%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin: 0px auto;
-
-        .privacy_policy_accept { // Mixin
-            width: 100%;
-            height: 50px;
-            color: $main-color;
-            background-color: $success-color;
-            border: 1px solid $main-color;
-            border-radius: $medium-border-radius;
-            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-            margin: {
-                top: 40px;
-                right: 10px;
-            }
-
-            &:hover,
-            &:focus {
-                background-color: lighten($success-color, 10%);
-                transform: scale(1.1);
-                letter-spacing: 1px;
-                cursor: pointer;
-            }
-        }
-
-        .privacy_policy_reject {
-            width: 100%;
-            height: 50px;
-            color: $main-color;
-            background-color: $error-color;
-            border: 1px solid $main-color;
-            border-radius: $medium-border-radius;
-            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-            margin: {
-                top: 40px;
-                left: 10px;
-            }
-
-            &:hover,
-            &:focus {
-                background-color: lighten($error-color, 5%);
-                transform: scale(1.1);
-                letter-spacing: 1px;
-                cursor: pointer;
-            }
-        }
-    }
-}
-
-// .content {
-//     padding-top: 125px; // Navigation Bar
-// }
-
-.content h2 {
-    font-size: 2.5em;
-    text-align: center;
-}
-
-// Move Up
-
-.move_up {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    width: 50px;
-    height: 50px;
-    background-color: transparentize($main-color, 0.9);
-    backdrop-filter: blur(5px);
-    border: 2px solid $secondary-color;
-    border-radius: 50%;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 1000;
-
-    &:hover {
-        cursor: pointer;
-
-        & img {
-            width: 36px;
-            height: 36px;
-        }
-    }
-
-    img {
-        position: absolute;
-        top: calc(50% - 3px);
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 32px;
-        height: 32px;
-        transition: width 0.3s ease, height 0.3s ease;
+        text-align: center;
     }
 }
 
@@ -515,13 +442,13 @@ main {
  Footer Styles
 **************/
 
-footer { // Minix
+footer {
     position: relative;
     text-align: center;
     padding: 10px;
     background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
-    z-index: 9999;
+    z-index: 7000;
 
     h2 {
         font-size: 2.5em;
@@ -614,11 +541,107 @@ footer { // Minix
     }
 }
 
+/*****************
+ Custom Properties
+******************/
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
 /***********
  Key Frames
 ***********/
 
+@keyframes preloaderSpin {
+    0%,
+    100% {
+        box-shadow: 0 -3em 0 0.2em, 
+        2em -2em 0 0em, 3em 0 0 -1em, 
+        2em 2em 0 -1em, 0 3em 0 -1em, 
+        -2em 2em 0 -1em, -3em 0 0 -1em, 
+        -2em -2em 0 0;
+    }
+
+    12.5% {
+        box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
+        3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
+        -2em 2em 0 -1em, -3em 0 0 -1em, 
+        -2em -2em 0 -1em;
+    }
+
+    25% {
+        box-shadow: 0 -3em 0 -0.5em, 
+        2em -2em 0 0, 3em 0 0 0.2em, 
+        2em 2em 0 0, 0 3em 0 -1em, 
+        -2em 2em 0 -1em, -3em 0 0 -1em, 
+        -2em -2em 0 -1em;
+    }
+
+    37.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+        3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
+        -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+
+    50% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+        3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
+        -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+
+    62.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+        3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
+        -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
+        3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+        -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
+    }
+    
+    87.5% {
+        box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
+        3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+        -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+    }
+}
+
+@keyframes skeletonLoading {
+    0% {
+        background-color: darken($secondary-color, 40%);
+    }
+
+    100% {
+        background-color: darken($secondary-color, 20%);
+    }
+}
+
+@keyframes spin {
+    0% {
+        --angle: 0deg;
+    }
+
+    100% {
+        --angle: 360deg;
+    }
+}
+
 @keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInScale {
     0% {
         opacity: 0;
         transform: scale(0.8);
@@ -630,7 +653,7 @@ footer { // Minix
     }
 }
 
-@keyframes fadeOut {
+@keyframes fadeOutMessage {
     0% {
         opacity: 1;
         visibility: visible;
@@ -638,6 +661,7 @@ footer { // Minix
 
     100% {
         opacity: 0;
+        visibility: hidden;
         top: 50%;
     }
 }
@@ -646,46 +670,35 @@ footer { // Minix
  Media Queries
 **************/
 
-// @media (min-width: 801px) {
-//     .navigation_bar {
-//         ul {
-//             li {
-//                 display: inline-block;
-//             }
-//         }
-//     }
-// }
+@media (width <= 800px) {
+    header {
+        // Navigation Bar
 
-@media (max-width: 800px) {
-    .navigation_bar {
-        ul {
-            li {
-                // display: none !important;
-                display: none;
+        .navigation_bar {
+            ul {
+                li {
+                    display: none !important;
 
-                a {
-                    display: block;
-                    margin: 10px 0px;
+                    a {
+                        display: block;
+                        margin: 10px 0px;
+                    }
+                }
+
+                i {
+                    display: block !important;
+                    color: $secondary-color;
+                    font-size: 2em;
+                    transition: transform 0.3s ease;
                 }
             }
-
-            i {
-                display: block !important;
-                color: $secondary-color;
-                font-size: 2em;
-                transition: transform 0.3s ease;
-            }
         }
-    }
 
-    .header_container h1 a {
-        font-size: 3em !important;
-    }
-}
+        // Banner
 
-@media (max-width: 600px) {
-    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, input[type="submit"] {
-        width: 100% !important;
+        .banner {
+            top: 51px;
+        }
     }
 }
 

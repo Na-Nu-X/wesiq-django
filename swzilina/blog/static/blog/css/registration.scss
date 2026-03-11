@@ -1,19 +1,18 @@
 @import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
 
 /************
  Main Styles
 ************/
 
-// Form
+// Registration Form
 
 .registration_form {
-    position: relative;
+    @include animated_border;
     max-width: 500px;
     margin: 0px auto;
     padding: 30px 50px 50px;
     text-align: center;
-    backdrop-filter: blur(5px);
-    border: 2px solid $secondary-color;
     border-radius: $medium-border-radius;
 
     h2 {
@@ -38,6 +37,7 @@
         left: 50px;
         width: 32px;
         height: 32px;
+        z-index: 100;
 
         img {
             width: 32px;
@@ -51,37 +51,7 @@
     }
 
     input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
-        width: 90%;
-        height: 50px;
-        margin-bottom: 10px;
-        padding: 0px 10px;
-        background: transparent;
-        color: $secondary-color;
-        border: none;
-        border-bottom: 1px solid darken($secondary-color, 40%);
-        outline: none;
-        transition: width 0.3s ease, border 0.3s ease;
-
-        &:hover,
-        &:focus {
-            width: 100%;
-            border-bottom: 1px solid darken($secondary-color, 20%);
-        }
-
-        &::placeholder {
-            color: darken($secondary-color, 40%);
-        }
-
-        &:-webkit-autofill {
-            -webkit-text-fill-color: rgb(255, 255, 255);
-            transition: width 0.3s ease, background-color 9999s ease;
-
-            &:hover,
-            &:focus {
-                -webkit-text-fill-color: rgb(255, 255, 255);
-                transition: width 0.3s ease, background-color 9999s ease;
-            }
-        }
+        @include form_input;
     }
 
     .password_container {
@@ -106,48 +76,23 @@
         }
 
         .fa-eye, .fa-eye-slash, .fa-key, .fa-copy {
+            @include icon;
             display: block;
-            color: darken($secondary-color, 40%);
             position: absolute;
             bottom: 10px;
-            padding-bottom: 16px;
-            padding-top: 19px;
-
-            &:hover {
-                color: darken($secondary-color, 20%);
-                cursor: pointer;
-                transition: color 0.3s ease, right 0.3s ease;
-            }
-        }
-
-        .fa-key {
-            display: block;
-            color: darken($secondary-color, 40%);
-            position: absolute;
-            bottom: 10px;
-            padding-bottom: 16px;
-            padding-top: 19px;
-
-            &:hover {
-                color: darken($secondary-color, 20%);
-                cursor: pointer;
-                transition: color 0.3s ease, left 0.3s ease;
-            }
+            padding: 19px 0px 16px;
         }
 
         .fa-eye, .fa-eye-slash {
             right: 20px;
-            transition: right 0.3s ease;
         }
 
         .fa-key {
             left: 3px;
-            transition: left 0.3s ease;
         }
 
         .fa-copy {
             right: 1px;
-            transition: right 0.3s ease;
         }
     }
 
@@ -164,57 +109,22 @@
         }
 
         .fa-copy {
+            @include icon;
             display: block;
-            color: darken($secondary-color, 40%);
             position: absolute;
             right: 1px;
             bottom: 10px;
-            padding-bottom: 16px;
-            padding-top: 19px;
-            transition: right 0.3s ease;
-
-            &:hover {
-                color: darken($secondary-color, 20%);
-                cursor: pointer;
-                transition: color 0.3s ease, right 0.3s ease;
-            }
+            padding: 19px 0px 16px;
         }
     }
 
     .form_report {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.9em;
-
-        &.success {
-            color: $success-color;
-        }
-
-        &.error {
-            color: $error-color;
-        }
+        @include form_report;
     }
 
     input[type="submit"] {
-        width: 90%;
-        height: 50px;
+        @include blue_button;
         margin-top: 40px;
-        background-color: transparentize($main-color, 0.2);
-        color: $secondary-color;
-        border: 1px solid $secondary-color;
-        border-radius: $big-border-radius;
-        transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-        &:hover,
-        &:focus {
-            background-color: transparentize($secondary-color, 0.1);
-            color: $main-color;
-            border: 1px solid $main-color;
-            transform: scale(1.1);
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
     }
 
     .form_questions {
@@ -236,17 +146,23 @@
  Media Queries
 **************/
 
-@media (max-width: 600px) {
-    .password_container .fa-eye,
-    .password_container .fa-eye-slash {
-        right: 0px !important;
-    }
+@media (width <= 600px) {
+    .registration_form {
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="submit"] {
+            width: 100% !important;
+        }
     
-    .password_container .fa-key {
-        left: -16px !important;
-    }
-
-    .password_container .fa-copy, .password_check_container .fa-copy {
-        right: -19px !important;
+        .password_container .fa-eye,
+        .password_container .fa-eye-slash {
+            right: 0px !important;
+        }
+        
+        .password_container .fa-key {
+            left: -16px !important;
+        }
+    
+        .password_container .fa-copy, .password_check_container .fa-copy {
+            right: -19px !important;
+        }
     }
 }

@@ -41,11 +41,28 @@
 <body>
     <span class="preloader"></span> <!-- https://cssloaders.github.io/ -->
 
-    <a class="skip_link" href="#">PRESKOČIŤ</a>
+    <div class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
+        <h2>Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
 
-    <div class="move_down" title="Posunúť nadol">
-        <img src="{% static 'images/arrow.png' %}"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+        <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
+
+        <div class="privacy_policy_buttons">
+            <button class="privacy_policy_accept">Potvrdiť všetky</button>
+            <button class="privacy_policy_reject">Iba nevyhnutné</button>
+        </div>
     </div>
+
+    <a class="skip_link" href="#">PRESKOČIŤ</a>
+    
+    <div class="move_down" title="Posunúť nadol"><img src="{% static 'images/arrow.png' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+    <div class="move_up"><img src="{% static 'images/arrow.png' %}" title="Posunúť nahor"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+
+    {% if messages %}
+        {% for one_message in messages %}
+            <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message|safe }}</p>
+        
+        {% endfor %}
+    {% endif %}
 
     <header>
         <nav class="navigation_bar">
@@ -56,18 +73,13 @@
                 
                 {% block navigation_bar_items %}{% endblock navigation_bar_items %}
 
-                {% comment %} <div class="navigation_icon">
-                    <i class="fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
-                    <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                </div> {% endcomment %}
-
                 <i class="fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
             </ul>
         </nav>
 
         <div class="banner">
-            {% block banner %}{% endblock banner %}
+            <div class="left">{% block banner %}{% endblock banner %}</div>
             
             <div class="right">
                 {% if request.session.logged_in_user_id %}
@@ -107,37 +119,14 @@
         </div>
         
         <div class="header_container">
-            <h1><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
+            {% block search_bar %}{% endblock search_bar %}
+            <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
             {% block buttons %}{% endblock buttons %}
         </div>
     </header>
 
-    <main>
-        <section class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
-            <h2>Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
-
-            <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
-
-            <div class="privacy_policy_buttons">
-                <button class="privacy_policy_accept">Potvrdiť všetky</button>
-                <button class="privacy_policy_reject">Iba nevyhnutné</button>
-            </div>
-        </section>
-
-        <section class="content">
-            {% if messages %}
-                {% for one_message in messages %}
-                    <p class="message {% if one_message.tags %}{{ one_message.tags }}{% endif %}">{{ one_message|safe }}</p>
-                
-                {% endfor %}
-            {% endif %}
-
-            {% block content %}{% endblock content %}
-        </section>
-
-        <div class="move_up">
-            <img src="{% static 'images/arrow.png' %}" title="Posunúť nahor"> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
-        </div>
+    <main class="content">
+        {% block content %}{% endblock content %}
     </main>
 
     <footer>
@@ -164,7 +153,7 @@
         
         <div class="other">
             <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
-            <p class="copywrite">&copy; Street Workout Žilina 2025, Všetky práva vyhradené</p>
+            <p class="copywrite">&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené.</p>
         </div>
     </footer>
 
@@ -172,37 +161,10 @@
         "use strict"
         
         document.addEventListener("DOMContentLoaded", function() {
-            // Secret Message
-
-            console.log("%cStreet Workout Žilina by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)")
-
-            // Removes Skeleton Loading Animation When Page Is Fully Loaded
-
-            const skeleton_loadings = document.querySelectorAll(".skeleton_loading")
-
-            window.addEventListener("load", function() {
-                skeleton_loadings.forEach(function(one_skeleton_loading) {
-                    one_skeleton_loading.classList.remove("skeleton_loading")
-                })
-            })
-
-            // Skeleton Text Loading Animation
-
-            const skeleton_texts = document.querySelectorAll(".skeleton_text")
-
-            skeleton_texts.forEach(function(one_skeleton_text) {
-                let skeleton_texts_tags = one_skeleton_text.querySelectorAll("h2, p, img")
-
-                skeleton_texts_tags.forEach(function(one_skeleton_text_tag) {
-                    one_skeleton_text_tag.classList.remove("hidden")
-                })
-
-                one_skeleton_text.classList.remove("skeleton_loading")
-                one_skeleton_text.classList.remove("skeleton_text")
-            })
+            console.log("%cStreet Workout Žilina by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)") // Secret Message
 
             // Privacy Policy
-            
+
             const privacy_policy = document.querySelector(".privacy_policy")
             const privacy_policy_accept = document.querySelector(".privacy_policy_accept")
             const privacy_policy_reject = document.querySelector(".privacy_policy_reject")
@@ -224,11 +186,36 @@
             })
 
             // Privacy Policy Again
-
             const privacy_policy_again = document.querySelector(".privacy_policy_again")
 
             privacy_policy_again.addEventListener("click", function() {
                 privacy_policy.classList.remove("hide")
+            })
+
+            // Skeleton Loading
+            
+            const skeleton_loadings = document.querySelectorAll(".skeleton_loading")
+            
+            // Removes Skeleton Loading Animation When Page Is Fully Loaded
+            window.addEventListener("load", function() {
+                skeleton_loadings.forEach(function(one_skeleton_loading) {
+                    one_skeleton_loading.classList.remove("skeleton_loading")
+                })
+            })
+
+            // Skeleton Text Loading Animation
+
+            const skeleton_texts = document.querySelectorAll(".skeleton_text")
+
+            skeleton_texts.forEach(function(one_skeleton_text) {
+                let skeleton_texts_tags = one_skeleton_text.querySelectorAll("h2, p, img")
+
+                skeleton_texts_tags.forEach(function(one_skeleton_text_tag) {
+                    one_skeleton_text_tag.classList.remove("hidden")
+                })
+
+                one_skeleton_text.classList.remove("skeleton_loading")
+                one_skeleton_text.classList.remove("skeleton_text")
             })
         })
     </script>
