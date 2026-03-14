@@ -83,10 +83,10 @@
             
             <div class="right">
                 {% if request.session.logged_in_user_id %}
-                    <div class="notifications">
+                    {% comment %} <div class="notifications">
                         <p class="label">9+</p>
                         <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
-                    </div>
+                    </div> {% endcomment %}
 
                     <div class="account">
                         <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
@@ -120,8 +120,11 @@
         
         <div class="header_container">
             {% block search_bar %}{% endblock search_bar %}
-            <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
-            {% block buttons %}{% endblock buttons %}
+
+            <div class="center">
+                <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
+                {% block buttons %}{% endblock buttons %}
+            </div>
         </div>
     </header>
 

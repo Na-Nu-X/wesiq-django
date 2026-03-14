@@ -34,9 +34,19 @@ header {
                 color: $secondary-color;
             }
 
-            img {
-                width: 12px;
-                height: 12px;
+            .fa-star {
+                font-size: 0.8em;
+                cursor: pointer;
+
+                &.full {
+                    color: $article-color;
+                    opacity: 1;
+                }
+
+                &.empty {
+                    color: darken($secondary-color, 40%);
+                    opacity: 0.5;
+                }
             }
         }
     }
@@ -44,67 +54,75 @@ header {
     // Header Container
 
     .header_container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         min-height: 100vh;
+        padding: 125px + 20px 20px 0px;
+
+        &::before {
+            @include circle_decoration($top: -150px, $left: -150px, $width: 400px, $height: 400px);
+        }
+
+        &::after {
+            @include circle_decoration($top: 150px, $right: -150px, $width: 300px, $height: 300px);
+        }
+
+        .center {
+            @include flex_center($direction: column);
+            position: relative;
+            gap: 20px;
+            height: calc(100vh - 125px - 20px - 38px);
+        }
 
         // Search Bar
 
         .search_bar_container {
             position: relative;
-            margin-bottom: 50px;
+            max-width: 500px;
+            width: 100%;
+            margin: 0px auto;
 
             div:nth-child(1) {
                 position: relative;
                 text-align: center;
 
                 .fa-magnifying-glass {
+                    @include icon;
+                    pointer-events: none;
                     position: absolute;
                     top: 50%;
                     left: 8.5px;
                     transform: translateY(-50%);
                     font-size: 20px;
-                    color: darken($secondary-color, 10%);
-                    transition: color 0.3s ease;
+                    transition: color 0.3s ease
                 }
 
                 .fa-xmark {
+                    @include icon;
                     position: absolute;
                     top: 50%;
                     right: 0px;
                     transform: translateY(-50%);
                     padding: 9px 8.5px 9px 0px;
                     font-size: 20px;
-                    color: darken($secondary-color, 10%);
-                    transition: color 0.3s ease;
-
-                    &:hover {
-                        color: $secondary-color;
-                        cursor: pointer;
-                    }
                 }
 
                 .search_bar {
                     padding: 0px 32px;
-                    width: 500px;
+                    width: 100%;
                     height: 38px;
-                    background-color: transparentize($main-color, 0.9);
+                    background-color: transparent;
                     color: $secondary-color;
                     border: none;
-                    border: 1px solid darken($secondary-color, 10%);
+                    border: 1px solid transparentize($blue-color, 0.5);
                     border-radius: $small-border-radius;
                     text-align: center;
                     outline: none;
                     font-size: 1.2em;
-                    transition: width 0.3s ease, border 0.3s ease;
+                    transition: border 0.3s ease;
                     z-index: 50;
 
                     &:hover,
                     &:focus {
-                        width: 500px + 20px;
-                        border-color: $secondary-color !important;
+                        border-color: $blue-color !important;
                     }
 
                     &::placeholder {
@@ -113,17 +131,31 @@ header {
                 }
 
                 &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
-                    color: $secondary-color;
+                    color: $blue-color;
                 }
             }
 
             .search_result {
                 position: absolute;
                 top: 38px !important;
-                width: 500px;
-                border-radius: 0px 0px 5px 5px;
+                width: 100%;
+                max-height: 100px;
+                border-bottom-right-radius: $small-border-radius;
+                border-bottom-left-radius: $small-border-radius;
                 opacity: 0;
+                overflow-y: auto;
                 transition: top 0.3s ease, width 0.3s ease, border 0.3s ease, opacity 0.5s ease;
+
+                &::-webkit-scrollbar {
+                    width: 3px;
+                    background-color: transparentize($blue-color, 0.9);
+                    border-radius: calc(3px / 2);
+                }
+        
+                &::-webkit-scrollbar-thumb {
+                    background-color: $blue-color;
+                    border-radius: calc(3px / 2);
+                }
 
                 &.active {
                     top: 115px;
@@ -134,23 +166,20 @@ header {
                     display: block;
                     height: 38px;
                     line-height: 38px;
-                    background-color: transparentize($secondary-color, 0.9);
                     color: $secondary-color;
                     text-align: center;
                     text-decoration: none;
-                    font-size: 1.2em;
                     transition: background-color 0.3s ease, letter-spacing 0.3s ease;
 
                     &:hover {
-                        background-color: transparentize($secondary-color, 0.8);
+                        background-color: transparentize($blue-color, 0.9);
                         letter-spacing: 0.5px;
                     }
                 }
             }
 
             &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
-                width: 500px + 20px;
-                border-color: $secondary-color !important;
+                border-color: $blue-color !important;
             }
         }
 
@@ -162,13 +191,13 @@ header {
             a {
                 text-decoration: none;
                 text-shadow: 0px 0px 5px $main-color;
-                color: $secondary-color;
+                color: transparentize($blue-color, 0.5);
                 animation: fadeIn 2s ease-out;
                 transition: letter-spacing 0.3s ease;
     
                 font: {
                     family: $heading-font;
-                    size: 4em;
+                    size: 3em;
                 }
     
                 &:hover,
@@ -186,10 +215,15 @@ header {
             max-width: 500px;
             width: 100%;
             animation: fadeInScale 1s ease-out forwards;
-
+            
             .login_button,
             .registration_button {
                 @include blue_button;
+                color: transparentize($secondary-color, 0.2);
+            }
+
+            .login_button {
+                @include glow_animated_border;
             }
         }
     }
@@ -228,27 +262,11 @@ header {
             overflow: hidden;
 
             &::before {
-                content: "";
-                position: absolute;
-                top: -250px;
-                left: -50px;
-                width: 400px;
-                height: 400px;
-                border-radius: 100%;
-                background-color: transparentize($main-color, 0.8);
-                z-index: -1;
+                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
             }
 
             &::after {
-                content: "";
-                position: absolute;
-                bottom: -200px;
-                right: -50px;
-                width: 400px;
-                height: 400px;
-                border-radius: 100%;
-                background-color: transparentize($main-color, 0.8);
-                z-index: -1;
+                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
             }
 
             h2 {
@@ -961,7 +979,7 @@ header {
             gap: 1.5px; // Visually The Gap Is 10px
             max-width: $main-width;
             margin: 10px 0px;
-            padding: 10px 50px;
+            padding: 10px 0px;
             background: radial-gradient(circle, transparentize($blue-color, 0.9) 0%, transparent 100%);
             border-radius: $small-border-radius;
 
@@ -1188,15 +1206,7 @@ header {
                 overflow: hidden;
 
                 &::before {
-                    content: "";
-                    position: absolute;
-                    top: 0px;
-                    left: -80px;
-                    width: 200px;
-                    height: 200px;
-                    border-radius: 100%;
-                    background-color: transparentize($main-color, 0.8);
-                    z-index: -1;
+                    @include circle_decoration($top: 0px, $left: -80px, $width: 200px, $height: 200px, $color: transparentize($main-color, 0.8));
                 }
 
                 &.animate {
@@ -1253,13 +1263,21 @@ header {
 
             .review {
                 .rating {
-                    height: 32px;
                     margin-top: 10px;
 
-                    img:hover {
-                        transform: scale(1.1);
+                    .fa-star {
+                        font-size: 1.5em;
                         cursor: pointer;
-                        transition: transform 0.3s ease;
+
+                        &.full {
+                            color: $article-color;
+                            opacity: 1;
+                        }
+
+                        &.empty {
+                            color: darken($secondary-color, 40%);
+                            opacity: 0.5;
+                        }
                     }
                 }
 
@@ -1274,7 +1292,7 @@ header {
             max-width: $main-width;
             margin-top: 10px;
             margin-bottom: 40px;
-            padding: 10px 50px;
+            padding: 10px 0px;
             background: radial-gradient(circle, transparentize($blue-color, 0.9) 0%, transparent 100%);
             border-radius: $small-border-radius;
 
@@ -1286,6 +1304,26 @@ header {
                 
                 .review {
                     .rating {
+                        .fa-star {
+                            font-size: 1.5em;
+                            cursor: pointer;
+                            transition: color 0.1s ease, transform 0.1s ease;
+
+                            &.full {
+                                color: $article-color;
+                                opacity: 1;
+                            }
+                            
+                            &.empty {
+                                color: darken($secondary-color, 40%);
+                                opacity: 0.5;
+                            }
+
+                            &:hover {
+                                transform: scale(1.1);
+                            }
+                        }
+
                         input {
                             display: none;
                         }
@@ -1313,7 +1351,6 @@ header {
         margin: 0px auto;
         padding: 30px 50px 50px;
         text-align: center;
-        // background-color: lighten($main-color, 5%);
         border-radius: $medium-border-radius;
 
         h2 {
@@ -1330,7 +1367,6 @@ header {
             position: relative;
             margin-bottom: 10px;
             cursor: pointer;
-            z-index: 100;
 
             .select {
                 display: flex;
@@ -1411,8 +1447,6 @@ header {
 
             textarea {
                 @include form_textarea;
-                position: relative;
-                z-index: 100;
             }
 
             .attachment {
@@ -1464,9 +1498,7 @@ header {
 
         input[type="submit"] {
             @include blue_button;
-            position: relative;
             margin-top: 40px;
-            z-index: 100;
         }
     }
 }
@@ -1481,34 +1513,14 @@ header {
     }
 }
 
-@media (width <= 1000px) {
-    // Search Bar
-
-    .search_bar_container {
-        div:nth-child(1) {
-            .search_bar {
-                width: 300px !important;
-
-                &:hover,
-                &:focus {
-                    width: 300px + 20px !important;
-                }
-            }
-        }
-
-        .search_result {
-            width: 300px !important;
-        }
-
-        &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
-            width: 300px + 20px !important;
-        }
-    }
-}
-
 @media (max-width: 800px) {
     .header_container {
         height: calc(100vh - 109px);
+        padding: 109px + 20px 20px 0px !important;
+
+        .center {
+            height: calc(100vh - 109px - 20px - 38px) !important;
+        }
     }
 
     .all_reviews .one_review {
@@ -1560,14 +1572,46 @@ header {
     }
 }
 
-@media (max-width: 555px) {
-    .num_reviews {
-        width: 445px !important;
-    }
+@media (max-width: 500px) {
+    header {
+        .header_container {
+            .heading {
+                a {
+                    font-size: 2em;
+                }
+            }
 
-    .select_menus {
-        .sort_select_menu, .rating_select_menu {
-            width: (445px - 20px) / 2 !important;
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                
+                .login_button,
+                .registration_button {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 350px) {
+    .content .reviews .reviews_info_container {
+        .graph .one_column {
+            gap: 10px;
+        }
+
+        .average_rating .tooltip .average_rating_number {
+            width: 65px;
+        }
+
+        .stars {
+            gap: 8px;
+
+            .tooltip .star svg {
+                width: 16px;
+                height: 16px;
+            }
         }
     }
 }

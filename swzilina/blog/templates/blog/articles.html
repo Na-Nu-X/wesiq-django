@@ -35,10 +35,10 @@
                     >
                         {% for _ in "12345" %}
                             {% if forloop.counter <= article.rating|floatformat:0|add:0 %}
-                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                             {% else %}
-                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                             {% endif %}
                         {% endfor %}

@@ -5,43 +5,6 @@
  Main Styles
 ************/
 
-.content {
-    padding-top: 20px;
-}
-
-header {
-    min-height: 100vh;
-
-    // Header Container
-
-    .header_container {
-        @include flex_center($direction: column);
-        min-height: 100vh;
-
-        .heading {
-            text-align: center;
-    
-            a {
-                text-decoration: none;
-                text-shadow: 0px 0px 5px $main-color;
-                color: $secondary-color;
-                animation: fadeIn 2s ease-out;
-                transition: letter-spacing 0.3s ease;
-    
-                font: {
-                    family: $heading-font;
-                    size: 4em;
-                }
-    
-                &:hover,
-                &:active {
-                    letter-spacing: 0.5px;
-                }
-            }
-        }
-    }
-}
-
 // Articles Info
 
 .num_articles {
@@ -310,9 +273,19 @@ header {
                     bottom: 20px - 5.5px + 23px;
                     left: 20px;
 
-                    img {
-                        width: 12px;
-                        height: 12px;
+                    .fa-star {
+                        font-size: 0.8em;
+                        cursor: pointer;
+        
+                        &.full {
+                            color: $article-color;
+                            opacity: 1;
+                        }
+        
+                        &.empty {
+                            color: darken($secondary-color, 40%);
+                            opacity: 0.5;
+                        }
                     }
                 }
 

@@ -220,7 +220,7 @@ def homepageView(request):
 
     avg_rating = reviews.aggregate(Avg("rating"))
     avg_rating_integer = math.floor(float(avg_rating["rating__avg"])) # For Example From Average Rating Of 4.25 It Returns 4
-    avg_rating_rest = str(round(float(avg_rating["rating__avg"]) - avg_rating_integer, 2)).replace("0.", "") # For Example From Average Rating Of 4.25 It Returns 25
+    avg_rating_rest = f"{float(avg_rating['rating__avg']) - avg_rating_integer:.2f}"[2:] # For Example From Average Rating Of 4.25 It Returns 25 And From 4.00 It Returns 00
 
     reviews_amount_by_stars = {
         "5": len(reviews.filter(rating=5)), # Number Of Reviews With 5 Star Rating

@@ -3,14 +3,19 @@
 document.addEventListener("DOMContentLoaded", function():void {
     // Write Review
 
-    const stars:NodeListOf<HTMLImageElement> = document.querySelectorAll<HTMLImageElement>(".write_review_form .stars img, .edit_review_form .stars img")
-    const rating:HTMLInputElement = document.querySelector(".write_review_form .rating input, .edit_review_form .rating input") as HTMLInputElement
+    const stars:NodeListOf<HTMLImageElement> = document.querySelectorAll<HTMLImageElement>(".write_review_form .review .rating .fa-star, .edit_review_form .review .rating .fa-star")
+    const rating:HTMLInputElement = document.querySelector(".write_review_form .review .rating input, .edit_review_form .review .rating input") as HTMLInputElement
     let selected_rating:number = parseInt(rating.value) || 0
 
     function updateStars(hover_value:number = 0):void {
         stars.forEach(function(star:HTMLImageElement, index:number):void {
-            if(hover_value > 0) index < hover_value ? star.src = "../../static/images/star.png" : star.src = "../../static/images/empty_star.png"
-            else index < selected_rating ? star.src = "../../static/images/star.png" : star.src = "../../static/images/empty_star.png"
+            if(hover_value > 0) {
+                index < hover_value ? star.classList.replace("empty", "full") : star.classList.replace("full", "empty")
+            }
+
+            else {
+                index < selected_rating ? star.classList.replace("empty", "full") : star.classList.replace("full", "empty")
+            }
         })
     }
 

@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(searched_text.trim() === "") {
             search_result.innerHTML = ""
 
-            search_bar.style.borderBottom = "1px solid rgb(229.5, 229.5, 229.5)"
+            search_bar.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
             search_bar.style.borderRadius = "5px"
 
             search_result.style.border = "none"
@@ -80,14 +80,14 @@ document.addEventListener("DOMContentLoaded", function():void {
             search_bar.style.borderRadius = "5px 5px 0px 0px"
             search_bar.style.borderBottom = "none"
 
-            search_result.style.borderBottom = "1px solid rgb(229.5, 229.5, 229.5)"
-            search_result.style.borderLeft = "1px solid rgb(229.5, 229.5, 229.5)"
-            search_result.style.borderRight = "1px solid rgb(229.5, 229.5, 229.5)"
+            search_result.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
+            search_result.style.borderLeft = "1px solid rgb(75, 75, 250, 0.5)"
+            search_result.style.borderRight = "1px solid rgb(75, 75, 250, 0.5)"
             search_result.classList.add("active")
         }
         
         else {
-            search_bar.style.border = "1px solid rgb(229.5, 229.5, 229.5)"
+            search_bar.style.border = "1px solid rgb(75, 75, 250, 0.5)"
             search_bar.style.borderRadius = "5px"
 
             search_result.style.border = "none"

@@ -53,9 +53,19 @@
                 align-items: center;
 
                 .rating {
-                    img {
-                        width: 12px;
-                        height: 12px;
+                    .fa-star {
+                        font-size: 1.5em;
+                        cursor: pointer;
+            
+                        &.full {
+                            color: $article-color;
+                            opacity: 1;
+                        }
+            
+                        &.empty {
+                            color: darken($secondary-color, 40%);
+                            opacity: 0.5;
+                        }
                     }
                 }
 

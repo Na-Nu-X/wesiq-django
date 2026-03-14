@@ -11,8 +11,6 @@
     <a href="{% url 'write_article_url' %}" title="Pridať článok" target="_self">Pridať článok</a>
 {% endblock banner %}
 
-{% block heading %}Témy na čítanie{% endblock heading %}
-
 {% block content %}
     <div class="num_articles">
         {% if num_articles == 1 %}
@@ -154,12 +152,12 @@
                         >
                             <div class="skeleton_loading skeleton_text">
                                 {% for _ in "12345" %}
-                                    {% if forloop.counter <= one_article.rating|floatformat:0|add:0 %}
-                                        <img class="hidden" src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                                    {% if forloop.counter <= one_article.rating %}
+                                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                                     {% else %}
-                                        <img class="hidden" src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-
+                                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                                    
                                     {% endif %}
                                 {% endfor %}
                             </div>
