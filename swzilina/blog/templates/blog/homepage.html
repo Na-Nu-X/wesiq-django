@@ -24,10 +24,10 @@
 
         {% for _ in "12345" %}
             {% if forloop.counter <= avg_rating.rating__avg|floatformat:0|add:0 %}
-                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
-            {% else %}
-                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+            {% else %} 
+                <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
         
             {% endif %}
         {% endfor %}
@@ -46,7 +46,7 @@
     </div>
 {% endblock search_bar %}
 
-{% block heading %}Street&nbsp;Workout Žilina{% endblock heading %}
+{% block heading %}Street Workout Žilina{% endblock heading %}
 
 {% block buttons %}
     <div class="buttons">
@@ -468,17 +468,15 @@
 
                     <div class="review">
                         <div class="rating">
-                            <div class="stars">
-                                {% for _ in "12345" %}
-                                    {% if forloop.counter <= one_review.rating %}
-                                        <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                            {% for _ in "12345" %}
+                                {% if forloop.counter <= one_review.rating %}
+                                    <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
-                                    {% else %}
-                                        <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                                    
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
+                                {% else %}
+                                    <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                                
+                                {% endif %}
+                            {% endfor %}
                         </div>
 
                         <p>{{ one_review.review }}</p>
@@ -517,12 +515,10 @@
 
                 <div class="review">
                     <div class="rating">
-                        <div class="stars">
-                            {% for _ in "12345" %}
-                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                                
-                            {% endfor %}
-                        </div>
+                        {% for _ in "12345" %}
+                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            
+                        {% endfor %}
 
                         {{ review_form.rating }}
                     </div>

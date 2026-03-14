@@ -407,3 +407,17 @@
         }
     }
 }
+
+@mixin circle_decoration($top: auto, $right: auto, $bottom: auto, $left: auto, $width: 100px, $height: 100px, $color: transparentize($blue-color, 0.95)) {
+    content: "";
+    position: absolute;
+    top: $top;
+    right: $right;
+    bottom: $bottom;
+    left: $left;
+    width: $width;
+    height: $height;
+    border-radius: 100%;
+    background-color: $color;
+    z-index: -1;
+}

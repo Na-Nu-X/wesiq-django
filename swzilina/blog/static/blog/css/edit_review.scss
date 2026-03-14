@@ -69,9 +69,25 @@
     }
 
     .rating {
-        height: 32px;
-        margin: 10px 0px 0px 5%;
-        text-align: left;
+        .fa-star {
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.1s ease, transform 0.1s ease;
+
+            &.full {
+                color: $article-color;
+                opacity: 1;
+            }
+            
+            &.empty {
+                color: darken($secondary-color, 40%);
+                opacity: 0.5;
+            }
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
 
         input {
             display: none;

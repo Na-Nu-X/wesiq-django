@@ -46,23 +46,20 @@
 
             <div class="review">
                 <div class="rating">
-                    <div class="stars">
-                        {% for _ in "12345" %}
-                            {% if forloop.counter <= review.rating %}
-                                <img src="{% static 'images/star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
+                    {% for _ in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
-                            {% else %}
-                                <img src="{% static 'images/empty_star.png' %}"> <!-- https://www.flaticon.com/free-icon/star_1828884 -->
-                            
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                        {% else %}
+                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                        
+                        {% endif %}
+                    {% endfor %}
 
                     {{ review_form.rating }}
                 </div>
 
                 {{ review_form.review }}
-                <!-- <p>{{ review.review }}</p> -->
             </div>
 
             <p class="form_report" style="bottom: 162px;"></p>
