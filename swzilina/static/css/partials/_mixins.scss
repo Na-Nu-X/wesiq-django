@@ -421,3 +421,21 @@
     background-color: $color;
     z-index: -1;
 }
+
+@mixin form_back {
+    position: absolute;
+    top: 42.5px;
+    left: 50px;
+    z-index: 100;
+
+    .fa-chevron-left {
+        font-size: 2em;
+        color: transparentize($blue-color, 0.5);
+        transition: color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            color: $blue-color;
+            transform: scale(1.1);
+        }
+    }
+}
