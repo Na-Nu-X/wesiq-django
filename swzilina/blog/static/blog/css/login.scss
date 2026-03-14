@@ -32,22 +32,7 @@
     }
 
     .back {
-        position: absolute;
-        top: 42px;
-        left: 50px;
-        width: 32px;
-        height: 32px;
-        z-index: 100;
-
-        img {
-            width: 32px;
-            height: 32px;
-            transition: transform 0.3s ease;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
+        @include form_back;
     }
 
     input[type="text"], input[type="email"] {
@@ -82,32 +67,108 @@
     }
 
     input[type="submit"] {
-        @include blue_button;
-        position: relative;
+        @include blue_button($width: 90%, $border-radius: $big-border-radius);
         margin-top: 40px;
-        z-index: 100;
+        margin-bottom: 10px;
     }
 
-    .login_methods div {
-        @include blue_button;
-        position: relative;
-        margin: 10px auto;
-        line-height: 50px;
-        z-index: 100;
+    .login_methods {
+        p {
+            position: relative;
+            color: darken($secondary-color, 40%);
 
-        a {
-            display: block;
-            width: 100%;
-            height: 100%;
-            text-decoration: none;
-            color: $secondary-color;
+            span {
+                &:nth-child(1) {
+                    position: absolute;
+                    top: 50%;
+                    left: 5%;
+                    transform: translateY(-50%);
+                    width: 135px;
+                    height: 1px;
+                    background-color: darken($secondary-color, 40%);
+                }
 
-            img {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                left: 8px;
+                &:nth-child(2) {
+                    position: absolute;
+                    top: 50%;
+                    right: 5%;
+                    transform: translateY(-50%);
+                    width: 135px;
+                    height: 1px;
+                    background-color: darken($secondary-color, 40%);
+                }
             }
+        }
+
+        div {
+            position: relative;
+            display: block;
+            width: 90%;
+            height: 50px;
+            line-height: 50px;
+            margin: 10px auto;
+            background-color: transparentize($main-color, 0.05);
+            border-radius: $big-border-radius;
+            transition: transform 0.3s ease, letter-spacing 0.3s ease;
+
+            &:hover {
+                letter-spacing: 0.5px;
+                cursor: pointer;
+
+                a i {
+                    color: darken($secondary-color, 20%);
+                }
+            }
+
+            a {
+                display: block;
+                color: $secondary-color;
+                text-decoration: none;
+                width: 100%;
+                height: 100%;
+
+                i {
+                    font-size: 20px;
+                    position: absolute;
+                    top: 50%;
+                    left: 14px;
+                    transform: translateY(-50%);
+                    color: darken($secondary-color, 40%);
+                    transition: color 0.3s ease;
+                }
+            }
+        }
+
+        .google {
+            @include glow_animated_border($colors: conic-gradient(
+                from var(--angle), 
+                red,
+                yellow,
+                green,
+                blue,
+                red
+            ), 
+            $thickness: 3px)
+        }
+
+        .apple {
+            @include glow_animated_border($colors: conic-gradient(
+                from var(--angle), 
+                chartreuse,
+                transparent,
+                chartreuse
+            ), 
+            $thickness: 3px)
+        }
+
+        .facebook {
+            @include glow_animated_border($colors: conic-gradient(
+                from var(--angle), 
+                dodgerblue,
+                transparent,
+                dodgerblue
+            ), 
+            $thickness: 3px)
         }
     }
 
@@ -115,10 +176,8 @@
         margin-top: 10px;
 
         a {
-            position: relative;
             color: $secondary-color;
             text-decoration: none;
-            z-index: 100;
 
             &:hover,
             &:active {
