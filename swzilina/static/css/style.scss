@@ -24,6 +24,7 @@
 
 body {
     background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
+    overflow-x: hidden;
 }
 
 // Preloader
@@ -49,6 +50,7 @@ body {
 // Privacy Policy
 
 .privacy_policy {
+    @include animated_border;
     @include position_center($position: fixed);
     max-width: 800px;
     width: 100%;
@@ -57,7 +59,6 @@ body {
     background-color: transparentize($main-color, 0.9);
     color: $secondary-color;
     backdrop-filter: blur(8px);
-    border: 2px solid $secondary-color;
     border-radius: $medium-border-radius;
     transition: opacity 0.5s ease, visibility 0.5s ease;
     z-index: 8000;
@@ -73,56 +74,21 @@ body {
     }
 
     .privacy_policy_buttons {
-        width: 90%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        gap: 20px;
+        width: 90%;
         margin: 0px auto;
 
-        .privacy_policy_accept { // Mixin
-            width: 100%;
-            height: 50px;
-            color: $main-color;
-            background-color: $success-color;
-            border: 1px solid $main-color;
-            border-radius: $medium-border-radius;
-            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-            margin: {
-                top: 40px;
-                right: 10px;
-            }
-
-            &:hover,
-            &:focus {
-                background-color: lighten($success-color, 10%);
-                transform: scale(1.1);
-                letter-spacing: 1px;
-                cursor: pointer;
-            }
+        .privacy_policy_accept,
+        .privacy_policy_reject {
+            @include blue_button;
+            margin-top: 40px;
         }
 
-        .privacy_policy_reject {
-            width: 100%;
-            height: 50px;
-            color: $main-color;
-            background-color: $error-color;
-            border: 1px solid $main-color;
-            border-radius: $medium-border-radius;
-            transition: background-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
-
-            margin: {
-                top: 40px;
-                left: 10px;
-            }
-
-            &:hover,
-            &:focus {
-                background-color: lighten($error-color, 5%);
-                transform: scale(1.1);
-                letter-spacing: 1px;
-                cursor: pointer;
-            }
+        .privacy_policy_accept {
+            border-color: $blue-color;
         }
     }
 }
@@ -355,8 +321,7 @@ header {
             // User's Account
 
             .account {
-                display: flex;
-                align-items: center;
+                @include flex_center;
                 gap: 10px;
                 height: 38px;
 
@@ -368,30 +333,11 @@ header {
                     }
 
                     .profile_picture {
-                        width: 38px;
-                        height: 38px;
-                        padding: 2px;
-                        border: 1px solid $secondary-color;
-                        border-radius: 50%;
-                        transition: transform 0.3s ease;
-
-                        &:hover {
-                            transform: scale(1.1);
-                        }
+                        @include profile_picture;
                     }
                 }
 
-                .user_name {
-                    position: relative;
-                    text-decoration: none;
-                    color: $secondary-color;
-
-                    &:hover,
-                    &:active {
-                        text-decoration: underline;
-                    }
-                }
-
+                .user_name,
                 .logout {
                     position: relative;
                     text-decoration: none;
@@ -498,9 +444,7 @@ footer {
     }
 
     .navigation {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
+        @include flex_center;
         gap: 10px;
         margin-bottom: 10px;
 

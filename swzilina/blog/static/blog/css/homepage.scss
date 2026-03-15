@@ -63,13 +63,14 @@ header {
 
         &::after {
             @include circle_decoration($top: 150px, $right: -150px, $width: 300px, $height: 300px);
+            overflow: hidden;
         }
 
         .center {
             @include flex_center($direction: column);
             position: relative;
             gap: 20px;
-            height: calc(100vh - 125px - 20px - 38px);
+            height: calc(100vh - 125px - 20px - 40px);
         }
 
         // Search Bar
@@ -108,7 +109,7 @@ header {
                 .search_bar {
                     padding: 0px 32px;
                     width: 100%;
-                    height: 38px;
+                    height: 40px;
                     background-color: transparent;
                     color: $secondary-color;
                     border: none;
@@ -137,14 +138,15 @@ header {
 
             .search_result {
                 position: absolute;
-                top: 38px !important;
+                top: 40px !important;
                 width: 100%;
-                max-height: 100px;
+                max-height: calc(40px * 3);
                 border-bottom-right-radius: $small-border-radius;
                 border-bottom-left-radius: $small-border-radius;
                 opacity: 0;
                 overflow-y: auto;
                 transition: top 0.3s ease, width 0.3s ease, border 0.3s ease, opacity 0.5s ease;
+                z-index: 100;
 
                 &::-webkit-scrollbar {
                     width: 3px;
@@ -164,8 +166,8 @@ header {
 
                 a {
                     display: block;
-                    height: 38px;
-                    line-height: 38px;
+                    height: 40px;
+                    line-height: 40px;
                     color: $secondary-color;
                     text-align: center;
                     text-decoration: none;
@@ -988,7 +990,7 @@ header {
                         text-align: center;
                         gap: 5px;
                         width: 40px;
-                        color: darken($secondary-color, 20%);
+                        color: darken($secondary-color, 40%);
 
                         span {
                             width: 10px;
@@ -1044,7 +1046,7 @@ header {
                     .counter {
                         width: 2em;
                         text-align: center;
-                        color: darken($secondary-color, 20%);
+                        color: darken($secondary-color, 40%);
                     }
                 }
             }
@@ -1138,7 +1140,7 @@ header {
             margin: 0px auto 10px;
 
             .sort_select_menu, .rating_select_menu {
-                @include custom_select_menu($options_list_height: 158px + 10px);
+                @include custom_select_menu($options_list_height: calc(33px * 4));
 
                 .refresh {
                     .fa-arrow-rotate-right {
@@ -1160,7 +1162,7 @@ header {
             }
 
             .rating_select_menu {
-                @include custom_select_menu($options_list_height: 158px + 10px, $scrollbar: auto);
+                @include custom_select_menu($options_list_height: calc(33px * 4), $scrollbar: auto);
             }
         }
 
@@ -1505,7 +1507,7 @@ header {
         padding: 109px + 20px 20px 0px !important;
 
         .center {
-            height: calc(100vh - 109px - 20px - 38px) !important;
+            height: calc(100vh - 109px - 20px - 40px) !important;
         }
     }
 
