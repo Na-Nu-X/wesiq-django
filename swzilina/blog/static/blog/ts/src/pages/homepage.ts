@@ -32,20 +32,23 @@ document.addEventListener("DOMContentLoaded", function():void {
     function renderSearchResult():void {
         interface Pages {
             url:string,
-            title:string
+            title:string,
+            icon: string,
         }
 
         let searched_text:string = search_bar.value // Searched Text Value
 
         // Data - Array of Objects of Pages
         const pages:Pages[] = [
-            { url: "/", title: "Hlavná stránka" },
-            { url: "/prihlasenie", title: "Prihlásenie" },
-            { url: "/obnova-hesla", title: "Obnova hesla" },
-            { url: "/registracia", title: "Registrácia" },
-            { url: "/moj-ucet", title: "Môj účet" },
-            { url: "/moje-hodnotenie", title: "Moje hodnotenie" },
-            { url: "/blog", title: "Blog" },
+            { url: "/", title: "Hlavná stránka", icon: "<i class='fa-solid fa-house'></i>" }, // https://fontawesome.com/icons/house
+            { url: "/prihlasenie", title: "Prihlásenie", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/obnova-hesla", title: "Obnova hesla", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/registracia", title: "Registrácia", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/moj-ucet", title: "Môj účet", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/moje-hodnotenie", title: "Moje hodnotenie", icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
+            { url: "/blog", title: "Blog", icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
+            { url: "/trening", title: "Tréning", icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
+            { url: "/moje-treningove-plany", title: "Moje tréningové plány", icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
         ]
 
         search_result.innerHTML = "" // Deletes Search Result
@@ -72,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         filtered_pages.forEach(function(one_page:Pages):void {
             let search_result_link:HTMLAnchorElement = document.createElement("a")
             search_result_link.setAttribute("href", one_page.url)
-            search_result_link.textContent = one_page.title
+            search_result_link.innerHTML = one_page.icon + one_page.title
             search_result.appendChild(search_result_link)
         })
 
@@ -131,7 +134,9 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.clientX < login_form_dimensions.left ||
             event.clientX > login_form_dimensions.right ||
             event.clientY < login_form_dimensions.top ||
-            event.clientY > login_form_dimensions.bottom
+            event.clientY > login_form_dimensions.bottom ||
+            (event.target as HTMLAnchorElement).classList.contains("back") ||
+            ((event.target as HTMLElement).parentNode as HTMLAnchorElement).classList.contains("back")
         ) {
             this.close()
         }
@@ -155,7 +160,9 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.clientX < registration_form_dimensions.left ||
             event.clientX > registration_form_dimensions.right ||
             event.clientY < registration_form_dimensions.top ||
-            event.clientY > registration_form_dimensions.bottom
+            event.clientY > registration_form_dimensions.bottom ||
+            (event.target as HTMLAnchorElement).classList.contains("back") ||
+            ((event.target as HTMLElement).parentNode as HTMLAnchorElement).classList.contains("back")
         ) {
             this.close()
         }
