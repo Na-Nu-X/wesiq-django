@@ -276,7 +276,7 @@ header {
             }
 
             .back {
-                @include form_back;
+                @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%))
             }
 
             .form_report {

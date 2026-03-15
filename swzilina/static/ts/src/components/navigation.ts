@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             this.classList.add("fa-xmark")
 
             navigation_bar_items.forEach((one_item:HTMLLIElement) => one_item.style.display = "block")
-            console.log(navigation_bar_items)
         }
 
         else if(this.classList[1] === "fa-xmark") {

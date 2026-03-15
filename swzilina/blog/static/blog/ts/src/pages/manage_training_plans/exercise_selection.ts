@@ -94,12 +94,16 @@ document.addEventListener("DOMContentLoaded", function() {
             if((event.target instanceof Node) && !(event.target as HTMLDivElement).classList.contains("increase_weight") && !(event.target as HTMLDivElement).classList.contains("decrease_weight") && !(event.target.parentNode as HTMLDivElement).classList.contains("weight")) {
                 global_state.selection_dragged_exercise = this // Sets Selection Dragged Exercise
 
-                // Adds Exercise To The New Training Plan
-                if(global_state.focused_element === "new_training_plan") addExercise(new_training_plan.querySelector(".training_plan") as HTMLDivElement, new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
-
-                // Adds Exercise To The Edit Training Plan
-                if(global_state.focused_element === "edit_training_plan") addExercise(edit_training_plan.querySelector(".training_plan") as HTMLDivElement, edit_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan
-
+                const page_url:URL = new URL(window.location.href) // Gets The Current URL Address
+                
+                if(page_url.searchParams.has("edit")) {
+                    addExercise(edit_training_plan.querySelector(".training_plan") as HTMLDivElement, edit_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan (Edit Training Plan)
+                }
+                
+                else {
+                    addExercise(new_training_plan.querySelector(".training_plan") as HTMLDivElement, new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan (New Training Plan)
+                }
+                
                 global_state.selection_dragged_exercise = null // Deletes Selection Dragged Exercise
             }
         })

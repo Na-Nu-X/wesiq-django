@@ -16,11 +16,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Extracts Data For Every Exercise
         exercises_data.forEach(function(one_exercise_data:HTMLDivElement):void {
             const training_plan_key:string = one_exercise_data.dataset.training_plan_key as string // Gets Training Plan Key
-            const day_data:string|null = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
-            const type_data:string = one_exercise_data.dataset.type as string // Gets Training Title Of The Exercise
             const exercise_data:string = one_exercise_data.dataset.exercise as string // Gets Exercise Name
-            const periods_data:number[] = JSON.parse(one_exercise_data.dataset.periods || "[0]") // Gets Exercise Sets & Reps Periods
-            const unit_data:string = one_exercise_data.dataset.unit || "reps" // Gets Exercise Unit Type (Reps Or Seconds)
 
             const exercise_template_clone:DocumentFragment = exercise_template.content.cloneNode(true) as DocumentFragment // Clones The Exercise Template Content
 

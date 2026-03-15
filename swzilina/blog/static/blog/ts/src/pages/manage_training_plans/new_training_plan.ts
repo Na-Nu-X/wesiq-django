@@ -221,11 +221,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
-    // Sets Focused Element
-    new_training_plan.addEventListener("focus", function():void {
-        global_state.focused_element = "new_training_plan"
-    })
-
     // Change Training Plan Exercises With Scroll Wheel Functionality
     training_plan.addEventListener("wheel", function(event:WheelEvent):void {
         event.preventDefault() // Stop Scrolling
