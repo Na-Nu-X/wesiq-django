@@ -422,7 +422,7 @@
     z-index: -1;
 }
 
-@mixin form_back {
+@mixin form_back($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
     position: absolute;
     top: 42.5px;
     left: 50px;
@@ -430,11 +430,11 @@
 
     .fa-chevron-left {
         font-size: 2em;
-        color: transparentize($blue-color, 0.5);
+        color: $color;
         transition: color 0.3s ease, transform 0.3s ease;
 
         &:hover {
-            color: $blue-color;
+            color: $hover_color;
             transform: scale(1.1);
         }
     }

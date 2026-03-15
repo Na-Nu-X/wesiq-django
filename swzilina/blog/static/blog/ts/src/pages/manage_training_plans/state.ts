@@ -4,7 +4,6 @@ interface globalState {
     selection_dragged_exercise:HTMLDivElement|null,
 
     hovered_element:string|null,
-    focused_element:string|null,
 
     hold_interval:number|null,
     hold_timeout:number|null
@@ -14,7 +13,6 @@ export const global_state:globalState = {
     selection_dragged_exercise: null, // Gets Dragged Exercise From Exercise Selection
 
     hovered_element: null, // Gets Current Hovered Element
-    focused_element: "new_training_plan", // Gets Focused Element (New Training Plan As Default)
 
     // Hold Button Interval
     hold_interval: null,

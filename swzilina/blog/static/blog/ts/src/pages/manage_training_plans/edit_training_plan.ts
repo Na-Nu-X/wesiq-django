@@ -466,11 +466,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
-    // Sets Focused Element
-    edit_training_plan.addEventListener("focus", function():void {
-        global_state.focused_element = "edit_training_plan"
-    })
-
+    // Change Training Plans With Scroll Wheel Functionality
     edit_training_plan.addEventListener("wheel", function(event:WheelEvent):void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
             event.preventDefault() // Stop Scrolling
