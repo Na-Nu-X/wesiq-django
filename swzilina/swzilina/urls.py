@@ -6,8 +6,8 @@ from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blog.urls')),
     path('accounts/', include('allauth.urls')), # Google OAuth 2.0
+    path('i18n/', include('django.conf.urls.i18n')),
     path('rosetta/', include('rosetta.urls')), # Rosetta (Language Admin Site)
 ]
 

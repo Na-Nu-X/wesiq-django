@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Street Workout Žilina - Hlavná stránka{% endblock title %}
+{% block title %}{% translate "Hlavná stránka" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/homepage.css' %}">
@@ -14,7 +15,7 @@
 
 {% block navigation_bar_items %}
     <li>
-        <a class="scroll_contact" href="#" target="_self">KONTAKT</a>
+        <a class="scroll_contact" href="#" target="_self">{% translate "KONTAKT" %}</a>
     </li>
 {% endblock navigation_bar_items %}
 
@@ -39,19 +40,19 @@
         <div>
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
             <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-            <input class="search_bar" type="text" placeholder="Hľadať" autocomplete="off">
+            <input class="search_bar" type="text" placeholder="{% translate 'Hľadať' %}" autocomplete="off">
         </div>
 
         <div class="search_result"></div>
     </div>
 {% endblock search_bar %}
 
-{% block heading %}Street Workout Žilina{% endblock heading %}
+{% block heading %}{% translate "Street Workout Žilina" %}{% endblock heading %}
 
 {% block buttons %}
     <div class="buttons">
-        <button class="login_button">Prihlásiť</button>
-        <button class="registration_button">Zaregistrovať</button>
+        <button class="login_button">{% translate "Prihlásiť" %}</button>
+        <button class="registration_button">{% translate "Zaregistrovať" %}</button>
     </div>
 {% endblock buttons %}
 
@@ -60,9 +61,9 @@
         <form class="login_form" action="{% url 'homepage_url' %}" method="POST">
             {% csrf_token %}
 
-            <h2>Prihlásenie</h2>
+            <h2>{% translate "Prihlásenie" %}</h2>
 
-            <a class="back" href="#" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="#" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             <div class="email_address_container">
                 <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
@@ -72,14 +73,14 @@
             <div class="password_container">
                 <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                 {{ login_form.password }}
-                <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+                <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
             </div>
 
             <p class="form_report" style="bottom: 287px;"></p>
-            <input type="submit" name="login_form_submit" value="Prihlásiť sa">
+            <input type="submit" name="login_form_submit" value="{% translate 'Prihlásiť sa' %}">
 
             <div class="login_methods">
-                <p><span></span>alebo<span></span></p>
+                <p><span></span>{% translate "alebo" %}<span></span></p>
 
                 <div class="google">
                     <a href="/accounts/google/login/"><i class="fa-brands fa-google"></i>Google</a> <!-- https://fontawesome.com/icons/google -->
@@ -95,8 +96,8 @@
             </div>
 
             <div class="form_questions">
-                <p>Zabudli ste heslo? <a class="password_reset" href="?password-reset=true" title="Poslať overovací kód">Zmeniť heslo</a></p>
-                <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
+                <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+                <p>{% translate "Ešte nemáte účet?" %} <a href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "Vytvoriť účet" %}</a></p>
             </div>
         </form>
     </dialog>
@@ -123,9 +124,9 @@
         <form class="registration_form" action="{% url 'homepage_url' %}" method="POST">
             {% csrf_token %}
 
-            <h2>Registrácia</h2>
+            <h2>{% translate "Registrácia" %}</h2>
 
-            <a class="back" href="#" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="#" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
             
             <div class="inputs">
                 <div class="first_name_container">
@@ -150,24 +151,24 @@
             </div>
                 
             <div class="password_container">
-                <i class="fa-solid fa-key" title="Navrhnúť heslo"></i> <!-- https://fontawesome.com/icons/key -->
+                <i class="fa-solid fa-key" title="{% translate 'Navrhnúť heslo' %}"></i> <!-- https://fontawesome.com/icons/key -->
                 {{ registration_form.password }}
-                <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
-                <i class="fa-solid fa-copy copy_password" title="Skopírovať"></i> <!-- https://fontawesome.com/icons/copy -->
+                <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+                <i class="fa-solid fa-copy copy_password" title="{% translate 'Skopírovať' %}"></i> <!-- https://fontawesome.com/icons/copy -->
             </div>
 
             <div class="password_check_container">
                 <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                 {{ registration_form.password_check }}
-                <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
+                <i class="fa-regular fa-copy paste_password" title="{% translate 'Prilepiť' %}"></i> <!-- https://fontawesome.com/icons/copy -->
             </div>
 
             <p class="form_report error" style="bottom: 241px;"></p>
             <input type="hidden" name="registration_form_submit" value="registration_form_submit">
-            <input type="submit" value="Vytvoriť účet">
+            <input type="submit" value="{% translate 'Vytvoriť účet' %}">
 
             <div class="form_questions">
-                <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
+                <p>{% translate "Už máte účet?" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">Prihlásiť sa</a></p>
             </div>
 
             <!-- Google reCAPTCHA V3 -->
@@ -289,13 +290,8 @@
         </div>
     </dialog>
 
-    {% comment %} <h2>O nás</h2> {% endcomment %}
-    {% comment %} <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, nesciunt.
-    <br>
-    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti similique cum nesciunt minus optio nostrum.</p> {% endcomment %}
-
     <div class="reviews">
-        <h2>Čo si myslia ostatní?</h2>
+        <h2>{% translate "Čo si myslia ostatní?" %}</h2>
 
         <div class="reviews_info_container">
             <div class="graph">
@@ -307,13 +303,13 @@
                             class="tooltip" 
                             data-tooltip="
                                 {% if value == 0 or value >= 5 %}
-                                    {{ value }} recenzií
+                                    {{ value }} {% translate "recenzií" %}
 
                                 {% elif value == 1 %}
-                                    {{ value }} recenzia
+                                    {{ value }} {% translate "recenzia" %}
                                 
                                 {% elif value > 1 or value <= 4 %}
-                                    {{ value }} recenzie
+                                    {{ value }} {% translate "recenzie" %}
                                 
                                 {% endif %}
                             "
@@ -332,13 +328,17 @@
                     class="tooltip" 
                     data-tooltip="
                         {% if num_reviews == 0 %}
-                            Zatiaľ žiadne recenzie
+                            {% translate "Zatiaľ žiadne recenzie" %}
 
-                        {% elif num_reviews == 1 %}
-                            Na základe {{ num_reviews }} recenzie
+                        {% else %}
 
-                        {% elif num_reviews >= 2 %}
-                            Na základe {{ num_reviews }} recenzií
+                            {% blocktranslate count amount=num_reviews %}
+                                Na základe {{ amount }} recenzie
+
+                            {% plural %}
+                                Na základe {{ amount }} recenzií
+
+                            {% endblocktranslate %}
 
                         {% endif %}
                     "
@@ -348,7 +348,25 @@
 
                 <div class="stars">
                     {% for index in "12345" %}
-                        <div class="tooltip" data-tooltip="Na základe {{ num_reviews }} recenzií">
+                        <div 
+                            class="tooltip" 
+                            data-tooltip="
+                                {% if num_reviews == 0 %}
+                                    {% translate "Zatiaľ žiadne recenzie" %}
+
+                                {% else %}
+
+                                    {% blocktranslate count amount=num_reviews %}
+                                        Na základe {{ amount }} recenzie
+                                        
+                                    {% plural %}
+                                        Na základe {{ amount }} recenzií
+
+                                    {% endblocktranslate %}
+
+                                {% endif %}
+                            "
+                        >
                             <span class="star">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
                                     <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
@@ -372,13 +390,13 @@
 
         <div class="num_reviews">
             {% if reviews|length == 1 %}
-                <p>Našla sa <span>{{ reviews|length }}</span> recenzia.</p>
+                <p>{% blocktranslate %}Našla sa <span>{{ reviews|length }}</span> recenzia.{% endblocktranslate %}</p>
 
             {% elif reviews|length > 1 and reviews|length < 5 %}
-                <p>Našli sa <span>{{ reviews|length }}</span> recenzie.</p>
+                <p>{% blocktranslate %}Našli sa <span>{{ reviews|length }}</span> recenzie.{% endblocktranslate %}</p>
 
             {% else %}
-                <p>Našlo sa <span>{{ reviews|length }}</span> recenzií.</p>
+                <p>{% blocktranslate %}Našlo sa <span>{{ reviews|length }}</span> recenzií.{% endblocktranslate %}</p>
             
             {% endif %}
         </div>
@@ -391,30 +409,30 @@
                 </div>
 
                 <div class="select">
-                    <span>Najnovšie recenzie</span>
+                    <span>{% translate "Najnovšie recenzie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>Najnovšie recenzie</span></div> <!-- https://fontawesome.com/icons/clock -->
-                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>Najstaršie recenzie</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>Najlepšie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-up -->
-                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>Najhoršie hodnotenie</span></div> <!-- https://fontawesome.com/icons/angles-down -->
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>{% translate "Najnovšie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>{% translate "Najstaršie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>{% translate "Najlepšie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-up -->
+                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>{% translate "Najhoršie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-down -->
                 </div>
             </div>
 
             <div class="rating_select_menu">
-                <div class="refresh" title="Obnoviť predvolené filtre">
+                <div class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </div>
 
                 <div class="select">
-                    <span>Všetky kategórie</span>
+                    <span>{% translate "Všetky kategórie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>Všetky recenzie</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
+                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
                     <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
                     <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
                     <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
@@ -427,7 +445,7 @@
         <div class="all_reviews">
             <h2 class="no_reviews">
                 {% if reviews|length == 0 %}
-                    Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie.
+                    {% translate "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}
                 
                 {% endif %}
             </h2>
@@ -450,7 +468,7 @@
 
                         <p class="full_name">
                             {% if one_review.user == None %}
-                                Neexistujúci účet
+                                {% translate "Neexistujúci účet" %}
 
                             {% else %}
                                 {{ one_review.user.first_name }} {{ one_review.user.last_name }}
@@ -460,7 +478,7 @@
                                 - {{ one_review.creation_time|date:"d.m. Y" }}
                                  
                                 {% if one_review.last_edit != None %}
-                                    (upravené)
+                                    ({% translate "upravené" %})
 
                                 {% endif %}
                             </span>
@@ -483,7 +501,7 @@
                         <p>{{ one_review.review }}</p>
                         
                         {% if one_review.user.id == request.session.logged_in_user_id %}
-                            <a class="edit_review" href="{% url 'edit_review_url' %}" title="Upraviť recenziu">Upraviť</a>
+                            <a class="edit_review" href="{% url 'edit_review_url' %}" title="Upraviť recenziu">{% translate "Upraviť" %}</a>
                         
                         {% endif %}
                     </div>
@@ -528,7 +546,7 @@
                 </div>
 
                 <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
-                <input type="submit" value="Uverejniť">
+                <input type="submit" value="{% translate 'Uverejniť' %}">
 
                 <!-- Google reCAPTCHA V3 -->
                 <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
@@ -557,7 +575,7 @@
     <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <h2>Kontaktujte nás</h2>
+        <h2>{% translate "Kontaktujte nás" %}</h2>
 
         {{ contact_form.first_name }}
         {{ contact_form.last_name }}
@@ -565,17 +583,17 @@
 
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="subject_select_menu">
-            <input type="hidden" name="subject" value="Otázka">
+            <input type="hidden" name="subject" value="{% translate 'Otázka' %}">
 
             <div class="select">
-                <span>Otázka</span>
+                <span>{% translate "Otázka" %}</span>
                 <i class="fas fa-angle-down"></i>
             </div>
 
             <div class="options_list">
-                <div class="option" data-subject="question"><i class="fa-solid fa-question"></i><span>Otázka</span></div> <!-- https://fontawesome.com/icons/question -->
-                <div class="option" data-subject="suggestion"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Návrh na zlepšenie</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
-                <div class="option" data-subject="bug"><i class="fa-solid fa-bug"></i><span>Nahlásenie chyby</span></div> <!-- https://fontawesome.com/icons/bug -->
+                <div class="option" data-subject="question"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
+                <div class="option" data-subject="suggestion"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+                <div class="option" data-subject="bug"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
             </div>
         </div>
 
@@ -583,11 +601,11 @@
             {{ contact_form.message }}
 
             <div class="attachment">
-                <p class="attachment_report">Nie je vybraný žiaden súbor.</p>
+                <p class="attachment_report">{% translate "Nie je vybratý žiaden súbor." %}</p>
                 
                 <label for="select_attachment">
-                    <div class="tooltip" data-tooltip="Vyberte prílohu z vašich súborov">
-                        <i class="fa-solid fa-paperclip" title="Vybrať prílohu"></i> <!-- https://fontawesome.com/icons/paperclip -->
+                    <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}">
+                        <i class="fa-solid fa-paperclip" title="{% translate 'Vybrať prílohu' %}"></i> <!-- https://fontawesome.com/icons/paperclip -->
                     </div>
                 </label>
                 {{ contact_form.select_attachment }}
@@ -596,7 +614,7 @@
 
         <p class="form_report" style="bottom: 113px;"></p>
         <input type="hidden" name="contact_form_submit" value="contact_form_submit">
-        <input type="submit" value="Odoslať správu">
+        <input type="submit" value="{% translate 'Odoslať správu' %}">
 
         <!-- Google reCAPTCHA V3 -->
         <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">

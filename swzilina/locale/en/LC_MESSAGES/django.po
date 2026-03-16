@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 15:07+0100\n"
-"PO-Revision-Date: 2026-03-16 15:08+0000\n"
+"POT-Creation-Date: 2026-03-16 20:43+0100\n"
+"PO-Revision-Date: 2026-03-16 20:51+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,25 +19,391 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
+#: .\blog\templates\blog\homepage.html:5
+msgid "Hlavná stránka"
+msgstr "Homepage"
+
+#: .\blog\templates\blog\homepage.html:18
+msgid "KONTAKT"
+msgstr "CONTACT"
+
+#: .\blog\templates\blog\homepage.html:43
+msgid "Hľadať"
+msgstr "Search"
+
+#: .\blog\templates\blog\homepage.html:50
+#, fuzzy
+#| msgid "Street&nbsp;Workout Žilina"
+msgid "Street Workout Žilina"
+msgstr "Street&nbsp;Workout Žilina"
+
+#: .\blog\templates\blog\homepage.html:54
+#, fuzzy
+#| msgid "Prihlásiť sa"
+msgid "Prihlásiť"
+msgstr "Log In"
+
+#: .\blog\templates\blog\homepage.html:55
+msgid "Zaregistrovať"
+msgstr "Register"
+
+#: .\blog\templates\blog\homepage.html:64 .\templates\base.html:156
+#, fuzzy
+#| msgid "Neprihlásený"
+msgid "Prihlásenie"
+msgstr "Signed Out"
+
+#: .\blog\templates\blog\homepage.html:66
+#: .\blog\templates\blog\homepage.html:129
+msgid "Späť na úvodnú stránku"
+msgstr "Back to The Homepage"
+
+#: .\blog\templates\blog\homepage.html:76
+#: .\blog\templates\blog\homepage.html:156
+msgid "Zobraziť heslo"
+msgstr "Show Password"
+
+#: .\blog\templates\blog\homepage.html:80
+#: .\blog\templates\blog\homepage.html:171 .\templates\base.html:117
+msgid "Prihlásiť sa"
+msgstr "Log In"
+
+#: .\blog\templates\blog\homepage.html:83
+msgid "alebo"
+msgstr "or"
+
+#: .\blog\templates\blog\homepage.html:99
+msgid "Zabudli ste heslo?"
+msgstr "Forgot Password?"
+
+#: .\blog\templates\blog\homepage.html:99
+msgid "Poslať overovací kód"
+msgstr "Send Verification Code"
+
+#: .\blog\templates\blog\homepage.html:99
+msgid "Zmeniť heslo"
+msgstr "Change Password"
+
+#: .\blog\templates\blog\homepage.html:100
+msgid "Ešte nemáte účet?"
+msgstr "Don't Have an Account yet?"
+
+#: .\blog\templates\blog\homepage.html:100
+#: .\blog\templates\blog\homepage.html:168
+msgid "Vytvoriť účet"
+msgstr "Create an Account"
+
+#: .\blog\templates\blog\homepage.html:127 .\templates\base.html:157
+msgid "Registrácia"
+msgstr "Registration"
+
+#: .\blog\templates\blog\homepage.html:154
+msgid "Navrhnúť heslo"
+msgstr "Suggest a Password"
+
+#: .\blog\templates\blog\homepage.html:157
+msgid "Skopírovať"
+msgstr "Copy"
+
+#: .\blog\templates\blog\homepage.html:163
+msgid "Prilepiť"
+msgstr "Paste"
+
+#: .\blog\templates\blog\homepage.html:171
+msgid "Už máte účet?"
+msgstr "Already Have an Account?"
+
+#: .\blog\templates\blog\homepage.html:299
+msgid "Čo si myslia ostatní?"
+msgstr "What Do Others Think?"
+
+#: .\blog\templates\blog\homepage.html:311
+msgid "recenzií"
+msgstr "Reviews"
+
+#: .\blog\templates\blog\homepage.html:314
+msgid "recenzia"
+msgstr "Review"
+
+#: .\blog\templates\blog\homepage.html:317
+msgid "recenzie"
+msgstr "Reviews"
+
+#: .\blog\templates\blog\homepage.html:336
+#: .\blog\templates\blog\homepage.html:360
+msgid "Zatiaľ žiadne recenzie"
+msgstr "No Reviews yet"
+
+#: .\blog\templates\blog\homepage.html:340
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                                Na základe %(amount)s recenzie\n"
+#| "                                \n"
+#| "                            "
+#| msgid_plural ""
+#| "\n"
+#| "                                Na základe %(amount)s recenzií\n"
+#| "\n"
+#| "                            "
+msgid ""
+"\n"
+"                                Na základe %(amount)s recenzie\n"
+"\n"
+"                            "
+msgid_plural ""
+"\n"
+"                                Na základe %(amount)s recenzií\n"
+"\n"
+"                            "
+msgstr[0] ""
+"\n"
+"Based on %(amount)s Review"
+msgstr[1] ""
+"\n"
+"Based on %(amount)s Reviews"
+
+#: .\blog\templates\blog\homepage.html:364
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                                Na základe %(amount)s recenzie\n"
+#| "                                \n"
+#| "                            "
+#| msgid_plural ""
+#| "\n"
+#| "                                Na základe %(amount)s recenzií\n"
+#| "\n"
+#| "                            "
+msgid ""
+"\n"
+"                                        Na základe %(amount)s recenzie\n"
+"                                        \n"
+"                                    "
+msgid_plural ""
+"\n"
+"                                        Na základe %(amount)s recenzií\n"
+"\n"
+"                                    "
+msgstr[0] ""
+"\n"
+"Based on %(amount)s Review"
+msgstr[1] ""
+"\n"
+"Based on %(amount)s Reviews"
+
+#: .\blog\templates\blog\homepage.html:398
+#, python-format
+msgid "Našla sa <span>%(reviews|length)s</span> recenzia."
+msgstr "<span>%(reviews|length)s</span> Review Found."
+
+#: .\blog\templates\blog\homepage.html:401
+#, python-format
+msgid "Našli sa <span>%(reviews|length)s</span> recenzie."
+msgstr "<span>%(reviews|length)s</span> Reviews Found."
+
+#: .\blog\templates\blog\homepage.html:404
+#, python-format
+msgid "Našlo sa <span>%(reviews|length)s</span> recenzií."
+msgstr "<span>%(reviews|length)s</span> Reviews Found."
+
+#: .\blog\templates\blog\homepage.html:417
+#: .\blog\templates\blog\homepage.html:422
+#, fuzzy
+#| msgid "Zatiaľ žiadne recenzie"
+msgid "Najnovšie recenzie"
+msgstr "No Reviews yet"
+
+#: .\blog\templates\blog\homepage.html:423
+#, fuzzy
+#| msgid "Zatiaľ žiadne recenzie"
+msgid "Najstaršie recenzie"
+msgstr "No Reviews yet"
+
+#: .\blog\templates\blog\homepage.html:424
+msgid "Najlepšie hodnotenie"
+msgstr "Best Rating"
+
+#: .\blog\templates\blog\homepage.html:425
+msgid "Najhoršie hodnotenie"
+msgstr "Worst Rating"
+
+#: .\blog\templates\blog\homepage.html:430
+msgid "Obnoviť predvolené filtre"
+msgstr "Restore Default Filters"
+
+#: .\blog\templates\blog\homepage.html:435
+msgid "Všetky kategórie"
+msgstr "All Categories"
+
+#: .\blog\templates\blog\homepage.html:440
+#, fuzzy
+#| msgid "recenzie"
+msgid "Všetky recenzie"
+msgstr "Reviews"
+
+#: .\blog\templates\blog\homepage.html:453
+msgid ""
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;recenzie."
+msgstr "Sorry!<br>No&nbsp;reviews&nbsp;found."
+
+#: .\blog\templates\blog\homepage.html:477
+msgid "Neexistujúci účet"
+msgstr "Not Existing Account"
+
+#: .\blog\templates\blog\homepage.html:487
+msgid "upravené"
+msgstr "edited"
+
+#: .\blog\templates\blog\homepage.html:510
+msgid "Upraviť"
+msgstr "Edit"
+
+#: .\blog\templates\blog\homepage.html:555
+msgid "Uverejniť"
+msgstr "Post"
+
+#: .\blog\templates\blog\homepage.html:584
+msgid "Kontaktujte nás"
+msgstr "Contact Us"
+
+#: .\blog\templates\blog\homepage.html:592
+#: .\blog\templates\blog\homepage.html:595
+#: .\blog\templates\blog\homepage.html:600
+msgid "Otázka"
+msgstr "Question"
+
+#: .\blog\templates\blog\homepage.html:601
+msgid "Návrh na zlepšenie"
+msgstr "Suggestion For Improvement"
+
+#: .\blog\templates\blog\homepage.html:602
+#, fuzzy
+#| msgid "Neprihlásený"
+msgid "Nahlásenie chyby"
+msgstr "Signed Out"
+
+#: .\blog\templates\blog\homepage.html:610
+msgid "Nie je vybraný žiaden súbor."
+msgstr "No File is Selected."
+
+#: .\blog\templates\blog\homepage.html:613
+msgid "Vyberte prílohu z vašich súborov"
+msgstr "Select an Attachment from your Files"
+
+#: .\blog\templates\blog\homepage.html:614
+msgid "Vybrať prílohu"
+msgstr "Select an Attachment"
+
+#: .\blog\templates\blog\homepage.html:623
+msgid "Odoslať správu"
+msgstr "Send Message"
+
 #: .\swzilina\settings.py:225
+#, fuzzy
 msgid "Slovak"
 msgstr ""
 
 #: .\swzilina\settings.py:226
+#, fuzzy
 msgid "Czech"
 msgstr ""
 
 #: .\swzilina\settings.py:227
+#, fuzzy
 msgid "English"
 msgstr ""
 
 #: .\swzilina\settings.py:228
+#, fuzzy
 msgid "Spanish"
 msgstr ""
 
-#: .\templates\base.html:46
+#: .\templates\base.html:46 .\templates\base.html:183
 msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
 msgstr "Privacy&nbsp;Policy"
+
+#: .\templates\base.html:48
+msgid ""
+"Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
+" zlepšovať naše služby."
+msgstr ""
+"This Site Uses Cookies to Provide you with The Best Possible Browsing "
+"Experience. Cookies Help us Analyze, Optimize and Improve our Services."
+
+#: .\templates\base.html:51
+msgid "Potvrdiť všetky"
+msgstr "Accept All"
+
+#: .\templates\base.html:52
+msgid "Iba nevyhnutné"
+msgstr "Only Essential"
+
+#: .\templates\base.html:56
+msgid "PRESKOČIŤ"
+msgstr "SKIP"
+
+#: .\templates\base.html:58
+msgid "Posunúť nadol"
+msgstr "Move Down"
+
+#: .\templates\base.html:59
+msgid "Posunúť nahor"
+msgstr "Move Up"
+
+#: .\templates\base.html:71
+msgid "DOMOV"
+msgstr "HOME"
+
+#: .\templates\base.html:72
+msgid "AKTIVITA"
+msgstr "ACTIVITY"
+
+#: .\templates\base.html:73
+msgid "BLOG"
+msgstr "BLOG"
+
+#: .\templates\base.html:94 .\templates\base.html:110
+msgid "Môj účet"
+msgstr "My Account"
+
+#: .\templates\base.html:112
+msgid "Odhlásiť sa z účtu"
+msgstr "Log Out from Account"
+
+#: .\templates\base.html:112
+msgid "Odhlásiť"
+msgstr "Log Out"
+
+#: .\templates\base.html:117
+msgid "Neprihlásený"
+msgstr "Signed Out"
+
+#: .\templates\base.html:140
+msgid "Street&nbsp;Workout Žilina"
+msgstr "Street&nbsp;Workout Žilina"
+
+#: .\templates\base.html:143
+msgid "Napísať..."
+msgstr "Write..."
+
+#: .\templates\base.html:145
+msgid "Zavolať..."
+msgstr "Call..."
+
+#: .\templates\base.html:155
+msgid "Domov"
+msgstr "Home"
+
+#: .\templates\base.html:158
+msgid "Blog"
+msgstr "Blog"
+
+#: .\templates\base.html:184
+msgid "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené."
+msgstr "&copy; Street Workout Žilina 2025 - 2026, All Rights Reserved."
 
 #~ msgid "Zásady"
 #~ msgstr "Privacy"

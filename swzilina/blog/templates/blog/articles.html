@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Street Workout Žilina - {{ article.title|default:"Článok sa nenašiel" }}{% endblock title %}
+{% block title %}{{ article.title|default:"Článok sa nenašiel" }}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/articles.css' %}">
