@@ -439,3 +439,60 @@
         }
     }
 }
+
+// Search Bar
+
+@mixin search_bar {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+
+    .fa-magnifying-glass {
+        @include icon;
+        pointer-events: none;
+        position: absolute;
+        top: 50%;
+        left: 8.5px;
+        transform: translateY(-50%);
+        font-size: 20px;
+        transition: color 0.3s ease
+    }
+
+    .fa-xmark {
+        @include icon;
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        transform: translateY(-50%);
+        padding: 9px 8.5px 9px 0px;
+        font-size: 20px;
+    }
+
+    .search_bar {
+        width: 100%;
+        height: 40px;
+        background-color: transparentize($main-color, 0.9);
+        color: $secondary-color;
+        border: none;
+        border: 1px solid transparentize($blue-color, 0.5);
+        border-radius: $small-border-radius;
+        text-align: center;
+        outline: none;
+        font-size: 1.2em;
+        transition: border 0.3s ease;
+        z-index: 50;
+
+        &:hover,
+        &:focus {
+            border-color: $blue-color !important;
+        }
+
+        &::placeholder {
+            color: darken($secondary-color, 20%);
+        }
+    }
+
+    &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
+        color: $blue-color;
+    }
+}
