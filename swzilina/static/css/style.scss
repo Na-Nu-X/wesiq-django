@@ -461,18 +461,21 @@ footer {
     }
 
     .languages {
-        a {
-            display: inline-block;
-            margin: 0px 5px;
+        form {
+            button {
+                all: unset;
+                margin: 0px 5px;
 
-            img {
-                opacity: 0.8;
-                transition: transform 0.3s ease, opacity 0.3s ease;
+                img {
+                    opacity: 0.8;
+                    transition: transform 0.3s ease, opacity 0.3s ease;
 
-                &:hover,
-                &:focus {
-                    transform: scale(1.1);
-                    opacity: 1;
+                    &:hover,
+                    &:focus {
+                        transform: scale(1.1);
+                        opacity: 1;
+                        cursor: pointer;
+                    }
                 }
             }
         }

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}{% endblock title %}</title>
+    <title>Street Workout Žilina - {% block title %}{% endblock title %}</title>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}"> <!-- https://www.flaticon.com/free-icon/street_10060229 -->
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -45,18 +45,18 @@
     <div class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
         <h2>{% translate "Zásady&nbsp;ochrany osobných&nbsp;údajov" %}</h2>
 
-        <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
+        <p>{% translate "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby." %}<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
 
         <div class="privacy_policy_buttons">
-            <button class="privacy_policy_accept">Potvrdiť všetky</button>
-            <button class="privacy_policy_reject">Iba nevyhnutné</button>
+            <button class="privacy_policy_accept">{% translate "Potvrdiť všetky" %}</button>
+            <button class="privacy_policy_reject">{% translate "Iba nevyhnutné" %}</button>
         </div>
     </div>
 
-    <a class="skip_link" href="#">PRESKOČIŤ</a>
+    <a class="skip_link" href="#">{% translate "PRESKOČIŤ" %}</a>
     
-    <div class="move_down" title="Posunúť nadol"><img src="{% static 'images/arrow.png' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
-    <div class="move_up"><img src="{% static 'images/arrow.png' %}" title="Posunúť nahor"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+    <div class="move_down" title="{% translate 'Posunúť nadol' %}"><img src="{% static 'images/arrow.png' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+    <div class="move_up"><img src="{% static 'images/arrow.png' %}" title="{% translate 'Posunúť nahor' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
 
     {% if messages %}
         {% for one_message in messages %}
@@ -68,9 +68,9 @@
     <header>
         <nav class="navigation_bar">
             <ul>
-                <li><a href="{% url 'homepage_url' %}" target="_self">DOMOV</a></li>
-                <li><a href="{% url 'training_session_url' %}" target="_self">AKTIVITA</a></li>
-                <li><a href="{% url 'blog_url' %}" target="_self">BLOG</a></li>
+                <li><a href="{% url 'homepage_url' %}" target="_self">{% translate "DOMOV" %}</a></li>
+                <li><a href="{% url 'training_session_url' %}" target="_self">{% translate "AKTIVITA" %}</a></li>
+                <li><a href="{% url 'blog_url' %}" target="_self">{% translate "BLOG" %}</a></li>
                 
                 {% block navigation_bar_items %}{% endblock navigation_bar_items %}
 
@@ -90,7 +90,7 @@
                     </div> {% endcomment %}
 
                     <div class="account">
-                        <a href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">
+                        <a href="{% url 'edit_account_url' %}" title="{% translate 'Môj účet' %}" target="_self">
                             <img 
                                 class="profile_picture skeleton_loading" 
                                 src="
@@ -105,14 +105,14 @@
                             >
                         </a>
 
-                        <a class="user_name" href="{% url 'edit_account_url' %}" title="Môj účet" target="_self">{{ first_name }} {{ last_name }}</a>
+                        <a class="user_name" href="{% url 'edit_account_url' %}" title="{% translate 'Môj účet' %}" target="_self">{{ first_name }} {{ last_name }}</a>
 
-                        <a class="logout" href="{% url 'logout_url' %}" title="Odhlásiť sa z účtu {{ first_name }} {{ last_name }}" target="_self">Odhlásiť</a>
+                        <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ first_name }} {{ last_name }}" target="_self">{% translate "Odhlásiť" %}</a>
                     </div>
 
                 {% else %}
                     <div class="no_account">
-                        <a class="login" href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Neprihlásený</a>
+                        <a class="login" href="#" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Neprihlásený" %}</a>
                     </div>
 
                 {% endif %}
@@ -124,6 +124,7 @@
 
             <div class="center">
                 <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
+
                 {% block buttons %}{% endblock buttons %}
             </div>
         </div>
@@ -134,12 +135,12 @@
     </main>
 
     <footer>
-        <h2>Street&nbsp;Workout Žilina</h2>
+        <h2>{% translate "Street&nbsp;Workout Žilina" %}</h2>
 
         <div class="contact_us">
-            <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="Napísať...">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
+            <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="{% translate 'Napísať...' %}">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
 
-            <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="Zavolať...">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone -->
+            <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="{% translate 'Zavolať...' %}">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone -->
         </div>
 
         <div class="social_media">
@@ -149,22 +150,36 @@
         </div>
         
         <div class="navigation">
-            <a href="{% url 'homepage_url' %}" title="Domov" target="_self">Domov</a>
-            <a href="{% url 'login_url' %}" title="Prihlásenie" target="_self">Prihlásenie</a>
-            <a href="{% url 'registration_url' %}" title="Registrácia" target="_self">Registrácia</a>
-            <a href="{% url 'blog_url' %}" title="Blog" target="_self">Blog</a>
+            <a href="{% url 'homepage_url' %}" title="{% translate 'Domov' %}" target="_self">{% translate "Domov" %}</a>
+            <a href="{% url 'login_url' %}" title="{% translate 'Prihlásenie' %}" target="_self">{% translate "Prihlásenie" %}</a>
+            <a href="{% url 'registration_url' %}" title="{% translate 'Registrácia' %}" target="_self">{% translate "Registrácia" %}</a>
+            <a href="{% url 'blog_url' %}" title="{% translate 'Blog' %}" target="_self">{% translate "Blog" %}</a>
         </div>
 
         <div class="languages">
-            <a href="?language=sk"><img src="{% static 'images/slovak.png' %}" title="Slovensky" alt="Slovensky"></a> <!-- https://www.flaticon.com/free-icon/slovakia_330594 -->
-            <a href="?language=cz"><img src="{% static 'images/czech.png' %}" title="Česky" alt="Česky"></a> <!-- https://www.flaticon.com/free-icon/czech-republic_330536 -->
-            <a href="?language=en"><img src="{% static 'images/english.png' %}" title="English" alt="English"></a> <!-- https://www.flaticon.com/free-icon/united-kingdom_330425 -->
-            <a href="?language=es"><img src="{% static 'images/spanish.png' %}" title="Español" alt="Español"></a> <!-- https://www.flaticon.com/free-icon/spain_330557 -->
+            <form action="{% url 'set_language' %}" method="POST">
+                {% csrf_token %}
+
+                <input name="next" type="hidden" value="{{ request.get_full_path|slice:'3:' }}">
+
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+
+                {% for language_code, language_name in LANGUAGES %}
+                    <button
+                        type="submit"
+                        name="language"
+                        value="{{ language_code }}"
+                    >
+                        <img src="{% static 'images/' %}{{ language_code }}.png" title="{{ language_name }}" alt="{{ language_name }}"> <!-- https://www.flaticon.com/free-icon/slovakia_330594 --> <!-- https://www.flaticon.com/free-icon/czech-republic_330536 --> <!-- https://www.flaticon.com/free-icon/united-kingdom_330425 --> <!-- https://www.flaticon.com/free-icon/spain_330557 -->
+                    </button>
+                {% endfor %}
+            </form>
         </div>
         
         <div class="other">
-            <p class="privacy_policy_again">Zásady&nbsp;ochrany osobných&nbsp;údajov</p>
-            <p class="copywrite">&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené.</p>
+            <p class="privacy_policy_again">{% translate "Zásady&nbsp;ochrany osobných&nbsp;údajov" %}</p>
+            <p class="copywrite">{% translate "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené." %}</p>
         </div>
     </footer>
 
