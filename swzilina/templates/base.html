@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="sk">
@@ -42,7 +43,7 @@
     <span class="preloader"></span> <!-- https://cssloaders.github.io/ -->
 
     <div class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
-        <h2>Zásady&nbsp;ochrany osobných&nbsp;údajov</h2>
+        <h2>{% translate "Zásady&nbsp;ochrany osobných&nbsp;údajov" %}</h2>
 
         <p>Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a zlepšovať naše služby.<!-- Podrobnejšie informácie nájdete v našich <a>zásadách ochrany osobných údajov.</a> --></p>
 

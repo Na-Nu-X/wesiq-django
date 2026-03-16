@@ -9,6 +9,6 @@ admin.site.register(ArticleForum)
 admin.site.register(TrainingPlan)
 admin.site.register(Exercises)
 
-# Django Admin Credentials
+# Django Admin & Rosetta (Language Admin Site) Credentials
 # username: patrik_behul
 # password: Patrik2008

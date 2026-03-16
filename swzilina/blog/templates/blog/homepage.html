@@ -198,7 +198,7 @@
                         class="profile_picture skeleton_loading" 
                         src="
                             {% if profile_picture_name %}
-                                media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                /media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                             {% else %}
                                 {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -439,7 +439,7 @@
                             class="profile_picture skeleton_loading" 
                             src="
                                 {% if one_review.user.profile_picture_name %}
-                                    media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+                                    /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
 
                                 {% else %}
                                     {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
