@@ -52,18 +52,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.postgres',
+    'django.contrib.postgres', # PostgreSQL
 
     # Google OAuth 2.0
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
+    'rosetta', # Rosetta (Language Admin Site)
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -167,9 +170,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media Directories
-
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media/'
 
 # Google reCAPTCHA V3
 RECAPTCHA_SITE_KEY = "6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"
@@ -213,3 +215,22 @@ DEBUG = bool(os.environ.get("DEBUG", True))
 # ALLOWED_HOSTS
 hosts = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
 ALLOWED_HOSTS = hosts.split(",")
+
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGE_CODE = 'sk' # Default Language (Slovak)
+
+# Supported Languages
+LANGUAGES = [
+    ('sk', _('Slovak')),
+    ('cz', _('Czech')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+]
+
+USE_I18N = True
+
+# Translations Directories (.po And .mo Files)
+LOCALE_PATHS = [
+    BASE_DIR / 'locale/',
+]
