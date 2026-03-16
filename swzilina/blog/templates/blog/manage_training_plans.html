@@ -136,7 +136,16 @@
         <div class="top">
             <div class="new_training_plan" tabindex="0">
                 <div class="additional_info">
-                    <input type="text" class="title" placeholder="Názov">
+                    <input type="text" class="title" placeholder="Názov" aria-label="title" list="title">
+
+                    <datalist id="title">
+                        <option value="Pull">
+                        <option value="Push">
+                        <option value="Legs">
+
+                        <option value="Upper">
+                        <option value="Lower">
+                    </datalist>
 
                     <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
                     <div class="day_select_menu">
@@ -180,7 +189,16 @@
                     {% endfor %}
 
                     <div class="additional_info">
-                        <input type="text" class="title" placeholder="Názov">
+                        <input type="text" class="title" placeholder="Názov" aria-label="title" list="title">
+
+                        <datalist id="title">
+                            <option value="Pull">
+                            <option value="Push">
+                            <option value="Legs">
+
+                            <option value="Upper">
+                            <option value="Lower">
+                        </datalist>
 
                         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
                         <div class="day_select_menu">
