@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Prihlásenie{% endblock title %}
+{% block title %}{% translate "Prihlásenie" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/login.css' %}">
@@ -9,7 +10,7 @@
 
 {% block navigation_bar_items %}
     <li>
-        <a href="{% url 'registration_url' %}" target="_self">REGISTRÁCIA</a>
+        <a href="{% url 'registration_url' %}" target="_self">{% translate "REGISTRÁCIA" %}</a>
     </li>
 {% endblock navigation_bar_items %}
 
@@ -17,22 +18,22 @@
     <form class="login_form" action="{% url 'login_url' %}" method="POST">
         {% csrf_token %}
 
-        <h2><a href="{% url 'login_url' %}" target="_self">Prihlásenie</a></h2>
+        <h2><a href="{% url 'login_url' %}" target="_self">{% translate "Prihlásenie" %}</a></h2>
 
-        <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+        <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
         {{ login_form.email_address }}
         
         <div class="password_container">
             {{ login_form.password }}
-            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+            <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
         </div>
 
         <p class="form_report" style="bottom: 287px;"></p>
-        <input type="submit" name="login_form_submit" value="Prihlásiť sa">
+        <input type="submit" name="login_form_submit" value="{% translate 'Prihlásiť sa' %}">
 
         <div class="login_methods">
-            <p><span></span>alebo<span></span></p>
+            <p><span></span>{% translate "alebo" %}<span></span></p>
 
             <div class="google">
                 <a href="/accounts/google/login/"><i class="fa-brands fa-google"></i>Google</a> <!-- https://fontawesome.com/icons/google -->
@@ -48,8 +49,8 @@
         </div>
 
         <div class="form_questions">
-            <p>Zabudli ste heslo? <a class="password_reset" href="?password-reset=true" title="Poslať overovací kód">Zmeniť heslo</a></p>
-            <p>Ešte nemáte účet? <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">Vytvoriť účet</a></p>
+            <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+            <p>{% translate "Ešte nemáte účet?" %} <a href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "Vytvoriť účet" %}</a></p>
         </div>
     </form>
 {% endblock content %}

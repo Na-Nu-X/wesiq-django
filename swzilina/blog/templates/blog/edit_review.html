@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Moje hodnotenie{% endblock title %}
+{% block title %}{% translate "Moje hodnotenie" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/edit_review.css' %}">
@@ -12,16 +13,16 @@
         <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
             {% csrf_token %}
 
-            <h2><a style="font-size: 35px;" href="{% url 'edit_review_url' %}" target="_self">Moje&nbsp;hodnotenie</a></h2>
+            <h2><a style="font-size: 35px;" href="{% url 'edit_review_url' %}" target="_self">{% translate "Moje&nbsp;hodnotenie" %}</a></h2>
 
-            <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             <div class="reviewer">
                 <img 
                     class="profile_picture" 
                     src="
                         {% if review.user.profile_picture_name %}
-                            media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+                            /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
 
                         {% else %}
                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -37,7 +38,7 @@
                         - {{ review.creation_time|date:"d.m. Y" }}
 
                         {% if review.last_edit != None %}
-                            (upravené)
+                            ({% translate "upravené" %})
 
                         {% endif %}
                     </span>
@@ -63,11 +64,11 @@
             </div>
 
             <p class="form_report" style="bottom: 162px;"></p>
-            <input type="submit" value="Uložiť zmeny">
+            <input type="submit" value="{% translate 'Uložiť zmeny' %}">
 
             <div>
                 <label for="delete_review">
-                    <img class="delete_review" src="{% static 'images/delete.png' %}" title="Odstrániť recenziu"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                    <img class="delete_review" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť recenziu' %}"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
                 </label>
                 {{ review_form.delete_review }}
             </div>
@@ -75,7 +76,7 @@
 
     {% else %}
         <div class="no_logged_in">
-            <p>Pre vykonávanie zmien vašej recenzie sa musíte najprv <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">prihlásiť</a> alebo <a href="{% url 'registration_url' %}" title="Vytvoriť účet" target="_self">zaregistrovať</a>.</p>
+            <p>{% translate "Pre vykonávanie zmien vašej recenzie sa musíte najprv" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť" %}</a> {% translate "alebo" %} <a href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "zaregistrovať" %}</a>.</p>
         </div>
 
     {% endif %}

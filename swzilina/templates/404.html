@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Stránka sa nenašla{% endblock title %}
+{% block title %}{% translate "Stránka sa nenašla" %}{% endblock title %}
 
 {% block content %}
-    <h1>Chyba 404</h1>
-    <p>Je nám to ľúto, ale hladaná stránka sa nenašla.</p>
-    <a href="{% url 'homepage_url' %}" target="_self">Späť na hlavnú stránku<a>
+    <h1>{% translate "Chyba 404" %}</h1>
+    <p>{% translate "Je nám to ľúto, ale hladaná stránka sa nenašla." %}</p>
+    <a href="{% url 'homepage_url' %}" target="_self">{% translate "Späť na hlavnú stránku" %}<a>
 {% endblock content %}

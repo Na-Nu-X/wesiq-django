@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Moje tréningové plány{% endblock title %}
+{% block title %}{% translate "Moje tréningové plány" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/manage_training_plans.css' %}">
@@ -9,7 +10,7 @@
 
 {% block banner %}
     <div class="training_session">
-        <a href="{% url 'training_session_url' %}" title="Aktivita" target="_self">Aktivita</a>
+        <a href="{% url 'training_session_url' %}" title="{% translate 'Aktivita' %}" target="_self">{% translate "Aktivita" %}</a>
     </div>
 {% endblock banner %}
 
@@ -17,9 +18,9 @@
     {% if not request.session.logged_in_user_id %}
         <div class="no_logged_in">
             <p>
-                Zdá sa, že nie ste prihlásený.<br>
-                Bez prihlásenia nie je možné vytvoriť tréningový plán.<br>
-                <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihláste sa.</a>
+                {% translate "Zdá sa, že nie ste prihlásený." %}<br>
+                {% translate "Bez prihlásenia nie je možné vytvoriť tréningový plán." %}<br>
+                <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
             </p>
         </div>
 
@@ -32,10 +33,10 @@
                 
                 <div class="labels">
                     <p class="unit_amount"></p>
-                    <p>Série</p>
+                    <p>{% translate "Série" %}</p>
                 </div>
 
-                <button class="add_period">Pridať sériu</button>
+                <button class="add_period">{% translate "Pridať sériu" %}</button>
 
                 <div class="periods_container">
                     <div class="period_selection">
@@ -44,7 +45,7 @@
                             <input type="number" class="reps" value="0" min="0">
                             <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
 
-                            <p class="to_failure">Do&nbsp;zlyhania</p>
+                            <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
                             <p class="time"></p>
                         </div>
 
@@ -94,7 +95,7 @@
                     <input type="number" class="reps" value="0" min="0">
                     <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
 
-                    <p class="to_failure">Do&nbsp;zlyhania</p>
+                    <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
                     <p class="time"></p>
                 </div>
 
@@ -112,13 +113,13 @@
                 <input type="hidden" name="unit" value="reps">
 
                 <div class="select">
-                    <span>Počet</span>
+                    <span>{% translate "Počet" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
                 <div class="options_list">
-                    <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>Opakovaní</span></div> <!-- https://fontawesome.com/icons/repeat -->
-                    <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>Sekúnd</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>{% translate "Opakovaní" %}</span></div> <!-- https://fontawesome.com/icons/repeat -->
+                    <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>{% translate "Sekúnd" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
                 </div>
             </div>
         </template>
@@ -127,8 +128,8 @@
 
     <div class="sidebar">
         <ul>
-            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i></a><span class="label">Vytvoriť</span></li> <!-- https://fontawesome.com/icons/plus -->
-            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i></a><span class="label">Upraviť</span></li> <!-- https://fontawesome.com/icons/pen -->
+            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i></a><span class="label">{% translate "Vytvoriť" %}</span></li> <!-- https://fontawesome.com/icons/plus -->
+            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i></a><span class="label">{% translate "Upraviť" %}</span></li> <!-- https://fontawesome.com/icons/pen -->
         </ul>
     </div>
 
@@ -136,15 +137,15 @@
         <div class="top">
             <div class="new_training_plan" tabindex="0">
                 <div class="additional_info">
-                    <input type="text" class="title" placeholder="Názov" aria-label="title" list="title">
+                    <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
 
                     <datalist id="title">
-                        <option value="Pull">
-                        <option value="Push">
-                        <option value="Legs">
+                        <option value="{% translate 'Pull' %}">
+                        <option value="{% translate 'Push' %}">
+                        <option value="{% translate 'Legs' %}">
 
-                        <option value="Upper">
-                        <option value="Lower">
+                        <option value="{% translate 'Upper' %}">
+                        <option value="{% translate 'Lower' %}">
                     </datalist>
 
                     <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
@@ -152,19 +153,19 @@
                         <input type="hidden" name="day" value="not_selected">
 
                         <div class="select">
-                            <span>Nepriradiť deň</span>
+                            <span>{% translate "Nepriradiť deň" %}</span>
                             <i class="fas fa-angle-down"></i>
                         </div>
 
                         <div class="options_list">
-                            <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
                         </div>
                     </div>
                 </div>
@@ -176,7 +177,7 @@
                     </div>
                 </div>
 
-                <button class="save">Pridať tréningový plán</button>
+                <button class="save">{% translate "Pridať tréningový plán" %}</button>
             </div>
 
             {% if training_plan|length > 0 %}
@@ -189,15 +190,15 @@
                     {% endfor %}
 
                     <div class="additional_info">
-                        <input type="text" class="title" placeholder="Názov" aria-label="title" list="title">
+                        <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
 
                         <datalist id="title">
-                            <option value="Pull">
-                            <option value="Push">
-                            <option value="Legs">
+                            <option value="{% translate 'Pull' %}">
+                            <option value="{% translate 'Push' %}">
+                            <option value="{% translate 'Legs' %}">
 
-                            <option value="Upper">
-                            <option value="Lower">
+                            <option value="{% translate 'Upper' %}">
+                            <option value="{% translate 'Lower' %}">
                         </datalist>
 
                         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
@@ -205,19 +206,19 @@
                             <input type="hidden" name="day" value="not_selected">
 
                             <div class="select">
-                                <span>Nepriradiť deň</span>
+                                <span>{% translate "Nepriradiť deň" %}</span>
                                 <i class="fas fa-angle-down"></i>
                             </div>
 
                             <div class="options_list">
-                                <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>Nepriradiť deň</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>PO</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>UT</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>ST</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>ŠT</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>PI</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>SO</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>NE</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
                             </div>
                         </div>
                     </div>
@@ -230,8 +231,8 @@
                     </div>
 
                     <div class="buttons">
-                        <button class="save">Uložiť zmeny</button>
-                        <button class="delete">Vymazať</button>
+                        <button class="save">{% translate "Uložiť zmeny" %}</button>
+                        <button class="delete">{% translate "Vymazať" %}</button>
                     </div>
                 </div>
                 
@@ -242,7 +243,7 @@
             <div class="search_bar_menu">
                 <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
                 <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                <input class="search_bar" placeholder="Nájsť cvik" autocomplete="off">
+                <input class="search_bar" placeholder="{% translate 'Nájsť cvik' %}" autocomplete="off">
             </div>
 
             <div class="exercises">

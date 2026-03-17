@@ -95,7 +95,7 @@
                                 class="profile_picture skeleton_loading" 
                                 src="
                                     {% if profile_picture_name %}
-                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                                     {% else %}
                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -112,7 +112,7 @@
 
                 {% else %}
                     <div class="no_account">
-                        <a class="login" href="#" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Neprihlásený" %}</a>
+                        <a class="login" href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Neprihlásený" %}</a>
                     </div>
 
                 {% endif %}

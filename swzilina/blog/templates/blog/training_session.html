@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Tréning{% endblock title %}
+{% block title %}{% translate "Tréning" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/training_session.css' %}">
@@ -28,10 +29,10 @@
 
                 {% endif %}
             "
-            title="Moje tréningové plány"
+            title="{% translate 'Moje tréningové plány' %}"
             target="_self"
         >
-            Moje tréningové plány
+            {% translate "Moje tréningové plány" %}
         </a>
     </div>
 {% endblock banner %}
@@ -51,15 +52,15 @@
         {% if training_plan|length == 0 %}
             {% if not request.session.logged_in_user_id %}
                 <p class="no_logged_in">
-                    Zdá sa, že nie ste prihlásený.<br>
-                    Bez prihlásenia nie je možné zaznamenať vašu aktivitu.<br>
-                    <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihláste sa.</a>
+                    {% translate "Zdá sa, že nie ste prihlásený." %}<br>
+                    {% translate "Bez prihlásenia nie je možné zaznamenať vašu aktivitu." %}<br>
+                    <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
                 </p>
 
             {% else %}
                 <p class="no_training_plan">
-                    Zatiaľ nemáte žiaden tréningový plán.<br>
-                    <a href="{% url 'manage_training_plans_url' %}" title="Moje tréningové plány" target="_self">Vytvorte si prvý.</a>
+                    {% translate "Zatiaľ nemáte žiaden tréningový plán." %}<br>
+                    <a href="{% url 'manage_training_plans_url' %}" title="{% translate 'Moje tréningové plány' %}" target="_self">{% translate "Vytvorte si prvý." %}</a>
                 </p>
 
             {% endif %}
@@ -123,8 +124,8 @@
                 <div class="training_plan">
                     <div class="start_training active">
                         <div class="left">
-                            <p>Tréningový plán</p>
-                            <h3>Začať tréning</h3>
+                            <p>{% translate "Tréningový plán" %}</p>
+                            <h3>{% translate "Začať tréning" %}</h3>
 
                             <p class="title"></p>
                         </div>
@@ -136,8 +137,8 @@
 
                     <div class="finish_training">
                         <div class="left">
-                            <p>Tréningový plán</p>
-                            <h3>Dokončiť tréning</h3>
+                            <p>{% translate "Tréningový plán" %}</p>
+                            <h3>{% translate "Dokončiť tréning" %}</h3>
 
                             <p class="title"></p>
                         </div>
@@ -194,7 +195,7 @@
             <div class="top">
                 <div class="average_activity_time_container">
                     <p>
-                        <span class="title"><i class="fa-regular fa-clock"></i> priemer&nbsp;/ 7&nbsp;dní</span>
+                        <span class="title"><i class="fa-regular fa-clock"></i> {% translate "priemer&nbsp;/ 7&nbsp;dní" %}</span>
 
                         {% if average_activity_time %}
                             <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
@@ -208,7 +209,7 @@
 
                 <div class="activities_amount_container">
                     <p>
-                        <span class="title"><i class="fa-regular fa-calendar"></i> počet&nbsp;/ 7&nbsp;dní</span>
+                        <span class="title"><i class="fa-regular fa-calendar"></i> {% translate "počet&nbsp;/ 7&nbsp;dní" %}</span>
                         
                         {% if activities_amount %}
                             <span class="activities_amount">{{ activities_amount }}</span>
@@ -232,7 +233,7 @@
                             <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
                         {% else %}
-                            <span class="no_latest_activity">posledná aktivita: </span><span class="none">žiadna</span>
+                            <span class="no_latest_activity">{% translate "posledná aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
 
                         {% endif %}
                     </p>
@@ -248,7 +249,7 @@
                             <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
                         {% else %}
-                            <span class="no_longest_activity">najdlhšia aktivita: </span><span class="none">žiadna</span>
+                            <span class="no_longest_activity">{% translate "najdlhšia aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
 
                         {% endif %}
                     </p>
@@ -263,11 +264,11 @@
             class="weekly_activity_chart" 
             data-activities="{{ weekly_activity }}"
         >
-            <canvas>Graf sa nepodarilo načítať.</canvas>
+            <canvas>{% translate "Graf sa nepodarilo načítať." %}</canvas>
         </div>
 
         <p class="training_plan_summary"></p>
-        <div class="training_plan_summary_chart"><canvas>Graf sa nepodarilo načítať.</canvas></div>
+        <div class="training_plan_summary_chart"><canvas>{% translate "Graf sa nepodarilo načítať." %}</canvas></div>
     </div>
 {% endblock content %}
 

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Pridať článok{% endblock title %}
+{% block title %}{% translate "Pridať článok" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/write_article.css' %}">
@@ -11,9 +12,9 @@
     <form class="write_article_form" action="{% url 'write_article_url' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <h2><a href="{% url 'write_article_url' %}" target="_self">Pridať článok</a></h2>
+        <h2><a href="{% url 'write_article_url' %}" target="_self">{% translate "Pridať článok" %}</a></h2>
 
-        <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+        <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
         {{ write_article_form.title }}
         {{ write_article_form.content }}
@@ -25,13 +26,13 @@
         </div>
 
         <div class="link_container">
-            <i class="fa-regular fa-lightbulb" title="Navrhnúť link"></i> <!-- https://fontawesome.com/icons/lightbulb -->
+            <i class="fa-regular fa-lightbulb" title="{% translate 'Navrhnúť link' %}"></i> <!-- https://fontawesome.com/icons/lightbulb -->
             {{ write_article_form.link }}
-            <i class="fa-solid fa-circle-info" title="URL adresa vášho článku (napr. front-lever)"></i> <!-- https://fontawesome.com/icons/circle-info -->
+            <i class="fa-solid fa-circle-info" title="{% translate 'URL adresa vášho článku (napr. front-lever)' %}"></i> <!-- https://fontawesome.com/icons/circle-info -->
         </div>
 
         {{ write_article_form.select_article_image }}
 
-        <input type="submit" value="Pridať článok">
+        <input type="submit" value="{% translate 'Pridať článok' %}">
     </form>
 {% endblock content %}

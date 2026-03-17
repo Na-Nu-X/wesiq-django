@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ article.title|default:"Článok sa nenašiel" }}{% endblock title %}
 
@@ -11,7 +12,7 @@
     {% if not_found == False %}
         <div class="article_banner">
             <div class="banner_image">
-                <img src="{% static '../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
+                <img src="{% static '/../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
             </div>
             
             <div class="banner_info">
@@ -25,10 +26,10 @@
                         class="rating" 
                         title="
                             {% if article.rating|floatformat:0|add:0 == 0 %}
-                                Zatiaľ žiadne hodnotenia
+                                {% translate 'Zatiaľ žiadne hodnotenia' %}
                             
                             {% else %}
-                                Priemerné hodnotenie {{ article.rating }}
+                                {% translate 'Priemerné hodnotenie' %} {{ article.rating }}
 
                             {% endif %}
                         "
@@ -49,7 +50,7 @@
                             class="profile_picture" 
                             src="
                                 {% if article.user.profile_picture_name %}
-                                    ../media/images/{{ article.user_id }}/{{ article.user.profile_picture_name }}
+                                    /../media/images/{{ article.user_id }}/{{ article.user.profile_picture_name }}
 
                                 {% else %}
                                     {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -58,10 +59,6 @@
                             "
                         >
                     </a>
-
-                    <!-- <div class="date" title="Dátum zverejnenia">
-                        <p>{{ article.creation_time|date:"d.m. Y" }}</p>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -80,7 +77,7 @@
                     class="profile_picture" 
                     src="
                         {% if profile_picture_name %}
-                            ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                            /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                         {% else %}
                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -99,7 +96,7 @@
             <div class="all_comments">
                 <h2 class="no_comments">
                     {% if no_comments %}
-                        Zatiaľ&nbsp;žiadne&nbsp;komentáre.<br>Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!
+                        {% translate "Zatiaľ&nbsp;žiadne&nbsp;komentáre." %}<br>{% translate "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!" %}
                     
                     {% endif %}
                 </h2>
@@ -111,26 +108,26 @@
                                 class="profile_picture" 
                                 src="
                                     {% if one_comment.user.profile_picture_name %}
-                                        ../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
+                                        /../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
 
                                     {% else %}
                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                     
                                     {% endif %}
                                 "
-                                title="Zobraziť profil {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
+                                title="{% translate 'Zobraziť profil' %} {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
                             >
 
                             <p>{{ one_comment.comment }}</p>
                         </div>
 
                         <div class="interactions">
-                            <div class="reply" title="Odpovedať...">
+                            <div class="reply" title="{% translate 'Odpovedať...' %}">
                                 <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
                                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                             </div>
                             
-                            <div class="likes" title="Páči sa mi...">
+                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
                                 <i 
                                     class="
                                         {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
@@ -147,11 +144,11 @@
                                 <p class="likes_counter">{{ one_comment.likes }}</p>
                             </div>
 
-                            <div class="report" title="Nahlásiť...">
+                            <div class="report" title="{% translate 'Nahlásiť...' %}">
                                 <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
                             </div>
 
-                            <div class="date" title="Dátum zverejnenia">
+                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
                                 <p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
                             </div>
                         </div>
@@ -165,7 +162,7 @@
                                 class="profile_picture" 
                                 src="
                                     {% if profile_picture_name %}
-                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                                     {% else %}
                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -192,26 +189,26 @@
                                                 class="profile_picture" 
                                                 src="
                                                     {% if one_reply.user.profile_picture_name %}
-                                                        ../media/images/{{ one_reply.user.id }}/{{ one_reply.user.profile_picture_name }}
+                                                        /../media/images/{{ one_reply.user.id }}/{{ one_reply.user.profile_picture_name }}
 
                                                     {% else %}
                                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                                     
                                                     {% endif %}
                                                 "
-                                                title="Zobraziť profil {{ one_reply.user.first_name }} {{ one_reply.user.last_name }}"
+                                                title="{% translate 'Zobraziť profil' %} {{ one_reply.user.first_name }} {{ one_reply.user.last_name }}"
                                             >
 
                                             <p>{{ one_reply.comment }}</p>
                                         </div>
 
                                         <div class="interactions">
-                                            <div class="reply" title="Odpovedať...">
+                                            <div class="reply" title="{% translate 'Odpovedať...' %}">
                                                 <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
                                                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                                             </div>
                                             
-                                            <div class="likes" title="Páči sa mi...">
+                                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
                                                 <i 
                                                     class="
                                                         {% if request.session.logged_in_user_id|stringformat:"i" in one_reply.likes_from_users %}
@@ -228,11 +225,11 @@
                                                 <p class="likes_counter">{{ one_reply.likes }}</p>
                                             </div>
 
-                                            <div class="report" title="Nahlásiť...">
+                                            <div class="report" title="{% translate 'Nahlásiť...' %}">
                                                 <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
                                             </div>
 
-                                            <div class="date" title="Dátum zverejnenia">
+                                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
                                                 <p>{{ one_reply.creation_time|date:"d.m. Y" }}</p>
                                             </div>
                                         </div>
@@ -246,7 +243,7 @@
                                                 class="profile_picture" 
                                                 src="
                                                     {% if profile_picture_name %}
-                                                        ../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
 
                                                     {% else %}
                                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
