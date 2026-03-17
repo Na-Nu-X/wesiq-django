@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Registrácia{% endblock title %}
+{% block title %}{% translate "Registrácia" %}{% endblock title %}
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'blog/css/registration.css' %}">
@@ -35,7 +36,7 @@
 
 {% block navigation_bar_items %}
     <li>
-        <a href="{% url 'login_url' %}" target="_self">PRIHLÁSENIE</a>
+        <a href="{% url 'login_url' %}" target="_self">{% translate "PRIHLÁSENIE" %}</a>
     </li>
 {% endblock navigation_bar_items %}
 
@@ -43,9 +44,9 @@
     <form class="registration_form" action="{% url 'registration_url' %}" method="POST">
         {% csrf_token %}
 
-        <h2><a href="{% url 'registration_url' %}" target="_self">Registrácia</a></h2>
+        <h2><a href="{% url 'registration_url' %}" target="_self">{% translate "Registrácia" %}</a></h2>
 
-        <a class="back" href="{% url 'homepage_url' %}" title="Späť na úvodnú stránku" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+        <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
         {{ registration_form.first_name }}
         {{ registration_form.last_name }}
@@ -53,22 +54,22 @@
         {{ registration_form.phone_number }}
         
         <div class="password_container">
-            <i class="fa-solid fa-key" title="Navrhnúť heslo"></i> <!-- https://fontawesome.com/icons/key -->
+            <i class="fa-solid fa-key" title="{% translate 'Navrhnúť heslo' %}"></i> <!-- https://fontawesome.com/icons/key -->
             {{ registration_form.password }}
-            <i class="fa-regular fa-eye-slash" title="Zobraziť heslo"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
-            <i class="fa-solid fa-copy copy_password" title="Skopírovať"></i> <!-- https://fontawesome.com/icons/copy -->
+            <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+            <i class="fa-solid fa-copy copy_password" title="{% translate 'Skopírovať' %}"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
         <div class="password_check_container">
             {{ registration_form.password_check }}
-            <i class="fa-regular fa-copy paste_password" title="Prilepiť"></i> <!-- https://fontawesome.com/icons/copy -->
+            <i class="fa-regular fa-copy paste_password" title="{% translate 'Prilepiť' %}"></i> <!-- https://fontawesome.com/icons/copy -->
         </div>
 
         <p class="form_report error" style="bottom: 241px;"></p>
-        <input type="submit" value="Vytvoriť účet">
+        <input type="submit" value="{% translate 'Vytvoriť účet' %}">
 
         <div class="form_questions">
-            <p>Už máte účet? <a href="{% url 'login_url' %}" title="Prihlásiť sa" target="_self">Prihlásiť sa</a></p>
+            <p>{% translate "Už máte účet?" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihlásiť sa" %}</a></p>
         </div>
 
         <!-- Google reCAPTCHA V3 -->

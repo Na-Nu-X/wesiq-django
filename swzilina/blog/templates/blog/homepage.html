@@ -390,13 +390,21 @@
 
         <div class="num_reviews">
             {% if reviews|length == 1 %}
-                <p>{% blocktranslate %}Našla sa <span>{{ reviews|length }}</span> recenzia.{% endblocktranslate %}</p>
+                {% translate "Našla sa 1 recenzia." %}
 
             {% elif reviews|length > 1 and reviews|length < 5 %}
-                <p>{% blocktranslate %}Našli sa <span>{{ reviews|length }}</span> recenzie.{% endblocktranslate %}</p>
+                <p>
+                    {% blocktranslate with amount=reviews|length %}
+                        Našli sa <span>{{ amount }}</span> recenzie.
+                    {% endblocktranslate %}
+                </p>
 
             {% else %}
-                <p>{% blocktranslate %}Našlo sa <span>{{ reviews|length }}</span> recenzií.{% endblocktranslate %}</p>
+                <p>
+                    {% blocktranslate with amount=reviews|length %}
+                        Našlo sa <span>{{ amount }}</span> recenzií.
+                    {% endblocktranslate %}
+                </p>
             
             {% endif %}
         </div>
