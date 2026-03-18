@@ -1,141 +1,82 @@
-# version: '3.8'
-
-# services:
-#   # PostgreSQL
-#   database:
-#     image: postgres:15-alpine
-#     container_name: swzilina_database
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=swzilina_db
-#       - POSTGRES_USER=swzilina_admin
-#       - POSTGRES_PASSWORD=Ac7}l|szo98=pK-5-g?R
-
-#   # Redis
-#   redis:
-#     image: redis:7.0.11-alpine
-#     container_name: redis
-#     ports:
-#       - "6379:6379"
-
-#   # Django
-#   swzilina:
-#     container_name: swzilina
-#     build: 
-#       context: ./swzilina
-#     command: python manage.py runserver 0.0.0.0:8000
-#     volumes:
-#       - ./swzilina:/usr/src/app/
-#     ports:
-#       - "8001:8000"
-#     environment:
-#       - DEBUG=1
-#       - SECRET_KEY=Ac7}l|szo98=pK-5-g?R
-#       - ALLOWED_HOSTS=localhost,127.0.0.1
-#       - DATABASE_URL=postgres://swzilina_admin:Ac7}l|szo98=pK-5-g?R@database:5432/swzilina_db
-#       - CELERY_BROKER_URL=redis://redis:6379/0
-#     depends_on:
-#       - database
-#       - redis
-
-#   # Celery Worker
-#   celery:
-#     container_name: celery
-#     build: 
-#       context: ./swzilina
-#     command: celery -A swzilina worker -l INFO
-#     volumes:
-#       - ./swzilina:/usr/src/app/
-#     environment:
-#       - DEBUG=1
-#       - SECRET_KEY=Ac7}l|szo98=pK-5-g?R
-#       - DATABASE_URL=postgres://swzilina_admin:Ac7}l|szo98=pK-5-g?R@database:5432/swzilina_db
-#       - CELERY_BROKER_URL=redis://redis:6379/0
-#     depends_on:
-#       - swzilina
-#       - redis
-
-# volumes:
-#   postgres_data:
-
-# https://testdriven.io/courses/django-celery/docker/
-
 version: '3.8'
 
 services:
-  # Django
-  web:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: django_celery_example_web
-    command: /start
-    volumes:
-      - .:/app
-    ports:
-      - 8010:8000
-    env_file:
-      - ./.env/.dev-sample
-    depends_on:
-      - redis
-      - db
-
+  # PostgreSQL
   db:
     image: postgres:17-alpine
+    container_name: swzilina_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=swzilina
-      - POSTGRES_USER=swzilina_admin
-      - POSTGRES_PASSWORD=Ac7}l|szo98=pK-5-g?R
-
-  redis:
-    image: redis:7-alpine
-
-  celery_worker:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: django_celery_example_celery_worker
-    command: /start-celeryworker
-    volumes:
-      - .:/app
-    env_file:
-      - ./.env/.dev-sample
-    depends_on:
-      - redis
-      - db
-
-  celery_beat:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: django_celery_example_celery_beat
-    command: /start-celerybeat
-    volumes:
-      - .:/app
-    env_file:
-      - ./.env/.dev-sample
-    depends_on:
-      - redis
-      - db
-
-  flower:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: django_celery_example_celery_flower
-    command: /start-flower
-    volumes:
-      - .:/app
-    env_file:
-      - ./.env/.dev-sample
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - 5557:5555
+      - "5432:5432"
+
+  # Redis
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: swzilina_redis
+
+  # Django
+  web:
+    build: ./swzilina
+    container_name: swzilina_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./swzilina:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
     depends_on:
-      - redis
       - db
+      - redis
+
+  # Celery
+  celery:
+    build: ./swzilina
+    container_name: swzilina_celery
+    command: celery -A swzilina worker -l INFO
+    volumes:
+      - ./swzilina:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - web
+
+  # Celery Beat
+  celery_beat:
+    build: ./swzilina
+    container_name: swzilina_beat
+    command: celery -A swzilina beat -l INFO
+    volumes:
+      - ./swzilina:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - web
+
+  # Flower
+  flower:
+    build: ./swzilina
+    container_name: swzilina_flower
+    command: celery -A swzilina flower --port=5555
+    volumes:
+      - ./swzilina:/app
+    ports:
+      - "5557:5555"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - celery
 
 volumes:
   postgres_data:

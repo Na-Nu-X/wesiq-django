@@ -1,0 +1,28 @@
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.cursor/
+.vscode/
+
+# Python
+.venv/
+__pycache__/
+
+# Django
+db.sqlite3
+
+# Node / TypeScript
+node_modules/
+
+# CSS
+*.css
+*.css.map
+
+# Environment Variables
+.env

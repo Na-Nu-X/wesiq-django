@@ -16,3 +16,6 @@ node_modules/
 # CSS
 *.css
 *.css.map
+
+# Environment Variables
+.env

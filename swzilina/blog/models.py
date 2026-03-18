@@ -18,17 +18,17 @@ class Users(models.Model):
     email_address = models.CharField(verbose_name="E-mail Address", max_length=50)
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
     password = models.CharField(verbose_name="Password", max_length=255)
-    role = models.CharField(verbose_name="Role", choices=role_choices, default="user")
+    role = models.CharField(verbose_name="Role", choices=role_choices, default="user", max_length=20)
     profile_picture_name = models.CharField(verbose_name="Profile Picture File", max_length=50, null=True, blank=True)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
-    following = ArrayField(models.CharField(verbose_name="Following"), default=list, null=False)
-    followers = ArrayField(models.CharField(verbose_name="Followers"), default=list, null=False)
+    following = ArrayField(models.CharField(verbose_name="Following", max_length=100), default=list, null=False)
+    followers = ArrayField(models.CharField(verbose_name="Followers", max_length=100), default=list, null=False)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
-    account_status = models.CharField(verbose_name="Account Status", choices=account_status_choices, default="OK", null=False)
+    account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="OK", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
@@ -106,7 +106,7 @@ class ArticleForum(models.Model):
 
     comment = models.TextField(verbose_name="Comment", null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
-    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users"), default=list, null=False)
+    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=100), default=list, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
     parent = models.ForeignKey(
@@ -117,9 +117,9 @@ class ArticleForum(models.Model):
         related_name="replies",
     )
 
-    status = models.CharField(verbose_name="Status", choices=status_choices, default="OK")
+    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
-    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users"), default=list, null=False)
+    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=100), default=list, null=False)
 
 class TrainingPlan(models.Model):
     unit_choices = [
@@ -140,8 +140,8 @@ class TrainingPlan(models.Model):
     day = models.IntegerField(verbose_name="Day", null=True, blank=True)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
-    periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=[0], null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
-    unit = models.CharField(verbose_name="Unit", choices=unit_choices, default="reps", null=False)
+    periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=list, null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
+    unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
     order = models.IntegerField(verbose_name="Order", default=0, null=False)
 
 class Exercises(models.Model):
@@ -152,6 +152,6 @@ class Exercises(models.Model):
     ]
 
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
-    unit = models.CharField(verbose_name="Unit", choices=unit_choices, default="reps", null=False)
+    unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
