@@ -5,10 +5,10 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Inštalácia závislostí pre Postgres
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
+    gettext \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/

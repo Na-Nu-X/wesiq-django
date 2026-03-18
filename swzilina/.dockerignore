@@ -1,5 +1,6 @@
 # Docker
 Dockerfile
+docker-compose.yml
 .dockerignore
 
 # Git
@@ -19,6 +20,7 @@ db.sqlite3
 
 # Node / TypeScript
 node_modules/
+**/dist/
 
 # CSS
 *.css
@@ -26,3 +28,7 @@ node_modules/
 
 # Environment Variables
 .env
+
+# Run Scripts
+local_run_dev.bat
+docker_run_dev.bat

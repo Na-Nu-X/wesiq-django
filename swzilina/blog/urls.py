@@ -1,40 +1,21 @@
 from django.urls import path
 from . import views
+from django.utils.translation import gettext_lazy as _
 
 urlpatterns = [
     path('', views.homepageView, name='homepage_url'),
-    path('domov', views.homepageView),
-    path('home', views.homepageView),
-
-    path('prihlasenie', views.loginView, name='login_url'),
-    path('login', views.loginView),
-
-    path('obnova-hesla', views.passwordResetView, name='password_reset_url'),
-    path('password-reset', views.passwordResetView),
-
-    path('odhlasenie', views.logoutView, name='logout_url'),
-    path('logout', views.logoutView),
-
-    path('registracia', views.registrationView, name='registration_url'),
-    path('registration', views.registrationView),
-
-    path('moj-ucet', views.editAccountView, name='edit_account_url'),
-    path('my-account', views.editAccountView),
-
-    path('moje-hodnotenie', views.editReviewView, name='edit_review_url'),
-    path('my-review', views.editReviewView),
-
+    path(_('domov/'), views.homepageView),
+    path(_('prihlasenie/'), views.loginView, name='login_url'),
+    path(_('obnova-hesla/'), views.passwordResetView, name='password_reset_url'),
+    path(_('odhlasenie/'), views.logoutView, name='logout_url'),
+    path(_('registracia/'), views.registrationView, name='registration_url'),
+    path(_('moj-ucet/'), views.editAccountView, name='edit_account_url'),
+    path(_('moje-hodnotenie/'), views.editReviewView, name='edit_review_url'),
+    path(_('pridat-clanok/'), views.writeArticleView, name='write_article_url'),
+    path(_('trening/'), views.trainingSessionView, name='training_session_url'),
+    path(_('moje-treningove-plany/'), views.manageTrainingPlansView, name='manage_training_plans_url'),
     path('blog/', views.blogView, name='blog_url'),
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
-
-    path('pridat-clanok', views.writeArticleView, name='write_article_url'),
-    path('write-article', views.writeArticleView),
-
-    path('trening', views.trainingSessionView, name='training_session_url'),
-    path('training-session', views.trainingSessionView),
-
-    path('moje-treningove-plany', views.manageTrainingPlansView, name='manage_training_plans_url'),
-    path('my-training-plans', views.manageTrainingPlansView),
 
     # URLs For JS POST Data
     path('like-comment/<int:comment_id>', views.likeComment, name='like_comment_url'),

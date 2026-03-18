@@ -160,10 +160,10 @@
             <form action="{% url 'set_language' %}" method="POST">
                 {% csrf_token %}
 
-                <input name="next" type="hidden" value="{{ request.get_full_path|slice:'3:' }}">
-
                 {% get_current_language as LANGUAGE_CODE %}
                 {% get_available_languages as LANGUAGES %}
+
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
 
                 {% for language_code, language_name in LANGUAGES %}
                     <button
@@ -187,7 +187,7 @@
         "use strict"
         
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("%cStreet Workout Žilina by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)") // Secret Message
+            console.log("%c{% translate 'Street Workout Žilina by Patrik Behul' %}", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)") // Secret Message
 
             // Privacy Policy
 

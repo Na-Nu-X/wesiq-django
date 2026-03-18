@@ -1,0 +1,56 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-19 14:45+0000\n"
+"PO-Revision-Date: 2026-03-19 14:47+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:43
+msgid "Hlavná stránka"
+msgstr "Homepage"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:44
+msgid "Prihlásenie"
+msgstr "Login"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:45
+msgid "Obnova hesla"
+msgstr "Password Reset"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:46
+msgid "Registrácia"
+msgstr "Registration"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:47
+msgid "Môj účet"
+msgstr "My Account"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:48
+msgid "Moje hodnotenie"
+msgstr "My Review"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:49
+msgid "Blog"
+msgstr "Blog"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:50
+msgid "Tréning"
+msgstr "Training Session"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:51
+msgid "Moje tréningové plány"
+msgstr "My Training Plans"

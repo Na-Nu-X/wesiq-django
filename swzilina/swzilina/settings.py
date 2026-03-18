@@ -106,51 +106,9 @@ WSGI_APPLICATION = 'swzilina.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASE_URL = os.environ.get('DATABASE_URL')
-
-# if DATABASE_URL:
-#     # Docker
-#     DATABASES = {
-#         'default': dj_database_url.config(default=DATABASE_URL)
-#     }
-
-# else:
-#     # Localhost
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': 'swzilina',
-#             'USER': 'swzilina_admin',
-#             'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
-#             'HOST': 'localhost',
-#             'PORT': '5432',
-#         }
-#     }
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL')
-#     )
-# }
-
-db_url = os.environ.get('DATABASE_URL_LOCAL') or os.environ.get('DATABASE_URL')
-
-if db_url:
-    DATABASES = {
-        'default': dj_database_url.parse(db_url)
-    }
-else:
-    # Záložný plán, ak URL chýba alebo je chybná
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DB', 'swzilina'),
-            'USER': os.environ.get('POSTGRES_USER', 'swzilina_admin'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'Ac7}l|szo98=pK-5-g?R'),
-            'HOST': 'localhost', # Ak bežíš lokálne
-            'PORT': '5432',
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+}
 
 
 # Password validation
@@ -246,7 +204,7 @@ LANGUAGE_CODE = 'sk' # Default Language (Slovak)
 # Supported Languages
 LANGUAGES = [
     ('sk', _('Slovak')),
-    ('cz', _('Czech')),
+    ('cs', _('Czech')),
     ('en', _('English')),
     ('es', _('Spanish')),
 ]
