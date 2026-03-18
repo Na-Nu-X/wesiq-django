@@ -22,10 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=(@y+tfd7i(93((as@8u3y79x&mfw&on&2cfpv_hul$o1-9#qg'
+# SECRET_KEY = 'django-insecure-=(@y+tfd7i(93((as@8u3y79x&mfw&on&2cfpv_hul$o1-9#qg'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'behulpatrik@gmail.com'
@@ -34,10 +36,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "192.168.0.248" # For Testing On Phone: python .\manage.py runserver 0.0.0.0:8000 And Then Open http://192.168.0.248:8000/
-]
+# ALLOWED_HOSTS = [
+#     "127.0.0.1",
+#     "192.168.0.248" # For Testing On Phone: python .\manage.py runserver 0.0.0.0:8000 And Then Open http://192.168.0.248:8000/
+# ]
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') # ALLOWED_HOSTS
 
 
 # Application definition
@@ -102,23 +106,48 @@ WSGI_APPLICATION = 'swzilina.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
+# DATABASE_URL = os.environ.get('DATABASE_URL')
 
-if DATABASE_URL:
-    # Docker
+# if DATABASE_URL:
+#     # Docker
+#     DATABASES = {
+#         'default': dj_database_url.config(default=DATABASE_URL)
+#     }
+
+# else:
+#     # Localhost
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'swzilina',
+#             'USER': 'swzilina_admin',
+#             'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
+#             'HOST': 'localhost',
+#             'PORT': '5432',
+#         }
+#     }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL')
+#     )
+# }
+
+db_url = os.environ.get('DATABASE_URL_LOCAL') or os.environ.get('DATABASE_URL')
+
+if db_url:
     DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL)
+        'default': dj_database_url.parse(db_url)
     }
-
 else:
-    # Localhost
+    # Záložný plán, ak URL chýba alebo je chybná
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'swzilina',
-            'USER': 'swzilina_admin',
-            'PASSWORD': 'Ac7}l|szo98=pK-5-g?R',
-            'HOST': 'localhost',
+            'NAME': os.environ.get('POSTGRES_DB', 'swzilina'),
+            'USER': os.environ.get('POSTGRES_USER', 'swzilina_admin'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'Ac7}l|szo98=pK-5-g?R'),
+            'HOST': 'localhost', # Ak bežíš lokálne
             'PORT': '5432',
         }
     }
@@ -199,22 +228,16 @@ SOCIALACCOUNT_PROVIDERS = {
 SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_METHODS = {'email'}
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # Celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 CELERY_TIMEZONE = 'Europe/Bratislava'
-
-SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
-DEBUG = bool(os.environ.get("DEBUG", True))
-
-# ALLOWED_HOSTS
-hosts = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
-ALLOWED_HOSTS = hosts.split(",")
 
 from django.utils.translation import gettext_lazy as _
 
