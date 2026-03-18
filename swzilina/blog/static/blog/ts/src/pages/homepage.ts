@@ -40,15 +40,15 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Data - Array of Objects of Pages
         const pages:Pages[] = [
-            { url: "/", title: "Hlavná stránka", icon: "<i class='fa-solid fa-house'></i>" }, // https://fontawesome.com/icons/house
-            { url: "/prihlasenie", title: "Prihlásenie", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/obnova-hesla", title: "Obnova hesla", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/registracia", title: "Registrácia", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/moj-ucet", title: "Môj účet", icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/moje-hodnotenie", title: "Moje hodnotenie", icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
-            { url: "/blog", title: "Blog", icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
-            { url: "/trening", title: "Tréning", icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
-            { url: "/moje-treningove-plany", title: "Moje tréningové plány", icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
+            { url: "/", title: gettext("Hlavná stránka"), icon: "<i class='fa-solid fa-house'></i>" }, // https://fontawesome.com/icons/house
+            { url: "/prihlasenie", title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/obnova-hesla", title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/registracia", title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/moj-ucet", title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: "/moje-hodnotenie", title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
+            { url: "/blog", title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
+            { url: "/trening", title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
+            { url: "/moje-treningove-plany", title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
         ]
 
         search_result.innerHTML = "" // Deletes Search Result
