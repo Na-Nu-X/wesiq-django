@@ -77,9 +77,9 @@ export function addExercise(training_plan:HTMLDivElement, state:{active_exercise
         (exercise_template_clone.querySelector(".exercise .title") as HTMLHeadingElement).textContent = createExerciseTitle(selection_dragged_exercise_name, selection_dragged_exercise_weight) || "" // Sets Formatted Title Value To The Exercise Title
 
         // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
-        if(global_state.selection_dragged_exercise!.dataset.unit === "reps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = "Počet opakovaní"
-        if(global_state.selection_dragged_exercise!.dataset.unit === "seconds") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = "Počet sekúnd"
-        if(global_state.selection_dragged_exercise!.dataset.unit === "steps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = "Počet krokov";
+        if(global_state.selection_dragged_exercise!.dataset.unit === "reps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet opakovaní")
+        if(global_state.selection_dragged_exercise!.dataset.unit === "seconds") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
+        if(global_state.selection_dragged_exercise!.dataset.unit === "steps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
 
         (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.unit = global_state.selection_dragged_exercise!.dataset.unit || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
 

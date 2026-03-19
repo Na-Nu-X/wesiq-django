@@ -146,9 +146,9 @@ document.addEventListener("DOMContentLoaded", function():void {
                         (exercise_template_clone.querySelector(".exercise .title") as HTMLHeadingElement).textContent = exercise_data // Sets Title To The Exercise Title
 
                         // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
-                        if(unit_data === "reps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = "Počet opakovaní"
-                        if(unit_data === "seconds") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = "Počet sekúnd"
-                        if(unit_data === "steps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = "Počet krokov";
+                        if(unit_data === "reps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet opakovaní")
+                        if(unit_data === "seconds") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
+                        if(unit_data === "steps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
 
                         (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.training_plan_key = training_plan_key; // Stores Training Plan Key Data To The Exercise
                         (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.unit = unit_data; // Stores Unit Type Data To The Exercise
@@ -278,8 +278,8 @@ document.addEventListener("DOMContentLoaded", function():void {
             training_plan_data.push(delete_training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST
-        sendNotification(`Tréningový plán ${training_plan_title.value} bol odstránený.`) // Sends The Notification For The User
+        sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST
+        sendNotification(interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])) // Sends The Notification For The User
         location.reload() // Reloads The Page
     }
 

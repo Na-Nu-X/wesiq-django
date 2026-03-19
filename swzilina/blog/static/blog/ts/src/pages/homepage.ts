@@ -41,14 +41,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Data - Array of Objects of Pages
         const pages:Pages[] = [
             { url: "/", title: gettext("Hlavná stránka"), icon: "<i class='fa-solid fa-house'></i>" }, // https://fontawesome.com/icons/house
-            { url: "/prihlasenie", title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/obnova-hesla", title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/registracia", title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/moj-ucet", title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: "/moje-hodnotenie", title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
-            { url: "/blog", title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
-            { url: "/trening", title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
-            { url: "/moje-treningove-plany", title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
+            { url: gettext("/prihlasenie"), title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: gettext("/obnova-hesla"), title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: gettext("/registracia"), title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: gettext("/moj-ucet"), title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
+            { url: gettext("/moje-hodnotenie"), title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
+            { url: gettext("/blog"), title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
+            { url: gettext("/trening"), title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
+            { url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
         ]
 
         search_result.innerHTML = "" // Deletes Search Result
@@ -348,8 +348,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const attachment_name = file.name
         const attachment_size = file.size
 
-        if(attachment_size <= 25000000) attachment_report.textContent = `Vybraný súbor: ${attachment_name}`
-        else if(attachment_size > 25000000) attachment_report.textContent = "Vybraný súbor je príliš veľký."
-        else attachment_report.textContent = "Nie je vybraný žiaden súbor."
+        if(attachment_size <= 25000000) attachment_report.textContent = `${gettext("Vybraný súbor")}: ${attachment_name}`
+        else if(attachment_size > 25000000) attachment_report.textContent = gettext("Vybraný súbor je príliš veľký.")
+        else attachment_report.textContent = gettext("Nie je vybraný žiaden súbor.")
     })
 })

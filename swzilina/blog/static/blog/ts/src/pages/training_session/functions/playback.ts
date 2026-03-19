@@ -143,7 +143,7 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
                     renderTrainingPlanActivitySummary(training_plan_summary, training_plan_title) // Renders Training Plan Activity Summary
                 }
 
-                if(!container.querySelector(".no_logged_in")) sendPOST("/training-session", new_activity_data) // Sends POST Data
+                if(!container.querySelector(".no_logged_in")) sendPOST(window.location.pathname, new_activity_data) // Sends POST Data
             }
         }
 

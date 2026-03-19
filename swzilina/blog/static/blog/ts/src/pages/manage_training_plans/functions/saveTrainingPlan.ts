@@ -83,11 +83,11 @@ export function saveTrainingPlan(container:HTMLDivElement, state:{active_exercis
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        sendPOST("/my-training-plans", training_plan_data) // Sends The Data With POST 
+        sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST 
 
         // Sends The Notification For The User
-        if(action === "new_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne pridaný.`)
-        if(action === "edited_training_plan") sendNotification(`Tréningový plán ${training_plan_title.value} bol úspešne upravený.`)
+        if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne pridaný."), [training_plan_title.value]))
+        if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne upravený."), [training_plan_title.value]))
 
         location.reload() // Reloads The Page
     }

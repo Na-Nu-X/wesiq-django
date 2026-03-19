@@ -87,7 +87,7 @@ export const xp_boost_interval:{
     set amount(value:number) {
         this._amount = value
         const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
-        current_activity_info.innerHTML = value === 1 ? "<span>Žiadne aktívne navýšenie XP</span>" : `<i class="fa-solid fa-bolt"></i> ${value}x` // Shows Current Activity Info https://fontawesome.com/icons/bolt
+        current_activity_info.innerHTML = value === 1 ? gettext("<span>Žiadne aktívne navýšenie XP</span>") : `<i class="fa-solid fa-bolt"></i> ${value}x` // Shows Current Activity Info https://fontawesome.com/icons/bolt
     }
 }
 

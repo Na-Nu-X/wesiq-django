@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     delete_review_checkbox.addEventListener("click", function():void {
         if(this.checked) {
             delete_review_image.style.opacity = "1"
-            form_report.textContent = "Vaše hodnotenie bude odstránené"
+            form_report.textContent = gettext("Vaše hodnotenie bude odstránené")
             form_report.classList.add("error")
         }
 
