@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     delete_profile_picture_checkbox.addEventListener("click", function():void {
         if(this.checked) {
             delete_profile_picture_image.style.opacity = "1"
-            form_report.textContent = "Profilový obrázok bude odstránený"
+            form_report.textContent = gettext("Profilový obrázok bude odstránený")
             form_report.classList.add("error")
         }
 
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     delete_account_checkbox.addEventListener("click", function():void {
         if(this.checked) {
             delete_account_image.style.opacity = "1"
-            form_report.textContent = "Váš úcet bude odstránený"
+            form_report.textContent = gettext("Váš úcet bude odstránený")
             form_report.classList.add("error")
         }
 

@@ -50,10 +50,10 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
     const average_activity_time:HTMLSpanElement = document.querySelector(".activity .previous_activity .average_activity_time") as HTMLSpanElement // Gets Average Activity Time
 
     // Main Summary
+    // interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])
+    gained_xp == 0 ? main_summary.innerHTML = gettext("Nezískali ste žiadne XP") : main_summary.innerHTML = `${gettext("Získali ste")}: <span style="color: #52cf20">${gained_xp}XP</span>` // Displays Text For Earned XP
 
-    gained_xp == 0 ? main_summary.innerHTML = `Nezískali ste žiadne XP` : main_summary.innerHTML = `Získali ste: <span style="color: #52cf20">${gained_xp}XP</span>` // Displays Text For Earned XP
-
-    main_summary.innerHTML += "<br>Aktuálna aktivita trvala: "
+    main_summary.innerHTML += gettext("<br>Aktuálna aktivita trvala: ")
 
     // Displays The Main Summary Text In Green
     if(elapsed_time >= parseInt(average_activity_time.dataset.average_activity_time || "0")) {
@@ -62,7 +62,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                    <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní">
+                    <span class="tooltip" data-tooltip="${gettext('Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní')}">
                         (+100%)
                     </span>
                 </span>
@@ -74,7 +74,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                    <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${((elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100) - 100).toFixed(2).replace(".", ",")}% dlhší ako priemer za posledných 7 dní">
+                    <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní'), [((elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100) - 100).toFixed(2).replace(".", ",")])}">
                         (+${((elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100) - 100).toFixed(2).replace(".", ",")}%)
                     </span>
                 </span>
@@ -88,7 +88,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
             <span style="color: #df3535">
                 ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                <span class="tooltip" data-tooltip="Čas aktuálnej aktivity bol o ${(100 - (elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100)).toFixed(2).replace(".", ",")}% kratší ako priemer za posledných 7 dní">
+                <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní'), [(100 - (elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100)).toFixed(2).replace(".", ",")])}">
                     (-${(100 - (elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100)).toFixed(2).replace(".", ",")}%)
                 </span>
             </span>

@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Checks If Cookie Exists
     if(!password_reset_timer) {
-        timer.innerText = "Platnosť vypršala!" // Sets Message
+        timer.innerText = gettext("Platnosť vypršala!") // Sets Message
         timer.style.fontFamily = "Poppins, Arial, sans-serif"
         timer.style.fontSize = "0.8em"
         timer.style.lineHeight = "1em"
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Checks If There Is Still Some Remaining Time
         if(remaining_time <= 0) {
-            timer.innerText = "Platnosť vypršala!" // Sets Message
+            timer.innerText = gettext("Platnosť vypršala!") // Sets Message
             timer.style.fontFamily = "Poppins, Arial, sans-serif"
             timer.style.fontSize = "0.8em"
             timer.style.lineHeight = "1em"

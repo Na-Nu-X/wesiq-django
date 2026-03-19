@@ -316,6 +316,7 @@
 
 {% block script %}
     {% if request.session.logged_in_user_id %}
+        <script src="{% url 'javascript_catalog_url' %}"></script>
         <script src="{% static 'blog/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
         <script src="{% static 'blog/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
         <script src="{% static 'blog/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>

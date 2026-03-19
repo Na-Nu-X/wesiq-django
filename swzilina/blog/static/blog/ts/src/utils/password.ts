@@ -1,12 +1,12 @@
 // Function For Verifying Password Inputs Validity
 export function passwordVerification(input_1:HTMLInputElement, input_2:HTMLInputElement, report:HTMLParagraphElement):void {
     if(input_1.value == input_2.value && input_1.value != "") {
-        report.textContent = "Heslá sa zhodujú" // Shows Valid Report Message
+        report.textContent = gettext("Heslá sa zhodujú") // Shows Valid Report Message
         report.classList.replace("error", "success") // Adds Success Class
     }
 
     else if(input_1.value != input_2.value) {
-        report.textContent = "Heslá sa nezhodujú" // Shows Invalid Report Message
+        report.textContent = gettext("Heslá sa nezhodujú") // Shows Invalid Report Message
         report.classList.replace("success", "error") // Adds Error Class
     }
 
@@ -16,14 +16,14 @@ export function passwordVerification(input_1:HTMLInputElement, input_2:HTMLInput
 // Function For Showing Password
 export function showPassword(icon:HTMLElement, input:HTMLInputElement):void {
     icon.classList.replace("fa-eye-slash", "fa-eye") // Shows Open Eye
-    icon.title = "Skryť heslo"; // Changes Title Attribute
+    icon.title = gettext("Skryť heslo"); // Changes Title Attribute
     (input.style as CSSStyleDeclaration & { webkitTextSecurity?: string }).webkitTextSecurity = "none" // Shows Password (input.style.webkitTextSecurity = "none")
 }
 
 // Function For Hiding Password
 export function hidePassword(icon:HTMLElement, input:HTMLInputElement):void {
     icon.classList.replace("fa-eye", "fa-eye-slash") // Shows Slashed Eye
-    icon.title = "Zobraziť heslo"; // Changes Title Attribute
+    icon.title = gettext("Zobraziť heslo"); // Changes Title Attribute
     (input.style as CSSStyleDeclaration & { webkitTextSecurity?: string }).webkitTextSecurity = "disc" // Hides Password (input.style.webkitTextSecurity = "disc")
 }
 
@@ -51,7 +51,7 @@ export function emailVerification(input:HTMLInputElement, report:HTMLParagraphEl
     else {
         event.preventDefault()
 
-        report.textContent = "Zadajte váš e-mail"
+        report.textContent = gettext("Zadajte váš e-mail")
         report.classList.add("error")
     }
 }
