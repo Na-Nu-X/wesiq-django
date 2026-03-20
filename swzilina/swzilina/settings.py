@@ -26,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# Gmail
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'behulpatrik@gmail.com'
-EMAIL_HOST_PASSWORD = 'ydgwvfkeqhjtcejv'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -161,8 +161,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
 # Google reCAPTCHA V3
-RECAPTCHA_SITE_KEY = "6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"
-RECAPTCHA_SECRET_KEY = "6LffOQcsAAAAADR5L5rz42G_B9aNmxsq0PotYn4N"
+RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
 
 # Google OAuth 2.0
 AUTHENTICATION_BACKENDS = [
@@ -186,8 +186,10 @@ SOCIALACCOUNT_PROVIDERS = {
 SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_LOGIN_METHODS = {'email'}
+
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'sysadmin', 'root', 'api', 'security', 'webmaster', 'profile', 'post', 'inbox', 'help', 'accounts', 'support']
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -207,6 +209,11 @@ LANGUAGES = [
     ('cs', _('Czech')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('uk', _('Ukrainian')),
+    ('ru', _('Russian')),
+    ('br', _('Brazilian')),
+    ('zh', _('Chinese')),
 ]
 
 USE_I18N = True
