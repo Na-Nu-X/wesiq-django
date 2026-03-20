@@ -1,57 +1,58 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 class contactForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte vaše meno"}),
+        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše meno")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadané meno je príliš dlhé",
-            "required": "Zadajte vaše meno",
+            "max_length": _("Zadané meno je príliš dlhé"),
+            "required": _("Zadajte vaše meno"),
         },
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Zadajte vaše priezvisko"}),
+        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše priezvisko")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadané priezvisko je príliš dlhé",
-            "required": "Zadajte vaše priezvisko",
+            "max_length": _("Zadané priezvisko je príliš dlhé"),
+            "required": _("Zadajte vaše priezvisko"),
         },
     )
 
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),
+        widget=forms.EmailInput(attrs={"placeholder": _("Zadajte váš e-mail")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadaný e-mail je príliš dlhý",
-            "required": "Zadajte váš e-mail",
+            "max_length": _("Zadaný e-mail je príliš dlhý"),
+            "required": _("Zadajte váš e-mail"),
         },
     )
 
     subject = forms.ChoiceField(
         choices = {
-            "Otázka": "Otázka",
-            "Návrh na zlepšenie": "Návrh na zlepšenie",
-            "Nahlásenie chyby": "Nahlásenie chyby",
+            "Otázka": _("Otázka"),
+            "Návrh na zlepšenie": _("Návrh na zlepšenie"),
+            "Nahlásenie chyby": _("Nahlásenie chyby"),
         },
         label=False,
         required=False,
     )
 
     message = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": "Napíšte správu"}),
+        widget=forms.Textarea(attrs={"placeholder": _("Napíšte správu")}),
         label=False,
         max_length=200,
         required=True,
         error_messages={
-            "max_length": "Vaša správa je príliš dlhá",
-            "required": "Napíšte správu",
+            "max_length": _("Vaša správa je príliš dlhá"),
+            "required": _("Napíšte správu"),
         },
     )
 
@@ -70,12 +71,12 @@ class reviewForm(forms.Form):
     )
 
     review = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "review_content", "placeholder": "Zanechajte nám hodnotenie"}),
+        widget=forms.Textarea(attrs={"class": "review_content", "placeholder": _("Zanechajte nám hodnotenie")}),
         label=False,
         max_length=200,
         required=False,
         error_messages={
-            "max_length": "Vaša recenzia je príliš dlhá",
+            "max_length": _("Vaša recenzia je príliš dlhá"),
         },
     )
 
@@ -85,182 +86,160 @@ class reviewForm(forms.Form):
     )
 class loginForm(forms.Form):
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "Zadajte váš e-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": _("Zadajte váš e-mail")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadaný e-mail je príliš dlhý",
-            "required": "Zadajte váš e-mail",
+            "max_length": _("Zadaný e-mail je príliš dlhý"),
+            "required": _("Zadajte váš e-mail"),
         },
     )
 
     password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Zadajte vaše heslo", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": _("Zadajte vaše heslo"), "autocomplete": "off"}),
         label=False,
         required=True,
         error_messages={
-            "required": "Zadajte vaše heslo",
+            "required": _("Zadajte vaše heslo"),
         },
     )
 
 class passwordResetForm(forms.Form):
     password_reset_code = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password_reset_code", "placeholder": "Zadajte 6-miestny overovací kód", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "password_reset_code", "placeholder": _("Zadajte 6-miestny overovací kód"), "autocomplete": "off"}),
         label=False,
         max_length=6,
         required=True,
         error_messages={
-            "max_length": "Zadaný kód je príliš dlhý",
-            "required": "Zadajte 6-miestny overovací kód",
+            "max_length": _("Zadaný kód je príliš dlhý"),
+            "required": _("Zadajte 6-miestny overovací kód"),
         },
     )
 
     new_password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": _("Vytvorte heslo"), "autocomplete": "off"}),
         label=False,
         min_length=8,
         max_length=50,
         required=True,
         error_messages={
-            "min_length": "Zadané heslo je príliš krátke",
-            "max_length": "Zadané heslo je príliš dlhé",
-            "required": "Vytvorte heslo",
+            "min_length": _("Zadané heslo je príliš krátke"),
+            "max_length": _("Zadané heslo je príliš dlhé"),
+            "required": _("Vytvorte heslo"),
         },
     )
 
 class registrationForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": "Meno"}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Meno")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadané meno je príliš dlhé",
-            "required": "Zadajte vaše meno",
+            "max_length": _("Zadané meno je príliš dlhé"),
+            "required": _("Zadajte vaše meno"),
         },
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": "Priezvisko"}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Priezvisko")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadané priezvisko je príliš dlhé",
-            "required": "Zadajte vaše priezvisko",
+            "max_length": _("Zadané priezvisko je príliš dlhé"),
+            "required": _("Zadajte vaše priezvisko"),
         },
     )
 
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "E-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": _("E-mail")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadaný e-mail je príliš dlhý",
-            "required": "Zadajte váš e-mail",
+            "max_length": _("Zadaný e-mail je príliš dlhý"),
+            "required": _("Zadajte váš e-mail"),
         },
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": "Telefónne číslo"}),
+        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": _("Telefónne číslo")}),
         label=False,
         max_length=20,
         required=False,
         error_messages={
-            "max_length": "Zadané telefónne číslo je príliš dlhé",
+            "max_length": _("Zadané telefónne číslo je príliš dlhé"),
         },
     )
 
     password = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password", "placeholder": "Vytvorte heslo", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "password", "placeholder": _("Vytvorte heslo"), "autocomplete": "off"}),
         label=False,
         min_length=8,
         max_length=50,
         required=True,
         error_messages={
-            "min_length": "Zadané heslo je príliš krátke",
-            "max_length": "Zadané heslo je príliš dlhé",
-            "required": "Vytvorte heslo",
+            "min_length": _("Zadané heslo je príliš krátke"),
+            "max_length": _("Zadané heslo je príliš dlhé"),
+            "required": _("Vytvorte heslo"),
         },
     )
 
     password_check = forms.CharField(
-        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": "Overte heslo", "autocomplete": "off"}),
+        widget=forms.PasswordInput(attrs={"class": "password_check", "placeholder": _("Overte heslo"), "autocomplete": "off"}),
         label=False,
         min_length=8,
         max_length=50,
         required=True,
         error_messages={
-            "min_length": "Zadané heslo je príliš krátke",
-            "max_length": "Zadané heslo je príliš dlhé",
-            "required": "Znovu zadajte heslo",
+            "min_length": _("Zadané heslo je príliš krátke"),
+            "max_length": _("Zadané heslo je príliš dlhé"),
+            "required": _("Znovu zadajte heslo"),
         },
     )
 
 class editAccountForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": "Zmeniť meno"}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Zmeniť meno")}),
         label=False,
         max_length=50,
         required=False,
         error_messages={
-            "max_length": "Zadané meno je príliš dlhé",
+            "max_length": _("Zadané meno je príliš dlhé"),
         },
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": "Zmeniť priezvisko"}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Zmeniť priezvisko")}),
         label=False,
         max_length=50,
         required=False,
         error_messages={
-            "max_length": "Zadané priezvisko je príliš dlhé",
+            "max_length": _("Zadané priezvisko je príliš dlhé"),
         },
     )
 
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": "Zmeniť e-mail"}),
+        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": _("Zmeniť e-mail")}),
         label=False,
         max_length=50,
         required=False,
         error_messages={
-            "max_length": "Zadaný e-mail je príliš dlhý",
+            "max_length": _("Zadaný e-mail je príliš dlhý"),
         },
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": "Zmeniť telefónne číslo"}),
+        widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": _("Zmeniť telefónne číslo")}),
         label=False,
         max_length=20,
         required=False,
         error_messages={
-            "max_length": "Zadané telefónne číslo je príliš dlhé",
+            "max_length": _("Zadané telefónne číslo je príliš dlhé"),
         },
     )
-
-    # current_password = forms.CharField(
-    #     widget=forms.PasswordInput(attrs={"placeholder": "Zadajte vaše heslo"}),
-    #     label=False,
-    #     max_length=50,
-    #     required=True,
-    #     error_messages={
-    #         "max_length": "Zadané heslo je príliš dlhé",
-    #         "required": "Vytvorte heslo",
-    #     },
-    # )
-
-    # new_password = forms.CharField(
-    #     widget=forms.PasswordInput(attrs={"placeholder": "Vytvorte nové heslo"}),
-    #     label=False,
-    #     max_length=50,
-    #     required=True,
-    #     error_messages={
-    #         "max_length": "Zadané heslo je príliš dlhé",
-    #         "required": "Vytvorte heslo",
-    #     },
-    # )
 
     select_profile_picture = forms.FileField(
         widget=forms.ClearableFileInput(attrs={"id": "select_profile_picture", "accept": "image/*"}),
@@ -280,92 +259,81 @@ class editAccountForm(forms.Form):
 
 class writeArticleForm(forms.Form):
     title = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Názov"}),
+        widget=forms.TextInput(attrs={"placeholder": _("Názov")}),
         label=False,
         max_length=20,
         required=True,
         error_messages={
-            "max_length": "Zadaný názov je príliš dlhý",
-            "required": "Zadajte názov",
+            "max_length": _("Zadaný názov je príliš dlhý"),
+            "required": _("Zadajte názov"),
         },
     )
 
     content = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": "Článok"}),
+        widget=forms.Textarea(attrs={"placeholder": _("Článok")}),
         label=False,
         required=True,
         error_messages={
-            "required": "Obsah článku nesmie byť prázdny",
+            "required": _("Obsah článku nesmie byť prázdny"),
         },
     )
-
-    # categories = forms.CharField(
-    #     widget=forms.TextInput(attrs={"placeholder": "Kategórie"}),
-    #     label=False,
-    #     max_length=30,
-    #     required=True,
-    #     error_messages={
-    #         "max_length": "Zadajte menej kategórií",
-    #         "required": "Zadajte kategórie",
-    #     },
-    # )
 
     category_style = forms.ChoiceField(
         widget=forms.Select(attrs={"class": "category_style"}),
         choices = {
-            "": "Kategória podľa určenia",
-            "static": "Statické prvky",
-            "dynamic": "Dynamický trik",
-            "isotonic": "Izotonický cvik",
-            "balance": "O rovnováhe",
-            "flexibility": "O flexibilite"
+            "": _("Kategória podľa určenia"),
+            "static": _("Statické prvky"),
+            "dynamic": _("Dynamický trik"),
+            "isotonic": _("Izotonický cvik"),
+            "balance": _("O rovnováhe"),
+            "flexibility": _("O flexibilite")
         },
         label=False,
         required=True,
         error_messages={
-            "required": "Vyberte kategóriu podľa určenia",
+            "required": _("Vyberte kategóriu podľa určenia"),
         },
     )
 
     category_movement = forms.ChoiceField(
         widget=forms.Select(attrs={"class": "category_movement"}),
         choices = {
-            "": "Kategória podľa pohybu",
-            "pull": "Ťah",
-            "push": "Tlak",
-            "legs": "Nohy",
+            "": _("Kategória podľa pohybu"),
+            "pull": _("Ťah"),
+            "push": _("Tlak"),
+            "legs": _("Nohy"),
         },
         label=False,
         required=True,
         error_messages={
-            "required": "Vyberte kategóriu podľa pohybu",
+            "required": _("Vyberte kategóriu podľa pohybu"),
         },
     )
 
     category_difficulty = forms.ChoiceField(
         widget=forms.Select(attrs={"class": "category_difficulty"}),
         choices = {
-            "": "Kategória podľa obtiažnosti",
-            "beginner": "Pre začiatočníkov",
-            "intermediate": "Pre stredne pokročilých",
-            "advanced": "Pre pokročilých",
-            "elite": "Pre profesionálov",
+            "": _("Kategória podľa obtiažnosti"),
+            "beginner": _("Pre začiatočníkov"),
+            "intermediate": _("Pre stredne pokročilých"),
+            "advanced": _("Pre pokročilých"),
+            "elite": _("Pre profesionálov"),
         },
         label=False,
         required=True,
         error_messages={
-            "required": "Vyberte kategóriu podľa obtiažnosti",
+            "required": _("Vyberte kategóriu podľa obtiažnosti"),
         },
     )
 
     link = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Link"}),
+        widget=forms.TextInput(attrs={"placeholder": _("Link")}),
         label=False,
         max_length=20,
         required=True,
         error_messages={
-            "max_length": "Zadaný link je príliš dlhý",
-            "required": "Zadajte link",
+            "max_length": _("Zadaný link je príliš dlhý"),
+            "required": _("Zadajte link"),
         },
     )
 
@@ -377,24 +345,24 @@ class writeArticleForm(forms.Form):
 
 class blogSubscribeForm(forms.Form):
     email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": "Zadajte váš e-mail"}),
+        widget=forms.EmailInput(attrs={"placeholder": _("Zadajte váš e-mail")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": "Zadaný e-mail je príliš dlhý",
-            "required": "Zadajte váš e-mail",
+            "max_length": _("Zadaný e-mail je príliš dlhý"),
+            "required": _("Zadajte váš e-mail"),
         },
     )
 
 class writeCommentForm(forms.Form):
     comment = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Napísať komentár", "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"placeholder": _("Napísať komentár"), "autocomplete": "off"}),
         label=False,
         max_length=200,
         required=True,
         error_messages={
-            "max_length": "Zadaný komentár je príliš dlhý",
-            "required": "Zanechajte komentár",
+            "max_length": _("Zadaný komentár je príliš dlhý"),
+            "required": _("Zanechajte komentár"),
         },
     )

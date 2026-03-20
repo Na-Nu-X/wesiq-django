@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 13:28+0000\n"
+"POT-Creation-Date: 2026-03-20 16:59+0000\n"
 "PO-Revision-Date: 2026-03-20 13:29+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,28 +160,21 @@ msgstr "<br>The Current Activity Lasted:"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "The Current Activity Time was 100% Longer Than The Average for The Last 7 "
 "Days"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "The Current Activity Time was %s Longer Than The Average for The Last 7 Days"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
-msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
-"The Current Activity Time was %s Shorter Than The Average for The Last 7 "
-"Days"
+"The Current Activity Time was %s Shorter Than The Average for The Last 7 Days"
 
 #: blog/static/blog/ts/src/pages/training_session/state.ts:90
 msgid "<span>Žiadne aktívne navýšenie XP</span>"
