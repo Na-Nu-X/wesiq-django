@@ -24,6 +24,7 @@ from collections import OrderedDict
 import json
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
 from django.db.models.functions import Mod
+from django.utils.translation import gettext as _
 
 # Functions
 def captureError(message):
@@ -46,17 +47,16 @@ def homepageView(request):
 
                     user.last_login = timezone.now() # Stores Last Login Time
                     user.save()
-
-                    messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{user.first_name}&nbsp;{user.last_name}")
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
                     return HttpResponseRedirect(reverse("homepage_url"))
                 
                 else: # Wrong Password
-                    messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+                    messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                     captureError("Nesprávne prihlasovacie údaje")
             
             except Users.DoesNotExist: # Wrong E-mail Address
-                messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+                messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError("Nesprávne prihlasovacie údaje")
 
     if request.GET.get("password-reset"):
@@ -90,8 +90,7 @@ def homepageView(request):
         # Saves Password Reset Code To Database
         user.password_reset_code = code
         user.save()
-
-        messages.add_message(request, messages.SUCCESS, f"Overovací&nbsp;kód&nbsp;bol&nbsp;odoslaný&nbsp;na&nbsp;adresu<br>{email_address}")
+        messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
 
         # Redirect After Sending Mail
         response = HttpResponseRedirect(reverse("password_reset_url"))
@@ -112,21 +111,21 @@ def homepageView(request):
 
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
-            messages.add_message(request, messages.ERROR, "Overenie&nbsp;reCaptcha&nbsp;zlyhalo")
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError("Overenie reCaptcha zlyhalo")
 
         else:
             registration_form = registrationForm(request.POST)
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
-                    messages.add_message(request, messages.ERROR, "Tento&nbsp;e-mail&nbsp;už&nbsp;je&nbsp;zaregistrovaný")
+                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
                     captureError("Tento e-mail už je zaregistrovaný")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
-                    messages.add_message(request, messages.ERROR, "Heslá&nbsp;sa&nbsp;nezhodujú")
+                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
 
                 elif len(registration_form.cleaned_data["password"]) < 8:
-                    messages.add_message(request, messages.ERROR, "Heslo&nbsp;je&nbsp;príliš&nbsp;krátke")
+                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
                     new_user = Users(
@@ -145,12 +144,12 @@ def homepageView(request):
                     # Sets User ID Session For New Registered User For Login or Switch Account
                     request.session["logged_in_user_id"] = new_user.id
 
-                    messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{new_user.first_name}&nbsp;{new_user.last_name}")
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": new_user.first_name, "last_name": new_user.last_name})
 
                     return HttpResponseRedirect(reverse("homepage_url"))
             
             else:
-                messages.add_message(request, messages.ERROR, "Registrácia&nbsp;zlyhala")
+                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
                 captureError("Registrácia zlyhala")
 
     # Contact Form
@@ -167,7 +166,7 @@ def homepageView(request):
 
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
-            messages.add_message(request, messages.ERROR, "Overenie&nbsp;reCaptcha&nbsp;zlyhalo")
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError("Overenie reCaptcha zlyhalo")
 
         else:
@@ -195,19 +194,19 @@ def homepageView(request):
 
                         mail_message.send()
 
-                        messages.add_message(request, messages.SUCCESS, "Správa&nbsp;bola&nbsp;odoslaná")
+                        messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
 
                     else:
-                        messages.add_message(request, messages.ERROR, "Príloha&nbsp;je&nbsp;príliš&nbsp;veľká")
+                        messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
                         captureError("Príloha je príliš veľká")
 
                 else: # Sends Mail Without An Attachment
                     mail_message.send()
 
-                    messages.add_message(request, messages.SUCCESS, "Správa bola odoslaná")
+                    messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
             
             else:
-                messages.add_message(request, messages.ERROR, "Správu&nbsp;sa&nbsp;nepodarilo&nbsp;odoslať")
+                messages.add_message(request, messages.ERROR, _("Správu sa nepodarilo odoslať"))
                 captureError("Správu sa nepodarilo odoslať")
 
         return HttpResponseRedirect(reverse("homepage_url"))
@@ -281,7 +280,7 @@ def homepageView(request):
 
             # Checks Validity Of reCaptcha Response
             if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
-                messages.add_message(request, messages.ERROR, "Overenie&nbsp;reCaptcha&nbsp;zlyhalo")
+                messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
                 captureError("Overenie reCaptcha zlyhalo")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
@@ -291,14 +290,14 @@ def homepageView(request):
                 if review_form.is_valid():
                     # Checks If User Has Already Written A Review
                     if Reviews.objects.filter(user_id=logged_in_user_id).exists():
-                        messages.add_message(request, messages.ERROR, "Skúste&nbsp;upraviť&nbsp;aktuálne&nbsp;hodnotenie")
+                        messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
 
                         return HttpResponseRedirect(reverse("edit_review_url"))
 
                     # Saves New Review To DB
                     else:
                         if int(review_form.cleaned_data["rating"]) == 0:
-                            messages.add_message(request, messages.ERROR, "Ukážte&nbsp;nám&nbsp;vašu&nbsp;spokojnosť")
+                            messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
 
                         else:
                             new_review = Reviews(
@@ -308,11 +307,11 @@ def homepageView(request):
                             )
                             new_review.save()
 
-                            messages.add_message(request, messages.SUCCESS, "Ďakujeme&nbsp;za&nbsp;vaše&nbsp;hodnotenie")
+                            messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
                         
                 else:
-                    messages.add_message(request, messages.ERROR, "Hodnotenie&nbsp;sa&nbsp;nepodarilo&nbsp;zverejniť")
-                    captureError("Hodnotenie sa nepodarilo zverejniť")
+                    messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
+                    captureError("Hodnotenie sa nepodarilo uverejniť")
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -350,7 +349,7 @@ def homepageView(request):
     else:
         # Write Review Form
         if request.method == "POST" and request.POST.get("write_review_form_submit"):
-            messages.add_message(request, messages.ERROR, "Pred&nbsp;napísaním&nbsp;hodnotenia&nbsp;sa&nbsp;prihláste")
+            messages.add_message(request, messages.ERROR, _("Pred napísaním hodnotenia sa prihláste"))
 
             return HttpResponseRedirect(reverse("login_url"))
 
@@ -381,16 +380,16 @@ def loginView(request):
                 user.last_login = timezone.now() # Stores Last Login Time
                 user.save()
 
-                messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{user.first_name}&nbsp;{user.last_name}")
+                messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
                 return HttpResponseRedirect(reverse("homepage_url"))
             
             else: # Wrong Password
-                messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+                messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError("Nesprávne prihlasovacie údaje")
         
         except Users.DoesNotExist: # Wrong E-mail Address
-            messages.add_message(request, messages.ERROR, "Nesprávne&nbsp;prihlasovacie&nbsp;údaje")
+            messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
             captureError("Nesprávne prihlasovacie údaje")
 
     if request.GET.get("password-reset"):
@@ -425,7 +424,7 @@ def loginView(request):
         user.password_reset_code = code
         user.save()
 
-        messages.add_message(request, messages.SUCCESS, f"Overovací&nbsp;kód&nbsp;bol&nbsp;odoslaný&nbsp;na&nbsp;adresu<br>{email_address}")
+        messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
 
         # Redirect After Sending Mail
         response = HttpResponseRedirect(reverse("password_reset_url"))
@@ -448,7 +447,7 @@ def passwordResetView(request):
 
                 if password_reset_code == user.password_reset_code:
                     if len(new_password) < 8:
-                        messages.add_message(request, messages.ERROR, "Heslo&nbsp;je&nbsp;príliš&nbsp;krátke")
+                        messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                     else:
                         # Saves New Password To Database And Deletes Password Reset Code From Database
@@ -456,7 +455,7 @@ def passwordResetView(request):
                         user.password_reset_code = None
                         user.save()
 
-                        messages.add_message(request, messages.SUCCESS, "Heslo&nbsp;bolo&nbsp;úspešne&nbsp;zmenené")
+                        messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
 
                         # Redirect After Changing Password
                         response = HttpResponseRedirect(reverse("login_url"))
@@ -464,11 +463,11 @@ def passwordResetView(request):
                         return response
                 
                 else:
-                    messages.add_message(request, messages.ERROR, "Overovací&nbsp;kód&nbsp;sa&nbsp;nezhoduje")
+                    messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
                     captureError("Overovací kód sa nezhoduje")
 
             else:
-                messages.add_message(request, messages.ERROR, "Overenie&nbsp;zlyhalo")
+                messages.add_message(request, messages.ERROR, _("Overenie zlyhalo"))
                 captureError("Overenie zlyhalo")
 
         if request.GET.get("password-reset"):
@@ -503,7 +502,7 @@ def passwordResetView(request):
             user.password_reset_code = code
             user.save()
 
-            messages.add_message(request, messages.SUCCESS, f"Overovací&nbsp;kód&nbsp;bol&nbsp;odoslaný&nbsp;na&nbsp;adresu<br>{email_address}")
+            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
 
             # Redirect After Sending Mail
             response = HttpResponseRedirect(reverse("password_reset_url"))
@@ -527,7 +526,7 @@ def passwordResetView(request):
 def logoutView(request):
     logout(request)
 
-    messages.add_message(request, messages.ERROR, "Boli&nbsp;ste&nbsp;odhlásený")
+    messages.add_message(request, messages.ERROR, _("Boli ste odhlásený"))
 
     return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -545,7 +544,7 @@ def registrationView(request):
 
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
-            messages.add_message(request, messages.ERROR, "Overenie&nbsp;reCaptcha&nbsp;zlyhalo")
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError("Overenie reCaptcha zlyhalo")
 
             return HttpResponseRedirect(reverse("registration_url"))
@@ -554,14 +553,14 @@ def registrationView(request):
             registration_form = registrationForm(request.POST)
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
-                    messages.add_message(request, messages.ERROR, "Tento&nbsp;e-mail&nbsp;už&nbsp;je&nbsp;zaregistrovaný")
+                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
                     captureError("Tento e-mail už je zaregistrovaný")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
-                    messages.add_message(request, messages.ERROR, "Heslá&nbsp;sa&nbsp;nezhodujú")
+                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
 
                 elif len(registration_form.cleaned_data["password"]) < 8:
-                    messages.add_message(request, messages.ERROR, "Heslo&nbsp;je&nbsp;príliš&nbsp;krátke")
+                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
                     new_user = Users(
@@ -580,12 +579,12 @@ def registrationView(request):
                     # Sets User ID Session For New Registered User For Login or Switch Account
                     request.session["logged_in_user_id"] = new_user.id
 
-                    messages.add_message(request, messages.SUCCESS, f"Úspešne&nbsp;prihlásený&nbsp;ako<br>{new_user.first_name}&nbsp;{new_user.last_name}")
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": new_user.first_name, "last_name": new_user.last_name})
 
                     return HttpResponseRedirect(reverse("homepage_url"))
                 
             else:
-                messages.add_message(request, messages.ERROR, "Registrácia&nbsp;zlyhala")
+                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
                 captureError("Registrácia zlyhala")
 
             return HttpResponseRedirect(reverse("registration_url"))
@@ -636,7 +635,7 @@ def editAccountView(request):
                     logged_in_user.account_status = "suspended" # Changes Account Status
                     logged_in_user.save()
 
-                    messages.add_message(request, messages.ERROR, f"Účet&nbsp;{logged_in_user.first_name}&nbsp;{logged_in_user.last_name}&nbsp;bol&nbsp;odstránený")
+                    messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
                     captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
 
                     del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
@@ -689,15 +688,15 @@ def editAccountView(request):
 
                     logged_in_user.save()
 
-                    messages.add_message(request, messages.SUCCESS, "Zmeny&nbsp;boli&nbsp;uložené")
+                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
                     return HttpResponseRedirect(reverse("homepage_url"))
 
                 else:
-                    messages.add_message(request, messages.ERROR, f"Ďalšie&nbsp;úpravy&nbsp;budú&nbsp;možné&nbsp;{(logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
+                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
             
             else:
-                messages.add_message(request, messages.ERROR, "Zmeny&nbsp;sa&nbsp;nepodarilo&nbsp;vykonať")
+                messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
                 captureError("Zmeny sa nepodarilo vykonať")
 
             return HttpResponseRedirect(reverse("edit_account_url"))
@@ -731,7 +730,7 @@ def editAccountView(request):
             logged_in_user.password_reset_code = code
             logged_in_user.save()
 
-            messages.add_message(request, messages.SUCCESS, f"Overovací&nbsp;kód&nbsp;bol&nbsp;odoslaný&nbsp;na&nbsp;adresu<br>{logged_in_user.email_address}")
+            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
 
             # Redirect After Sending Mail
             response = HttpResponseRedirect(reverse("password_reset_url"))
@@ -780,22 +779,22 @@ def editReviewView(request):
                     if delete_review:
                         review.delete()
 
-                        messages.add_message(request, messages.ERROR, "Vaše&nbsp;hodnotenie&nbsp;bolo&nbsp;odstránené")
+                        messages.add_message(request, messages.ERROR, _("Vaše hodnotenie bolo odstránené"))
 
                         return HttpResponseRedirect(reverse("homepage_url"))
                     
-                    messages.add_message(request, messages.SUCCESS, "Zmeny&nbsp;boli&nbsp;uložené")
+                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
                     return HttpResponseRedirect(reverse("homepage_url"))
                 
                 else:
-                    messages.add_message(request, messages.ERROR, "Zmeny&nbsp;sa&nbsp;nepodarilo&nbsp;vykonať")
+                    messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
                     captureError("Zmeny sa nepodarilo vykonať")
 
                 return HttpResponseRedirect(reverse("edit_review_url"))
             
             else:
-                messages.add_message(request, messages.ERROR, f"Ďalšie&nbsp;úpravy&nbsp;budú&nbsp;možné&nbsp;{(review.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')}")
+                messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (review.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
         
         filled_review_form = reviewForm(initial={
             "rating": review.rating,
@@ -871,7 +870,7 @@ def blogView(request):
                 subscribed_user.blog_subscribe = True
                 subscribed_user.save()
 
-                messages.add_message(request, messages.SUCCESS, f"Budete&nbsp;dostávať&nbsp;upozornenia&nbsp;na&nbsp;adresu<br>{email_address}")
+                messages.add_message(request, messages.SUCCESS, f"Budete dostávať upozornenia na adresu\n%(email_address)s" % {"email_address": email_address})
 
             # Account With The Entered E-mail Address Does Not Exist
             except:
