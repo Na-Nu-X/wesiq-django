@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    'django_celery_beat', # Django Celery Beat (Added Periodic Tasks Section To The Admin Site)
+
     'rosetta', # Rosetta (Language Admin Site)
 ]
 
@@ -136,6 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+# TIME_ZONE = 'Europe/Bratislava'
 
 USE_I18N = True
 
@@ -195,9 +198,10 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # Celery
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
 CELERY_TIMEZONE = 'Europe/Bratislava'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 from django.utils.translation import gettext_lazy as _
 
@@ -222,3 +226,9 @@ USE_I18N = True
 LOCALE_PATHS = [
     BASE_DIR / 'locale/',
 ]
+
+# Logs Directory
+LOGS_DIR = BASE_DIR / "logs"
+
+if not LOGS_DIR.exists():
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
