@@ -1,7 +1,9 @@
-[21.03. 2026 10:31:21 UTC] - Nesprávne prihlasovacie údaje
-[21.03. 2026 10:42:12 UTC] - Nesprávne prihlasovacie údaje
-[21.03. 2026 10:42:22 UTC] - Nesprávne prihlasovacie údaje
-[21.03. 2026 11:43:04 UTC] - Tento e-mail už je zaregistrovaný
-[21.03. 2026 11:45:08 UTC] - Účet TEST TEST bol odstránený
-[21.03. 2026 11:57:08 UTC] - Účet TEST TEST bol odstránený
-[21.03. 2026 12:01:29 UTC] - Účet TEST TEST bol odstránený
+[21.03. 2026 14:26:59 UTC] - Incorrect Login Credentials (Wrong Password)
+	- E-mail Address: behulpatrik@gmail.com,
+	- Password: a,
+	- IP Address: 172.18.0.1
+
+[21.03. 2026 14:28:17 UTC] - Incorrect Login Credentials (Wrong Password)
+	- E-mail Address: behulpatrik@gmail.com,
+	- Password: B,
+	- IP Address: 172.18.0.1

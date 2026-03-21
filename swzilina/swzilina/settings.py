@@ -232,3 +232,7 @@ LOGS_DIR = BASE_DIR / "logs"
 
 if not LOGS_DIR.exists():
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Get IP Address
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

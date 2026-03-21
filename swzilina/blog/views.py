@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
 from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -17,10 +17,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 import math
 from django.http import JsonResponse
-from django.db.models import Max
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
-from collections import OrderedDict
 import json
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
 from django.db.models.functions import Mod
@@ -31,6 +29,16 @@ def captureError(message):
     with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+
+def getClientIp(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    return ip
 
 def homepageView(request):
     # Login Form
@@ -54,11 +62,11 @@ def homepageView(request):
                 
                 else: # Wrong Password
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                    captureError("Nesprávne prihlasovacie údaje")
+                    captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
             
             except Users.DoesNotExist: # Wrong E-mail Address
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError("Nesprávne prihlasovacie údaje")
+                captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -113,14 +121,14 @@ def homepageView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError("Overenie reCaptcha zlyhalo")
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
             registration_form = registrationForm(request.POST)
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
                     messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError("Tento e-mail už je zaregistrovaný")
+                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
                     messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
@@ -151,7 +159,7 @@ def homepageView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError("Registrácia zlyhala")
+                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
 
     # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
@@ -168,7 +176,7 @@ def homepageView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError("Overenie reCaptcha zlyhalo")
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
             contact_form = contactForm(request.POST, request.FILES)
@@ -199,7 +207,7 @@ def homepageView(request):
 
                     else:
                         messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
-                        captureError("Príloha je príliš veľká")
+                        captureError(f"The Attachment is Too Large\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                 else: # Sends Mail Without An Attachment
                     mail_message.send()
@@ -208,7 +216,7 @@ def homepageView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Správu sa nepodarilo odoslať"))
-                captureError("Správu sa nepodarilo odoslať")
+                captureError(f"The Message Could Not be Sent\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
         return HttpResponseRedirect(reverse("homepage_url"))
             
@@ -282,7 +290,7 @@ def homepageView(request):
             # Checks Validity Of reCaptcha Response
             if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
                 messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-                captureError("Overenie reCaptcha zlyhalo")
+                captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
             
@@ -312,7 +320,7 @@ def homepageView(request):
                         
                 else:
                     messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
-                    captureError("Hodnotenie sa nepodarilo uverejniť")
+                    captureError(f"Review Could Not be Published\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -388,11 +396,11 @@ def loginView(request):
             
             else: # Wrong Password
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError("Nesprávne prihlasovacie údaje")
+                captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
         
         except Users.DoesNotExist: # Wrong E-mail Address
             messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-            captureError("Nesprávne prihlasovacie údaje")
+            captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -466,11 +474,11 @@ def passwordResetView(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
-                    captureError("Overovací kód sa nezhoduje")
+                    captureError(f"Verification Code Does Not Match\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
 
             else:
                 messages.add_message(request, messages.ERROR, _("Overenie zlyhalo"))
-                captureError("Overenie zlyhalo")
+                captureError(f"Verification Failed\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
 
         if request.GET.get("password-reset"):
             email_address = request.COOKIES.get("email_address")
@@ -547,7 +555,7 @@ def registrationView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError("Overenie reCaptcha zlyhalo")
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
 
@@ -556,7 +564,7 @@ def registrationView(request):
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
                     messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError("Tento e-mail už je zaregistrovaný")
+                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
                     messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
@@ -587,7 +595,7 @@ def registrationView(request):
                 
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError("Registrácia zlyhala")
+                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
         
@@ -625,7 +633,7 @@ def editAccountView(request):
                     logged_in_user.save()
 
                     messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                    captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
+                    captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s Account Status Has Been Changed to Suspended\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                     del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
@@ -686,7 +694,7 @@ def editAccountView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                captureError("Zmeny sa nepodarilo vykonať")
+                captureError(f"Changes Could Not be Made While Editing Account)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("edit_account_url"))
         
@@ -778,7 +786,7 @@ def editReviewView(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                    captureError("Zmeny sa nepodarilo vykonať")
+                    captureError(f"Changes Could Not be Made While Editing Review)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("edit_review_url"))
             
