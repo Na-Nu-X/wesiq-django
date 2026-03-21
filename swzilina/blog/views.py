@@ -28,7 +28,7 @@ from django.utils.translation import gettext as _
 
 # Functions
 def captureError(message):
-    with open(f"{settings.BASE_DIR}/error.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
@@ -46,6 +46,7 @@ def homepageView(request):
                     request.session["logged_in_user_id"] = user.id
 
                     user.last_login = timezone.now() # Stores Last Login Time
+                    user.account_status = "OK"
                     user.save()
                     messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
@@ -378,6 +379,7 @@ def loginView(request):
                 request.session["logged_in_user_id"] = user.id
 
                 user.last_login = timezone.now() # Stores Last Login Time
+                user.account_status = "OK"
                 user.save()
 
                 messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
@@ -604,19 +606,6 @@ def editAccountView(request):
             if edit_account_form.is_valid():
                 delete_account = edit_account_form.cleaned_data["delete_account"]
                 if delete_account:
-                    # current_profile_picture_name = logged_in_user.profile_picture_name
-                    # path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                    # if current_profile_picture_name != "" and current_profile_picture_name != None:
-                    #     os.remove(f"{path}/{current_profile_picture_name}")
-
-                    # messages.add_message(request, messages.ERROR, f"Účet&nbsp;{logged_in_user.first_name}&nbsp;{logged_in_user.last_name}&nbsp;bol&nbsp;odstránený")
-                    # captureError(f"Účet {logged_in_user.first_name} {logged_in_user.last_name} bol odstránený")
-
-                    # logged_in_user.delete()
-
-                    # # Deletes Previous User ID Session If Was Logged In
-                    # del request.session["logged_in_user_id"]
-
                     # Send Mail
                     subject = "SW Žilina - Odstránenie účtu"
                     text_content = f"Dobrý deň {logged_in_user.first_name} {logged_in_user.last_name},\ndostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina."

@@ -41,6 +41,7 @@ services:
     command: celery -A swzilina worker -l INFO
     volumes:
       - ./swzilina:/app
+      - ./swzilina/logs:/app/logs
     env_file:
       - .env
     depends_on:
@@ -52,7 +53,7 @@ services:
   celery_beat:
     build: ./swzilina
     container_name: swzilina_beat
-    command: celery -A swzilina beat -l INFO
+    command: celery -A swzilina beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - ./swzilina:/app
     env_file:
