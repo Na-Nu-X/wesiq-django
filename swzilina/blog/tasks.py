@@ -2,19 +2,15 @@ from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
 from blog.models import Users
-import os, logging
+import os
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
-logger = logging.getLogger(__name__)
-
-if not logger.handlers:
-    handler = logging.FileHandler(os.path.join(settings.LOGS_DIR, 'celery_tasks.log'), mode='a')
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
-    handler.terminator = '\n'
+# Functions
+def captureMessage(message):
+    with open(f"{settings.LOGS_DIR}/celery_tasks.log", mode="a", encoding="utf-8") as file:
+        # timezone.LocalTimezone
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 @shared_task(name="blog.tasks.cleanup_users")
 def cleanup_users():
@@ -54,10 +50,10 @@ def cleanup_users():
 
         # Sets Message
         message = f"{users_for_deletion_count} User Has Been Deleted" if users_for_deletion_count == 1 else f"{users_for_deletion_count} Users Has Been Deleted"
-        logger.info(message)
+        captureMessage(message)
         return message
 
     # Sets Message
-    message = "No Users Has Been Deleted."
-    logger.info(message)
+    message = "No Users Has Been Deleted"
+    captureMessage(message)
     return message
