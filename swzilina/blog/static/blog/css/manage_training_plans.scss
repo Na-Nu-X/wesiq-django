@@ -5,11 +5,12 @@
     @include flex_center;
     position: fixed;
     top: 0px;
+    left: 0px;
     width: 100%;
     height: calc(100vh);
     backdrop-filter: blur(2px);
     background-color: transparentize($main-color, 0.5);
-    z-index: 1000;
+    z-index: 500;
 
     p {
         text-align: center;
@@ -37,7 +38,7 @@
     padding: 15px;
     background-color: transparentize($main-color, 0.2);
     border-radius: 0px $big-border-radius $big-border-radius 0px;
-    z-index: 500;
+    z-index: 2000;
 
     ul {
         display: flex;

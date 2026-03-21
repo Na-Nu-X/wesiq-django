@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 19:22+0000\n"
-"PO-Revision-Date: 2026-03-20 19:39+0000\n"
+"POT-Creation-Date: 2026-03-21 17:05+0000\n"
+"PO-Revision-Date: 2026-03-21 17:06+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -28,7 +28,6 @@ msgid "Zadané meno je príliš dlhé"
 msgstr "Entered First Name is Too Long"
 
 #: blog/forms.py:17 blog/forms.py:23 blog/forms.py:152
-#| msgid "Zadajte vaše meno"
 msgid "Zadajte vaše priezvisko"
 msgstr "Enter your Last Name"
 
@@ -38,7 +37,6 @@ msgstr "Entered Last Name is Too Long"
 
 #: blog/forms.py:28 blog/forms.py:34 blog/forms.py:89 blog/forms.py:95
 #: blog/forms.py:163 blog/forms.py:348 blog/forms.py:354
-#| msgid "Zadajte vaše meno"
 msgid "Zadajte váš e-mail"
 msgstr "Enter your e-mail"
 
@@ -61,17 +59,14 @@ msgid "Nahlásenie chyby"
 msgstr "Report Bug"
 
 #: blog/forms.py:49 blog/forms.py:55
-#| msgid "Odoslať správu"
 msgid "Napíšte správu"
 msgstr "Write a Message"
 
 #: blog/forms.py:54
-#| msgid "Príloha je príliš veľká"
 msgid "Vaša správa je príliš dlhá"
 msgstr "Your Message is Too Long"
 
 #: blog/forms.py:74
-#| msgid "Priemerné hodnotenie"
 msgid "Zanechajte nám hodnotenie"
 msgstr "Leave Us a Review"
 
@@ -80,12 +75,10 @@ msgid "Vaša recenzia je príliš dlhá"
 msgstr "Your Review is Too Long"
 
 #: blog/forms.py:100 blog/forms.py:104
-#| msgid "Zadajte vaše meno"
 msgid "Zadajte vaše heslo"
 msgstr "Enter your Password"
 
 #: blog/forms.py:110 blog/forms.py:116
-#| msgid "Poslať overovací kód"
 msgid "Zadajte 6-miestny overovací kód"
 msgstr "Enter the 6-Digit Verification Code"
 
@@ -94,17 +87,14 @@ msgid "Zadaný kód je príliš dlhý"
 msgstr "Entered Code is Too Long"
 
 #: blog/forms.py:121 blog/forms.py:129 blog/forms.py:178 blog/forms.py:186
-#| msgid "Vytvorte si prvý."
 msgid "Vytvorte heslo"
 msgstr "Create a Password"
 
 #: blog/forms.py:127 blog/forms.py:184 blog/forms.py:197
-#| msgid "Heslo je príliš krátke"
 msgid "Zadané heslo je príliš krátke"
 msgstr "Entered Password is Too Short"
 
 #: blog/forms.py:128 blog/forms.py:185 blog/forms.py:198
-#| msgid "Heslo je príliš krátke"
 msgid "Zadané heslo je príliš dlhé"
 msgstr "Entered Password is Too Long"
 
@@ -129,7 +119,6 @@ msgid "Zadané telefónne číslo je príliš dlhé"
 msgstr "Entered Phone Number is Too Long"
 
 #: blog/forms.py:191
-#| msgid "Overenie zlyhalo"
 msgid "Overte heslo"
 msgstr "Verify Password"
 
@@ -138,22 +127,18 @@ msgid "Znovu zadajte heslo"
 msgstr "Enter The Password Again"
 
 #: blog/forms.py:205
-#| msgid "Zmeniť heslo"
 msgid "Zmeniť meno"
 msgstr "Change First Name"
 
 #: blog/forms.py:215
-#| msgid "Zmeniť heslo"
 msgid "Zmeniť priezvisko"
 msgstr "Change Last Name"
 
 #: blog/forms.py:225
-#| msgid "Zmeniť heslo"
 msgid "Zmeniť e-mail"
 msgstr "Change e-mail"
 
 #: blog/forms.py:235
-#| msgid "Zmeniť heslo"
 msgid "Zmeniť telefónne číslo"
 msgstr "Change Phone Number"
 
@@ -167,7 +152,6 @@ msgid "Zadaný názov je príliš dlhý"
 msgstr "Entered Title is Too Long"
 
 #: blog/forms.py:268
-#| msgid "Zadajte vaše meno"
 msgid "Zadajte názov"
 msgstr "Enter Title"
 
@@ -188,12 +172,10 @@ msgid "Statické prvky"
 msgstr "Static"
 
 #: blog/forms.py:286
-#| msgid "Dynamické triky"
 msgid "Dynamický trik"
 msgstr "Dynamic"
 
 #: blog/forms.py:287
-#| msgid "Izotonické cviky"
 msgid "Izotonický cvik"
 msgstr "Isotonic"
 
@@ -262,7 +244,6 @@ msgid "Zadaný link je príliš dlhý"
 msgstr "Entered Link is Too Long"
 
 #: blog/forms.py:336
-#| msgid "Zadajte vaše meno"
 msgid "Zadajte link"
 msgstr "Enter Link"
 
@@ -1014,7 +995,7 @@ msgstr "training-session/"
 msgid "moje-treningove-plany/"
 msgstr "my-training-plans/"
 
-#: blog/views.py:50 blog/views.py:147 blog/views.py:383 blog/views.py:582
+#: blog/views.py:59 blog/views.py:156 blog/views.py:393 blog/views.py:592
 #, python-format
 msgid ""
 "Úspešne prihlásený ako\n"
@@ -1023,122 +1004,142 @@ msgstr ""
 "Successfully Logged In as\n"
 "%(first_name)s %(last_name)s"
 
-#: blog/views.py:55 blog/views.py:59 blog/views.py:388 blog/views.py:392
+#: blog/views.py:64 blog/views.py:68 blog/views.py:398 blog/views.py:402
 msgid "Nesprávne prihlasovacie údaje"
 msgstr "Incorrect Login Credentials"
 
-#: blog/views.py:93 blog/views.py:427 blog/views.py:505 blog/views.py:733
+#: blog/views.py:102 blog/views.py:437 blog/views.py:515 blog/views.py:730
 #, python-format
 msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
 msgstr "A Verification Code Has Been Sent to the %(email_address)s"
 
-#: blog/views.py:114 blog/views.py:169 blog/views.py:283 blog/views.py:547
+#: blog/views.py:123 blog/views.py:178 blog/views.py:292 blog/views.py:557
 msgid "Overenie reCaptcha zlyhalo"
 msgstr "Verification by reCaptcha Failed"
 
-#: blog/views.py:121 blog/views.py:556
+#: blog/views.py:130 blog/views.py:566
 msgid "Tento e-mail už je zaregistrovaný"
 msgstr "This e-mail is Already Registered"
 
-#: blog/views.py:125 blog/views.py:560
+#: blog/views.py:134 blog/views.py:570
 msgid "Heslá sa nezhodujú"
 msgstr "Passwords Do Not Match"
 
-#: blog/views.py:128 blog/views.py:450 blog/views.py:563
+#: blog/views.py:137 blog/views.py:460 blog/views.py:573
 msgid "Heslo je príliš krátke"
 msgstr "The Password is Too Short"
 
-#: blog/views.py:152 blog/views.py:587
+#: blog/views.py:161 blog/views.py:597
 msgid "Registrácia zlyhala"
 msgstr "Registration Failed"
 
-#: blog/views.py:197 blog/views.py:206
+#: blog/views.py:206 blog/views.py:215
 msgid "Správa bola odoslaná"
 msgstr "The Message Has Been Sent"
 
-#: blog/views.py:200
+#: blog/views.py:209
 msgid "Príloha je príliš veľká"
 msgstr "The Attachment is Too Large"
 
-#: blog/views.py:209
+#: blog/views.py:218
 msgid "Správu sa nepodarilo odoslať"
 msgstr "The Message Could Not be Sent"
 
-#: blog/views.py:293
+#: blog/views.py:302
 msgid "Skúste upraviť aktuálne hodnotenie"
 msgstr "Try Editing the Current Review"
 
-#: blog/views.py:300
+#: blog/views.py:309
 msgid "Ukážte nám vašu spokojnosť"
 msgstr "Show us your Satisfaction"
 
-#: blog/views.py:310
+#: blog/views.py:319
 msgid "Ďakujeme za vaše hodnotenie"
 msgstr "Thank you for Your Review"
 
-#: blog/views.py:313
+#: blog/views.py:322
 msgid "Hodnotenie sa nepodarilo uverejniť"
 msgstr "Review Could Not be Published"
 
-#: blog/views.py:352
+#: blog/views.py:361
 msgid "Pred napísaním hodnotenia sa prihláste"
 msgstr "Please Log In Before Writing a Review"
 
-#: blog/views.py:458
+#: blog/views.py:468
 msgid "Heslo bolo úspešne zmenené"
 msgstr "Password Changed Successfully"
 
-#: blog/views.py:466
+#: blog/views.py:476
 msgid "Overovací kód sa nezhoduje"
 msgstr "Verification Code Does Not Match"
 
-#: blog/views.py:470
+#: blog/views.py:480
 msgid "Overenie zlyhalo"
 msgstr "Verification Failed"
 
-#: blog/views.py:529
+#: blog/views.py:539
 msgid "Boli ste odhlásený"
 msgstr "You Have been Logged Out"
 
-#: blog/views.py:638
+#: blog/views.py:635
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgstr "Account %(first_name)s %(last_name)s Has been Deleted"
 
-#: blog/views.py:691 blog/views.py:786
+#: blog/views.py:688 blog/views.py:783
 msgid "Zmeny boli uložené"
 msgstr "Changes Have been Saved"
 
-#: blog/views.py:696 blog/views.py:797
+#: blog/views.py:693 blog/views.py:794
 #, python-format
 msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
 msgstr "Further Adjustments will be Possible on %(next_edit_time)s"
 
-#: blog/views.py:699 blog/views.py:791
+#: blog/views.py:696 blog/views.py:788
 msgid "Zmeny sa nepodarilo vykonať"
 msgstr "Changes Could Not be Made"
 
-#: blog/views.py:782
+#: blog/views.py:779
 msgid "Vaše hodnotenie bolo odstránené"
 msgstr "Your Review Has been Deleted"
 
-#: swzilina/settings.py:206
+#: swzilina/settings.py:212
 msgid "Slovak"
 msgstr "Slovak"
 
-#: swzilina/settings.py:207
+#: swzilina/settings.py:213
 msgid "Czech"
 msgstr "Czech"
 
-#: swzilina/settings.py:208
+#: swzilina/settings.py:214
 msgid "English"
 msgstr "English"
 
-#: swzilina/settings.py:209
+#: swzilina/settings.py:215
 msgid "Spanish"
 msgstr "Spanish"
+
+#: swzilina/settings.py:216
+msgid "French"
+msgstr "French"
+
+#: swzilina/settings.py:217
+msgid "Ukrainian"
+msgstr "Ukrainian"
+
+#: swzilina/settings.py:218
+msgid "Russian"
+msgstr "Russian"
+
+#: swzilina/settings.py:219
+msgid "Brazilian"
+msgstr "Brazilian"
+
+#: swzilina/settings.py:220
+msgid "Chinese"
+msgstr "Chinese"
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"

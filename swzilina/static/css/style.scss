@@ -39,7 +39,7 @@ body {
     border-radius: 50%;
     transition: opacity 1s ease, visibility 1s ease;
     animation: preloaderSpin 1s infinite linear;
-    z-index: 9000;
+    z-index: 3000;
 
     &.hidden {
         opacity: 0;
@@ -61,7 +61,7 @@ body {
     backdrop-filter: blur(8px);
     border-radius: $medium-border-radius;
     transition: opacity 0.5s ease, visibility 0.5s ease;
-    z-index: 8000;
+    z-index: 2000;
 
     &.hide {
         opacity: 0;
@@ -126,7 +126,7 @@ body {
     border: 2px solid $secondary-color;
     border-radius: 50%;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 9000;
+    z-index: 3000;
 
     &:hover {
         cursor: pointer;
@@ -178,7 +178,7 @@ body {
     transform: translate(-50%, -50%);
     text-align: center;
     animation: fadeOutMessage 5s ease;
-    z-index: 200;
+    z-index: 3000;
 
     &.success {
         color: $success-color;
@@ -217,7 +217,7 @@ header {
         border-bottom: 1px solid $secondary-color;
         backdrop-filter: blur(5px);
         opacity: 1;
-        z-index: 8000;
+        z-index: 2000;
 
         ul {
             text-align: center;
@@ -269,7 +269,7 @@ header {
         height: calc(125px - 67px);
         padding: 0px 10px;
         background-color: transparentize($secondary-color, 0.95);
-        z-index: 7000;
+        z-index: 1000;
 
         .left {
             width: 100%;
@@ -394,7 +394,7 @@ footer {
     padding: 10px;
     background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
-    z-index: 7000;
+    z-index: 1000;
 
     h2 {
         font-size: 2.5em;
