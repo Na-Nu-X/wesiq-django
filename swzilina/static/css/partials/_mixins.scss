@@ -446,6 +446,8 @@
     position: relative;
     max-width: 500px;
     width: 100%;
+    backdrop-filter: blur(5px);
+    z-index: 50;
 
     .fa-magnifying-glass {
         @include icon;

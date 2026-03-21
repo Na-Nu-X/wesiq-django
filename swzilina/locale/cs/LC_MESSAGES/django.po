@@ -8,390 +8,595 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 20:08+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2026-03-21 16:59+0000\n"
+"PO-Revision-Date: 2026-03-21 19:38+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
-"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: blog/forms.py:6 blog/forms.py:12 blog/forms.py:141
+msgid "Zadajte vaše meno"
+msgstr "Zadejte vaše jméno"
+
+#: blog/forms.py:11 blog/forms.py:140 blog/forms.py:210
+msgid "Zadané meno je príliš dlhé"
+msgstr "Zadané jméno je příliš dlouhé"
+
+#: blog/forms.py:17 blog/forms.py:23 blog/forms.py:152
+msgid "Zadajte vaše priezvisko"
+msgstr "Zadejte vaše příjmení"
+
+#: blog/forms.py:22 blog/forms.py:151 blog/forms.py:220
+msgid "Zadané priezvisko je príliš dlhé"
+msgstr "Zadané příjmení je příliš dlouhé"
+
+#: blog/forms.py:28 blog/forms.py:34 blog/forms.py:89 blog/forms.py:95
+#: blog/forms.py:163 blog/forms.py:348 blog/forms.py:354
+msgid "Zadajte váš e-mail"
+msgstr "Zadejte váš e-mail"
+
+#: blog/forms.py:33 blog/forms.py:94 blog/forms.py:162 blog/forms.py:230
+#: blog/forms.py:353
+msgid "Zadaný e-mail je príliš dlhý"
+msgstr "Zadaný e-mail je příliš dlouhý"
+
+#: blog/forms.py:40 blog/templates/blog/homepage.html:600
+#: blog/templates/blog/homepage.html:603 blog/templates/blog/homepage.html:608
+msgid "Otázka"
+msgstr "Otázka"
+
+#: blog/forms.py:41 blog/templates/blog/homepage.html:609
+msgid "Návrh na zlepšenie"
+msgstr "Návrh na zlepšení"
+
+#: blog/forms.py:42 blog/templates/blog/homepage.html:610
+msgid "Nahlásenie chyby"
+msgstr "Nahlášení chyby"
+
+#: blog/forms.py:49 blog/forms.py:55
+msgid "Napíšte správu"
+msgstr "Napište zprávu"
+
+#: blog/forms.py:54
+msgid "Vaša správa je príliš dlhá"
+msgstr "Vaše zpráva je příliš dlouhá"
+
+#: blog/forms.py:74
+msgid "Zanechajte nám hodnotenie"
+msgstr "Zanechte nám hodnocení"
+
+#: blog/forms.py:79
+msgid "Vaša recenzia je príliš dlhá"
+msgstr "Vaše recenze je příliš dlouhá"
+
+#: blog/forms.py:100 blog/forms.py:104
+msgid "Zadajte vaše heslo"
+msgstr "Zadejte vaše heslo"
+
+#: blog/forms.py:110 blog/forms.py:116
+msgid "Zadajte 6-miestny overovací kód"
+msgstr "Zadejte 6 místný ověřovací kód"
+
+#: blog/forms.py:115
+msgid "Zadaný kód je príliš dlhý"
+msgstr "Zadaný kód je příliš dlouhý"
+
+#: blog/forms.py:121 blog/forms.py:129 blog/forms.py:178 blog/forms.py:186
+msgid "Vytvorte heslo"
+msgstr "Vytvořte heslo"
+
+#: blog/forms.py:127 blog/forms.py:184 blog/forms.py:197
+msgid "Zadané heslo je príliš krátke"
+msgstr "Zadané heslo je příliš krátké"
+
+#: blog/forms.py:128 blog/forms.py:185 blog/forms.py:198
+msgid "Zadané heslo je príliš dlhé"
+msgstr "Zadané heslo je příliš dlouhé"
+
+#: blog/forms.py:135
+msgid "Meno"
+msgstr "Jméno"
+
+#: blog/forms.py:146
+msgid "Priezvisko"
+msgstr "Příjmení"
+
+#: blog/forms.py:157
+msgid "E-mail"
+msgstr "E-mail"
+
+#: blog/forms.py:168
+msgid "Telefónne číslo"
+msgstr "Telefonní číslo"
+
+#: blog/forms.py:173 blog/forms.py:240
+msgid "Zadané telefónne číslo je príliš dlhé"
+msgstr "Zadané telefonní číslo je příliš dlouhé"
+
+#: blog/forms.py:191
+msgid "Overte heslo"
+msgstr "Ověřte heslo"
+
+#: blog/forms.py:199
+msgid "Znovu zadajte heslo"
+msgstr "Znovu zadejte heslo"
+
+#: blog/forms.py:205
+msgid "Zmeniť meno"
+msgstr "Změnit jméno"
+
+#: blog/forms.py:215
+msgid "Zmeniť priezvisko"
+msgstr "Změnit příjmení"
+
+#: blog/forms.py:225
+msgid "Zmeniť e-mail"
+msgstr "Změnit e-mail"
+
+#: blog/forms.py:235
+msgid "Zmeniť telefónne číslo"
+msgstr "Změnit telefonní číslo"
+
+#: blog/forms.py:262 blog/templates/blog/manage_training_plans.html:140
+#: blog/templates/blog/manage_training_plans.html:194
+msgid "Názov"
+msgstr "Název"
+
+#: blog/forms.py:267
+msgid "Zadaný názov je príliš dlhý"
+msgstr "Zadaný název je příliš dlouhý"
+
+#: blog/forms.py:268
+msgid "Zadajte názov"
+msgstr "Zadejte název"
+
+#: blog/forms.py:273
+msgid "Článok"
+msgstr "Článek"
+
+#: blog/forms.py:277
+msgid "Obsah článku nesmie byť prázdny"
+msgstr "Obsah článku nesmí být prázdný"
+
+#: blog/forms.py:284
+msgid "Kategória podľa určenia"
+msgstr "Kategorie podle určení"
+
+#: blog/forms.py:285 blog/templates/blog/blog.html:69
+msgid "Statické prvky"
+msgstr "Statické prvky"
+
+#: blog/forms.py:286
+msgid "Dynamický trik"
+msgstr "Dynamický trik"
+
+#: blog/forms.py:287
+msgid "Izotonický cvik"
+msgstr "Izotonický cvik"
+
+#: blog/forms.py:288 blog/templates/blog/blog.html:72
+msgid "O rovnováhe"
+msgstr "O rovnováze"
+
+#: blog/forms.py:289 blog/templates/blog/blog.html:73
+msgid "O flexibilite"
+msgstr "O flexibilitě"
+
+#: blog/forms.py:294
+msgid "Vyberte kategóriu podľa určenia"
+msgstr "Vyberte kategorii podle určení"
+
+#: blog/forms.py:301
+msgid "Kategória podľa pohybu"
+msgstr "Kategorie podle pohybu"
+
+#: blog/forms.py:302 blog/templates/blog/blog.html:76
+msgid "Ťah"
+msgstr "Tah"
+
+#: blog/forms.py:303 blog/templates/blog/blog.html:75
+msgid "Tlak"
+msgstr "Tlak"
+
+#: blog/forms.py:304 blog/templates/blog/blog.html:77
+msgid "Nohy"
+msgstr "Nohy"
+
+#: blog/forms.py:309
+msgid "Vyberte kategóriu podľa pohybu"
+msgstr "Vyberte kategorii podle pohybu"
+
+#: blog/forms.py:316
+msgid "Kategória podľa obtiažnosti"
+msgstr "Kategorie podle obtížnosti"
+
+#: blog/forms.py:317 blog/templates/blog/blog.html:79
+msgid "Pre začiatočníkov"
+msgstr "Pro začátečníky"
+
+#: blog/forms.py:318 blog/templates/blog/blog.html:80
+msgid "Pre stredne pokročilých"
+msgstr "Pro středně pokročilé"
+
+#: blog/forms.py:319 blog/templates/blog/blog.html:81
+msgid "Pre pokročilých"
+msgstr "Pro pokročilé"
+
+#: blog/forms.py:320 blog/templates/blog/blog.html:82
+msgid "Pre profesionálov"
+msgstr "Pro profesionály"
+
+#: blog/forms.py:325
+msgid "Vyberte kategóriu podľa obtiažnosti"
+msgstr "Vyberte kategorii podle obtížnosti"
+
+#: blog/forms.py:330
+msgid "Link"
+msgstr "Link"
+
+#: blog/forms.py:335
+msgid "Zadaný link je príliš dlhý"
+msgstr "Zadaný link je příliš dlouhý"
+
+#: blog/forms.py:336
+msgid "Zadajte link"
+msgstr "Zadejte link"
+
+#: blog/forms.py:360
+msgid "Napísať komentár"
+msgstr "Napsat komentář"
+
+#: blog/forms.py:365
+msgid "Zadaný komentár je príliš dlhý"
+msgstr "Zadaný komentář je příliš dlouhý"
+
+#: blog/forms.py:366
+msgid "Zanechajte komentár"
+msgstr "Zanechte komentář"
 
 #: blog/templates/blog/articles.html:29 blog/templates/blog/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
-msgstr ""
+msgstr "Zatím žádná hodnocení"
 
 #: blog/templates/blog/articles.html:32 blog/templates/blog/blog.html:150
 msgid "Priemerné hodnotenie"
-msgstr ""
+msgstr "Průměrné hodnocení"
 
 #: blog/templates/blog/articles.html:101
 msgid "Zatiaľ&nbsp;žiadne&nbsp;komentáre."
-msgstr ""
+msgstr "Zatím&nbsp;žádné&nbsp;komentáře."
 
 #: blog/templates/blog/articles.html:101
 msgid "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!"
-msgstr ""
+msgstr "Buďte&nbsp;prvním&nbsp;a&nbsp;začněte&nbsp;diskusi!"
 
 #: blog/templates/blog/articles.html:121 blog/templates/blog/articles.html:204
 msgid "Zobraziť profil"
-msgstr ""
+msgstr "Zobrazit profil"
 
 #: blog/templates/blog/articles.html:128 blog/templates/blog/articles.html:211
 msgid "Odpovedať..."
-msgstr ""
+msgstr "Odpovědět..."
 
 #: blog/templates/blog/articles.html:133 blog/templates/blog/articles.html:216
 msgid "Páči sa mi..."
-msgstr ""
+msgstr "Líbí se mi..."
 
 #: blog/templates/blog/articles.html:150 blog/templates/blog/articles.html:233
 msgid "Nahlásiť..."
-msgstr ""
+msgstr "Nahlásit..."
 
 #: blog/templates/blog/articles.html:154 blog/templates/blog/articles.html:237
 #: blog/templates/blog/blog.html:187
 msgid "Dátum zverejnenia"
-msgstr ""
+msgstr "Datum zveřejnění"
 
 #: blog/templates/blog/blog.html:5 templates/base.html:158
 msgid "Blog"
-msgstr ""
+msgstr "Blog"
 
 #: blog/templates/blog/blog.html:12 blog/templates/blog/write_article.html:5
 #: blog/templates/blog/write_article.html:15
 #: blog/templates/blog/write_article.html:36
 msgid "Pridať článok"
-msgstr ""
+msgstr "Přidat článek"
 
 #: blog/templates/blog/blog.html:18
 #, python-format
 msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr ""
+msgstr "Našel se %(num_articles)s článek."
 
 #: blog/templates/blog/blog.html:21
 #, python-format
 msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr ""
+msgstr "Našli se %(num_articles)s články."
 
 #: blog/templates/blog/blog.html:24
 #, python-format
 msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr ""
+msgstr "Našlo se %(num_articles)s článků."
 
 #: blog/templates/blog/blog.html:33
 msgid "Nájsť článok"
-msgstr ""
+msgstr "Najít článek"
 
 #: blog/templates/blog/blog.html:39 blog/templates/blog/blog.html:58
 #: blog/templates/blog/homepage.html:438
 msgid "Obnoviť predvolené filtre"
-msgstr ""
+msgstr "Obnovit výchozí filtry"
 
 #: blog/templates/blog/blog.html:44 blog/templates/blog/blog.html:49
 msgid "Najnovšie články"
-msgstr ""
+msgstr "Nejnovější články"
 
 #: blog/templates/blog/blog.html:50
 msgid "Populárne články"
-msgstr ""
+msgstr "Populární články"
 
 #: blog/templates/blog/blog.html:51
 msgid "Najlepšie hodnotené"
-msgstr ""
+msgstr "Nejlépe hodnocené"
 
 #: blog/templates/blog/blog.html:52
 msgid "Podľa abecedy (A-Z)"
-msgstr ""
+msgstr "Podle abecedy (A-Z)"
 
 #: blog/templates/blog/blog.html:53
 msgid "Podľa abecedy (Z-A)"
-msgstr ""
+msgstr "Podle abecedy (Z-A)"
 
 #: blog/templates/blog/blog.html:63 blog/templates/blog/blog.html:68
 #: blog/templates/blog/homepage.html:443
 msgid "Všetky kategórie"
-msgstr ""
-
-#: blog/templates/blog/blog.html:69
-msgid "Statické prvky"
-msgstr ""
+msgstr "Všechny kategorie"
 
 #: blog/templates/blog/blog.html:70
 msgid "Dynamické triky"
-msgstr ""
+msgstr "Dynamické triky"
 
 #: blog/templates/blog/blog.html:71
 msgid "Izotonické cviky"
-msgstr ""
-
-#: blog/templates/blog/blog.html:72
-msgid "O rovnováhe"
-msgstr ""
-
-#: blog/templates/blog/blog.html:73
-msgid "O flexibilite"
-msgstr ""
-
-#: blog/templates/blog/blog.html:75
-msgid "Tlak"
-msgstr ""
-
-#: blog/templates/blog/blog.html:76
-msgid "Ťah"
-msgstr ""
-
-#: blog/templates/blog/blog.html:77
-msgid "Nohy"
-msgstr ""
-
-#: blog/templates/blog/blog.html:79
-msgid "Pre začiatočníkov"
-msgstr ""
-
-#: blog/templates/blog/blog.html:80
-msgid "Pre stredne pokročilých"
-msgstr ""
-
-#: blog/templates/blog/blog.html:81
-msgid "Pre pokročilých"
-msgstr ""
-
-#: blog/templates/blog/blog.html:82
-msgid "Pre profesionálov"
-msgstr ""
+msgstr "Izotonické cviky"
 
 #: blog/templates/blog/blog.html:90
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;články."
 msgstr ""
+"Omlouváme&nbsp;se!<br>Nepodařilo&nbsp;se&nbsp;najít žádné&nbsp;články."
 
 #: blog/templates/blog/blog.html:122
 msgid "Tento článok pridal"
-msgstr ""
+msgstr "Tento článek přidal"
 
 #: blog/templates/blog/blog.html:127
 msgid "Zdielať"
-msgstr ""
+msgstr "Sdílet"
 
 #: blog/templates/blog/blog.html:137
 msgid "Zobraziť"
-msgstr ""
+msgstr "Zobrazit"
 
 #: blog/templates/blog/blog.html:168
 msgid "Kategória"
-msgstr ""
+msgstr "Kategorie"
 
 #: blog/templates/blog/blog.html:181
 msgid "unikátnych návštevníkov"
-msgstr ""
+msgstr "unikátních návštěvníků"
 
-#: blog/templates/blog/blog.html:206
+#: blog/templates/blog/blog.html:204
 msgid "Odoberať"
-msgstr ""
+msgstr "Odebírat"
 
-#: blog/templates/blog/blog.html:206
+#: blog/templates/blog/blog.html:204
 msgid "Dostávať upozornenia o nových článkoch"
-msgstr ""
+msgstr "Dostávat upozornění o nových článcích"
 
 #: blog/templates/blog/edit_account.html:5 templates/base.html:94
 #: templates/base.html:110
 msgid "Môj účet"
-msgstr ""
+msgstr "Můj účet"
 
 #: blog/templates/blog/edit_account.html:16
 msgid "Môj&nbsp;účet"
-msgstr ""
+msgstr "Můj&nbsp;účet"
 
 #: blog/templates/blog/edit_account.html:18
-#: blog/templates/blog/edit_review.html:18 blog/templates/blog/homepage.html:66
-#: blog/templates/blog/homepage.html:129 blog/templates/blog/login.html:23
-#: blog/templates/blog/password_reset.html:42
+#: blog/templates/blog/edit_review.html:18
+#: blog/templates/blog/homepage.html:66 blog/templates/blog/homepage.html:129
+#: blog/templates/blog/login.html:23
+#: blog/templates/blog/password_reset.html:40
 #: blog/templates/blog/registration.html:49
 #: blog/templates/blog/write_article.html:17
 msgid "Späť na úvodnú stránku"
-msgstr ""
+msgstr "Zpět na úvodní stránku"
 
 #: blog/templates/blog/edit_account.html:34
 msgid "Nahrať obrázok"
-msgstr ""
+msgstr "Nahrát obrázek"
 
 #: blog/templates/blog/edit_account.html:40
 msgid "Odstrániť obrázok"
-msgstr ""
+msgstr "Odstranit obrázek"
 
 #: blog/templates/blog/edit_account.html:66
 #: blog/templates/blog/edit_review.html:68
 #: blog/templates/blog/manage_training_plans.html:236
 msgid "Uložiť zmeny"
-msgstr ""
+msgstr "Uložit změny"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
 msgid "Zabudli ste heslo?"
-msgstr ""
+msgstr "Zapomněli jste heslo?"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
-#: blog/templates/blog/password_reset.html:58
+#: blog/templates/blog/password_reset.html:56
 msgid "Poslať overovací kód"
-msgstr ""
+msgstr "Poslat ověřovací kód"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
-#: blog/templates/blog/password_reset.html:55
+#: blog/templates/blog/password_reset.html:53
 msgid "Zmeniť heslo"
-msgstr ""
+msgstr "Změnit heslo"
 
 #: blog/templates/blog/edit_account.html:73
 msgid "Odstrániť účet"
-msgstr ""
+msgstr "Odstranit účet"
 
 #: blog/templates/blog/edit_account.html:80
 msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
-msgstr ""
+msgstr "Pro provádění změn ve vašem účtu se musíte nejprve"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:80
-#: blog/templates/blog/homepage.html:171 blog/templates/blog/login.html:33
+#: blog/templates/blog/edit_review.html:80
+#: blog/templates/blog/homepage.html:80 blog/templates/blog/homepage.html:171
+#: blog/templates/blog/login.html:33
 #: blog/templates/blog/manage_training_plans.html:23
-#: blog/templates/blog/password_reset.html:64
+#: blog/templates/blog/password_reset.html:65
 #: blog/templates/blog/registration.html:72
 #: blog/templates/blog/training_session.html:58 templates/base.html:117
 msgid "Prihlásiť sa"
-msgstr ""
+msgstr "Přihlásit se"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 msgid "prihlásiť"
-msgstr ""
+msgstr "přihlásit"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:83
-#: blog/templates/blog/login.html:36
+#: blog/templates/blog/edit_review.html:80
+#: blog/templates/blog/homepage.html:83 blog/templates/blog/login.html:36
 msgid "alebo"
-msgstr ""
+msgstr "nebo"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 #: blog/templates/blog/homepage.html:100 blog/templates/blog/homepage.html:168
 #: blog/templates/blog/login.html:53 blog/templates/blog/registration.html:69
 msgid "Vytvoriť účet"
-msgstr ""
+msgstr "Vytvořit účet"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 msgid "zaregistrovať"
-msgstr ""
+msgstr "zaregistrovat"
 
 #: blog/templates/blog/edit_review.html:5
 msgid "Moje hodnotenie"
-msgstr ""
+msgstr "Mé hodnocení"
 
 #: blog/templates/blog/edit_review.html:16
 msgid "Moje&nbsp;hodnotenie"
-msgstr ""
+msgstr "Mé&nbsp;hodnocení"
 
 #: blog/templates/blog/edit_review.html:42
 #: blog/templates/blog/homepage.html:495
 msgid "upravené"
-msgstr ""
+msgstr "upraveno"
 
 #: blog/templates/blog/edit_review.html:72
 msgid "Odstrániť recenziu"
-msgstr ""
+msgstr "Odstranit recenzi"
 
 #: blog/templates/blog/edit_review.html:80
 msgid "Pre vykonávanie zmien vašej recenzie sa musíte najprv"
-msgstr ""
+msgstr "Pro provádění změn vaší recenze se musíte nejprve"
 
 #: blog/templates/blog/homepage.html:5
 msgid "Hlavná stránka"
-msgstr ""
+msgstr "Hlavní stránka"
 
 #: blog/templates/blog/homepage.html:18
 msgid "KONTAKT"
-msgstr ""
+msgstr "KONTAKT"
 
 #: blog/templates/blog/homepage.html:43
 msgid "Hľadať"
-msgstr ""
+msgstr "Hledat"
 
 #: blog/templates/blog/homepage.html:50
 msgid "Street Workout Žilina"
-msgstr ""
+msgstr "Street Workout Žilina"
 
 #: blog/templates/blog/homepage.html:54
 msgid "Prihlásiť"
-msgstr ""
+msgstr "Přihlásit"
 
 #: blog/templates/blog/homepage.html:55
 msgid "Zaregistrovať"
-msgstr ""
+msgstr "Zaregistrovat"
 
 #: blog/templates/blog/homepage.html:64 blog/templates/blog/login.html:5
 #: blog/templates/blog/login.html:21 templates/base.html:156
 msgid "Prihlásenie"
-msgstr ""
+msgstr "Přihlášení"
 
 #: blog/templates/blog/homepage.html:76 blog/templates/blog/homepage.html:156
-#: blog/templates/blog/login.html:29 blog/templates/blog/password_reset.html:52
+#: blog/templates/blog/login.html:29
+#: blog/templates/blog/password_reset.html:50
 #: blog/templates/blog/registration.html:59
 msgid "Zobraziť heslo"
-msgstr ""
+msgstr "Zobrazit heslo"
 
 #: blog/templates/blog/homepage.html:100 blog/templates/blog/login.html:53
 msgid "Ešte nemáte účet?"
-msgstr ""
+msgstr "Ještě nemáte účet?"
 
 #: blog/templates/blog/homepage.html:127
 #: blog/templates/blog/registration.html:5
 #: blog/templates/blog/registration.html:47 templates/base.html:157
 msgid "Registrácia"
-msgstr ""
+msgstr "Registrace"
 
 #: blog/templates/blog/homepage.html:154
-#: blog/templates/blog/password_reset.html:50
+#: blog/templates/blog/password_reset.html:48
 #: blog/templates/blog/registration.html:57
 msgid "Navrhnúť heslo"
-msgstr ""
+msgstr "Navrhnout heslo"
 
 #: blog/templates/blog/homepage.html:157
 #: blog/templates/blog/registration.html:60
 msgid "Skopírovať"
-msgstr ""
+msgstr "Zkopírovat"
 
 #: blog/templates/blog/homepage.html:163
 #: blog/templates/blog/registration.html:65
 msgid "Prilepiť"
-msgstr ""
+msgstr "Přilepit"
 
 #: blog/templates/blog/homepage.html:171
 #: blog/templates/blog/registration.html:72
 msgid "Už máte účet?"
-msgstr ""
+msgstr "Už máte účet?"
 
 #: blog/templates/blog/homepage.html:299
 msgid "Čo si myslia ostatní?"
-msgstr ""
+msgstr "Co si myslí ostatní?"
 
 #: blog/templates/blog/homepage.html:311
 msgid "recenzií"
-msgstr ""
+msgstr "recenzí"
 
 #: blog/templates/blog/homepage.html:314
 msgid "recenzia"
-msgstr ""
+msgstr "recenze"
 
 #: blog/templates/blog/homepage.html:317
 msgid "recenzie"
-msgstr ""
+msgstr "recenze"
 
 #: blog/templates/blog/homepage.html:336 blog/templates/blog/homepage.html:360
 msgid "Zatiaľ žiadne recenzie"
-msgstr ""
+msgstr "Zatím žádné recenze"
 
 #: blog/templates/blog/homepage.html:340
 #, python-format
@@ -406,7 +611,11 @@ msgid_plural ""
 "\n"
 "                            "
 msgstr[0] ""
+"\n"
+"Na základě %(amount)s recenze"
 msgstr[1] ""
+"\n"
+"Na základě %(amount)s recenzí"
 
 #: blog/templates/blog/homepage.html:364
 #, python-format
@@ -421,11 +630,15 @@ msgid_plural ""
 "\n"
 "                                    "
 msgstr[0] ""
+"\n"
+"Na základě %(amount)s recenze"
 msgstr[1] ""
+"\n"
+"Na základě %(amount)s recenzí"
 
 #: blog/templates/blog/homepage.html:398
 msgid "Našla sa 1 recenzia."
-msgstr ""
+msgstr "Našla se 1 recenze."
 
 #: blog/templates/blog/homepage.html:402
 #, python-format
@@ -434,6 +647,8 @@ msgid ""
 "                        Našli sa <span>%(amount)s</span> recenzie.\n"
 "                    "
 msgstr ""
+"\n"
+"Našli se <span>%(amount)s</span> recenze."
 
 #: blog/templates/blog/homepage.html:409
 #, python-format
@@ -442,424 +657,588 @@ msgid ""
 "                        Našlo sa <span>%(amount)s</span> recenzií.\n"
 "                    "
 msgstr ""
+"\n"
+"Našlo se <span>%(amount)s</span> recenzí."
 
 #: blog/templates/blog/homepage.html:425 blog/templates/blog/homepage.html:430
 msgid "Najnovšie recenzie"
-msgstr ""
+msgstr "Nejnovější recenze"
 
 #: blog/templates/blog/homepage.html:431
 msgid "Najstaršie recenzie"
-msgstr ""
+msgstr "Nejstarší recenze"
 
 #: blog/templates/blog/homepage.html:432
 msgid "Najlepšie hodnotenie"
-msgstr ""
+msgstr "Nejlepší hodnocení"
 
 #: blog/templates/blog/homepage.html:433
 msgid "Najhoršie hodnotenie"
-msgstr ""
+msgstr "Nejhorší hodnocení"
 
 #: blog/templates/blog/homepage.html:448
 msgid "Všetky recenzie"
-msgstr ""
+msgstr "Všechny recenze"
 
 #: blog/templates/blog/homepage.html:461
 msgid ""
 "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
 "žiadne&nbsp;recenzie."
 msgstr ""
+"Omlouváme&nbsp;se!<br>Nepodařilo&nbsp;se&nbsp;najít žádné&nbsp;recenze."
 
 #: blog/templates/blog/homepage.html:485
 msgid "Neexistujúci účet"
-msgstr ""
+msgstr "Neexistující účet"
 
 #: blog/templates/blog/homepage.html:518
 #: blog/templates/blog/manage_training_plans.html:132
 msgid "Upraviť"
-msgstr ""
+msgstr "Upravit"
 
 #: blog/templates/blog/homepage.html:563
 msgid "Uverejniť"
-msgstr ""
+msgstr "Zveřejnit"
 
 #: blog/templates/blog/homepage.html:592
 msgid "Kontaktujte nás"
-msgstr ""
-
-#: blog/templates/blog/homepage.html:600 blog/templates/blog/homepage.html:603
-#: blog/templates/blog/homepage.html:608
-msgid "Otázka"
-msgstr ""
-
-#: blog/templates/blog/homepage.html:609
-msgid "Návrh na zlepšenie"
-msgstr ""
-
-#: blog/templates/blog/homepage.html:610
-msgid "Nahlásenie chyby"
-msgstr ""
+msgstr "Kontaktujte nás"
 
 #: blog/templates/blog/homepage.html:618
-msgid "Nie je vybratý žiaden súbor."
-msgstr ""
+msgid "Nie je vybraný žiaden súbor."
+msgstr "Není vybrán žádný soubor."
 
 #: blog/templates/blog/homepage.html:621
 msgid "Vyberte prílohu z vašich súborov"
-msgstr ""
+msgstr "Vyberte přílohu z vašich souborů"
 
 #: blog/templates/blog/homepage.html:622
 msgid "Vybrať prílohu"
-msgstr ""
+msgstr "Vybrat přílohu"
 
 #: blog/templates/blog/homepage.html:631
 msgid "Odoslať správu"
-msgstr ""
+msgstr "Odeslat zprávu"
 
 #: blog/templates/blog/login.html:13
 msgid "REGISTRÁCIA"
-msgstr ""
+msgstr "REGISTRACE"
 
 #: blog/templates/blog/manage_training_plans.html:5
 #: blog/templates/blog/training_session.html:32
 #: blog/templates/blog/training_session.html:35
 #: blog/templates/blog/training_session.html:64
 msgid "Moje tréningové plány"
-msgstr ""
+msgstr "Mé tréninkové plány"
 
 #: blog/templates/blog/manage_training_plans.html:13
 msgid "Aktivita"
-msgstr ""
+msgstr "Aktivita"
 
 #: blog/templates/blog/manage_training_plans.html:21
 #: blog/templates/blog/training_session.html:56
 msgid "Zdá sa, že nie ste prihlásený."
-msgstr ""
+msgstr "Zdá se, že nejste přihlášeni."
 
 #: blog/templates/blog/manage_training_plans.html:22
 msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
-msgstr ""
+msgstr "Bez přihlášení není možné vytvořit tréninkový plán."
 
 #: blog/templates/blog/manage_training_plans.html:23
 #: blog/templates/blog/training_session.html:58
 msgid "Prihláste sa."
-msgstr ""
+msgstr "Přihlaste se."
 
 #: blog/templates/blog/manage_training_plans.html:36
 msgid "Série"
-msgstr ""
+msgstr "Série"
 
 #: blog/templates/blog/manage_training_plans.html:39
 msgid "Pridať sériu"
-msgstr ""
+msgstr "Přidat sérii"
 
 #: blog/templates/blog/manage_training_plans.html:48
 #: blog/templates/blog/manage_training_plans.html:98
 msgid "Do&nbsp;zlyhania"
-msgstr ""
+msgstr "Do&nbsp;selhání"
 
 #: blog/templates/blog/manage_training_plans.html:116
 msgid "Počet"
-msgstr ""
+msgstr "Počet"
 
 #: blog/templates/blog/manage_training_plans.html:121
 msgid "Opakovaní"
-msgstr ""
+msgstr "Opakování"
 
 #: blog/templates/blog/manage_training_plans.html:122
 msgid "Sekúnd"
-msgstr ""
+msgstr "Vteřin"
 
 #: blog/templates/blog/manage_training_plans.html:131
 msgid "Vytvoriť"
-msgstr ""
-
-#: blog/templates/blog/manage_training_plans.html:140
-#: blog/templates/blog/manage_training_plans.html:194
-msgid "Názov"
-msgstr ""
+msgstr "Vytvořit"
 
 #: blog/templates/blog/manage_training_plans.html:143
 #: blog/templates/blog/manage_training_plans.html:197
 msgid "Pull"
-msgstr ""
+msgstr "Pull"
 
 #: blog/templates/blog/manage_training_plans.html:144
 #: blog/templates/blog/manage_training_plans.html:198
 msgid "Push"
-msgstr ""
+msgstr "Push"
 
 #: blog/templates/blog/manage_training_plans.html:145
 #: blog/templates/blog/manage_training_plans.html:199
 msgid "Legs"
-msgstr ""
+msgstr "Legs"
 
 #: blog/templates/blog/manage_training_plans.html:147
 #: blog/templates/blog/manage_training_plans.html:201
 msgid "Upper"
-msgstr ""
+msgstr "Upper"
 
 #: blog/templates/blog/manage_training_plans.html:148
 #: blog/templates/blog/manage_training_plans.html:202
 msgid "Lower"
-msgstr ""
+msgstr "Lower"
 
 #: blog/templates/blog/manage_training_plans.html:156
 #: blog/templates/blog/manage_training_plans.html:161
 #: blog/templates/blog/manage_training_plans.html:210
 #: blog/templates/blog/manage_training_plans.html:215
 msgid "Nepriradiť deň"
-msgstr ""
+msgstr "Nepřiřadit den"
 
 #: blog/templates/blog/manage_training_plans.html:162
 #: blog/templates/blog/manage_training_plans.html:216
 msgid "PO"
-msgstr ""
+msgstr "PO"
 
 #: blog/templates/blog/manage_training_plans.html:163
 #: blog/templates/blog/manage_training_plans.html:217
 msgid "UT"
-msgstr ""
+msgstr "ÚT"
 
 #: blog/templates/blog/manage_training_plans.html:164
 #: blog/templates/blog/manage_training_plans.html:218
 msgid "ST"
-msgstr ""
+msgstr "ST"
 
 #: blog/templates/blog/manage_training_plans.html:165
 #: blog/templates/blog/manage_training_plans.html:219
 msgid "ŠT"
-msgstr ""
+msgstr "ČT"
 
 #: blog/templates/blog/manage_training_plans.html:166
 #: blog/templates/blog/manage_training_plans.html:220
 msgid "PI"
-msgstr ""
+msgstr "PÁ"
 
 #: blog/templates/blog/manage_training_plans.html:167
 #: blog/templates/blog/manage_training_plans.html:221
 msgid "SO"
-msgstr ""
+msgstr "SO"
 
 #: blog/templates/blog/manage_training_plans.html:168
 #: blog/templates/blog/manage_training_plans.html:222
 msgid "NE"
-msgstr ""
+msgstr "NE"
 
 #: blog/templates/blog/manage_training_plans.html:181
 msgid "Pridať tréningový plán"
-msgstr ""
+msgstr "Přidat tréninkový plán"
 
 #: blog/templates/blog/manage_training_plans.html:237
 msgid "Vymazať"
-msgstr ""
+msgstr "Vymazat"
 
 #: blog/templates/blog/manage_training_plans.html:248
 msgid "Nájsť cvik"
-msgstr ""
+msgstr "Najít cvik"
 
 #: blog/templates/blog/password_reset.html:5
-#: blog/templates/blog/password_reset.html:18
+#: blog/templates/blog/password_reset.html:16
 msgid "Obnova hesla"
-msgstr ""
+msgstr "Obnova hesla"
 
-#: blog/templates/blog/password_reset.html:45
+#: blog/templates/blog/password_reset.html:43
 msgid "Otvoriť Gmail"
-msgstr ""
+msgstr "Otevřít Gmail"
 
-#: blog/templates/blog/password_reset.html:58
+#: blog/templates/blog/password_reset.html:56
 msgid "Neprišiel vám overovací kód?"
-msgstr ""
+msgstr "Nepřišel vám ověřovací kód?"
 
-#: blog/templates/blog/password_reset.html:58
+#: blog/templates/blog/password_reset.html:56
 msgid "Skúsiť znovu"
-msgstr ""
+msgstr "Zkusit znovu"
 
-#: blog/templates/blog/password_reset.html:64
+#: blog/templates/blog/password_reset.html:65
 msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
-msgstr ""
+msgstr "Platnost ověřovacího kódu pro změnu hesla k vašemu účtu vypršela."
 
-#: blog/templates/blog/password_reset.html:64
+#: blog/templates/blog/password_reset.html:65
 msgid "Na stránke s"
-msgstr ""
+msgstr "Na stránce s"
 
-#: blog/templates/blog/password_reset.html:64
+#: blog/templates/blog/password_reset.html:65
 msgid "prihlásením"
-msgstr ""
+msgstr "přihlášením"
 
-#: blog/templates/blog/password_reset.html:64
+#: blog/templates/blog/password_reset.html:65
 msgid "požiadajte o nový."
-msgstr ""
+msgstr "požádejte o nový."
 
 #: blog/templates/blog/registration.html:39
 msgid "PRIHLÁSENIE"
-msgstr ""
+msgstr "PŘIHLÁŠENÍ"
 
 #: blog/templates/blog/training_session.html:5
 msgid "Tréning"
-msgstr ""
+msgstr "Trénink"
 
 #: blog/templates/blog/training_session.html:57
 msgid "Bez prihlásenia nie je možné zaznamenať vašu aktivitu."
-msgstr ""
+msgstr "Bez přihlášení nelze zaznamenat vaši aktivitu."
 
 #: blog/templates/blog/training_session.html:63
 msgid "Zatiaľ nemáte žiaden tréningový plán."
-msgstr ""
+msgstr "Zatím nemáte žádný tréninkový plán."
 
 #: blog/templates/blog/training_session.html:64
 msgid "Vytvorte si prvý."
-msgstr ""
+msgstr "Vytvořte si první."
 
 #: blog/templates/blog/training_session.html:128
 #: blog/templates/blog/training_session.html:141
 msgid "Tréningový plán"
-msgstr ""
+msgstr "Tréninkový plán"
 
 #: blog/templates/blog/training_session.html:129
 msgid "Začať tréning"
-msgstr ""
+msgstr "Začít trénink"
 
 #: blog/templates/blog/training_session.html:142
 msgid "Dokončiť tréning"
-msgstr ""
+msgstr "Dokončit trénink"
 
 #: blog/templates/blog/training_session.html:200
 msgid "priemer&nbsp;/ 7&nbsp;dní"
-msgstr ""
+msgstr "průměr&nbsp;/ 7&nbsp;dní"
 
 #: blog/templates/blog/training_session.html:214
 msgid "počet&nbsp;/ 7&nbsp;dní"
-msgstr ""
+msgstr "počet&nbsp;/ 7&nbsp;dní"
 
 #: blog/templates/blog/training_session.html:238
 msgid "posledná aktivita"
-msgstr ""
+msgstr "poslední aktivita"
 
 #: blog/templates/blog/training_session.html:238
 #: blog/templates/blog/training_session.html:254
 msgid "žiadna"
-msgstr ""
+msgstr "žádná"
 
 #: blog/templates/blog/training_session.html:254
 msgid "najdlhšia aktivita"
-msgstr ""
+msgstr "nejdelší aktivita"
 
 #: blog/templates/blog/training_session.html:269
 #: blog/templates/blog/training_session.html:273
 msgid "Graf sa nepodarilo načítať."
-msgstr ""
+msgstr "Graf se nepodařilo načíst."
 
 #: blog/templates/blog/write_article.html:29
 msgid "Navrhnúť link"
-msgstr ""
+msgstr "Navrhnout link"
 
 #: blog/templates/blog/write_article.html:31
 msgid "URL adresa vášho článku (napr. front-lever)"
-msgstr ""
+msgstr "URL adresa vašeho článku (např. front-lever)"
 
-#: swzilina/settings.py:206
+#: blog/urls.py:7
+msgid "domov/"
+msgstr "domu/"
+
+#: blog/urls.py:8
+msgid "prihlasenie/"
+msgstr "prihlaseni/"
+
+#: blog/urls.py:9
+msgid "obnova-hesla/"
+msgstr "obnova-hesla/"
+
+#: blog/urls.py:10
+msgid "odhlasenie/"
+msgstr "odhlaseni/"
+
+#: blog/urls.py:11
+msgid "registracia/"
+msgstr "registrace/"
+
+#: blog/urls.py:12
+msgid "moj-ucet/"
+msgstr "muj-ucet/"
+
+#: blog/urls.py:13
+msgid "moje-hodnotenie/"
+msgstr "moje-hodnoceni/"
+
+#: blog/urls.py:14
+msgid "pridat-clanok/"
+msgstr "pridat-clanek/"
+
+#: blog/urls.py:15
+msgid "trening/"
+msgstr "trenink/"
+
+#: blog/urls.py:16
+msgid "moje-treningove-plany/"
+msgstr "moje-treninkove-plany/"
+
+#: blog/views.py:59 blog/views.py:156 blog/views.py:393 blog/views.py:592
+#, python-format
+msgid ""
+"Úspešne prihlásený ako\n"
+"%(first_name)s %(last_name)s"
+msgstr ""
+"Úspěšně přihlášen jako\n"
+"%(first_name)s %(last_name)s"
+
+#: blog/views.py:64 blog/views.py:68 blog/views.py:398 blog/views.py:402
+msgid "Nesprávne prihlasovacie údaje"
+msgstr "Nesprávné přihlašovací údaje"
+
+#: blog/views.py:102 blog/views.py:437 blog/views.py:515 blog/views.py:730
+#, python-format
+msgid ""
+"Overovací kód bol odoslaný na adresu\n"
+"%(email_address)s"
+msgstr ""
+"Ověřovací kód byl odeslán na adresu\n"
+"%(email_address)s"
+
+#: blog/views.py:123 blog/views.py:178 blog/views.py:292 blog/views.py:557
+msgid "Overenie reCaptcha zlyhalo"
+msgstr "Ověření reCaptcha selhalo"
+
+#: blog/views.py:130 blog/views.py:566
+msgid "Tento e-mail už je zaregistrovaný"
+msgstr "Tento e-mail již je zaregistrován"
+
+#: blog/views.py:134 blog/views.py:570
+msgid "Heslá sa nezhodujú"
+msgstr "Hesla se neshodují"
+
+#: blog/views.py:137 blog/views.py:460 blog/views.py:573
+msgid "Heslo je príliš krátke"
+msgstr "Heslo je příliš krátké"
+
+#: blog/views.py:161 blog/views.py:597
+msgid "Registrácia zlyhala"
+msgstr "Registrace selhala"
+
+#: blog/views.py:206 blog/views.py:215
+msgid "Správa bola odoslaná"
+msgstr "Zpráva byla odeslána"
+
+#: blog/views.py:209
+msgid "Príloha je príliš veľká"
+msgstr "Příloha je příliš velká"
+
+#: blog/views.py:218
+msgid "Správu sa nepodarilo odoslať"
+msgstr "Zprávu se nepodařilo odeslat"
+
+#: blog/views.py:302
+msgid "Skúste upraviť aktuálne hodnotenie"
+msgstr "Zkuste upravit aktuální hodnocení"
+
+#: blog/views.py:309
+msgid "Ukážte nám vašu spokojnosť"
+msgstr "Ukažte nám vaši spokojenost"
+
+#: blog/views.py:319
+msgid "Ďakujeme za vaše hodnotenie"
+msgstr "Děkujeme za vaše hodnocení"
+
+#: blog/views.py:322
+msgid "Hodnotenie sa nepodarilo uverejniť"
+msgstr "Hodnocení se nepodařilo zveřejnit"
+
+#: blog/views.py:361
+msgid "Pred napísaním hodnotenia sa prihláste"
+msgstr "Před napsáním hodnocení se přihlaste"
+
+#: blog/views.py:468
+msgid "Heslo bolo úspešne zmenené"
+msgstr "Heslo bylo úspěšně změněno"
+
+#: blog/views.py:476
+msgid "Overovací kód sa nezhoduje"
+msgstr "Ověřovací kód se neshoduje"
+
+#: blog/views.py:480
+msgid "Overenie zlyhalo"
+msgstr "Ověření selhalo"
+
+#: blog/views.py:539
+msgid "Boli ste odhlásený"
+msgstr "Byl jste odhlášen"
+
+#: blog/views.py:635
+#, python-format
+msgid "Účet %(first_name)s %(last_name)s bol odstránený"
+msgstr "Účet %(first_name)s %(last_name)s byl odstraněn"
+
+#: blog/views.py:688 blog/views.py:783
+msgid "Zmeny boli uložené"
+msgstr "Změny byly uloženy"
+
+#: blog/views.py:693 blog/views.py:794
+#, python-format
+msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
+msgstr "Další úpravy budou možné %(next_edit_time)s"
+
+#: blog/views.py:696 blog/views.py:788
+msgid "Zmeny sa nepodarilo vykonať"
+msgstr "Změny se nepodařilo provést"
+
+#: blog/views.py:779
+msgid "Vaše hodnotenie bolo odstránené"
+msgstr "Vaše hodnocení bylo odstraněno"
+
+#: swzilina/settings.py:212
 msgid "Slovak"
-msgstr ""
+msgstr "Slovensky"
 
-#: swzilina/settings.py:207
+#: swzilina/settings.py:213
 msgid "Czech"
-msgstr ""
+msgstr "Česky"
 
-#: swzilina/settings.py:208
+#: swzilina/settings.py:214
 msgid "English"
-msgstr ""
+msgstr "Anglicky"
 
-#: swzilina/settings.py:209
+#: swzilina/settings.py:215
 msgid "Spanish"
-msgstr ""
+msgstr "Španělsky"
+
+#: swzilina/settings.py:216
+msgid "French"
+msgstr "Francouzsky"
+
+#: swzilina/settings.py:217
+msgid "Ukrainian"
+msgstr "Ukrajinsky"
+
+#: swzilina/settings.py:218
+msgid "Russian"
+msgstr "Rusky"
+
+#: swzilina/settings.py:219
+msgid "Brazilian"
+msgstr "Brazilský"
+
+#: swzilina/settings.py:220
+msgid "Chinese"
+msgstr "Čínský"
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
-msgstr ""
+msgstr "Stránka nebyla nalezena"
 
 #: templates/404.html:8
 msgid "Chyba 404"
-msgstr ""
+msgstr "Chyba 404"
 
 #: templates/404.html:9
 msgid "Je nám to ľúto, ale hladaná stránka sa nenašla."
-msgstr ""
+msgstr "Je nám to líto, ale hledaná stránka se nenašla."
 
 #: templates/404.html:10
 msgid "Späť na hlavnú stránku"
-msgstr ""
+msgstr "Zpět na hlavní stránku"
 
 #: templates/base.html:46 templates/base.html:183
 msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
-msgstr ""
+msgstr "Zásady&nbsp;ochrany osobních&nbsp;údajů"
 
 #: templates/base.html:48
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
-"zlepšovať naše služby."
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
+" zlepšovať naše služby."
 msgstr ""
+"Tato stránka používá soubory cookies, aby vám poskytla co nejlepší zážitek "
+"při jejím prohlížení. Soubory cookies nám pomáhají analyzovat, optimalizovat"
+" a zlepšovat naše služby."
 
 #: templates/base.html:51
 msgid "Potvrdiť všetky"
-msgstr ""
+msgstr "Potvrdit všechny"
 
 #: templates/base.html:52
 msgid "Iba nevyhnutné"
-msgstr ""
+msgstr "Pouze nezbytné"
 
 #: templates/base.html:56
 msgid "PRESKOČIŤ"
-msgstr ""
+msgstr "PŘESKOČIT"
 
 #: templates/base.html:58
 msgid "Posunúť nadol"
-msgstr ""
+msgstr "Posunout dolů"
 
 #: templates/base.html:59
 msgid "Posunúť nahor"
-msgstr ""
+msgstr "Posunout nahoru"
 
 #: templates/base.html:71
 msgid "DOMOV"
-msgstr ""
+msgstr "DOMŮ"
 
 #: templates/base.html:72
 msgid "AKTIVITA"
-msgstr ""
+msgstr "AKTIVITA"
 
 #: templates/base.html:73
 msgid "BLOG"
-msgstr ""
+msgstr "BLOG"
 
 #: templates/base.html:112
 msgid "Odhlásiť sa z účtu"
-msgstr ""
+msgstr "Odhlásit se z účtu"
 
 #: templates/base.html:112
 msgid "Odhlásiť"
-msgstr ""
+msgstr "Odhlásit"
 
 #: templates/base.html:117
 msgid "Neprihlásený"
-msgstr ""
+msgstr "Nepřihlášen"
 
 #: templates/base.html:140
 msgid "Street&nbsp;Workout Žilina"
-msgstr ""
+msgstr "Street&nbsp;Workout Žilina"
 
 #: templates/base.html:143
 msgid "Napísať..."
-msgstr ""
+msgstr "Napsat..."
 
 #: templates/base.html:145
 msgid "Zavolať..."
-msgstr ""
+msgstr "Zavolat..."
 
 #: templates/base.html:155
 msgid "Domov"
-msgstr ""
+msgstr "Domů"
 
 #: templates/base.html:184
 msgid "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené."
-msgstr ""
+msgstr "&copy; Street Workout Žilina 2025 - 2026, Všechna práva vyhrazena."
+
+#: templates/base.html:192
+msgid "Street Workout Žilina by Patrik Behul"
+msgstr "Street Workout Žilina by Patrik Behul"

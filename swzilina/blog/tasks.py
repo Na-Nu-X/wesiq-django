@@ -2,7 +2,7 @@ from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
 from blog.models import Users
-import os
+import os, shutil
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
@@ -29,6 +29,10 @@ def cleanup_users():
         for user in users_with_profile_picture:
             path = os.path.join(settings.MEDIA_ROOT, f"images/{str(user.id)}")
             os.remove(f"{path}/{user.profile_picture_name}")
+
+            # Deletes The Whole Folder If There Are No Files
+            if len(os.listdir(path)) == 0:
+                shutil.rmtree(path)
 
         # Send Mail
         for user in users_for_deletion:
