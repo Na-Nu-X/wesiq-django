@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-22 15:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+#: blog/static/blog/ts/src/pages/edit_account.ts:13
+msgid "Profilový obrázok bude odstránený"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/edit_account.ts:31
+msgid "Váš úcet bude odstránený"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/edit_review.ts:13
+msgid "Vaše hodnotenie bude odstránené"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:43
+msgid "Hlavná stránka"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:44
+msgid "/prihlasenie"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:44
+msgid "Prihlásenie"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:45
+msgid "/obnova-hesla"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:45
+msgid "Obnova hesla"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:46
+msgid "/registracia"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:46
+msgid "Registrácia"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:47
+msgid "/moj-ucet"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:47
+msgid "Môj účet"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:48
+msgid "/moje-hodnotenie"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:48
+msgid "Moje hodnotenie"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:49
+msgid "/blog"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:49
+msgid "Blog"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:50
+msgid "/trening"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:50
+msgid "Tréning"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:51
+msgid "/moje-treningove-plany"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:51
+msgid "Moje tréningové plány"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:351
+msgid "Vybraný súbor"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:352
+msgid "Vybraný súbor je príliš veľký."
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/homepage.ts:353
+msgid "Nie je vybraný žiaden súbor."
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:149
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:80
+msgid "Počet opakovaní"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:150
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:81
+msgid "Počet sekúnd"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:151
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:82
+msgid "Počet krokov"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:282
+#, javascript-format
+msgid "Tréningový plán %s bol odstránený."
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:89
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne pridaný."
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:90
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne upravený."
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/password_reset.ts:46
+#: blog/static/blog/ts/src/pages/password_reset.ts:74
+msgid "Platnosť vypršala!"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Nezískali ste žiadne XP"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Získali ste"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:56
+msgid "<br>Aktuálna aktivita trvala: "
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
+#, javascript-format
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:77
+#, javascript-format
+msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgstr ""
+
+#: blog/static/blog/ts/src/pages/training_session/state.ts:90
+msgid "<span>Žiadne aktívne navýšenie XP</span>"
+msgstr ""
+
+#: blog/static/blog/ts/src/utils/password.ts:4
+msgid "Heslá sa zhodujú"
+msgstr ""
+
+#: blog/static/blog/ts/src/utils/password.ts:9
+msgid "Heslá sa nezhodujú"
+msgstr ""
+
+#: blog/static/blog/ts/src/utils/password.ts:19
+msgid "Skryť heslo"
+msgstr ""
+
+#: blog/static/blog/ts/src/utils/password.ts:26
+msgid "Zobraziť heslo"
+msgstr ""
+
+#: blog/static/blog/ts/src/utils/password.ts:54
+msgid "Zadajte váš e-mail"
+msgstr ""
