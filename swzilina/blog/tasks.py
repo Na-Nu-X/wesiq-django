@@ -5,6 +5,8 @@ from blog.models import Users
 import os, shutil
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.utils import translation
+from django.utils.translation import gettext as _
 
 # Functions
 def captureMessage(message):
@@ -36,19 +38,22 @@ def cleanup_users():
 
         # Send Mail
         for user in users_for_deletion:
-            subject = "SW Žilina - Odstránenie účtu"
-            text_content = f"Dobrý deň {user.first_name} {user.last_name},\noznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina."
-            sender = settings.EMAIL_HOST_USER
-            receiver = [user.email_address]
-            html_content = f"""
-                <h1>Dobrý deň {user.first_name} {user.last_name},</h1>
-                <p>oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.<p><br>
-                Tím Street Workout Žilina.</p>
-            """
+            user_language = user.language
 
-            mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-            mail_message.attach_alternative(html_content, "text/html")
-            mail_message.send()
+            with translation.override(user_language):
+                subject = _("SW Žilina - Odstránenie účtu")
+                text_content = _("Dobrý deň %(first_name)s %(last_name)s,\noznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name}
+                sender = settings.EMAIL_HOST_USER
+                receiver = [user.email_address]
+                html_content = f"""
+                    <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
+                    <p>{_('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.')}<br>
+                    {_('Tím Street Workout Žilina.')}</p>
+                """
+
+                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                mail_message.attach_alternative(html_content, "text/html")
+                mail_message.send()
 
         users_for_deletion.delete() # Deletes Users
 

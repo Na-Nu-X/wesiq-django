@@ -16,6 +16,7 @@ urlpatterns = [
     path(_('moje-treningove-plany/'), views.manageTrainingPlansView, name='manage_training_plans_url'),
     path('blog/', views.blogView, name='blog_url'),
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
+    path('change-language/', views.changeLanguage, name='change_language_url'),
 
     # URLs For JS POST Data
     path('like-comment/<int:comment_id>', views.likeComment, name='like_comment_url'),
