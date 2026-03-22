@@ -217,7 +217,7 @@ LANGUAGES = [
     ('uk', _('Ukrainian')),
     ('ru', _('Russian')),
     ('br', _('Brazilian')),
-    ('zh', _('Chinese')),
+    # ('zh-hans', _('Simplified Chinese')),
 ]
 
 USE_I18N = True
