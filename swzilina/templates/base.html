@@ -157,7 +157,7 @@
         </div>
 
         <div class="languages">
-            <form action="{% url 'set_language' %}" method="POST">
+            <form action="{% url 'change_language_url' %}" method="POST">
                 {% csrf_token %}
 
                 {% get_current_language as LANGUAGE_CODE %}
