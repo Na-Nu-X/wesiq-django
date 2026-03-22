@@ -20,6 +20,7 @@ class Users(models.Model):
     password = models.CharField(verbose_name="Password", max_length=255)
     role = models.CharField(verbose_name="Role", choices=role_choices, default="user", max_length=20)
     profile_picture_name = models.CharField(verbose_name="Profile Picture File", max_length=50, null=True, blank=True)
+    language = models.CharField(verbose_name="Language Code", max_length=10, default="en", null=False, blank=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)

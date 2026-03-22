@@ -389,9 +389,11 @@ header {
 **************/
 
 footer {
+    @include flex_center($direction: column);
+    gap: 20px;
     position: relative;
+    min-height: 100vh;
     text-align: center;
-    padding: 10px;
     background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
     z-index: 1000;
@@ -428,8 +430,6 @@ footer {
     }
 
     .social_media {
-        margin: 20px 0px;
-
         i {
             margin: 0px 5px;
             font-size: 2em;
@@ -446,7 +446,6 @@ footer {
     .navigation {
         @include flex_center;
         gap: 10px;
-        margin-bottom: 10px;
 
         a {
             text-decoration: none;
@@ -462,11 +461,15 @@ footer {
 
     .languages {
         form {
+            @include flex_center;
+            gap: 10px;
+
             button {
                 all: unset;
-                margin: 0px 5px;
+                height: 32px;
 
                 img {
+                    display: inline-block;
                     opacity: 0.8;
                     transition: transform 0.3s ease, opacity 0.3s ease;
 
