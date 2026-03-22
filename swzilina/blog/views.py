@@ -23,6 +23,33 @@ import json
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
 from django.db.models.functions import Mod
 from django.utils.translation import gettext as _
+from django.utils import translation
+from django.urls import translate_url
+
+def changeLanguage(request):
+    language_code = request.POST.get('language')
+    next_url = request.POST.get('next', '/')
+
+    response = HttpResponseRedirect(next_url)
+
+    if language_code:
+        target_url = translate_url(next_url, language_code)
+        
+        if target_url != next_url:
+            response = HttpResponseRedirect(target_url)
+
+        translation.activate(language_code)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language_code)
+
+        # Stores Language To The User's DB
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
+            user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+
+            user.language = language_code
+            user.save()
+        
+    return response
 
 # Functions
 def captureError(message):
@@ -79,26 +106,31 @@ def homepageView(request):
             one_number = random.randint(0, 9)
             code += str(one_number)
 
-        # Send Mail
-        subject = "SW Žilina - Obnova hesla"
-        text_content = f"Dobrý deň {user.first_name} {user.last_name},\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code={code} - {code}\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina."
-        sender = settings.EMAIL_HOST_USER
-        receiver = [email_address]
-        html_content = f"""
-            <h1>Dobrý deň {user.first_name} {user.last_name},</h1>
-            <p>dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code={code}" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.<p>
-            <h1>{code}</h1>
-            <p>Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.<br>
-            Tím Street Workout Žilina.</p>
-        """
 
-        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-        mail_message.attach_alternative(html_content, "text/html")
-        # mail_message.send()
+        user_language = user.language
 
-        # Saves Password Reset Code To Database
-        user.password_reset_code = code
-        user.save()
+        with translation.override(user_language):
+            # Send Mail
+            subject = _("SW Žilina - Obnova hesla")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "code": code}
+            sender = settings.EMAIL_HOST_USER
+            receiver = [email_address]
+            html_content = f"""
+                <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
+                <p>{_('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}}<p>
+                <h1>{code}</h1>
+                <p>{_('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.')}<br>
+                {_('Tím Street Workout Žilina.')}</p>
+            """
+
+            mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+            mail_message.attach_alternative(html_content, "text/html")
+            # mail_message.send()
+
+            # Saves Password Reset Code To Database
+            user.password_reset_code = code
+            user.save()
+
         messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
 
         # Redirect After Sending Mail
