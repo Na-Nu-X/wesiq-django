@@ -1,0 +1,205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-22 07:16+0000\n"
+"PO-Revision-Date: 2026-03-22 15:14+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: blog/static/blog/ts/src/pages/edit_account.ts:13
+msgid "Profilový obrázok bude odstránený"
+msgstr "Фотография профиля будет удалена"
+
+#: blog/static/blog/ts/src/pages/edit_account.ts:31
+msgid "Váš úcet bude odstránený"
+msgstr "Ваш аккаунт будет удалён"
+
+#: blog/static/blog/ts/src/pages/edit_review.ts:13
+msgid "Vaše hodnotenie bude odstránené"
+msgstr "Ваш отзыв будет удалён"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:43
+msgid "Hlavná stránka"
+msgstr "Главная страница"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:44
+msgid "/prihlasenie"
+msgstr "/avtorizovatsya"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:44
+msgid "Prihlásenie"
+msgstr "Авторизоваться"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:45
+msgid "/obnova-hesla"
+msgstr "/vosstanovleniye-parolya"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:45
+msgid "Obnova hesla"
+msgstr "Восстановление пароля"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:46
+msgid "/registracia"
+msgstr "/registratsiya"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:46
+msgid "Registrácia"
+msgstr "Регистрация"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:47
+msgid "/moj-ucet"
+msgstr "/moy-schet"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:47
+msgid "Môj účet"
+msgstr "Мой счет"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:48
+msgid "/moje-hodnotenie"
+msgstr "/moy-reyting"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:48
+msgid "Moje hodnotenie"
+msgstr "Мой рейтинг"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:49
+msgid "/blog"
+msgstr "/blog"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:49
+msgid "Blog"
+msgstr "Блог"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:50
+msgid "/trening"
+msgstr "/obucheniye"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:50
+msgid "Tréning"
+msgstr "Обучение"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:51
+msgid "/moje-treningove-plany"
+msgstr "/moi-plany-trenirovok"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:51
+msgid "Moje tréningové plány"
+msgstr "Мои планы тренировок"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:351
+msgid "Vybraný súbor"
+msgstr "Выбранный файл"
+
+#: blog/static/blog/ts/src/pages/homepage.ts:352
+msgid "Vybraný súbor je príliš veľký."
+msgstr "Выбранный файл слишком большой."
+
+#: blog/static/blog/ts/src/pages/homepage.ts:353
+msgid "Nie je vybraný žiaden súbor."
+msgstr "Файл не выбран."
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:149
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:80
+msgid "Počet opakovaní"
+msgstr "Количество повторений"
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:150
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:81
+msgid "Počet sekúnd"
+msgstr "Количество секунд"
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:151
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/exercises.ts:82
+msgid "Počet krokov"
+msgstr "Количество шагов"
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/edit_training_plan.ts:282
+#, javascript-format
+msgid "Tréningový plán %s bol odstránený."
+msgstr "Тренировочный план %s удален."
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:89
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne pridaný."
+msgstr "Тренировочный план %s успешно добавлен."
+
+#: blog/static/blog/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:90
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne upravený."
+msgstr "Тренировочный план %s успешно скорректирован."
+
+#: blog/static/blog/ts/src/pages/password_reset.ts:46
+#: blog/static/blog/ts/src/pages/password_reset.ts:74
+msgid "Platnosť vypršala!"
+msgstr "Истекший!"
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Nezískali ste žiadne XP"
+msgstr "Вы не получили ни одного очка опыта."
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Získali ste"
+msgstr "Вы получили"
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:56
+msgid "<br>Aktuálna aktivita trvala: "
+msgstr "Текущая активность продолжалась:"
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
+#, javascript-format
+msgid ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+"Продолжительность текущей активности на 100% превысила средний показатель за"
+" последние 7 дней"
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:77
+#, javascript-format
+msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+"Продолжительность текущей активности была на %s% больше, чем в среднем за "
+"последние 7 дней"
+
+#: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
+msgid ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgstr ""
+"Продолжительность текущей активности была на %s% меньше, чем в среднем за "
+"последние 7 дней"
+
+#: blog/static/blog/ts/src/pages/training_session/state.ts:90
+msgid "<span>Žiadne aktívne navýšenie XP</span>"
+msgstr "<span>Нет активного повышения опыта</span>"
+
+#: blog/static/blog/ts/src/utils/password.ts:4
+msgid "Heslá sa zhodujú"
+msgstr "Пароли совпадают"
+
+#: blog/static/blog/ts/src/utils/password.ts:9
+msgid "Heslá sa nezhodujú"
+msgstr "Пароли не совпадают"
+
+#: blog/static/blog/ts/src/utils/password.ts:19
+msgid "Skryť heslo"
+msgstr "Скрыть пароль"
+
+#: blog/static/blog/ts/src/utils/password.ts:26
+msgid "Zobraziť heslo"
+msgstr "Показать пароль"
+
+#: blog/static/blog/ts/src/utils/password.ts:54
+msgid "Zadajte váš e-mail"
+msgstr "Введите адрес электронной почты"
