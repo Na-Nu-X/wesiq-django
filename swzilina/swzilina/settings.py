@@ -216,7 +216,7 @@ LANGUAGES = [
     ('fr', _('French')),
     ('uk', _('Ukrainian')),
     ('ru', _('Russian')),
-    ('br', _('Brazilian')),
+    ('pt-br', _('Portuguese (Brazil)')),
     # ('zh-hans', _('Simplified Chinese')),
 ]
 
