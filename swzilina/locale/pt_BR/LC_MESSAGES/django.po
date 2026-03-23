@@ -8,260 +8,260 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 13:42+0000\n"
-"PO-Revision-Date: 2026-03-23 19:29+0000\n"
+"POT-Creation-Date: 2026-03-23 19:41+0000\n"
+"PO-Revision-Date: 2026-03-24 17:10+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: blog/forms.py:6 blog/forms.py:12 blog/forms.py:141
 msgid "Zadajte vaše meno"
-msgstr "Введіть своє ім'я"
+msgstr "Digite seu nome"
 
 #: blog/forms.py:11 blog/forms.py:140 blog/forms.py:210
 msgid "Zadané meno je príliš dlhé"
-msgstr "Введене вами ім'я занадто довге"
+msgstr "O nome que você digitou é muito longo"
 
 #: blog/forms.py:17 blog/forms.py:23 blog/forms.py:152
 msgid "Zadajte vaše priezvisko"
-msgstr "Введіть своє прізвище"
+msgstr "Digite seu sobrenome"
 
 #: blog/forms.py:22 blog/forms.py:151 blog/forms.py:220
 msgid "Zadané priezvisko je príliš dlhé"
-msgstr "Введене прізвище занадто довге"
+msgstr "O sobrenome inserido é muito longo"
 
 #: blog/forms.py:28 blog/forms.py:34 blog/forms.py:89 blog/forms.py:95
 #: blog/forms.py:163 blog/forms.py:348 blog/forms.py:354
 msgid "Zadajte váš e-mail"
-msgstr "Введіть адресу електронної пошти"
+msgstr "Digite seu e-mail"
 
 #: blog/forms.py:33 blog/forms.py:94 blog/forms.py:162 blog/forms.py:230
 #: blog/forms.py:353
 msgid "Zadaný e-mail je príliš dlhý"
-msgstr "Введена вами електронна адреса занадто довга"
+msgstr "O endereço de e-mail que você digitou é muito longo"
 
 #: blog/forms.py:40 blog/templates/blog/homepage.html:600
 #: blog/templates/blog/homepage.html:603 blog/templates/blog/homepage.html:608
 msgid "Otázka"
-msgstr "Питання"
+msgstr "Pergunta"
 
 #: blog/forms.py:41 blog/templates/blog/homepage.html:609
 msgid "Návrh na zlepšenie"
-msgstr "Пропозиція щодо покращення"
+msgstr "Sugestão de melhoria"
 
 #: blog/forms.py:42 blog/templates/blog/homepage.html:610
 msgid "Nahlásenie chyby"
-msgstr "Повідомити про помилку"
+msgstr "Informar um erro"
 
 #: blog/forms.py:49 blog/forms.py:55
 msgid "Napíšte správu"
-msgstr "Написати повідомлення"
+msgstr "Escreva uma mensagem"
 
 #: blog/forms.py:54
 msgid "Vaša správa je príliš dlhá"
-msgstr "Ваше повідомлення занадто довге"
+msgstr "Sua mensagem é muito longa"
 
 #: blog/forms.py:74
 msgid "Zanechajte nám hodnotenie"
-msgstr "Залиште нам оцінку"
+msgstr "Deixe-nos uma avaliação"
 
 #: blog/forms.py:79
 msgid "Vaša recenzia je príliš dlhá"
-msgstr "Ваш відгук занадто довгий"
+msgstr "Sua avaliação está muito longa"
 
 #: blog/forms.py:100 blog/forms.py:104
 msgid "Zadajte vaše heslo"
-msgstr "Введіть свій пароль"
+msgstr "Digite sua senha"
 
 #: blog/forms.py:110 blog/forms.py:116
 msgid "Zadajte 6-miestny overovací kód"
-msgstr "Введіть 6-значний код підтвердження"
+msgstr "Digite o código de verificação de 6 dígitos"
 
 #: blog/forms.py:115
 msgid "Zadaný kód je príliš dlhý"
-msgstr "Введений вами код занадто довгий"
+msgstr "O código que você digitou é muito longo"
 
 #: blog/forms.py:121 blog/forms.py:129 blog/forms.py:178 blog/forms.py:186
 msgid "Vytvorte heslo"
-msgstr "Створіть пароль"
+msgstr "Criar uma senha"
 
 #: blog/forms.py:127 blog/forms.py:184 blog/forms.py:197
 msgid "Zadané heslo je príliš krátke"
-msgstr "Введений вами пароль занадто короткий"
+msgstr "A senha que você digitou é muito curta"
 
 #: blog/forms.py:128 blog/forms.py:185 blog/forms.py:198
 msgid "Zadané heslo je príliš dlhé"
-msgstr "Введений вами пароль занадто довгий"
+msgstr "A senha que você digitou é muito longa"
 
 #: blog/forms.py:135
 msgid "Meno"
-msgstr "Ім'я"
+msgstr "Nome"
 
 #: blog/forms.py:146
 msgid "Priezvisko"
-msgstr "Прізвище"
+msgstr "Sobrenome"
 
 #: blog/forms.py:157
 msgid "E-mail"
-msgstr "Електронна пошта"
+msgstr "E-mail"
 
 #: blog/forms.py:168
 msgid "Telefónne číslo"
-msgstr "Номер телефону"
+msgstr "Número de telefone"
 
 #: blog/forms.py:173 blog/forms.py:240
 msgid "Zadané telefónne číslo je príliš dlhé"
-msgstr "Введений вами номер телефону занадто довгий"
+msgstr "O número de telefone que você digitou é muito longo"
 
 #: blog/forms.py:191
 msgid "Overte heslo"
-msgstr "Підтвердьте пароль"
+msgstr "Verifique a senha"
 
 #: blog/forms.py:199
 msgid "Znovu zadajte heslo"
-msgstr "Введіть свій пароль ще раз"
+msgstr "Digite sua senha novamente"
 
 #: blog/forms.py:205
 msgid "Zmeniť meno"
-msgstr "Змінити назву"
+msgstr "Alterar nome"
 
 #: blog/forms.py:215
 msgid "Zmeniť priezvisko"
-msgstr "Змінити прізвище"
+msgstr "Alterar sobrenome"
 
 #: blog/forms.py:225
 msgid "Zmeniť e-mail"
-msgstr "Змінити електронну адресу"
+msgstr "Alterar e-mail"
 
 #: blog/forms.py:235
 msgid "Zmeniť telefónne číslo"
-msgstr "Змінити номер телефону"
+msgstr "Alterar número de telefone"
 
 #: blog/forms.py:262 blog/templates/blog/manage_training_plans.html:140
 #: blog/templates/blog/manage_training_plans.html:194
 msgid "Názov"
-msgstr "Ім'я"
+msgstr "Nome"
 
 #: blog/forms.py:267
 msgid "Zadaný názov je príliš dlhý"
-msgstr "Введене вами ім'я занадто довге"
+msgstr "O nome que você digitou é muito longo"
 
 #: blog/forms.py:268
 msgid "Zadajte názov"
-msgstr "Введіть назву"
+msgstr "Digite um nome"
 
 #: blog/forms.py:273
 msgid "Článok"
-msgstr "Стаття"
+msgstr "Artigo"
 
 #: blog/forms.py:277
 msgid "Obsah článku nesmie byť prázdny"
-msgstr "Зміст статті не повинен бути порожнім"
+msgstr "O conteúdo do artigo não deve estar vazio"
 
 #: blog/forms.py:284
 msgid "Kategória podľa určenia"
-msgstr "Категорія за призначенням"
+msgstr "Categoria por destino"
 
 #: blog/forms.py:285 blog/templates/blog/blog.html:69
 msgid "Statické prvky"
-msgstr "Статичні елементи"
+msgstr "Elementos estáticos"
 
 #: blog/forms.py:286
 msgid "Dynamický trik"
-msgstr "Динамічний трюк"
+msgstr "Truque dinâmico"
 
 #: blog/forms.py:287
 msgid "Izotonický cvik"
-msgstr "Ізотонічна вправа"
+msgstr "Exercício isotônico"
 
 #: blog/forms.py:288 blog/templates/blog/blog.html:72
 msgid "O rovnováhe"
-msgstr "Про баланс"
+msgstr "Sobre equilíbrio"
 
 #: blog/forms.py:289 blog/templates/blog/blog.html:73
 msgid "O flexibilite"
-msgstr "Про гнучкість"
+msgstr "Sobre flexibilidade"
 
 #: blog/forms.py:294
 msgid "Vyberte kategóriu podľa určenia"
-msgstr "Виберіть категорію відповідно до пункту призначення"
+msgstr "Selecione a categoria por destino"
 
 #: blog/forms.py:301
 msgid "Kategória podľa pohybu"
-msgstr "Категорія за рухом"
+msgstr "Categoria por movimento"
 
 #: blog/forms.py:302 blog/templates/blog/blog.html:76
 msgid "Ťah"
-msgstr "Tyaha"
+msgstr "Puxada"
 
 #: blog/forms.py:303 blog/templates/blog/blog.html:75
 msgid "Tlak"
-msgstr "Жим"
+msgstr "Empurre"
 
 #: blog/forms.py:304 blog/templates/blog/blog.html:77
 msgid "Nohy"
-msgstr "Ноги"
+msgstr "Pernas"
 
 #: blog/forms.py:309
 msgid "Vyberte kategóriu podľa pohybu"
-msgstr "Виберіть категорію за рухом"
+msgstr "Selecione categoria por movimento"
 
 #: blog/forms.py:316
 msgid "Kategória podľa obtiažnosti"
-msgstr "Категорія за складністю"
+msgstr "Categoria por dificuldade"
 
 #: blog/forms.py:317 blog/templates/blog/blog.html:79
 msgid "Pre začiatočníkov"
-msgstr "Для початківців"
+msgstr "Para iniciantes"
 
 #: blog/forms.py:318 blog/templates/blog/blog.html:80
 msgid "Pre stredne pokročilých"
-msgstr "Для проміжних"
+msgstr "Para intermediários"
 
 #: blog/forms.py:319 blog/templates/blog/blog.html:81
 msgid "Pre pokročilých"
-msgstr "Для розширених"
+msgstr "Para o avançado"
 
 #: blog/forms.py:320 blog/templates/blog/blog.html:82
 msgid "Pre profesionálov"
-msgstr "Для професіоналів"
+msgstr "Para profissionais"
 
 #: blog/forms.py:325
 msgid "Vyberte kategóriu podľa obtiažnosti"
-msgstr "Виберіть категорію за складністю"
+msgstr "Selecione uma categoria por dificuldade"
 
 #: blog/forms.py:330
 msgid "Link"
-msgstr "Линк"
+msgstr "Link"
 
 #: blog/forms.py:335
 msgid "Zadaný link je príliš dlhý"
-msgstr "Введене посилання занадто довге"
+msgstr "O link inserido é muito longo."
 
 #: blog/forms.py:336
 msgid "Zadajte link"
-msgstr "Введіть посилання"
+msgstr "Digite o link"
 
 #: blog/forms.py:360
 msgid "Napísať komentár"
-msgstr "Напишіть коментар"
+msgstr "Escreva um comentário"
 
 #: blog/forms.py:365
 msgid "Zadaný komentár je príliš dlhý"
-msgstr "Введений коментар занадто довгий"
+msgstr "O comentário que você digitou é muito longo"
 
 #: blog/forms.py:366
 msgid "Zanechajte komentár"
-msgstr "Залишити коментар"
+msgstr "Deixe um comentário"
 
 #: blog/tasks.py:44 blog/views.py:677
 msgid "SW Žilina - Odstránenie účtu"
-msgstr "SW Zhylina - Видалення облікового запису"
+msgstr "SW Žilina - Exclusão de conta"
 
 #: blog/tasks.py:45
 #, python-format
@@ -270,15 +270,15 @@ msgid ""
 "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Привіт %(first_name)s %(last_name)s,\n"
-"ми повідомляємо вас, що ваш обліковий запис користувача було видалено назавжди. Повторний вхід до початкового облікового запису більше неможливий. Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви створите новий.\n"
-"Команда Street Workout Zhylina."
+"Olá %(first_name)s %(last_name)s,\n"
+"gostaríamos de informar que sua conta de usuário foi excluída permanentemente. Não é mais possível acessar sua conta original. Caso deseje retornar no futuro, teremos prazer em criar uma nova conta para você.\n"
+"Equipe Street Workout Žilina."
 
 #: blog/tasks.py:49 blog/views.py:122 blog/views.py:466 blog/views.py:553
 #: blog/views.py:682 blog/views.py:778
 #, python-format
 msgid "Dobrý deň %(first_name)s %(last_name)s,"
-msgstr "Привіт %(first_name)s %(last_name)s,"
+msgstr "Olá %(first_name)s %(last_name)s,"
 
 #: blog/tasks.py:50
 msgid ""
@@ -286,162 +286,161 @@ msgid ""
 "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
 "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgstr ""
-"ми повідомляємо вас, що ваш обліковий запис користувача було видалено "
-"назавжди. Повторний вхід до початкового облікового запису більше неможливий."
-" Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви "
-"створите новий."
+"gostaríamos de informar que sua conta de usuário foi excluída "
+"permanentemente. Não é mais possível acessar sua conta original. Caso deseje"
+" retornar no futuro, teremos prazer em criar uma nova conta para você."
 
 #: blog/tasks.py:51 blog/views.py:126 blog/views.py:470 blog/views.py:557
 #: blog/views.py:684 blog/views.py:782
 msgid "Tím Street Workout Žilina."
-msgstr "Команда Street Workout Zhylina."
+msgstr "Equipe Street Workout Žilina."
 
 #: blog/templates/blog/articles.html:29 blog/templates/blog/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
-msgstr "Поки що немає оцінок"
+msgstr "Ainda não há avaliações"
 
 #: blog/templates/blog/articles.html:32 blog/templates/blog/blog.html:150
 msgid "Priemerné hodnotenie"
-msgstr "Середній рейтинг"
+msgstr "Avaliação média"
 
 #: blog/templates/blog/articles.html:101
 msgid "Zatiaľ&nbsp;žiadne&nbsp;komentáre."
-msgstr "Поки&nbsp;що&nbsp;коментарів&nbsp;немає."
+msgstr "Ainda&nbsp;não&nbsp;há&nbsp;comentários."
 
 #: blog/templates/blog/articles.html:101
 msgid "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!"
-msgstr "Станьте&nbsp;першим,&nbsp;хто&nbsp;почне&nbsp;дискусію!"
+msgstr "Seja&nbsp;o&nbsp;primeiro&nbsp;a&nbsp;iniciar&nbsp;a&nbsp;discussão!"
 
 #: blog/templates/blog/articles.html:121 blog/templates/blog/articles.html:204
 msgid "Zobraziť profil"
-msgstr "Переглянути профіль"
+msgstr "Ver perfil"
 
 #: blog/templates/blog/articles.html:128 blog/templates/blog/articles.html:211
 msgid "Odpovedať..."
-msgstr "Відповісти..."
+msgstr "Responder..."
 
 #: blog/templates/blog/articles.html:133 blog/templates/blog/articles.html:216
 msgid "Páči sa mi..."
-msgstr "Мені подобається..."
+msgstr "Eu gosto..."
 
 #: blog/templates/blog/articles.html:150 blog/templates/blog/articles.html:233
 msgid "Nahlásiť..."
-msgstr "Звіт..."
+msgstr "Relatório..."
 
 #: blog/templates/blog/articles.html:154 blog/templates/blog/articles.html:237
 #: blog/templates/blog/blog.html:187
 msgid "Dátum zverejnenia"
-msgstr "Дата публікації"
+msgstr "Data de publicação"
 
 #: blog/templates/blog/blog.html:5 templates/base.html:158
 msgid "Blog"
-msgstr "Блог"
+msgstr "Blogue"
 
 #: blog/templates/blog/blog.html:12 blog/templates/blog/write_article.html:5
 #: blog/templates/blog/write_article.html:15
 #: blog/templates/blog/write_article.html:36
 msgid "Pridať článok"
-msgstr "Додати статтю"
+msgstr "Adicione um artigo"
 
 #: blog/templates/blog/blog.html:18
 #, python-format
 msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr "Знайдено <span>%(num_articles)s</span> статтю."
+msgstr "<span>%(num_articles)s</span> artigo encontrado."
 
 #: blog/templates/blog/blog.html:21
 #, python-format
 msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr "Знайдено <span>%(num_articles)s</span> статті."
+msgstr "<span>%(num_articles)s</span> artigos encontrados."
 
 #: blog/templates/blog/blog.html:24
 #, python-format
 msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr "Знайдено <span>%(num_articles)s</span> статей."
+msgstr "<span>%(num_articles)s</span> artigos encontrados."
 
 #: blog/templates/blog/blog.html:33
 msgid "Nájsť článok"
-msgstr "Знайти статтю"
+msgstr "Encontre um artigo"
 
 #: blog/templates/blog/blog.html:39 blog/templates/blog/blog.html:58
 #: blog/templates/blog/homepage.html:438
 msgid "Obnoviť predvolené filtre"
-msgstr "Відновити фільтри за замовчуванням"
+msgstr "Restaurar filtros padrão"
 
 #: blog/templates/blog/blog.html:44 blog/templates/blog/blog.html:49
 msgid "Najnovšie články"
-msgstr "Останні статті"
+msgstr "Artigos mais recentes"
 
 #: blog/templates/blog/blog.html:50
 msgid "Populárne články"
-msgstr "Популярні статті"
+msgstr "Artigos populares"
 
 #: blog/templates/blog/blog.html:51
 msgid "Najlepšie hodnotené"
-msgstr "Топ рейтинг"
+msgstr "Melhor avaliado"
 
 #: blog/templates/blog/blog.html:52
 msgid "Podľa abecedy (A-Z)"
-msgstr "За алфавітом (А-Я)"
+msgstr "Em ordem alfabética (A-Z)"
 
 #: blog/templates/blog/blog.html:53
 msgid "Podľa abecedy (Z-A)"
-msgstr "За алфавітом (Я-A)"
+msgstr "Em ordem alfabética (Z-A)"
 
 #: blog/templates/blog/blog.html:63 blog/templates/blog/blog.html:68
 #: blog/templates/blog/homepage.html:443
 msgid "Všetky kategórie"
-msgstr "Всі категорії"
+msgstr "Todas as categorias"
 
 #: blog/templates/blog/blog.html:70
 msgid "Dynamické triky"
-msgstr "Динамічні трюки"
+msgstr "Truques dinâmicos"
 
 #: blog/templates/blog/blog.html:71
 msgid "Izotonické cviky"
-msgstr "Ізотонічні вправи"
+msgstr "Exercícios isotônicos"
 
 #: blog/templates/blog/blog.html:90
 msgid ""
 "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
 "žiadne&nbsp;články."
-msgstr "Прости!<br>Не&nbsp;вдалося&nbsp;знайти&nbsp;статей."
+msgstr "Desculpe!<br>Nenhum&nbsp;artigo&nbsp;encontrado."
 
 #: blog/templates/blog/blog.html:122
 msgid "Tento článok pridal"
-msgstr "Ця стаття додала"
+msgstr "Este artigo foi adicionado por"
 
 #: blog/templates/blog/blog.html:127
 msgid "Zdielať"
-msgstr "Поділитися"
+msgstr "Compartilhar"
 
 #: blog/templates/blog/blog.html:137
 msgid "Zobraziť"
-msgstr "Шоу"
+msgstr "Visualizar"
 
 #: blog/templates/blog/blog.html:168
 msgid "Kategória"
-msgstr "Категорія"
+msgstr "Categoria"
 
 #: blog/templates/blog/blog.html:181
 msgid "unikátnych návštevníkov"
-msgstr "унікальних відвідувачів"
+msgstr "visitantes únicos"
 
 #: blog/templates/blog/blog.html:204
 msgid "Odoberať"
-msgstr "Підписатися"
+msgstr "Inscrever-se"
 
 #: blog/templates/blog/blog.html:204
 msgid "Dostávať upozornenia o nových článkoch"
-msgstr "Отримувати повідомлення про нові статті"
+msgstr "Receba notificações sobre novos artigos"
 
 #: blog/templates/blog/edit_account.html:5 templates/base.html:94
 #: templates/base.html:110
 msgid "Môj účet"
-msgstr "Мій рахунок"
+msgstr "Minha conta"
 
 #: blog/templates/blog/edit_account.html:16
 msgid "Môj&nbsp;účet"
-msgstr "Мій&nbsp;рахунок"
+msgstr "Minha&nbsp;conta"
 
 #: blog/templates/blog/edit_account.html:18
 #: blog/templates/blog/edit_review.html:18
@@ -451,46 +450,46 @@ msgstr "Мій&nbsp;рахунок"
 #: blog/templates/blog/registration.html:49
 #: blog/templates/blog/write_article.html:17
 msgid "Späť na úvodnú stránku"
-msgstr "Назад на домашню сторінку"
+msgstr "Voltar à página inicial"
 
 #: blog/templates/blog/edit_account.html:34
 msgid "Nahrať obrázok"
-msgstr "Завантажити зображення"
+msgstr "Carregar uma foto"
 
 #: blog/templates/blog/edit_account.html:40
 msgid "Odstrániť obrázok"
-msgstr "Видалити зображення"
+msgstr "Excluir imagem"
 
 #: blog/templates/blog/edit_account.html:66
 #: blog/templates/blog/edit_review.html:68
 #: blog/templates/blog/manage_training_plans.html:236
 msgid "Uložiť zmeny"
-msgstr "Зберегти зміни"
+msgstr "Salvar alterações"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
 msgid "Zabudli ste heslo?"
-msgstr "Забули пароль?"
+msgstr "Esqueceu sua senha?"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
 #: blog/templates/blog/password_reset.html:56
 msgid "Poslať overovací kód"
-msgstr "Надіслати код підтвердження"
+msgstr "Enviar código de verificação"
 
 #: blog/templates/blog/edit_account.html:69
 #: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:52
 #: blog/templates/blog/password_reset.html:53
 msgid "Zmeniť heslo"
-msgstr "Змінити пароль"
+msgstr "Alterar a senha"
 
 #: blog/templates/blog/edit_account.html:73
 msgid "Odstrániť účet"
-msgstr "Видалити обліковий запис"
+msgstr "Excluir conta"
 
 #: blog/templates/blog/edit_account.html:80
 msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
-msgstr "Щоб внести зміни у свій обліковий запис, спочатку необхідно"
+msgstr "Para fazer alterações na sua conta, primeiro você precisa"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
@@ -501,138 +500,138 @@ msgstr "Щоб внести зміни у свій обліковий запис
 #: blog/templates/blog/registration.html:72
 #: blog/templates/blog/training_session.html:58 templates/base.html:117
 msgid "Prihlásiť sa"
-msgstr "Увійти"
+msgstr "Conecte-se"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 msgid "prihlásiť"
-msgstr "увійти"
+msgstr "conectar-se"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 #: blog/templates/blog/homepage.html:83 blog/templates/blog/login.html:36
 msgid "alebo"
-msgstr "або"
+msgstr "ou"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 #: blog/templates/blog/homepage.html:100 blog/templates/blog/homepage.html:168
 #: blog/templates/blog/login.html:53 blog/templates/blog/registration.html:69
 msgid "Vytvoriť účet"
-msgstr "Створити обліковий запис"
+msgstr "Crie uma conta"
 
 #: blog/templates/blog/edit_account.html:80
 #: blog/templates/blog/edit_review.html:80
 msgid "zaregistrovať"
-msgstr "реєстр"
+msgstr "registrar"
 
 #: blog/templates/blog/edit_review.html:5
 msgid "Moje hodnotenie"
-msgstr "Мій рейтинг"
+msgstr "Minha avaliação"
 
 #: blog/templates/blog/edit_review.html:16
 msgid "Moje&nbsp;hodnotenie"
-msgstr "Мій&nbsp;рейтинг"
+msgstr "Minha&nbsp;avaliação"
 
 #: blog/templates/blog/edit_review.html:42
 #: blog/templates/blog/homepage.html:495
 msgid "upravené"
-msgstr "модифікований"
+msgstr "ajustado"
 
 #: blog/templates/blog/edit_review.html:72
 msgid "Odstrániť recenziu"
-msgstr "Вилучити відгук"
+msgstr "Excluir avaliação"
 
 #: blog/templates/blog/edit_review.html:80
 msgid "Pre vykonávanie zmien vašej recenzie sa musíte najprv"
-msgstr "Щоб внести зміни до свого огляду, спочатку необхідно"
+msgstr "Para fazer alterações na sua avaliação, primeiro você precisa fazer"
 
 #: blog/templates/blog/homepage.html:5
 msgid "Hlavná stránka"
-msgstr "Головна сторінка"
+msgstr "Página principal"
 
 #: blog/templates/blog/homepage.html:18
 msgid "KONTAKT"
-msgstr "КОНТАКТ"
+msgstr "CONTATO"
 
 #: blog/templates/blog/homepage.html:43
 msgid "Hľadať"
-msgstr "Пошук"
+msgstr "Procurar"
 
 #: blog/templates/blog/homepage.html:50
 msgid "Street Workout Žilina"
-msgstr "Street Workout Zhylina"
+msgstr "Street Workout Žilina"
 
 #: blog/templates/blog/homepage.html:54
 msgid "Prihlásiť"
-msgstr "Увійти"
+msgstr "Conecte-se"
 
 #: blog/templates/blog/homepage.html:55
 msgid "Zaregistrovať"
-msgstr "Реєструватися"
+msgstr "Cadastre-se"
 
 #: blog/templates/blog/homepage.html:64 blog/templates/blog/login.html:5
 #: blog/templates/blog/login.html:21 templates/base.html:156
 msgid "Prihlásenie"
-msgstr "Логін"
+msgstr "Conecte-se"
 
 #: blog/templates/blog/homepage.html:76 blog/templates/blog/homepage.html:156
 #: blog/templates/blog/login.html:29
 #: blog/templates/blog/password_reset.html:50
 #: blog/templates/blog/registration.html:59
 msgid "Zobraziť heslo"
-msgstr "Показати пароль"
+msgstr "Mostrar senha"
 
 #: blog/templates/blog/homepage.html:100 blog/templates/blog/login.html:53
 msgid "Ešte nemáte účet?"
-msgstr "У вас ще немає облікового запису?"
+msgstr "Ainda não tem uma conta?"
 
 #: blog/templates/blog/homepage.html:127
 #: blog/templates/blog/registration.html:5
 #: blog/templates/blog/registration.html:47 templates/base.html:157
 msgid "Registrácia"
-msgstr "Реєстрація"
+msgstr "Cadastro"
 
 #: blog/templates/blog/homepage.html:154
 #: blog/templates/blog/password_reset.html:48
 #: blog/templates/blog/registration.html:57
 msgid "Navrhnúť heslo"
-msgstr "Запропонувати пароль"
+msgstr "Sugira uma senha"
 
 #: blog/templates/blog/homepage.html:157
 #: blog/templates/blog/registration.html:60
 msgid "Skopírovať"
-msgstr "Копіювати"
+msgstr "Cópia"
 
 #: blog/templates/blog/homepage.html:163
 #: blog/templates/blog/registration.html:65
 msgid "Prilepiť"
-msgstr "Паста"
+msgstr "Colar"
 
 #: blog/templates/blog/homepage.html:171
 #: blog/templates/blog/registration.html:72
 msgid "Už máte účet?"
-msgstr "Уже є обліковий запис?"
+msgstr "Já tem uma conta?"
 
 #: blog/templates/blog/homepage.html:299
 msgid "Čo si myslia ostatní?"
-msgstr "Що думають інші?"
+msgstr "O que os outros pensam?"
 
 #: blog/templates/blog/homepage.html:311
 msgid "recenzií"
-msgstr "відгуки"
+msgstr "comentários"
 
 #: blog/templates/blog/homepage.html:314
 msgid "recenzia"
-msgstr "огляд"
+msgstr "avaliação"
 
 #: blog/templates/blog/homepage.html:317
 msgid "recenzie"
-msgstr "відгуки"
+msgstr "comentários"
 
 #: blog/templates/blog/homepage.html:336 blog/templates/blog/homepage.html:360
 msgid "Zatiaľ žiadne recenzie"
-msgstr "Поки що немає відгуків"
+msgstr "Ainda não há comentários"
 
 #: blog/templates/blog/homepage.html:340
 #, python-format
@@ -648,10 +647,10 @@ msgid_plural ""
 "                            "
 msgstr[0] ""
 "\n"
-"На основі %(amount)s відгук"
+"Com base em %(amount)s avaliação"
 msgstr[1] ""
 "\n"
-"На основі %(amount)s відгуків"
+"Com base em %(amount)s avaliações"
 
 #: blog/templates/blog/homepage.html:364
 #, python-format
@@ -667,14 +666,14 @@ msgid_plural ""
 "                                    "
 msgstr[0] ""
 "\n"
-"На основі %(amount)s відгук"
+"Com base em %(amount)s avaliação"
 msgstr[1] ""
 "\n"
-"На основі %(amount)s відгуків"
+"Com base em %(amount)s avaliações"
 
 #: blog/templates/blog/homepage.html:398
 msgid "Našla sa 1 recenzia."
-msgstr "1 відгук знайдено."
+msgstr "1 avaliação encontrada."
 
 #: blog/templates/blog/homepage.html:402
 #, python-format
@@ -684,7 +683,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"Знайдено <span>%(amount)s</span> відгуки."
+"Encontramos <span>%(amount)s</span> avaliações."
 
 #: blog/templates/blog/homepage.html:409
 #, python-format
@@ -694,360 +693,358 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"Знайдено <span>%(amount)s</span> відгуків."
+"Encontramos <span>%(amount)s</span> avaliações."
 
 #: blog/templates/blog/homepage.html:425 blog/templates/blog/homepage.html:430
 msgid "Najnovšie recenzie"
-msgstr "Останні відгуки"
+msgstr "Últimas avaliações"
 
 #: blog/templates/blog/homepage.html:431
 msgid "Najstaršie recenzie"
-msgstr "Найстаріші відгуки"
+msgstr "Críticas mais antigas"
 
 #: blog/templates/blog/homepage.html:432
 msgid "Najlepšie hodnotenie"
-msgstr "Найкращий рейтинг"
+msgstr "Melhor classificação"
 
 #: blog/templates/blog/homepage.html:433
 msgid "Najhoršie hodnotenie"
-msgstr "Найгірший рейтинг"
+msgstr "Pior classificação"
 
 #: blog/templates/blog/homepage.html:448
 msgid "Všetky recenzie"
-msgstr "Всі відгуки"
+msgstr "Todas as avaliações"
 
 #: blog/templates/blog/homepage.html:461
 msgid ""
 "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
 "žiadne&nbsp;recenzie."
-msgstr "Прости!<br>Не&nbsp;вдалося&nbsp;знайти&nbsp;жодних&nbsp;відгуків."
+msgstr "Desculpe!<br>Nenhuma&nbsp;avaliação&nbsp;encontrada."
 
 #: blog/templates/blog/homepage.html:485
 msgid "Neexistujúci účet"
-msgstr "Неіснуючий рахунок"
+msgstr "Conta inexistente"
 
 #: blog/templates/blog/homepage.html:518
 #: blog/templates/blog/manage_training_plans.html:132
 msgid "Upraviť"
-msgstr "Редагувати"
+msgstr "Editar"
 
 #: blog/templates/blog/homepage.html:563
 msgid "Uverejniť"
-msgstr "Опублікувати"
+msgstr "Publicar"
 
 #: blog/templates/blog/homepage.html:592
 msgid "Kontaktujte nás"
-msgstr "Зв'яжіться з нами"
+msgstr "Contate-nos"
 
 #: blog/templates/blog/homepage.html:618
 msgid "Nie je vybraný žiaden súbor."
-msgstr "Файл не вибрано."
+msgstr "Nenhum arquivo está selecionado."
 
 #: blog/templates/blog/homepage.html:621
 msgid "Vyberte prílohu z vašich súborov"
-msgstr "Виберіть вкладення зі своїх файлів"
+msgstr "Selecione um anexo dos seus arquivos"
 
 #: blog/templates/blog/homepage.html:622
 msgid "Vybrať prílohu"
-msgstr "Виберіть долучення"
+msgstr "Selecione o anexo"
 
 #: blog/templates/blog/homepage.html:631
 msgid "Odoslať správu"
-msgstr "Надіслати повідомлення"
+msgstr "Enviar mensagem"
 
 #: blog/templates/blog/login.html:13
 msgid "REGISTRÁCIA"
-msgstr "РЕЄСТРАЦІЯ"
+msgstr "REGISTRO"
 
 #: blog/templates/blog/manage_training_plans.html:5
 #: blog/templates/blog/training_session.html:32
 #: blog/templates/blog/training_session.html:35
 #: blog/templates/blog/training_session.html:64
 msgid "Moje tréningové plány"
-msgstr "Мої плани тренувань"
+msgstr "Meus planos de treinamento"
 
 #: blog/templates/blog/manage_training_plans.html:13
 msgid "Aktivita"
-msgstr "Активність"
+msgstr "Atividade"
 
 #: blog/templates/blog/manage_training_plans.html:21
 #: blog/templates/blog/training_session.html:56
 msgid "Zdá sa, že nie ste prihlásený."
-msgstr "Здається, ви не ввійшли."
+msgstr "Parece que você não está conectado."
 
 #: blog/templates/blog/manage_training_plans.html:22
 msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
-msgstr "Неможливо створити план навчання без входу."
+msgstr "Não é possível criar um plano de treinamento sem fazer login."
 
 #: blog/templates/blog/manage_training_plans.html:23
 #: blog/templates/blog/training_session.html:58
 msgid "Prihláste sa."
-msgstr "Увійти."
+msgstr "Conecte-se."
 
 #: blog/templates/blog/manage_training_plans.html:36
 msgid "Série"
-msgstr "Серія"
+msgstr "Séries"
 
 #: blog/templates/blog/manage_training_plans.html:39
 msgid "Pridať sériu"
-msgstr "Додати серію"
+msgstr "Adicionar série"
 
 #: blog/templates/blog/manage_training_plans.html:48
 #: blog/templates/blog/manage_training_plans.html:98
 msgid "Do&nbsp;zlyhania"
-msgstr "До&nbsp;провалу"
+msgstr "Até&nbsp;o&nbsp;fracasso"
 
 #: blog/templates/blog/manage_training_plans.html:116
 msgid "Počet"
-msgstr "Кількість"
+msgstr "Quantidade"
 
 #: blog/templates/blog/manage_training_plans.html:121
 msgid "Opakovaní"
-msgstr "Повторень"
+msgstr "Repetições"
 
 #: blog/templates/blog/manage_training_plans.html:122
 msgid "Sekúnd"
-msgstr "Секунд"
+msgstr "Segundos"
 
 #: blog/templates/blog/manage_training_plans.html:131
 msgid "Vytvoriť"
-msgstr "Створити"
+msgstr "Criar"
 
 #: blog/templates/blog/manage_training_plans.html:143
 #: blog/templates/blog/manage_training_plans.html:197
 msgid "Pull"
-msgstr "Тяга"
+msgstr "Puxada"
 
 #: blog/templates/blog/manage_training_plans.html:144
 #: blog/templates/blog/manage_training_plans.html:198
 msgid "Push"
-msgstr "Жим"
+msgstr "Empurre"
 
 #: blog/templates/blog/manage_training_plans.html:145
 #: blog/templates/blog/manage_training_plans.html:199
 msgid "Legs"
-msgstr "Ноги"
+msgstr "Pernas"
 
 #: blog/templates/blog/manage_training_plans.html:147
 #: blog/templates/blog/manage_training_plans.html:201
 msgid "Upper"
-msgstr "Верх"
+msgstr "Superior"
 
 #: blog/templates/blog/manage_training_plans.html:148
 #: blog/templates/blog/manage_training_plans.html:202
 msgid "Lower"
-msgstr "Низ"
+msgstr "Inferior"
 
 #: blog/templates/blog/manage_training_plans.html:156
 #: blog/templates/blog/manage_training_plans.html:161
 #: blog/templates/blog/manage_training_plans.html:210
 #: blog/templates/blog/manage_training_plans.html:215
 msgid "Nepriradiť deň"
-msgstr "Не призначати день"
+msgstr "Não atribua um dia"
 
 #: blog/templates/blog/manage_training_plans.html:162
 #: blog/templates/blog/manage_training_plans.html:216
 msgid "PO"
-msgstr "Пн"
+msgstr "2f"
 
 #: blog/templates/blog/manage_training_plans.html:163
 #: blog/templates/blog/manage_training_plans.html:217
 msgid "UT"
-msgstr "Вт"
+msgstr "3f"
 
 #: blog/templates/blog/manage_training_plans.html:164
 #: blog/templates/blog/manage_training_plans.html:218
 msgid "ST"
-msgstr "Ср"
+msgstr "4f"
 
 #: blog/templates/blog/manage_training_plans.html:165
 #: blog/templates/blog/manage_training_plans.html:219
 msgid "ŠT"
-msgstr "Чт"
+msgstr "5f"
 
 #: blog/templates/blog/manage_training_plans.html:166
 #: blog/templates/blog/manage_training_plans.html:220
 msgid "PI"
-msgstr "Пт"
+msgstr "6f"
 
 #: blog/templates/blog/manage_training_plans.html:167
 #: blog/templates/blog/manage_training_plans.html:221
 msgid "SO"
-msgstr "Сб"
+msgstr "SÁ"
 
 #: blog/templates/blog/manage_training_plans.html:168
 #: blog/templates/blog/manage_training_plans.html:222
 msgid "NE"
-msgstr "Нд"
+msgstr "DO"
 
 #: blog/templates/blog/manage_training_plans.html:181
 msgid "Pridať tréningový plán"
-msgstr "Додати план навчання"
+msgstr "Adicione um plano de treinamento"
 
 #: blog/templates/blog/manage_training_plans.html:237
 msgid "Vymazať"
-msgstr "Видалити"
+msgstr "Excluir"
 
 #: blog/templates/blog/manage_training_plans.html:248
 msgid "Nájsť cvik"
-msgstr "Знайти практику"
+msgstr "Encontre um exercício"
 
 #: blog/templates/blog/password_reset.html:5
 #: blog/templates/blog/password_reset.html:16
 msgid "Obnova hesla"
-msgstr "Відновлення пароля"
+msgstr "Recuperação de senha"
 
 #: blog/templates/blog/password_reset.html:43
 msgid "Otvoriť Gmail"
-msgstr "Відкрити Gmail"
+msgstr "Abra o Gmail"
 
 #: blog/templates/blog/password_reset.html:56
 msgid "Neprišiel vám overovací kód?"
-msgstr "Не отримали код підтвердження?"
+msgstr "Você não recebeu um código de verificação?"
 
 #: blog/templates/blog/password_reset.html:56
 msgid "Skúsiť znovu"
-msgstr "Спробуйте ще раз"
+msgstr "Tente novamente"
 
 #: blog/templates/blog/password_reset.html:65
 msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
-msgstr ""
-"Термін дії коду підтвердження для зміни пароля вашого облікового запису "
-"закінчився."
+msgstr "O código de verificação para alterar a senha da sua conta expirou."
 
 #: blog/templates/blog/password_reset.html:65
 msgid "Na stránke s"
-msgstr "На сторінці"
+msgstr "Na página com"
 
 #: blog/templates/blog/password_reset.html:65
 msgid "prihlásením"
-msgstr "входу"
+msgstr "login"
 
 #: blog/templates/blog/password_reset.html:65
 msgid "požiadajte o nový."
-msgstr "запросіть новий."
+msgstr "solicite um novo."
 
 #: blog/templates/blog/registration.html:39
 msgid "PRIHLÁSENIE"
-msgstr "ЛОГІН"
+msgstr "CONECTE-SE"
 
 #: blog/templates/blog/training_session.html:5
 msgid "Tréning"
-msgstr "Тренінг"
+msgstr "Treinamento"
 
 #: blog/templates/blog/training_session.html:57
 msgid "Bez prihlásenia nie je možné zaznamenať vašu aktivitu."
-msgstr "Вашу активність неможливо записати без входу в систему."
+msgstr "Sem fazer login, sua atividade não poderá ser registrada."
 
 #: blog/templates/blog/training_session.html:63
 msgid "Zatiaľ nemáte žiaden tréningový plán."
-msgstr "У вас ще немає плану тренувань."
+msgstr "Você ainda não tem um plano de treinamento."
 
 #: blog/templates/blog/training_session.html:64
 msgid "Vytvorte si prvý."
-msgstr "Створити перший."
+msgstr "Crie o seu primeiro."
 
 #: blog/templates/blog/training_session.html:128
 #: blog/templates/blog/training_session.html:141
 msgid "Tréningový plán"
-msgstr "План навчання"
+msgstr "Plano de treinamento"
 
 #: blog/templates/blog/training_session.html:129
 msgid "Začať tréning"
-msgstr "Почніть навчання"
+msgstr "Comece a treinar"
 
 #: blog/templates/blog/training_session.html:142
 msgid "Dokončiť tréning"
-msgstr "Повне навчання"
+msgstr "Conclua o treinamento"
 
 #: blog/templates/blog/training_session.html:200
 msgid "priemer&nbsp;/ 7&nbsp;dní"
-msgstr "середня&nbsp;/ 7&nbsp;днів"
+msgstr "média&nbsp;/ 7&nbsp;dias"
 
 #: blog/templates/blog/training_session.html:214
 msgid "počet&nbsp;/ 7&nbsp;dní"
-msgstr "кількість&nbsp;/ 7&nbsp;днів"
+msgstr "número&nbsp;/ 7&nbsp;dias"
 
 #: blog/templates/blog/training_session.html:238
 msgid "posledná aktivita"
-msgstr "остання активність"
+msgstr "última atividade"
 
 #: blog/templates/blog/training_session.html:238
 #: blog/templates/blog/training_session.html:254
 msgid "žiadna"
-msgstr "жодного"
+msgstr "nenhum"
 
 #: blog/templates/blog/training_session.html:254
 msgid "najdlhšia aktivita"
-msgstr "найдовша активність"
+msgstr "atividade mais longa"
 
 #: blog/templates/blog/training_session.html:269
 #: blog/templates/blog/training_session.html:273
 msgid "Graf sa nepodarilo načítať."
-msgstr "Не вдалося завантажити діаграму."
+msgstr "O gráfico não pôde ser carregado."
 
 #: blog/templates/blog/write_article.html:29
 msgid "Navrhnúť link"
-msgstr "Запропонуйте посилання"
+msgstr "Sugira um link"
 
 #: blog/templates/blog/write_article.html:31
 msgid "URL adresa vášho článku (napr. front-lever)"
-msgstr "URL-адреса вашої статті (напр. front-lever)"
+msgstr "O URL do seu artigo (p. ex. front-lever)"
 
 #: blog/urls.py:7
 msgid "domov/"
-msgstr "dodomu/"
+msgstr "lar/"
 
 #: blog/urls.py:8
 msgid "prihlasenie/"
-msgstr "lohin/"
+msgstr "conecte-se/"
 
 #: blog/urls.py:9
 msgid "obnova-hesla/"
-msgstr "vidnovlennya-parolya/"
+msgstr "recuperacao-de-senha/"
 
 #: blog/urls.py:10
 msgid "odhlasenie/"
-msgstr "vyyty/"
+msgstr "sair/"
 
 #: blog/urls.py:11
 msgid "registracia/"
-msgstr "reyestratsiya/"
+msgstr "registro/"
 
 #: blog/urls.py:12
 msgid "moj-ucet/"
-msgstr "miy-rakhunok/"
+msgstr "minha-conta/"
 
 #: blog/urls.py:13
 msgid "moje-hodnotenie/"
-msgstr "miy-reytynh/"
+msgstr "minha-avaliacao/"
 
 #: blog/urls.py:14
 msgid "pridat-clanok/"
-msgstr "dodaty-stattyu/"
+msgstr "adicione-um-artigo/"
 
 #: blog/urls.py:15
 msgid "trening/"
-msgstr "treninh/"
+msgstr "treinamento/"
 
 #: blog/urls.py:16
 msgid "moje-treningove-plany/"
-msgstr "moyi-plany-trenuvan/"
+msgstr "meus-planos-de-treinamento/"
 
 #: blog/views.py:87 blog/views.py:194 blog/views.py:431 blog/views.py:648
 #, python-format
 msgid ""
 "Úspešne prihlásený ako\n"
 "%(first_name)s %(last_name)s"
-msgstr "Успішно зареєстрований як %(first_name)s %(last_name)s"
+msgstr "Login efetuado com sucesso como %(first_name)s %(last_name)s"
 
 #: blog/views.py:92 blog/views.py:96 blog/views.py:436 blog/views.py:440
 msgid "Nesprávne prihlasovacie údaje"
-msgstr "Неправильна інформація для входу"
+msgstr "Dados de login incorretos"
 
 #: blog/views.py:117 blog/views.py:461 blog/views.py:548 blog/views.py:773
 msgid "SW Žilina - Obnova hesla"
-msgstr "SW Zhylina - Відновлення пароля"
+msgstr "SW Žilina - Recuperação de senha"
 
 #: blog/views.py:118 blog/views.py:462 blog/views.py:549 blog/views.py:774
 #, python-format
@@ -1060,13 +1057,13 @@ msgid ""
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Привіт %(first_name)s %(last_name)s,\n"
-"ми отримали запит на скидання пароля вашого облікового запису. Якщо це були ви, будь ласка, скористайтеся наступним посиланням і введіть наступний код підтвердження.\n"
+"Olá %(first_name)s %(last_name)s,\n"
+"recebemos uma solicitação para redefinir a senha da sua conta. Se você foi quem fez a solicitação, use o link a seguir e insira o código de verificação.\n"
 "\n"
-"http://127.0.0.1:8000/vidnovlennya-parolya?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/recuperacao-de-senha?password-reset-code=%(code)s - %(code)s\n"
 "\n"
-"Якщо ви не подали запит на скидання пароля, проігноруйте цей електронний лист.\n"
-"Команда Street Workout Zhylina."
+"Se você não solicitou a redefinição de senha, ignore este e-mail.\n"
+"Equipe Street Workout Žilina."
 
 #: blog/views.py:123 blog/views.py:467 blog/views.py:554 blog/views.py:779
 #, python-format
@@ -1076,92 +1073,90 @@ msgid ""
 "code=%(code)s\" title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz a "
 "zadajte nasledovný overovací kód."
 msgstr ""
-"ми отримали запит на скидання пароля вашого облікового запису. Якщо це були "
-"ви, будь ласка, скористайтеся <a href=\"http://127.0.0.1:8000/vidnovlennya-"
-"parolya?password-reset-code=%(code)s\" title=\"Скинути пароль\" "
-"target=\"_blank\">наступним</a> посиланням і введіть наступний код "
-"підтвердження."
+"recebemos uma solicitação para redefinir a senha da sua conta. Se você foi "
+"quem fez a solicitação, use o link a <a "
+"href=\"http://127.0.0.1:8000/recuperacao-de-senha?password-reset-"
+"code=%(code)s\" title=\"Obnoviť heslo\" target=\"_blank\">seguir</a> e "
+"insira o código de verificação."
 
 #: blog/views.py:125 blog/views.py:469 blog/views.py:556 blog/views.py:781
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
-msgstr ""
-"Якщо ви не подали запит на скидання пароля, проігноруйте цей електронний "
-"лист."
+msgstr "Se você não solicitou a redefinição de senha, ignore este e-mail."
 
 #: blog/views.py:137 blog/views.py:481 blog/views.py:568 blog/views.py:793
 #, python-format
 msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
-msgstr "Код перевірки надіслано до %(email_address)s"
+msgstr "O código de verificação foi enviado para %(email_address)s"
 
 #: blog/views.py:161 blog/views.py:216 blog/views.py:330 blog/views.py:613
 msgid "Overenie reCaptcha zlyhalo"
-msgstr "Помилка автентифікації reCaptcha"
+msgstr "A verificação reCaptcha falhou"
 
 #: blog/views.py:168 blog/views.py:622
 msgid "Tento e-mail už je zaregistrovaný"
-msgstr "Цей email вже зареєстрований"
+msgstr "Este e-mail já está registado"
 
 #: blog/views.py:172 blog/views.py:626
 msgid "Heslá sa nezhodujú"
-msgstr "Паролі не збігаються"
+msgstr "As senhas não coincidem"
 
 #: blog/views.py:175 blog/views.py:507 blog/views.py:629
 msgid "Heslo je príliš krátke"
-msgstr "Пароль занадто короткий"
+msgstr "A senha é muito curta"
 
 #: blog/views.py:199 blog/views.py:653
 msgid "Registrácia zlyhala"
-msgstr "Не вдалося зареєструватися"
+msgstr "Falha no registro"
 
 #: blog/views.py:244 blog/views.py:253
 msgid "Správa bola odoslaná"
-msgstr "Повідомлення відправлено"
+msgstr "A mensagem foi enviada"
 
 #: blog/views.py:247
 msgid "Príloha je príliš veľká"
-msgstr "Прикріплення занадто велике"
+msgstr "O acessório é muito grande"
 
 #: blog/views.py:256
 msgid "Správu sa nepodarilo odoslať"
-msgstr "Не вдалося надіслати повідомлення"
+msgstr "Não foi possível enviar a mensagem"
 
 #: blog/views.py:340
 msgid "Skúste upraviť aktuálne hodnotenie"
-msgstr "Спробуйте відредагувати поточний рейтинг"
+msgstr "Tente editar a classificação atual"
 
 #: blog/views.py:347
 msgid "Ukážte nám vašu spokojnosť"
-msgstr "Покажіть нам своє задоволення"
+msgstr "Mostre-nos a sua satisfação"
 
 #: blog/views.py:357
 msgid "Ďakujeme za vaše hodnotenie"
-msgstr "Дякуємо за відгук"
+msgstr "Obrigado pela sua avaliação"
 
 #: blog/views.py:360
 msgid "Hodnotenie sa nepodarilo uverejniť"
-msgstr "Рейтинг не вдалося опублікувати"
+msgstr "A classificação não pôde ser publicada"
 
 #: blog/views.py:399
 msgid "Pred napísaním hodnotenia sa prihláste"
-msgstr "Будь ласка, подайте заявку перед написанням відгуку"
+msgstr "Faça login antes de escrever uma avaliação"
 
 #: blog/views.py:515
 msgid "Heslo bolo úspešne zmenené"
-msgstr "Пароль успішно змінено"
+msgstr "Senha alterada com sucesso"
 
 #: blog/views.py:523
 msgid "Overovací kód sa nezhoduje"
-msgstr "Код перевірки не збігається"
+msgstr "O código de verificação não corresponde"
 
 #: blog/views.py:527
 msgid "Overenie zlyhalo"
-msgstr "Не вдалося перевірити"
+msgstr "Falha na verificação"
 
 #: blog/views.py:595
 msgid "Boli ste odhlásený"
-msgstr "Вас вибули"
+msgstr "Você foi desconectado"
 
 #: blog/views.py:678
 #, python-format
@@ -1170,91 +1165,93 @@ msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Привіт %(first_name)s %(last_name)s,\n"
-"ми отримали запит на видалення вашого облікового запису. У разі помилки у вас є можливість увійти протягом 30 днів. В іншому випадку ваш аккаунт неминуче буде видалений."
+"Olá %(first_name)s %(last_name)s,\n"
+"recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem 30 dias para fazer login. Caso contrário, sua conta será excluída permanentemente."
 
 #: blog/views.py:683
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený."
 msgstr ""
-"ми отримали запит на видалення вашого облікового запису. У разі помилки у "
-"вас є можливість увійти протягом 30 днів. В іншому випадку ваш аккаунт "
-"неминуче буде видалений."
+"recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem "
+"30 dias para fazer login. Caso contrário, sua conta será excluída "
+"permanentemente."
 
 #: blog/views.py:694
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
-msgstr "Обліковий запис %(first_name)s %(last_name)s видалено"
+msgstr "A conta de %(first_name)s %(last_name)s foi excluída"
 
 #: blog/views.py:747 blog/views.py:846
 msgid "Zmeny boli uložené"
-msgstr "Зміни збережено"
+msgstr "As alterações foram salvas"
 
 #: blog/views.py:752 blog/views.py:857
 #, python-format
 msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
-msgstr "Подальші коригування будуть можливі %(next_edit_time)s"
+msgstr "Novos ajustes serão possíveis a partir de %(next_edit_time)s"
 
 #: blog/views.py:755 blog/views.py:851
 msgid "Zmeny sa nepodarilo vykonať"
-msgstr "Зміни не вдалося внести"
+msgstr "Não foi possível efetuar alterações"
 
 #: blog/views.py:842
 msgid "Vaše hodnotenie bolo odstránené"
-msgstr "Ваш рейтинг видалено"
+msgstr "Sua avaliação foi removida"
 
 #: swzilina/settings.py:212
 msgid "Slovak"
-msgstr "Словацький"
+msgstr "Eslovaco"
 
 #: swzilina/settings.py:213
 msgid "Czech"
-msgstr "Чех"
+msgstr "Tcheco"
 
 #: swzilina/settings.py:214
 msgid "English"
-msgstr "Английский"
+msgstr "Inglês"
 
 #: swzilina/settings.py:215
 msgid "Spanish"
-msgstr "Іспанська"
+msgstr "Espanhol"
 
 #: swzilina/settings.py:216
 msgid "French"
-msgstr "Французький"
+msgstr "Francês"
 
 #: swzilina/settings.py:217
 msgid "Ukrainian"
-msgstr "Український"
+msgstr "Ucraniano"
 
 #: swzilina/settings.py:218
 msgid "Russian"
-msgstr "Русский"
+msgstr "Russo"
 
 #: swzilina/settings.py:219
-msgid "Brazilian"
-msgstr "Бразильський"
+msgid "Portuguese (Brazil)"
+msgstr "Português (Brasil)"
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
-msgstr "Сторінку не знайдено"
+msgstr "Página não encontrada"
 
 #: templates/404.html:8
 msgid "Chyba 404"
-msgstr "Помилка 404"
+msgstr "Erro 404"
 
 #: templates/404.html:9
 msgid "Je nám to ľúto, ale hladaná stránka sa nenašla."
-msgstr "Вибачте, але сторінка, яку ви шукали, не знайдена."
+msgstr ""
+"Pedimos desculpas, mas a página que você estava procurando não foi "
+"encontrada."
 
 #: templates/404.html:10
 msgid "Späť na hlavnú stránku"
-msgstr "Назад на головну сторінку"
+msgstr "Voltar à página principal"
 
 #: templates/base.html:46 templates/base.html:183
 msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
-msgstr "Політика&nbsp;конфіденційності"
+msgstr "Política&nbsp;de&nbsp;Privacidade"
 
 #: templates/base.html:48
 msgid ""
@@ -1262,73 +1259,74 @@ msgid ""
 "pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
 " zlepšovať naše služby."
 msgstr ""
-"Цей сайт використовує файли cookie, щоб забезпечити вам найкращий досвід "
-"перегляду. Файли cookie допомагають нам аналізувати, оптимізувати та "
-"покращувати наші послуги."
+"Este site utiliza cookies para lhe proporcionar a melhor experiência de "
+"navegação possível. Os cookies ajudam-nos a analisar, otimizar e melhorar os"
+" nossos serviços."
 
 #: templates/base.html:51
 msgid "Potvrdiť všetky"
-msgstr "Підтвердити всі"
+msgstr "Confirme tudo"
 
 #: templates/base.html:52
 msgid "Iba nevyhnutné"
-msgstr "Тільки необхідно"
+msgstr "Apenas necessário"
 
 #: templates/base.html:56
 msgid "PRESKOČIŤ"
-msgstr "ПРОПУСТИТИ"
+msgstr "PULAR"
 
 #: templates/base.html:58
 msgid "Posunúť nadol"
-msgstr "Рухатися вниз"
+msgstr "Mover para baixo"
 
 #: templates/base.html:59
 msgid "Posunúť nahor"
-msgstr "Рухатися вгору"
+msgstr "Subir"
 
 #: templates/base.html:71
 msgid "DOMOV"
-msgstr "ДОМОЙ"
+msgstr "LAR"
 
 #: templates/base.html:72
 msgid "AKTIVITA"
-msgstr "АКТИВНІСТЬ"
+msgstr "ATIVIDADE"
 
 #: templates/base.html:73
 msgid "BLOG"
-msgstr "БЛОГ"
+msgstr "BLOGUE"
 
 #: templates/base.html:112
 msgid "Odhlásiť sa z účtu"
-msgstr "Вийдіть зі свого облікового запису"
+msgstr "Sair da conta"
 
 #: templates/base.html:112
 msgid "Odhlásiť"
-msgstr "Відписатися"
+msgstr "Sair"
 
 #: templates/base.html:117
 msgid "Neprihlásený"
-msgstr "Не ввійшов"
+msgstr "Não logado"
 
 #: templates/base.html:140
 msgid "Street&nbsp;Workout Žilina"
-msgstr "Street&nbsp;Workout Zhylina"
+msgstr "Street&nbsp;Workout Žilina"
 
 #: templates/base.html:143
 msgid "Napísať..."
-msgstr "Напиши..."
+msgstr "Escrever..."
 
 #: templates/base.html:145
 msgid "Zavolať..."
-msgstr "Телефонуйте..."
+msgstr "Chamar..."
 
 #: templates/base.html:155
 msgid "Domov"
-msgstr "Додому"
+msgstr "Lar"
 
 #: templates/base.html:184
 msgid "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené."
-msgstr "&copy; Street Workout Zhylina 2025 - 2026, Всі права захищені."
+msgstr ""
+"&copy; Street Workout Žilina 2025 - 2026, Todos os direitos reservados."
 
 #: templates/base.html:192
 msgid "Street Workout Žilina by Patrik Behul"
