@@ -205,7 +205,7 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 from django.utils.translation import gettext_lazy as _
 
-LANGUAGE_CODE = 'sk' # Default Language (Slovak)
+LANGUAGE_CODE = 'en' # Default Language (English)
 
 # Supported Languages
 LANGUAGES = [

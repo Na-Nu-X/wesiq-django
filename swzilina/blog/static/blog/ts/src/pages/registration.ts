@@ -1,3 +1,6 @@
+// @ts-ignore
+import { AsYouType, isValidPhoneNumber } from 'https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.44/+esm'
+
 import { 
     passwordVerification,
     showPassword,
@@ -11,23 +14,32 @@ import { generateKey } from "../utils/generateKey.js"
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    const password_container:HTMLDivElement = document.querySelector(".registration_form .password_container") as HTMLDivElement // Gets Password Container
-    const password_check_container:HTMLDivElement = document?.querySelector(".registration_form .password_check_container") as HTMLDivElement // Gets Password Check Container
+    const registration_form:HTMLFormElement = document.querySelector(".registration_form") as HTMLFormElement // Gets Registration Form
 
-    const password_input:HTMLInputElement = password_container.querySelector(".registration_form .password") as HTMLInputElement // Gets Password Input
-    const password_check_input:HTMLInputElement = password_check_container?.querySelector(".registration_form .password_check") as HTMLInputElement // Gets Password Check Input
+    const registration_form_submit:HTMLInputElement = registration_form.querySelector(".registration_form_submit") as HTMLInputElement // Gets Registration Form Submit Button
+
+    const password_container:HTMLDivElement = registration_form.querySelector(".password_container") as HTMLDivElement // Gets Password Container
+    const password_check_container:HTMLDivElement = registration_form?.querySelector(".password_check_container") as HTMLDivElement // Gets Password Check Container
+
+    const password_input:HTMLInputElement = password_container.querySelector(".password") as HTMLInputElement // Gets Password Input
+    const password_check_input:HTMLInputElement = password_check_container?.querySelector(".password_check") as HTMLInputElement // Gets Password Check Input
     
-    const form_report:HTMLParagraphElement = document.querySelector(".registration_form .form_report") as HTMLParagraphElement // Gets Form Report
+    const form_report:HTMLParagraphElement = registration_form.querySelector(".form_report") as HTMLParagraphElement // Gets Form Report
 
     let copied_password:string|null = null // Default Value For Copied Password
 
     // Phone Number
-    const phone_number_container:HTMLDivElement = document.querySelector(".registration_form .phone_number_container") as HTMLDivElement // Gets Phone Number Container
+    const phone_number_container:HTMLDivElement = registration_form.querySelector(".phone_number_container") as HTMLDivElement // Gets Phone Number Container
     const phone_number:HTMLInputElement = phone_number_container.querySelector(".phone_number") as HTMLInputElement // Gets Phone Number Input
     const language:HTMLInputElement = phone_number_container.querySelector(".language") as HTMLInputElement // Gets Language Input
     const flag:HTMLImageElement = phone_number_container.querySelector(".flag") as HTMLImageElement // Gets Flag Image
 
     phone_number.addEventListener("input", function():void {
+        // Phone Number Formatting
+        const phone_number_formatter = new AsYouType()
+        const formatted_phone_number = phone_number_formatter.input(this.value)
+        this.value = formatted_phone_number
+
         // Language Flag
 
         // Slovak
@@ -90,6 +102,19 @@ document.addEventListener("DOMContentLoaded", function():void {
         else {
             flag.src = ""
             language.value = "en"
+        }
+    })
+
+    // Phone Number Validation
+    phone_number.addEventListener("blur", function():void {
+        if(!this.value) return
+        
+        isValidPhoneNumber(this.value) ? this.style.borderBottomColor = "#52cf20" : this.style.borderBottomColor = "#df3535"
+    })
+
+    registration_form_submit.addEventListener("click", function(event) {
+        if(!isValidPhoneNumber(phone_number.value)) {
+            event.preventDefault()
         }
     })
     

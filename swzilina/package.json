@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "chart.js": "^4.5.1",
-    "chartjs-plugin-datalabels": "^2.2.0"
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "libphonenumber-js": "^1.12.40"
   },
   "name": "swzilina-django",
   "version": "1.0.0",
