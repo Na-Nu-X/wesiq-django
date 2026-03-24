@@ -37,6 +37,22 @@
         @include form_input;
     }
 
+    .phone_number_container {
+        position: relative;
+
+        &:has(.phone_number:hover) .flag, &:has(.phone_number:focus) .flag {
+            right: 0px;
+        }
+
+        .flag {
+            position: absolute;
+            bottom: 18px;
+            right: 20px;
+            opacity: 0.8;
+            transition: right 0.3s ease;
+        }
+    }
+
     .password_container {
         position: relative;
 
