@@ -66,3 +66,7 @@ def cleanup_users():
     message = "No Users Has Been Deleted"
     captureMessage(message)
     return message
+
+@shared_task(name="blog.tasks.weeklyReport")
+def weeklyReport():
+    return "Weekly Report"

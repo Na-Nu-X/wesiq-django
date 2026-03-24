@@ -167,7 +167,7 @@ class registrationForm(forms.Form):
     phone_number = forms.CharField(
         widget=forms.TextInput(attrs={"class": "phone_number", "type": "tel", "placeholder": _("Telefónne číslo")}),
         label=False,
-        max_length=20,
+        max_length=25,
         required=False,
         error_messages={
             "max_length": _("Zadané telefónne číslo je príliš dlhé"),
