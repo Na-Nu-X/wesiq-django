@@ -20,6 +20,78 @@ document.addEventListener("DOMContentLoaded", function():void {
     const form_report:HTMLParagraphElement = document.querySelector(".registration_form .form_report") as HTMLParagraphElement // Gets Form Report
 
     let copied_password:string|null = null // Default Value For Copied Password
+
+    // Phone Number
+    const phone_number_container:HTMLDivElement = document.querySelector(".registration_form .phone_number_container") as HTMLDivElement // Gets Phone Number Container
+    const phone_number:HTMLInputElement = phone_number_container.querySelector(".phone_number") as HTMLInputElement // Gets Phone Number Input
+    const language:HTMLInputElement = phone_number_container.querySelector(".language") as HTMLInputElement // Gets Language Input
+    const flag:HTMLImageElement = phone_number_container.querySelector(".flag") as HTMLImageElement // Gets Flag Image
+
+    phone_number.addEventListener("input", function():void {
+        // Language Flag
+
+        // Slovak
+        if(
+            this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "2" && this.value[3] === "1") {
+            flag.src = "/static/images/sk.png"
+            language.value = "sk"
+        }
+
+        // Czech
+        else if(this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "2" && this.value[3] === "0") {
+            flag.src = "/static/images/cs.png"
+            language.value = "cs"
+        }
+
+        // English (England & USA)
+        else if(
+            this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "4" ||
+            this.value[0] === "+" && this.value[1] === "1"
+        ) {
+            flag.src = "/static/images/en.png"
+            language.value = "en"
+        }
+
+        // Spanish
+        else if(
+            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "4") {
+            flag.src = "/static/images/es.png"
+            language.value = "es"
+        }
+
+        // French
+        else if(
+            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "3") {
+            flag.src = "/static/images/fr.png"
+            language.value = "fr"
+        }
+
+        // Ukrainian
+        else if(
+            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "8" && this.value[3] === "0") {
+            flag.src = "/static/images/uk.png"
+            language.value = "uk"
+        }
+
+        // Russian
+        else if(
+            this.value[0] === "+" && this.value[1] === "7") {
+            flag.src = "/static/images/ru.png"
+            language.value = "ru"
+        }
+
+        // Portuguese (Brazil)
+        else if(
+            this.value[0] === "+" && this.value[1] === "5" && this.value[2] === "5") {
+            flag.src = "/static/images/pt-br.png"
+            language.value = "pt-br"
+        }
+
+        else {
+            flag.src = ""
+            language.value = "en"
+        }
+    })
     
     // Password Container Event Listener
     password_container.addEventListener("click", function(event:PointerEvent):void {

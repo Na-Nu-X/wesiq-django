@@ -545,6 +545,21 @@ header {
                 .phone_number_container:has(.phone_number:hover) .fa-phone, .phone_number_container:has(.phone_number:focus) .fa-phone {
                     right: 0px;
                 }
+
+                .phone_number_container {
+                    &:has(.phone_number:hover) .flag, &:has(.phone_number:focus) .flag {
+                        right: -30px;
+                    }
+            
+                    .flag {
+                        position: absolute;
+                        bottom: 21px;
+                        right: -10px;
+                        width: 24px;
+                        opacity: 0.8;
+                        transition: right 0.3s ease;
+                    }
+                }
             }
 
             .password, input[type="password"] {

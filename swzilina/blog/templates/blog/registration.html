@@ -51,7 +51,13 @@
         {{ registration_form.first_name }}
         {{ registration_form.last_name }}
         {{ registration_form.email_address }}
-        {{ registration_form.phone_number }}
+
+        <div class="phone_number_container">
+            {{ registration_form.phone_number }}
+            
+            <input class="language" type="hidden" name="language" value="en">
+            <img class="flag" src="" alt="">
+        </div>
         
         <div class="password_container">
             <i class="fa-solid fa-key" title="{% translate 'Navrhnúť heslo' %}"></i> <!-- https://fontawesome.com/icons/key -->

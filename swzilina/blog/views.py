@@ -175,13 +175,17 @@ def homepageView(request):
                     messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
+                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+
                     new_user = Users(
                         first_name = registration_form.cleaned_data["first_name"],
                         last_name = registration_form.cleaned_data["last_name"],
                         email_address = registration_form.cleaned_data["email_address"],
-                        phone_number = registration_form.cleaned_data["phone_number"],
+                        phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
+                        language = request.POST.get("language")
                     )
+
                     new_user.save()
 
                     # Deletes Previous User ID Session If Was Logged In
@@ -352,6 +356,7 @@ def homepageView(request):
                                 rating = int(review_form.cleaned_data["rating"]),
                                 review = review_form.cleaned_data["review"],
                             )
+
                             new_review.save()
 
                             messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
@@ -629,13 +634,17 @@ def registrationView(request):
                     messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
+                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+
                     new_user = Users(
                         first_name = registration_form.cleaned_data["first_name"],
                         last_name = registration_form.cleaned_data["last_name"],
                         email_address = registration_form.cleaned_data["email_address"],
-                        phone_number = registration_form.cleaned_data["phone_number"],
+                        phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
+                        language = request.POST.get("language")
                     )
+
                     new_user.save()
 
                     # Deletes Previous User ID Session If Was Logged In
@@ -1003,6 +1012,7 @@ def blogThemeView(request, theme):
                         user_id = logged_in_user_id,
                         comment = write_comment_form.cleaned_data["comment"],
                     )
+
                     new_comment.save()
 
             # Reply Comment Form
@@ -1015,6 +1025,7 @@ def blogThemeView(request, theme):
                         comment = write_comment_form.cleaned_data["comment"],
                         parent_id = request.POST.get("parent_id")
                     )
+
                     new_comment_reply.save()
 
         response = render(request, "blog/articles.html", {
@@ -1063,6 +1074,7 @@ def writeArticleView(request):
                 link = write_article_form.cleaned_data["link"],
                 image_name = new_image_name,
             )
+            
             new_article.save()
 
     return render(request, "blog/write_article.html", {
