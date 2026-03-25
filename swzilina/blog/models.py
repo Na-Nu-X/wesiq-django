@@ -8,6 +8,7 @@ class Users(models.Model):
     ]
 
     account_status_choices = [
+        ("unverified", "unverified"),
         ("OK", "OK"),
         ("suspended", "suspended"),
         ("deleted", "deleted"),
@@ -23,14 +24,15 @@ class Users(models.Model):
     language = models.CharField(verbose_name="Language Code", max_length=10, default="en", null=False, blank=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+    verification_code = models.CharField(verbose_name="Verification Code", max_length=6, null=True, blank=True)
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
     following = ArrayField(models.CharField(verbose_name="Following", max_length=100), default=list, null=False)
     followers = ArrayField(models.CharField(verbose_name="Followers", max_length=100), default=list, null=False)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
-    account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="OK", null=False)
-    last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=True, null=True, blank=True)
+    account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
+    last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
