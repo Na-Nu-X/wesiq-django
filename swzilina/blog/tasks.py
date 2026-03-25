@@ -14,11 +14,11 @@ def captureMessage(message):
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
-@shared_task(name="blog.tasks.cleanup_users")
-def cleanup_users():
+@shared_task(name="blog.tasks.cleanupSuspendedUsers")
+def cleanupSuspendedUsers():
     # Gets Users From Database Which Are Suspended And Their Last Login Is Older Than 30 Days
     users_for_deletion = Users.objects.filter(
-        account_status='suspended',
+        account_status="suspended",
         last_login__lt=timezone.now() - timedelta(days=30)
     )
     
@@ -58,12 +58,35 @@ def cleanup_users():
         users_for_deletion.delete() # Deletes Users
 
         # Sets Message
-        message = f"{users_for_deletion_count} User Has Been Deleted" if users_for_deletion_count == 1 else f"{users_for_deletion_count} Users Has Been Deleted"
+        message = f"{users_for_deletion_count} Suspended User Has Been Deleted" if users_for_deletion_count == 1 else f"{users_for_deletion_count} Suspended Users Has Been Deleted"
         captureMessage(message)
         return message
 
     # Sets Message
-    message = "No Users Has Been Deleted"
+    message = "No Suspended Users Has Been Deleted"
+    captureMessage(message)
+    return message
+
+@shared_task(name="blog.tasks.cleanupUnverifiedUsers")
+def cleanupUnverifiedUsers():
+    # Gets Users From Database Which Are Unverified And Their Creation Time Is Older Than 1 Days
+    users_for_deletion = Users.objects.filter(
+        account_status="unverified",
+        creation_time__lt=timezone.now() - timedelta(days=1)
+    )
+    
+    users_for_deletion_count = users_for_deletion.count() # Gets Amount Of Users For Deletion
+    
+    if users_for_deletion_count > 0:
+        users_for_deletion.delete() # Deletes Users
+
+        # Sets Message
+        message = f"{users_for_deletion_count} Unverified User Has Been Deleted" if users_for_deletion_count == 1 else f"{users_for_deletion_count} Unverified Users Has Been Deleted"
+        captureMessage(message)
+        return message
+
+    # Sets Message
+    message = "No Unverified Users Has Been Deleted"
     captureMessage(message)
     return message
 

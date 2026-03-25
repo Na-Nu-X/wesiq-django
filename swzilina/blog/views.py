@@ -27,6 +27,8 @@ from django.utils import translation
 from django.urls import translate_url
 from django.shortcuts import redirect
 
+# Functions
+
 def changeLanguage(request):
     language_code = request.POST.get('language')
     next_url = request.POST.get('next', '/')
@@ -68,6 +70,18 @@ def getClientIp(request):
 
     return ip
 
+# Generates Random 6-Digit Code
+def generateCode(length=6):
+    code = ""
+
+    for one_number in range(length):
+        one_number = random.randint(0, 9)
+        code += str(one_number)
+
+    return code
+
+# Views
+
 def homepageView(request):
     # Login Form
     if request.method == "POST" and request.POST.get("login_form_submit"):
@@ -96,19 +110,28 @@ def homepageView(request):
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
 
+    if request.GET.get("verification-code") and request.GET.get("id"):
+        if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exists():
+            user = Users.objects.get(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code")))
+            
+            request.session["logged_in_user_id"] = user.id # Sets User ID Session For New Registered User For Login or Switch Account
+
+            user.verification_code = None
+            user.account_status = "OK"
+            user.last_login = timezone.now() # Stores Last Login Time
+            user.save()
+
+            messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+
+        return HttpResponseRedirect(reverse("homepage_url"))
+
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
 
         if Users.objects.filter(email_address=email_address).exists():
             user = Users.objects.get(email_address=email_address)
 
-            # Generates Random 6-Digit Code
-            code = ""
-
-            for one_number in range(6):
-                one_number = random.randint(0, 9)
-                code += str(one_number)
-
+            code = generateCode() # Generates Random 6-Digit Code
 
             user_language = user.language
 
@@ -175,6 +198,8 @@ def homepageView(request):
                     messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
+                    verification_code = generateCode() # Generates Random 6-Digit Code
+
                     phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
                     new_user = Users(
@@ -183,7 +208,8 @@ def homepageView(request):
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
-                        language = request.POST.get("language")
+                        language = request.POST.get("language"),
+                        verification_code = verification_code
                     )
 
                     new_user.save()
@@ -192,12 +218,26 @@ def homepageView(request):
                     if "logged_in_user_id" in request.session:
                         del request.session["logged_in_user_id"]
 
-                    # Sets User ID Session For New Registered User For Login or Switch Account
-                    request.session["logged_in_user_id"] = new_user.id
+                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": new_user.first_name, "last_name": new_user.last_name})
+                    with translation.override(request.POST.get("language")):
+                        # Send Mail
+                        subject = _("SW Žilina - Overenie účtu")
+                        text_content = _(f"Dobrý deň %(first_name)s %(last_name)s,\nďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"], "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}
+                        sender = settings.EMAIL_HOST_USER
+                        receiver = [registration_form.cleaned_data["email_address"]]
+                        html_content = f"""
+                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"]}}</h1>
+                            <p>{_('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}}</p>
+                            <p>{_('Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.')}<br>
+                            {_('Tím Street Workout Žilina.')}</p>
+                        """
 
-                    return HttpResponseRedirect(reverse("homepage_url"))
+                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                        mail_message.attach_alternative(html_content, "text/html")
+                        mail_message.send()
+
+                    return HttpResponseRedirect(reverse("registration_url"))
             
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
@@ -451,13 +491,7 @@ def loginView(request):
         if Users.objects.filter(email_address=email_address).exists():
             user = Users.objects.get(email_address=email_address)
 
-            # Generates Random 6-Digit Code
-            code = ""
-
-            for one_number in range(6):
-                one_number = random.randint(0, 9)
-                code += str(one_number)
-
+            code = generateCode() # Generates Random 6-Digit Code
 
             user_language = user.language
 
@@ -538,13 +572,7 @@ def passwordResetView(request):
             if Users.objects.filter(email_address=email_address).exists():
                 user = Users.objects.get(email_address=email_address)
 
-                # Generates Random 6-Digit Code
-                code = ""
-
-                for one_number in range(6):
-                    one_number = random.randint(0, 9)
-                    code += str(one_number)
-
+                code = generateCode() # Generates Random 6-Digit Code
 
                 user_language = user.language
 
@@ -634,6 +662,8 @@ def registrationView(request):
                     messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
+                    verification_code = generateCode() # Generates Random 6-Digit Code
+
                     phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
                     new_user = Users(
@@ -642,7 +672,8 @@ def registrationView(request):
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
-                        language = request.POST.get("language")
+                        language = request.POST.get("language"),
+                        verification_code = verification_code
                     )
 
                     new_user.save()
@@ -651,12 +682,26 @@ def registrationView(request):
                     if "logged_in_user_id" in request.session:
                         del request.session["logged_in_user_id"]
 
-                    # Sets User ID Session For New Registered User For Login or Switch Account
-                    request.session["logged_in_user_id"] = new_user.id
+                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": new_user.first_name, "last_name": new_user.last_name})
+                    with translation.override(request.POST.get("language")):
+                        # Send Mail
+                        subject = _("SW Žilina - Overenie účtu")
+                        text_content = _(f"Dobrý deň %(first_name)s %(last_name)s,\nďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"], "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}
+                        sender = settings.EMAIL_HOST_USER
+                        receiver = [registration_form.cleaned_data["email_address"]]
+                        html_content = f"""
+                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"]}}</h1>
+                            <p>{_('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}}</p>
+                            <p>{_('Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.')}<br>
+                            {_('Tím Street Workout Žilina.')}</p>
+                        """
 
-                    return HttpResponseRedirect(reverse("homepage_url"))
+                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                        mail_message.attach_alternative(html_content, "text/html")
+                        mail_message.send()
+
+                    return HttpResponseRedirect(reverse("registration_url"))
                 
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
@@ -767,13 +812,7 @@ def editAccountView(request):
             return HttpResponseRedirect(reverse("edit_account_url"))
         
         if request.GET.get("password-reset"):
-            # Generates Random 6-Digit Code
-            code = ""
-
-            for one_number in range(6):
-                one_number = random.randint(0, 9)
-                code += str(one_number)
-
+            code = generateCode() # Generates Random 6-Digit Code
 
             user_language = logged_in_user.language
 
