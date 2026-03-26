@@ -80,6 +80,25 @@ def generateCode(length=6):
 
     return code
 
+def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+    with translation.override(user.language):
+        # Send Mail
+        subject = f"SW Žilina - {subject}"
+        text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
+        sender = settings.EMAIL_HOST_USER
+        receiver = [user.email_address]
+        html_content = f"""
+            <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+            <p>{html_content}<p>
+            <h1>{html_content_middle}</h1>
+            <p>{html_content_end}<br>
+            {_('Tím Street Workout Žilina.')}</p>
+        """
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+        mail_message.send()
+
 # Views
 
 def homepageView(request):
@@ -99,22 +118,13 @@ def homepageView(request):
                     user.account_status = "OK"
                     user.save()
 
-                    with translation.override(user.language):
-                        # Send Mail
-                        subject = _("SW Žilina - Prihlásenie do účtu")
-                        text_content = _("Dobrý deň %(first_name)s %(last_name)s,\nbolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "language": user.language}
-                        sender = settings.EMAIL_HOST_USER
-                        receiver = [email_address]
-                        html_content = f"""
-                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                            <p>{_('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}}<p>
-                            <p>{_('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.')}<br>
-                            {_('Tím Street Workout Žilina.')}</p>
-                        """
-
-                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                        mail_message.attach_alternative(html_content, "text/html")
-                        mail_message.send()
+                    sendMail(
+                        user,
+                        _("Prihlásenie do účtu"), # Subject
+                        _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+                        _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}, # HTML Content
+                        _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.') # End Of HTML Content
+                    )
 
                     messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
@@ -139,22 +149,13 @@ def homepageView(request):
             user.last_login = timezone.now() # Stores Last Login Time
             user.save()
 
-            with translation.override(user.language):
-                # Send Mail - Successful Registration After Account Verification
-                subject = _("SW Žilina - Úspešná registrácia")
-                text_content = _("Dobrý deň %(first_name)s %(last_name)s,\nmáme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name}
-                sender = settings.EMAIL_HOST_USER
-                receiver = [email_address]
-                html_content = f"""
-                    <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                    <p>{_('máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.')}<p>
-                    <p>{_('Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.')}<br>
-                    {_('Tím Street Workout Žilina.')}</p>
-                """
-
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
-                mail_message.send()
+            sendMail(
+                user,
+                _("Úspešná registrácia"), # Subject
+                _("máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\nTím Street Workout Žilina."), # Text Content
+                _('máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.'), # HTML Content
+                _('Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.') # End Of HTML Content
+            )
 
             messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
@@ -170,23 +171,14 @@ def homepageView(request):
 
             user_language = user.language
 
-            with translation.override(user_language):
-                # Send Mail
-                subject = _("SW Žilina - Obnova hesla")
-                text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "code": code}
-                sender = settings.EMAIL_HOST_USER
-                receiver = [email_address]
-                html_content = f"""
-                    <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                    <p>{_('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}}<p>
-                    <h1>{code}</h1>
-                    <p>{_('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.')}<br>
-                    {_('Tím Street Workout Žilina.')}</p>
-                """
-
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
-                mail_message.send()
+            sendMail(
+                user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
 
             # Saves Password Reset Code To Database
             user.password_reset_code = code
@@ -255,22 +247,13 @@ def homepageView(request):
 
                     messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    with translation.override(request.POST.get("language")):
-                        # Send Mail
-                        subject = _("SW Žilina - Overenie účtu")
-                        text_content = _(f"Dobrý deň %(first_name)s %(last_name)s,\nďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"], "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}
-                        sender = settings.EMAIL_HOST_USER
-                        receiver = [registration_form.cleaned_data["email_address"]]
-                        html_content = f"""
-                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"]}}</h1>
-                            <p>{_('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}}</p>
-                            <p>{_('Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.')}<br>
-                            {_('Tím Street Workout Žilina.')}</p>
-                        """
-
-                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                        mail_message.attach_alternative(html_content, "text/html")
-                        mail_message.send()
+                    sendMail(
+                        new_user,
+                        _("Overenie účtu"), # Subject
+                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                    )
 
                     return HttpResponseRedirect(reverse("registration_url"))
             
@@ -508,22 +491,13 @@ def loginView(request):
                 user.account_status = "OK"
                 user.save()
 
-                with translation.override(user.language):
-                    # Send Mail
-                    subject = _("SW Žilina - Prihlásenie do účtu")
-                    text_content = _("Dobrý deň %(first_name)s %(last_name)s,\nbolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "language": user.language}
-                    sender = settings.EMAIL_HOST_USER
-                    receiver = [email_address]
-                    html_content = f"""
-                        <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                        <p>{_('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}}<p>
-                        <p>{_('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.')}<br>
-                        {_('Tím Street Workout Žilina.')}</p>
-                    """
-
-                    mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                    mail_message.attach_alternative(html_content, "text/html")
-                    mail_message.send()
+                sendMail(
+                    user,
+                    _("Prihlásenie do účtu"), # Subject
+                    _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+                    _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}, # HTML Content
+                    _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.') # End Of HTML Content
+                )
 
                 messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
 
@@ -547,23 +521,14 @@ def loginView(request):
 
             user_language = user.language
 
-            with translation.override(user_language):
-                # Send Mail
-                subject = _("SW Žilina - Obnova hesla")
-                text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "code": code}
-                sender = settings.EMAIL_HOST_USER
-                receiver = [email_address]
-                html_content = f"""
-                    <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                    <p>{_('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}}<p>
-                    <h1>{code}</h1>
-                    <p>{_('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.')}<br>
-                    {_('Tím Street Workout Žilina.')}</p>
-                """
-
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
-                mail_message.send()
+            sendMail(
+                user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
 
             # Saves Password Reset Code To Database
             user.password_reset_code = code
@@ -628,23 +593,14 @@ def passwordResetView(request):
 
                 user_language = user.language
 
-                with translation.override(user_language):
-                    # Send Mail
-                    subject = _("SW Žilina - Obnova hesla")
-                    text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": user.first_name, "last_name": user.last_name, "code": code}
-                    sender = settings.EMAIL_HOST_USER
-                    receiver = [email_address]
-                    html_content = f"""
-                        <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": user.first_name, "last_name": user.last_name}}</h1>
-                        <p>{_('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}}<p>
-                        <h1>{code}</h1>
-                        <p>{_('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.')}<br>
-                        {_('Tím Street Workout Žilina.')}</p>
-                    """
-
-                    mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                    mail_message.attach_alternative(html_content, "text/html")
-                    mail_message.send()
+                sendMail(
+                    user,
+                    _("Obnova hesla"), # Subject
+                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
+                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                    _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                    code
+                )
 
                 # Saves Password Reset Code To Database
                 user.password_reset_code = code
@@ -736,22 +692,13 @@ def registrationView(request):
 
                     messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    with translation.override(request.POST.get("language")):
-                        # Send Mail
-                        subject = _("SW Žilina - Overenie účtu")
-                        text_content = _(f"Dobrý deň %(first_name)s %(last_name)s,\nďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"], "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}
-                        sender = settings.EMAIL_HOST_USER
-                        receiver = [registration_form.cleaned_data["email_address"]]
-                        html_content = f"""
-                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": registration_form.cleaned_data["first_name"], "last_name": registration_form.cleaned_data["last_name"]}}</h1>
-                            <p>{_('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}}</p>
-                            <p>{_('Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.')}<br>
-                            {_('Tím Street Workout Žilina.')}</p>
-                        """
-
-                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                        mail_message.attach_alternative(html_content, "text/html")
-                        mail_message.send()
+                    sendMail(
+                        new_user,
+                        _("Overenie účtu"), # Subject
+                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                    )
 
                     return HttpResponseRedirect(reverse("registration_url"))
                 
@@ -778,21 +725,13 @@ def editAccountView(request):
                 if delete_account:
                     user_language = logged_in_user.language
 
-                    with translation.override(user_language):
-                        # Send Mail
-                        subject = _("SW Žilina - Odstránenie účtu")
-                        text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina.") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name}
-                        sender = settings.EMAIL_HOST_USER
-                        receiver = [logged_in_user.email_address]
-                        html_content = f"""
-                            <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name}}</h1>
-                            <p>{_('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.')}<br>
-                            {_('Tím Street Workout Žilina.')}</p>
-                        """
-
-                        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                        mail_message.attach_alternative(html_content, "text/html")
-                        mail_message.send()
+                    sendMail(
+                        logged_in_user,
+                        _("Odstránenie účtu"), # Subject
+                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina."), # Text Content
+                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.'), # HTML Content
+                        _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                    )
 
                     logged_in_user.account_status = "suspended" # Changes Account Status
                     logged_in_user.save()
@@ -868,23 +807,14 @@ def editAccountView(request):
 
             user_language = logged_in_user.language
 
-            with translation.override(user_language):
-                # Send Mail
-                subject = _("SW Žilina - Obnova hesla")
-                text_content = _("Dobrý deň %(first_name)s %(last_name)s,\ndostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name, "code": code}
-                sender = settings.EMAIL_HOST_USER
-                receiver = [logged_in_user.email_address]
-                html_content = f"""
-                    <h1>{_('Dobrý deň %(first_name)s %(last_name)s,') % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name}}</h1>
-                    <p>{_('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}}<p>
-                    <h1>{code}</h1>
-                    <p>{_('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.')}<br>
-                    {_('Tím Street Workout Žilina.')}</p>
-                """
-
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
-                mail_message.send()
+            sendMail(
+                logged_in_user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
 
             # Saves Password Reset Code To Database
             logged_in_user.password_reset_code = code
