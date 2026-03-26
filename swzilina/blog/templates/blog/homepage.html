@@ -20,7 +20,23 @@
 {% endblock navigation_bar_items %}
 
 {% block banner %}
-    <div class="reviews_info" title="Na základe {{ num_reviews }} recenzií">
+    <div 
+        class="reviews_info" 
+        title="
+            {% if num_reviews == 0 %}
+                {% translate "Zatiaľ žiadne recenzie" %}
+
+            {% else %}
+                {% blocktranslate count amount=num_reviews %}
+                    Na základe {{ amount }} recenzie
+
+                {% plural %}
+                    Na základe {{ amount }} recenzií
+
+                {% endblocktranslate %}
+            {% endif %}
+        "
+    >
         <p>{{ avg_rating.rating__avg|floatformat:2 }}</p>
 
         {% for _ in "12345" %}
@@ -334,7 +350,6 @@
                             {% translate "Zatiaľ žiadne recenzie" %}
 
                         {% else %}
-
                             {% blocktranslate count amount=num_reviews %}
                                 Na základe {{ amount }} recenzie
 
@@ -342,7 +357,6 @@
                                 Na základe {{ amount }} recenzií
 
                             {% endblocktranslate %}
-
                         {% endif %}
                     "
                 >
@@ -358,7 +372,6 @@
                                     {% translate "Zatiaľ žiadne recenzie" %}
 
                                 {% else %}
-
                                     {% blocktranslate count amount=num_reviews %}
                                         Na základe {{ amount }} recenzie
                                         
@@ -366,7 +379,6 @@
                                         Na základe {{ amount }} recenzií
 
                                     {% endblocktranslate %}
-
                                 {% endif %}
                             "
                         >
