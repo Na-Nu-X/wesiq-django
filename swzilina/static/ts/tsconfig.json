@@ -1,14 +1,16 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+
     // File Layout
     "rootDir": "src",
     "outDir": "dist",
 
     // Environment Settings
-    "module": "ES2020",
-    "moduleResolution": "NodeNext",
-    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "es6",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
@@ -31,6 +33,19 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+
+    // "paths": {
+    //   "@/*": ["./src/*"],
+    // },
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": false,
+    "noPropertyAccessFromIndexSignature": true,
+    "erasableSyntaxOnly": true,
+    "noImplicitOverride": true,
   },
 
   // "include": [],
