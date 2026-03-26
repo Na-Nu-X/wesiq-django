@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-26 15:34+0000\n"
+"POT-Creation-Date: 2026-03-26 18:45+0000\n"
 "PO-Revision-Date: 2026-03-24 17:10+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -259,45 +259,56 @@ msgstr "O comentário que você digitou é muito longo"
 msgid "Zanechajte komentár"
 msgstr "Deixe um comentário"
 
-#: blog/tasks.py:44 blog/views.py:731
-msgid "SW Žilina - Odstránenie účtu"
-msgstr "SW Žilina - Exclusão de conta"
+#: blog/tasks.py:21 blog/tasks.py:25 blog/views.py:87 blog/views.py:91
+#, fuzzy, python-format
+#| msgid "Dobrý deň %(first_name)s %(last_name)s,"
+msgid "Dobrý deň %(first_name)s %(last_name)s"
+msgstr "Olá %(first_name)s %(last_name)s,"
 
-#: blog/tasks.py:45
-#, python-format
+#: blog/tasks.py:29 blog/views.py:95
+msgid "Tím Street Workout Žilina."
+msgstr "Equipe Street Workout Žilina."
+
+#: blog/tasks.py:62 blog/views.py:730
+#, fuzzy
+#| msgid "Odstrániť účet"
+msgid "Odstránenie účtu"
+msgstr "Excluir conta"
+
+#: blog/tasks.py:63
+#, fuzzy
+#| msgid ""
+#| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#| "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
+#| "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgid ""
-"Dobrý deň %(first_name)s %(last_name)s,\n"
 "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
 "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
 "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Olá %(first_name)s %(last_name)s,\n"
 "gostaríamos de informar que sua conta de usuário foi excluída "
 "permanentemente. Não é mais possível acessar sua conta original. Caso deseje "
-"retornar no futuro, teremos prazer em criar uma nova conta para você.\n"
-"Equipe Street Workout Žilina."
+"retornar no futuro, teremos prazer em criar uma nova conta para você."
 
-#: blog/tasks.py:49 blog/views.py:145 blog/views.py:230 blog/views.py:505
-#: blog/views.py:586 blog/views.py:694 blog/views.py:736 blog/views.py:826
-#, python-format
-msgid "Dobrý deň %(first_name)s %(last_name)s,"
-msgstr "Olá %(first_name)s %(last_name)s,"
-
-#: blog/tasks.py:50
+#: blog/tasks.py:64
+#, fuzzy
+#| msgid ""
+#| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#| "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
+#| "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgid ""
 "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
-"prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
-"budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
+"prihlásenie do pôvodného účtu už nie je možné."
 msgstr ""
 "gostaríamos de informar que sua conta de usuário foi excluída "
 "permanentemente. Não é mais possível acessar sua conta original. Caso deseje "
 "retornar no futuro, teremos prazer em criar uma nova conta para você."
 
-#: blog/tasks.py:51 blog/views.py:149 blog/views.py:233 blog/views.py:509
-#: blog/views.py:590 blog/views.py:697 blog/views.py:738 blog/views.py:830
-msgid "Tím Street Workout Žilina."
-msgstr "Equipe Street Workout Žilina."
+#: blog/tasks.py:65
+msgid ""
+"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
+msgstr ""
 
 #: blog/templates/blog/articles.html:29 blog/templates/blog/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
@@ -922,7 +933,8 @@ msgid "Nájsť cvik"
 msgstr "Encontre um exercício"
 
 #: blog/templates/blog/password_reset.html:5
-#: blog/templates/blog/password_reset.html:16
+#: blog/templates/blog/password_reset.html:16 blog/views.py:176
+#: blog/views.py:526 blog/views.py:598 blog/views.py:812
 msgid "Obnova hesla"
 msgstr "Recuperação de senha"
 
@@ -1061,25 +1073,93 @@ msgstr "treinamento/"
 msgid "moje-treningove-plany/"
 msgstr "meus-planos-de-treinamento/"
 
-#: blog/views.py:101 blog/views.py:124 blog/views.py:476
+#: blog/views.py:123 blog/views.py:496
+#, fuzzy
+#| msgid "Prihlásenie"
+msgid "Prihlásenie do účtu"
+msgstr "Conecte-se"
+
+#: blog/views.py:124 blog/views.py:497
+#, python-format
+msgid ""
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
+"\n"
+"Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
+"Tím Street Workout Žilina."
+msgstr ""
+
+#: blog/views.py:125 blog/views.py:498
+#, python-format
+msgid ""
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a "
+"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\" "
+"title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
+msgstr ""
+
+#: blog/views.py:126 blog/views.py:499
+#, fuzzy
+#| msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
+msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
+msgstr "Se você não solicitou a redefinição de senha, ignore este e-mail."
+
+#: blog/views.py:129 blog/views.py:160 blog/views.py:502
 #, python-format
 msgid ""
 "Úspešne prihlásený ako\n"
 "%(first_name)s %(last_name)s"
 msgstr "Login efetuado com sucesso como %(first_name)s %(last_name)s"
 
-#: blog/views.py:106 blog/views.py:110 blog/views.py:481 blog/views.py:485
+#: blog/views.py:134 blog/views.py:138 blog/views.py:507 blog/views.py:511
 msgid "Nesprávne prihlasovacie údaje"
 msgstr "Dados de login incorretos"
 
-#: blog/views.py:140 blog/views.py:500 blog/views.py:581 blog/views.py:821
-msgid "SW Žilina - Obnova hesla"
-msgstr "SW Žilina - Recuperação de senha"
+#: blog/views.py:154
+#, fuzzy
+#| msgid "Registrácia"
+msgid "Úspešná registrácia"
+msgstr "Cadastro"
 
-#: blog/views.py:141 blog/views.py:501 blog/views.py:582 blog/views.py:822
-#, python-format
+#: blog/views.py:155
 msgid ""
-"Dobrý deň %(first_name)s %(last_name)s,\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. "
+"Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"Tím Street Workout Žilina."
+msgstr ""
+
+#: blog/views.py:156
+msgid ""
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny."
+msgstr ""
+
+#: blog/views.py:157
+msgid ""
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
+"všetky funkcie našich služieb."
+msgstr ""
+
+#: blog/views.py:177 blog/views.py:527 blog/views.py:599 blog/views.py:813
+#, fuzzy, python-format
+#| msgid ""
+#| "Dobrý deň %(first_name)s %(last_name)s,\n"
+#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+#| "prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - "
+#| "%(code)s\n"
+#| "\n"
+#| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
+#| "Tím Street Workout Žilina."
+msgid ""
 "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
 "prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
@@ -1099,7 +1179,7 @@ msgstr ""
 "Se você não solicitou a redefinição de senha, ignore este e-mail.\n"
 "Equipe Street Workout Žilina."
 
-#: blog/views.py:146 blog/views.py:506 blog/views.py:587 blog/views.py:827
+#: blog/views.py:178 blog/views.py:528 blog/views.py:600 blog/views.py:814
 #, python-format
 msgid ""
 "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
@@ -1112,34 +1192,34 @@ msgstr ""
 "recuperacao-de-senha?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
 "target=\"_blank\">seguir</a> e insira o código de verificação."
 
-#: blog/views.py:148 blog/views.py:508 blog/views.py:589 blog/views.py:829
+#: blog/views.py:179 blog/views.py:529 blog/views.py:601 blog/views.py:815
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgstr "Se você não solicitou a redefinição de senha, ignore este e-mail."
 
-#: blog/views.py:160 blog/views.py:520 blog/views.py:601 blog/views.py:841
+#: blog/views.py:187 blog/views.py:537 blog/views.py:609 blog/views.py:823
 #, python-format
 msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
 msgstr "O código de verificação foi enviado para %(email_address)s"
 
-#: blog/views.py:184 blog/views.py:260 blog/views.py:374 blog/views.py:646
+#: blog/views.py:211 blog/views.py:278 blog/views.py:392 blog/views.py:654
 msgid "Overenie reCaptcha zlyhalo"
 msgstr "A verificação reCaptcha falhou"
 
-#: blog/views.py:191 blog/views.py:655
+#: blog/views.py:218 blog/views.py:663
 msgid "Tento e-mail už je zaregistrovaný"
 msgstr "Este e-mail já está registado"
 
-#: blog/views.py:195 blog/views.py:659
+#: blog/views.py:222 blog/views.py:667
 msgid "Heslá sa nezhodujú"
 msgstr "As senhas não coincidem"
 
-#: blog/views.py:198 blog/views.py:546 blog/views.py:662
+#: blog/views.py:225 blog/views.py:563 blog/views.py:670
 msgid "Heslo je príliš krátke"
 msgstr "A senha é muito curta"
 
-#: blog/views.py:221 blog/views.py:685
+#: blog/views.py:248 blog/views.py:693
 #, fuzzy, python-format
 #| msgid ""
 #| "Overovací kód bol odoslaný na adresu\n"
@@ -1149,16 +1229,15 @@ msgid ""
 "%(email_address)s"
 msgstr "O código de verificação foi enviado para %(email_address)s"
 
-#: blog/views.py:225 blog/views.py:689
+#: blog/views.py:252 blog/views.py:697
 #, fuzzy
 #| msgid "SW Žilina - Odstránenie účtu"
-msgid "SW Žilina - Overenie účtu"
+msgid "Overenie účtu"
 msgstr "SW Žilina - Exclusão de conta"
 
-#: blog/views.py:226 blog/views.py:690
+#: blog/views.py:253 blog/views.py:698
 #, python-format
 msgid ""
-"Dobrý deň %(first_name)s %(last_name)s,\n"
 "ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
 "Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
 "uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
@@ -1173,7 +1252,7 @@ msgid ""
 "Tím Street Workout Žilina."
 msgstr ""
 
-#: blog/views.py:231 blog/views.py:695
+#: blog/views.py:254 blog/views.py:699
 #, python-format
 msgid ""
 "ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
@@ -1186,79 +1265,81 @@ msgid ""
 "registráciu zopakovať."
 msgstr ""
 
-#: blog/views.py:232 blog/views.py:696
+#: blog/views.py:255 blog/views.py:700
 #, fuzzy
 #| msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
 msgstr "Se você não solicitou a redefinição de senha, ignore este e-mail."
 
-#: blog/views.py:243 blog/views.py:707
+#: blog/views.py:261 blog/views.py:706
 msgid "Registrácia zlyhala"
 msgstr "Falha no registro"
 
-#: blog/views.py:288 blog/views.py:297
+#: blog/views.py:306 blog/views.py:315
 msgid "Správa bola odoslaná"
 msgstr "A mensagem foi enviada"
 
-#: blog/views.py:291
+#: blog/views.py:309
 msgid "Príloha je príliš veľká"
 msgstr "O acessório é muito grande"
 
-#: blog/views.py:300
+#: blog/views.py:318
 msgid "Správu sa nepodarilo odoslať"
 msgstr "Não foi possível enviar a mensagem"
 
-#: blog/views.py:384
+#: blog/views.py:402
 msgid "Skúste upraviť aktuálne hodnotenie"
 msgstr "Tente editar a classificação atual"
 
-#: blog/views.py:391
+#: blog/views.py:409
 msgid "Ukážte nám vašu spokojnosť"
 msgstr "Mostre-nos a sua satisfação"
 
-#: blog/views.py:402
+#: blog/views.py:420
 msgid "Ďakujeme za vaše hodnotenie"
 msgstr "Obrigado pela sua avaliação"
 
-#: blog/views.py:405
+#: blog/views.py:423
 msgid "Hodnotenie sa nepodarilo uverejniť"
 msgstr "A classificação não pôde ser publicada"
 
-#: blog/views.py:444
+#: blog/views.py:462
 msgid "Pred napísaním hodnotenia sa prihláste"
 msgstr "Faça login antes de escrever uma avaliação"
 
-#: blog/views.py:554
+#: blog/views.py:571
 msgid "Heslo bolo úspešne zmenené"
 msgstr "Senha alterada com sucesso"
 
-#: blog/views.py:562
+#: blog/views.py:579
 msgid "Overovací kód sa nezhoduje"
 msgstr "O código de verificação não corresponde"
 
-#: blog/views.py:566
+#: blog/views.py:583
 msgid "Overenie zlyhalo"
 msgstr "Falha na verificação"
 
-#: blog/views.py:628
+#: blog/views.py:636
 msgid "Boli ste odhlásený"
 msgstr "Você foi desconectado"
 
-#: blog/views.py:732
-#, python-format
+#: blog/views.py:731
+#, fuzzy
+#| msgid ""
+#| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#| "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
+#| "odstránený."
 msgid ""
-"Dobrý deň %(first_name)s %(last_name)s,\n"
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
 "odstránený.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Olá %(first_name)s %(last_name)s,\n"
 "recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem "
 "30 dias para fazer login. Caso contrário, sua conta será excluída "
 "permanentemente."
 
-#: blog/views.py:737
+#: blog/views.py:732
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený."
@@ -1267,25 +1348,29 @@ msgstr ""
 "30 dias para fazer login. Caso contrário, sua conta será excluída "
 "permanentemente."
 
-#: blog/views.py:748
+#: blog/views.py:733
+msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
+msgstr ""
+
+#: blog/views.py:739
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgstr "A conta de %(first_name)s %(last_name)s foi excluída"
 
-#: blog/views.py:801 blog/views.py:894
+#: blog/views.py:792 blog/views.py:876
 msgid "Zmeny boli uložené"
 msgstr "As alterações foram salvas"
 
-#: blog/views.py:806 blog/views.py:905
+#: blog/views.py:797 blog/views.py:887
 #, python-format
 msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
 msgstr "Novos ajustes serão possíveis a partir de %(next_edit_time)s"
 
-#: blog/views.py:809 blog/views.py:899
+#: blog/views.py:800 blog/views.py:881
 msgid "Zmeny sa nepodarilo vykonať"
 msgstr "Não foi possível efetuar alterações"
 
-#: blog/views.py:890
+#: blog/views.py:872
 msgid "Vaše hodnotenie bolo odstránené"
 msgstr "Sua avaliação foi removida"
 
@@ -1421,3 +1506,37 @@ msgstr ""
 #: templates/base.html:192
 msgid "Street Workout Žilina by Patrik Behul"
 msgstr "Street Workout Žilina by Patrik Behul"
+
+#~ msgid "SW Žilina - Odstránenie účtu"
+#~ msgstr "SW Žilina - Exclusão de conta"
+
+#, python-format
+#~ msgid ""
+#~ "Dobrý deň %(first_name)s %(last_name)s,\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#~ "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
+#~ "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "Tím Street Workout Žilina."
+#~ msgstr ""
+#~ "Olá %(first_name)s %(last_name)s,\n"
+#~ "gostaríamos de informar que sua conta de usuário foi excluída "
+#~ "permanentemente. Não é mais possível acessar sua conta original. Caso "
+#~ "deseje retornar no futuro, teremos prazer em criar uma nova conta para "
+#~ "você.\n"
+#~ "Equipe Street Workout Žilina."
+
+#~ msgid "SW Žilina - Obnova hesla"
+#~ msgstr "SW Žilina - Recuperação de senha"
+
+#, python-format
+#~ msgid ""
+#~ "Dobrý deň %(first_name)s %(last_name)s,\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#~ "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
+#~ "odstránený.\n"
+#~ "Tím Street Workout Žilina."
+#~ msgstr ""
+#~ "Olá %(first_name)s %(last_name)s,\n"
+#~ "recebemos uma solicitação para excluir sua conta. Em caso de erro, você "
+#~ "tem 30 dias para fazer login. Caso contrário, sua conta será excluída "
+#~ "permanentemente."
