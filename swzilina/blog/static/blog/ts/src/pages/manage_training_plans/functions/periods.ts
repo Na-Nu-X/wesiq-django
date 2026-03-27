@@ -14,7 +14,7 @@ export function addPeriod(exercise:HTMLDivElement):void {
 
 // Function For Change The Reps Value
 export function changeReps(button:HTMLButtonElement, operation:string):void {
-    const unit:string|undefined = (button.closest(".exercise") as HTMLDivElement).dataset.unit // Gets Exercise Unit Type (Reps Or Seconds)
+    const unit:string|undefined = (button.closest(".exercise") as HTMLDivElement).dataset["unit"] // Gets Exercise Unit Type (Reps Or Seconds)
     const reps:HTMLInputElement = (button.closest(".reps_container") as HTMLDivElement).querySelector(".reps") as HTMLInputElement // Gets Reps Input
     const to_failure:HTMLParagraphElement = (button.closest(".reps_container") as HTMLDivElement).querySelector(".to_failure") as HTMLParagraphElement // Gets To Failure Text
     const time:HTMLParagraphElement = (button.closest(".reps_container") as HTMLDivElement).querySelector(".time") as HTMLParagraphElement // Gets Time Text

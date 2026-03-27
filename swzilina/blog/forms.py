@@ -106,17 +106,6 @@ class loginForm(forms.Form):
     )
 
 class passwordResetForm(forms.Form):
-    password_reset_code = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "password_reset_code", "placeholder": _("Zadajte 6-miestny overovací kód"), "autocomplete": "off"}),
-        label=False,
-        max_length=6,
-        required=True,
-        error_messages={
-            "max_length": _("Zadaný kód je príliš dlhý"),
-            "required": _("Zadajte 6-miestny overovací kód"),
-        },
-    )
-
     new_password = forms.CharField(
         widget=forms.TextInput(attrs={"class": "password", "placeholder": _("Vytvorte heslo"), "autocomplete": "off"}),
         label=False,

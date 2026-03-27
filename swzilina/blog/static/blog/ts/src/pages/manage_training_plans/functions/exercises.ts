@@ -10,7 +10,7 @@ function isExistingExercise(training_plan:HTMLDivElement):boolean {
         const title:string = (one_exercise.querySelector(".title") as HTMLHeadingElement).textContent // Gets Title Of The Exercise In The Training Plan
 
         const selection_dragged_exercise_name:string = (global_state!.selection_dragged_exercise!.querySelector(".name") as HTMLParagraphElement).textContent // Gets Dragged Exercise Name
-        const selection_dragged_exercise_weight:number = Number(global_state.selection_dragged_exercise!.dataset.weight || 0) // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+        const selection_dragged_exercise_weight:number = Number(global_state.selection_dragged_exercise!.dataset["weight"] || 0) // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
 
         return (
             title === selection_dragged_exercise_name && selection_dragged_exercise_weight === 0 || // For Example: Front Lever
@@ -29,7 +29,7 @@ function createExerciseTitle(exercise_name:string, exercise_weight:number):strin
     if(global_state.selection_dragged_exercise!.classList.contains("warm_up")) return undefined // Skips Warm Up
 
     if(exercise_weight !== 0) {
-        return global_state.selection_dragged_exercise!.dataset.requires_weight == "False" ? exercise_weight > 0 ? `${exercise_name} +${exercise_weight}kg` : `${exercise_name} ${exercise_weight}kg` : `${exercise_weight}kg ${exercise_name}` // Returns Title With Appended Weight If The Exercise Doesn't Require Weight And Exercise Weight Isn't Set To 0 (For Example: Front Lever +10kg Or Front Lever -10kg)
+        return global_state.selection_dragged_exercise!.dataset["requires_weight"] == "False" ? exercise_weight > 0 ? `${exercise_name} +${exercise_weight}kg` : `${exercise_name} ${exercise_weight}kg` : `${exercise_weight}kg ${exercise_name}` // Returns Title With Appended Weight If The Exercise Doesn't Require Weight And Exercise Weight Isn't Set To 0 (For Example: Front Lever +10kg Or Front Lever -10kg)
     }
 
     return exercise_name // Returns Unchanged Exercise Title If The Weight Is Set To 0
@@ -72,16 +72,16 @@ export function addExercise(training_plan:HTMLDivElement, state:{active_exercise
         const exercise_template_clone:DocumentFragment = exercise_template.content.cloneNode(true) as DocumentFragment // Clones The Exercise Template Content
 
         const selection_dragged_exercise_name:string = (global_state.selection_dragged_exercise!.querySelector(".name") as HTMLParagraphElement).textContent // Gets Dragged Exercise Name
-        const selection_dragged_exercise_weight:number = Number(global_state.selection_dragged_exercise!.dataset.weight || 0); // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
+        const selection_dragged_exercise_weight:number = Number(global_state.selection_dragged_exercise!.dataset["weight"] || 0); // Gets Current Added Or Subtracted Weight Of The Dragged Exercise
 
         (exercise_template_clone.querySelector(".exercise .title") as HTMLHeadingElement).textContent = createExerciseTitle(selection_dragged_exercise_name, selection_dragged_exercise_weight) || "" // Sets Formatted Title Value To The Exercise Title
 
         // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
-        if(global_state.selection_dragged_exercise!.dataset.unit === "reps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet opakovaní")
-        if(global_state.selection_dragged_exercise!.dataset.unit === "seconds") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
-        if(global_state.selection_dragged_exercise!.dataset.unit === "steps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
+        if(global_state.selection_dragged_exercise!.dataset["unit"] === "reps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet opakovaní")
+        if(global_state.selection_dragged_exercise!.dataset["unit"] === "seconds") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
+        if(global_state.selection_dragged_exercise!.dataset["unit"] === "steps") (exercise_template_clone.querySelector(".labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
 
-        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.unit = global_state.selection_dragged_exercise!.dataset.unit || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
+        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["unit"] = global_state.selection_dragged_exercise!.dataset["unit"] || "reps" // Stores Unit Type Data To The Exercise (Reps By Default)
 
         if(global_state.selection_dragged_exercise!.classList.contains("custom_exercise")) addCustomExercise(exercise_template_clone.querySelector(".exercise") as HTMLDivElement) // Adds Custom Exercise To The Training Plan
 

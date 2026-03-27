@@ -60,9 +60,9 @@ def cleanupSuspendedUsers():
             sendMail(
                 user,
                 _("Odstránenie účtu"), # Subject
-                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina."), # Text Content
+                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
                 _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
-                _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.') # End Of HTML Content
+                _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"language": user.language} # End Of HTML Content
             )
 
         users_for_deletion.delete() # Deletes Users

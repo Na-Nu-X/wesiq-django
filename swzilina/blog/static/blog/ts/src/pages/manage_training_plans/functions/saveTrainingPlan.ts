@@ -52,10 +52,10 @@ export function saveTrainingPlan(container:HTMLDivElement, state:{active_exercis
 
         // Gets Info From Every Exercise
         exercises.forEach(function(one_exercise) {
-            const previous_training_plan_key:string|null = one_exercise.dataset.training_plan_key ?? null // Gets Previous Training Plan Key If POST Is From Edited Training Plan
+            const previous_training_plan_key:string|null = one_exercise.dataset["training_plan_key"] ?? null // Gets Previous Training Plan Key If POST Is From Edited Training Plan
             const exercise = (one_exercise.querySelector(".title") as HTMLHeadingElement).textContent !== "" ? (one_exercise.querySelector(".title") as HTMLHeadingElement).textContent : (one_exercise.querySelector(".title_input") as HTMLInputElement).value // Gets Exercise Title
             const periods:number[] = getPeriods(one_exercise) // Stores Periods Value
-            const unit:string = one_exercise.dataset.unit ?? "reps" // Gets Exercise Unit Type (Reps Or Seconds)
+            const unit:string = one_exercise.dataset["unit"] ?? "reps" // Gets Exercise Unit Type (Reps Or Seconds)
 
             // Creates And Fills Data For Object Of One Exercise For Saved Training Plan
             const training_plan_object:{

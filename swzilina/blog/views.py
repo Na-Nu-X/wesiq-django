@@ -152,8 +152,8 @@ def homepageView(request):
             sendMail(
                 user,
                 _("Úspešná registrácia"), # Subject
-                _("máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\nTím Street Workout Žilina."), # Text Content
-                _('máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.'), # HTML Content
+                _("máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet/\n\nSme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+                _('máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Kliknite na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet/" title="Môj účet" target="_blank">tento</a> odkaz pre zobrazenie Vášho úštu.') % {"language": user.language}, # HTML Content
                 _('Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.') # End Of HTML Content
             )
 
@@ -169,13 +169,11 @@ def homepageView(request):
 
             code = generateCode() # Generates Random 6-Digit Code
 
-            user_language = user.language
-
             sendMail(
                 user,
                 _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
                 _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
                 code
             )
@@ -251,7 +249,7 @@ def homepageView(request):
                         new_user,
                         _("Overenie účtu"), # Subject
                         _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
-                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
                         _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
                     )
 
@@ -519,13 +517,11 @@ def loginView(request):
 
             code = generateCode() # Generates Random 6-Digit Code
 
-            user_language = user.language
-
             sendMail(
                 user,
                 _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
                 _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
                 code
             )
@@ -591,13 +587,11 @@ def passwordResetView(request):
 
                 code = generateCode() # Generates Random 6-Digit Code
 
-                user_language = user.language
-
                 sendMail(
                     user,
                     _("Obnova hesla"), # Subject
-                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
-                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": user.language, "code": code}, # Text Content
+                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
                     _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
                     code
                 )
@@ -696,7 +690,7 @@ def registrationView(request):
                         new_user,
                         _("Overenie účtu"), # Subject
                         _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
-                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
                         _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
                     )
 
@@ -723,13 +717,11 @@ def editAccountView(request):
             if edit_account_form.is_valid():
                 delete_account = edit_account_form.cleaned_data["delete_account"]
                 if delete_account:
-                    user_language = logged_in_user.language
-
                     sendMail(
                         logged_in_user,
                         _("Odstránenie účtu"), # Subject
-                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina."), # Text Content
-                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.'), # HTML Content
+                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\nhttp://127.0.0.1:8000/%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Street Workout Žilina.") % {"language": logged_in_user.language}, # Text Content
+                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="http://127.0.0.1:8000/%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"language": logged_in_user.language}, # HTML Content
                         _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
                     )
 
@@ -805,13 +797,11 @@ def editAccountView(request):
         if request.GET.get("password-reset"):
             code = generateCode() # Generates Random 6-Digit Code
 
-            user_language = logged_in_user.language
-
             sendMail(
                 logged_in_user,
                 _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"code": code}, # HTML Content
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Street Workout Žilina.") % {"language": logged_in_user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": logged_in_user.language, "code": code}, # HTML Content
                 _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
                 code
             )

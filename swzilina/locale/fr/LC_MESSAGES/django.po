@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-26 18:45+0000\n"
-"PO-Revision-Date: 2026-03-23 17:15+0000\n"
+"PO-Revision-Date: 2026-03-27 19:58+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -260,40 +260,33 @@ msgid "Zanechajte komentár"
 msgstr "Laisser un commentaire"
 
 #: blog/tasks.py:21 blog/tasks.py:25 blog/views.py:87 blog/views.py:91
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s,"
 msgid "Dobrý deň %(first_name)s %(last_name)s"
-msgstr "Bonjour %(first_name)s %(last_name)s,"
+msgstr "Bonjour %(first_name)s %(last_name)s"
 
 #: blog/tasks.py:29 blog/views.py:95
 msgid "Tím Street Workout Žilina."
 msgstr "Équipe Street Workout Žilina."
 
 #: blog/tasks.py:62 blog/views.py:730
-#, fuzzy
 #| msgid "Odstrániť účet"
 msgid "Odstránenie účtu"
-msgstr "Supprimer le compte"
+msgstr "Suppression de compte"
 
 #: blog/tasks.py:63
-#, fuzzy
 #| msgid ""
 #| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
 #| "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
 #| "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgid ""
-"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
-"prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
-"budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"nous vous informons que votre compte utilisateur a été définitivement "
-"supprimé. Il n'est plus possible de vous reconnecter à votre compte "
-"d'origine. Si vous souhaitez revenir ultérieurement, nous serons ravis de "
-"vous en créer un nouveau."
+"nous vous informons que votre compte utilisateur a été définitivement supprimé. Il n'est plus possible de vous reconnecter à votre compte d'origine. Si vous souhaitez revenir ultérieurement, nous serons ravis de vous en créer un nouveau.\n"
+"Équipe Street Workout Žilina."
 
 #: blog/tasks.py:64
-#, fuzzy
 #| msgid ""
 #| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
 #| "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
@@ -304,13 +297,14 @@ msgid ""
 msgstr ""
 "nous vous informons que votre compte utilisateur a été définitivement "
 "supprimé. Il n'est plus possible de vous reconnecter à votre compte "
-"d'origine. Si vous souhaitez revenir ultérieurement, nous serons ravis de "
-"vous en créer un nouveau."
+"d'origine."
 
 #: blog/tasks.py:65
 msgid ""
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgstr ""
+"Si vous souhaitez revenir à l'avenir, nous serions ravis d'en créer un "
+"nouveau."
 
 #: blog/templates/blog/articles.html:29 blog/templates/blog/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
@@ -326,7 +320,8 @@ msgstr "Pas&nbsp;encore&nbsp;de&nbsp;commentaires."
 
 #: blog/templates/blog/articles.html:101
 msgid "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!"
-msgstr "Soyez&nbsp;le&nbsp;premier&nbsp;à&nbsp;lancer&nbsp;la&nbsp;discussion&nbsp;!"
+msgstr ""
+"Soyez&nbsp;le&nbsp;premier&nbsp;à&nbsp;lancer&nbsp;la&nbsp;discussion&nbsp;!"
 
 #: blog/templates/blog/articles.html:121 blog/templates/blog/articles.html:204
 msgid "Zobraziť profil"
@@ -418,7 +413,8 @@ msgstr "Exercices isotoniques"
 
 #: blog/templates/blog/blog.html:90
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;články."
 msgstr "Désolé&nbsp;! Aucun&nbsp;article&nbsp;trouvé."
 
 #: blog/templates/blog/blog.html:122
@@ -459,8 +455,9 @@ msgid "Môj&nbsp;účet"
 msgstr "Mon&nbsp;compte"
 
 #: blog/templates/blog/edit_account.html:18
-#: blog/templates/blog/edit_review.html:18 blog/templates/blog/homepage.html:82
-#: blog/templates/blog/homepage.html:145 blog/templates/blog/login.html:23
+#: blog/templates/blog/edit_review.html:18
+#: blog/templates/blog/homepage.html:82 blog/templates/blog/homepage.html:145
+#: blog/templates/blog/login.html:23
 #: blog/templates/blog/password_reset.html:40
 #: blog/templates/blog/registration.html:49
 #: blog/templates/blog/write_article.html:17
@@ -507,8 +504,9 @@ msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
 msgstr "Pour modifier les informations de votre compte, vous devez"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:96
-#: blog/templates/blog/homepage.html:190 blog/templates/blog/login.html:33
+#: blog/templates/blog/edit_review.html:80
+#: blog/templates/blog/homepage.html:96 blog/templates/blog/homepage.html:190
+#: blog/templates/blog/login.html:33
 #: blog/templates/blog/manage_training_plans.html:23
 #: blog/templates/blog/password_reset.html:65
 #: blog/templates/blog/registration.html:78
@@ -522,8 +520,8 @@ msgid "prihlásiť"
 msgstr "d'abord vous connecter"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:99
-#: blog/templates/blog/login.html:36
+#: blog/templates/blog/edit_review.html:80
+#: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:36
 msgid "alebo"
 msgstr "ou"
 
@@ -574,7 +572,7 @@ msgid "Zatiaľ žiadne recenzie"
 msgstr "Aucun avis pour l'instant"
 
 #: blog/templates/blog/homepage.html:30
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
 #| "\n"
 #| "                                Na základe %(amount)s recenzie\n"
@@ -624,7 +622,8 @@ msgid "Prihlásenie"
 msgstr "Se connecter"
 
 #: blog/templates/blog/homepage.html:92 blog/templates/blog/homepage.html:175
-#: blog/templates/blog/login.html:29 blog/templates/blog/password_reset.html:50
+#: blog/templates/blog/login.html:29
+#: blog/templates/blog/password_reset.html:50
 #: blog/templates/blog/registration.html:65
 msgid "Zobraziť heslo"
 msgstr "Afficher le mot de passe"
@@ -1079,24 +1078,26 @@ msgid "moje-treningove-plany/"
 msgstr "mes-projets-d'entrainement/"
 
 #: blog/views.py:123 blog/views.py:496
-#, fuzzy
 #| msgid "Prihlásenie"
 msgid "Prihlásenie do účtu"
-msgstr "Se connecter"
+msgstr "Connexion au compte"
 
 #: blog/views.py:124 blog/views.py:497
 #, python-format
 msgid ""
-"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
-"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
-"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
-"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
+"votre compte a été ouvert. Nous tenons à vous informer que si vous ne vous êtes pas connecté depuis, vos données pourraient être compromises. Nous vous recommandons de modifier immédiatement votre mot de passe ou de nous contacter. La sécurité de vos données est importante pour nous.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/mon-compte?password-reset=true\n"
+"\n"
+"Si vous vous êtes inscrit, veuillez ignorer ce courriel.\n"
+"Équipe Street Workout Žilina."
 
 #: blog/views.py:125 blog/views.py:498
 #, python-format
@@ -1108,14 +1109,18 @@ msgid ""
 "title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
+"votre compte a été ouvert. Nous tenons à vous informer que si vous ne vous "
+"êtes pas connecté depuis, vos données pourraient être compromises. Nous vous"
+" recommandons de modifier immédiatement votre mot de passe en cliquant sur "
+"<a href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\" "
+"title=\"Obnoviť heslo\" target=\"_blank\">ce</a> lien ou en nous contactant."
+" La sécurité de vos données est importante pour nous."
 
 #: blog/views.py:126 blog/views.py:499
-#, fuzzy
-#| msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
+#| msgid ""
+#| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
-msgstr ""
-"Si vous n'avez pas demandé de réinitialisation de mot de passe, veuillez "
-"ignorer ce courriel."
+msgstr "Si vous vous êtes inscrit, veuillez ignorer ce courriel."
 
 #: blog/views.py:129 blog/views.py:160 blog/views.py:502
 #, python-format
@@ -1129,62 +1134,57 @@ msgid "Nesprávne prihlasovacie údaje"
 msgstr "Informations de connexion incorrectes"
 
 #: blog/views.py:154
-#, fuzzy
 #| msgid "Registrácia"
 msgid "Úspešná registrácia"
-msgstr "Inscription"
+msgstr "Inscription réussie"
 
 #: blog/views.py:155
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
-"účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. "
-"Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
 "Tím Street Workout Žilina."
 msgstr ""
+"Nous avons une excellente nouvelle ! Votre adresse e-mail a été vérifiée avec succès et votre compte est désormais pleinement actif. Nous sommes ravis de vous accueillir dans notre communauté. Vous pouvez désormais profiter pleinement de toutes les fonctionnalités de nos services.\n"
+"Équipe Street Workout Žilina."
 
 #: blog/views.py:156
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
-"účet je odteraz plne aktívny."
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
+" účet je odteraz plne aktívny."
 msgstr ""
+"nous avons une excellente nouvelle ! Votre adresse e-mail a été vérifiée "
+"avec succès et votre compte est désormais pleinement actif."
 
 #: blog/views.py:157
 msgid ""
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
 "všetky funkcie našich služieb."
 msgstr ""
+"Nous sommes ravis de vous accueillir dans notre communauté. Vous pouvez "
+"désormais profiter pleinement de toutes les fonctionnalités de nos services."
 
 #: blog/views.py:177 blog/views.py:527 blog/views.py:599 blog/views.py:813
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
 #| "Dobrý deň %(first_name)s %(last_name)s,\n"
-#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-#| "prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 #| "\n"
-#| "http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - "
-#| "%(code)s\n"
+#| "http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
 #| "\n"
 #| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 #| "Tím Street Workout Žilina."
 msgid ""
-"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-"prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
 "http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Bonjour %(first_name)s %(last_name)s,\n"
-"nous avons reçu une demande de réinitialisation de votre mot de passe. Si "
-"vous êtes à l'origine de cette demande, veuillez utiliser le lien suivant et "
-"saisir le code de vérification ci-dessous.\n"
+"nous avons reçu une demande de réinitialisation de votre mot de passe. Si vous êtes à l'origine de cette demande, veuillez utiliser le lien suivant et saisir le code de vérification ci-dessous.\n"
 "\n"
-"http://127.0.0.1:8000/recuperation-de-mot-de-passe?password-reset-"
-"code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/recuperation-de-mot-de-passe?password-reset-code=%(code)s - %(code)s\n"
 "\n"
-"Si vous n'avez pas demandé de réinitialisation de mot de passe, veuillez "
-"ignorer ce courriel.\n"
+"Si vous n'avez pas demandé de réinitialisation de mot de passe, veuillez ignorer ce courriel.\n"
 "Équipe Street Workout Žilina."
 
 #: blog/views.py:178 blog/views.py:528 blog/views.py:600 blog/views.py:814
@@ -1231,58 +1231,63 @@ msgid "Heslo je príliš krátke"
 msgstr "Le mot de passe est trop court"
 
 #: blog/views.py:248 blog/views.py:693
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
 #| "Overovací kód bol odoslaný na adresu\n"
 #| "%(email_address)s"
 msgid ""
 "Potvrdte vašu e-mailovú adresu\n"
 "%(email_address)s"
-msgstr "Un code de vérification a été envoyé à l'adresse %(email_address)s"
+msgstr "Veuillez confirmer votre adresse courriel %(email_address)s"
 
 #: blog/views.py:252 blog/views.py:697
-#, fuzzy
 #| msgid "SW Žilina - Odstránenie účtu"
 msgid "Overenie účtu"
-msgstr "SW Žilina - Suppression de compte"
+msgstr "Vérification du compte"
 
 #: blog/views.py:253 blog/views.py:698
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
-"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
-"uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
-"svojho nového účtu.\n"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-"
-"code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z "
-"bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu "
-"nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
+"merci de votre inscription. Pour finaliser votre inscription et activer votre compte, vous devez vérifier votre adresse courriel. Cliquez sur le lien ci-dessous pour la confirmer ; vous serez ensuite automatiquement connecté à votre nouveau compte.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"\n"
+"Ce lien est valable pendant les prochaines 24 heures. Passé ce délai, vous devrez vous réinscrire pour des raisons de sécurité. Si vous ne vous êtes pas encore inscrit, veuillez ignorer ce courriel.\n"
+"Équipe Street Workout Žilina."
 
 #: blog/views.py:254 blog/views.py:699
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
-"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
+" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
 "href=\"http://127.0.0.1:8000/%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Obnoviť heslo\" "
-"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky "
-"prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
+" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
+"merci de votre inscription. Pour finaliser votre inscription et activer "
+"votre compte, vous devez vérifier votre adresse courriel. Cliquez sur <a "
+"href=\"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\" title=\"Obnoviť heslo\" "
+"target=\"_blank\">ce</a> lien pour confirmer votre adresse e-mail et vous "
+"serez automatiquement connecté à votre nouveau compte. Ce lien est valable "
+"pendant les prochaines 24 heures. Passé ce délai, vous devrez vous "
+"réinscrire pour des raisons de sécurité."
 
 #: blog/views.py:255 blog/views.py:700
-#, fuzzy
-#| msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
+#| msgid ""
+#| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
-msgstr ""
-"Si vous n'avez pas demandé de réinitialisation de mot de passe, veuillez "
-"ignorer ce courriel."
+msgstr "Si vous ne vous êtes pas inscrit, veuillez ignorer ce courriel."
 
 #: blog/views.py:261 blog/views.py:706
 msgid "Registrácia zlyhala"
@@ -1337,33 +1342,28 @@ msgid "Boli ste odhlásený"
 msgstr "Vous avez été déconnecté"
 
 #: blog/views.py:731
-#, fuzzy
 #| msgid ""
 #| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-#| "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
-#| "odstránený."
+#| "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený."
 msgid ""
-"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-"možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
-"odstránený.\n"
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"nous avons reçu une demande de suppression de votre compte. En cas d'erreur, "
-"vous disposez de 30 jours pour vous connecter. Passé ce délai, votre compte "
-"sera définitivement supprimé."
+"nous avons reçu une demande de suppression de votre compte. En cas d'erreur, vous disposez de 30 jours pour vous connecter. Passé ce délai, votre compte sera définitivement supprimé.\n"
+"Équipe Street Workout Žilina."
 
 #: blog/views.py:732
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený."
 msgstr ""
-"nous avons reçu une demande de suppression de votre compte. En cas d'erreur, "
-"vous disposez de 30 jours pour vous connecter. Passé ce délai, votre compte "
-"sera définitivement supprimé."
+"nous avons reçu une demande de suppression de votre compte. En cas d'erreur,"
+" vous disposez de 30 jours pour vous connecter. Passé ce délai, votre compte"
+" sera définitivement supprimé."
 
 #: blog/views.py:733
 msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
-msgstr ""
+msgstr "Ak neviete, aký je váš e-mail, kontaktujte nás pre viac informácií."
 
 #: blog/views.py:739
 #, python-format
@@ -1417,7 +1417,7 @@ msgstr "Russe"
 
 #: swzilina/settings.py:219
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portugais (Brésil)"
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
@@ -1443,8 +1443,8 @@ msgstr "politique&nbsp;de&nbsp;confidentialité"
 #: templates/base.html:48
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
-"zlepšovať naše služby."
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
+" zlepšovať naše služby."
 msgstr ""
 "Ce site utilise des cookies pour vous offrir la meilleure expérience de "
 "navigation possible. Les cookies nous aident à analyser, optimiser et "
@@ -1524,16 +1524,11 @@ msgstr "Street Workout Žilina by Patrik Behul"
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
-#~ "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
-#~ "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 #~ "Tím Street Workout Žilina."
 #~ msgstr ""
 #~ "Bonjour %(first_name)s %(last_name)s,\n"
-#~ "nous vous informons que votre compte utilisateur a été définitivement "
-#~ "supprimé. Il n'est plus possible de vous reconnecter à votre compte "
-#~ "d'origine. Si vous souhaitez revenir ultérieurement, nous serons ravis de "
-#~ "vous en créer un nouveau.\n"
+#~ "nous vous informons que votre compte utilisateur a été définitivement supprimé. Il n'est plus possible de vous reconnecter à votre compte d'origine. Si vous souhaitez revenir ultérieurement, nous serons ravis de vous en créer un nouveau.\n"
 #~ "Équipe Street Workout Žilina."
 
 #~ msgid "SW Žilina - Obnova hesla"
@@ -1542,15 +1537,11 @@ msgstr "Street Workout Žilina by Patrik Behul"
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-#~ "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
-#~ "odstránený.\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
 #~ "Tím Street Workout Žilina."
 #~ msgstr ""
 #~ "Bonjour %(first_name)s %(last_name)s,\n"
-#~ "nous avons reçu une demande de suppression de votre compte. En cas "
-#~ "d'erreur, vous disposez de 30 jours pour vous connecter. Passé ce délai, "
-#~ "votre compte sera définitivement supprimé.\n"
+#~ "nous avons reçu une demande de suppression de votre compte. En cas d'erreur, vous disposez de 30 jours pour vous connecter. Passé ce délai, votre compte sera définitivement supprimé.\n"
 #~ "Équipe Street Workout Žilina."
 
 #~ msgid "Brazilian"

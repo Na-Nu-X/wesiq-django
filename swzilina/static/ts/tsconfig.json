@@ -10,7 +10,14 @@
     // Environment Settings
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "target": "es6",
+    "target": "ES2017",
+
+    "lib": [
+      "DOM", 
+      "DOM.Iterable", 
+      "ESNext"
+    ],
+
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 

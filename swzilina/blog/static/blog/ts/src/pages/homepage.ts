@@ -199,12 +199,12 @@ document.addEventListener("DOMContentLoaded", function():void {
     const customCanvasBackgroundColor:Plugin<"line"> = {
     id: 'customCanvasBackgroundColor',
         beforeDraw: (chart, _args, options) => {
-            const {ctx} = chart;
-            ctx.save();
-            ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = options.color || '#99ffff';
-            ctx.fillRect(0, 0, chart.width, chart.height);
-            ctx.restore();
+            const {ctx} = chart
+            ctx.save()
+            ctx.globalCompositeOperation = 'destination-over'
+            ctx.fillStyle = options["color"] || "#99ffff"
+            ctx.fillRect(0, 0, chart.width, chart.height)
+            ctx.restore()
         }
     };
     
@@ -310,9 +310,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     subject_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
-            if(!this.dataset.subject) return
+            if(!this.dataset["subject"]) return
 
-            sessionStorage.setItem("subject", this.dataset.subject)
+            sessionStorage.setItem("subject", this.dataset["subject"])
 
             subject_options_list.classList.toggle("active");
             (subject_select.querySelector(".fa-angle-down") as HTMLDivElement).classList.toggle("fa-angle-up")
@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             // Shows Current Selected Option From List Without Icon
-            if(this.dataset.subject === sessionStorage.getItem("subject")) {
+            if(this.dataset["subject"] === sessionStorage.getItem("subject")) {
                 (subject_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent;
                 (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
 
