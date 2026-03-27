@@ -59,16 +59,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function For Change Weight In Exercise
     function changeWeight(exercise:HTMLDivElement, operation:string):void {
-        const current_weight:string = exercise.dataset.weight || "0" // Gets Current Added Or Subtracted Weight
+        const current_weight:string = exercise.dataset["weight"] || "0" // Gets Current Added Or Subtracted Weight
         const weight:HTMLSpanElement = exercise.querySelector(".weight_selection .weight span:first-child") as HTMLSpanElement // Gets Weight Print
 
         let current_weight_number:number = parseInt(current_weight) // Converts Current Weight Into Number Format
 
-        if(exercise.dataset.requires_weight == "True" && operation === "decrease" && current_weight_number <= 0) return // Can't Get Negative Number If The Exercise Has Required Weight
+        if(exercise.dataset["requires_weight"] == "True" && operation === "decrease" && current_weight_number <= 0) return // Can't Get Negative Number If The Exercise Has Required Weight
 
         operation === "increase" ? current_weight_number += 1 : current_weight_number -= 1 // Increases Or Decreases Weight Value Based On The Operation
 
-        exercise.dataset.weight = String(current_weight_number) // Updates Current Weight Value In Exercise
+        exercise.dataset["weight"] = String(current_weight_number) // Updates Current Weight Value In Exercise
         weight.textContent = String(current_weight_number) // Shows Weight Value In The Input
     }
 

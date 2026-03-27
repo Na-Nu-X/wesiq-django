@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", function():void {
     function generateTrainingPlan(exercises_data:NodeListOf<HTMLDivElement>, container:HTMLDivElement):void {
         // Extracts Data For Every Exercise
         exercises_data.forEach(function(one_exercise_data:HTMLDivElement):void {
-            const training_plan_key:string = one_exercise_data.dataset.training_plan_key as string // Gets Training Plan Key
-            const exercise_data:string = one_exercise_data.dataset.exercise as string // Gets Exercise Name
+            const training_plan_key:string = one_exercise_data.dataset["training_plan_key"] as string // Gets Training Plan Key
+            const exercise_data:string = one_exercise_data.dataset["exercise"] as string // Gets Exercise Name
 
             const exercise_template_clone:DocumentFragment = exercise_template.content.cloneNode(true) as DocumentFragment // Clones The Exercise Template Content
 
-            (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.training_plan_key = training_plan_key; // Stores Training Plan Key Data To The Exercise
+            (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["training_plan_key"] = training_plan_key; // Stores Training Plan Key Data To The Exercise
         
             (exercise_template_clone.querySelector(".exercise .title") as HTMLHeadingElement).textContent = exercise_data; // Sets Title To The Exercise Title
 

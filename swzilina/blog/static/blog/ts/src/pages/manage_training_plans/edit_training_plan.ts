@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Gets Current Order Of Training Plans By Day Value
     const training_plan_days_order:(string|null)[] = [
         ...new Set([...exercises_data].map(function(one_exercise_data:HTMLDivElement):string|null {
-            return one_exercise_data.dataset.day ? one_exercise_data.dataset.day : null
+            return one_exercise_data.dataset["day"] ? one_exercise_data.dataset["day"] : null
         }))
     ]
 
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         day_options.forEach(function(one_option:HTMLDivElement):void {
             // Shows Current Selected Option From List Without Icon
-            if(one_option.dataset.day === training_plan_day) {
+            if(one_option.dataset["day"] === training_plan_day) {
                 (day_select.querySelector("span") as HTMLSpanElement).textContent = (one_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                 one_option.classList.add("selected") // Adds Selected Class To Selected Option
             }
@@ -112,17 +112,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Orders Exercises By Order Value In Exercises Data
         const ordered_exercises_data:HTMLDivElement[] = [...exercises_data].sort(function(a:HTMLDivElement, b:HTMLDivElement) {
-            return Number(a.dataset.order) - Number(b.dataset.order)
+            return Number(a.dataset["order"]) - Number(b.dataset["order"])
         })
 
         // Extracts Data For Every Exercise
         ordered_exercises_data.forEach(function(one_exercise_data:HTMLDivElement):void {
-            const training_plan_key:string = one_exercise_data.dataset.training_plan_key as string // Gets Training Plan Key
-            const day_data:string|null = one_exercise_data.dataset.day || null // Gets Training Day Of The Exercise If Has Any
-            const type_data:string = one_exercise_data.dataset.type as string // Gets Training Title Of The Exercise
-            const exercise_data:string = one_exercise_data.dataset.exercise as string // Gets Exercise Name
-            const periods_data:number[] = JSON.parse(one_exercise_data.dataset.periods || "[0]") // Gets Exercise Sets & Reps Periods
-            const unit_data:string = one_exercise_data.dataset.unit || "reps" // Gets Exercise Unit Type (Reps Or Seconds)
+            const training_plan_key:string = one_exercise_data.dataset["training_plan_key"] as string // Gets Training Plan Key
+            const day_data:string|null = one_exercise_data.dataset["day"] || null // Gets Training Day Of The Exercise If Has Any
+            const type_data:string = one_exercise_data.dataset["type"] as string // Gets Training Title Of The Exercise
+            const exercise_data:string = one_exercise_data.dataset["exercise"] as string // Gets Exercise Name
+            const periods_data:number[] = JSON.parse(one_exercise_data.dataset["periods"] || "[0]") // Gets Exercise Sets & Reps Periods
+            const unit_data:string = one_exercise_data.dataset["unit"] || "reps" // Gets Exercise Unit Type (Reps Or Seconds)
 
             // Shows Exercises Only Which Have Some Training Plan Day
             if(day_data !== null) {
@@ -150,8 +150,8 @@ document.addEventListener("DOMContentLoaded", function():void {
                         if(unit_data === "seconds") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
                         if(unit_data === "steps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
 
-                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.training_plan_key = training_plan_key; // Stores Training Plan Key Data To The Exercise
-                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset.unit = unit_data; // Stores Unit Type Data To The Exercise
+                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["training_plan_key"] = training_plan_key; // Stores Training Plan Key Data To The Exercise
+                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["unit"] = unit_data; // Stores Unit Type Data To The Exercise
 
                         (exercise_template_clone.querySelector(".exercise .periods_container") as HTMLDivElement).innerHTML = "" // Deletes All Period Selections
 
@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const training_plan_data:{}[] = [] // Stores All Delete Training Plan Data
 
         exercises.forEach(function(one_exercise:HTMLDivElement):void {
-            const training_plan_key:string|undefined = one_exercise.dataset.training_plan_key // Gets Training Plan Key
+            const training_plan_key:string|undefined = one_exercise.dataset["training_plan_key"] // Gets Training Plan Key
 
             if(!training_plan_key) return
 
@@ -394,19 +394,19 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if((event.target as HTMLDivElement).closest(".option") as HTMLDivElement) {
                 const clicked_option:HTMLDivElement = (event.target as HTMLDivElement).closest(".option") as HTMLDivElement // Gets Clicked Option
-                (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset.unit = clicked_option.dataset.unit_option // Sets Unit Data To The Exercise
+                (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"] = clicked_option.dataset["unit_option"] // Sets Unit Data To The Exercise
 
                 // Removes Selected Class From Options
                 unit_options.forEach(function(one_option:HTMLDivElement) {
                     one_option.classList.remove("selected")
                 })
 
-                if(clicked_option.dataset.unit_option === (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset.unit) {
+                if(clicked_option.dataset["unit_option"] === (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"]) {
                     (unit_select.querySelector("span") as HTMLSpanElement).textContent = (clicked_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                     clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
                 }
 
-                if(clicked_option.dataset.unit_option) updateUnitTypes(clicked_option.dataset.unit_option, training_plan, edit_training_plan_state) // Updates Unit Type For Every Reps Container
+                if(clicked_option.dataset["unit_option"]) updateUnitTypes(clicked_option.dataset["unit_option"], training_plan, edit_training_plan_state) // Updates Unit Type For Every Reps Container
             }
         }
 
@@ -512,9 +512,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     day_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
-            if(!this.dataset.day) return
+            if(!this.dataset["day"]) return
 
-            sessionStorage.setItem("edit_training_plan_day", this.dataset.day) // Stores Edited Training Plan Day To Session Storage
+            sessionStorage.setItem("edit_training_plan_day", this.dataset["day"]) // Stores Edited Training Plan Day To Session Storage
 
             day_options_list.classList.toggle("active"); // Shows / Hides Options List
             (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
@@ -525,7 +525,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             // Shows Current Selected Option From List Without Icon
-            if(this.dataset.day === sessionStorage.getItem("edit_training_plan_day")) {
+            if(this.dataset["day"] === sessionStorage.getItem("edit_training_plan_day")) {
                 (day_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                 this.classList.add("selected") // Adds Selected Class To Selected Option
             }

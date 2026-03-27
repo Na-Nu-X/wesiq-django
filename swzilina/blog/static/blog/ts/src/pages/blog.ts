@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     share_buttons.forEach(function(one_share_button:HTMLDivElement):void {
         one_share_button.addEventListener("click", async function():Promise<void> {
-            let title:string = this.dataset.title || "" // Gets Title
-            let link:string = this.dataset.link || "" // Gets Link
+            let title:string = this.dataset["title"] || "" // Gets Title
+            let link:string = this.dataset["link"] || "" // Gets Link
 
             // Creates And Fill Object With Data Values
             let share_data:{

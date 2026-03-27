@@ -56,8 +56,8 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
     main_summary.innerHTML += gettext("<br>Aktuálna aktivita trvala: ")
 
     // Displays The Main Summary Text In Green
-    if(elapsed_time >= parseInt(average_activity_time.dataset.average_activity_time || "0")) {
-        if(parseInt(average_activity_time.dataset.average_activity_time || "0") === 0) {
+    if(elapsed_time >= parseInt(average_activity_time.dataset["average_activity_time"] || "0")) {
+        if(parseInt(average_activity_time.dataset["average_activity_time"] || "0") === 0) {
             main_summary.innerHTML += `
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
@@ -74,8 +74,8 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                    <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní'), [((elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100) - 100).toFixed(2).replace(".", ",")])}">
-                        (+${((elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100) - 100).toFixed(2).replace(".", ",")}%)
+                    <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní'), [((elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100) - 100).toFixed(2).replace(".", ",")])}">
+                        (+${((elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100) - 100).toFixed(2).replace(".", ",")}%)
                     </span>
                 </span>
             `
@@ -88,8 +88,8 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
             <span style="color: #df3535">
                 ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní'), [(100 - (elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100)).toFixed(2).replace(".", ",")])}">
-                    (-${(100 - (elapsed_time / parseInt(average_activity_time.dataset.average_activity_time || "0") * 100)).toFixed(2).replace(".", ",")}%)
+                <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní'), [(100 - (elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100)).toFixed(2).replace(".", ",")])}">
+                    (-${(100 - (elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100)).toFixed(2).replace(".", ",")}%)
                 </span>
             </span>
         `
@@ -101,7 +101,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
     let weekly_activity_data:{
         day:string,
         total_elapsed_time:number
-    }[] = JSON.parse(weekly_activity_chart.dataset.activities || '[{"day": "PO", "total_elapsed_time": 0}, {"day": "UT", "total_elapsed_time": 0}, {"day": "ST", "total_elapsed_time": 0}, {"day": "ŠT", "total_elapsed_time": 0}, {"day": "PI", "total_elapsed_time": 0}, {"day": "SO", "total_elapsed_time": 0}, {"day": "NE", "total_elapsed_time": 0}]')
+    }[] = JSON.parse(weekly_activity_chart.dataset["activities"] || '[{"day": "PO", "total_elapsed_time": 0}, {"day": "UT", "total_elapsed_time": 0}, {"day": "ST", "total_elapsed_time": 0}, {"day": "ŠT", "total_elapsed_time": 0}, {"day": "PI", "total_elapsed_time": 0}, {"day": "SO", "total_elapsed_time": 0}, {"day": "NE", "total_elapsed_time": 0}]')
 
     // Extracts Data From Weekly Activity Data
     const labels:string[] = weekly_activity_data.map(one_item => one_item.day) // Gets Days As Labels
@@ -192,7 +192,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
 }
 
 // Function For Render Training Plan Activity Summary
-export function renderTrainingPlanActivitySummary(training_plan_summary_data:exercise[], training_plan_title:string):void {
+export function renderTrainingPlanActivitySummary(training_plan_summary_data:exercise[]):void {
     const activity_summary:HTMLDivElement = document.querySelector(".activity_summary") as HTMLDivElement // Gets The Activity Summary
     const training_plan_summary:HTMLParagraphElement = activity_summary.querySelector(".training_plan_summary") as HTMLParagraphElement // Gets The Training Plan Summary
     const training_plan_summary_chart:HTMLDivElement = activity_summary.querySelector(".training_plan_summary_chart") as HTMLDivElement // Gets The Training Plan Summary Chart

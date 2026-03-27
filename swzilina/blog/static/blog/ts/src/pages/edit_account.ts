@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const password_reset:HTMLAnchorElement = document.querySelector(".password_reset") as HTMLAnchorElement
 
     password_reset.addEventListener("click", function():void {
-        document.cookie = `email_address=${this.dataset.email_address}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
+        document.cookie = `email_address=${this.dataset["email_address"]}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
 
         document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
     })

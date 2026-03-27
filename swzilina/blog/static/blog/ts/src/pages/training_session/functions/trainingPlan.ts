@@ -31,7 +31,7 @@ import { randomColor } from "../../../utils/randomColor.js"
 // Function For Create Bar Labels
 function createBarLabels(bars:NodeListOf<HTMLDivElement>, exercises:NodeListOf<HTMLDivElement>):void {
     bars.forEach(function(one_bar:HTMLDivElement, index:number):void {
-        one_bar.dataset.exercise = ((exercises[index] as HTMLDivElement).querySelector(".title") as HTMLHeadingElement).textContent // Sets Exercise Title To Bar Data
+        one_bar.dataset["exercise"] = ((exercises[index] as HTMLDivElement).querySelector(".title") as HTMLHeadingElement).textContent // Sets Exercise Title To Bar Data
         one_bar.classList.add("show") // Shows The Label
     })
 }
@@ -244,7 +244,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     // Gets Ordered Days From Available Training Plans
     const days:(string|null)[] = [
         ...new Set([...data].map(function(one_exercise_data:HTMLDivElement):string|null {
-            return one_exercise_data.dataset.day ? one_exercise_data.dataset.day : null
+            return one_exercise_data.dataset["day"] ? one_exercise_data.dataset["day"] : null
         }))
     ]
 
@@ -258,23 +258,23 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     }
 
     const selected_day:string|null = days[training_plan_state.active_training_plan_index] || null // Selects Current Or Upcoming Day Of Training Plan
-    const ordered_exercises:HTMLDivElement[] = [...data].sort((a:HTMLDivElement, b:HTMLDivElement) => Number(a.dataset.order) - Number(b.dataset.order)) // Orders Exercises From All Training Plans By Their Order Value
+    const ordered_exercises:HTMLDivElement[] = [...data].sort((a:HTMLDivElement, b:HTMLDivElement) => Number(a.dataset["order"]) - Number(b.dataset["order"])) // Orders Exercises From All Training Plans By Their Order Value
 
     // Extracts Data For Every Exercise
     ordered_exercises.forEach(function(one_exercise:HTMLDivElement):void {
-        const training_plan_key:string = one_exercise.dataset.training_plan_key as string // Gets Training Plan Key
-        const day_data:string|null = one_exercise.dataset.day || null // Gets Training Day Of The Exercise If Has Any
-        const training_plan_title_data:string = one_exercise.dataset.type as string // Gets Training Title Of The Exercise
-        const exercise_title_data:string = one_exercise.dataset.exercise as string // Gets Exercise Name
-        const periods_data:number[] = JSON.parse(one_exercise.dataset.periods || "[0]") // Gets Exercise Sets & Reps Periods
-        const unit_data:string = one_exercise.dataset.unit || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
+        // const training_plan_key:string = one_exercise.dataset["training_plan_key"] as string // Gets Training Plan Key
+        const day_data:string|null = one_exercise.dataset["day"] || null // Gets Training Day Of The Exercise If Has Any
+        const training_plan_title_data:string = one_exercise.dataset["type"] as string // Gets Training Title Of The Exercise
+        const exercise_title_data:string = one_exercise.dataset["exercise"] as string // Gets Exercise Name
+        const periods_data:number[] = JSON.parse(one_exercise.dataset["periods"] || "[0]") // Gets Exercise Sets & Reps Periods
+        const unit_data:string = one_exercise.dataset["unit"] || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
         // Shows Exercises Which Have Assigned Day
         if(day_data !== null) {
             // Shows Training Plan Exercises Of Selected Day
             if(selected_day === day_data) {
-                training_plan.dataset.title = training_plan_title_data; // Stores Training Plan Title Data
-                training_plan.dataset.day = day_data; // Stores Training Plan Day Data
+                training_plan.dataset["title"] = training_plan_title_data; // Stores Training Plan Title Data
+                training_plan.dataset["day"] = day_data; // Stores Training Plan Day Data
 
                 (start_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}`; // Sets Training Plan Title On The Start Training Slide
                 (finish_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}` // Sets Training Plan Title On The Finish Training Slide
@@ -294,8 +294,8 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
                     
                     (exercise_template_clone.querySelector(".title") as HTMLHeadingElement).textContent = exercise_title_data; // Sets Exercise Title
 
-                    (exercise_template_clone.querySelector(".reps") as HTMLParagraphElement).dataset.periods_data = JSON.stringify(periods_data); // Stores Periods Data
-                    (exercise_template_clone.querySelector(".reps") as HTMLParagraphElement).dataset.unit_data = unit_data; // Stores Unit Data
+                    (exercise_template_clone.querySelector(".reps") as HTMLParagraphElement).dataset["periods_data"] = JSON.stringify(periods_data); // Stores Periods Data
+                    (exercise_template_clone.querySelector(".reps") as HTMLParagraphElement).dataset["unit_data"] = unit_data; // Stores Unit Data
 
                     (exercise_template_clone.querySelector(".sets .total") as HTMLSpanElement).textContent = String(periods_data.length); // Sets Exercise Total Sets
 
@@ -342,8 +342,8 @@ export function startTraining(container:HTMLDivElement):void {
 
     // First Exercise Is Ordinary
     if(!(exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.contains("warm_up")) {
-        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
-        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
+        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset["periods_data"] || "[0]") // Gets Exercise Sets & Reps Periods
+        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset["unit_data"] || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
         container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
 
@@ -391,8 +391,8 @@ export function nextExercise(container:HTMLDivElement):void {
 
     // Updates Set Progress
     if(current_set < sets_amount || exercises_break.classList.contains("active")) {
-        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.periods_data || "[0]") // Gets Exercise Sets & Reps Periods
-        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset.unit_data || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
+        const periods_data:number[] = JSON.parse(((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset["periods_data"] || "[0]") // Gets Exercise Sets & Reps Periods
+        const unit_data:string = ((exercises[training_plan_state.active_exercise_index] as HTMLDivElement).querySelector(".reps") as HTMLParagraphElement).dataset["unit_data"] || "reps" // Gets Exercise Unit Type (Reps, Seconds Or Steps)
 
         if(!exercises_break.classList.contains("active")) {
             // Warm Up

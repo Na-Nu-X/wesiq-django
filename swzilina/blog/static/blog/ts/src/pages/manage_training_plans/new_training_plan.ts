@@ -149,19 +149,19 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if((event.target as HTMLDivElement).closest(".option") as HTMLDivElement) {
                 const clicked_option:HTMLDivElement = (event.target as HTMLDivElement).closest(".option") as HTMLDivElement // Gets Clicked Option
-                (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset.unit = clicked_option.dataset.unit_option // Sets Unit Data To The Exercise
+                (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"] = clicked_option.dataset["unit_option"] // Sets Unit Data To The Exercise
 
                 // Removes Selected Class From Options
                 unit_options.forEach(function(one_option:HTMLDivElement) {
                     one_option.classList.remove("selected")
                 })
 
-                if(clicked_option.dataset.unit_option === (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset.unit) {
+                if(clicked_option.dataset["unit_option"] === (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"]) {
                     (unit_select.querySelector("span") as HTMLSpanElement).textContent = (clicked_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                     clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
                 }
 
-                if(clicked_option.dataset.unit_option) updateUnitTypes(clicked_option.dataset.unit_option, this, new_training_plan_state) // Updates Unit Type For Every Reps Container
+                if(clicked_option.dataset["unit_option"]) updateUnitTypes(clicked_option.dataset["unit_option"], this, new_training_plan_state) // Updates Unit Type For Every Reps Container
             }
         }
 
@@ -253,9 +253,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     day_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
-            if(!this.dataset.day) return
+            if(!this.dataset["day"]) return
 
-            sessionStorage.setItem("new_training_plan_day", this.dataset.day) // Stores New Training Plan Day To Session Storage
+            sessionStorage.setItem("new_training_plan_day", this.dataset["day"]) // Stores New Training Plan Day To Session Storage
 
             day_options_list.classList.toggle("active"); // Shows / Hides Options List
             (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             // Shows Current Selected Option From List Without Icon
-            if(this.dataset.day === sessionStorage.getItem("new_training_plan_day")) {
+            if(this.dataset["day"] === sessionStorage.getItem("new_training_plan_day")) {
                 (day_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                 this.classList.add("selected") // Adds Selected Class To Selected Option
             }

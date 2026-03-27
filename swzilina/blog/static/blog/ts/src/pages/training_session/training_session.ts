@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Gets Ordered Days From Available Training Plans
     const ordered_days:(string|null)[] = [
         ...new Set([...exercises_data].map(function(one_exercise_data:HTMLDivElement):string|null {
-            return one_exercise_data.dataset.day ? one_exercise_data.dataset.day : null
+            return one_exercise_data.dataset["day"] ? one_exercise_data.dataset["day"] : null
         }))
     ]
 
