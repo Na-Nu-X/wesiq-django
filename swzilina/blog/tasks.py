@@ -133,4 +133,17 @@ def cleanupUnverifiedUsers():
 
 @shared_task(name="blog.tasks.weeklyReport")
 def weeklyReport():
+    users = Users.objects.filter(account_status="OK") # Gets All Users With Valid Account Status
+
+    for user in users:
+        print(user.xp)
+
+        # sendMail(
+        #     user,
+        #     _("Odstránenie účtu"), # Subject
+        #     _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+        #     _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
+        #     _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"language": user.language} # End Of HTML Content
+        # )
+
     return "Weekly Report"

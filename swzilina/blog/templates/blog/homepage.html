@@ -642,6 +642,14 @@
         <!-- Google reCAPTCHA V3 -->
         <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
     </form>
+
+    <form class="donation_form" action="{% url 'homepage_url' %}" method="POST">
+        {% csrf_token %}
+
+        <button class="donate_button" type="submit" name="donation" value="1">{% translate "1€" %}</button>
+        <button class="donate_button" type="submit" name="donation" value="2">{% translate "2€" %}</button>
+        <button class="donate_button" type="submit" name="donation" value="5">{% translate "5€" %}</button>
+    </form>
 {% endblock content %}
 
 {% block script %}
