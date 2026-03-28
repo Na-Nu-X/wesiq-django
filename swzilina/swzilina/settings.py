@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -203,6 +204,27 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6
 CELERY_TIMEZONE = 'Europe/Bratislava'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
+CELERY_BEAT_SCHEDULE = {
+    'models_warm_up_every_10_minutes': {
+        'task': 'blog.tasks.modelsWarmUp',
+        'schedule': crontab(minute='*/10'), # Every 10 Minutes
+    },
+}
+
+# Cache
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+CACHE_TTL = 3600  # 1 Hour Cache
+
+# Translations
 from django.utils.translation import gettext_lazy as _
 
 LANGUAGE_CODE = 'en' # Default Language (English)

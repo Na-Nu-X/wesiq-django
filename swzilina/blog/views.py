@@ -26,6 +26,7 @@ from django.utils.translation import gettext as _
 from django.utils import translation
 from django.urls import translate_url
 from django.shortcuts import redirect
+from django.core.cache import cache
 
 # Functions
 
@@ -319,22 +320,58 @@ def homepageView(request):
         return HttpResponseRedirect(reverse("homepage_url"))
             
     # Get All Reviews From DB
-    reviews = Reviews.objects.all()
+    reviews = cache.get("cached_reviews") # Gets All Cached Reviews
+    # reviews = Reviews.objects.all() # Queryset
+
+    # Reviews Fallback (If Cache Is Clear)
+    if reviews is None:
+        # Gets All Reviews
+        reviews = list(
+            Reviews.objects.all()
+            # .values("user", "rating", "review", "last_edit", "creation_time")
+        )
+
+        cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
+
+        print("Getting Reviews Data From The DB.") # Test Print
+
+    else:
+        print("Getting Reviews Data From The Redis Cache.") # Test Print
 
     # Info About Reviews
-    num_reviews = reviews.count()
+    num_reviews = len(reviews) # Redis List
+    # num_reviews = reviews.count() # Queryset
 
-    avg_rating = reviews.aggregate(Avg("rating"))
+    ratings = [one_review.rating for one_review in reviews]
+
+    if ratings:
+        avg_value = sum(ratings) / len(ratings)
+    
+    else:
+        avg_value = 0
+
+    avg_rating = {"rating__avg": avg_value} # Redis List
+    # avg_rating = reviews.aggregate(Avg("rating")) # Queryset
     avg_rating_integer = math.floor(float(avg_rating["rating__avg"])) # For Example From Average Rating Of 4.25 It Returns 4
     avg_rating_rest = f"{float(avg_rating['rating__avg']) - avg_rating_integer:.2f}"[2:] # For Example From Average Rating Of 4.25 It Returns 25 And From 4.00 It Returns 00
 
+    # Redis List
     reviews_amount_by_stars = {
-        "5": len(reviews.filter(rating=5)), # Number Of Reviews With 5 Star Rating
-        "4": len(reviews.filter(rating=4)), # Number Of Reviews With 4 Star Rating
-        "3": len(reviews.filter(rating=3)), # Number Of Reviews With 3 Star Rating
-        "2": len(reviews.filter(rating=2)), # Number Of Reviews With 2 Star Rating
-        "1": len(reviews.filter(rating=1)), # Number Of Reviews With 1 Star Rating
+        "5": len([one_review for one_review in reviews if one_review.rating == 5]),
+        "4": len([one_review for one_review in reviews if one_review.rating == 4]),
+        "3": len([one_review for one_review in reviews if one_review.rating == 3]),
+        "2": len([one_review for one_review in reviews if one_review.rating == 2]),
+        "1": len([one_review for one_review in reviews if one_review.rating == 1]),
     }
+
+    # Queryset
+    # reviews_amount_by_stars = {
+    #     "5": len(reviews.filter(rating=5)), # Number Of Reviews With 5 Star Rating
+    #     "4": len(reviews.filter(rating=4)), # Number Of Reviews With 4 Star Rating
+    #     "3": len(reviews.filter(rating=3)), # Number Of Reviews With 3 Star Rating
+    #     "2": len(reviews.filter(rating=2)), # Number Of Reviews With 2 Star Rating
+    #     "1": len(reviews.filter(rating=1)), # Number Of Reviews With 1 Star Rating
+    # }
 
     # Sorts Reviews By User Preferencies (The Latest Articles Are Set As Default)
     sort = request.GET.get("sort", "latest").lower()
@@ -342,14 +379,16 @@ def homepageView(request):
 
     if sort == "latest":
         if rating == "all":
-            reviews = reviews.order_by("-creation_time")
+            reviews = sorted(reviews, key=lambda one_review: one_review.creation_time, reverse=True) # Redis List
+            # reviews = reviews.order_by("-creation_time") # Queryset
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("-creation_time")
 
     if sort == "oldest":
         if rating == "all":
-            reviews = reviews.order_by("creation_time")
+            reviews = sorted(reviews, key=lambda one_review: one_review.creation_time) # Redis List
+            # reviews = reviews.order_by("creation_time") # Queryset
 
         else:
             reviews = reviews.filter(rating=int(rating)).order_by("creation_time")
@@ -1268,7 +1307,23 @@ def trainingSessionView(request):
     return render(request, "blog/training_session.html")
 
 def manageTrainingPlansView(request):
-    exercises = Exercises.objects.all().order_by("exercise") # Gets All Exercises
+    exercises = cache.get("cached_exercises") # Gets All Cached Exercises
+
+    # Exercises Fallback (If Cache Is Clear)
+    if exercises is None:
+        # Gets All Exercises
+        exercises = list(
+            Exercises.objects.all()
+            .order_by("exercise")
+            # .values("exercise", "unit", "categories", "requires_weight")
+        )
+
+        cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
+
+        print("Getting Exercises Data From The DB.") # Test Print
+
+    else:
+        print("Getting Exercises Data From The Redis Cache.") # Test Print
 
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session

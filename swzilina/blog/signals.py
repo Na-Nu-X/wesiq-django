@@ -1,7 +1,9 @@
 from allauth.socialaccount.signals import social_account_added, pre_social_login
 from allauth.socialaccount.models import SocialAccount
 from django.dispatch import receiver
-from .models import Users
+from .models import Users, Activity, Reviews, Articles, ArticleForum, TrainingPlan, Exercises
+from django.db.models.signals import post_save, post_delete
+from .tasks import modelsWarmUp
 
 # Google OAuth 2.0
 @receiver(social_account_added)
@@ -27,3 +29,13 @@ def save_google_user(sender, request, sociallogin, **kwargs):
         if not user_obj.google_id:
             user_obj.google_id = google_id
             user_obj.save()
+
+# Pages Warming Up
+def updateCacheOnChange(sender, instance, **kwargs):
+    modelsWarmUp.delay() # Every Change In The Database Triggers Pages Warm Up
+
+models_for_warm_up = [Users, Activity, Reviews, Articles, ArticleForum, TrainingPlan, Exercises] # Gets All Models For Warm Up
+
+for one_model in models_for_warm_up:
+    post_save.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Save
+    post_delete.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Delete
