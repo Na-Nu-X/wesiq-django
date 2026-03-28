@@ -379,33 +379,83 @@ def homepageView(request):
 
     if sort == "latest":
         if rating == "all":
-            reviews = sorted(reviews, key=lambda one_review: one_review.creation_time, reverse=True) # Redis List
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.creation_time,
+                reverse=True
+            )
+
             # reviews = reviews.order_by("-creation_time") # Queryset
 
         else:
-            reviews = reviews.filter(rating=int(rating)).order_by("-creation_time")
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.creation_time, 
+                reverse=True
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("-creation_time") # Queryset
 
     if sort == "oldest":
         if rating == "all":
-            reviews = sorted(reviews, key=lambda one_review: one_review.creation_time) # Redis List
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.creation_time
+            )
+
             # reviews = reviews.order_by("creation_time") # Queryset
 
         else:
-            reviews = reviews.filter(rating=int(rating)).order_by("creation_time")
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.creation_time, 
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("creation_time") # Queryset
 
     if sort == "best":
         if rating == "all":
-            reviews = reviews.order_by("-rating")
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.rating,
+                reverse=True
+            )
+
+            # reviews = reviews.order_by("-rating") # Queryset
 
         else:
-            reviews = reviews.filter(rating=int(rating)).order_by("-rating")
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.rating, 
+                reverse=True
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("-rating") # Queryset
 
     if sort == "worst":
         if rating == "all":
-            reviews = reviews.order_by("rating")
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.rating
+            )
+
+            # reviews = reviews.order_by("rating") # Queryset
 
         else:
-            reviews = reviews.filter(rating=int(rating)).order_by("rating")
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.rating
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("rating") # Queryset
 
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
@@ -929,7 +979,23 @@ def editReviewView(request):
 
 def blogView(request):
     # Gets All Articles From DB
-    articles = Articles.objects.all()
+    articles = cache.get("cached_articles") # Gets All Cached Reviews
+    # articles = Articles.objects.all() # Queryset
+
+    # Articles Fallback (If Cache Is Clear)
+    if articles is None:
+        # Gets All Articles
+        articles = list(
+            Articles.objects.all()
+            # .values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")
+        )
+
+        cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
+
+        print("Getting Articles Data From The DB.") # Test Print
+
+    else:
+        print("Getting Articles Data From The Redis Cache.") # Test Print
 
     no_articles = True # Default Value That Says That There Are No Articles In The Database
 
@@ -939,43 +1005,139 @@ def blogView(request):
 
     if sort == "latest":
         if category == "all":
-            articles.order_by("-creation_time")
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.creation_time,
+                reverse=True
+            )
+
+            # articles.order_by("-creation_time") # Queryset
 
         else:
-            articles = articles.filter(categories__contains=[category]).order_by("-creation_time")
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.creation_time,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-creation_time") # Queryset
 
     if sort == "popular":
         if category == "all":
-            articles = articles.order_by("-visitors")
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.visitors,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-visitors") # Queryset
 
         else:
-            articles = articles.filter(categories__contains=[category]).order_by("-visitors")
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.visitors,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-visitors") # Queryset
 
     elif sort == "best":
         if category == "all":
-            articles = articles.order_by("-rating")
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.rating,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-rating") # Queryset
 
         else:
-            articles = articles.filter(categories__contains=[category]).order_by("-rating")
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.rating,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-rating") # Queryset
 
     elif sort == "a-z":
         if category == "all":
-            articles = articles.order_by("title")
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.title
+            )
+
+            # articles = articles.order_by("title") # Queryset
         
         else:
-            articles = articles.filter(categories__contains=[category]).order_by("title")
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.title
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("title") # Queryset
 
     elif sort == "z-a":
         if category == "all":
-            articles = articles.order_by("-title")
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.title,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-title") # Queryset
         
         else:
-            articles = articles.filter(categories__contains=[category]).order_by("-title")
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
 
-    num_articles = articles.count() # Number Of All Articles
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.title,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-title") # Queryset
+
+    # Number Of All Articles
+    num_articles = len(articles) # Redis List
+    # num_articles = articles.count() # Queryset
 
     # Checks If There Are Any Articles In The Database
-    if(articles.exists()):
+    # if(articles.exists()): # Queryset
+    if articles is not None and len(articles) > 0:
         no_articles = False
 
     # Blog Subscribe Form
@@ -1308,6 +1470,7 @@ def trainingSessionView(request):
 
 def manageTrainingPlansView(request):
     exercises = cache.get("cached_exercises") # Gets All Cached Exercises
+    # exercises = Exercises.objects.all() # Queryset
 
     # Exercises Fallback (If Cache Is Clear)
     if exercises is None:
