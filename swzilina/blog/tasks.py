@@ -36,16 +36,16 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
 
 @shared_task
 def modelsWarmUp():
-    # users = list(Users.objects.all().values("id", "first_name", "last_name", "email_address", "phone_number", "password", "profile_picture_name", "language")) # Gets All Users
-    activity = list(Activity.objects.all().values("user", "end_time", "formatted_elapsed_time", "elapsed_time", "gained_xp", "type", "training_plan_day")) # Gets All Activity
-    articles = list(Articles.objects.all().values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")) # Gets All Articles
-    article_forum = list(ArticleForum.objects.all().values("article", "user", "comment", "likes", "likes_from_users", "creation_time", "parent", "status", "reports")) # Gets All Article Forum
-    training_plan = list(TrainingPlan.objects.all().values("user", "training_plan_key", "day", "type", "exercise", "periods", "unit", "order")) # Gets All Training Plan
-
     # Gets All Reviews
     reviews = list(
         Reviews.objects.all()
         # .values("user", "rating", "review", "last_edit", "creation_time")
+    )
+
+    # Gets All Articles
+    articles = list(
+        Articles.objects.all()
+        # .values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")
     )
 
     # Gets All Exercises
@@ -56,6 +56,7 @@ def modelsWarmUp():
     )
     
     cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
+    cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
     cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
 
     # Sets Message
