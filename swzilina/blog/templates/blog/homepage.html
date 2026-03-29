@@ -650,6 +650,67 @@
         <button class="donate_button" type="submit" name="donation" value="2">{% translate "2€" %}</button>
         <button class="donate_button" type="submit" name="donation" value="5">{% translate "5€" %}</button>
     </form>
+
+    <form class="credit_card">
+        <div class="front">
+            <div class="card_data_row">
+                <div class="brand_name">{% translate "Online Platba" %}</div>
+                <img class="logo" src="{% static 'images/visa.svg' %}">
+            </div>
+
+            <fieldset class="form_group">
+                <legend>{% translate "Číslo karty" %}</legend>
+                <label for="cc_1">{% translate "Číslo karty" %}</label>
+
+                <div class="cc_inputs horizontal_input_stack">
+                    <input type="tel" maxlength="4" aria-label="Credit Card First 4 Digits" id="cc_1" required pattern="[0-9]{4}" />
+                    <input type="tel" maxlength="4" aria-label="Credit Card Second 4 Digits" required pattern="[0-9]{4}" />
+                    <input type="tel" maxlength="4" aria-label="Credit Card Third 4 Digits" required pattern="[0-9]{4}" />
+                    <input type="tel" maxlength="4" aria-label="Credit Card Last 4 Digits" required pattern="[0-9]{4}" />
+                </div>
+            </fieldset>
+
+            <div class="input_row">
+                <div class="form_group name_group">
+                    <label for="name">{% translate "Držiteľ karty" %}</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <fieldset class="form_group">
+                    <legend>{% translate "Platnosť" %}</legend>
+                    <label for="expiration_month">{% translate "Platnosť" %}</label>
+
+                    <div class="horizontal_input_stack">
+                        <select id="expiration_month" aria-label="Expiration Month" required>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                            <option>05</option>
+                            <option>06</option>
+                            <option>07</option>
+                            <option>08</option>
+                            <option>09</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                        </select>
+
+                        <select class="expiration_year" id="expiration_year" aria-label="Expiration Year" required data-expiration-year></select>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="back">
+            <div class="stripe"></div>
+
+            <div class="form_group cvc_group">
+                <label for="cvc">CVC</label>
+                <input class="cvc_input" type="tel" maxlength="3" id="cvc" required />
+            </div>
+        </div>
+    </form>
 {% endblock content %}
 
 {% block script %}

@@ -1465,6 +1465,8 @@ header {
         }
     }
 
+    // Donation Form
+
     .donation_form {
         @include flex_center;
         gap: 20px;
@@ -1477,6 +1479,167 @@ header {
             color: transparentize($secondary-color, 0.2);
             background-color: transparentize($main-color, 0.8);
             font-size: 1.2em;
+        }
+    }
+
+    // Credit Card
+
+    .credit_card {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        max-width: 500px;
+        margin: 50px auto 2rem;
+        color: $secondary-color;
+        font-family: Arial;
+
+        .front,
+        .back {
+            width: 85.6mm; // ISO / IEC 7810
+            aspect-ratio: 1.586 / 1; // ISO / IEC 7810
+            padding: 10px 15px;
+            background-color: lighten($main-color, 5%);
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $medium-border-radius;
+
+            .form_group {
+                display: flex;
+                flex-direction: column;
+
+                label {
+                    font-size: 0.8em;
+                    text-transform: uppercase;
+                }
+
+                input,
+                select {
+                    height: 30px;
+                    padding: 0px 5px;
+                    color: $secondary-color;
+                    background-color: transparentize($main-color, 0.8);
+                    border: none;
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $small-border-radius;
+                    outline: none;
+                    appearance: none;
+                }
+            }
+        }
+
+        .front {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 5px;
+            overflow: hidden;
+            z-index: 1;
+
+            &::before {
+                @include circle_decoration($top: -250px, $left: -150px, $width: 400px, $height: 400px, $color: transparentize($blue-color, 0.9));
+            }
+
+            &::after {
+                @include circle_decoration($bottom: -475px, $left: -150px, $width: 600px, $height: 600px, $color: transparentize($blue-color, 0.9));
+            }
+
+            .card_data_row {
+                display: flex;
+                margin-bottom: auto;
+
+                .brand_name {
+                    flex-grow: 1;
+                    font-size: 1.2em;
+                    font-weight: bold;
+                }
+
+                .logo {
+                    width: 50px;
+                    flex-grow: 0;
+                }
+            }
+
+            fieldset {
+                padding: 0px;
+                margin: 0px;
+                border: none;
+
+                legend {
+                    position: absolute;
+                    top: -200vh;
+                    height: 0px;
+                    width: 0px;
+                    visibility: hidden;
+                }
+
+                .horizontal_input_stack {
+                    display: flex;
+                    gap: 5px;
+
+                    select {
+                        text-align: center;
+
+                        &:nth-child(1) {
+                            width: 30px;
+                        }
+
+                        &:nth-child(2) {
+                            width: 50px;
+                        }
+                    }
+                }
+
+                .cc_inputs {
+                    width: calc(100% - 50px - 5px);
+
+                    input {
+                        width: 100%;
+                        text-align: center;
+                        font-family: monospace;
+                    }
+                }
+            }
+
+            .input_row {
+                display: flex;
+                gap: 15px;
+
+                .name_group {
+                    flex-grow: 1;
+
+                    input {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .back {
+            position: absolute;
+            top: 15px;
+            left: calc(50% + 70px);
+            transform: translateX(-50%);
+
+            .stripe {
+                background-color: transparentize($blue-color, 0.9);
+                height: 35px;
+                position: absolute;
+                left: 0px;
+                right: 0px;
+                top: 10px;
+            }
+
+            .cvc_group {
+                position: absolute;
+                bottom: 10px;
+                right: 15px;
+
+                .cvc_input {
+                    width: 40px;
+                    text-align: center;
+                    font-family: monospace;
+                }
+            }
         }
     }
 }
