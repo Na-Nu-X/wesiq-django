@@ -29,6 +29,8 @@ from django.shortcuts import redirect
 from django.core.cache import cache
 import stripe
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 # Functions
 
 def changeLanguage(request):
@@ -101,6 +103,8 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send()
 
+# Views
+
 def successDonation(request):
     messages.add_message(request, messages.SUCCESS, _("Ďakujeme za Vašu podporu!"))
 
@@ -111,7 +115,24 @@ def cancelDonation(request):
 
     return redirect("homepage_url")
 
-# Views
+def createPaymentIntent(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            amount = int(data.get("amount"))
+
+            intent = stripe.PaymentIntent.create(
+                amount=amount,
+                currency="eur",
+                metadata={"integration_check": "accept_a_payment"},
+            )
+
+            return JsonResponse({"client_secret": intent.client_secret})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+            
+    return JsonResponse({"error": "Only POST is Allowed."}, status=405)
 
 def homepageView(request):
     # Login Form
@@ -468,41 +489,6 @@ def homepageView(request):
 
             # reviews = reviews.filter(rating=int(rating)).order_by("rating") # Queryset
 
-    # Donation Form
-    if request.method == "POST" and request.POST.get("donation"):
-        try:
-            amount_eur = int(request.POST.get("donation", 0))
-
-            if amount_eur < 1:
-                return redirect("homepage_url")
-
-        except(ValueError, TypeError):
-            return redirect("homepage_url")
-
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        amount_cents = amount_eur * 100 # Get Amount In Cents
-
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            
-            line_items=[{
-                "price_data": {
-                    "currency": "eur",
-                    "unit_amount": amount_cents,
-                    "product_data": {"name": f"Podpora projektu - {amount_eur}€"},
-                },
-
-                "quantity": 1,
-            }],
-
-            mode="payment",
-
-            success_url=request.build_absolute_uri(reverse("success_donation_url")), # Back To Homepage With Thank You Message
-            cancel_url=request.build_absolute_uri(reverse("cancel_donation_url")), # Back To Homepage With Cancel Donation Message
-        )
-
-        return redirect(checkout_session.url, code=303)
-
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
@@ -587,6 +573,7 @@ def homepageView(request):
             "avg_rating_rest": avg_rating_rest,
             "reviews_amount_by_stars": reviews_amount_by_stars,
             "logged_in_user": user,
+            "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
         })
     
     else:
@@ -608,6 +595,7 @@ def homepageView(request):
         "avg_rating_integer": avg_rating_integer,
         "avg_rating_rest": avg_rating_rest,
         "reviews_amount_by_stars": reviews_amount_by_stars,
+        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
     })
 
 def loginView(request):

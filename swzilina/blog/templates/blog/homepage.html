@@ -643,73 +643,50 @@
         <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
     </form>
 
-    <form class="donation_form" action="{% url 'homepage_url' %}" method="POST">
-        {% csrf_token %}
-
-        <button class="donate_button" type="submit" name="donation" value="1">{% translate "1€" %}</button>
-        <button class="donate_button" type="submit" name="donation" value="2">{% translate "2€" %}</button>
-        <button class="donate_button" type="submit" name="donation" value="5">{% translate "5€" %}</button>
-    </form>
-
-    <form class="credit_card">
-        <div class="front">
-            <div class="card_data_row">
-                <div class="brand_name">{% translate "Online Platba" %}</div>
-                <img class="logo" src="{% static 'images/visa.svg' %}">
-            </div>
-
-            <fieldset class="form_group">
-                <legend>{% translate "Číslo karty" %}</legend>
-                <label for="cc_1">{% translate "Číslo karty" %}</label>
-
-                <div class="cc_inputs horizontal_input_stack">
-                    <input type="tel" maxlength="4" aria-label="Credit Card First 4 Digits" id="cc_1" required pattern="[0-9]{4}" />
-                    <input type="tel" maxlength="4" aria-label="Credit Card Second 4 Digits" required pattern="[0-9]{4}" />
-                    <input type="tel" maxlength="4" aria-label="Credit Card Third 4 Digits" required pattern="[0-9]{4}" />
-                    <input type="tel" maxlength="4" aria-label="Credit Card Last 4 Digits" required pattern="[0-9]{4}" />
-                </div>
-            </fieldset>
-
-            <div class="input_row">
-                <div class="form_group name_group">
-                    <label for="name">{% translate "Držiteľ karty" %}</label>
-                    <input type="text" id="name" required>
+    <form class="credit_card_form">
+        <div class="credit_card">
+            <div class="front">
+                <div class="card_data_row">
+                    <div class="brand_name">{% translate "Podporte nás" %}</div>
+                    <img class="logo" src="{% static 'images/visa.svg' %}">
                 </div>
 
                 <fieldset class="form_group">
-                    <legend>{% translate "Platnosť" %}</legend>
-                    <label for="expiration_month">{% translate "Platnosť" %}</label>
+                    <legend>{% translate "Číslo karty" %}</legend>
+                    <label>{% translate "Číslo karty" %}</label>
 
-                    <div class="horizontal_input_stack">
-                        <select id="expiration_month" aria-label="Expiration Month" required>
-                            <option>01</option>
-                            <option>02</option>
-                            <option>03</option>
-                            <option>04</option>
-                            <option>05</option>
-                            <option>06</option>
-                            <option>07</option>
-                            <option>08</option>
-                            <option>09</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                        </select>
-
-                        <select class="expiration_year" id="expiration_year" aria-label="Expiration Year" required data-expiration-year></select>
-                    </div>
+                    <div id="stripe-card-number" class="card_number"></div>
                 </fieldset>
+
+                <div class="input_row">
+                    <div class="form_group name_group">
+                        <label for="name">{% translate "Držiteľ karty" %}</label>
+                        <input class="name" type="text" id="name" placeholder="Carl Johnson" required>
+                    </div>
+
+                    <fieldset class="form_group">
+                        <legend>{% translate "Platnosť" %}</legend>
+                        <label>{% translate "Platnosť" %}</label>
+
+                        <div id="stripe-card-expiry" class="card_expiry"></div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="back">
+                <div class="form_group cvc_group">
+                    <div id="stripe-card-cvc" class="card_cvc"></div>
+                </div>
             </div>
         </div>
 
-        <div class="back">
-            <div class="stripe"></div>
-
-            <div class="form_group cvc_group">
-                <label for="cvc">CVC</label>
-                <input class="cvc_input" type="tel" maxlength="3" id="cvc" required />
-            </div>
+        <div class="donation_buttons">
+            <button class="donate_button" type="button" data-amount="100">1€</button>
+            <button class="donate_button" type="button" data-amount="200">2€</button>
+            <button class="donate_button" type="button" data-amount="500">5€</button>
         </div>
+        
+        <div id="card-errors" style="color: red; margin-top: 10px;"></div>
     </form>
 {% endblock content %}
 
@@ -721,4 +698,94 @@
     <script src="{% static 'blog/ts/dist/components/reviews.js' %}" type="module"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const stripe = Stripe("{{ publishable_key }}")
+            const elements = stripe.elements()
+
+            const styles = {
+                base: {
+                    lineHeight: "28px",
+                    fontFamily: "monospace",
+                    fontSize: "15px",
+                    color: "#ffffff",
+                    "::placeholder": { color: "#999999" }
+                },
+
+                invalid: { color: "#df3535", iconColor: "#df3535" }
+            }
+
+            const cardNumber = elements.create("cardNumber", {style: styles})
+            const cardExpiry = elements.create("cardExpiry", {style: styles})
+            const cardCvc = elements.create("cardCvc", {style: styles})
+
+            cardNumber.mount("#stripe-card-number")
+            cardExpiry.mount("#stripe-card-expiry")
+            cardCvc.mount("#stripe-card-cvc")
+
+            const donate_buttons = document.querySelectorAll(".donate_button") // Gets All Donate Buttons
+
+            donate_buttons.forEach(function(one_button) {
+                one_button.addEventListener("click", async function(event) {
+                    event.preventDefault()
+                    
+                    const amount_in_cents = this.getAttribute("data-amount") // Gets Amount In Cents
+                    const cardholder_name = document.getElementById("name").value // Gets Cardholder Name
+
+                    donate_buttons.forEach(b => b.disabled = true) // Disables All Buttons
+
+                    try {
+                        const response = await fetch("{% url 'create_payment_intent_url' %}", {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+
+                            body: JSON.stringify({ amount: amount_in_cents })
+                        })
+
+                        const data = await response.json()
+
+                        if(data.error) {
+                            // console.log("Chyba: " + data.error)
+                            donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
+                            return
+                        }
+
+                        const {paymentIntent, error} = await stripe.confirmCardPayment(data.client_secret, {
+                            payment_method: {
+                                card: cardNumber,
+
+                                billing_details: {
+                                    name: cardholder_name
+                                }
+                            }
+                        })
+
+                        if(error) {
+                            // console.log(error.message)
+                            donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
+                        } 
+                        
+                        else {
+                            if(paymentIntent.status === "succeeded") {
+                                window.location.href = "{% url 'success_donation_url' %}" // Success Redirect
+                            }
+                        }
+                    } 
+                    
+                    catch(e) {
+                        // console.log("Chyba pri komunikácii so serverom.")
+                        donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
+                    }
+                })
+            })
+        })
+    </script>
 {% endblock script %}
