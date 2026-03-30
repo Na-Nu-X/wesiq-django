@@ -1490,7 +1490,7 @@ header {
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
 
-                .form_group {
+                .group {
                     display: flex;
                     flex-direction: column;
 
@@ -1501,7 +1501,7 @@ header {
                     }
 
                     .card_number,
-                    .name,
+                    .cardholder_name,
                     .card_expiry,
                     .card_cvc {
                         height: 30px;
@@ -1522,7 +1522,7 @@ header {
                 position: relative;
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
+                justify-content: space-between;
                 padding-top: 5px;
                 overflow: hidden;
                 z-index: 1;
@@ -1535,11 +1535,10 @@ header {
                     @include circle_decoration($bottom: -475px, $left: -150px, $width: 600px, $height: 600px, $color: transparentize($blue-color, 0.9));
                 }
 
-                .card_data_row {
+                .top {
                     display: flex;
-                    margin-bottom: auto;
 
-                    .brand_name {
+                    .title {
                         flex-grow: 1;
                         font-size: 1.5em;
                         font-weight: bold;
@@ -1551,33 +1550,35 @@ header {
                     }
                 }
 
-                fieldset {
-                    padding: 0px;
-                    margin: 0px;
-                    border: none;
-
-                    legend {
-                        position: absolute;
-                        height: 0px;
-                        width: 0px;
-                        visibility: hidden;
-                    }
-
-                    .card_number {
-                        width: 170px;
-                    }
+                .error_report {
+                    font-size: 0.9em;
+                    color: $error-color;
                 }
 
-                .input_row {
+                .bottom {
                     display: flex;
-                    gap: 15px;
+                    flex-direction: column;
+                    gap: 10px;
 
-                    .name_group {
-                        flex-grow: 1;
+                    .group {
+                        .card_number {
+                            width: 170px;
+                        }
                     }
-
-                    .card_expiry {
-                        width: 70px;
+    
+                    .row {
+                        display: flex;
+                        gap: 15px;
+    
+                        .cardholder_name_group {
+                            flex-grow: 1;
+                        }
+                        
+                        .group {
+                            .card_expiry {
+                                width: 70px;
+                            }
+                        }
                     }
                 }
             }
@@ -1588,7 +1589,7 @@ header {
                 left: calc(50% + 70px);
                 transform: translateX(-50%);
 
-                .cvc_group {
+                .group {
                     position: absolute;
                     bottom: 10px;
                     right: 15px;
