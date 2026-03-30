@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Payments
+from blog.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -123,15 +123,22 @@ def createPaymentIntent(request):
             amount = int(data.get("amount"))
             name = data.get("name", "Anonymous")
 
+            logged_in_user_id = request.session.get("logged_in_user_id") if "logged_in_user_id" in request.session else None
+
             intent = stripe.PaymentIntent.create(
                 amount=amount,
                 currency="eur",
-                metadata={"integration_check": "accept_a_payment"},
+
+                metadata={
+                    "integration_check": "accept_a_payment",
+                    "user_id": logged_in_user_id
+                },
             )
 
-            Payments.objects.create(
+            Transactions.objects.create(
+                user_id=logged_in_user_id,
                 stripe_intent_id=intent.id,
-                user=name,
+                cardholder_name=name,
                 amount=amount / 100,
                 status="pending",
             )
@@ -161,13 +168,19 @@ def stripeWebhook(request):
     if event["type"] == "payment_intent.succeeded":
         payment_intent = event["data"]["object"]
         stripe_id = payment_intent["id"]
+        user_id = payment_intent.get("metadata", {}).get("user_id")
 
         try:
-            payment = Payments.objects.get(stripe_intent_id=stripe_id)
+            payment = Transactions.objects.get(stripe_intent_id=stripe_id)
+
             payment.status = "succeeded"
+
+            if user_id:
+                payment.user_id = user_id
+
             payment.save()
 
-        except Payments.DoesNotExist:
+        except Transactions.DoesNotExist:
             pass
 
     return HttpResponse(status=200)

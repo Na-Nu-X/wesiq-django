@@ -159,18 +159,26 @@ class Exercises(models.Model):
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
 
-class Payments(models.Model):
+class Transactions(models.Model):
     status_choices = [
         ("pending", "pending"),
         ("succeeded", "succeeded"),
         ("failed", "failed"),
     ]
 
-    stripe_intent_id = models.CharField(max_length=255, unique=True)
-    user = models.CharField(max_length=255)
-    amount = models.DecimalField(max_digits=10, decimal_places=2) # In €
-    status = models.CharField(max_length=20, choices=status_choices, default="pending")
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User ID",
+        on_delete=models.DO_NOTHING,
+        related_name="transactions",
+        null=True,
+    )
+
+    stripe_intent_id = models.CharField(verbose_name="Stripe ID", max_length=255, unique=True, null=False)
+    cardholder_name = models.CharField(verbose_name="Cardholder Name", max_length=50, null=False)
+    amount = models.DecimalField(verbose_name="Amount (€)", max_digits=10, decimal_places=2, default=0, null=False) # In €
+    status = models.CharField(verbose_name="Status", max_length=20, choices=status_choices, default="pending", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     def __str__(self):
-        return f"{self.meno_darcu} - {self.suma}€ ({self.stav})"
+        return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
