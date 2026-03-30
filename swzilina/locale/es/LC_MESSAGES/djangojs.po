@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-21 17:03+0000\n"
+"POT-Creation-Date: 2026-03-30 17:44+0000\n"
 "PO-Revision-Date: 2026-03-22 07:13+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: blog/static/blog/ts/src/pages/edit_account.ts:13
@@ -141,8 +142,8 @@ msgstr "El plan de entrenamiento %s se ha añadido correctamente."
 msgid "Tréningový plán %s bol úspešne upravený."
 msgstr "El plan de entrenamiento %s se ha editado correctamente."
 
-#: blog/static/blog/ts/src/pages/password_reset.ts:46
-#: blog/static/blog/ts/src/pages/password_reset.ts:74
+#: blog/static/blog/ts/src/pages/password_reset.ts:121
+#: blog/static/blog/ts/src/pages/password_reset.ts:149
 msgid "Platnosť vypršala!"
 msgstr "¡Venció!"
 
@@ -160,8 +161,7 @@ msgstr "<br>La actividad actual duró:"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "El tiempo de actividad actual fue un 100% mayor que el promedio de los "
 "últimos 7 días"
@@ -174,8 +174,7 @@ msgstr ""
 "últimos 7 días"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
 "El tiempo de actividad actual fue un %s% menor que el promedio de los "
 "últimos 7 días"

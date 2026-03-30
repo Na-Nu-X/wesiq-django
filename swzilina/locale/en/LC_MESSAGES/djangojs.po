@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 16:59+0000\n"
+"POT-Creation-Date: 2026-03-30 17:44+0000\n"
 "PO-Revision-Date: 2026-03-20 13:29+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,8 +141,8 @@ msgstr "Training Plan %s was Successfully Added."
 msgid "Tréningový plán %s bol úspešne upravený."
 msgstr "Training Plan %s was Successfully Edited."
 
-#: blog/static/blog/ts/src/pages/password_reset.ts:46
-#: blog/static/blog/ts/src/pages/password_reset.ts:74
+#: blog/static/blog/ts/src/pages/password_reset.ts:121
+#: blog/static/blog/ts/src/pages/password_reset.ts:149
 msgid "Platnosť vypršala!"
 msgstr "Expired!"
 

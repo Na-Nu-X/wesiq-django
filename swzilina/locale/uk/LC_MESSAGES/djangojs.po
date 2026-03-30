@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-22 15:16+0000\n"
+"POT-Creation-Date: 2026-03-30 17:44+0000\n"
 "PO-Revision-Date: 2026-03-23 19:36+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: blog/static/blog/ts/src/pages/edit_account.ts:13
@@ -141,8 +144,8 @@ msgstr "План навчання %s успішно додано."
 msgid "Tréningový plán %s bol úspešne upravený."
 msgstr "План навчання %s був успішно змінений."
 
-#: blog/static/blog/ts/src/pages/password_reset.ts:46
-#: blog/static/blog/ts/src/pages/password_reset.ts:74
+#: blog/static/blog/ts/src/pages/password_reset.ts:121
+#: blog/static/blog/ts/src/pages/password_reset.ts:149
 msgid "Platnosť vypršala!"
 msgstr "Прострочено!"
 
@@ -160,8 +163,7 @@ msgstr "<br>Поточна діяльність тривала:"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Час поточної діяльності був на 100% довшим, ніж у середньому за останні 7 "
 "днів"
@@ -170,12 +172,10 @@ msgstr ""
 #, javascript-format
 msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
 msgstr ""
-"Час поточної діяльності був на %s% довшим, ніж у середньому за останні 7 "
-"днів"
+"Час поточної діяльності був на %s% довшим, ніж у середньому за останні 7 днів"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
 "Час поточної діяльності був на %s% коротшим, ніж у середньому за останні 7 "
 "днів"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 19:42+0000\n"
+"POT-Creation-Date: 2026-03-30 17:44+0000\n"
 "PO-Revision-Date: 2026-03-24 17:17+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,8 +141,8 @@ msgstr "O plano de treinamento %s foi adicionado com sucesso."
 msgid "Tréningový plán %s bol úspešne upravený."
 msgstr "O plano de treinamento %s foi modificado com sucesso."
 
-#: blog/static/blog/ts/src/pages/password_reset.ts:46
-#: blog/static/blog/ts/src/pages/password_reset.ts:74
+#: blog/static/blog/ts/src/pages/password_reset.ts:121
+#: blog/static/blog/ts/src/pages/password_reset.ts:149
 msgid "Platnosť vypršala!"
 msgstr "Expirado!"
 
@@ -160,8 +160,7 @@ msgstr "<br>A atividade atual durou:"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "O tempo de atividade atual foi 100% maior que a média dos últimos 7 dias"
 
@@ -172,8 +171,7 @@ msgstr ""
 "O tempo de atividade atual foi %s% maior do que a média dos últimos 7 dias"
 
 #: blog/static/blog/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
 "O tempo de atividade atual foi %s% menor que a média dos últimos 7 dias"
 
