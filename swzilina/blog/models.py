@@ -158,3 +158,19 @@ class Exercises(models.Model):
     unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
+
+class Payments(models.Model):
+    status_choices = [
+        ("pending", "pending"),
+        ("succeeded", "succeeded"),
+        ("failed", "failed"),
+    ]
+
+    stripe_intent_id = models.CharField(max_length=255, unique=True)
+    user = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2) # In €
+    status = models.CharField(max_length=20, choices=status_choices, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.meno_darcu} - {self.suma}€ ({self.stav})"

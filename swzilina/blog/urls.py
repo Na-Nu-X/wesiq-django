@@ -18,8 +18,9 @@ urlpatterns = [
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
     path('change-language/', views.changeLanguage, name='change_language_url'),
     path(_('platba-uspesna/'), views.successDonation, name='success_donation_url'),
-    path(_('platba-zrusena/'), views.cancelDonation, name='cancel_donation_url'),
+    # path(_('platba-zrusena/'), views.cancelDonation, name='cancel_donation_url'),
     path('create-payment-intent/', views.createPaymentIntent, name='create_payment_intent_url'),
+    path('stripe/webhook/', views.stripeWebhook, name='stripe_webhook_url'),
 
     # URLs For JS POST Data
     path('like-comment/<int:comment_id>', views.likeComment, name='like_comment_url'),
