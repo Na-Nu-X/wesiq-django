@@ -25,57 +25,42 @@ declare module "chart.js" {
 document.addEventListener("DOMContentLoaded", function():void {
     // Search Bar
 
-    const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement
-    const search_result:HTMLDivElement = document.querySelector(".search_result") as HTMLDivElement
-    const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement
+    const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement // Gets Search Bar
+    const search_result:HTMLDivElement = document.querySelector(".search_result") as HTMLDivElement // Gets Search Result
+    const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement // Gets Delete Search Bar Icon
 
-    function renderSearchResult():void {
-        interface Pages {
-            url:string,
-            title:string,
-            icon: string,
-        }
+    interface Pages {
+        id:number,
+        url:string,
+        title:string,
+        icon: string,
+        is_from_history:boolean
+    }
 
-        let searched_text:string = search_bar.value // Searched Text Value
+    // Data - Array of Objects of Pages
+    const pages:Pages[] = [
+        { id: 1, url: "/", title: gettext("Hlavná stránka"), icon: "<i class='fa-solid fa-house'></i>", is_from_history: false }, // https://fontawesome.com/icons/house
+        { id: 2, url: gettext("/prihlasenie"), title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 3, url: gettext("/obnova-hesla"), title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 4, url: gettext("/registracia"), title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 5, url: gettext("/moj-ucet"), title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 6, url: gettext("/moje-hodnotenie"), title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>", is_from_history: false }, // https://fontawesome.com/icons/star
+        { id: 7, url: gettext("/blog"), title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>", is_from_history: false }, // https://fontawesome.com/icons/book
+        { id: 8, url: gettext("/trening"), title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
+        { id: 9, url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
+    ]
 
-        // Data - Array of Objects of Pages
-        const pages:Pages[] = [
-            { url: "/", title: gettext("Hlavná stránka"), icon: "<i class='fa-solid fa-house'></i>" }, // https://fontawesome.com/icons/house
-            { url: gettext("/prihlasenie"), title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: gettext("/obnova-hesla"), title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: gettext("/registracia"), title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: gettext("/moj-ucet"), title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>" }, // https://fontawesome.com/icons/user
-            { url: gettext("/moje-hodnotenie"), title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>" }, // https://fontawesome.com/icons/star
-            { url: gettext("/blog"), title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>" }, // https://fontawesome.com/icons/book
-            { url: gettext("/trening"), title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
-            { url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>" }, // https://fontawesome.com/icons/dumbbell
-        ]
-
-        search_result.innerHTML = "" // Deletes Search Result
-
-        // Deletes Search Result When Searched Text Value is Empty
-        if(searched_text.trim() === "") {
-            search_result.innerHTML = ""
-
-            search_bar.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
-            search_bar.style.borderRadius = "5px"
-
-            search_result.style.border = "none"
-            search_result.classList.remove("active")
-
-            return
-        }
-        
-        // Filters Pages by Searched Text Value
-        const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
-            return one_page.title.toLowerCase().includes(searched_text.toLowerCase())
-        })
-
+    // Function For Render Search Result
+    function renderSearchResult(filtered_pages:Pages[]):void {
         // Renders Result
         filtered_pages.forEach(function(one_page:Pages):void {
             let search_result_link:HTMLAnchorElement = document.createElement("a")
+
+            search_result_link.dataset["id"] = String(one_page.id) // Stores ID Of Search Result
             search_result_link.setAttribute("href", one_page.url)
-            search_result_link.innerHTML = one_page.icon + one_page.title
+
+            !one_page.is_from_history ? search_result_link.innerHTML = one_page.icon + one_page.title : search_result_link.innerHTML = one_page.title + "<i class='fa-solid fa-clock-rotate-left'></i>"
+
             search_result.appendChild(search_result_link)
         })
 
@@ -97,16 +82,83 @@ document.addEventListener("DOMContentLoaded", function():void {
             search_result.classList.remove("active")
         }
     }
+    
+    // Function For Filter Search Result By Searched Text
+    function filterSearchResult():void {
+        let searched_text:string = search_bar.value // Searched Text Value
+
+        search_result.innerHTML = "" // Deletes Search Result
+
+        // Deletes Search Result When Searched Text Value is Empty
+        if(searched_text.trim() === "") {
+            search_result.innerHTML = ""
+
+            search_bar.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
+            search_bar.style.borderRadius = "5px"
+
+            search_result.style.border = "none"
+            search_result.classList.remove("active")
+
+            return
+        }
+        
+        // Filters Pages by Searched Text Value
+        const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
+            return one_page.title.toLowerCase().includes(searched_text.toLowerCase())
+        })
+
+        filtered_pages.forEach((one_page:Pages) => one_page.is_from_history = false) // Flags Filtered Pages That They Are Not From The History
+
+        renderSearchResult(filtered_pages) // Renders Search Result
+    }
 
     // Delete Search Bar Icon
     delete_search_bar.addEventListener("click", function():void {
-        search_bar.value = ""
-        renderSearchResult()
+        search_bar.value = "" // Deletes Search Bar Value
+        search_result.innerHTML = "" // Deletes Search Result
     })
 
     // Search Bar Input
     search_bar.addEventListener("input", function():void {
-        renderSearchResult()
+        filterSearchResult() // Filters Search Result By Searched Text
+    })
+
+    // Stores Clicked Search Result To The Search Bar History
+    search_result.addEventListener("click", function(event):void {
+        const clicked_search_result_id:string = (event.target as HTMLAnchorElement).dataset["id"] || "" // Gets The Clicked Search Result ID
+        const search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
+
+        if(search_bar_history.length >= 3) search_bar_history.pop() // Shows Maximum Of 3 Results From The History, Others Will Be Deleted From The History
+        
+        if(!search_bar_history.includes(clicked_search_result_id)) search_bar_history.unshift(clicked_search_result_id) // Updates Search Bar History If Is Not Already In The Local Storage
+
+        localStorage.setItem("search_bar_history", JSON.stringify(search_bar_history)) // Saves Updated Search Bar History To The Local Storage
+    })
+
+    // If User Click Inside The Search Bar
+    search_bar.addEventListener("focus", function():void {
+        filterSearchResult() // Filters Search Result By Searched Text
+
+        // Shows Search Bar History
+        if(this.value === "") {
+            search_result.innerHTML = "" // Deletes Search Result
+
+            const search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
+
+            // Filters Pages by IDs In Search Bar History In The Local Storage
+            const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
+                return search_bar_history.includes(String(one_page.id))
+            })
+
+            filtered_pages.forEach((one_page:Pages) => one_page.is_from_history = true) // Flags Filtered Pages That They Are From The History
+
+            renderSearchResult(filtered_pages.reverse()) // Renders Search Result (Reversed, In Order To Show Latest Result From The History On The Top)
+        }
+    })
+
+    // If User Clicks Outside The Search Bar
+    document.addEventListener("click", function(event:PointerEvent):void {
+        if(!(event.target as HTMLInputElement).classList.contains("search_bar") && !(event.target as HTMLDivElement).classList.contains("search_result")) search_result.innerHTML = "" // Deletes Search Result
     })
 
     // Login Form
