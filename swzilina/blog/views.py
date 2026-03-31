@@ -167,8 +167,10 @@ def stripeWebhook(request):
 
     if event["type"] == "payment_intent.succeeded":
         payment_intent = event["data"]["object"]
-        stripe_id = payment_intent["id"]
-        user_id = payment_intent.get("metadata", {}).get("user_id")
+        stripe_id = payment_intent.id
+
+        metadata = payment_intent.metadata
+        user_id = metadata["user_id"] if "user_id" in metadata else None
 
         try:
             payment = Transactions.objects.get(stripe_intent_id=stripe_id)
@@ -176,7 +178,7 @@ def stripeWebhook(request):
             payment.status = "succeeded"
 
             if user_id:
-                payment.user_id = user_id
+                payment.user_id = int(user_id)
 
             payment.save()
 
