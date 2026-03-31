@@ -29,6 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT')
+
 # Gmail
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'behulpatrik@gmail.com'
@@ -263,3 +265,10 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
+
+# Other Production Settings
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE')
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE')
+SECURE_HSTS_SECONDS = os.environ.get('SECURE_HSTS_SECONDS')
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS')
+SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD')
