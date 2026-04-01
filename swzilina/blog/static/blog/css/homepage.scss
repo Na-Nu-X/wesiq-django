@@ -27,6 +27,7 @@ header {
             display: flex;
             align-items: center;
             gap: 5px;
+            width: max-content;
             cursor: pointer;
 
             p {
@@ -75,17 +76,17 @@ header {
 
         // Search Bar
 
-        .search_bar_container {
+        .search_container {
             position: relative;
             max-width: 500px;
             width: 100%;
             margin: 0px auto;
 
-            div:nth-child(1) {
+            .search_bar_container {
                 @include search_bar;
             }
 
-            .search_result {
+            .search_result_container {
                 position: absolute;
                 top: 40px !important;
                 width: 100%;
@@ -114,7 +115,7 @@ header {
                     opacity: 1;
                 }
 
-                div {
+                .search_result {
                     position: relative;
                     height: 40px;
 
@@ -128,17 +129,17 @@ header {
                         z-index: 100;
                     }
 
-                    .fa-clock-rotate-left,
-                    .fa-xmark {
-                        @include icon;
-                        padding: 9px 0px 9px;
-                        font-size: 20px;
-                        // background-color: red;
+                    .delete_from_history {
+                        left: 0px;
+                        width: 15px + 10px;
+                        height: 100%;
+                        line-height: 40px;
+                        padding-left: 10px;
                         pointer-events: all;
                         cursor: pointer;
 
-                        &:hover {
-                            width: 20px;
+                        &.fa-xmark {
+                            font-size: 20px;
                         }
                     }
 
@@ -161,7 +162,7 @@ header {
                 }
             }
 
-            &:has(.search_bar:hover) .search_result, &:has(.search_bar:focus) .search_result {
+            &:has(.search_bar:hover) .search_result_container, &:has(.search_bar:focus) .search_result_container {
                 border-color: $blue-color !important;
             }
         }

@@ -52,14 +52,14 @@
 {% endblock banner %}
 
 {% block search_bar %}
-    <div class="search_bar_container">
-        <div>
+    <div class="search_container">
+        <div class="search_bar_container">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
             <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
             <input class="search_bar" type="text" placeholder="{% translate 'Hľadať' %}" autocomplete="off">
         </div>
 
-        <div class="search_result"></div>
+        <div class="search_result_container"></div>
     </div>
 {% endblock search_bar %}
 
@@ -694,6 +694,7 @@
     <script src="{% static 'blog/ts/dist/pages/homepage.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/login.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/pages/registration.js' %}" type="module"></script>
+    <script src="{% static 'blog/ts/dist/components/searchBar.js' %}" type="module"></script>
     <script src="{% static 'blog/ts/dist/components/reviews.js' %}" type="module"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
