@@ -334,6 +334,11 @@ header {
 
                     .profile_picture {
                         @include profile_picture;
+                        transition: transform 0.3s ease;
+
+                        &:hover {
+                            transform: scale(1.05);
+                        }
                     }
                 }
 
