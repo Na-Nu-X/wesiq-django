@@ -114,20 +114,9 @@ header {
                     opacity: 1;
                 }
 
-                a {
+                div {
                     position: relative;
-                    display: block;
                     height: 40px;
-                    line-height: 40px;
-                    color: $secondary-color;
-                    text-align: center;
-                    text-decoration: none;
-                    transition: background-color 0.3s ease, letter-spacing 0.3s ease;
-
-                    &:hover {
-                        background-color: transparentize($blue-color, 0.9);
-                        letter-spacing: 0.5px;
-                    }
 
                     i {
                         pointer-events: none;
@@ -135,6 +124,39 @@ header {
                         top: 50%;
                         left: 10px;
                         transform: translateY(-50%);
+                        color: $secondary-color;
+                        z-index: 100;
+                    }
+
+                    .fa-clock-rotate-left,
+                    .fa-xmark {
+                        @include icon;
+                        padding: 9px 0px 9px;
+                        font-size: 20px;
+                        // background-color: red;
+                        pointer-events: all;
+                        cursor: pointer;
+
+                        &:hover {
+                            width: 20px;
+                        }
+                    }
+
+                    a {
+                        position: relative;
+                        display: block;
+                        height: inherit;
+                        line-height: 40px;
+                        color: $secondary-color;
+                        text-align: center;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+
+                        &:hover,
+                        &:focus {
+                            background-color: transparentize($blue-color, 0.9);
+                            letter-spacing: 0.5px;
+                        }
                     }
                 }
             }
