@@ -54,17 +54,32 @@ document.addEventListener("DOMContentLoaded", function():void {
     function renderSearchResult(filtered_pages:Pages[]):void {
         // Renders Result
         filtered_pages.forEach(function(one_page:Pages):void {
+            let container:HTMLDivElement = document.createElement("div")
+
             let search_result_link:HTMLAnchorElement = document.createElement("a")
 
             search_result_link.dataset["id"] = String(one_page.id) // Stores ID Of Search Result
             search_result_link.setAttribute("href", one_page.url)
 
-            !one_page.is_from_history ? search_result_link.innerHTML = one_page.icon + one_page.title : search_result_link.innerHTML = one_page.title + "<i class='fa-solid fa-clock-rotate-left'></i>"
+            // If The Page Is Not From History
+            if(!one_page.is_from_history) {
+                container.innerHTML = one_page.icon
+                search_result_link.innerHTML = one_page.title
+            }
+            
+            // If The Page Is From History
+            else {
+                container.innerHTML = "<i class='fa-solid fa-clock-rotate-left'></i>" // https://fontawesome.com/icons/clock-rotate-left
+                search_result_link.innerHTML = one_page.title
+            }
 
-            search_result.appendChild(search_result_link)
+            container.appendChild(search_result_link)
+            search_result.appendChild(container)
         })
 
         if(search_result.children.length > 0) {
+            search_bar.focus()
+
             search_bar.style.borderRadius = "5px 5px 0px 0px"
             search_bar.style.borderBottom = "none"
 
@@ -112,10 +127,46 @@ document.addEventListener("DOMContentLoaded", function():void {
         renderSearchResult(filtered_pages) // Renders Search Result
     }
 
+    function focusSearchBar():void {
+        // Shows Search Bar History
+        if(search_bar.value === "") {
+            const search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
+            
+            search_result.innerHTML = "" // Deletes Search Result
+
+            // Shows All Available Pages When The Search History Is Empty
+            if(search_bar_history.length === 0) {
+                pages.forEach((one_page:Pages) => one_page.is_from_history = false) // Flags Filtered Pages That They Are Not From The History
+
+                renderSearchResult(pages) // Renders Search Result (Reversed, In Order To Show Latest Result From The History On The Top)
+            }
+
+            // Shows Search Bar History Results
+            else {
+                // Filters Pages by IDs In Search Bar History In The Local Storage
+                const filtered_pages:Pages[] = search_bar_history
+                    .map(one_id => pages.find(one_page => String(one_page.id) === one_id))
+                    .filter((one_page):one_page is Pages => one_page !== undefined)
+
+                filtered_pages.forEach((one_page:Pages) => one_page.is_from_history = true) // Flags Filtered Pages That They Are From The History
+
+                renderSearchResult(filtered_pages) // Renders Search Result (Reversed, In Order To Show Latest Result From The History On The Top)
+            }
+        }
+
+        else filterSearchResult() // Filters Search Result By Searched Text
+    }
+
     // Delete Search Bar Icon
     delete_search_bar.addEventListener("click", function():void {
         search_bar.value = "" // Deletes Search Bar Value
         search_result.innerHTML = "" // Deletes Search Result
+
+        search_bar.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
+        search_bar.style.borderRadius = "5px"
+
+        search_result.style.border = "none"
+        search_result.classList.remove("active")
     })
 
     // Search Bar Input
@@ -123,43 +174,88 @@ document.addEventListener("DOMContentLoaded", function():void {
         filterSearchResult() // Filters Search Result By Searched Text
     })
 
-    // Stores Clicked Search Result To The Search Bar History
+    // If The User Clicks To Search Result
     search_result.addEventListener("click", function(event):void {
         const clicked_search_result_id:string = (event.target as HTMLAnchorElement).dataset["id"] || "" // Gets The Clicked Search Result ID
-        const search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
+        let search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
 
-        if(search_bar_history.length >= 3) search_bar_history.pop() // Shows Maximum Of 3 Results From The History, Others Will Be Deleted From The History
-        
-        if(!search_bar_history.includes(clicked_search_result_id)) search_bar_history.unshift(clicked_search_result_id) // Updates Search Bar History If Is Not Already In The Local Storage
+        // Removes Item From The History
+        if((event.target as HTMLElement).classList.contains("fa-xmark")) {
+            const search_result_id_for_deletion:string = ((event.target as HTMLAnchorElement).nextSibling as HTMLAnchorElement).dataset["id"] || "" // Gets The Search Result ID Of The Item For Deletion
+            search_bar_history = search_bar_history.filter(one_item => one_item !== search_result_id_for_deletion) // Removes The Item From The History
 
-        localStorage.setItem("search_bar_history", JSON.stringify(search_bar_history)) // Saves Updated Search Bar History To The Local Storage
+            localStorage.setItem("search_bar_history", JSON.stringify(search_bar_history)) // Saves Updated Search Bar History To The Local Storage
+
+            focusSearchBar()
+        }
+
+        // Stores Clicked Search Result To The Search Bar History
+        else {
+            search_bar_history = search_bar_history.filter(one_item => one_item !== clicked_search_result_id) // Removes The Clicked Item From The History
+            search_bar_history.unshift(clicked_search_result_id) // Updates Search Bar History
+            if(search_bar_history.length > 3) search_bar_history = search_bar_history.slice(0, 3) // Shows Maximum Of 3 Results From The History, Others Will Be Deleted From The History
+
+            localStorage.setItem("search_bar_history", JSON.stringify(search_bar_history)) // Saves Updated Search Bar History To The Local Storage
+        }
     })
 
     // If User Click Inside The Search Bar
     search_bar.addEventListener("focus", function():void {
-        filterSearchResult() // Filters Search Result By Searched Text
-
-        // Shows Search Bar History
-        if(this.value === "") {
-            search_result.innerHTML = "" // Deletes Search Result
-
-            const search_bar_history:string[] = JSON.parse(localStorage.getItem("search_bar_history") || "[]") as string[] // Gets The Search Bar History From The Local Storage
-
-            // Filters Pages by IDs In Search Bar History In The Local Storage
-            const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
-                return search_bar_history.includes(String(one_page.id))
-            })
-
-            filtered_pages.forEach((one_page:Pages) => one_page.is_from_history = true) // Flags Filtered Pages That They Are From The History
-
-            renderSearchResult(filtered_pages.reverse()) // Renders Search Result (Reversed, In Order To Show Latest Result From The History On The Top)
-        }
+        focusSearchBar()
     })
 
     // If User Clicks Outside The Search Bar
     document.addEventListener("click", function(event:PointerEvent):void {
-        if(!(event.target as HTMLInputElement).classList.contains("search_bar") && !(event.target as HTMLDivElement).classList.contains("search_result")) search_result.innerHTML = "" // Deletes Search Result
+        if(!(event.target as HTMLInputElement).classList.contains("search_bar") && !(event.target as HTMLDivElement).classList.contains("search_result") && !(event.target as HTMLElement).classList.contains("fa-xmark")) {
+            search_result.innerHTML = "" // Deletes Search Result
+
+            search_bar.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
+            search_bar.style.borderRadius = "5px"
+
+            search_result.style.border = "none"
+            search_result.classList.remove("active")
+
+            return
+        }
     })
+
+    // Change Remove Item From The History Icon Functionality
+    search_result.addEventListener("mouseover", function(event:MouseEvent):void {
+        if((event.target as HTMLElement).classList.contains("fa-clock-rotate-left")) {
+            const icon:HTMLElement = event.target as HTMLElement // Gets The Remove From Search History Icon
+
+            icon.classList.replace("fa-clock-rotate-left", "fa-xmark") // Shows The X Icon
+        }
+    })
+
+    search_result.addEventListener("mouseout", function(event:MouseEvent):void {
+        if((event.target as HTMLElement).classList.contains("fa-xmark")) {
+            const icon:HTMLElement = event.target as HTMLElement // Gets The Remove From Search History Icon
+
+            icon.classList.replace("fa-xmark", "fa-clock-rotate-left") // Shows The Clock Icon
+        }
+    })
+
+    let focused_search_result_index:number = 0 // Focused Search Result Index
+
+    search_result.addEventListener("wheel", function(event:WheelEvent):void {
+        event.preventDefault() // Stop Scrolling
+
+        if(event.deltaY < 0) changeFocusedSearchResult(focused_search_result_index + 1) // Changes Focused Search Result (Shows Next Search Result)
+        if(event.deltaY > 0) changeFocusedSearchResult(focused_search_result_index - 1) // Changes Focused Search Result (Shows Previous Search Result)
+    })
+
+    // Function For Change Focused Search Result
+    function changeFocusedSearchResult(index:number):void {
+        const all_search_results:NodeListOf<HTMLAnchorElement> = search_result.querySelectorAll("a")
+
+        focused_search_result_index = index // Updates Focused Search Result Index
+
+        if(index > all_search_results.length - 1) focused_search_result_index = 0 // Sets Focused Search Result Index To Minimum
+        if(index < 0) focused_search_result_index = all_search_results.length - 1; // Sets Focused Search Result Index To Maximum
+
+        (all_search_results[focused_search_result_index] as HTMLAnchorElement).focus() // Focuses Search Result
+    }
 
     // Login Form
 
