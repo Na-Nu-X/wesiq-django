@@ -1,6 +1,6 @@
 @echo off
 
-cd .\swzilina\
+cd .\wesiq\
 
 start cmd /k "docker compose up -d"
 start cmd /k "npm run watch"

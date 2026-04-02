@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% translate "Moje hodnotenie" %}{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'app/css/edit_review.css' %}">
+{% endblock style %}
+
+{% block content %}
+    {% if request.session.logged_in_user_id %}
+        <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
+            {% csrf_token %}
+
+            <h2><a style="font-size: 35px;" href="{% url 'edit_review_url' %}" target="_self">{% translate "Moje&nbsp;hodnotenie" %}</a></h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+
+            <div class="reviewer">
+                <img 
+                    class="profile_picture" 
+                    src="
+                        {% if review.user.profile_picture_name %}
+                            /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+
+                <p class="full_name">
+                    {{ review.user.first_name }} {{ review.user.last_name }}
+
+                    <span class="date">
+                        - {{ review.creation_time|date:"d.m. Y" }}
+
+                        {% if review.last_edit != None %}
+                            ({% translate "upravené" %})
+
+                        {% endif %}
+                    </span>
+                </p>
+            </div>
+
+            <div class="review">
+                <div class="rating">
+                    {% for _ in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+
+                        {% else %}
+                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                        
+                        {% endif %}
+                    {% endfor %}
+
+                    {{ review_form.rating }}
+                </div>
+
+                {{ review_form.review }}
+            </div>
+
+            <p class="form_report" style="bottom: 162px;"></p>
+            <input type="submit" value="{% translate 'Uložiť zmeny' %}">
+
+            <div>
+                <label for="delete_review">
+                    <img class="delete_review" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť recenziu' %}"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                </label>
+                {{ review_form.delete_review }}
+            </div>
+        </form>
+
+    {% else %}
+        <div class="no_logged_in">
+            <p>{% translate "Pre vykonávanie zmien vašej recenzie sa musíte najprv" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť" %}</a> {% translate "alebo" %} <a href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "zaregistrovať" %}</a>.</p>
+        </div>
+
+    {% endif %}
+{% endblock content %}
+
+{% block script %}
+    <script src="{% url 'javascript_catalog_url' %}"></script>
+    <script src="{% static 'app/ts/dist/pages/edit_review.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
+{% endblock script %}

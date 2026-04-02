@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% translate "Moje tréningové plány" %}{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'app/css/manage_training_plans.css' %}">
+{% endblock style %}
+
+{% block banner %}
+    <div class="training_session">
+        <a href="{% url 'training_session_url' %}" title="{% translate 'Aktivita' %}" target="_self">{% translate "Aktivita" %}</a>
+    </div>
+{% endblock banner %}
+
+{% block content %}
+    {% if not request.session.logged_in_user_id %}
+        <div class="no_logged_in">
+            <p>
+                {% translate "Zdá sa, že nie ste prihlásený." %}<br>
+                {% translate "Bez prihlásenia nie je možné vytvoriť tréningový plán." %}<br>
+                <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
+            </p>
+        </div>
+
+    {% endif %}
+
+    {% if request.session.logged_in_user_id %}
+        <template class="exercise_template">
+            <div class="exercise" draggable="true">
+                <h3 class="title"></h3>
+                
+                <div class="labels">
+                    <p class="unit_amount"></p>
+                    <p>{% translate "Série" %}</p>
+                </div>
+
+                <button class="add_period">{% translate "Pridať sériu" %}</button>
+
+                <div class="periods_container">
+                    <div class="period_selection">
+                        <div class="reps_container">
+                            <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                            <input type="number" class="reps" value="0" min="0">
+                            <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                            <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
+                            <p class="time"></p>
+                        </div>
+
+                        <div class="sets_container">
+                            <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                            <input type="number" class="sets" value="1" min="1" max="100">
+                            <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template class="warm_up_template">
+            <div class="exercise warm_up" draggable="true" data-unit="seconds">
+                <h3 class="title">Warm Up</h3>
+                
+                <div class="timer_container">
+                    <div class="subtract_time">
+                        <i class='fa-solid fa-minus'></i> <!-- https://fontawesome.com/icons/minus -->
+                    </div>
+
+                    <div class="timer">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                class="progress_background"
+                            />
+                        </svg>
+
+                        <p class="countdown">5:00</p>
+                    </div>
+
+                    <div class="add_time">
+                        <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template class="period_selection_template">
+            <div class="period_selection">
+                <div class="reps_container">
+                    <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    <input type="number" class="reps" value="0" min="0">
+                    <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+
+                    <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
+                    <p class="time"></p>
+                </div>
+
+                <div class="sets_container">
+                    <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                    <input type="number" class="sets" value="1" min="1" max="100">
+                    <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                </div>
+            </div>
+        </template>
+
+        <template class="unit_select_menu_template">
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="unit_select_menu">
+                <input type="hidden" name="unit" value="reps">
+
+                <div class="select">
+                    <span>{% translate "Počet" %}</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list">
+                    <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>{% translate "Opakovaní" %}</span></div> <!-- https://fontawesome.com/icons/repeat -->
+                    <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>{% translate "Sekúnd" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
+                </div>
+            </div>
+        </template>
+
+    {% endif %}
+
+    <div class="sidebar">
+        <ul>
+            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i></a><span class="label">{% translate "Vytvoriť" %}</span></li> <!-- https://fontawesome.com/icons/plus -->
+            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i></a><span class="label">{% translate "Upraviť" %}</span></li> <!-- https://fontawesome.com/icons/pen -->
+        </ul>
+    </div>
+
+    <div class="first_section">
+        <div class="top">
+            <div class="new_training_plan" tabindex="0">
+                <div class="additional_info">
+                    <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
+
+                    <datalist id="title">
+                        <option value="{% translate 'Pull' %}">
+                        <option value="{% translate 'Push' %}">
+                        <option value="{% translate 'Legs' %}">
+
+                        <option value="{% translate 'Upper' %}">
+                        <option value="{% translate 'Lower' %}">
+                    </datalist>
+
+                    <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                    <div class="day_select_menu">
+                        <input type="hidden" name="day" value="not_selected">
+
+                        <div class="select">
+                            <span>{% translate "Nepriradiť deň" %}</span>
+                            <i class="fas fa-angle-down"></i>
+                        </div>
+
+                        <div class="options_list">
+                            <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="training_plan">
+                    <div class="drop_zone active">
+                        {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
+                        <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                    </div>
+                </div>
+
+                <button class="save">{% translate "Pridať tréningový plán" %}</button>
+            </div>
+
+            {% if training_plan|length > 0 %}
+                <div class="edit_training_plan hidden" tabindex="0">
+                    <script src="{% static 'app/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
+
+                    {% for one_exercise in training_plan %}
+                        <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+                    
+                    {% endfor %}
+
+                    <div class="additional_info">
+                        <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
+
+                        <datalist id="title">
+                            <option value="{% translate 'Pull' %}">
+                            <option value="{% translate 'Push' %}">
+                            <option value="{% translate 'Legs' %}">
+
+                            <option value="{% translate 'Upper' %}">
+                            <option value="{% translate 'Lower' %}">
+                        </datalist>
+
+                        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+                        <div class="day_select_menu">
+                            <input type="hidden" name="day" value="not_selected">
+
+                            <div class="select">
+                                <span>{% translate "Nepriradiť deň" %}</span>
+                                <i class="fas fa-angle-down"></i>
+                            </div>
+
+                            <div class="options_list">
+                                <div class="option" data-day="not_selected"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="1"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="2"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="3"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="4"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="5"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="6"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="training_plan">
+                        <div class="drop_zone">
+                            {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
+                            <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="save">{% translate "Uložiť zmeny" %}</button>
+                        <button class="delete">{% translate "Vymazať" %}</button>
+                    </div>
+                </div>
+                
+            {% endif %}
+        </div>
+
+        <div class="exercise_selection">
+            <div class="search_bar_menu">
+                <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                <input class="search_bar" placeholder="{% translate 'Nájsť cvik' %}" autocomplete="off">
+            </div>
+
+            <div class="exercises">
+                <div class="custom_exercise exercise" draggable="true">
+                    <p class="name"></p>
+                    <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
+                </div>
+
+                <div class="warm_up exercise" draggable="true">
+                    <p class="name"></p>
+                    <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+                </div>
+
+                {% for one_exercise in exercises %}
+                    <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0" data-requires_weight="{{ one_exercise.requires_weight }}">
+                        <p class="name">{{ one_exercise.exercise }}</p>
+
+                        <div class="weight_selection">
+                            <button class="increase_weight"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
+                            {% comment %} <input type="number" class="weight" value="0" min="-100" max="1000"> {% endcomment %}
+                            <p class="weight"><span>0</span><span>kg</span></p>
+                            <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
+                        </div>
+                    </div>
+        
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="second_section" style="display: none;">
+        {% comment %} <div class="training_plan_selection">
+            <div class="training_plan">
+                <p>Pull</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Push</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Legs</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Upper</p>
+            </div>
+
+            <div class="training_plan">
+                <p>Lower</p>
+            </div>
+        </div> {% endcomment %}
+
+        <div class="training_plan_selection">
+            {% for one_exercise in training_plan %}
+                <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+            
+            {% endfor %}
+
+            <template class="exercise_template">
+                <div class="exercise">
+                    <h3 class="title"></h3>
+                </div>
+            </template>
+
+            <div class="training_plan"></div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    {% if request.session.logged_in_user_id %}
+        <script src="{% url 'javascript_catalog_url' %}"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>
+        
+    {% endif %}
+{% endblock script %}

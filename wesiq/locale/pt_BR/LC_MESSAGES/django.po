@@ -1,0 +1,1566 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-02 10:27+0000\n"
+"PO-Revision-Date: 2026-04-02 11:33+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: app/forms.py:6 app/forms.py:12 app/forms.py:130
+msgid "Zadajte vaše meno"
+msgstr "Digite seu nome"
+
+#: app/forms.py:11 app/forms.py:129 app/forms.py:199
+msgid "Zadané meno je príliš dlhé"
+msgstr "O nome que você digitou é muito longo"
+
+#: app/forms.py:17 app/forms.py:23 app/forms.py:141
+msgid "Zadajte vaše priezvisko"
+msgstr "Digite seu sobrenome"
+
+#: app/forms.py:22 app/forms.py:140 app/forms.py:209
+msgid "Zadané priezvisko je príliš dlhé"
+msgstr "O sobrenome inserido é muito longo"
+
+#: app/forms.py:28 app/forms.py:34 app/forms.py:89 app/forms.py:95
+#: app/forms.py:152 app/forms.py:337 app/forms.py:343
+msgid "Zadajte váš e-mail"
+msgstr "Digite seu e-mail"
+
+#: app/forms.py:33 app/forms.py:94 app/forms.py:151 app/forms.py:219
+#: app/forms.py:342
+msgid "Zadaný e-mail je príliš dlhý"
+msgstr "O endereço de e-mail que você digitou é muito longo"
+
+#: app/forms.py:40 app/templates/app/homepage.html:615
+#: app/templates/app/homepage.html:618 app/templates/app/homepage.html:623
+msgid "Otázka"
+msgstr "Pergunta"
+
+#: app/forms.py:41 app/templates/app/homepage.html:624
+msgid "Návrh na zlepšenie"
+msgstr "Sugestão de melhoria"
+
+#: app/forms.py:42 app/templates/app/homepage.html:625
+msgid "Nahlásenie chyby"
+msgstr "Informar um erro"
+
+#: app/forms.py:49 app/forms.py:55
+msgid "Napíšte správu"
+msgstr "Escreva uma mensagem"
+
+#: app/forms.py:54
+msgid "Vaša správa je príliš dlhá"
+msgstr "Sua mensagem é muito longa"
+
+#: app/forms.py:74
+msgid "Zanechajte nám hodnotenie"
+msgstr "Deixe-nos uma avaliação"
+
+#: app/forms.py:79
+msgid "Vaša recenzia je príliš dlhá"
+msgstr "Sua avaliação está muito longa"
+
+#: app/forms.py:100 app/forms.py:104
+msgid "Zadajte vaše heslo"
+msgstr "Digite sua senha"
+
+#: app/forms.py:110 app/forms.py:118 app/forms.py:167 app/forms.py:175
+msgid "Vytvorte heslo"
+msgstr "Criar uma senha"
+
+#: app/forms.py:116 app/forms.py:173 app/forms.py:186
+msgid "Zadané heslo je príliš krátke"
+msgstr "A senha que você digitou é muito curta"
+
+#: app/forms.py:117 app/forms.py:174 app/forms.py:187
+msgid "Zadané heslo je príliš dlhé"
+msgstr "A senha que você digitou é muito longa"
+
+#: app/forms.py:124
+msgid "Meno"
+msgstr "Nome"
+
+#: app/forms.py:135
+msgid "Priezvisko"
+msgstr "Sobrenome"
+
+#: app/forms.py:146
+msgid "E-mail"
+msgstr "E-mail"
+
+#: app/forms.py:157
+msgid "Telefónne číslo"
+msgstr "Número de telefone"
+
+#: app/forms.py:162 app/forms.py:229
+msgid "Zadané telefónne číslo je príliš dlhé"
+msgstr "O número de telefone que você digitou é muito longo"
+
+#: app/forms.py:180
+msgid "Overte heslo"
+msgstr "Verifique a senha"
+
+#: app/forms.py:188
+msgid "Znovu zadajte heslo"
+msgstr "Digite sua senha novamente"
+
+#: app/forms.py:194
+msgid "Zmeniť meno"
+msgstr "Alterar nome"
+
+#: app/forms.py:204
+msgid "Zmeniť priezvisko"
+msgstr "Alterar sobrenome"
+
+#: app/forms.py:214
+msgid "Zmeniť e-mail"
+msgstr "Alterar e-mail"
+
+#: app/forms.py:224
+msgid "Zmeniť telefónne číslo"
+msgstr "Alterar número de telefone"
+
+#: app/forms.py:251 app/templates/app/manage_training_plans.html:140
+#: app/templates/app/manage_training_plans.html:194
+msgid "Názov"
+msgstr "Nome"
+
+#: app/forms.py:256
+msgid "Zadaný názov je príliš dlhý"
+msgstr "O nome que você digitou é muito longo"
+
+#: app/forms.py:257
+msgid "Zadajte názov"
+msgstr "Digite um nome"
+
+#: app/forms.py:262
+msgid "Článok"
+msgstr "Artigo"
+
+#: app/forms.py:266
+msgid "Obsah článku nesmie byť prázdny"
+msgstr "O conteúdo do artigo não deve estar vazio"
+
+#: app/forms.py:273
+msgid "Kategória podľa určenia"
+msgstr "Categoria por destino"
+
+#: app/forms.py:274 app/templates/app/blog.html:69
+msgid "Statické prvky"
+msgstr "Elementos estáticos"
+
+#: app/forms.py:275
+msgid "Dynamický trik"
+msgstr "Truque dinâmico"
+
+#: app/forms.py:276
+msgid "Izotonický cvik"
+msgstr "Exercício isotônico"
+
+#: app/forms.py:277 app/templates/app/blog.html:72
+msgid "O rovnováhe"
+msgstr "Sobre equilíbrio"
+
+#: app/forms.py:278 app/templates/app/blog.html:73
+msgid "O flexibilite"
+msgstr "Sobre flexibilidade"
+
+#: app/forms.py:283
+msgid "Vyberte kategóriu podľa určenia"
+msgstr "Selecione a categoria por destino"
+
+#: app/forms.py:290
+msgid "Kategória podľa pohybu"
+msgstr "Categoria por movimento"
+
+#: app/forms.py:291 app/templates/app/blog.html:76
+msgid "Ťah"
+msgstr "Puxada"
+
+#: app/forms.py:292 app/templates/app/blog.html:75
+msgid "Tlak"
+msgstr "Empurre"
+
+#: app/forms.py:293 app/templates/app/blog.html:77
+msgid "Nohy"
+msgstr "Pernas"
+
+#: app/forms.py:298
+msgid "Vyberte kategóriu podľa pohybu"
+msgstr "Selecione categoria por movimento"
+
+#: app/forms.py:305
+msgid "Kategória podľa obtiažnosti"
+msgstr "Categoria por dificuldade"
+
+#: app/forms.py:306 app/templates/app/blog.html:79
+msgid "Pre začiatočníkov"
+msgstr "Para iniciantes"
+
+#: app/forms.py:307 app/templates/app/blog.html:80
+msgid "Pre stredne pokročilých"
+msgstr "Para intermediários"
+
+#: app/forms.py:308 app/templates/app/blog.html:81
+msgid "Pre pokročilých"
+msgstr "Para o avançado"
+
+#: app/forms.py:309 app/templates/app/blog.html:82
+msgid "Pre profesionálov"
+msgstr "Para profissionais"
+
+#: app/forms.py:314
+msgid "Vyberte kategóriu podľa obtiažnosti"
+msgstr "Selecione uma categoria por dificuldade"
+
+#: app/forms.py:319
+msgid "Link"
+msgstr "Link"
+
+#: app/forms.py:324
+msgid "Zadaný link je príliš dlhý"
+msgstr "O link inserido é muito longo."
+
+#: app/forms.py:325
+msgid "Zadajte link"
+msgstr "Digite o link"
+
+#: app/forms.py:349
+msgid "Napísať komentár"
+msgstr "Escreva um comentário"
+
+#: app/forms.py:354
+msgid "Zadaný komentár je príliš dlhý"
+msgstr "O comentário que você digitou é muito longo"
+
+#: app/forms.py:355
+msgid "Zanechajte komentár"
+msgstr "Deixe um comentário"
+
+#: app/tasks.py:22 app/tasks.py:26 app/views.py:92 app/views.py:96
+#, python-format
+msgid "Dobrý deň %(first_name)s %(last_name)s"
+msgstr "Olá %(first_name)s %(last_name)s"
+
+#: app/tasks.py:30 app/views.py:100
+msgid "Tím Wesiq."
+msgstr "Equipe Wesiq."
+
+#: app/tasks.py:93 app/views.py:898
+msgid "Odstránenie účtu"
+msgstr "Exclusão de conta"
+
+#: app/tasks.py:94
+#, python-format
+msgid ""
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/registracia/\n"
+"\n"
+"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+"Tím Wesiq."
+msgstr ""
+"gostaríamos de informar que sua conta de usuário foi excluída permanentemente. Não é mais possível acessar sua conta original.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/registro/\n"
+"\n"
+"Caso deseje retornar no futuro, teremos prazer em criar uma nova conta para você.\n"
+"Equipe Wesiq."
+
+#: app/tasks.py:95
+msgid ""
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+"prihlásenie do pôvodného účtu už nie je možné."
+msgstr ""
+"gostaríamos de informar que sua conta de usuário foi excluída "
+"permanentemente. Não é mais possível acessar sua conta original."
+
+#: app/tasks.py:96
+#, python-format
+msgid ""
+"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a "
+"href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
+"účet\" target=\"_blank\">vytvoríte nový</a>."
+msgstr ""
+"Se desejar retornar no futuro, teremos o maior prazer em <a "
+"href=\"http://127.0.0.1:8000/%(language)s/registro/\" title=\"Crie uma "
+"conta\" target=\"_blank\">criar</a> uma nova conta."
+
+#: app/templates/app/articles.html:29 app/templates/app/blog.html:147
+msgid "Zatiaľ žiadne hodnotenia"
+msgstr "Ainda não há avaliações"
+
+#: app/templates/app/articles.html:32 app/templates/app/blog.html:150
+msgid "Priemerné hodnotenie"
+msgstr "Avaliação média"
+
+#: app/templates/app/articles.html:101
+msgid "Zatiaľ&nbsp;žiadne&nbsp;komentáre."
+msgstr "Ainda&nbsp;não&nbsp;há&nbsp;comentários."
+
+#: app/templates/app/articles.html:101
+msgid "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!"
+msgstr "Seja&nbsp;o&nbsp;primeiro&nbsp;a&nbsp;iniciar&nbsp;a&nbsp;discussão!"
+
+#: app/templates/app/articles.html:121 app/templates/app/articles.html:204
+msgid "Zobraziť profil"
+msgstr "Ver perfil"
+
+#: app/templates/app/articles.html:128 app/templates/app/articles.html:211
+msgid "Odpovedať..."
+msgstr "Responder..."
+
+#: app/templates/app/articles.html:133 app/templates/app/articles.html:216
+msgid "Páči sa mi..."
+msgstr "Eu gosto..."
+
+#: app/templates/app/articles.html:150 app/templates/app/articles.html:233
+msgid "Nahlásiť..."
+msgstr "Relatório..."
+
+#: app/templates/app/articles.html:154 app/templates/app/articles.html:237
+#: app/templates/app/blog.html:187
+msgid "Dátum zverejnenia"
+msgstr "Data de publicação"
+
+#: app/templates/app/blog.html:5 templates/base.html:158
+msgid "Blog"
+msgstr "Blogue"
+
+#: app/templates/app/blog.html:12 app/templates/app/write_article.html:5
+#: app/templates/app/write_article.html:15
+#: app/templates/app/write_article.html:36
+msgid "Pridať článok"
+msgstr "Adicione um artigo"
+
+#: app/templates/app/blog.html:18
+#, python-format
+msgid "Našiel sa <span>%(num_articles)s</span> článok."
+msgstr "<span>%(num_articles)s</span> artigo encontrado."
+
+#: app/templates/app/blog.html:21
+#, python-format
+msgid "Našli sa <span>%(num_articles)s</span> články."
+msgstr "<span>%(num_articles)s</span> artigos encontrados."
+
+#: app/templates/app/blog.html:24
+#, python-format
+msgid "Našlo sa <span>%(num_articles)s</span> článkov."
+msgstr "<span>%(num_articles)s</span> artigos encontrados."
+
+#: app/templates/app/blog.html:33
+msgid "Nájsť článok"
+msgstr "Encontre um artigo"
+
+#: app/templates/app/blog.html:39 app/templates/app/blog.html:58
+#: app/templates/app/homepage.html:453
+msgid "Obnoviť predvolené filtre"
+msgstr "Restaurar filtros padrão"
+
+#: app/templates/app/blog.html:44 app/templates/app/blog.html:49
+msgid "Najnovšie články"
+msgstr "Artigos mais recentes"
+
+#: app/templates/app/blog.html:50
+msgid "Populárne články"
+msgstr "Artigos populares"
+
+#: app/templates/app/blog.html:51
+msgid "Najlepšie hodnotené"
+msgstr "Melhor avaliado"
+
+#: app/templates/app/blog.html:52
+msgid "Podľa abecedy (A-Z)"
+msgstr "Em ordem alfabética (A-Z)"
+
+#: app/templates/app/blog.html:53
+msgid "Podľa abecedy (Z-A)"
+msgstr "Em ordem alfabética (Z-A)"
+
+#: app/templates/app/blog.html:63 app/templates/app/blog.html:68
+#: app/templates/app/homepage.html:458
+msgid "Všetky kategórie"
+msgstr "Todas as categorias"
+
+#: app/templates/app/blog.html:70
+msgid "Dynamické triky"
+msgstr "Truques dinâmicos"
+
+#: app/templates/app/blog.html:71
+msgid "Izotonické cviky"
+msgstr "Exercícios isotônicos"
+
+#: app/templates/app/blog.html:90
+msgid ""
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;články."
+msgstr "Desculpe!<br>Nenhum&nbsp;artigo&nbsp;encontrado."
+
+#: app/templates/app/blog.html:122
+msgid "Tento článok pridal"
+msgstr "Este artigo foi adicionado por"
+
+#: app/templates/app/blog.html:127
+msgid "Zdielať"
+msgstr "Compartilhar"
+
+#: app/templates/app/blog.html:137
+msgid "Zobraziť"
+msgstr "Visualizar"
+
+#: app/templates/app/blog.html:168
+msgid "Kategória"
+msgstr "Categoria"
+
+#: app/templates/app/blog.html:181
+msgid "unikátnych návštevníkov"
+msgstr "visitantes únicos"
+
+#: app/templates/app/blog.html:204
+msgid "Odoberať"
+msgstr "Inscrever-se"
+
+#: app/templates/app/blog.html:204
+msgid "Dostávať upozornenia o nových článkoch"
+msgstr "Receba notificações sobre novos artigos"
+
+#: app/templates/app/edit_account.html:5 templates/base.html:94
+#: templates/base.html:110
+msgid "Môj účet"
+msgstr "Minha conta"
+
+#: app/templates/app/edit_account.html:16
+msgid "Môj&nbsp;účet"
+msgstr "Minha&nbsp;conta"
+
+#: app/templates/app/edit_account.html:18
+#: app/templates/app/edit_review.html:18
+#: app/templates/app/homepage.html:82 app/templates/app/homepage.html:145
+#: app/templates/app/login.html:23
+#: app/templates/app/password_reset.html:40
+#: app/templates/app/registration.html:49
+#: app/templates/app/write_article.html:17
+msgid "Späť na úvodnú stránku"
+msgstr "Voltar à página inicial"
+
+#: app/templates/app/edit_account.html:34
+msgid "Nahrať obrázok"
+msgstr "Carregar uma foto"
+
+#: app/templates/app/edit_account.html:40
+msgid "Odstrániť obrázok"
+msgstr "Excluir imagem"
+
+#: app/templates/app/edit_account.html:66
+#: app/templates/app/edit_review.html:68
+#: app/templates/app/manage_training_plans.html:236
+msgid "Uložiť zmeny"
+msgstr "Salvar alterações"
+
+#: app/templates/app/edit_account.html:69
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+msgid "Zabudli ste heslo?"
+msgstr "Esqueceu sua senha?"
+
+#: app/templates/app/edit_account.html:69
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/password_reset.html:62
+msgid "Poslať overovací kód"
+msgstr "Enviar código de verificação"
+
+#: app/templates/app/edit_account.html:69
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/password_reset.html:59
+msgid "Zmeniť heslo"
+msgstr "Alterar a senha"
+
+#: app/templates/app/edit_account.html:73
+msgid "Odstrániť účet"
+msgstr "Excluir conta"
+
+#: app/templates/app/edit_account.html:80
+msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
+msgstr "Para fazer alterações na sua conta, primeiro você precisa"
+
+#: app/templates/app/edit_account.html:80
+#: app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:96 app/templates/app/homepage.html:190
+#: app/templates/app/login.html:33
+#: app/templates/app/manage_training_plans.html:23
+#: app/templates/app/password_reset.html:71
+#: app/templates/app/registration.html:78
+#: app/templates/app/training_session.html:58 templates/base.html:117
+msgid "Prihlásiť sa"
+msgstr "Conecte-se"
+
+#: app/templates/app/edit_account.html:80
+#: app/templates/app/edit_review.html:80
+msgid "prihlásiť"
+msgstr "conectar-se"
+
+#: app/templates/app/edit_account.html:80
+#: app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:99 app/templates/app/login.html:36
+msgid "alebo"
+msgstr "ou"
+
+#: app/templates/app/edit_account.html:80
+#: app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:116 app/templates/app/homepage.html:187
+#: app/templates/app/login.html:53 app/templates/app/registration.html:75
+msgid "Vytvoriť účet"
+msgstr "Crie uma conta"
+
+#: app/templates/app/edit_account.html:80
+#: app/templates/app/edit_review.html:80
+msgid "zaregistrovať"
+msgstr "registrar"
+
+#: app/templates/app/edit_review.html:5
+msgid "Moje hodnotenie"
+msgstr "Minha avaliação"
+
+#: app/templates/app/edit_review.html:16
+msgid "Moje&nbsp;hodnotenie"
+msgstr "Minha&nbsp;avaliação"
+
+#: app/templates/app/edit_review.html:42
+#: app/templates/app/homepage.html:510
+msgid "upravené"
+msgstr "ajustado"
+
+#: app/templates/app/edit_review.html:72
+msgid "Odstrániť recenziu"
+msgstr "Excluir avaliação"
+
+#: app/templates/app/edit_review.html:80
+msgid "Pre vykonávanie zmien vašej recenzie sa musíte najprv"
+msgstr "Para fazer alterações na sua avaliação, primeiro você precisa fazer"
+
+#: app/templates/app/homepage.html:5
+msgid "Hlavná stránka"
+msgstr "Página principal"
+
+#: app/templates/app/homepage.html:18
+msgid "KONTAKT"
+msgstr "CONTATO"
+
+#: app/templates/app/homepage.html:27 app/templates/app/homepage.html:355
+#: app/templates/app/homepage.html:377
+msgid "Zatiaľ žiadne recenzie"
+msgstr "Ainda não há comentários"
+
+#: app/templates/app/homepage.html:30
+#, python-format
+msgid ""
+"\n"
+"                    Na základe %(amount)s recenzie\n"
+"\n"
+"                "
+msgid_plural ""
+"\n"
+"                    Na základe %(amount)s recenzií\n"
+"\n"
+"                "
+msgstr[0] ""
+"\n"
+"Com base em %(amount)s avaliação"
+msgstr[1] ""
+"\n"
+"Com base em %(amount)s avaliações"
+
+#: app/templates/app/homepage.html:59
+msgid "Hľadať"
+msgstr "Procurar"
+
+#: app/templates/app/homepage.html:66
+msgid "Wesiq"
+msgstr "Wesiq"
+
+#: app/templates/app/homepage.html:70
+msgid "Prihlásiť"
+msgstr "Conecte-se"
+
+#: app/templates/app/homepage.html:71
+msgid "Zaregistrovať"
+msgstr "Cadastre-se"
+
+#: app/templates/app/homepage.html:80 app/templates/app/login.html:5
+#: app/templates/app/login.html:21 templates/base.html:156
+msgid "Prihlásenie"
+msgstr "Conecte-se"
+
+#: app/templates/app/homepage.html:92 app/templates/app/homepage.html:175
+#: app/templates/app/login.html:29
+#: app/templates/app/password_reset.html:56
+#: app/templates/app/registration.html:65
+msgid "Zobraziť heslo"
+msgstr "Mostrar senha"
+
+#: app/templates/app/homepage.html:116 app/templates/app/login.html:53
+msgid "Ešte nemáte účet?"
+msgstr "Ainda não tem uma conta?"
+
+#: app/templates/app/homepage.html:143
+#: app/templates/app/registration.html:5
+#: app/templates/app/registration.html:47 templates/base.html:157
+msgid "Registrácia"
+msgstr "Cadastro"
+
+#: app/templates/app/homepage.html:173
+#: app/templates/app/password_reset.html:54
+#: app/templates/app/registration.html:63
+msgid "Navrhnúť heslo"
+msgstr "Sugira uma senha"
+
+#: app/templates/app/homepage.html:176
+#: app/templates/app/registration.html:66
+msgid "Skopírovať"
+msgstr "Cópia"
+
+#: app/templates/app/homepage.html:182
+#: app/templates/app/registration.html:71
+msgid "Prilepiť"
+msgstr "Colar"
+
+#: app/templates/app/homepage.html:190
+#: app/templates/app/registration.html:78
+msgid "Už máte účet?"
+msgstr "Já tem uma conta?"
+
+#: app/templates/app/homepage.html:318
+msgid "Čo si myslia ostatní?"
+msgstr "O que os outros pensam?"
+
+#: app/templates/app/homepage.html:330
+msgid "recenzií"
+msgstr "comentários"
+
+#: app/templates/app/homepage.html:333
+msgid "recenzia"
+msgstr "avaliação"
+
+#: app/templates/app/homepage.html:336
+msgid "recenzie"
+msgstr "comentários"
+
+#: app/templates/app/homepage.html:358
+#, python-format
+msgid ""
+"\n"
+"                                Na základe %(amount)s recenzie\n"
+"\n"
+"                            "
+msgid_plural ""
+"\n"
+"                                Na základe %(amount)s recenzií\n"
+"\n"
+"                            "
+msgstr[0] ""
+"\n"
+"Com base em %(amount)s avaliação"
+msgstr[1] ""
+"\n"
+"Com base em %(amount)s avaliações"
+
+#: app/templates/app/homepage.html:380
+#, python-format
+msgid ""
+"\n"
+"                                        Na základe %(amount)s recenzie\n"
+"                                        \n"
+"                                    "
+msgid_plural ""
+"\n"
+"                                        Na základe %(amount)s recenzií\n"
+"\n"
+"                                    "
+msgstr[0] ""
+"\n"
+"Com base em %(amount)s avaliação"
+msgstr[1] ""
+"\n"
+"Com base em %(amount)s avaliações"
+
+#: app/templates/app/homepage.html:413
+msgid "Našla sa 1 recenzia."
+msgstr "1 avaliação encontrada."
+
+#: app/templates/app/homepage.html:417
+#, python-format
+msgid ""
+"\n"
+"                        Našli sa <span>%(amount)s</span> recenzie.\n"
+"                    "
+msgstr ""
+"\n"
+"Encontramos <span>%(amount)s</span> avaliações."
+
+#: app/templates/app/homepage.html:424
+#, python-format
+msgid ""
+"\n"
+"                        Našlo sa <span>%(amount)s</span> recenzií.\n"
+"                    "
+msgstr ""
+"\n"
+"Encontramos <span>%(amount)s</span> avaliações."
+
+#: app/templates/app/homepage.html:440 app/templates/app/homepage.html:445
+msgid "Najnovšie recenzie"
+msgstr "Últimas avaliações"
+
+#: app/templates/app/homepage.html:446
+msgid "Najstaršie recenzie"
+msgstr "Críticas mais antigas"
+
+#: app/templates/app/homepage.html:447
+msgid "Najlepšie hodnotenie"
+msgstr "Melhor classificação"
+
+#: app/templates/app/homepage.html:448
+msgid "Najhoršie hodnotenie"
+msgstr "Pior classificação"
+
+#: app/templates/app/homepage.html:463
+msgid "Všetky recenzie"
+msgstr "Todas as avaliações"
+
+#: app/templates/app/homepage.html:476
+msgid ""
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;recenzie."
+msgstr "Desculpe!<br>Nenhuma&nbsp;avaliação&nbsp;encontrada."
+
+#: app/templates/app/homepage.html:500
+msgid "Neexistujúci účet"
+msgstr "Conta inexistente"
+
+#: app/templates/app/homepage.html:533
+#: app/templates/app/manage_training_plans.html:132
+msgid "Upraviť"
+msgstr "Editar"
+
+#: app/templates/app/homepage.html:578
+msgid "Uverejniť"
+msgstr "Publicar"
+
+#: app/templates/app/homepage.html:607
+msgid "Kontaktujte nás"
+msgstr "Contate-nos"
+
+#: app/templates/app/homepage.html:633
+msgid "Nie je vybraný žiaden súbor."
+msgstr "Nenhum arquivo está selecionado."
+
+#: app/templates/app/homepage.html:636
+msgid "Vyberte prílohu z vašich súborov"
+msgstr "Selecione um anexo dos seus arquivos"
+
+#: app/templates/app/homepage.html:637
+msgid "Vybrať prílohu"
+msgstr "Selecione o anexo"
+
+#: app/templates/app/homepage.html:646
+msgid "Odoslať správu"
+msgstr "Enviar mensagem"
+
+#: app/templates/app/homepage.html:656
+msgid "Podporte nás"
+msgstr "Apoie-nos"
+
+#: app/templates/app/homepage.html:664
+msgid "Číslo karty"
+msgstr "Número do cartão"
+
+#: app/templates/app/homepage.html:670
+msgid "Držiteľ karty"
+msgstr "Titular do cartão"
+
+#: app/templates/app/homepage.html:675
+msgid "Platnosť"
+msgstr "Validade"
+
+#: app/templates/app/homepage.html:684
+msgid "CVC"
+msgstr "CVC"
+
+#: app/templates/app/login.html:13
+msgid "REGISTRÁCIA"
+msgstr "REGISTRO"
+
+#: app/templates/app/manage_training_plans.html:5
+#: app/templates/app/training_session.html:32
+#: app/templates/app/training_session.html:35
+#: app/templates/app/training_session.html:64
+msgid "Moje tréningové plány"
+msgstr "Meus planos de treinamento"
+
+#: app/templates/app/manage_training_plans.html:13
+msgid "Aktivita"
+msgstr "Atividade"
+
+#: app/templates/app/manage_training_plans.html:21
+#: app/templates/app/training_session.html:56
+msgid "Zdá sa, že nie ste prihlásený."
+msgstr "Parece que você não está conectado."
+
+#: app/templates/app/manage_training_plans.html:22
+msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
+msgstr "Não é possível criar um plano de treinamento sem fazer login."
+
+#: app/templates/app/manage_training_plans.html:23
+#: app/templates/app/training_session.html:58
+msgid "Prihláste sa."
+msgstr "Conecte-se."
+
+#: app/templates/app/manage_training_plans.html:36
+msgid "Série"
+msgstr "Séries"
+
+#: app/templates/app/manage_training_plans.html:39
+msgid "Pridať sériu"
+msgstr "Adicionar série"
+
+#: app/templates/app/manage_training_plans.html:48
+#: app/templates/app/manage_training_plans.html:98
+msgid "Do&nbsp;zlyhania"
+msgstr "Até&nbsp;o&nbsp;fracasso"
+
+#: app/templates/app/manage_training_plans.html:116
+msgid "Počet"
+msgstr "Quantidade"
+
+#: app/templates/app/manage_training_plans.html:121
+msgid "Opakovaní"
+msgstr "Repetições"
+
+#: app/templates/app/manage_training_plans.html:122
+msgid "Sekúnd"
+msgstr "Segundos"
+
+#: app/templates/app/manage_training_plans.html:131
+msgid "Vytvoriť"
+msgstr "Criar"
+
+#: app/templates/app/manage_training_plans.html:143
+#: app/templates/app/manage_training_plans.html:197
+msgid "Pull"
+msgstr "Puxada"
+
+#: app/templates/app/manage_training_plans.html:144
+#: app/templates/app/manage_training_plans.html:198
+msgid "Push"
+msgstr "Empurre"
+
+#: app/templates/app/manage_training_plans.html:145
+#: app/templates/app/manage_training_plans.html:199
+msgid "Legs"
+msgstr "Pernas"
+
+#: app/templates/app/manage_training_plans.html:147
+#: app/templates/app/manage_training_plans.html:201
+msgid "Upper"
+msgstr "Superior"
+
+#: app/templates/app/manage_training_plans.html:148
+#: app/templates/app/manage_training_plans.html:202
+msgid "Lower"
+msgstr "Inferior"
+
+#: app/templates/app/manage_training_plans.html:156
+#: app/templates/app/manage_training_plans.html:161
+#: app/templates/app/manage_training_plans.html:210
+#: app/templates/app/manage_training_plans.html:215
+msgid "Nepriradiť deň"
+msgstr "Não atribua um dia"
+
+#: app/templates/app/manage_training_plans.html:162
+#: app/templates/app/manage_training_plans.html:216
+msgid "PO"
+msgstr "2f"
+
+#: app/templates/app/manage_training_plans.html:163
+#: app/templates/app/manage_training_plans.html:217
+msgid "UT"
+msgstr "3f"
+
+#: app/templates/app/manage_training_plans.html:164
+#: app/templates/app/manage_training_plans.html:218
+msgid "ST"
+msgstr "4f"
+
+#: app/templates/app/manage_training_plans.html:165
+#: app/templates/app/manage_training_plans.html:219
+msgid "ŠT"
+msgstr "5f"
+
+#: app/templates/app/manage_training_plans.html:166
+#: app/templates/app/manage_training_plans.html:220
+msgid "PI"
+msgstr "6f"
+
+#: app/templates/app/manage_training_plans.html:167
+#: app/templates/app/manage_training_plans.html:221
+msgid "SO"
+msgstr "SÁ"
+
+#: app/templates/app/manage_training_plans.html:168
+#: app/templates/app/manage_training_plans.html:222
+msgid "NE"
+msgstr "DO"
+
+#: app/templates/app/manage_training_plans.html:181
+msgid "Pridať tréningový plán"
+msgstr "Adicione um plano de treinamento"
+
+#: app/templates/app/manage_training_plans.html:237
+msgid "Vymazať"
+msgstr "Excluir"
+
+#: app/templates/app/manage_training_plans.html:248
+msgid "Nájsť cvik"
+msgstr "Encontre um exercício"
+
+#: app/templates/app/password_reset.html:5
+#: app/templates/app/password_reset.html:16 app/views.py:260
+#: app/views.py:698 app/views.py:768 app/views.py:978
+msgid "Obnova hesla"
+msgstr "Recuperação de senha"
+
+#: app/templates/app/password_reset.html:62
+msgid "Neprišiel vám overovací kód?"
+msgstr "Você não recebeu um código de verificação?"
+
+#: app/templates/app/password_reset.html:62
+msgid "Skúsiť znovu"
+msgstr "Tente novamente"
+
+#: app/templates/app/password_reset.html:71
+msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
+msgstr "O código de verificação para alterar a senha da sua conta expirou."
+
+#: app/templates/app/password_reset.html:71
+msgid "Na stránke s"
+msgstr "Na página com"
+
+#: app/templates/app/password_reset.html:71
+msgid "prihlásením"
+msgstr "login"
+
+#: app/templates/app/password_reset.html:71
+msgid "požiadajte o nový."
+msgstr "solicite um novo."
+
+#: app/templates/app/registration.html:39
+msgid "PRIHLÁSENIE"
+msgstr "CONECTE-SE"
+
+#: app/templates/app/training_session.html:5
+msgid "Tréning"
+msgstr "Treinamento"
+
+#: app/templates/app/training_session.html:57
+msgid "Bez prihlásenia nie je možné zaznamenať vašu aktivitu."
+msgstr "Sem fazer login, sua atividade não poderá ser registrada."
+
+#: app/templates/app/training_session.html:63
+msgid "Zatiaľ nemáte žiaden tréningový plán."
+msgstr "Você ainda não tem um plano de treinamento."
+
+#: app/templates/app/training_session.html:64
+msgid "Vytvorte si prvý."
+msgstr "Crie o seu primeiro."
+
+#: app/templates/app/training_session.html:128
+#: app/templates/app/training_session.html:141
+msgid "Tréningový plán"
+msgstr "Plano de treinamento"
+
+#: app/templates/app/training_session.html:129
+msgid "Začať tréning"
+msgstr "Comece a treinar"
+
+#: app/templates/app/training_session.html:142
+msgid "Dokončiť tréning"
+msgstr "Conclua o treinamento"
+
+#: app/templates/app/training_session.html:200
+msgid "priemer&nbsp;/ 7&nbsp;dní"
+msgstr "média&nbsp;/ 7&nbsp;dias"
+
+#: app/templates/app/training_session.html:214
+msgid "počet&nbsp;/ 7&nbsp;dní"
+msgstr "número&nbsp;/ 7&nbsp;dias"
+
+#: app/templates/app/training_session.html:238
+msgid "posledná aktivita"
+msgstr "última atividade"
+
+#: app/templates/app/training_session.html:238
+#: app/templates/app/training_session.html:254
+msgid "žiadna"
+msgstr "nenhum"
+
+#: app/templates/app/training_session.html:254
+msgid "najdlhšia aktivita"
+msgstr "atividade mais longa"
+
+#: app/templates/app/training_session.html:269
+#: app/templates/app/training_session.html:273
+msgid "Graf sa nepodarilo načítať."
+msgstr "O gráfico não pôde ser carregado."
+
+#: app/templates/app/write_article.html:29
+msgid "Navrhnúť link"
+msgstr "Sugira um link"
+
+#: app/templates/app/write_article.html:31
+msgid "URL adresa vášho článku (napr. front-lever)"
+msgstr "O URL do seu artigo (p. ex. front-lever)"
+
+#: app/urls.py:7
+msgid "domov/"
+msgstr "lar/"
+
+#: app/urls.py:8
+msgid "prihlasenie/"
+msgstr "conecte-se/"
+
+#: app/urls.py:9
+msgid "obnova-hesla/"
+msgstr "recuperacao-de-senha/"
+
+#: app/urls.py:10
+msgid "odhlasenie/"
+msgstr "sair/"
+
+#: app/urls.py:11
+msgid "registracia/"
+msgstr "registro/"
+
+#: app/urls.py:12
+msgid "moj-ucet/"
+msgstr "minha-conta/"
+
+#: app/urls.py:13
+msgid "moje-hodnotenie/"
+msgstr "minha-avaliacao/"
+
+#: app/urls.py:14
+msgid "pridat-clanok/"
+msgstr "adicione-um-artigo/"
+
+#: app/urls.py:15
+msgid "trening/"
+msgstr "treinamento/"
+
+#: app/urls.py:16
+msgid "moje-treningove-plany/"
+msgstr "meus-planos-de-treinamento/"
+
+#: app/urls.py:20
+msgid "platba-uspesna/"
+msgstr "pagamento-bem-sucedido/"
+
+#: app/views.py:110
+msgid "Ďakujeme za Vašu podporu!"
+msgstr "Obrigado pelo seu apoio!"
+
+#: app/views.py:209 app/views.py:670
+msgid "Prihlásenie do účtu"
+msgstr "Login da conta"
+
+#: app/views.py:210 app/views.py:671
+#, python-format
+msgid ""
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
+"\n"
+"Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
+"Tím Wesiq."
+msgstr ""
+"sua conta foi conectada. Gostaríamos de informar que, caso não tenha feito login durante esse período, seus dados podem estar em risco. Recomendamos que você altere sua senha imediatamente ou entre em contato conosco. A segurança dos seus dados é nossa prioridade.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/minha-conta?password-reset=true\n"
+"\n"
+"Se você se cadastrou, ignore este e-mail.\n"
+"Equipe Wesiq."
+
+#: app/views.py:211 app/views.py:672
+#, python-format
+msgid ""
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a "
+"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\" "
+"title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
+msgstr ""
+"sua conta foi conectada. Gostaríamos de informar que, caso não tenha feito "
+"login durante esse período, seus dados podem estar em risco. Recomendamos "
+"que você altere sua senha imediatamente clicando <a "
+"href=\"http://127.0.0.1:8000/%(language)s/minha-conta?password-reset=true\" "
+"title=\"Obnoviť heslo\" target=\"_blank\">neste</a> link ou entrando em "
+"contato conosco. A segurança dos seus dados é nossa prioridade."
+
+#: app/views.py:212 app/views.py:673
+msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
+msgstr "Se você se cadastrou, ignore este e-mail."
+
+#: app/views.py:215 app/views.py:246 app/views.py:676
+#, python-format
+msgid ""
+"Úspešne prihlásený ako\n"
+"%(first_name)s %(last_name)s"
+msgstr "Login efetuado com sucesso como %(first_name)s %(last_name)s"
+
+#: app/views.py:220 app/views.py:224 app/views.py:681 app/views.py:685
+msgid "Nesprávne prihlasovacie údaje"
+msgstr "Dados de login incorretos"
+
+#: app/views.py:240
+msgid "Úspešná registrácia"
+msgstr "Registro bem-sucedido"
+
+#: app/views.py:241
+#, python-format
+msgid ""
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
+"\n"
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"Tím Wesiq."
+msgstr ""
+"temos ótimas notícias para você! Seu endereço de e-mail foi verificado com sucesso e sua conta agora está totalmente ativa.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/minha-conta/\n"
+"\n"
+"Estamos felizes por você ter se juntado à nossa comunidade. Agora você pode usar todos os recursos dos nossos serviços.\n"
+"Equipe Wesiq."
+
+#: app/views.py:242
+#, python-format
+msgid ""
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
+" účet je odteraz plne aktívny. Kliknite na <a "
+"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
+"target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
+msgstr ""
+"temos ótimas notícias para você! Seu endereço de e-mail foi verificado com "
+"sucesso e sua conta agora está totalmente ativa. Clique <a "
+"href=\"http://127.0.0.1:8000/%(language)s/minha-conta/\" title=\"Minha "
+"conta\" target=\"_blank\">neste</a> link para visualizar sua conta."
+
+#: app/views.py:243
+msgid ""
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
+"všetky funkcie našich služieb."
+msgstr ""
+"Estamos felizes por você ter se juntado à nossa comunidade. Agora você pode "
+"usar todos os recursos dos nossos serviços."
+
+#: app/views.py:261 app/views.py:699 app/views.py:769 app/views.py:979
+#, python-format
+msgid ""
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
+"\n"
+"Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
+"Tím Wesiq."
+msgstr ""
+"recebemos uma solicitação para redefinir a senha da sua conta. Se você foi quem fez a solicitação, use o link a seguir e insira o código de verificação.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/recuperacao-de-senha?password-reset-code=%(code)s - %(code)s\n"
+"\n"
+"Se você não solicitou a redefinição de senha, ignore este e-mail.\n"
+"Equipe Wesiq."
+
+#: app/views.py:262 app/views.py:700 app/views.py:770 app/views.py:980
+#, python-format
+msgid ""
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-"
+"hesla?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
+"target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
+msgstr ""
+"recebemos uma solicitação para redefinir a senha da sua conta. Se você foi "
+"quem fez a solicitação, use o link a <a "
+"href=\"http://127.0.0.1:8000/%(language)s/recuperacao-de-senha?password-"
+"reset-code=%(code)s\" title=\"Redefinir senha\" target=\"_blank\">seguir</a>"
+" e insira o código de verificação."
+
+#: app/views.py:263 app/views.py:701 app/views.py:771 app/views.py:981
+msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
+msgstr "Se você não solicitou a redefinição de senha, ignore este e-mail."
+
+#: app/views.py:271 app/views.py:709 app/views.py:779 app/views.py:989
+#, python-format
+msgid ""
+"Overovací kód bol odoslaný na adresu\n"
+"%(email_address)s"
+msgstr "O código de verificação foi enviado para %(email_address)s"
+
+#: app/views.py:295 app/views.py:362 app/views.py:564 app/views.py:824
+msgid "Overenie reCaptcha zlyhalo"
+msgstr "A verificação reCaptcha falhou"
+
+#: app/views.py:302 app/views.py:833
+msgid "Tento e-mail už je zaregistrovaný"
+msgstr "Este e-mail já está registado"
+
+#: app/views.py:306 app/views.py:837
+msgid "Heslá sa nezhodujú"
+msgstr "As senhas não coincidem"
+
+#: app/views.py:309 app/views.py:735 app/views.py:840
+msgid "Heslo je príliš krátke"
+msgstr "A senha é muito curta"
+
+#: app/views.py:332 app/views.py:863
+#, python-format
+msgid ""
+"Potvrdte vašu e-mailovú adresu\n"
+"%(email_address)s"
+msgstr "Confirme seu endereço de e-mail %(email_address)s"
+
+#: app/views.py:336 app/views.py:867
+msgid "Overenie účtu"
+msgstr "Verificação de conta"
+
+#: app/views.py:337 app/views.py:868
+#, python-format
+msgid ""
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tím Wesiq."
+msgstr ""
+"obrigado por se cadastrar. Para concluir o processo de cadastro e ativar sua conta, você precisa verificar seu endereço de e-mail. Clique no link abaixo para confirmar seu e-mail e você será automaticamente conectado à sua nova conta.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"\n"
+"Este link é válido pelas próximas 24 horas. Após esse período, você precisará se cadastrar novamente por motivos de segurança. Caso não tenha se cadastrado, ignore este e-mail.\n"
+"Equipe Wesiq."
+
+#: app/views.py:338 app/views.py:869
+#, python-format
+msgid ""
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
+" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"href=\"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
+" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
+"registráciu zopakovať."
+msgstr ""
+"obrigado por se cadastrar. Para concluir o processo de cadastro e ativar sua"
+" conta, você precisa verificar seu endereço de e-mail. Clique <a "
+"href=\"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\" title=\"Concluir registro\" "
+"target=\"_blank\">neste</a> link para confirmar seu e-mail e você entrará "
+"automaticamente em sua nova conta. Este link é válido pelas próximas 24 "
+"horas. Após esse período, você precisará se cadastrar novamente por motivos "
+"de segurança."
+
+#: app/views.py:339 app/views.py:870
+msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
+msgstr "Caso não tenha se cadastrado, ignore este e-mail."
+
+#: app/views.py:345 app/views.py:876
+msgid "Registrácia zlyhala"
+msgstr "Falha no registro"
+
+#: app/views.py:390 app/views.py:399
+msgid "Správa bola odoslaná"
+msgstr "A mensagem foi enviada"
+
+#: app/views.py:393
+msgid "Príloha je príliš veľká"
+msgstr "O acessório é muito grande"
+
+#: app/views.py:402
+msgid "Správu sa nepodarilo odoslať"
+msgstr "Não foi possível enviar a mensagem"
+
+#: app/views.py:574
+msgid "Skúste upraviť aktuálne hodnotenie"
+msgstr "Tente editar a classificação atual"
+
+#: app/views.py:581
+msgid "Ukážte nám vašu spokojnosť"
+msgstr "Mostre-nos a sua satisfação"
+
+#: app/views.py:592
+msgid "Ďakujeme za vaše hodnotenie"
+msgstr "Obrigado pela sua avaliação"
+
+#: app/views.py:595
+msgid "Hodnotenie sa nepodarilo uverejniť"
+msgstr "A classificação não pôde ser publicada"
+
+#: app/views.py:635
+msgid "Pred napísaním hodnotenia sa prihláste"
+msgstr "Faça login antes de escrever uma avaliação"
+
+#: app/views.py:743
+msgid "Heslo bolo úspešne zmenené"
+msgstr "Senha alterada com sucesso"
+
+#: app/views.py:751
+msgid "Overovací kód sa nezhoduje"
+msgstr "O código de verificação não corresponde"
+
+#: app/views.py:755
+msgid "Overenie zlyhalo"
+msgstr "Falha na verificação"
+
+#: app/views.py:806
+msgid "Boli ste odhlásený"
+msgstr "Você foi desconectado"
+
+#: app/views.py:899
+#, python-format
+msgid ""
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
+"\n"
+"V opačnom prípade bude váš účet neodvratne odstránený.\n"
+"Tím Wesiq."
+msgstr ""
+"recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem 30 dias para fazer login.\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/login/\n"
+"\n"
+"Caso contrário, sua conta será excluída permanentemente.\n"
+"Equipe Wesiq."
+
+#: app/views.py:900
+#, python-format
+msgid ""
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+"možnosť <a href=\"http://127.0.0.1:8000/%(language)s/prihlasenie/\" "
+"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade"
+" bude váš účet neodvratne odstránený."
+msgstr ""
+"recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem "
+"30 dias para fazer <a href=\"http://127.0.0.1:8000/%(language)s/login/\" "
+"title=\"Login\" target=\"_blank\">login</a>. Caso contrário, sua conta será "
+"excluída permanentemente."
+
+#: app/views.py:901
+msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
+msgstr "Por favor, ignore este e-mail, ele é apenas para sua informação."
+
+#: app/views.py:907
+#, python-format
+msgid "Účet %(first_name)s %(last_name)s bol odstránený"
+msgstr "A conta de %(first_name)s %(last_name)s foi excluída"
+
+#: app/views.py:960 app/views.py:1042
+msgid "Zmeny boli uložené"
+msgstr "As alterações foram salvas"
+
+#: app/views.py:965 app/views.py:1053
+#, python-format
+msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
+msgstr "Novos ajustes serão possíveis a partir de %(next_edit_time)s"
+
+#: app/views.py:968 app/views.py:1047
+msgid "Zmeny sa nepodarilo vykonať"
+msgstr "Não foi possível efetuar alterações"
+
+#: app/views.py:1038
+msgid "Vaše hodnotenie bolo odstránené"
+msgstr "Sua avaliação foi removida"
+
+#: core/settings.py:238
+msgid "Slovak"
+msgstr "Eslovaco"
+
+#: core/settings.py:239
+msgid "Czech"
+msgstr "Tcheco"
+
+#: core/settings.py:240
+msgid "English"
+msgstr "Inglês"
+
+#: core/settings.py:241
+msgid "Spanish"
+msgstr "Espanhol"
+
+#: core/settings.py:242
+msgid "French"
+msgstr "Francês"
+
+#: core/settings.py:243
+msgid "Ukrainian"
+msgstr "Ucraniano"
+
+#: core/settings.py:244
+msgid "Russian"
+msgstr "Russo"
+
+#: core/settings.py:245
+msgid "Portuguese (Brazil)"
+msgstr "Português (Brasil)"
+
+#: core/settings.py:246
+msgid "Simplified Chinese"
+msgstr "Chinês simplificado"
+
+#: templates/404.html:5
+msgid "Stránka sa nenašla"
+msgstr "Página não encontrada"
+
+#: templates/404.html:8
+msgid "Chyba 404"
+msgstr "Erro 404"
+
+#: templates/404.html:9
+msgid "Je nám to ľúto, ale hladaná stránka sa nenašla."
+msgstr ""
+"Pedimos desculpas, mas a página que você estava procurando não foi "
+"encontrada."
+
+#: templates/404.html:10
+msgid "Späť na hlavnú stránku"
+msgstr "Voltar à página principal"
+
+#: templates/base.html:46 templates/base.html:183
+msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
+msgstr "Política&nbsp;de&nbsp;Privacidade"
+
+#: templates/base.html:48
+msgid ""
+"Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
+" zlepšovať naše služby."
+msgstr ""
+"Este site utiliza cookies para lhe proporcionar a melhor experiência de "
+"navegação possível. Os cookies ajudam-nos a analisar, otimizar e melhorar os"
+" nossos serviços."
+
+#: templates/base.html:51
+msgid "Potvrdiť všetky"
+msgstr "Confirme tudo"
+
+#: templates/base.html:52
+msgid "Iba nevyhnutné"
+msgstr "Apenas necessário"
+
+#: templates/base.html:56
+msgid "PRESKOČIŤ"
+msgstr "PULAR"
+
+#: templates/base.html:58
+msgid "Posunúť nadol"
+msgstr "Mover para baixo"
+
+#: templates/base.html:59
+msgid "Posunúť nahor"
+msgstr "Subir"
+
+#: templates/base.html:71
+msgid "DOMOV"
+msgstr "LAR"
+
+#: templates/base.html:72
+msgid "AKTIVITA"
+msgstr "ATIVIDADE"
+
+#: templates/base.html:73
+msgid "BLOG"
+msgstr "BLOGUE"
+
+#: templates/base.html:112
+msgid "Odhlásiť sa z účtu"
+msgstr "Sair da conta"
+
+#: templates/base.html:112
+msgid "Odhlásiť"
+msgstr "Sair"
+
+#: templates/base.html:117
+msgid "Neprihlásený"
+msgstr "Não logado"
+
+#: templates/base.html:140
+msgid "Wesiq"
+msgstr "Wesiq"
+
+#: templates/base.html:143
+msgid "Napísať..."
+msgstr "Escrever..."
+
+#: templates/base.html:145
+msgid "Zavolať..."
+msgstr "Chamar..."
+
+#: templates/base.html:155
+msgid "Domov"
+msgstr "Lar"
+
+#: templates/base.html:184
+msgid "&copy; Wesiq 2025 - 2026, Všetky práva vyhradené."
+msgstr "&copy; Wesiq 2025 - 2026, Todos os direitos reservados."
+
+#: templates/base.html:192
+msgid "Wesiq by Patrik Behul"
+msgstr "Wesiq by Patrik Behul"
+
+#~ msgid "Zadajte 6-miestny overovací kód"
+#~ msgstr "Digite o código de verificação de 6 dígitos"
+
+#~ msgid "Zadaný kód je príliš dlhý"
+#~ msgstr "O código que você digitou é muito longo"
+
+#~ msgid "Otvoriť Gmail"
+#~ msgstr "Abra o Gmail"
+
+#~ msgid "SW Žilina - Odstránenie účtu"
+#~ msgstr "SW Žilina - Exclusão de conta"
+
+#, python-format
+#~ msgid ""
+#~ "Dobrý deň %(first_name)s %(last_name)s,\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "Tím Wesiq."
+#~ msgstr ""
+#~ "Olá %(first_name)s %(last_name)s,\n"
+#~ "gostaríamos de informar que sua conta de usuário foi excluída permanentemente. Não é mais possível acessar sua conta original. Caso deseje retornar no futuro, teremos prazer em criar uma nova conta para você.\n"
+#~ "Equipe Wesiq."
+
+#~ msgid "SW Žilina - Obnova hesla"
+#~ msgstr "SW Žilina - Recuperação de senha"
+
+#, python-format
+#~ msgid ""
+#~ "Dobrý deň %(first_name)s %(last_name)s,\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
+#~ "Tím Wesiq."
+#~ msgstr ""
+#~ "Olá %(first_name)s %(last_name)s,\n"
+#~ "recebemos uma solicitação para excluir sua conta. Em caso de erro, você tem 30 dias para fazer login. Caso contrário, sua conta será excluída permanentemente."
