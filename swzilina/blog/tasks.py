@@ -27,7 +27,7 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
             <p>{html_content}<p>
             <h1>{html_content_middle}</h1>
             <p>{html_content_end}<br>
-            {_('Tím Street Workout Žilina.')}</p>
+            {_('Tím')} Wesiq.</p>
         """
 
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
@@ -91,7 +91,7 @@ def cleanupSuspendedUsers():
             sendMail(
                 user,
                 _("Odstránenie účtu"), # Subject
-                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"language": user.language}, # Text Content
                 _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
                 _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"language": user.language} # End Of HTML Content
             )
@@ -141,7 +141,7 @@ def weeklyReport():
         # sendMail(
         #     user,
         #     _("Odstránenie účtu"), # Subject
-        #     _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Street Workout Žilina.") % {"language": user.language}, # Text Content
+        #     _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"language": user.language}, # Text Content
         #     _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
         #     _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"language": user.language} # End Of HTML Content
         # )

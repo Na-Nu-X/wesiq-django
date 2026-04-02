@@ -1,1 +1,1 @@
-# Street Workout Žilina
+# Wesiq
