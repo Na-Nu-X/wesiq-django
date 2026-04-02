@@ -9,187 +9,190 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-02 09:24+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2026-04-02 19:47+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:23
 msgid "Hlavná stránka"
-msgstr ""
+msgstr "主页"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
 msgid "/prihlasenie"
-msgstr ""
+msgstr "/denglu"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
 msgid "Prihlásenie"
-msgstr ""
+msgstr "登录"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "/obnova-hesla"
-msgstr ""
+msgstr "/mima-huifu"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "Obnova hesla"
-msgstr ""
+msgstr "密码恢复"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
 msgid "/registracia"
-msgstr ""
+msgstr "/dengji"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
 msgid "Registrácia"
-msgstr ""
+msgstr "登记"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/moj-ucet"
-msgstr ""
+msgstr "/wo-de-zhanghu"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Môj účet"
-msgstr ""
+msgstr "我的账户"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/moje-hodnotenie"
-msgstr ""
+msgstr "/wo-de-pingjia"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Moje hodnotenie"
-msgstr ""
+msgstr "我的评价"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/blog"
-msgstr ""
+msgstr "/boke"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Blog"
-msgstr ""
+msgstr "博客"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/trening"
-msgstr ""
+msgstr "/xunlian"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Tréning"
-msgstr ""
+msgstr "训练"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/moje-treningove-plany"
-msgstr ""
+msgstr "/wo-de-xunlian-jihua"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moje tréningové plány"
-msgstr ""
+msgstr "我的训练计划"
 
 #: app/static/app/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
-msgstr ""
+msgstr "头像将被移除"
 
 #: app/static/app/ts/src/pages/edit_account.ts:31
 msgid "Váš úcet bude odstránený"
-msgstr ""
+msgstr "您的账号将被删除"
 
 #: app/static/app/ts/src/pages/edit_review.ts:13
 msgid "Vaše hodnotenie bude odstránené"
-msgstr ""
+msgstr "您的评分将被删除"
 
 #: app/static/app/ts/src/pages/homepage.ts:265
 msgid "Vybraný súbor"
-msgstr ""
+msgstr "选定的文件"
 
 #: app/static/app/ts/src/pages/homepage.ts:266
 msgid "Vybraný súbor je príliš veľký."
-msgstr ""
+msgstr "所选文件过大。"
 
 #: app/static/app/ts/src/pages/homepage.ts:267
 msgid "Nie je vybraný žiaden súbor."
-msgstr ""
+msgstr "未选择任何文件。"
 
 #: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:149
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:80
 msgid "Počet opakovaní"
-msgstr ""
+msgstr "次数"
 
 #: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:150
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:81
 msgid "Počet sekúnd"
-msgstr ""
+msgstr "秒数"
 
 #: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:151
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:82
 msgid "Počet krokov"
-msgstr ""
+msgstr "步数"
 
 #: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:282
 #, javascript-format
 msgid "Tréningový plán %s bol odstránený."
-msgstr ""
+msgstr "训练计划 %s 已被删除。"
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:89
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne pridaný."
-msgstr ""
+msgstr "训练计划 %s 已成功添加。"
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:90
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne upravený."
-msgstr ""
+msgstr "训练计划 %s 已成功编辑。"
 
 #: app/static/app/ts/src/pages/password_reset.ts:121
 #: app/static/app/ts/src/pages/password_reset.ts:149
 msgid "Platnosť vypršala!"
-msgstr ""
+msgstr "已到期！"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
 msgid "Nezískali ste žiadne XP"
-msgstr ""
+msgstr "你没有获得任何经验值"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
 msgid "Získali ste"
-msgstr ""
+msgstr "你获得了"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:56
 msgid "<br>Aktuálna aktivita trvala: "
-msgstr ""
+msgstr "<br>本次活动持续时间："
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
-msgstr ""
+msgid ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgstr "当前活动时间比过去 7 天的平均活动时间长 100%"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
 msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
-msgstr ""
+msgstr "当前活动时间比过去7天的平均活动时间长%s%"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
-msgstr ""
+msgid ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgstr "当前活动时间比过去7天的平均活动时间短%s%"
 
 #: app/static/app/ts/src/pages/training_session/state.ts:90
 msgid "<span>Žiadne aktívne navýšenie XP</span>"
-msgstr ""
+msgstr "<span>没有主动 XP 提升</span>"
 
 #: app/static/app/ts/src/utils/password.ts:4
 msgid "Heslá sa zhodujú"
-msgstr ""
+msgstr "密码匹配"
 
 #: app/static/app/ts/src/utils/password.ts:9
 msgid "Heslá sa nezhodujú"
-msgstr ""
+msgstr "密码不匹配"
 
 #: app/static/app/ts/src/utils/password.ts:19
 msgid "Skryť heslo"
-msgstr ""
+msgstr "隐藏密码"
 
 #: app/static/app/ts/src/utils/password.ts:26
 msgid "Zobraziť heslo"
-msgstr ""
+msgstr "显示密码"
 
 #: app/static/app/ts/src/utils/password.ts:54
 msgid "Zadajte váš e-mail"
-msgstr ""
+msgstr "输入您的电子邮件"
