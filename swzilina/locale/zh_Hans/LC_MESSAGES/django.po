@@ -257,7 +257,7 @@ msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgstr "你好 %(first_name)s %(last_name)s"
 
 #: blog/tasks.py:30 blog/views.py:100
-msgid "Tím Street Workout Žilina."
+msgid "Tím Wesiq."
 msgstr "团队 Wesiq."
 
 #: blog/tasks.py:93 blog/views.py:898
@@ -272,7 +272,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s/registracia/\n"
 "\n"
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/tasks.py:95
@@ -573,7 +573,7 @@ msgid "Hľadať"
 msgstr "搜索"
 
 #: blog/templates/blog/homepage.html:66
-msgid "Street Workout Žilina"
+msgid "Wesiq"
 msgstr "Wesiq"
 
 #: blog/templates/blog/homepage.html:70
@@ -1068,7 +1068,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/views.py:211 blog/views.py:672
@@ -1109,7 +1109,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
 "\n"
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/views.py:242
@@ -1135,7 +1135,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/views.py:262 blog/views.py:700 blog/views.py:770 blog/views.py:980
@@ -1193,7 +1193,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
 "\n"
 "Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/views.py:338 blog/views.py:869
@@ -1273,7 +1273,7 @@ msgid ""
 "http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
-"Tím Street Workout Žilina."
+"Tím Wesiq."
 msgstr ""
 
 #: blog/views.py:900
@@ -1419,7 +1419,7 @@ msgid "Neprihlásený"
 msgstr ""
 
 #: templates/base.html:140
-msgid "Street&nbsp;Workout Žilina"
+msgid "Wesiq"
 msgstr ""
 
 #: templates/base.html:143
@@ -1435,11 +1435,11 @@ msgid "Domov"
 msgstr ""
 
 #: templates/base.html:184
-msgid "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené."
+msgid "&copy; Wesiq 2025 - 2026, Všetky práva vyhradené."
 msgstr ""
 
 #: templates/base.html:192
-msgid "Street Workout Žilina by Patrik Behul"
+msgid "Wesiq by Patrik Behul"
 msgstr ""
 
 #~ msgid "Zadajte 6-miestny overovací kód"

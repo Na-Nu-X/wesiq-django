@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 title:string,
                 url:string
             } = {
-                title: `Street Workout Žilina - ${title}`,
+                title: `Wesiq - ${title}`,
                 url: `${document.location.href + link}` // http://127.0.0.1:8000/blog/${link}
             }
 

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Street Workout Žilina - {% block title %}{% endblock title %}</title>
+    <title>Wesiq - {% block title %}{% endblock title %}</title>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}"> <!-- https://www.flaticon.com/free-icon/street_10060229 -->
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -135,7 +135,7 @@
     </main>
 
     <footer>
-        <h2>{% translate "Street&nbsp;Workout Žilina" %}</h2>
+        <h2>Wesiq</h2>
 
         <div class="contact_us">
             <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="{% translate 'Napísať...' %}">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
@@ -189,7 +189,7 @@
         
         <div class="other">
             <p class="privacy_policy_again">{% translate "Zásady&nbsp;ochrany osobných&nbsp;údajov" %}</p>
-            <p class="copywrite">{% translate "&copy; Street Workout Žilina 2025 - 2026, Všetky práva vyhradené." %}</p>
+            <p class="copywrite">&copy; Wesiq 2025 - 2026, {% translate "Všetky práva vyhradené." %}</p>
         </div>
     </footer>
 
@@ -197,7 +197,7 @@
         "use strict"
         
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("%c{% translate 'Street Workout Žilina by Patrik Behul' %}", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)") // Secret Message
+            console.log("%cWesiq by Patrik Behul", "color: rgb(170, 255, 50); background-color: rgb(0, 0, 0)") // Secret Message
 
             // Privacy Policy
 

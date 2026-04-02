@@ -182,7 +182,7 @@ header {
     
                 font: {
                     family: $heading-font;
-                    size: 3em;
+                    size: 4em;
                 }
     
                 &:hover,
@@ -1715,12 +1715,6 @@ header {
 @media (max-width: 500px) {
     header {
         .header_container {
-            .heading {
-                a {
-                    font-size: 2em;
-                }
-            }
-
             .buttons {
                 flex-direction: column;
                 align-items: center;

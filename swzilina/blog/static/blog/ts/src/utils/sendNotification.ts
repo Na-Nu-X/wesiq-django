@@ -2,7 +2,7 @@
 export function sendNotification(message:string):void {
     Notification.requestPermission().then(function(response:NotificationPermission) {
         if(response === "granted") {
-            const notification:Notification = new Notification("Street Workout Žilina", {
+            const notification:Notification = new Notification("Wesiq", {
                 body: message,
                 icon: "../../static/images/favicon.png",
                 tag: "Aktivita",
