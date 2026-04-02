@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 17:43+0000\n"
+"POT-Creation-Date: 2026-04-02 10:27+0000\n"
 "PO-Revision-Date: 2026-03-30 18:09+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -260,28 +260,28 @@ msgstr "Hello %(first_name)s %(last_name)s"
 msgid "Tím Street Workout Žilina."
 msgstr "Street Workout Žilina Team."
 
-#: blog/tasks.py:93 blog/views.py:896
+#: blog/tasks.py:93 blog/views.py:898
 msgid "Odstránenie účtu"
 msgstr "Account Deletion"
 
 #: blog/tasks.py:94
 #, python-format
-#| msgid ""
-#| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
-#| "Tím Street Workout Žilina."
 msgid ""
-"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n"
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+"prihlásenie do pôvodného účtu už nie je možné.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/registracia/\n"
 "\n"
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"We Would Like to Inform you That your User Account Has been Permanently Deleted. It is no Longer Possible to Log Back Into your Original Account.\n"
+"We Would Like to Inform you That your User Account Has been Permanently "
+"Deleted. It is no Longer Possible to Log Back Into your Original Account.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/registration/\n"
 "\n"
-"If you Would Like to Return in the Future, We Would be Happy if you Create a new one.\n"
+"If you Would Like to Return in the Future, We Would be Happy if you Create a "
+"new one.\n"
 "Street Workout Žilina Team."
 
 #: blog/tasks.py:95
@@ -294,12 +294,10 @@ msgstr ""
 
 #: blog/tasks.py:96
 #, python-format
-#| msgid ""
-#| "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový."
 msgid ""
-"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a "
-"href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
-"účet\" target=\"_blank\">vytvoríte nový</a>."
+"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href=\"http://"
+"127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť účet\" "
+"target=\"_blank\">vytvoríte nový</a>."
 msgstr ""
 "If you Would Like to Return in the Future, We Would be Happy if you <a "
 "href=\"http://127.0.0.1:8000/%(language)s/registration/\" title=\"Create an "
@@ -411,8 +409,7 @@ msgstr "Isotonic"
 
 #: blog/templates/blog/blog.html:90
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
-"žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
 msgstr "Sorry!<br>No&nbsp;articles&nbsp;found."
 
 #: blog/templates/blog/blog.html:122
@@ -453,9 +450,8 @@ msgid "Môj&nbsp;účet"
 msgstr "My&nbsp;Account"
 
 #: blog/templates/blog/edit_account.html:18
-#: blog/templates/blog/edit_review.html:18
-#: blog/templates/blog/homepage.html:82 blog/templates/blog/homepage.html:145
-#: blog/templates/blog/login.html:23
+#: blog/templates/blog/edit_review.html:18 blog/templates/blog/homepage.html:82
+#: blog/templates/blog/homepage.html:145 blog/templates/blog/login.html:23
 #: blog/templates/blog/password_reset.html:40
 #: blog/templates/blog/registration.html:49
 #: blog/templates/blog/write_article.html:17
@@ -502,9 +498,8 @@ msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
 msgstr "To Make Changes in your Account, you Have to First"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80
-#: blog/templates/blog/homepage.html:96 blog/templates/blog/homepage.html:190
-#: blog/templates/blog/login.html:33
+#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:96
+#: blog/templates/blog/homepage.html:190 blog/templates/blog/login.html:33
 #: blog/templates/blog/manage_training_plans.html:23
 #: blog/templates/blog/password_reset.html:71
 #: blog/templates/blog/registration.html:78
@@ -518,8 +513,8 @@ msgid "prihlásiť"
 msgstr "Log In"
 
 #: blog/templates/blog/edit_account.html:80
-#: blog/templates/blog/edit_review.html:80
-#: blog/templates/blog/homepage.html:99 blog/templates/blog/login.html:36
+#: blog/templates/blog/edit_review.html:80 blog/templates/blog/homepage.html:99
+#: blog/templates/blog/login.html:36
 msgid "alebo"
 msgstr "or"
 
@@ -610,8 +605,7 @@ msgid "Prihlásenie"
 msgstr "Log In"
 
 #: blog/templates/blog/homepage.html:92 blog/templates/blog/homepage.html:175
-#: blog/templates/blog/login.html:29
-#: blog/templates/blog/password_reset.html:56
+#: blog/templates/blog/login.html:29 blog/templates/blog/password_reset.html:56
 #: blog/templates/blog/registration.html:65
 msgid "Zobraziť heslo"
 msgstr "Show Password"
@@ -942,8 +936,8 @@ msgid "Nájsť cvik"
 msgstr "Find an Exercise"
 
 #: blog/templates/blog/password_reset.html:5
-#: blog/templates/blog/password_reset.html:16 blog/views.py:258
-#: blog/views.py:696 blog/views.py:766 blog/views.py:976
+#: blog/templates/blog/password_reset.html:16 blog/views.py:260
+#: blog/views.py:698 blog/views.py:768 blog/views.py:978
 msgid "Obnova hesla"
 msgstr "Password Reset"
 
@@ -1083,32 +1077,37 @@ msgid "platba-uspesna/"
 msgstr "payment-successful/"
 
 #: blog/views.py:110
-#| msgid "Ďakujeme za vaše hodnotenie"
 msgid "Ďakujeme za Vašu podporu!"
 msgstr "Thank you for your support!"
 
-#: blog/views.py:207 blog/views.py:668
+#: blog/views.py:209 blog/views.py:670
 msgid "Prihlásenie do účtu"
 msgstr "Account Login"
 
-#: blog/views.py:208 blog/views.py:669
+#: blog/views.py:210 blog/views.py:671
 #, python-format
 msgid ""
-"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Your Account Has been Logged in. We Would Like to Inform you With this Message that if you Have Not Logged in During this Time, your Data May be at Risk. We Recommend that you Change your Password Immediately or Contact us. We Care about the Security of your Data.\n"
+"Your Account Has been Logged in. We Would Like to Inform you With this "
+"Message that if you Have Not Logged in During this Time, your Data May be at "
+"Risk. We Recommend that you Change your Password Immediately or Contact us. "
+"We Care about the Security of your Data.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/my-account?password-reset=true\n"
 "\n"
 "If you Logged in, Please Ignore this E-mail.\n"
 "Street Workout Žilina Team."
 
-#: blog/views.py:209 blog/views.py:670
+#: blog/views.py:211 blog/views.py:672
 #, python-format
 msgid ""
 "bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
@@ -1119,18 +1118,18 @@ msgid ""
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
 "Your Account Has been Logged in. We Would Like to Inform you With this "
-"Message that if you Have Not Logged in During this Time, your Data May be at"
-" Risk. We Recommend that you Change your Password Immediately by Clicking <a"
-" href=\"http://127.0.0.1:8000/%(language)s/my-account?password-reset=true\" "
-"title=\"Obnoviť heslo\" target=\"_blank\">this</a> Link or Contacting us. We"
-" care about the security of your data. We Care about the Security of your "
+"Message that if you Have Not Logged in During this Time, your Data May be at "
+"Risk. We Recommend that you Change your Password Immediately by Clicking <a "
+"href=\"http://127.0.0.1:8000/%(language)s/my-account?password-reset=true\" "
+"title=\"Obnoviť heslo\" target=\"_blank\">this</a> Link or Contacting us. We "
+"care about the security of your data. We Care about the Security of your "
 "Data."
 
-#: blog/views.py:210 blog/views.py:671
+#: blog/views.py:212 blog/views.py:673
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
 msgstr "If you Logged in, Please Ignore This E-mail."
 
-#: blog/views.py:213 blog/views.py:244 blog/views.py:674
+#: blog/views.py:215 blog/views.py:246 blog/views.py:676
 #, python-format
 msgid ""
 "Úspešne prihlásený ako\n"
@@ -1139,51 +1138,49 @@ msgstr ""
 "Successfully Logged In as\n"
 "%(first_name)s %(last_name)s"
 
-#: blog/views.py:218 blog/views.py:222 blog/views.py:679 blog/views.py:683
+#: blog/views.py:220 blog/views.py:224 blog/views.py:681 blog/views.py:685
 msgid "Nesprávne prihlasovacie údaje"
 msgstr "Incorrect Login Credentials"
 
-#: blog/views.py:238
+#: blog/views.py:240
 msgid "Úspešná registrácia"
 msgstr "Successful Registration"
 
-#: blog/views.py:239
+#: blog/views.py:241
 #, python-format
-#| msgid ""
-#| "máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
-#| "Tím Street Workout Žilina."
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
 "\n"
-"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
+"všetky funkcie našich služieb.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"We Have Great News for you! Your E-mail Address Has been Successfully Verified and your Account is Now Fully Active.\n"
+"We Have Great News for you! Your E-mail Address Has been Successfully "
+"Verified and your Account is Now Fully Active.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/my-account/\n"
 "\n"
-"We are Glad you have Joined our Community. Now you can Fully Use all The Features of our Services.\n"
+"We are Glad you have Joined our Community. Now you can Fully Use all The "
+"Features of our Services.\n"
 "Street Workout Žilina Team."
 
-#: blog/views.py:240
+#: blog/views.py:242
 #, python-format
-#| msgid ""
-#| "máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
-#| " účet je odteraz plne aktívny."
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
-" účet je odteraz plne aktívny. Kliknite na <a "
-"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny. Kliknite na <a href=\"http://"
+"127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
 "target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
 msgstr ""
 "We Have Great News for you! Your E-mail Address Has been Successfully "
-"Verified and your Account is Now Fully Active. Click <a "
-"href=\"http://127.0.0.1:8000/%(language)s/my-account/\" title=\"My Account\""
-" target=\"_blank\">This</a> Link to View your Account."
+"Verified and your Account is Now Fully Active. Click <a href=\"http://"
+"127.0.0.1:8000/%(language)s/my-account/\" title=\"My Account\" "
+"target=\"_blank\">This</a> Link to View your Account."
 
-#: blog/views.py:241
+#: blog/views.py:243
 msgid ""
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
 "všetky funkcie našich služieb."
@@ -1191,76 +1188,68 @@ msgstr ""
 "We are Glad you have Joined our Community. Now you can Fully Use all The "
 "Features of our Services."
 
-#: blog/views.py:259 blog/views.py:697 blog/views.py:767 blog/views.py:977
+#: blog/views.py:261 blog/views.py:699 blog/views.py:769 blog/views.py:979
 #, python-format
-#| msgid ""
-#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
-#| "\n"
-#| "http://127.0.0.1:8000/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
-#| "\n"
-#| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
-#| "Tím Street Workout Žilina."
 msgid ""
-"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+"prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s "
+"- %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"We Have Received a Request to Reset Your Account Password. If This was you, Please Use the Following Link and Enter the Following Verification Code.\n"
+"We Have Received a Request to Reset Your Account Password. If This was you, "
+"Please Use the Following Link and Enter the Following Verification Code.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s "
+"- %(code)s\n"
 "\n"
 "If you Did Not Request a Password Reset, Please Ignore This E-mail.\n"
 "Street Workout Žilina Team."
 
-#: blog/views.py:260 blog/views.py:698 blog/views.py:768 blog/views.py:978
+#: blog/views.py:262 blog/views.py:700 blog/views.py:770 blog/views.py:980
 #, python-format
-#| msgid ""
-#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-#| "prosím použite <a href=\"http://127.0.0.1:8000/obnova-hesla?password-reset-"
-#| "code=%(code)s\" title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz a "
-#| "zadajte nasledovný overovací kód."
 msgid ""
 "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-"
-"hesla?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
+"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-hesla?"
+"password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
 "target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
 msgstr ""
 "We Have Received a Request to Reset Your Account Password. If This was you, "
-"Please Use <a href=\"http://127.0.0.1:8000/%(language)s/obnova-"
-"hesla?password-reset-code=%(code)s\" title=\"Reset Password\" "
+"Please Use <a href=\"http://127.0.0.1:8000/%(language)s/obnova-hesla?"
+"password-reset-code=%(code)s\" title=\"Reset Password\" "
 "target=\"_blank\">This</a> Link and Enter the Following Verification Code."
 
-#: blog/views.py:261 blog/views.py:699 blog/views.py:769 blog/views.py:979
+#: blog/views.py:263 blog/views.py:701 blog/views.py:771 blog/views.py:981
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgstr "If you Did Not Request a Password Reset, Please Ignore This E-mail."
 
-#: blog/views.py:269 blog/views.py:707 blog/views.py:777 blog/views.py:987
+#: blog/views.py:271 blog/views.py:709 blog/views.py:779 blog/views.py:989
 #, python-format
 msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
 msgstr "A Verification Code Has Been Sent to the %(email_address)s"
 
-#: blog/views.py:293 blog/views.py:360 blog/views.py:562 blog/views.py:822
+#: blog/views.py:295 blog/views.py:362 blog/views.py:564 blog/views.py:824
 msgid "Overenie reCaptcha zlyhalo"
 msgstr "Verification by reCaptcha Failed"
 
-#: blog/views.py:300 blog/views.py:831
+#: blog/views.py:302 blog/views.py:833
 msgid "Tento e-mail už je zaregistrovaný"
 msgstr "This e-mail is Already Registered"
 
-#: blog/views.py:304 blog/views.py:835
+#: blog/views.py:306 blog/views.py:837
 msgid "Heslá sa nezhodujú"
 msgstr "Passwords Do Not Match"
 
-#: blog/views.py:307 blog/views.py:733 blog/views.py:838
+#: blog/views.py:309 blog/views.py:735 blog/views.py:840
 msgid "Heslo je príliš krátke"
 msgstr "The Password is Too Short"
 
-#: blog/views.py:330 blog/views.py:861
+#: blog/views.py:332 blog/views.py:863
 #, python-format
 msgid ""
 "Potvrdte vašu e-mailovú adresu\n"
@@ -1269,45 +1258,48 @@ msgstr ""
 "Confirm your E-mail Address \n"
 "%(email_address)s"
 
-#: blog/views.py:334 blog/views.py:865
+#: blog/views.py:336 blog/views.py:867
 msgid "Overenie účtu"
 msgstr "SW Žilina - Account Verification"
 
-#: blog/views.py:335 blog/views.py:866
+#: blog/views.py:337 blog/views.py:868
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
+"uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
+"svojho nového účtu.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z "
+"bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu "
+"nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"Thank You for your Registration. To Complete the Registration Process and Activate your Account, you Must Verify your E-mail Address. Click on the Link Below to Confirm your E-mail and you Will be Automatically Logged Into your New Account.\n"
+"Thank You for your Registration. To Complete the Registration Process and "
+"Activate your Account, you Must Verify your E-mail Address. Click on the "
+"Link Below to Confirm your E-mail and you Will be Automatically Logged Into "
+"your New Account.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"This Link is Valid for the Next 24 hours. After this Time, you Will Need to Register Again for Security Reasons. If you Did Not Register, Please Ignore this E-mail.\n"
+"This Link is Valid for the Next 24 hours. After this Time, you Will Need to "
+"Register Again for Security Reasons. If you Did Not Register, Please Ignore "
+"this E-mail.\n"
 "Street Workout Žilina Team."
 
-#: blog/views.py:336 blog/views.py:867
+#: blog/views.py:338 blog/views.py:869
 #, python-format
-#| msgid ""
-#| "ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
-#| " Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
-#| "href=\"http://127.0.0.1:8000/%(language)s?verification-"
-#| "code=%(verification_code)s&id=%(id)s\" title=\"Obnoviť heslo\" "
-#| "target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
-#| " prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
-#| "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
-#| "registráciu zopakovať."
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
-" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
 "href=\"http://127.0.0.1:8000/%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
-"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
-" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky "
+"prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
@@ -1320,155 +1312,155 @@ msgstr ""
 "24 hours. After this Time, you Will Need to Register Again for Security "
 "Reasons."
 
-#: blog/views.py:337 blog/views.py:868
+#: blog/views.py:339 blog/views.py:870
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
 msgstr "If you Did Not Register, Please Ignore This E-mail."
 
-#: blog/views.py:343 blog/views.py:874
+#: blog/views.py:345 blog/views.py:876
 msgid "Registrácia zlyhala"
 msgstr "Registration Failed"
 
-#: blog/views.py:388 blog/views.py:397
+#: blog/views.py:390 blog/views.py:399
 msgid "Správa bola odoslaná"
 msgstr "The Message Has Been Sent"
 
-#: blog/views.py:391
+#: blog/views.py:393
 msgid "Príloha je príliš veľká"
 msgstr "The Attachment is Too Large"
 
-#: blog/views.py:400
+#: blog/views.py:402
 msgid "Správu sa nepodarilo odoslať"
 msgstr "The Message Could Not be Sent"
 
-#: blog/views.py:572
+#: blog/views.py:574
 msgid "Skúste upraviť aktuálne hodnotenie"
 msgstr "Try Editing the Current Review"
 
-#: blog/views.py:579
+#: blog/views.py:581
 msgid "Ukážte nám vašu spokojnosť"
 msgstr "Show us your Satisfaction"
 
-#: blog/views.py:590
+#: blog/views.py:592
 msgid "Ďakujeme za vaše hodnotenie"
 msgstr "Thank you for Your Review"
 
-#: blog/views.py:593
+#: blog/views.py:595
 msgid "Hodnotenie sa nepodarilo uverejniť"
 msgstr "Review Could Not be Published"
 
-#: blog/views.py:633
+#: blog/views.py:635
 msgid "Pred napísaním hodnotenia sa prihláste"
 msgstr "Please Log In Before Writing a Review"
 
-#: blog/views.py:741
+#: blog/views.py:743
 msgid "Heslo bolo úspešne zmenené"
 msgstr "Password Changed Successfully"
 
-#: blog/views.py:749
+#: blog/views.py:751
 msgid "Overovací kód sa nezhoduje"
 msgstr "Verification Code Does Not Match"
 
-#: blog/views.py:753
+#: blog/views.py:755
 msgid "Overenie zlyhalo"
 msgstr "Verification Failed"
 
-#: blog/views.py:804
+#: blog/views.py:806
 msgid "Boli ste odhlásený"
 msgstr "You Have been Logged Out"
 
-#: blog/views.py:897
+#: blog/views.py:899
 #, python-format
-#| msgid ""
-#| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
-#| "Tím Street Workout Žilina."
 msgid ""
-"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n"
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+"možnosť prihlásiť sa.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Street Workout Žilina."
 msgstr ""
-"We Have Received a Request to Delete your Account. In Case of Error, you Have 30 Days to Log in. \n"
+"We Have Received a Request to Delete your Account. In Case of Error, you "
+"Have 30 Days to Log in. \n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/login/\n"
 "\n"
 "Otherwise, your Account will be Permanently Deleted.\n"
 "Street Workout Žilina Team."
 
-#: blog/views.py:898
+#: blog/views.py:900
 #, python-format
-#| msgid ""
-#| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-#| "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený."
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť <a href=\"http://127.0.0.1:8000/%(language)s/prihlasenie/\" "
-"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade"
-" bude váš účet neodvratne odstránený."
+"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade "
+"bude váš účet neodvratne odstránený."
 msgstr ""
 "We Have Received a Request to Delete your Account. In Case of Error, you "
 "Have 30 Days to <a href=\"http://127.0.0.1:8000/%(language)s/login/\" "
 "title=\"Log In\" target=\"_blank\">Log in</a>. Otherwise, your Account will "
 "be Permanently Deleted."
 
-#: blog/views.py:899
+#: blog/views.py:901
 msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
 msgstr "Please Ignore this E-mail, it is for Informational Purposes Only."
 
-#: blog/views.py:905
+#: blog/views.py:907
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgstr "Account %(first_name)s %(last_name)s Has been Deleted"
 
-#: blog/views.py:958 blog/views.py:1040
+#: blog/views.py:960 blog/views.py:1042
 msgid "Zmeny boli uložené"
 msgstr "Changes Have been Saved"
 
-#: blog/views.py:963 blog/views.py:1051
+#: blog/views.py:965 blog/views.py:1053
 #, python-format
 msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
 msgstr "Further Adjustments will be Possible on %(next_edit_time)s"
 
-#: blog/views.py:966 blog/views.py:1045
+#: blog/views.py:968 blog/views.py:1047
 msgid "Zmeny sa nepodarilo vykonať"
 msgstr "Changes Could Not be Made"
 
-#: blog/views.py:1036
+#: blog/views.py:1038
 msgid "Vaše hodnotenie bolo odstránené"
 msgstr "Your Review Has been Deleted"
 
-#: swzilina/settings.py:234
+#: swzilina/settings.py:238
 msgid "Slovak"
 msgstr "Slovak"
 
-#: swzilina/settings.py:235
+#: swzilina/settings.py:239
 msgid "Czech"
 msgstr "Czech"
 
-#: swzilina/settings.py:236
+#: swzilina/settings.py:240
 msgid "English"
 msgstr "English"
 
-#: swzilina/settings.py:237
+#: swzilina/settings.py:241
 msgid "Spanish"
 msgstr "Spanish"
 
-#: swzilina/settings.py:238
+#: swzilina/settings.py:242
 msgid "French"
 msgstr "French"
 
-#: swzilina/settings.py:239
+#: swzilina/settings.py:243
 msgid "Ukrainian"
 msgstr "Ukrainian"
 
-#: swzilina/settings.py:240
+#: swzilina/settings.py:244
 msgid "Russian"
 msgstr "Russian"
 
-#: swzilina/settings.py:241
+#: swzilina/settings.py:245
 msgid "Portuguese (Brazil)"
 msgstr "Portuguese (Brazil)"
+
+#: swzilina/settings.py:246
+msgid "Simplified Chinese"
+msgstr ""
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
@@ -1493,8 +1485,8 @@ msgstr "Privacy&nbsp;Policy"
 #: templates/base.html:48
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
-" zlepšovať naše služby."
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
+"zlepšovať naše služby."
 msgstr ""
 "This Site Uses Cookies to Provide you with The Best Possible Browsing "
 "Experience. Cookies Help us Analyze, Optimize and Improve our Services."
@@ -1582,11 +1574,16 @@ msgstr "Street Workout Žilina by Patrik Behul"
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#~ "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
+#~ "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 #~ "Tím Street Workout Žilina."
 #~ msgstr ""
 #~ "Hello %(first_name)s %(last_name)s,\n"
-#~ "We Would Like to Inform you That your User Account Has been Permanently Deleted. It is no Longer Possible to Log Back Into your Original Account. If you Would Like to Return in the Future, We Would be Happy if you Create a new one."
+#~ "We Would Like to Inform you That your User Account Has been Permanently "
+#~ "Deleted. It is no Longer Possible to Log Back Into your Original Account. "
+#~ "If you Would Like to Return in the Future, We Would be Happy if you "
+#~ "Create a new one."
 
 #~ msgid "SW Žilina - Obnova hesla"
 #~ msgstr "SW Žilina - Password Reset"
@@ -1594,11 +1591,15 @@ msgstr "Street Workout Žilina by Patrik Behul"
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#~ "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
+#~ "odstránený.\n"
 #~ "Tím Street Workout Žilina."
 #~ msgstr ""
 #~ "Hello %(first_name)s %(last_name)s,\n"
-#~ "We Have Received a Request to Delete your Account. In Case of Error, you Have 30 Days to Log in. Otherwise, your Account will be Permanently Deleted.\n"
+#~ "We Have Received a Request to Delete your Account. In Case of Error, you "
+#~ "Have 30 Days to Log in. Otherwise, your Account will be Permanently "
+#~ "Deleted.\n"
 #~ "Street Workout Žilina Team."
 
 #~ msgid "Brazilian"

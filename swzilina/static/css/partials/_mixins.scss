@@ -4,7 +4,7 @@
  General Mixins
 ***************/
 
-// Center
+// Center Positioning
 
 @mixin position_center($position: absolute) {
     position: $position;
@@ -43,7 +43,7 @@
     }
 }
 
-// Blue Animated Border
+// Animated Border
 
 @mixin animated_border($colors: conic-gradient(
         from var(--angle), 
@@ -75,6 +75,8 @@
         opacity: 0.5;
     }
 }
+
+// Glow Animated Border
 
 @mixin glow_animated_border(
     $colors: conic-gradient(
@@ -110,12 +112,6 @@
         mask-composite: exclude;
     }
 }
-
-// Bar
-
-// @mixin bar {
-    
-// }
 
 // Tooltip
 
@@ -307,6 +303,8 @@
     }
 }
 
+// Form Textarea
+
 @mixin form_textarea($width: 90%) {
     width: $width;
     min-height: 100px;
@@ -346,6 +344,26 @@
 
     &.error {
         color: $error-color;
+    }
+}
+
+// Form Back
+
+@mixin form_back($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+    position: absolute;
+    top: 42.5px;
+    left: 50px;
+    z-index: 100;
+
+    .fa-chevron-left {
+        font-size: 2em;
+        color: $color;
+        transition: color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            color: $hover_color;
+            transform: scale(1.1);
+        }
     }
 }
 
@@ -408,6 +426,8 @@
     }
 }
 
+// Circle Decoration
+
 @mixin circle_decoration($top: auto, $right: auto, $bottom: auto, $left: auto, $width: 100px, $height: 100px, $color: transparentize($blue-color, 0.95)) {
     content: "";
     position: absolute;
@@ -420,24 +440,6 @@
     border-radius: 100%;
     background-color: $color;
     z-index: -1;
-}
-
-@mixin form_back($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
-    position: absolute;
-    top: 42.5px;
-    left: 50px;
-    z-index: 100;
-
-    .fa-chevron-left {
-        font-size: 2em;
-        color: $color;
-        transition: color 0.3s ease, transform 0.3s ease;
-
-        &:hover {
-            color: $hover_color;
-            transform: scale(1.1);
-        }
-    }
 }
 
 // Search Bar

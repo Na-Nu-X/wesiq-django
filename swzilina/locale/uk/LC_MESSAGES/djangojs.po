@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 17:44+0000\n"
+"POT-Creation-Date: 2026-04-02 09:24+0000\n"
 "PO-Revision-Date: 2026-03-23 19:36+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,74 @@ msgstr ""
 "(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
+#: blog/static/blog/ts/src/components/searchBar.ts:23
+msgid "Hlavná stránka"
+msgstr "Головна сторінка"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:24
+msgid "/prihlasenie"
+msgstr "/lohin"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:24
+msgid "Prihlásenie"
+msgstr "Логін"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:25
+msgid "/obnova-hesla"
+msgstr "/vidnovlennya-parolya"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:25
+msgid "Obnova hesla"
+msgstr "Відновлення пароля"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:26
+msgid "/registracia"
+msgstr "/reyestratsiya"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:26
+msgid "Registrácia"
+msgstr "Реєстрація"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:27
+msgid "/moj-ucet"
+msgstr "/miy-rakhunok"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:27
+msgid "Môj účet"
+msgstr "Мій рахунок"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:28
+msgid "/moje-hodnotenie"
+msgstr "miy-reytynh"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:28
+msgid "Moje hodnotenie"
+msgstr "Моя оцінка"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:29
+msgid "/blog"
+msgstr "/bloh"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:29
+msgid "Blog"
+msgstr "Блог"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:30
+msgid "/trening"
+msgstr "/treninh"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:30
+msgid "Tréning"
+msgstr "Тренінг"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:31
+msgid "/moje-treningove-plany"
+msgstr "/moyi-plany-trenuvan"
+
+#: blog/static/blog/ts/src/components/searchBar.ts:31
+msgid "Moje tréningové plány"
+msgstr "Мої плани тренувань"
+
 #: blog/static/blog/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
 msgstr "Зображення профілю буде видалено"
@@ -34,83 +102,15 @@ msgstr "Ваш обліковий запис буде видалено"
 msgid "Vaše hodnotenie bude odstránené"
 msgstr "Ваш рейтинг буде видалено"
 
-#: blog/static/blog/ts/src/pages/homepage.ts:43
-msgid "Hlavná stránka"
-msgstr "Головна сторінка"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:44
-msgid "/prihlasenie"
-msgstr "/lohin"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:44
-msgid "Prihlásenie"
-msgstr "Логін"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:45
-msgid "/obnova-hesla"
-msgstr "/vidnovlennya-parolya"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:45
-msgid "Obnova hesla"
-msgstr "Відновлення пароля"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:46
-msgid "/registracia"
-msgstr "/reyestratsiya"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:46
-msgid "Registrácia"
-msgstr "Реєстрація"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:47
-msgid "/moj-ucet"
-msgstr "/miy-rakhunok"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:47
-msgid "Môj účet"
-msgstr "Мій рахунок"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:48
-msgid "/moje-hodnotenie"
-msgstr "miy-reytynh"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:48
-msgid "Moje hodnotenie"
-msgstr "Моя оцінка"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:49
-msgid "/blog"
-msgstr "/bloh"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:49
-msgid "Blog"
-msgstr "Блог"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:50
-msgid "/trening"
-msgstr "/treninh"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:50
-msgid "Tréning"
-msgstr "Тренінг"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:51
-msgid "/moje-treningove-plany"
-msgstr "/moyi-plany-trenuvan"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:51
-msgid "Moje tréningové plány"
-msgstr "Мої плани тренувань"
-
-#: blog/static/blog/ts/src/pages/homepage.ts:351
+#: blog/static/blog/ts/src/pages/homepage.ts:265
 msgid "Vybraný súbor"
 msgstr "Вибраний файл"
 
-#: blog/static/blog/ts/src/pages/homepage.ts:352
+#: blog/static/blog/ts/src/pages/homepage.ts:266
 msgid "Vybraný súbor je príliš veľký."
 msgstr "Вибраний файл занадто великий."
 
-#: blog/static/blog/ts/src/pages/homepage.ts:353
+#: blog/static/blog/ts/src/pages/homepage.ts:267
 msgid "Nie je vybraný žiaden súbor."
 msgstr "Файл не вибрано."
 
