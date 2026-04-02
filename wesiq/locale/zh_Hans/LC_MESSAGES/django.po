@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-02 09:35+0000\n"
-"PO-Revision-Date: 2026-04-02 10:01+0000\n"
+"PO-Revision-Date: 2026-04-02 19:39+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -274,12 +274,18 @@ msgid ""
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Wesiq."
 msgstr ""
+"我们谨通知您，您的用户帐户已被永久删除。您将无法重新登录原帐户。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/zhuce/\n"
+"\n"
+"如果您以后想回来，我们很高兴您能创建新的。\n"
+"Wesiq 团队。"
 
 #: app/tasks.py:95
 msgid ""
 "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
 "prihlásenie do pôvodného účtu už nie je možné."
-msgstr ""
+msgstr "我们谨通知您，您的用户帐户已被永久删除。您将无法重新登录原帐户。"
 
 #: app/tasks.py:96
 #, python-format
@@ -288,6 +294,8 @@ msgid ""
 "href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
 "účet\" target=\"_blank\">vytvoríte nový</a>."
 msgstr ""
+"如果您以后想回来，我们很高兴您能<a href=\"http://127.0.0.1:8000/%(language)s/zhuce/\" "
+"title=\"创建账户\" target=\"_blank\">创建新的</a>。"
 
 #: app/templates/app/articles.html:29 app/templates/app/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
@@ -303,7 +311,7 @@ msgstr "还没有评论"
 
 #: app/templates/app/articles.html:101
 msgid "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!"
-msgstr ""
+msgstr "率先发起讨论！"
 
 #: app/templates/app/articles.html:121 app/templates/app/articles.html:204
 msgid "Zobraziť profil"
@@ -339,30 +347,30 @@ msgstr "添加文章"
 #: app/templates/app/blog.html:18
 #, python-format
 msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr ""
+msgstr "找到<span>%(num_articles)s</span>篇文章。"
 
 #: app/templates/app/blog.html:21
 #, python-format
 msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr ""
+msgstr "找到 <span>%(num_articles)s</span> 篇文章。"
 
 #: app/templates/app/blog.html:24
 #, python-format
 msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr ""
+msgstr "找到 <span>%(num_articles)s</span> 篇文章。"
 
 #: app/templates/app/blog.html:33
 msgid "Nájsť článok"
-msgstr ""
+msgstr "查找文章"
 
 #: app/templates/app/blog.html:39 app/templates/app/blog.html:58
 #: app/templates/app/homepage.html:453
 msgid "Obnoviť predvolené filtre"
-msgstr ""
+msgstr "恢复默认过滤器"
 
 #: app/templates/app/blog.html:44 app/templates/app/blog.html:49
 msgid "Najnovšie články"
-msgstr ""
+msgstr "最新文章"
 
 #: app/templates/app/blog.html:50
 msgid "Populárne články"
@@ -409,50 +417,49 @@ msgstr "分享"
 
 #: app/templates/app/blog.html:137
 msgid "Zobraziť"
-msgstr ""
+msgstr "显示"
 
 #: app/templates/app/blog.html:168
 msgid "Kategória"
-msgstr ""
+msgstr "类别"
 
 #: app/templates/app/blog.html:181
 msgid "unikátnych návštevníkov"
-msgstr ""
+msgstr "位独立访客"
 
 #: app/templates/app/blog.html:204
 msgid "Odoberať"
-msgstr ""
+msgstr "订阅"
 
 #: app/templates/app/blog.html:204
 msgid "Dostávať upozornenia o nových článkoch"
-msgstr ""
+msgstr "接收有关新文章的通知"
 
 #: app/templates/app/edit_account.html:5 templates/base.html:94
 #: templates/base.html:110
 msgid "Môj účet"
-msgstr ""
+msgstr "我的账户"
 
 #: app/templates/app/edit_account.html:16
 msgid "Môj&nbsp;účet"
-msgstr ""
+msgstr "我的账户"
 
 #: app/templates/app/edit_account.html:18
-#: app/templates/app/edit_review.html:18
-#: app/templates/app/homepage.html:82 app/templates/app/homepage.html:145
-#: app/templates/app/login.html:23
+#: app/templates/app/edit_review.html:18 app/templates/app/homepage.html:82
+#: app/templates/app/homepage.html:145 app/templates/app/login.html:23
 #: app/templates/app/password_reset.html:40
 #: app/templates/app/registration.html:49
 #: app/templates/app/write_article.html:17
 msgid "Späť na úvodnú stránku"
-msgstr ""
+msgstr "返回首页"
 
 #: app/templates/app/edit_account.html:34
 msgid "Nahrať obrázok"
-msgstr ""
+msgstr "上传图片"
 
 #: app/templates/app/edit_account.html:40
 msgid "Odstrániť obrázok"
-msgstr ""
+msgstr "删除图像"
 
 #: app/templates/app/edit_account.html:66
 #: app/templates/app/edit_review.html:68
@@ -460,20 +467,18 @@ msgstr ""
 msgid "Uložiť zmeny"
 msgstr "保存更改"
 
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/edit_account.html:69 app/templates/app/homepage.html:115
+#: app/templates/app/login.html:52
 msgid "Zabudli ste heslo?"
 msgstr "忘记密码了吗？"
 
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
-#: app/templates/app/password_reset.html:62
+#: app/templates/app/edit_account.html:69 app/templates/app/homepage.html:115
+#: app/templates/app/login.html:52 app/templates/app/password_reset.html:62
 msgid "Poslať overovací kód"
 msgstr "发送验证码"
 
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
-#: app/templates/app/password_reset.html:59
+#: app/templates/app/edit_account.html:69 app/templates/app/homepage.html:115
+#: app/templates/app/login.html:52 app/templates/app/password_reset.html:59
 msgid "Zmeniť heslo"
 msgstr "更改密码"
 
@@ -486,9 +491,8 @@ msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
 msgstr "要更改您的帐户，您必须先"
 
 #: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:96 app/templates/app/homepage.html:190
-#: app/templates/app/login.html:33
+#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:96
+#: app/templates/app/homepage.html:190 app/templates/app/login.html:33
 #: app/templates/app/manage_training_plans.html:23
 #: app/templates/app/password_reset.html:71
 #: app/templates/app/registration.html:78
@@ -502,56 +506,55 @@ msgid "prihlásiť"
 msgstr "登录"
 
 #: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:99 app/templates/app/login.html:36
+#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:99
+#: app/templates/app/login.html:36
 msgid "alebo"
 msgstr "或者"
 
 #: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:116 app/templates/app/homepage.html:187
-#: app/templates/app/login.html:53 app/templates/app/registration.html:75
+#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:116
+#: app/templates/app/homepage.html:187 app/templates/app/login.html:53
+#: app/templates/app/registration.html:75
 msgid "Vytvoriť účet"
 msgstr "创建一个帐户"
 
 #: app/templates/app/edit_account.html:80
 #: app/templates/app/edit_review.html:80
 msgid "zaregistrovať"
-msgstr ""
+msgstr "注册"
 
 #: app/templates/app/edit_review.html:5
 msgid "Moje hodnotenie"
-msgstr ""
+msgstr "我的评价"
 
 #: app/templates/app/edit_review.html:16
 msgid "Moje&nbsp;hodnotenie"
-msgstr ""
+msgstr "我的评价"
 
-#: app/templates/app/edit_review.html:42
-#: app/templates/app/homepage.html:510
+#: app/templates/app/edit_review.html:42 app/templates/app/homepage.html:510
 msgid "upravené"
-msgstr ""
+msgstr "调整过的"
 
 #: app/templates/app/edit_review.html:72
 msgid "Odstrániť recenziu"
-msgstr ""
+msgstr "删除评论"
 
 #: app/templates/app/edit_review.html:80
 msgid "Pre vykonávanie zmien vašej recenzie sa musíte najprv"
-msgstr ""
+msgstr "若要修改您的评价，请先"
 
 #: app/templates/app/homepage.html:5
 msgid "Hlavná stránka"
-msgstr ""
+msgstr "主页"
 
 #: app/templates/app/homepage.html:18
 msgid "KONTAKT"
-msgstr ""
+msgstr "联系我们"
 
 #: app/templates/app/homepage.html:27 app/templates/app/homepage.html:355
 #: app/templates/app/homepage.html:377
 msgid "Zatiaľ žiadne recenzie"
-msgstr ""
+msgstr "暂无评价"
 
 #: app/templates/app/homepage.html:30
 #, python-format
@@ -566,7 +569,11 @@ msgid_plural ""
 "\n"
 "                "
 msgstr[0] ""
+"\n"
+"基于 %(amount)s 条评价"
 msgstr[1] ""
+"\n"
+"基于 %(amount)s 条评价"
 
 #: app/templates/app/homepage.html:59
 msgid "Hľadať"
@@ -590,8 +597,7 @@ msgid "Prihlásenie"
 msgstr "登录"
 
 #: app/templates/app/homepage.html:92 app/templates/app/homepage.html:175
-#: app/templates/app/login.html:29
-#: app/templates/app/password_reset.html:56
+#: app/templates/app/login.html:29 app/templates/app/password_reset.html:56
 #: app/templates/app/registration.html:65
 msgid "Zobraziť heslo"
 msgstr "显示密码"
@@ -600,8 +606,7 @@ msgstr "显示密码"
 msgid "Ešte nemáte účet?"
 msgstr "还没有账号？"
 
-#: app/templates/app/homepage.html:143
-#: app/templates/app/registration.html:5
+#: app/templates/app/homepage.html:143 app/templates/app/registration.html:5
 #: app/templates/app/registration.html:47 templates/base.html:157
 msgid "Registrácia"
 msgstr "登记"
@@ -612,36 +617,33 @@ msgstr "登记"
 msgid "Navrhnúť heslo"
 msgstr "建议密码"
 
-#: app/templates/app/homepage.html:176
-#: app/templates/app/registration.html:66
+#: app/templates/app/homepage.html:176 app/templates/app/registration.html:66
 msgid "Skopírovať"
 msgstr "复制"
 
-#: app/templates/app/homepage.html:182
-#: app/templates/app/registration.html:71
+#: app/templates/app/homepage.html:182 app/templates/app/registration.html:71
 msgid "Prilepiť"
-msgstr ""
+msgstr "粘贴"
 
-#: app/templates/app/homepage.html:190
-#: app/templates/app/registration.html:78
+#: app/templates/app/homepage.html:190 app/templates/app/registration.html:78
 msgid "Už máte účet?"
-msgstr ""
+msgstr "已有账号？"
 
 #: app/templates/app/homepage.html:318
 msgid "Čo si myslia ostatní?"
-msgstr ""
+msgstr "其他人怎么看？"
 
 #: app/templates/app/homepage.html:330
 msgid "recenzií"
-msgstr ""
+msgstr "条评价"
 
 #: app/templates/app/homepage.html:333
 msgid "recenzia"
-msgstr ""
+msgstr "条评价"
 
 #: app/templates/app/homepage.html:336
 msgid "recenzie"
-msgstr ""
+msgstr "条评价"
 
 #: app/templates/app/homepage.html:358
 #, python-format
@@ -656,7 +658,11 @@ msgid_plural ""
 "\n"
 "                            "
 msgstr[0] ""
+"\n"
+"基于 %(amount)s 条评价"
 msgstr[1] ""
+"\n"
+"基于 %(amount)s 条评价"
 
 #: app/templates/app/homepage.html:380
 #, python-format
@@ -671,11 +677,15 @@ msgid_plural ""
 "\n"
 "                                    "
 msgstr[0] ""
+"\n"
+"基于 %(amount)s 条评价"
 msgstr[1] ""
+"\n"
+"基于 %(amount)s 条评价"
 
 #: app/templates/app/homepage.html:413
 msgid "Našla sa 1 recenzia."
-msgstr ""
+msgstr "找到 1 条评价。"
 
 #: app/templates/app/homepage.html:417
 #, python-format
@@ -684,6 +694,8 @@ msgid ""
 "                        Našli sa <span>%(amount)s</span> recenzie.\n"
 "                    "
 msgstr ""
+"\n"
+"找到 <span>%(amount)s</span> 条评价。"
 
 #: app/templates/app/homepage.html:424
 #, python-format
@@ -719,346 +731,346 @@ msgstr "所有评论"
 msgid ""
 "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
 "žiadne&nbsp;recenzie."
-msgstr ""
+msgstr "抱歉！<br>没有 找到 任何 评价。"
 
 #: app/templates/app/homepage.html:500
 msgid "Neexistujúci účet"
-msgstr ""
+msgstr "不存在的账户"
 
 #: app/templates/app/homepage.html:533
 #: app/templates/app/manage_training_plans.html:132
 msgid "Upraviť"
-msgstr ""
+msgstr "编辑"
 
 #: app/templates/app/homepage.html:578
 msgid "Uverejniť"
-msgstr ""
+msgstr "发布"
 
 #: app/templates/app/homepage.html:607
 msgid "Kontaktujte nás"
-msgstr ""
+msgstr "联系我们"
 
 #: app/templates/app/homepage.html:633
 msgid "Nie je vybraný žiaden súbor."
-msgstr ""
+msgstr "未选择任何文件。"
 
 #: app/templates/app/homepage.html:636
 msgid "Vyberte prílohu z vašich súborov"
-msgstr ""
+msgstr "从您的文件中选择一个附件"
 
 #: app/templates/app/homepage.html:637
 msgid "Vybrať prílohu"
-msgstr ""
+msgstr "选择附件"
 
 #: app/templates/app/homepage.html:646
 msgid "Odoslať správu"
-msgstr ""
+msgstr "发送消息"
 
 #: app/templates/app/homepage.html:656
 msgid "Podporte nás"
-msgstr ""
+msgstr "支持我们"
 
 #: app/templates/app/homepage.html:664
 msgid "Číslo karty"
-msgstr ""
+msgstr "卡号"
 
 #: app/templates/app/homepage.html:670
 msgid "Držiteľ karty"
-msgstr ""
+msgstr "持卡人"
 
 #: app/templates/app/homepage.html:675
 msgid "Platnosť"
-msgstr ""
+msgstr "有效性"
 
 #: app/templates/app/homepage.html:684
 msgid "CVC"
-msgstr ""
+msgstr "验证码"
 
 #: app/templates/app/login.html:13
 msgid "REGISTRÁCIA"
-msgstr ""
+msgstr "登记"
 
 #: app/templates/app/manage_training_plans.html:5
 #: app/templates/app/training_session.html:32
 #: app/templates/app/training_session.html:35
 #: app/templates/app/training_session.html:64
 msgid "Moje tréningové plány"
-msgstr ""
+msgstr "我的训练计划"
 
 #: app/templates/app/manage_training_plans.html:13
 msgid "Aktivita"
-msgstr ""
+msgstr "活动"
 
 #: app/templates/app/manage_training_plans.html:21
 #: app/templates/app/training_session.html:56
 msgid "Zdá sa, že nie ste prihlásený."
-msgstr ""
+msgstr "您似乎尚未登录。"
 
 #: app/templates/app/manage_training_plans.html:22
 msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
-msgstr ""
+msgstr "不登录就无法创建训练计划。"
 
 #: app/templates/app/manage_training_plans.html:23
 #: app/templates/app/training_session.html:58
 msgid "Prihláste sa."
-msgstr ""
+msgstr "登录。"
 
 #: app/templates/app/manage_training_plans.html:36
 msgid "Série"
-msgstr ""
+msgstr "组数"
 
 #: app/templates/app/manage_training_plans.html:39
 msgid "Pridať sériu"
-msgstr ""
+msgstr "添加组"
 
 #: app/templates/app/manage_training_plans.html:48
 #: app/templates/app/manage_training_plans.html:98
 msgid "Do&nbsp;zlyhania"
-msgstr ""
+msgstr "力竭"
 
 #: app/templates/app/manage_training_plans.html:116
 msgid "Počet"
-msgstr ""
+msgstr "数量"
 
 #: app/templates/app/manage_training_plans.html:121
 msgid "Opakovaní"
-msgstr ""
+msgstr "次数"
 
 #: app/templates/app/manage_training_plans.html:122
 msgid "Sekúnd"
-msgstr ""
+msgstr "秒数"
 
 #: app/templates/app/manage_training_plans.html:131
 msgid "Vytvoriť"
-msgstr ""
+msgstr "创造"
 
 #: app/templates/app/manage_training_plans.html:143
 #: app/templates/app/manage_training_plans.html:197
 msgid "Pull"
-msgstr ""
+msgstr "拉力训练"
 
 #: app/templates/app/manage_training_plans.html:144
 #: app/templates/app/manage_training_plans.html:198
 msgid "Push"
-msgstr ""
+msgstr "推力训练"
 
 #: app/templates/app/manage_training_plans.html:145
 #: app/templates/app/manage_training_plans.html:199
 msgid "Legs"
-msgstr ""
+msgstr "腿部训练"
 
 #: app/templates/app/manage_training_plans.html:147
 #: app/templates/app/manage_training_plans.html:201
 msgid "Upper"
-msgstr ""
+msgstr "上肢训练"
 
 #: app/templates/app/manage_training_plans.html:148
 #: app/templates/app/manage_training_plans.html:202
 msgid "Lower"
-msgstr ""
+msgstr "下肢训练"
 
 #: app/templates/app/manage_training_plans.html:156
 #: app/templates/app/manage_training_plans.html:161
 #: app/templates/app/manage_training_plans.html:210
 #: app/templates/app/manage_training_plans.html:215
 msgid "Nepriradiť deň"
-msgstr ""
+msgstr "不要指定日期"
 
 #: app/templates/app/manage_training_plans.html:162
 #: app/templates/app/manage_training_plans.html:216
 msgid "PO"
-msgstr ""
+msgstr "周一"
 
 #: app/templates/app/manage_training_plans.html:163
 #: app/templates/app/manage_training_plans.html:217
 msgid "UT"
-msgstr ""
+msgstr "周二"
 
 #: app/templates/app/manage_training_plans.html:164
 #: app/templates/app/manage_training_plans.html:218
 msgid "ST"
-msgstr ""
+msgstr "周三"
 
 #: app/templates/app/manage_training_plans.html:165
 #: app/templates/app/manage_training_plans.html:219
 msgid "ŠT"
-msgstr ""
+msgstr "周四"
 
 #: app/templates/app/manage_training_plans.html:166
 #: app/templates/app/manage_training_plans.html:220
 msgid "PI"
-msgstr ""
+msgstr "周五"
 
 #: app/templates/app/manage_training_plans.html:167
 #: app/templates/app/manage_training_plans.html:221
 msgid "SO"
-msgstr ""
+msgstr "周六"
 
 #: app/templates/app/manage_training_plans.html:168
 #: app/templates/app/manage_training_plans.html:222
 msgid "NE"
-msgstr ""
+msgstr "周日"
 
 #: app/templates/app/manage_training_plans.html:181
 msgid "Pridať tréningový plán"
-msgstr ""
+msgstr "添加训练计划"
 
 #: app/templates/app/manage_training_plans.html:237
 msgid "Vymazať"
-msgstr ""
+msgstr "删除"
 
 #: app/templates/app/manage_training_plans.html:248
 msgid "Nájsť cvik"
-msgstr ""
+msgstr "查找动作"
 
 #: app/templates/app/password_reset.html:5
-#: app/templates/app/password_reset.html:16 app/views.py:260
-#: app/views.py:698 app/views.py:768 app/views.py:978
+#: app/templates/app/password_reset.html:16 app/views.py:260 app/views.py:698
+#: app/views.py:768 app/views.py:978
 msgid "Obnova hesla"
-msgstr ""
+msgstr "密码恢复"
 
 #: app/templates/app/password_reset.html:62
 msgid "Neprišiel vám overovací kód?"
-msgstr ""
+msgstr "你没收到验证码吗？"
 
 #: app/templates/app/password_reset.html:62
 msgid "Skúsiť znovu"
-msgstr ""
+msgstr "再试一次"
 
 #: app/templates/app/password_reset.html:71
 msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
-msgstr ""
+msgstr "用于更改账户密码的验证码已过期。"
 
 #: app/templates/app/password_reset.html:71
 msgid "Na stránke s"
-msgstr ""
+msgstr "在"
 
 #: app/templates/app/password_reset.html:71
 msgid "prihlásením"
-msgstr ""
+msgstr "登录页面"
 
 #: app/templates/app/password_reset.html:71
 msgid "požiadajte o nový."
-msgstr ""
+msgstr "申请新密码。"
 
 #: app/templates/app/registration.html:39
 msgid "PRIHLÁSENIE"
-msgstr ""
+msgstr "登录"
 
 #: app/templates/app/training_session.html:5
 msgid "Tréning"
-msgstr ""
+msgstr "训练"
 
 #: app/templates/app/training_session.html:57
 msgid "Bez prihlásenia nie je možné zaznamenať vašu aktivitu."
-msgstr ""
+msgstr "不登录，您的活动将无法被记录。"
 
 #: app/templates/app/training_session.html:63
 msgid "Zatiaľ nemáte žiaden tréningový plán."
-msgstr ""
+msgstr "你还没有训练计划。"
 
 #: app/templates/app/training_session.html:64
 msgid "Vytvorte si prvý."
-msgstr ""
+msgstr "创建你的第一个。"
 
 #: app/templates/app/training_session.html:128
 #: app/templates/app/training_session.html:141
 msgid "Tréningový plán"
-msgstr ""
+msgstr "培训计划"
 
 #: app/templates/app/training_session.html:129
 msgid "Začať tréning"
-msgstr ""
+msgstr "开始训练"
 
 #: app/templates/app/training_session.html:142
 msgid "Dokončiť tréning"
-msgstr ""
+msgstr "完成训练"
 
 #: app/templates/app/training_session.html:200
 msgid "priemer&nbsp;/ 7&nbsp;dní"
-msgstr ""
+msgstr "平均/7天"
 
 #: app/templates/app/training_session.html:214
 msgid "počet&nbsp;/ 7&nbsp;dní"
-msgstr ""
+msgstr "数量/7天"
 
 #: app/templates/app/training_session.html:238
 msgid "posledná aktivita"
-msgstr ""
+msgstr "上次活动"
 
 #: app/templates/app/training_session.html:238
 #: app/templates/app/training_session.html:254
 msgid "žiadna"
-msgstr ""
+msgstr "没有任何"
 
 #: app/templates/app/training_session.html:254
 msgid "najdlhšia aktivita"
-msgstr ""
+msgstr "最长的活动"
 
 #: app/templates/app/training_session.html:269
 #: app/templates/app/training_session.html:273
 msgid "Graf sa nepodarilo načítať."
-msgstr ""
+msgstr "图表无法加载。"
 
 #: app/templates/app/write_article.html:29
 msgid "Navrhnúť link"
-msgstr ""
+msgstr "建议链接"
 
 #: app/templates/app/write_article.html:31
 msgid "URL adresa vášho článku (napr. front-lever)"
-msgstr ""
+msgstr "你的文章网址 (例如 front-lever)"
 
 #: app/urls.py:7
 msgid "domov/"
-msgstr ""
+msgstr "jia/"
 
 #: app/urls.py:8
 msgid "prihlasenie/"
-msgstr ""
+msgstr "denglu/"
 
 #: app/urls.py:9
 msgid "obnova-hesla/"
-msgstr ""
+msgstr "mima-huifu/"
 
 #: app/urls.py:10
 msgid "odhlasenie/"
-msgstr ""
+msgstr "zhuxiao/"
 
 #: app/urls.py:11
 msgid "registracia/"
-msgstr ""
+msgstr "dengji/"
 
 #: app/urls.py:12
 msgid "moj-ucet/"
-msgstr ""
+msgstr "wo-de-zhanghu/"
 
 #: app/urls.py:13
 msgid "moje-hodnotenie/"
-msgstr ""
+msgstr "wo-de-pingjia"
 
 #: app/urls.py:14
 msgid "pridat-clanok/"
-msgstr ""
+msgstr "tianjia-wenzhang/"
 
 #: app/urls.py:15
 msgid "trening/"
-msgstr ""
+msgstr "xunlian/"
 
 #: app/urls.py:16
 msgid "moje-treningove-plany/"
-msgstr ""
+msgstr "wo-de-xunlian-jihua/"
 
 #: app/urls.py:20
 msgid "platba-uspesna/"
-msgstr ""
+msgstr "Fukuan-chenggong/"
 
 #: app/views.py:110
 msgid "Ďakujeme za Vašu podporu!"
-msgstr ""
+msgstr "感谢您的支持！"
 
 #: app/views.py:209 app/views.py:670
 msgid "Prihlásenie do účtu"
-msgstr ""
+msgstr "账户登录"
 
 #: app/views.py:210 app/views.py:671
 #, python-format
@@ -1070,6 +1082,12 @@ msgid ""
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
+"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。我们建议您立即更改密码或联系我们。我们非常重视您的数据安全。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/wo-de-zhanghu?password-reset=true\n"
+"\n"
+"如果您已注册，请忽略此邮件。\n"
+"Wesiq 团队。"
 
 #: app/views.py:211 app/views.py:672
 #, python-format
@@ -1081,25 +1099,28 @@ msgid ""
 "title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
+"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。我们建议您立即点击<a "
+"href=\"http://127.0.0.1:8000/%(language)s/wo-de-zhanghu?password-"
+"reset=true\" title=\"重置密码\" target=\"_blank\">此</a>链接或联系我们更改密码。我们非常重视您的数据安全。"
 
 #: app/views.py:212 app/views.py:673
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
-msgstr ""
+msgstr "如果您已注册，请忽略此邮件。"
 
 #: app/views.py:215 app/views.py:246 app/views.py:676
 #, python-format
 msgid ""
 "Úspešne prihlásený ako\n"
 "%(first_name)s %(last_name)s"
-msgstr ""
+msgstr "已成功以 %(first_name)s %(last_name)s 身份登录"
 
 #: app/views.py:220 app/views.py:224 app/views.py:681 app/views.py:685
 msgid "Nesprávne prihlasovacie údaje"
-msgstr ""
+msgstr "登录信息错误"
 
 #: app/views.py:240
 msgid "Úspešná registrácia"
-msgstr ""
+msgstr "注册成功"
 
 #: app/views.py:241
 #, python-format
@@ -1111,6 +1132,12 @@ msgid ""
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
 "Tím Wesiq."
 msgstr ""
+"我们有好消息要告诉您！您的电子邮件地址已成功验证，您的帐户现已完全激活。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/wo-de-zhanghu/\n"
+"\n"
+"我们很高兴您加入我们的社区。现在您可以全面使用我们服务的所有功能了。\n"
+"Wesiq 团队。"
 
 #: app/views.py:242
 #, python-format
@@ -1120,12 +1147,14 @@ msgid ""
 "href=\"http://127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
 "target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
 msgstr ""
+"好消息！您的邮箱地址已成功验证，账户现已完全激活。点击<a href=\"http://127.0.0.1:8000/%(language)s/wo-"
+"de-zhanghu/\" title=\"我的账户\" target=\"_blank\">此</a>链接查看您的账户。"
 
 #: app/views.py:243
 msgid ""
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
 "všetky funkcie našich služieb."
-msgstr ""
+msgstr "我们很高兴您加入我们的社区。现在您可以全面使用我们服务的所有功能了。"
 
 #: app/views.py:261 app/views.py:699 app/views.py:769 app/views.py:979
 #, python-format
@@ -1137,6 +1166,12 @@ msgid ""
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
+"我们收到您重置账户密码的请求。如果您是发起此请求的人，请使用以下链接并输入以下验证码。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-code=%(code)s - %(code)s\n"
+"\n"
+"如果您没有申请重置密码，请忽略此邮件。\n"
+"Wesiq 团队。"
 
 #: app/views.py:262 app/views.py:700 app/views.py:770 app/views.py:980
 #, python-format
@@ -1146,10 +1181,13 @@ msgid ""
 "hesla?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
 "target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
 msgstr ""
+"我们收到您重置账户密码的请求。如果您是发起此请求的人，请点击<a "
+"href=\"http://127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-"
+"code=%(code)s\" title=\"重置密码\" target=\"_blank\">此</a>链接并输入以下验证码。"
 
 #: app/views.py:263 app/views.py:701 app/views.py:771 app/views.py:981
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
-msgstr ""
+msgstr "如果您没有申请重置密码，请忽略此邮件。"
 
 #: app/views.py:271 app/views.py:709 app/views.py:779 app/views.py:989
 #, python-format
@@ -1157,22 +1195,24 @@ msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
 msgstr ""
+"验证码已发送至\n"
+"%(email_address)s"
 
 #: app/views.py:295 app/views.py:362 app/views.py:564 app/views.py:824
 msgid "Overenie reCaptcha zlyhalo"
-msgstr ""
+msgstr "reCaptcha验证失败"
 
 #: app/views.py:302 app/views.py:833
 msgid "Tento e-mail už je zaregistrovaný"
-msgstr ""
+msgstr "此邮箱号已被注册"
 
 #: app/views.py:306 app/views.py:837
 msgid "Heslá sa nezhodujú"
-msgstr ""
+msgstr "密码不匹配"
 
 #: app/views.py:309 app/views.py:735 app/views.py:840
 msgid "Heslo je príliš krátke"
-msgstr ""
+msgstr "密码太短"
 
 #: app/views.py:332 app/views.py:863
 #, python-format
@@ -1180,10 +1220,12 @@ msgid ""
 "Potvrdte vašu e-mailovú adresu\n"
 "%(email_address)s"
 msgstr ""
+"请确认您的邮箱地址\n"
+"%(email_address)s"
 
 #: app/views.py:336 app/views.py:867
 msgid "Overenie účtu"
-msgstr ""
+msgstr "账户验证"
 
 #: app/views.py:337 app/views.py:868
 #, python-format
@@ -1195,6 +1237,12 @@ msgid ""
 "Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
+"感谢您的注册。要完成注册并激活您的帐户，您必须验证您的电子邮件地址。请点击下方链接确认您的电子邮件，您将自动登录到您的新帐户。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"\n"
+"此链接有效期为24小时。此后，出于安全考虑，您需要重新注册。如果您尚未注册，请忽略此邮件。\n"
+"Wesiq 团队。"
 
 #: app/views.py:338 app/views.py:869
 #, python-format
@@ -1208,62 +1256,66 @@ msgid ""
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
+"感谢您的注册。要完成注册并激活您的帐户，您需要验证您的电子邮件地址。点击<a "
+"href=\"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\" title=\"完成注册\" "
+"target=\"_blank\">此</a>链接即可确认您的电子邮件地址，您将自动登录到您的新帐户。此链接有效期为24小时。此后，出于安全考虑，您需要重新注册。"
 
 #: app/views.py:339 app/views.py:870
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
-msgstr ""
+msgstr "如果您没有注册，请忽略此邮件。"
 
 #: app/views.py:345 app/views.py:876
 msgid "Registrácia zlyhala"
-msgstr ""
+msgstr "注册失败"
 
 #: app/views.py:390 app/views.py:399
 msgid "Správa bola odoslaná"
-msgstr ""
+msgstr "信息已发送"
 
 #: app/views.py:393
 msgid "Príloha je príliš veľká"
-msgstr ""
+msgstr "附件太大了"
 
 #: app/views.py:402
 msgid "Správu sa nepodarilo odoslať"
-msgstr ""
+msgstr "信息发送失败"
 
 #: app/views.py:574
 msgid "Skúste upraviť aktuálne hodnotenie"
-msgstr ""
+msgstr "尝试修改当前评分"
 
 #: app/views.py:581
 msgid "Ukážte nám vašu spokojnosť"
-msgstr ""
+msgstr "向我们展示您的满意度"
 
 #: app/views.py:592
 msgid "Ďakujeme za vaše hodnotenie"
-msgstr ""
+msgstr "感谢您的评分"
 
 #: app/views.py:595
 msgid "Hodnotenie sa nepodarilo uverejniť"
-msgstr ""
+msgstr "该评级无法公布"
 
 #: app/views.py:635
 msgid "Pred napísaním hodnotenia sa prihláste"
-msgstr ""
+msgstr "请先登录再撰写评论"
 
 #: app/views.py:743
 msgid "Heslo bolo úspešne zmenené"
-msgstr ""
+msgstr "密码修改成功"
 
 #: app/views.py:751
 msgid "Overovací kód sa nezhoduje"
-msgstr ""
+msgstr "验证码不匹配"
 
 #: app/views.py:755
 msgid "Overenie zlyhalo"
-msgstr ""
+msgstr "验证失败"
 
 #: app/views.py:806
 msgid "Boli ste odhlásený"
-msgstr ""
+msgstr "您已被登出"
 
 #: app/views.py:899
 #, python-format
@@ -1275,6 +1327,12 @@ msgid ""
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Wesiq."
 msgstr ""
+"我们收到删除您账户的请求。如果是误操作，您有30天的时间登录。\n"
+"\n"
+"http://127.0.0.1:8000/%(language)s/denglu/\n"
+"\n"
+"否则，您的账户将被永久删除。\n"
+"Wesiq 团队。"
 
 #: app/views.py:900
 #, python-format
@@ -1284,163 +1342,166 @@ msgid ""
 "title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade"
 " bude váš účet neodvratne odstránený."
 msgstr ""
+"我们收到删除您账户的请求。如果是误操作，您有30天的时间<a "
+"href=\"http://127.0.0.1:8000/%(language)s/denglu/\" title=\"登录\" "
+"target=\"_blank\">登录</a>。否则，您的账户将被永久删除。"
 
 #: app/views.py:901
 msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
-msgstr ""
+msgstr "请忽略此邮件，它仅供您参考。"
 
 #: app/views.py:907
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
-msgstr ""
+msgstr "%(first_name)s %(last_name)s 的账号已被删除"
 
 #: app/views.py:960 app/views.py:1042
 msgid "Zmeny boli uložené"
-msgstr ""
+msgstr "更改已保存"
 
 #: app/views.py:965 app/views.py:1053
 #, python-format
 msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
-msgstr ""
+msgstr "下次修改将在 %(next_edit_time)s 之后开放"
 
 #: app/views.py:968 app/views.py:1047
 msgid "Zmeny sa nepodarilo vykonať"
-msgstr ""
+msgstr "无法进行更改"
 
 #: app/views.py:1038
 msgid "Vaše hodnotenie bolo odstránené"
-msgstr ""
+msgstr "您的评分已被移除"
 
 #: core/settings.py:238
 msgid "Slovak"
-msgstr ""
+msgstr "斯洛伐克语"
 
 #: core/settings.py:239
 msgid "Czech"
-msgstr ""
+msgstr "捷克语"
 
 #: core/settings.py:240
 msgid "English"
-msgstr ""
+msgstr "英语"
 
 #: core/settings.py:241
 msgid "Spanish"
-msgstr ""
+msgstr "西班牙语"
 
 #: core/settings.py:242
 msgid "French"
-msgstr ""
+msgstr "法语"
 
 #: core/settings.py:243
 msgid "Ukrainian"
-msgstr ""
+msgstr "乌克兰"
 
 #: core/settings.py:244
 msgid "Russian"
-msgstr ""
+msgstr "俄语"
 
 #: core/settings.py:245
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "葡萄牙语（巴西）"
 
 #: core/settings.py:246
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "简体中文"
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
-msgstr ""
+msgstr "找不到页面"
 
 #: templates/404.html:8
 msgid "Chyba 404"
-msgstr ""
+msgstr "错误 404"
 
 #: templates/404.html:9
 msgid "Je nám to ľúto, ale hladaná stránka sa nenašla."
-msgstr ""
+msgstr "抱歉，您要查找的页面未找到。"
 
 #: templates/404.html:10
 msgid "Späť na hlavnú stránku"
-msgstr ""
+msgstr "返回主页"
 
 #: templates/base.html:46 templates/base.html:183
 msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
-msgstr ""
+msgstr "隐私政策"
 
 #: templates/base.html:48
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
 "pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
 " zlepšovať naše služby."
-msgstr ""
+msgstr "本网站使用 Cookie 为您提供最佳浏览体验。Cookie 帮助我们分析、优化和改进服务。"
 
 #: templates/base.html:51
 msgid "Potvrdiť všetky"
-msgstr ""
+msgstr "全部确认"
 
 #: templates/base.html:52
 msgid "Iba nevyhnutné"
-msgstr ""
+msgstr "仅必要"
 
 #: templates/base.html:56
 msgid "PRESKOČIŤ"
-msgstr ""
+msgstr "跳过"
 
 #: templates/base.html:58
 msgid "Posunúť nadol"
-msgstr ""
+msgstr "下移"
 
 #: templates/base.html:59
 msgid "Posunúť nahor"
-msgstr ""
+msgstr "向上移动"
 
 #: templates/base.html:71
 msgid "DOMOV"
-msgstr ""
+msgstr "家"
 
 #: templates/base.html:72
 msgid "AKTIVITA"
-msgstr ""
+msgstr "活动"
 
 #: templates/base.html:73
 msgid "BLOG"
-msgstr ""
+msgstr "博客"
 
 #: templates/base.html:112
 msgid "Odhlásiť sa z účtu"
-msgstr ""
+msgstr "退出帐户"
 
 #: templates/base.html:112
 msgid "Odhlásiť"
-msgstr ""
+msgstr "登出"
 
 #: templates/base.html:117
 msgid "Neprihlásený"
-msgstr ""
+msgstr "未登录"
 
 #: templates/base.html:140
 msgid "Wesiq"
-msgstr ""
+msgstr "Wesiq"
 
 #: templates/base.html:143
 msgid "Napísať..."
-msgstr ""
+msgstr "写..."
 
 #: templates/base.html:145
 msgid "Zavolať..."
-msgstr ""
+msgstr "称呼..."
 
 #: templates/base.html:155
 msgid "Domov"
-msgstr ""
+msgstr "家"
 
 #: templates/base.html:184
 msgid "&copy; Wesiq 2025 - 2026, Všetky práva vyhradené."
-msgstr ""
+msgstr "&copy; Wesiq 2025 - 2026, 版权所有。"
 
 #: templates/base.html:192
 msgid "Wesiq by Patrik Behul"
-msgstr ""
+msgstr "Wesiq by Patrik Behul"
 
 #~ msgid "Zadajte 6-miestny overovací kód"
 #~ msgstr "请输入6位数的验证码"

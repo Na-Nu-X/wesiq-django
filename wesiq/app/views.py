@@ -1057,7 +1057,12 @@ def editReviewView(request):
             "review": review.review,
         })
 
+        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+
         return render(request, "app/edit_review.html", {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
             "review_form": filled_review_form,
             "review": review,
         })
@@ -1284,10 +1289,9 @@ def blogThemeView(request, theme):
 
             no_comments = True # Default Value That Says That There Are No Comments In The Database
 
-            # Gets Logged In User From DB
-            user = Users.objects.get(id=logged_in_user_id)
-            # Gets Article By URL Address
-            article = Articles.objects.get(link=theme)
+            user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From DB
+            article = Articles.objects.get(link=theme) # Gets Article By URL Address
+
             # Gets All Comments Of The Article
             comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None, status="OK")
             replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None) & Q(status="OK"))
@@ -1328,10 +1332,12 @@ def blogThemeView(request, theme):
                     new_comment_reply.save()
 
         response = render(request, "app/articles.html", {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
             "article": article,
             "comments": comments,
             "replies": replies,
-            "profile_picture_name": user.profile_picture_name,
             "write_comment_form": writeCommentForm,
             "no_comments": no_comments,
             "not_found": False,
@@ -1647,4 +1653,16 @@ def manageTrainingPlansView(request):
 
     return render(request, "app/manage_training_plans.html", {
         "exercises": exercises,
+    })
+
+def communityView(request):
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
+    return render(request, "app/community.html", {
+        "first_name": logged_in_user.first_name,
+        "last_name": logged_in_user.last_name,
+        "profile_picture_name": logged_in_user.profile_picture_name,
     })

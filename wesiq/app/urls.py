@@ -14,6 +14,7 @@ urlpatterns = [
     path(_('pridat-clanok/'), views.writeArticleView, name='write_article_url'),
     path(_('trening/'), views.trainingSessionView, name='training_session_url'),
     path(_('moje-treningove-plany/'), views.manageTrainingPlansView, name='manage_training_plans_url'),
+    path(_('komunita/'), views.communityView, name='community_url'),
     path('blog/', views.blogView, name='blog_url'),
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
     path('change-language/', views.changeLanguage, name='change_language_url'),
