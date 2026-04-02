@@ -229,6 +229,8 @@ CACHE_TTL = 3600  # 1 Hour Cache
 # Translations
 from django.utils.translation import gettext_lazy as _
 
+USE_I18N = True
+
 LANGUAGE_CODE = 'en' # Default Language (English)
 
 # Supported Languages
@@ -241,10 +243,8 @@ LANGUAGES = [
     ('uk', _('Ukrainian')),
     ('ru', _('Russian')),
     ('pt-br', _('Portuguese (Brazil)')),
-    # ('zh-hans', _('Simplified Chinese')),
+    ('zh-hans', _('Simplified Chinese')),
 ]
-
-USE_I18N = True
 
 # Translations Directories (.po And .mo Files)
 LOCALE_PATHS = [

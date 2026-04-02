@@ -489,6 +489,16 @@ footer {
         }
     }
 
+    .payment_methods {
+        @include flex_center;
+        gap: 10px;
+        height: 32px;
+        
+        img {
+            opacity: 0.8;
+        }
+    }
+
     .other {
         color: darken($secondary-color, 40%);
 

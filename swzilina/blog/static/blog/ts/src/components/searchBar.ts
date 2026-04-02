@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement // Gets The Search Bar Input
     const search_result_container:HTMLDivElement = document.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
     const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Bar Icon
+
+    const MAX_HISTORY_LENGTH = 3 // Sets Maximum Search History Length
     let focused_search_result_index:number = 0 // Focused Search Result Index
 
     // Data - Array of Objects of Pages
@@ -181,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(event.target instanceof HTMLAnchorElement) {
             search_history = search_history.filter(one_item => one_item !== clicked_search_result_id) // Removes The Clicked Item From The Search History
             if(clicked_search_result_id) search_history.unshift(clicked_search_result_id) // Updates Search History
-            if(search_history.length > 3) search_history = search_history.slice(0, 3) // Shows Maximum Of 3 Results From The Search History, Others Will Be Deleted From The Search History
+            if(search_history.length > MAX_HISTORY_LENGTH) search_history = search_history.slice(0, MAX_HISTORY_LENGTH) // Shows Maximum Of 3 Results From The Search History, Others Will Be Deleted From The Search History
 
             localStorage.setItem("search_history", JSON.stringify(search_history)) // Saves Updated Search History To The Local Storage
         }
