@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "libphonenumber-js": "^1.12.40"
+  },
+  "name": "wesiq",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "watch": "start cmd /k \"cd app/static/app/ts && tsc -w --project tsconfig.json\" && start cmd /k \"cd static/ts && tsc -w --project tsconfig.json\"",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

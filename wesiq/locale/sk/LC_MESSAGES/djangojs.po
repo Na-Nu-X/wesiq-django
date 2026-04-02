@@ -1,0 +1,200 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-02 09:24+0000\n"
+"PO-Revision-Date: 2026-03-27 19:42+0000\n"
+"Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: app/static/app/ts/src/components/searchBar.ts:23
+msgid "Hlavná stránka"
+msgstr "Hlavná stránka"
+
+#: app/static/app/ts/src/components/searchBar.ts:24
+msgid "/prihlasenie"
+msgstr "/prihlasenie"
+
+#: app/static/app/ts/src/components/searchBar.ts:24
+msgid "Prihlásenie"
+msgstr "Prihlásenie"
+
+#: app/static/app/ts/src/components/searchBar.ts:25
+msgid "/obnova-hesla"
+msgstr "/obnova-hesla"
+
+#: app/static/app/ts/src/components/searchBar.ts:25
+msgid "Obnova hesla"
+msgstr "Obnova hesla"
+
+#: app/static/app/ts/src/components/searchBar.ts:26
+msgid "/registracia"
+msgstr "/registracia"
+
+#: app/static/app/ts/src/components/searchBar.ts:26
+msgid "Registrácia"
+msgstr "Registrácia"
+
+#: app/static/app/ts/src/components/searchBar.ts:27
+msgid "/moj-ucet"
+msgstr "/moj-ucet"
+
+#: app/static/app/ts/src/components/searchBar.ts:27
+msgid "Môj účet"
+msgstr "Môj účet"
+
+#: app/static/app/ts/src/components/searchBar.ts:28
+msgid "/moje-hodnotenie"
+msgstr "/moje-hodnotenie"
+
+#: app/static/app/ts/src/components/searchBar.ts:28
+msgid "Moje hodnotenie"
+msgstr "Moje hodnotenie"
+
+#: app/static/app/ts/src/components/searchBar.ts:29
+msgid "/blog"
+msgstr "/blog"
+
+#: app/static/app/ts/src/components/searchBar.ts:29
+msgid "Blog"
+msgstr "Blog"
+
+#: app/static/app/ts/src/components/searchBar.ts:30
+msgid "/trening"
+msgstr "/trening"
+
+#: app/static/app/ts/src/components/searchBar.ts:30
+msgid "Tréning"
+msgstr "Tréning"
+
+#: app/static/app/ts/src/components/searchBar.ts:31
+msgid "/moje-treningove-plany"
+msgstr "/moje-treningove-plany"
+
+#: app/static/app/ts/src/components/searchBar.ts:31
+msgid "Moje tréningové plány"
+msgstr "Moje tréningové plány"
+
+#: app/static/app/ts/src/pages/edit_account.ts:13
+msgid "Profilový obrázok bude odstránený"
+msgstr "Profilový obrázok bude odstránený"
+
+#: app/static/app/ts/src/pages/edit_account.ts:31
+msgid "Váš úcet bude odstránený"
+msgstr "Váš úcet bude odstránený"
+
+#: app/static/app/ts/src/pages/edit_review.ts:13
+msgid "Vaše hodnotenie bude odstránené"
+msgstr "Vaše hodnotenie bude odstránené"
+
+#: app/static/app/ts/src/pages/homepage.ts:265
+msgid "Vybraný súbor"
+msgstr "Vybraný súbor"
+
+#: app/static/app/ts/src/pages/homepage.ts:266
+msgid "Vybraný súbor je príliš veľký."
+msgstr "Vybraný súbor je príliš veľký."
+
+#: app/static/app/ts/src/pages/homepage.ts:267
+msgid "Nie je vybraný žiaden súbor."
+msgstr "Nie je vybraný žiaden súbor."
+
+#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:149
+#: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:80
+msgid "Počet opakovaní"
+msgstr "Počet opakovaní"
+
+#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:150
+#: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:81
+msgid "Počet sekúnd"
+msgstr "Počet sekúnd"
+
+#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:151
+#: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:82
+msgid "Počet krokov"
+msgstr "Počet krokov"
+
+#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:282
+#, javascript-format
+msgid "Tréningový plán %s bol odstránený."
+msgstr "Tréningový plán %s bol odstránený."
+
+#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:89
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne pridaný."
+msgstr "Tréningový plán %s bol úspešne pridaný."
+
+#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:90
+#, javascript-format
+msgid "Tréningový plán %s bol úspešne upravený."
+msgstr "Tréningový plán %s bol úspešne upravený."
+
+#: app/static/app/ts/src/pages/password_reset.ts:121
+#: app/static/app/ts/src/pages/password_reset.ts:149
+msgid "Platnosť vypršala!"
+msgstr "Platnosť vypršala!"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Nezískali ste žiadne XP"
+msgstr "Nezískali ste žiadne XP"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
+msgid "Získali ste"
+msgstr "Získali ste"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:56
+msgid "<br>Aktuálna aktivita trvala: "
+msgstr "<br>Aktuálna aktivita trvala:"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
+#, javascript-format
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
+#, javascript-format
+msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgstr "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+
+#: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgstr ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+
+#: app/static/app/ts/src/pages/training_session/state.ts:90
+msgid "<span>Žiadne aktívne navýšenie XP</span>"
+msgstr "<span>Žiadne aktívne navýšenie XP</span>"
+
+#: app/static/app/ts/src/utils/password.ts:4
+msgid "Heslá sa zhodujú"
+msgstr "Heslá sa zhodujú"
+
+#: app/static/app/ts/src/utils/password.ts:9
+msgid "Heslá sa nezhodujú"
+msgstr "Heslá sa nezhodujú"
+
+#: app/static/app/ts/src/utils/password.ts:19
+msgid "Skryť heslo"
+msgstr "Skryť heslo"
+
+#: app/static/app/ts/src/utils/password.ts:26
+msgid "Zobraziť heslo"
+msgstr "Zobraziť heslo"
+
+#: app/static/app/ts/src/utils/password.ts:54
+msgid "Zadajte váš e-mail"
+msgstr "Zadajte váš e-mail"

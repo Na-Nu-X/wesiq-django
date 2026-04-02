@@ -4,7 +4,7 @@ services:
   # PostgreSQL
   db:
     image: postgres:17-alpine
-    container_name: swzilina_db
+    container_name: wesiq_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -17,15 +17,15 @@ services:
   # Redis
   redis:
     image: redis:7.0.11-alpine
-    container_name: swzilina_redis
+    container_name: wesiq_redis
 
   # Django
   web:
-    build: ./swzilina
-    container_name: swzilina_web
+    build: ./wesiq
+    container_name: wesiq_web
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./swzilina:/app
+      - ./wesiq:/app
     ports:
       - "8000:8000"
     env_file:
@@ -36,12 +36,12 @@ services:
 
   # Celery
   celery:
-    build: ./swzilina
-    container_name: swzilina_celery
-    command: celery -A swzilina worker -l INFO
+    build: ./wesiq
+    container_name: wesiq_celery
+    command: celery -A core worker -l INFO
     volumes:
-      - ./swzilina:/app
-      - ./swzilina/logs:/app/logs
+      - ./wesiq:/app
+      - ./wesiq/logs:/app/logs
     env_file:
       - .env
     depends_on:
@@ -51,11 +51,11 @@ services:
 
   # Celery Beat
   celery_beat:
-    build: ./swzilina
-    container_name: swzilina_beat
-    command: celery -A swzilina beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    build: ./wesiq
+    container_name: wesiq_beat
+    command: celery -A core beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
-      - ./swzilina:/app
+      - ./wesiq:/app
     env_file:
       - .env
     depends_on:
@@ -65,11 +65,11 @@ services:
 
   # Flower
   flower:
-    build: ./swzilina
-    container_name: swzilina_flower
-    command: celery -A swzilina flower --port=5555
+    build: ./wesiq
+    container_name: wesiq_flower
+    command: celery -A core flower --port=5555
     volumes:
-      - ./swzilina:/app
+      - ./wesiq:/app
     ports:
       - "5557:5555"
     env_file:

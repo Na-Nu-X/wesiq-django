@@ -1,0 +1,1650 @@
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions
+from django.contrib.auth import logout
+from pathlib import Path
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta, datetime
+from django.db.models import Avg
+from django.core.mail import EmailMultiAlternatives
+import random, requests, os, secrets
+from django.contrib.auth.hashers import make_password, check_password
+from django.db.models import Q
+import math
+from django.http import JsonResponse
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
+import json
+from django.db.models import F, IntegerField, ExpressionWrapper, Value
+from django.db.models.functions import Mod
+from django.utils.translation import gettext as _
+from django.utils import translation
+from django.urls import translate_url
+from django.shortcuts import redirect
+from django.core.cache import cache
+import stripe
+from django.views.decorators.csrf import csrf_exempt
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+# Functions
+
+def changeLanguage(request):
+    language_code = request.POST.get('language')
+    next_url = request.POST.get('next', '/')
+
+    response = HttpResponseRedirect(next_url)
+
+    if language_code:
+        target_url = translate_url(next_url, language_code)
+        
+        if target_url != next_url:
+            response = HttpResponseRedirect(target_url)
+
+        translation.activate(language_code)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language_code)
+
+        # Stores Language To The User's DB
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
+            user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+
+            user.language = language_code
+            user.save()
+        
+    return response
+
+# Functions
+def captureError(message):
+    with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
+        # timezone.LocalTimezone
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+
+def getClientIp(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    return ip
+
+# Generates Random 6-Digit Code
+def generateCode(length=6):
+    code = ""
+
+    for one_number in range(length):
+        one_number = random.randint(0, 9)
+        code += str(one_number)
+
+    return code
+
+def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+    with translation.override(user.language):
+        # Send Mail
+        subject = f"SW Žilina - {subject}"
+        text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
+        sender = settings.EMAIL_HOST_USER
+        receiver = [user.email_address]
+        html_content = f"""
+            <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+            <p>{html_content}<p>
+            <h1>{html_content_middle}</h1>
+            <p>{html_content_end}<br>
+            {_('Tím')} Wesiq.</p>
+        """
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+        mail_message.send()
+
+# Views
+
+def successDonation(request):
+    messages.add_message(request, messages.SUCCESS, _("Ďakujeme za Vašu podporu!"))
+
+    return redirect("homepage_url")
+
+# def cancelDonation(request):
+#     messages.add_message(request, messages.SUCCESS, _("Platba nebola dokončená.\nAk ste mali problém, skúste to neskôr."))
+
+#     return redirect("homepage_url")
+
+def createPaymentIntent(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            amount = int(data.get("amount"))
+            name = data.get("name", "Anonymous")
+
+            logged_in_user_id = request.session.get("logged_in_user_id") if "logged_in_user_id" in request.session else None
+
+            intent = stripe.PaymentIntent.create(
+                amount=amount,
+                currency="eur",
+
+                metadata={
+                    "integration_check": "accept_a_payment",
+                    "user_id": logged_in_user_id
+                },
+            )
+
+            Transactions.objects.create(
+                user_id=logged_in_user_id,
+                stripe_intent_id=intent.id,
+                cardholder_name=name,
+                amount=amount / 100,
+                status="pending",
+            )
+
+            return JsonResponse({"client_secret": intent.client_secret})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+            
+    return JsonResponse({"error": "Only POST is Allowed."}, status=405)
+
+@csrf_exempt
+def stripeWebhook(request):
+    payload = request.body
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+
+    except ValueError:
+        return HttpResponse(status=400)
+
+    except stripe.error.SignatureVerificationError:
+        return HttpResponse(status=400)
+
+    if event["type"] == "payment_intent.succeeded":
+        payment_intent = event["data"]["object"]
+        stripe_id = payment_intent.id
+
+        metadata = payment_intent.metadata
+        user_id = metadata["user_id"] if "user_id" in metadata else None
+
+        try:
+            payment = Transactions.objects.get(stripe_intent_id=stripe_id)
+
+            payment.status = "succeeded"
+
+            if user_id:
+                payment.user_id = int(user_id)
+
+            payment.save()
+
+        except Transactions.DoesNotExist:
+            pass
+
+    return HttpResponse(status=200)
+
+def homepageView(request):
+    # Login Form
+    if request.method == "POST" and request.POST.get("login_form_submit"):
+        login_form = loginForm(request.POST)
+        if login_form.is_valid():
+            email_address = login_form.cleaned_data["email_address"]
+            password = login_form.cleaned_data["password"]
+
+            try:
+                user = Users.objects.get(email_address=email_address)
+                if check_password(password, user.password):
+                    request.session["logged_in_user_id"] = user.id
+
+                    user.last_login = timezone.now() # Stores Last Login Time
+                    user.account_status = "OK"
+                    user.save()
+
+                    sendMail(
+                        user,
+                        _("Prihlásenie do účtu"), # Subject
+                        _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": user.language}, # Text Content
+                        _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}, # HTML Content
+                        _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.') # End Of HTML Content
+                    )
+
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else: # Wrong Password
+                    messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
+                    captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+            
+            except Users.DoesNotExist: # Wrong E-mail Address
+                messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
+                captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+
+    if request.GET.get("verification-code") and request.GET.get("id"):
+        if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
+            user = Users.objects.get(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code")))
+            
+            request.session["logged_in_user_id"] = user.id # Sets User ID Session For New Registered User For Login or Switch Account
+
+            user.verification_code = None
+            user.account_status = "OK"
+            user.last_login = timezone.now() # Stores Last Login Time
+            user.save()
+
+            sendMail(
+                user,
+                _("Úspešná registrácia"), # Subject
+                _("máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet/\n\nSme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\nTím Wesiq.") % {"language": user.language}, # Text Content
+                _('máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny. Kliknite na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet/" title="Môj účet" target="_blank">tento</a> odkaz pre zobrazenie Vášho úštu.') % {"language": user.language}, # HTML Content
+                _('Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.') # End Of HTML Content
+            )
+
+            messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+
+        return HttpResponseRedirect(reverse("homepage_url"))
+
+    if request.GET.get("password-reset"):
+        email_address = request.COOKIES.get("email_address")
+
+        if Users.objects.filter(email_address=email_address).exists():
+            user = Users.objects.get(email_address=email_address)
+
+            code = generateCode() # Generates Random 6-Digit Code
+
+            sendMail(
+                user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
+
+            # Saves Password Reset Code To Database
+            user.password_reset_code = code
+            user.save()
+
+            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
+
+            # Redirect After Sending Mail
+            response = HttpResponseRedirect(reverse("password_reset_url"))
+            # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+            return response
+
+        else:
+            return redirect(request.path)
+    
+    # Registration Form
+    if request.method == "POST" and request.POST.get("registration_form_submit"):
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
+
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+        else:
+            registration_form = registrationForm(request.POST)
+            if registration_form.is_valid():
+                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
+                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
+
+                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
+
+                elif len(registration_form.cleaned_data["password"]) < 8:
+                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+
+                else:
+                    verification_code = generateCode() # Generates Random 6-Digit Code
+
+                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+
+                    new_user = Users(
+                        first_name = registration_form.cleaned_data["first_name"],
+                        last_name = registration_form.cleaned_data["last_name"],
+                        email_address = registration_form.cleaned_data["email_address"],
+                        phone_number = phone_number,
+                        password = make_password(registration_form.cleaned_data["password"]),
+                        language = request.POST.get("language"),
+                        verification_code = verification_code
+                    )
+
+                    new_user.save()
+
+                    # Deletes Previous User ID Session If Was Logged In
+                    if "logged_in_user_id" in request.session:
+                        del request.session["logged_in_user_id"]
+
+                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
+
+                    sendMail(
+                        new_user,
+                        _("Overenie účtu"), # Subject
+                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                    )
+
+                    return HttpResponseRedirect(reverse("registration_url"))
+            
+            else:
+                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
+                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+    # Contact Form
+    if request.method == "POST" and request.POST.get("contact_form_submit"):
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
+
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+        else:
+            contact_form = contactForm(request.POST, request.FILES)
+            if contact_form.is_valid():
+                # Send Mail
+                subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
+                text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
+                sender = contact_form.cleaned_data["email_address"]
+                receiver = [settings.EMAIL_HOST_USER]
+                html_content = f"""
+                    <p>
+                        <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
+                        {contact_form.cleaned_data["message"]}
+                    </p>
+                """
+
+                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                mail_message.attach_alternative(html_content, "text/html")
+
+                attachment_file = request.FILES.get("select_attachment")
+                if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
+                    if attachment_file.size < 25000000:
+                        mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+
+                        mail_message.send()
+
+                        messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
+
+                    else:
+                        messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
+                        captureError(f"The Attachment is Too Large\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                else: # Sends Mail Without An Attachment
+                    mail_message.send()
+
+                    messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
+            
+            else:
+                messages.add_message(request, messages.ERROR, _("Správu sa nepodarilo odoslať"))
+                captureError(f"The Message Could Not be Sent\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+        return HttpResponseRedirect(reverse("homepage_url"))
+            
+    # Get All Reviews From DB
+    reviews = cache.get("cached_reviews") # Gets All Cached Reviews
+    # reviews = Reviews.objects.all() # Queryset
+
+    # Reviews Fallback (If Cache Is Clear)
+    if reviews is None:
+        # Gets All Reviews
+        reviews = list(
+            Reviews.objects.all()
+            # .values("user", "rating", "review", "last_edit", "creation_time")
+        )
+
+        cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
+
+        print("Getting Reviews Data From The DB.") # Test Print
+
+    else:
+        print("Getting Reviews Data From The Redis Cache.") # Test Print
+
+    # Info About Reviews
+    num_reviews = len(reviews) # Redis List
+    # num_reviews = reviews.count() # Queryset
+
+    ratings = [one_review.rating for one_review in reviews]
+
+    if ratings:
+        avg_value = sum(ratings) / len(ratings)
+    
+    else:
+        avg_value = 0
+
+    avg_rating = {"rating__avg": avg_value} # Redis List
+    # avg_rating = reviews.aggregate(Avg("rating")) # Queryset
+    avg_rating_integer = math.floor(float(avg_rating["rating__avg"])) # For Example From Average Rating Of 4.25 It Returns 4
+    avg_rating_rest = f"{float(avg_rating['rating__avg']) - avg_rating_integer:.2f}"[2:] # For Example From Average Rating Of 4.25 It Returns 25 And From 4.00 It Returns 00
+
+    # Redis List
+    reviews_amount_by_stars = {
+        "5": len([one_review for one_review in reviews if one_review.rating == 5]),
+        "4": len([one_review for one_review in reviews if one_review.rating == 4]),
+        "3": len([one_review for one_review in reviews if one_review.rating == 3]),
+        "2": len([one_review for one_review in reviews if one_review.rating == 2]),
+        "1": len([one_review for one_review in reviews if one_review.rating == 1]),
+    }
+
+    # Queryset
+    # reviews_amount_by_stars = {
+    #     "5": len(reviews.filter(rating=5)), # Number Of Reviews With 5 Star Rating
+    #     "4": len(reviews.filter(rating=4)), # Number Of Reviews With 4 Star Rating
+    #     "3": len(reviews.filter(rating=3)), # Number Of Reviews With 3 Star Rating
+    #     "2": len(reviews.filter(rating=2)), # Number Of Reviews With 2 Star Rating
+    #     "1": len(reviews.filter(rating=1)), # Number Of Reviews With 1 Star Rating
+    # }
+
+    # Sorts Reviews By User Preferencies (The Latest Articles Are Set As Default)
+    sort = request.GET.get("sort", "latest").lower()
+    rating = request.GET.get("rating", "all")
+
+    if sort == "latest":
+        if rating == "all":
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.creation_time,
+                reverse=True
+            )
+
+            # reviews = reviews.order_by("-creation_time") # Queryset
+
+        else:
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.creation_time, 
+                reverse=True
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("-creation_time") # Queryset
+
+    if sort == "oldest":
+        if rating == "all":
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.creation_time
+            )
+
+            # reviews = reviews.order_by("creation_time") # Queryset
+
+        else:
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.creation_time, 
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("creation_time") # Queryset
+
+    if sort == "best":
+        if rating == "all":
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.rating,
+                reverse=True
+            )
+
+            # reviews = reviews.order_by("-rating") # Queryset
+
+        else:
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.rating, 
+                reverse=True
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("-rating") # Queryset
+
+    if sort == "worst":
+        if rating == "all":
+            # Redis List
+            reviews = sorted(
+                reviews, 
+                key=lambda one_review: one_review.rating
+            )
+
+            # reviews = reviews.order_by("rating") # Queryset
+
+        else:
+            # Redis List
+            reviews = sorted(
+                [one_review for one_review in reviews if one_review.rating == int(rating)], 
+                key=lambda one_review: one_review.rating
+            )
+
+            # reviews = reviews.filter(rating=int(rating)).order_by("rating") # Queryset
+
+    # Checks If User Is Logged In
+    if "logged_in_user_id" in request.session:
+        # Get Logged In User ID From Session
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        # Write Review Form
+        if request.method == "POST" and request.POST.get("write_review_form_submit"):
+            # Loads Data From reCaptcha In Registration Page
+            recaptcha_response = request.POST.get("g-recaptcha-response")
+            recaptcha_data = {
+                "secret": settings.RECAPTCHA_SECRET_KEY,
+                "response": recaptcha_response
+            }
+
+            # Loads reCaptcha API
+            recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+            # Checks Validity Of reCaptcha Response
+            if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+                messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+                captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+                return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else:
+                review_form = reviewForm(request.POST)
+                if review_form.is_valid():
+                    # Checks If User Has Already Written A Review
+                    if Reviews.objects.filter(user_id=logged_in_user_id).exists():
+                        messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
+
+                        return HttpResponseRedirect(reverse("edit_review_url"))
+
+                    # Saves New Review To DB
+                    else:
+                        if int(review_form.cleaned_data["rating"]) == 0:
+                            messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
+
+                        else:
+                            new_review = Reviews(
+                                user_id = logged_in_user_id,
+                                rating = int(review_form.cleaned_data["rating"]),
+                                review = review_form.cleaned_data["review"],
+                            )
+
+                            new_review.save()
+
+                            messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
+                        
+                else:
+                    messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
+                    captureError(f"Review Could Not be Published\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+            return HttpResponseRedirect(reverse("homepage_url"))
+
+        # Get Logged In User From DB
+        user = Users.objects.get(id=logged_in_user_id)
+
+        # Automatically Set Values Into Contact Form When User Is Logged In
+        filled_contact_form = contactForm(initial={
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email_address": user.email_address,
+        })
+
+        # Renders Homepage With Filled Contact Form, User Data And Reviews
+        return render(request, "app/homepage.html", {
+            "login_form": loginForm,
+            "registration_form": registrationForm,
+            "contact_form": filled_contact_form,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email_address": user.email_address,
+            "phone_number": user.phone_number,
+            "role": user.role,
+            "profile_picture_name": user.profile_picture_name,
+            "review_form": reviewForm,
+            "reviews": reviews,
+            "num_reviews": num_reviews,
+            "avg_rating": avg_rating,
+            "avg_rating_integer": avg_rating_integer,
+            "avg_rating_rest": avg_rating_rest,
+            "reviews_amount_by_stars": reviews_amount_by_stars,
+            "logged_in_user": user,
+            "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+        })
+    
+    else:
+        # Write Review Form
+        if request.method == "POST" and request.POST.get("write_review_form_submit"):
+            messages.add_message(request, messages.ERROR, _("Pred napísaním hodnotenia sa prihláste"))
+
+            return HttpResponseRedirect(reverse("login_url"))
+
+    # Renders Homepage With Reviews
+    return render(request, "app/homepage.html", {
+        "login_form": loginForm,
+        "registration_form": registrationForm,
+        "contact_form": contactForm,
+        "review_form": reviewForm,
+        "reviews": reviews,
+        "num_reviews": num_reviews,
+        "avg_rating": avg_rating,
+        "avg_rating_integer": avg_rating_integer,
+        "avg_rating_rest": avg_rating_rest,
+        "reviews_amount_by_stars": reviews_amount_by_stars,
+        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+    })
+
+def loginView(request):
+    if request.method == "POST":
+        email_address = request.POST.get("email_address")
+        password = request.POST.get("password")
+
+        try:
+            user = Users.objects.get(email_address=email_address)
+            if check_password(password, user.password):
+                request.session["logged_in_user_id"] = user.id
+
+                user.last_login = timezone.now() # Stores Last Login Time
+                user.account_status = "OK"
+                user.save()
+
+                sendMail(
+                    user,
+                    _("Prihlásenie do účtu"), # Subject
+                    _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\nhttp://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": user.language}, # Text Content
+                    _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"language": user.language}, # HTML Content
+                    _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.') # End Of HTML Content
+                )
+
+                messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+
+                return HttpResponseRedirect(reverse("homepage_url"))
+            
+            else: # Wrong Password
+                messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
+                captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+        
+        except Users.DoesNotExist: # Wrong E-mail Address
+            messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
+            captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+
+    if request.GET.get("password-reset"):
+        email_address = request.COOKIES.get("email_address")
+        
+        if Users.objects.filter(email_address=email_address).exists():
+            user = Users.objects.get(email_address=email_address)
+
+            code = generateCode() # Generates Random 6-Digit Code
+
+            sendMail(
+                user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
+
+            # Saves Password Reset Code To Database
+            user.password_reset_code = code
+            user.save()
+
+            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
+
+            # Redirect After Sending Mail
+            response = HttpResponseRedirect(reverse("password_reset_url"))
+            # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+            return response
+
+        else:
+            return redirect(request.path)
+
+    return render(request, "app/login.html", {
+        "login_form": loginForm,
+    })
+
+def passwordResetView(request):
+    if request.COOKIES.get("email_address"):
+        if request.method == "POST":
+            password_reset_form = passwordResetForm(request.POST)
+            if password_reset_form.is_valid():
+                password_reset_code = password_reset_form.cleaned_data["password_reset_code"]
+                new_password = password_reset_form.cleaned_data["new_password"]
+
+                user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
+
+                if password_reset_code == user.password_reset_code:
+                    if len(new_password) < 8:
+                        messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+
+                    else:
+                        # Saves New Password To Database And Deletes Password Reset Code From Database
+                        user.password = make_password(new_password)
+                        user.password_reset_code = None
+                        user.save()
+
+                        messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
+
+                        # Redirect After Changing Password
+                        response = HttpResponseRedirect(reverse("login_url"))
+                        response.delete_cookie("email_address") # Deletes Cookie With Email Address
+                        return response
+                
+                else:
+                    messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
+                    captureError(f"Verification Code Does Not Match\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+
+            else:
+                messages.add_message(request, messages.ERROR, _("Overenie zlyhalo"))
+                captureError(f"Verification Failed\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+
+        if request.GET.get("password-reset"):
+            email_address = request.COOKIES.get("email_address")
+            
+            if Users.objects.filter(email_address=email_address).exists():
+                user = Users.objects.get(email_address=email_address)
+
+                code = generateCode() # Generates Random 6-Digit Code
+
+                sendMail(
+                    user,
+                    _("Obnova hesla"), # Subject
+                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": user.language, "code": code}, # Text Content
+                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": user.language, "code": code}, # HTML Content
+                    _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                    code
+                )
+
+                # Saves Password Reset Code To Database
+                user.password_reset_code = code
+                user.save()
+
+                messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address})
+
+                # Redirect After Sending Mail
+                response = HttpResponseRedirect(reverse("password_reset_url"))
+                # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+                return response
+
+            else:
+                return redirect(request.path)
+
+        # Gets Password Reset Code From URL Parameters If User Opened Attached Link In Mail
+        if request.method == "GET" and request.GET.get("password-reset-code"):
+            filled_password_reset_form = passwordResetForm(initial={
+                "password_reset_code": request.GET.get("password-reset-code")
+            })
+
+            return render(request, "app/password_reset.html", {
+                "password_reset_form": filled_password_reset_form,
+            })
+
+    return render(request, "app/password_reset.html", {
+        "password_reset_form": passwordResetForm,
+    })
+
+def logoutView(request):
+    logout(request)
+
+    messages.add_message(request, messages.ERROR, _("Boli ste odhlásený"))
+
+    return HttpResponseRedirect(reverse("homepage_url"))
+
+def registrationView(request):
+    if request.method == "POST":
+        # Loads Data From reCaptcha In Registration Page
+        recaptcha_response = request.POST.get("g-recaptcha-response")
+        recaptcha_data = {
+            "secret": settings.RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response
+        }
+
+        # Loads reCaptcha API
+        recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+
+        # Checks Validity Of reCaptcha Response
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+            return HttpResponseRedirect(reverse("registration_url"))
+
+        else:
+            registration_form = registrationForm(request.POST)
+            if registration_form.is_valid():
+                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
+                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
+
+                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
+
+                elif len(registration_form.cleaned_data["password"]) < 8:
+                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+
+                else:
+                    verification_code = generateCode() # Generates Random 6-Digit Code
+
+                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+
+                    new_user = Users(
+                        first_name = registration_form.cleaned_data["first_name"],
+                        last_name = registration_form.cleaned_data["last_name"],
+                        email_address = registration_form.cleaned_data["email_address"],
+                        phone_number = phone_number,
+                        password = make_password(registration_form.cleaned_data["password"]),
+                        language = request.POST.get("language"),
+                        verification_code = verification_code
+                    )
+
+                    new_user.save()
+
+                    # Deletes Previous User ID Session If Was Logged In
+                    if "logged_in_user_id" in request.session:
+                        del request.session["logged_in_user_id"]
+
+                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
+
+                    sendMail(
+                        new_user,
+                        _("Overenie účtu"), # Subject
+                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\nhttp://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                    )
+
+                    return HttpResponseRedirect(reverse("registration_url"))
+                
+            else:
+                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
+                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
+
+            return HttpResponseRedirect(reverse("registration_url"))
+        
+    return render(request, "app/registration.html", {
+        "registration_form": registrationForm,
+    })
+
+def editAccountView(request):
+    logged_in_user_id = request.session.get("logged_in_user_id")
+
+    if logged_in_user_id:
+        logged_in_user = Users.objects.get(id=logged_in_user_id)
+
+        if request.method == "POST":
+            edit_account_form = editAccountForm(request.POST, request.FILES)
+            if edit_account_form.is_valid():
+                delete_account = edit_account_form.cleaned_data["delete_account"]
+                if delete_account:
+                    sendMail(
+                        logged_in_user,
+                        _("Odstránenie účtu"), # Subject
+                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\nhttp://127.0.0.1:8000/%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"language": logged_in_user.language}, # Text Content
+                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="http://127.0.0.1:8000/%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"language": logged_in_user.language}, # HTML Content
+                        _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                    )
+
+                    logged_in_user.account_status = "suspended" # Changes Account Status
+                    logged_in_user.save()
+
+                    messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
+                    captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s Account Status Has Been Changed to Suspended\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                    del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+
+                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
+                    profile_picture_file = request.FILES.get("select_profile_picture")
+                    if profile_picture_file:
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+
+                        current_profile_picture_name = logged_in_user.profile_picture_name
+                        if current_profile_picture_name != "" and current_profile_picture_name != None:
+                            os.remove(f"{path}/{current_profile_picture_name}")
+
+                        new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+
+                        image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                        image_save_location.save(new_image_name, profile_picture_file)
+
+                        logged_in_user.profile_picture_name = new_image_name
+
+                        logged_in_user.last_edit = timezone.now()
+
+                    delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
+                    if delete_profile_picture:
+                        current_profile_picture_name = logged_in_user.profile_picture_name
+                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                        os.remove(f"{path}/{current_profile_picture_name}")
+
+                        logged_in_user.profile_picture_name = ""
+
+                        logged_in_user.last_edit = timezone.now()
+
+                    if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
+                        logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+                        logged_in_user.last_edit = timezone.now()
+
+                    if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
+                        logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+                        logged_in_user.last_edit = timezone.now()
+
+                    if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
+                        logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+                        logged_in_user.last_edit = timezone.now()
+
+                    if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
+                        logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+                        logged_in_user.last_edit = timezone.now()
+
+                    logged_in_user.save()
+
+                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+
+                else:
+                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
+            
+            else:
+                messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
+                captureError(f"Changes Could Not be Made While Editing Account)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+            return HttpResponseRedirect(reverse("edit_account_url"))
+        
+        if request.GET.get("password-reset"):
+            code = generateCode() # Generates Random 6-Digit Code
+
+            sendMail(
+                logged_in_user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": logged_in_user.language, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": logged_in_user.language, "code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code
+            )
+
+            # Saves Password Reset Code To Database
+            logged_in_user.password_reset_code = code
+            logged_in_user.save()
+
+            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
+
+            # Redirect After Sending Mail
+            response = HttpResponseRedirect(reverse("password_reset_url"))
+            # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
+            return response
+
+        filled_edit_account_form = editAccountForm(initial={
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "email_address": logged_in_user.email_address,
+            "phone_number": logged_in_user.phone_number,
+        })
+
+        return render(request, "app/edit_account.html", {
+            "edit_account_form": filled_edit_account_form,
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "email_address": logged_in_user.email_address,
+            "phone_number": logged_in_user.phone_number,
+            "profile_picture_name": logged_in_user.profile_picture_name,
+        })
+    
+    return render(request, "app/edit_account.html")
+    
+def editReviewView(request):
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        review = Reviews.objects.get(user_id=logged_in_user_id)
+
+        if request.method == "POST":
+            if review.last_edit == None or timezone.now() - review.last_edit >= timedelta(days=30):
+                review_form = reviewForm(request.POST)
+                if review_form.is_valid():
+                    if review.rating != int(review_form.cleaned_data["rating"]):
+                        review.rating = int(review_form.cleaned_data["rating"])
+                        review.last_edit = timezone.now()
+
+                    if review.review != review_form.cleaned_data["review"]:
+                        review.review = review_form.cleaned_data["review"]
+                        review.last_edit = timezone.now()
+
+                    review.save()
+
+                    delete_review = review_form.cleaned_data["delete_review"]
+                    if delete_review:
+                        review.delete()
+
+                        messages.add_message(request, messages.ERROR, _("Vaše hodnotenie bolo odstránené"))
+
+                        return HttpResponseRedirect(reverse("homepage_url"))
+                    
+                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else:
+                    messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
+                    captureError(f"Changes Could Not be Made While Editing Review)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                return HttpResponseRedirect(reverse("edit_review_url"))
+            
+            else:
+                messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (review.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
+        
+        filled_review_form = reviewForm(initial={
+            "rating": review.rating,
+            "review": review.review,
+        })
+
+        return render(request, "app/edit_review.html", {
+            "review_form": filled_review_form,
+            "review": review,
+        })
+    
+    return render(request, "app/edit_review.html")
+
+def blogView(request):
+    # Gets All Articles From DB
+    articles = cache.get("cached_articles") # Gets All Cached Reviews
+    # articles = Articles.objects.all() # Queryset
+
+    # Articles Fallback (If Cache Is Clear)
+    if articles is None:
+        # Gets All Articles
+        articles = list(
+            Articles.objects.all()
+            # .values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")
+        )
+
+        cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
+
+        print("Getting Articles Data From The DB.") # Test Print
+
+    else:
+        print("Getting Articles Data From The Redis Cache.") # Test Print
+
+    no_articles = True # Default Value That Says That There Are No Articles In The Database
+
+    # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
+    sort = request.GET.get("sort", "latest").lower()
+    category = request.GET.get("category", "all").lower()
+
+    if sort == "latest":
+        if category == "all":
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.creation_time,
+                reverse=True
+            )
+
+            # articles.order_by("-creation_time") # Queryset
+
+        else:
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.creation_time,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-creation_time") # Queryset
+
+    if sort == "popular":
+        if category == "all":
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.visitors,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-visitors") # Queryset
+
+        else:
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.visitors,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-visitors") # Queryset
+
+    elif sort == "best":
+        if category == "all":
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.rating,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-rating") # Queryset
+
+        else:
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.rating,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-rating") # Queryset
+
+    elif sort == "a-z":
+        if category == "all":
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.title
+            )
+
+            # articles = articles.order_by("title") # Queryset
+        
+        else:
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.title
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("title") # Queryset
+
+    elif sort == "z-a":
+        if category == "all":
+            # Redis List
+            articles = sorted(
+                articles, 
+                key=lambda one_article: one_article.title,
+                reverse=True
+            )
+
+            # articles = articles.order_by("-title") # Queryset
+        
+        else:
+            # Redis List
+            filtered_articles = [
+                one_article for one_article in articles 
+                if category in one_article.categories
+            ]
+
+            articles = sorted(
+                filtered_articles,
+                key=lambda one_article: one_article.title,
+                reverse=True
+            )
+
+            # articles = articles.filter(categories__contains=[category]).order_by("-title") # Queryset
+
+    # Number Of All Articles
+    num_articles = len(articles) # Redis List
+    # num_articles = articles.count() # Queryset
+
+    # Checks If There Are Any Articles In The Database
+    # if(articles.exists()): # Queryset
+    if articles is not None and len(articles) > 0:
+        no_articles = False
+
+    # Blog Subscribe Form
+    if request.method == "POST":
+        blog_subscribe_form = blogSubscribeForm(request.POST)
+        if blog_subscribe_form.is_valid():
+            email_address = blog_subscribe_form.cleaned_data["email_address"]
+            
+            try:
+                subscribed_user = Users.objects.get(email_address=email_address)
+                subscribed_user.blog_subscribe = True
+                subscribed_user.save()
+
+                messages.add_message(request, messages.SUCCESS, f"Budete dostávať upozornenia na adresu\n%(email_address)s" % {"email_address": email_address})
+
+            # Account With The Entered E-mail Address Does Not Exist
+            except:
+                pass
+
+    # Checks If User Is Logged In
+    if "logged_in_user_id" in request.session:
+        # Get Logged In User ID From Session
+        logged_in_user_id = request.session.get("logged_in_user_id")
+
+        # Get Logged In User From DB
+        user = Users.objects.get(id=logged_in_user_id)
+
+        # Automatically Set Values Into Contact Form When User Is Logged In
+        filled_blog_subscribe_form = blogSubscribeForm(initial={
+            "email_address": user.email_address,
+        })
+
+        # Renders Blog Page With Filled Subscribe Form, User Data And Articles
+        return render(request, "app/blog.html", {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
+            "articles": articles,
+            "no_articles": no_articles,
+            "blog_subscribe_form": filled_blog_subscribe_form,
+            "num_articles": num_articles,
+        })
+
+    # Renders Page With Articles Data
+    return render(request, "app/blog.html", {
+        "articles": articles,
+        "blog_subscribe_form": blogSubscribeForm,
+        "num_articles": num_articles,
+    })
+
+def blogThemeView(request, theme):
+    try:
+        # Gets Logged In User
+        if "logged_in_user_id" in request.session:
+            # Gets Logged In User ID From Session
+            logged_in_user_id = request.session.get("logged_in_user_id")
+
+            no_comments = True # Default Value That Says That There Are No Comments In The Database
+
+            # Gets Logged In User From DB
+            user = Users.objects.get(id=logged_in_user_id)
+            # Gets Article By URL Address
+            article = Articles.objects.get(link=theme)
+            # Gets All Comments Of The Article
+            comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None, status="OK")
+            replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None) & Q(status="OK"))
+
+            # Checks If There Are Any Articles In The Database
+            if(comments.exists()):
+                no_comments = False
+
+        # Adds 1 Visitor to The Article's Unique Visitors
+        if not request.COOKIES.get(article.link):
+            article.visitors += 1
+            article.save()
+
+        if request.method == "POST":
+            # Write Comment Form
+            if request.POST.get("write_comment_form"):
+                write_comment_form = writeCommentForm(request.POST)
+                if write_comment_form.is_valid():
+                    new_comment = ArticleForum(
+                        article_id = article.id,
+                        user_id = logged_in_user_id,
+                        comment = write_comment_form.cleaned_data["comment"],
+                    )
+
+                    new_comment.save()
+
+            # Reply Comment Form
+            elif request.POST.get("reply_comment_form"):
+                write_comment_form = writeCommentForm(request.POST)
+                if write_comment_form.is_valid():
+                    new_comment_reply = ArticleForum(
+                        article_id = article.id,
+                        user_id = logged_in_user_id,
+                        comment = write_comment_form.cleaned_data["comment"],
+                        parent_id = request.POST.get("parent_id")
+                    )
+
+                    new_comment_reply.save()
+
+        response = render(request, "app/articles.html", {
+            "article": article,
+            "comments": comments,
+            "replies": replies,
+            "profile_picture_name": user.profile_picture_name,
+            "write_comment_form": writeCommentForm,
+            "no_comments": no_comments,
+            "not_found": False,
+        })
+
+        response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
+
+        return response
+    
+    except:
+        return render(request, "app/articles.html", {
+            "not_found": True,
+        })
+    
+def writeArticleView(request):
+    logged_in_user_id = request.session.get("logged_in_user_id")
+
+    if request.method == "POST":
+        write_article_form = writeArticleForm(request.POST, request.FILES)
+        if write_article_form.is_valid():
+            categories = []
+            categories.append(write_article_form.cleaned_data["category_style"])
+            categories.append(write_article_form.cleaned_data["category_movement"])
+            categories.append(write_article_form.cleaned_data["category_difficulty"])
+
+            new_image_name = None # Default Image Name Is Saved To Database As null
+
+            article_image_file = request.FILES.get("select_article_image")
+            if article_image_file:
+                new_image_name = write_article_form.cleaned_data["link"] + Path(article_image_file.name).suffix
+                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                image_save_location.save(new_image_name, article_image_file)
+
+            new_article = Articles(
+                user_id = logged_in_user_id,
+                title = write_article_form.cleaned_data["title"],
+                content = write_article_form.cleaned_data["content"],
+                categories = categories,
+                link = write_article_form.cleaned_data["link"],
+                image_name = new_image_name,
+            )
+            
+            new_article.save()
+
+    return render(request, "app/write_article.html", {
+        "write_article_form": writeArticleForm
+    })
+
+def likeComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) not in comment.likes_from_users):
+                    comment.likes_from_users.append(logged_in_user_id)
+                    comment.likes += 1
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return JsonResponse({"success": "Like Has Been Recorded."})
+
+def cancelLikeComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) in comment.likes_from_users):
+                    comment.likes_from_users.remove(str(logged_in_user_id))
+                    comment.likes -= 1
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return JsonResponse({"success": "Like Has Been Removed."})
+
+def reportComment(request, comment_id):
+    if request.method == "POST":
+        try:
+            # Gets Logged In User
+            if "logged_in_user_id" in request.session:
+                # Gets Logged In User ID From Session
+                logged_in_user_id = request.session.get("logged_in_user_id")
+
+                comment = ArticleForum.objects.get(id=comment_id)
+
+                if(str(logged_in_user_id) not in comment.reports_from_users):
+                    comment.reports_from_users.append(logged_in_user_id)
+                    comment.reports += 1
+
+                    if comment.reports >= 5:
+                        comment.status = "hidden"
+                    
+                    comment.save()
+
+        except:
+            pass
+
+    return JsonResponse({"success": "Report Has Been Sent."})
+
+def trainingSessionView(request):
+    # Gets Logged In User
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
+        activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
+        latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
+        longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+
+        # Gets Last 7 Days Average Logged In User's Activity Time
+        average_activity_elapsed_time = Activity.objects.filter(
+            user_id=logged_in_user_id,
+            end_time__gte=timezone.now() - timedelta(days=6)
+        ).aggregate(avg=Avg("elapsed_time"))["avg"]
+
+        average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0
+
+        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" if activities else "" # Formats Average Activity Time
+        activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
+
+        today = timezone.now().date() # Determines Today's Date
+        start_date = today - timedelta(days=6) # Determines Previous 7th Date
+
+        # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+        weekly_activity = (
+            Activity.objects
+            .filter(
+                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
+            )
+            .annotate(day=TruncDate("end_time"))
+            .values("day")
+            .annotate(total_elapsed_time=Sum("elapsed_time"))
+        )
+
+        # Creates Dictionary From Weekly Activity
+        weekly_activity_dictionary = {
+            one_day["day"]: one_day["total_elapsed_time"]
+            for one_day in weekly_activity
+        }
+
+        weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
+
+        weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
+
+        # Fills And Sorts Result From The Oldest Date To Today's Date 
+        for i in range(6, -1, -1):
+            day = today - timedelta(days=i)
+            label = weekday_labels[day.weekday()]
+
+            weekly_activity_result.append({
+                "day": label,
+                "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
+            })
+
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+
+        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        training_plan = (
+            TrainingPlan.objects
+            .filter(user_id=logged_in_user_id)
+            .annotate(
+                sorted_days=ExpressionWrapper(
+                    Mod(F("day") - Value(day_index) + Value(7), Value(7)),
+                    output_field=IntegerField()
+                )
+            )
+            .order_by("sorted_days")
+        )
+        
+        if request.method == "POST":
+            new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+
+            gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
+
+            # Increments Gained XP For The User In The Database
+            logged_in_user.xp += int(gained_xp)
+            logged_in_user.save()
+
+            # Saves New Activity To Database
+            new_activity = Activity(
+                user_id = logged_in_user_id,
+                formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
+                elapsed_time = int(new_activity_data["elapsed_time"]),
+                gained_xp = int(gained_xp),
+                type = new_activity_data["type"],
+                training_plan_day = new_activity_data["day"]
+            )
+
+            new_activity.save()
+
+            return JsonResponse({"success": "Amount Of XP Has Been Increased."})
+
+        return render(request, "app/training_session.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "profile_picture_name": logged_in_user.profile_picture_name,
+            "latest_activity": latest_activity,
+            "longest_activity": longest_activity,
+            "average_activity_time": average_activity_time,
+            "average_activity_time_formatted": average_activity_time_formatted,
+            "activities_amount": activities_amount,
+            "training_plan": training_plan,
+            "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
+        })
+
+    return render(request, "app/training_session.html")
+
+def manageTrainingPlansView(request):
+    exercises = cache.get("cached_exercises") # Gets All Cached Exercises
+    # exercises = Exercises.objects.all() # Queryset
+
+    # Exercises Fallback (If Cache Is Clear)
+    if exercises is None:
+        # Gets All Exercises
+        exercises = list(
+            Exercises.objects.all()
+            .order_by("exercise")
+            # .values("exercise", "unit", "categories", "requires_weight")
+        )
+
+        cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
+
+        print("Getting Exercises Data From The DB.") # Test Print
+
+    else:
+        print("Getting Exercises Data From The Redis Cache.") # Test Print
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+
+        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        training_plan = (
+            TrainingPlan.objects
+            .filter(user_id=logged_in_user_id)
+            .annotate(
+                sorted_days=ExpressionWrapper(
+                    Mod(F("day") - Value(day_index) + Value(7), Value(7)),
+                    output_field=IntegerField()
+                )
+            )
+            .order_by("sorted_days")
+        )
+
+        if request.method == "POST":
+            training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+            
+            # Gets Each Object From The Training Plan Data
+            for one_object in training_plan_data:
+                # New Training Plan
+                if one_object["action"] == "new_training_plan":
+                    new_training_plan = TrainingPlan(
+                        user_id = logged_in_user_id,
+                        training_plan_key = one_object["training_plan_key"],
+                        day = one_object["day"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                    )
+
+                    new_training_plan.save() # Saves New Training Plan
+
+                # Edited Training Plan
+                elif one_object["action"] == "edited_training_plan":
+                    training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
+
+                    edited_training_plan = TrainingPlan(
+                        user_id = logged_in_user_id,
+                        training_plan_key = one_object["training_plan_key"],
+                        day = one_object["day"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                    )
+
+                    edited_training_plan.save() # Saves Edited Training Plan
+
+                elif one_object["action"] == "delete_training_plan":
+                    training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
+
+            return JsonResponse({"success": "true"}) # Returns Success Response
+        
+        return render(request, "app/manage_training_plans.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "profile_picture_name": logged_in_user.profile_picture_name,
+            "exercises": exercises,
+            "training_plan": training_plan,
+        })
+
+    return render(request, "app/manage_training_plans.html", {
+        "exercises": exercises,
+    })
