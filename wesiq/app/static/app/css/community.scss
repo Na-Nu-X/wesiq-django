@@ -1,0 +1,52 @@
+@import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
+
+/************
+ Main Styles
+************/
+
+.content {
+    // Search Bar
+
+    .search_bar_container {
+        @include search_bar;
+        margin: 0px auto;
+        z-index: 100;
+    }
+
+    // All Users
+
+    .all_users {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 500px;
+        width: 100%;
+        margin: 20px auto 0px;
+
+        .one_user {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $small-border-radius;
+            transition: transform 0.3s ease;
+
+            .profile_picture {
+                @include profile_picture;
+            }
+            
+            .user_name {
+                color: $secondary-color;
+                flex-grow: 1
+            }
+
+            .add_friend {
+                @include icon;
+                // flex-grow: 1;
+            }
+        }
+    }
+}

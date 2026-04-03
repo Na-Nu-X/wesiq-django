@@ -68,7 +68,7 @@ def captureError(message):
 
 def getClientIp(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    
+
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0].strip()
 
@@ -1674,11 +1674,16 @@ def manageTrainingPlansView(request):
 def communityView(request):
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-    return render(request, "app/community.html", {
-        "first_name": logged_in_user.first_name,
-        "last_name": logged_in_user.last_name,
-        "profile_picture_name": logged_in_user.profile_picture_name,
-    })
+        users = Users.objects.filter(account_status="OK") # Gets All Users With OK Account Status
+
+        return render(request, "app/community.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "profile_picture_name": logged_in_user.profile_picture_name,
+
+            "users": users
+        })
+
+    return render(request, "app/community.html")
