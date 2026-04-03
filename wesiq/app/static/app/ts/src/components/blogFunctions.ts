@@ -10,7 +10,7 @@ export function fillArticlesData(all_articles:NodeListOf<HTMLElement>):article[]
     all_articles.forEach(function(one_article:HTMLElement):void {
         // Gets Data From HTML Tags
         const one_article_class:string = one_article.className // For Example: front-lever
-        const one_article_title:string|undefined = one_article.dataset.title // For Example: Front Lever
+        const one_article_title:string|undefined = one_article.dataset["title"] // For Example: Front Lever
 
         if(!one_article_title) return
         
