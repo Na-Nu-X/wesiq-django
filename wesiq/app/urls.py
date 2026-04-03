@@ -22,9 +22,4 @@ urlpatterns = [
     # path(_('platba-zrusena/'), views.cancelDonation, name='cancel_donation_url'),
     path('create-payment-intent/', views.createPaymentIntent, name='create_payment_intent_url'),
     path('stripe/webhook/', views.stripeWebhook, name='stripe_webhook_url'),
-
-    # URLs For JS POST Data
-    path('like-comment/<int:comment_id>', views.likeComment, name='like_comment_url'),
-    path('cancel-like-comment/<int:comment_id>', views.cancelLikeComment, name='cancel_like_comment_url'),
-    path('report-comment/<int:comment_id>', views.reportComment, name='report_comment_url'),
 ]

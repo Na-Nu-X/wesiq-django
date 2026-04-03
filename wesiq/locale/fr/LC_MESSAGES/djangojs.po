@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 09:24+0000\n"
+"POT-Creation-Date: 2026-04-03 17:51+0000\n"
 "PO-Revision-Date: 2026-03-22 11:57+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,72 +19,166 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: app/static/app/ts/src/components/searchBar.ts:23
+#: app/static/app/ts/src/components/searchBar.ts:24
 msgid "Hlavná stránka"
 msgstr "Page principale"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
+#, fuzzy
+#| msgid "Hlavná stránka"
+msgid "Domovská stránka"
+msgstr "Page principale"
+
+#: app/static/app/ts/src/components/searchBar.ts:24
+#, fuzzy
+#| msgid "Hlavná stránka"
+msgid "Úvodná stránka"
+msgstr "Page principale"
+
+#: app/static/app/ts/src/components/searchBar.ts:25
 msgid "/prihlasenie"
 msgstr "/se-connecter"
 
-#: app/static/app/ts/src/components/searchBar.ts:24
+#: app/static/app/ts/src/components/searchBar.ts:25
 msgid "Prihlásenie"
 msgstr "Se connecter"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
+#, fuzzy
+#| msgid "Prihlásenie"
+msgid "Prihlásiť sa"
+msgstr "Se connecter"
+
+#: app/static/app/ts/src/components/searchBar.ts:25
+msgid "Autorizovať sa"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:26
 msgid "/obnova-hesla"
 msgstr "/recupération-de-mot-de-passe"
 
-#: app/static/app/ts/src/components/searchBar.ts:25
+#: app/static/app/ts/src/components/searchBar.ts:26
 msgid "Obnova hesla"
 msgstr "Récupération de mot de passe"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
+#, fuzzy
+#| msgid "Obnova hesla"
+msgid "Obnoviť heslo"
+msgstr "Récupération de mot de passe"
+
+#: app/static/app/ts/src/components/searchBar.ts:26
+#, fuzzy
+#| msgid "Zobraziť heslo"
+msgid "Zmeniť heslo"
+msgstr "Afficher le mot de passe"
+
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/registracia"
 msgstr "/inscription"
 
-#: app/static/app/ts/src/components/searchBar.ts:26
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Registrácia"
 msgstr "Inscription"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
+#, fuzzy
+#| msgid "/registracia"
+msgid "Zaregistrovať sa"
+msgstr "/inscription"
+
+#: app/static/app/ts/src/components/searchBar.ts:27
+msgid "Vytvoriť účet"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/moj-ucet"
 msgstr "/mon-compte"
 
-#: app/static/app/ts/src/components/searchBar.ts:27
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Môj účet"
 msgstr "Mon compte"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
+msgid "Upraviť účet"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:28
+#, fuzzy
+#| msgid "Zobraziť heslo"
+msgid "Zobraziť účet"
+msgstr "Afficher le mot de passe"
+
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/moje-hodnotenie"
 msgstr "/ma-note"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Moje hodnotenie"
 msgstr "Ma note"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
+msgid "Moja recenzia"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:29
+#, fuzzy
+#| msgid "Moje hodnotenie"
+msgid "Upraviť hodnotenie"
+msgstr "Ma note"
+
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/blog"
 msgstr "/blogue"
 
-#: app/static/app/ts/src/components/searchBar.ts:29
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Blog"
 msgstr "Blogue"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
+msgid "Články"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/trening"
 msgstr "/entrainement"
 
-#: app/static/app/ts/src/components/searchBar.ts:30
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Tréning"
 msgstr "Entraînement"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
+msgid "Aktivita"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:31
+msgid "Spustiť aktivitu"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/moje-treningove-plany"
 msgstr "/mes-projets-d'entrainement"
 
-#: app/static/app/ts/src/components/searchBar.ts:31
+#: app/static/app/ts/src/components/searchBar.ts:32
 msgid "Moje tréningové plány"
+msgstr "Mes projets d'entraînement"
+
+#: app/static/app/ts/src/components/searchBar.ts:32
+#, fuzzy
+#| msgid "Moje tréningové plány"
+msgid "Vytvoriť tréningový plán"
+msgstr "Mes projets d'entraînement"
+
+#: app/static/app/ts/src/components/searchBar.ts:32
+#, fuzzy
+#| msgid "Moje tréningové plány"
+msgid "Upraviť tréningový plán"
+msgstr "Mes projets d'entraînement"
+
+#: app/static/app/ts/src/components/searchBar.ts:32
+#, fuzzy
+#| msgid "Moje tréningové plány"
+msgid "Odstrániť tréningový plán"
 msgstr "Mes projets d'entraînement"
 
 #: app/static/app/ts/src/pages/edit_account.ts:13

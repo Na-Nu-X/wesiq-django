@@ -69,8 +69,10 @@
                 flex-grow: 1
             }
 
-            .add_friend {
+            .fa-user-plus,
+            .fa-user-minus {
                 @include icon;
+                display: block;
             }
         }
     }

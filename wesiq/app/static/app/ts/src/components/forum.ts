@@ -10,7 +10,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string) {
 
             counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
 
-            sendPOST(`/like-comment/${id}`) // Sends Liked Commet ID As A POST Data To Like Comment Page
+            sendPOST(`/like-comment/${id}/`) // Sends Liked Commet ID As A POST Data To Like Comment Page
         }
 
         // If The Heart Is Already Clicked
@@ -20,7 +20,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string) {
 
             counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
             
-            sendPOST(`/cancel-like-comment/${id}`) // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
+            sendPOST(`/cancel-like-comment/${id}/`) // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
         }
     })
 }
@@ -60,6 +60,6 @@ export function commentFunctionality(one_comment:HTMLDivElement):void {
     const flag:HTMLElement = one_comment.querySelector(".interactions .report .fa-flag") as HTMLElement
 
     flag.addEventListener("click", function():void {
-        sendPOST(`/report-comment/${one_comment_id}`) // Sends Reported Commet ID As A POST Data To Report Comment Page
+        sendPOST(`/report-comment/${one_comment_id}/`) // Sends Reported Commet ID As A POST Data To Report Comment Page
     })
 }
