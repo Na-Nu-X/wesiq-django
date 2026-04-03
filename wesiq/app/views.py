@@ -29,6 +29,7 @@ from django.shortcuts import redirect
 from django.core.cache import cache
 import stripe
 from django.views.decorators.csrf import csrf_exempt
+import string
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -67,6 +68,7 @@ def captureError(message):
 
 def getClientIp(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0].strip()
 
@@ -76,19 +78,29 @@ def getClientIp(request):
     return ip
 
 # Generates Random 6-Digit Code
-def generateCode(length=6):
+def generateCode(length=6, letters=False):
     code = ""
 
-    for one_number in range(length):
-        one_number = random.randint(0, 9)
-        code += str(one_number)
+    if letters:
+        characters = string.digits + string.ascii_letters
+
+        for one_character in range(length):
+            one_character = random.choice(characters)
+            code += str(one_character)
+
+    else:
+        characters = string.digits
+
+        for one_character in range(length):
+            one_character = random.choice(characters)
+            code += str(one_character)
 
     return code
 
 def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
     with translation.override(user.language):
         # Send Mail
-        subject = f"SW Žilina - {subject}"
+        subject = f"Wesiq - {subject}"
         text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
         sender = settings.EMAIL_HOST_USER
         receiver = [user.email_address]
@@ -310,6 +322,7 @@ def homepageView(request):
 
                 else:
                     verification_code = generateCode() # Generates Random 6-Digit Code
+                    friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
                     phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
@@ -320,7 +333,8 @@ def homepageView(request):
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
                         language = request.POST.get("language"),
-                        verification_code = verification_code
+                        verification_code = verification_code,
+                        friend_code = friend_code
                     )
 
                     new_user.save()
@@ -366,7 +380,7 @@ def homepageView(request):
             contact_form = contactForm(request.POST, request.FILES)
             if contact_form.is_valid():
                 # Send Mail
-                subject = f"SW Žilina - {contact_form.cleaned_data["subject"]}"
+                subject = f"Wesiq - {contact_form.cleaned_data["subject"]}"
                 text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
                 sender = contact_form.cleaned_data["email_address"]
                 receiver = [settings.EMAIL_HOST_USER]
@@ -841,6 +855,7 @@ def registrationView(request):
 
                 else:
                     verification_code = generateCode() # Generates Random 6-Digit Code
+                    friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
                     phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
@@ -851,7 +866,8 @@ def registrationView(request):
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
                         language = request.POST.get("language"),
-                        verification_code = verification_code
+                        verification_code = verification_code,
+                        friend_code = friend_code
                     )
 
                     new_user.save()

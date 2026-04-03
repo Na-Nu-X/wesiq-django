@@ -1250,7 +1250,7 @@ msgstr ""
 
 #: app/views.py:336 app/views.py:867
 msgid "Overenie účtu"
-msgstr "SW Žilina - Ověření účtu"
+msgstr "Wesiq - Ověření účtu"
 
 #: app/views.py:337 app/views.py:868
 #, python-format
@@ -1545,8 +1545,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Otvoriť Gmail"
 #~ msgstr "Otevřít Gmail"
 
-#~ msgid "SW Žilina - Odstránenie účtu"
-#~ msgstr "SW Žilina - Odstranění účtu"
+#~ msgid "Wesiq - Odstránenie účtu"
+#~ msgstr "Wesiq - Odstranění účtu"
 
 #, python-format
 #~ msgid ""
@@ -1557,8 +1557,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ "Dobrý den %(first_name)s %(last_name)s,\n"
 #~ "oznamujeme vám, že váš uživatelský účet byl trvale odstraněn. Opětovné přihlášení do původního účtu již není možné. Pokud byste se chtěli v budoucnu vrátit, budeme rádi, když si vytvoříte nový."
 
-#~ msgid "SW Žilina - Obnova hesla"
-#~ msgstr "SW Žilina - Obnova hesla"
+#~ msgid "Wesiq - Obnova hesla"
+#~ msgstr "Wesiq - Obnova hesla"
 
 #, python-format
 #~ msgid ""

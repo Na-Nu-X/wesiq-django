@@ -1543,7 +1543,7 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Otvoriť Gmail"
 #~ msgstr "Відкрити Gmail"
 
-#~ msgid "SW Žilina - Odstránenie účtu"
+#~ msgid "Wesiq - Odstránenie účtu"
 #~ msgstr "SW Zhylina - Видалення облікового запису"
 
 #, python-format
@@ -1556,7 +1556,7 @@ msgstr "Wesiq by Patrik Behul"
 #~ "ми повідомляємо вас, що ваш обліковий запис користувача було видалено назавжди. Повторний вхід до початкового облікового запису більше неможливий. Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви створите новий.\n"
 #~ "Wesiq."
 
-#~ msgid "SW Žilina - Obnova hesla"
+#~ msgid "Wesiq - Obnova hesla"
 #~ msgstr "SW Zhylina - Відновлення пароля"
 
 #, python-format

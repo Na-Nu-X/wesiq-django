@@ -1540,8 +1540,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Otvoriť Gmail"
 #~ msgstr "Abra o Gmail"
 
-#~ msgid "SW Žilina - Odstránenie účtu"
-#~ msgstr "SW Žilina - Exclusão de conta"
+#~ msgid "Wesiq - Odstránenie účtu"
+#~ msgstr "Wesiq - Exclusão de conta"
 
 #, python-format
 #~ msgid ""
@@ -1553,8 +1553,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ "gostaríamos de informar que sua conta de usuário foi excluída permanentemente. Não é mais possível acessar sua conta original. Caso deseje retornar no futuro, teremos prazer em criar uma nova conta para você.\n"
 #~ "Equipe Wesiq."
 
-#~ msgid "SW Žilina - Obnova hesla"
-#~ msgstr "SW Žilina - Recuperação de senha"
+#~ msgid "Wesiq - Obnova hesla"
+#~ msgstr "Wesiq - Recuperação de senha"
 
 #, python-format
 #~ msgid ""

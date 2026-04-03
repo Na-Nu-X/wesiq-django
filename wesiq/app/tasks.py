@@ -18,7 +18,7 @@ def captureMessage(message):
 def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
     with translation.override(user.language):
         # Send Mail
-        subject = f"SW Žilina - {subject}"
+        subject = f"Wesiq - {subject}"
         text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
         sender = settings.EMAIL_HOST_USER
         receiver = [user.email_address]

@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
@@ -28,6 +29,7 @@ class Users(models.Model):
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
+    friend_code = models.CharField(verbose_name="Friend Code", max_length=6, null=False)
     following = ArrayField(models.CharField(verbose_name="Following", max_length=100), default=list, null=False)
     followers = ArrayField(models.CharField(verbose_name="Followers", max_length=100), default=list, null=False)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
