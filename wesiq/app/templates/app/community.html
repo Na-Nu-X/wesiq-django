@@ -4,6 +4,42 @@
 
 {% block title %}{% translate "Komunita" %}{% endblock title %}
 
+{% block style %}
+    <link rel="stylesheet" href="{% static 'app/css/community.css' %}">
+{% endblock style %}
+
 {% block content %}
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil laboriosam expedita veritatis illo quos. Molestias quidem consectetur nisi vero ea inventore impedit, repudiandae culpa commodi nostrum reiciendis labore dolores itaque.</p>
+    <div class="search_bar_container">
+        <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+        <input class="search_bar" type="text" placeholder="{% translate 'Nájsť užívateľa' %}" autocomplete="off">
+    </div>
+
+    <div class="all_users">
+        {% for one_user in users %}
+            <a class="one_user" href="#" title="" target="_self">
+                <img 
+                    class="profile_picture skeleton_loading" 
+                    src="
+                        {% if one_user.profile_picture_name %}
+                            /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+
+                <p class="user_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
+
+                <i class="add_friend fa-solid fa-user-plus"></i>
+            </a>
+        
+        {% endfor %}
+    </div>
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'app/ts/dist/pages/community.js' %}" type="module"></script>
+{% endblock script %}
