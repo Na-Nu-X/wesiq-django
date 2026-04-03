@@ -17,7 +17,7 @@
 
     <div class="all_users">
         {% for one_user in users %}
-            <a class="one_user" href="#" title="" target="_self">
+            <div class="one_user" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
                 <img 
                     class="profile_picture skeleton_loading" 
                     src="
@@ -33,8 +33,22 @@
 
                 <p class="user_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
-                <i class="add_friend fa-solid fa-user-plus"></i> <!-- https://fontawesome.com/icons/user-plus -->
-            </a>
+                <p class="followers">{{ one_user.followers|length }}</p>
+
+                <i 
+                    class="
+                        fa-solid
+
+                        {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
+                            fa-user-plus
+
+                        {% else %}
+                            fa-user-minus
+                        
+                        {% endif %}
+                    "
+                ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+            </div>
         
         {% endfor %}
     </div>

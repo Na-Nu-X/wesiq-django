@@ -30,6 +30,7 @@ from django.core.cache import cache
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 import string
+from django.views.decorators.http import require_POST
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1402,71 +1403,65 @@ def writeArticleView(request):
         "write_article_form": writeArticleForm
     })
 
+@require_POST
 def likeComment(request, comment_id):
-    if request.method == "POST":
-        try:
-            # Gets Logged In User
-            if "logged_in_user_id" in request.session:
-                # Gets Logged In User ID From Session
-                logged_in_user_id = request.session.get("logged_in_user_id")
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
-                comment = ArticleForum.objects.get(id=comment_id)
+            comment = ArticleForum.objects.get(id=comment_id)
 
-                if(str(logged_in_user_id) not in comment.likes_from_users):
-                    comment.likes_from_users.append(logged_in_user_id)
-                    comment.likes += 1
-                    
-                    comment.save()
+            if(str(logged_in_user_id) not in comment.likes_from_users):
+                comment.likes_from_users.append(logged_in_user_id)
+                comment.likes += 1
+                
+                comment.save()
 
-        except:
-            pass
+        return JsonResponse({"success": "Like Has Been Recorded."})
 
-    return JsonResponse({"success": "Like Has Been Recorded."})
+    except:
+        return JsonResponse({"error": "Like Could Not Be Recorded."})
 
+@require_POST
 def cancelLikeComment(request, comment_id):
-    if request.method == "POST":
-        try:
-            # Gets Logged In User
-            if "logged_in_user_id" in request.session:
-                # Gets Logged In User ID From Session
-                logged_in_user_id = request.session.get("logged_in_user_id")
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
-                comment = ArticleForum.objects.get(id=comment_id)
+            comment = ArticleForum.objects.get(id=comment_id)
 
-                if(str(logged_in_user_id) in comment.likes_from_users):
-                    comment.likes_from_users.remove(str(logged_in_user_id))
-                    comment.likes -= 1
-                    
-                    comment.save()
+            if(str(logged_in_user_id) in comment.likes_from_users):
+                comment.likes_from_users.remove(str(logged_in_user_id))
+                comment.likes -= 1
+                
+                comment.save()
 
-        except:
-            pass
+        return JsonResponse({"success": "Like Has Been Removed."})
 
-    return JsonResponse({"success": "Like Has Been Removed."})
+    except:
+        return JsonResponse({"error": "Like Could Not Be Removed."})
 
+@require_POST
 def reportComment(request, comment_id):
-    if request.method == "POST":
-        try:
-            # Gets Logged In User
-            if "logged_in_user_id" in request.session:
-                # Gets Logged In User ID From Session
-                logged_in_user_id = request.session.get("logged_in_user_id")
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
-                comment = ArticleForum.objects.get(id=comment_id)
+            comment = ArticleForum.objects.get(id=comment_id)
 
-                if(str(logged_in_user_id) not in comment.reports_from_users):
-                    comment.reports_from_users.append(logged_in_user_id)
-                    comment.reports += 1
+            if(str(logged_in_user_id) not in comment.reports_from_users):
+                comment.reports_from_users.append(logged_in_user_id)
+                comment.reports += 1
 
-                    if comment.reports >= 5:
-                        comment.status = "hidden"
-                    
-                    comment.save()
+                if comment.reports >= 5:
+                    comment.status = "hidden"
+                
+                comment.save()
 
-        except:
-            pass
+        return JsonResponse({"success": "Report Has Been Sent."})
 
-    return JsonResponse({"success": "Report Has Been Sent."})
+    except:
+        return JsonResponse({"error": "Report Could Not Be Sent."})
 
 def trainingSessionView(request):
     # Gets Logged In User
@@ -1676,7 +1671,7 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id) # Gets All Users With OK Account Status And Excludes Logged In User
+        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time") # Gets All Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
@@ -1687,3 +1682,47 @@ def communityView(request):
         })
 
     return render(request, "app/community.html")
+
+@require_POST
+def follow(request, user_id):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+            user_to_follow = Users.objects.get(id=user_id) # Gets User To Follow From The DB
+
+            if(str(user_id) not in logged_in_user.following):
+                logged_in_user.following.append(user_id)
+                logged_in_user.save()
+
+            if(str(logged_in_user_id) not in user_to_follow.followers):
+                user_to_follow.followers.append(logged_in_user_id)
+                user_to_follow.save()
+
+        return JsonResponse({"success": "Follow Has Been Added."})
+
+    except:
+        return JsonResponse({"error": "Follow Could Not Be Added."})
+
+@require_POST
+def unfollow(request, user_id):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+            user_to_follow = Users.objects.get(id=user_id) # Gets User To Follow From The DB
+
+            if(str(user_id) in logged_in_user.following):
+                logged_in_user.following.remove(str(user_id))
+                logged_in_user.save()
+
+            if(str(logged_in_user_id) in user_to_follow.followers):
+                user_to_follow.followers.remove(str(logged_in_user_id))
+                user_to_follow.save()
+
+        return JsonResponse({"success": "Follow Has Been Removed."})
+
+    except:
+        return JsonResponse({"error": "Follow Could Not Be Removed."})
