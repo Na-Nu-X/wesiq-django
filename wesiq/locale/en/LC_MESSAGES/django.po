@@ -1247,7 +1247,7 @@ msgstr ""
 
 #: app/views.py:336 app/views.py:867
 msgid "Overenie účtu"
-msgstr "SW Žilina - Account Verification"
+msgstr "Wesiq - Account Verification"
 
 #: app/views.py:337 app/views.py:868
 #, python-format
@@ -1541,8 +1541,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Otvoriť Gmail"
 #~ msgstr "Open Gmail"
 
-#~ msgid "SW Žilina - Odstránenie účtu"
-#~ msgstr "SW Žilina - Account Deletion"
+#~ msgid "Wesiq - Odstránenie účtu"
+#~ msgstr "Wesiq - Account Deletion"
 
 #, python-format
 #~ msgid ""
@@ -1553,8 +1553,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ "Hello %(first_name)s %(last_name)s,\n"
 #~ "We Would Like to Inform you That your User Account Has been Permanently Deleted. It is no Longer Possible to Log Back Into your Original Account. If you Would Like to Return in the Future, We Would be Happy if you Create a new one."
 
-#~ msgid "SW Žilina - Obnova hesla"
-#~ msgstr "SW Žilina - Password Reset"
+#~ msgid "Wesiq - Obnova hesla"
+#~ msgstr "Wesiq - Password Reset"
 
 #, python-format
 #~ msgid ""

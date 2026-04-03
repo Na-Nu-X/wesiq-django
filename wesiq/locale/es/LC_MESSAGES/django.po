@@ -1554,8 +1554,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Otvoriť Gmail"
 #~ msgstr "Abrir Gmail"
 
-#~ msgid "SW Žilina - Odstránenie účtu"
-#~ msgstr "SW Žilina - Eliminación de cuenta"
+#~ msgid "Wesiq - Odstránenie účtu"
+#~ msgstr "Wesiq - Eliminación de cuenta"
 
 #, python-format
 #~ msgid ""
@@ -1566,8 +1566,8 @@ msgstr "Wesiq by Patrik Behul"
 #~ "Hola %(first_name)s %(last_name)s,\n"
 #~ "le informamos que su cuenta de usuario ha sido eliminada permanentemente. Ya no es posible acceder a ella. Si desea recuperarla en el futuro, con gusto le crearemos una nueva."
 
-#~ msgid "SW Žilina - Obnova hesla"
-#~ msgstr "SW Žilina - Recuperación de contraseña"
+#~ msgid "Wesiq - Obnova hesla"
+#~ msgstr "Wesiq - Recuperación de contraseña"
 
 #, python-format
 #~ msgid ""
