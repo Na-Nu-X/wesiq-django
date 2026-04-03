@@ -1676,7 +1676,7 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-        users = Users.objects.filter(account_status="OK") # Gets All Users With OK Account Status
+        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id) # Gets All Users With OK Account Status And Excludes Logged In User
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
