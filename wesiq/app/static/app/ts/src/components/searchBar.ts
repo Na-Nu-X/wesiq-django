@@ -2,6 +2,7 @@ interface Pages {
     id:number,
     url:string,
     title:string,
+    keywords:string[],
     icon: string,
     is_from_history:boolean
 }
@@ -20,15 +21,15 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Data - Array of Objects of Pages
     const pages:Pages[] = [
-        { id: 1, url: "/", title: gettext("Hlavná stránka"), icon: "<i class='fa-solid fa-house'></i>", is_from_history: false }, // https://fontawesome.com/icons/house
-        { id: 2, url: gettext("/prihlasenie"), title: gettext("Prihlásenie"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
-        { id: 3, url: gettext("/obnova-hesla"), title: gettext("Obnova hesla"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
-        { id: 4, url: gettext("/registracia"), title: gettext("Registrácia"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
-        { id: 5, url: gettext("/moj-ucet"), title: gettext("Môj účet"), icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
-        { id: 6, url: gettext("/moje-hodnotenie"), title: gettext("Moje hodnotenie"), icon: "<i class='fa-regular fa-star'></i>", is_from_history: false }, // https://fontawesome.com/icons/star
-        { id: 7, url: gettext("/blog"), title: gettext("Blog"), icon: "<i class='fa-solid fa-book'></i>", is_from_history: false }, // https://fontawesome.com/icons/book
-        { id: 8, url: gettext("/trening"), title: gettext("Tréning"), icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
-        { id: 9, url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
+        { id: 1, url: "/", title: gettext("Hlavná stránka"), keywords: [gettext("Domovská stránka"), gettext("Úvodná stránka")], icon: "<i class='fa-solid fa-house'></i>", is_from_history: false }, // https://fontawesome.com/icons/house
+        { id: 2, url: gettext("/prihlasenie"), title: gettext("Prihlásenie"), keywords: [gettext("Prihlásiť sa"), gettext("Autorizovať sa")], icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 3, url: gettext("/obnova-hesla"), title: gettext("Obnova hesla"), keywords: [gettext("Obnoviť heslo"), gettext("Zmeniť heslo")], icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 4, url: gettext("/registracia"), title: gettext("Registrácia"), keywords: [gettext("Zaregistrovať sa"), gettext("Vytvoriť účet")], icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 5, url: gettext("/moj-ucet"), title: gettext("Môj účet"), keywords: [gettext("Upraviť účet"), gettext("Zobraziť účet")], icon: "<i class='fa-regular fa-user'></i>", is_from_history: false }, // https://fontawesome.com/icons/user
+        { id: 6, url: gettext("/moje-hodnotenie"), title: gettext("Moje hodnotenie"), keywords: [gettext("Moja recenzia"), gettext("Upraviť hodnotenie")], icon: "<i class='fa-regular fa-star'></i>", is_from_history: false }, // https://fontawesome.com/icons/star
+        { id: 7, url: gettext("/blog"), title: gettext("Blog"), keywords: [gettext("Články")], icon: "<i class='fa-solid fa-book'></i>", is_from_history: false }, // https://fontawesome.com/icons/book
+        { id: 8, url: gettext("/trening"), title: gettext("Tréning"), keywords: [gettext("Aktivita"), gettext("Spustiť aktivitu")], icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
+        { id: 9, url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), keywords: [gettext("Vytvoriť tréningový plán"), gettext("Upraviť tréningový plán"), gettext("Odstrániť tréningový plán")], icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
     ]
 
     // Functions
@@ -76,7 +77,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     function filterPagesBySearchedText(searched_text:string):Pages[] {
         // Filters Pages by Searched Text Value
         const filtered_pages:Pages[] = pages.filter(function(one_page:Pages):boolean {
-            return one_page.title.toLowerCase().includes(searched_text.toLowerCase())
+            return (
+                one_page.title.toLowerCase().includes(searched_text.toLowerCase()) || // Filters By Titles
+                one_page.keywords.some(one_keyword => one_keyword.toLowerCase().includes(searched_text.toLowerCase())) // Filters By Keywords
+            )
         })
 
         filtered_pages.forEach((one_page:Pages) => one_page.is_from_history = false) // Flags Filtered Pages That They Are Not From The History
