@@ -5,7 +5,7 @@ export function reviewsInfoAnimation():void {
     // Review Graph Animation
     const reviews_graph_columns:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".reviews .reviews_info_container .graph .one_column") // Gets All Columns From Reviews Graph
     
-    let total_reviews_amount:number = [...reviews_graph_columns].reduce((sum:number, one_column:HTMLDivElement) => sum + Number((one_column.querySelector(".counter") as HTMLParagraphElement).dataset.amount), 0) // Gets Total Amount Of Reviews
+    let total_reviews_amount:number = [...reviews_graph_columns].reduce((sum:number, one_column:HTMLDivElement) => sum + Number((one_column.querySelector(".counter") as HTMLParagraphElement).dataset["amount"]), 0) // Gets Total Amount Of Reviews
 
     const max_green:number = 185 // Color With Maximum Of Green Is rgb(235, 185, 20)
 
@@ -13,7 +13,7 @@ export function reviewsInfoAnimation():void {
         const bar:HTMLDivElement = one_column.querySelector(".review_bar") as HTMLDivElement // Gets Bar
         const counter:HTMLParagraphElement = one_column.querySelector(".counter") as HTMLParagraphElement // Gets Counter
 
-        const progress_percentage:string = ((Number(counter.dataset.amount) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
+        const progress_percentage:string = ((Number(counter.dataset["amount"]) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
 
         // Animation's Settings
         const bar_target:number = parseFloat(progress_percentage) // Saves Each Column's Progress Pecentage As A Float Number
@@ -37,7 +37,7 @@ export function reviewsInfoAnimation():void {
             bar.style.setProperty("--progress", `${eased * bar_target}%`) // Sets Progress Percentage To Variable In CSS From Data Attribute
 
             // Each Review Counter Rendering
-           counter.dataset.amount ? counter.textContent = String(Math.floor(eased * Number(counter.dataset.amount))) : counter.textContent = "0" // Sets Each Column's Reviews Amount To Its Counter
+           counter.dataset["amount"] ? counter.textContent = String(Math.floor(eased * Number(counter.dataset["amount"]))) : counter.textContent = "0" // Sets Each Column's Reviews Amount To Its Counter
 
             if(progress < 1) requestAnimationFrame(reviewGraphAnimation) // Calls The Animation Until Its Duration Ends
         }

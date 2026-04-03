@@ -218,6 +218,7 @@ header {
         backdrop-filter: blur(5px);
         opacity: 1;
         z-index: 2000;
+        transition: opacity 0.3s ease;
 
         ul {
             text-align: center;
@@ -465,6 +466,10 @@ footer {
     }
 
     .languages {
+        p {
+            color: $secondary-color
+        }
+
         form {
             @include flex_center;
             gap: 10px;
@@ -490,12 +495,14 @@ footer {
     }
 
     .payment_methods {
-        @include flex_center;
-        gap: 10px;
-        height: 32px;
-        
-        img {
-            opacity: 0.8;
+        .icons {
+            @include flex_center;
+            gap: 10px;
+            height: 32px;
+            
+            img {
+                opacity: 0.8;
+            }
         }
     }
 
@@ -660,7 +667,7 @@ footer {
         .navigation_bar {
             ul {
                 li {
-                    display: none !important;
+                    display: none;
 
                     a {
                         display: block;
@@ -669,7 +676,7 @@ footer {
                 }
 
                 i {
-                    display: block !important;
+                    display: block;
                     color: $secondary-color;
                     font-size: 2em;
                     transition: transform 0.3s ease;

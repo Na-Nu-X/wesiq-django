@@ -37,7 +37,7 @@ function toggleReply(icon:HTMLElement, form:HTMLFormElement):void {
 
 // Function For Add Functionality For Comments
 export function commentFunctionality(one_comment:HTMLDivElement):void {
-    const one_comment_id:string|undefined = one_comment.dataset.id // Gets Comment ID From The Data Value
+    const one_comment_id:string|undefined = one_comment.dataset["id"] // Gets Comment ID From The Data Value
 
     if(!one_comment_id) return
 
