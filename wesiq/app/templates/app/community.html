@@ -16,6 +16,10 @@
     </div>
 
     <div class="all_users">
+        <div class="loading hidden">
+            <p>{% translate "Načítavam..." %}</p>
+        </div>
+        
         {% for one_user in users %}
             <a class="one_user" href="#" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
                 <img 
