@@ -113,6 +113,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
 
         data: {
             labels: labels,
+            
             datasets: [{
                 data: data, // Seconds
                 borderRadius: 0,
@@ -177,7 +178,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
             },
         },
 
-        plugins: [ChartDataLabels],
+        plugins: [ChartDataLabels]
     })
 
     activity_summary.style.display = "flex" // Shows Activity Summary
