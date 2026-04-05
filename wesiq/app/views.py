@@ -31,6 +31,7 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 import string
 from django.views.decorators.http import require_POST
+from django.db.models.functions import Lower
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1671,7 +1672,28 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time") # Gets All Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+
+        if request.method == "POST":
+            searched_text = json.loads(request.body) # Gets The Searched Text
+            users = Users.objects.filter(Q(account_status="OK") & Q(first_name__icontains=searched_text) | Q(last_name__icontains=searched_text) | Q(friend_code__contains=searched_text)).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
+            
+            # Creates Valid Format For JSON Response
+            users = [
+                {
+                    "id": one_user.id, 
+                    "first_name": one_user.first_name, 
+                    "last_name": one_user.last_name, 
+                    "profile_picture_name": one_user.profile_picture_name, 
+                    "friend_code": one_user.friend_code,
+                    "following": list(one_user.following),
+                    "followers": list(one_user.followers),
+                }
+
+                for one_user in users
+            ]
+
+            return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,

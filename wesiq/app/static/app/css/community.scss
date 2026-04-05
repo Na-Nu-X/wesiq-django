@@ -51,6 +51,7 @@
             align-items: center;
             gap: 10px;
             padding: 5px;
+            color: $secondary-color;
             border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $small-border-radius;
             transition: transform 0.3s ease, display 0.3s ease allow-discrete;
