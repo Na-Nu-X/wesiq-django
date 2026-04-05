@@ -31,7 +31,6 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 import string
 from django.views.decorators.http import require_POST
-from django.db.models.functions import Lower
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 

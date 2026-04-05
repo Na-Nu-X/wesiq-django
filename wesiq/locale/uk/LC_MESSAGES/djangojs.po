@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-05 18:20+0000\n"
+"POT-Creation-Date: 2026-04-05 19:46+0000\n"
 "PO-Revision-Date: 2026-03-23 19:36+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,11 +184,15 @@ msgstr "Мої плани тренувань"
 msgid "Odstrániť tréningový plán"
 msgstr "Мої плани тренувань"
 
-#: app/static/app/ts/src/pages/community.ts:72
+#: app/static/app/ts/src/pages/community.ts:77
 #, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť užívateľa"
 msgstr "Показати пароль"
+
+#: app/static/app/ts/src/pages/community.ts:137
+msgid "An Error Occurred While Searching for Users."
+msgstr ""
 
 #: app/static/app/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
