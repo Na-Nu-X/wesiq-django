@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     let all_users:NodeListOf<HTMLAnchorElement> = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
     const first_users:NodeListOf<HTMLAnchorElement> = all_users // Stores First Loaded Users
 
+    const loading:HTMLDivElement = all_users_container.querySelector(".loading") as HTMLDivElement // Gets Loading
+
     let previous_search_bar_length:number = 0 // Stores The Previous Search Bar Input Length
 
     // Functions
@@ -119,12 +121,24 @@ document.addEventListener("DOMContentLoaded", function():void {
             
             // Gets Users From The DB If The First Character Is Entered
             if(this.value.length === 1 && previous_search_bar_length !== 2) {
-                const search_bar_response:searchBarResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
+                loading.classList.remove("hidden") // Shows The Loader
 
-                if(search_bar_response.success) {
-                    all_users_container.innerHTML = "" // Deletes All Users Container
-                    search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id)) // Renders Users
-                    all_users = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
+                try {
+                    const search_bar_response:searchBarResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
+
+                    if(search_bar_response.success) {
+                        all_users_container.innerHTML = "" // Deletes All Users Container
+                        search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id)) // Renders Users
+                        all_users = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
+                    }
+                }
+
+                catch(error) {
+                    console.error(gettext("An Error Occurred While Searching for Users."), error)
+                }
+                
+                finally {
+                    loading.classList.add("hidden") // Hides The Loader
                 }
             }
 
