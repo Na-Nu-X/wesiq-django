@@ -9,13 +9,12 @@ from django.utils import translation
 from django.utils.translation import gettext as _
 from django.core.cache import cache
 from quickchart import QuickChart
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from email.mime.image import MIMEImage
 from django.db.models import Q
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
 import json
+import math
 
 # Functions
 def captureMessage(message):
@@ -45,11 +44,87 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
             image = MIMEImage(image_data)
 
             image.add_header("Content-ID", "ID")
-            image.add_header("Content-Disposition", "inline", filename="weekly_activity.png")
+            image.add_header("Content-Disposition", "inline", filename=f"Wesiq - Weekly Report {timezone.now().date()}.png")
 
             mail_message.attach(image)
 
-        # mail_message.send()
+        mail_message.send()
+
+# Function For Formatting Time
+def getFormattedTime(unit="seconds", elapsed_seconds=0, leading_zero=False):
+    # Formats Seconds
+    if(unit == "seconds"):
+        result = math.floor(elapsed_seconds % 60) # Number Value Of Elapsed Seconds
+        return f"{result:02d}" if leading_zero else result # Returns Formatted Style Of Elapsed Seconds If Format Parameter Is Set As True
+
+    # Formats Minutes
+    if(unit == "minutes"):
+        result = (math.floor(elapsed_seconds / 60) % 60) # Number Value Of Elapsed Minutes
+        return f"{result:02d}" if leading_zero else result # Returns Formatted Style Of Elapsed Minutes If Format Parameter Is Set As True
+
+    # Formats Minutes
+    if(unit == "hours"):
+        result = (math.floor(elapsed_seconds / 3600) % 60) # Number Value Of Elapsed Hours
+        return f"{result:02d}" if leading_zero else result # Returns Formatted Style Of Elapsed Hours If Format Parameter Is Set As True
+
+    else: return "00" if leading_zero else "0" # Default Values
+
+# Function For Formatting Time To Minimalist Format
+def getMinimalistFormattedTime(elapsed_time):
+    # For Example Converts 3600 To 1h
+    result = ""
+
+    result += f"{getFormattedTime("hours", elapsed_time)}h " if getFormattedTime("hours", elapsed_time) != 0 else ""
+    result += f"{getFormattedTime("minutes", elapsed_time)}m " if getFormattedTime("minutes", elapsed_time) != 0 else ""
+    result += f"{getFormattedTime("seconds", elapsed_time)}s" if getFormattedTime("seconds", elapsed_time) != 0 else "0s"
+
+    return result
+
+# Function For Getting Weekly Activity Data
+def getWeeklyActivityData(user_id, weeks_before=0):
+    today = timezone.now().date() - timedelta(days=1) if weeks_before == 0 else timezone.now().date() - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = today - timedelta(days=7) if weeks_before == 0 else today - timedelta(days=((weeks_before * 7) + 7)) # Start Date
+
+    # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+    weekly_activity = (
+        Activity.objects
+        .filter(
+            Q(user_id=user_id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
+        )
+        .annotate(day=TruncDate("end_time"))
+        .values("day")
+        .annotate(total_elapsed_time=Sum("elapsed_time"))
+    )
+
+    # Creates Dictionary From Weekly Activity
+    weekly_activity_dictionary = {
+        one_day["day"]: one_day["total_elapsed_time"]
+        for one_day in weekly_activity
+    }
+
+    weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
+
+    weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
+
+    # Fills And Sorts Result From The Oldest Date To Today's Date 
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        label = weekday_labels[day.weekday()]
+
+        weekly_activity_result.append({
+            "day": label,
+            "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
+        })
+
+    return weekly_activity_result
+
+# Function For Getting Average Activity Time Improvement Text
+def getAverageActivityTimeImprovementText(activities_percentage_improvement):
+    if activities_percentage_improvement > 0:
+        return _("To je o %(value)s%% lepšie oproti predchádzajúcemu týždňu.") % {"value": round(activities_percentage_improvement)}  
+        
+    else:
+        return _("To je o %(value)s%% horšie oproti predchádzajúcemu týždňu.") % {"value": abs(round(activities_percentage_improvement))}
 
 @shared_task
 def modelsWarmUp():
@@ -153,39 +228,7 @@ def weeklyReport():
     users = Users.objects.filter(account_status="OK") # Gets All Users With Valid Account Status
 
     for user in users:
-        today = timezone.now().date() # Determines Today's Date
-        start_date = today - timedelta(days=6) # Determines Previous 7th Date
-
-        # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
-        weekly_activity = (
-            Activity.objects
-            .filter(
-                Q(user_id=user.id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
-            )
-            .annotate(day=TruncDate("end_time"))
-            .values("day")
-            .annotate(total_elapsed_time=Sum("elapsed_time"))
-        )
-
-        # Creates Dictionary From Weekly Activity
-        weekly_activity_dictionary = {
-            one_day["day"]: one_day["total_elapsed_time"]
-            for one_day in weekly_activity
-        }
-
-        weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
-
-        weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
-
-        # Fills And Sorts Result From The Oldest Date To Today's Date 
-        for i in range(6, -1, -1):
-            day = today - timedelta(days=i)
-            label = weekday_labels[day.weekday()]
-
-            weekly_activity_result.append({
-                "day": label,
-                "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
-            })
+        weekly_activity_result = getWeeklyActivityData(user.id) # Gets The Weekly Activity Result
 
         # Extracts Data From Weekly Activity Data
         labels = [one_item["day"] for one_item in weekly_activity_result] # Gets Days As Labels
@@ -295,15 +338,59 @@ def weeklyReport():
 
         chart_data = qc.get_bytes() # Gets The Chart Data
 
-        # Send Mail
-        sendMail(
-            user,
-            _("Týždenný prehľad aktivít"), # Subject
-            _("lorem\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nlorem\nTím Wesiq.") % {"language": user.language}, # Text Content
-            _('lorem'), # HTML Content
-            _('lorem <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">lorem</a>.') % {"language": user.language}, # End Of HTML Content
-            "",
-            chart_data
-        )
+        # Weekly Activity Result
+        most_active_day = (max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
+        most_active_day_time = getMinimalistFormattedTime((max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("total_elapsed_time")) # Gets The Value Of The Most Active Day Of Week
+        average_activity_time = sum(data) / len(data) # Gets The Weekly Average Activity Time
+        total_activity_time = sum(data) # Gets The Total Activity Time
 
-    return "Weekly Report"
+        # Previous Weekly Activity Result
+        previous_weekly_activity_result = getWeeklyActivityData(user.id, 1) # Gets The Previous Weekly Activity Result
+        previous_data = [one_item["total_elapsed_time"] for one_item in previous_weekly_activity_result] # Gets Total Elapsed Time For Each Day As Data
+        previous_average_activity_time = sum(previous_data) / len(previous_data) # Gets The Previous Weekly Average Activity Time
+
+        activities_percentage_improvement = ((average_activity_time - previous_average_activity_time) / previous_average_activity_time) * 100 if previous_average_activity_time != 0 else 100 # Gets The Activities Percentage Improvement / Decrease
+
+        # Mail With No Activity Info
+        if average_activity_time == 0 and previous_average_activity_time == 0:
+            # Send Mail
+            sendMail(
+                user,
+                _("Týždenný prehľad aktivít"), # Subject
+                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
+                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>V poslednej dobe sme nezaznamenali žiadnu aktivitu.'), # HTML Content
+                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
+                _('Priemerný čas bol 0s<br>Celkový čas bol 0s'), # HTML Middle Content
+                chart_data
+            )
+
+        # Mail With No This Week's Activity Info
+        elif average_activity_time == 0 and previous_average_activity_time > 0:
+            # Send Mail
+            sendMail(
+                user,
+                _("Týždenný prehľad aktivít"), # Subject
+                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
+                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>Tento týždeň sme nezaznamenali žiadnu aktivitu.'), # HTML Content
+                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
+                _('Priemerný čas bol %(average_activity_time)s<br>Celkový čas bol %(total_activity_time)s<br>%(activities_percentage_improvement)s') % {"average_activity_time": getMinimalistFormattedTime(average_activity_time), "activities_percentage_improvement": getAverageActivityTimeImprovementText(activities_percentage_improvement), "total_activity_time": getMinimalistFormattedTime(total_activity_time)}, # HTML Middle Content
+                chart_data
+            )
+
+        # Mail With Activity Info
+        else:
+            # Send Mail
+            sendMail(
+                user,
+                _("Týždenný prehľad aktivít"), # Subject
+                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
+                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s dosiahnutým časom <strong>%(most_active_day_time)s</strong>') % {"most_active_day": most_active_day, "most_active_day_time": most_active_day_time}, # HTML Content
+                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
+                _('Priemerný čas bol %(average_activity_time)s<br>Celkový čas bol %(total_activity_time)s<br>%(activities_percentage_improvement)s') % {"average_activity_time": getMinimalistFormattedTime(average_activity_time), "activities_percentage_improvement": getAverageActivityTimeImprovementText(activities_percentage_improvement), "total_activity_time": getMinimalistFormattedTime(total_activity_time)}, # HTML Middle Content
+                chart_data
+            )
+
+    # Sets Message
+    message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
+    captureMessage(message)
+    return message
