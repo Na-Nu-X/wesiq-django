@@ -15,46 +15,48 @@
         <input class="search_bar" type="text" placeholder="{% translate 'Nájsť užívateľa' %}" autocomplete="off">
     </div>
 
-    <div class="all_users">
+    <div class="search_result_container">
         <div class="loading hidden">
             <p>{% translate "Načítavam..." %}</p>
         </div>
-        
-        {% for one_user in users %}
-            <a class="one_user" href="#" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
-                <img 
-                    class="profile_picture skeleton_loading" 
-                    src="
-                        {% if one_user.profile_picture_name %}
-                            /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
 
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                >
+        <div class="all_users">
+            {% for one_user in users %}
+                <a class="one_user" href="#" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if one_user.profile_picture_name %}
+                                /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
 
-                <p class="user_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
 
-                <p class="followers">{{ one_user.followers|length }}</p>
+                    <p class="user_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
-                <i 
-                    class="
-                        fa-solid
+                    <p class="followers">{{ one_user.followers|length }}</p>
 
-                        {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
-                            fa-user-plus
+                    <i 
+                        class="
+                            fa-solid
 
-                        {% else %}
-                            fa-user-minus
-                        
-                        {% endif %}
-                    "
-                ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
-            </a>
-        
-        {% endfor %}
+                            {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
+                                fa-user-plus
+
+                            {% else %}
+                                fa-user-minus
+                            
+                            {% endif %}
+                        "
+                    ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+                </a>
+            
+            {% endfor %}
+        </div>
     </div>
 {% endblock content %}
 
