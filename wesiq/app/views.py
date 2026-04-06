@@ -1675,7 +1675,14 @@ def communityView(request):
 
         if request.method == "POST":
             searched_text = json.loads(request.body) # Gets The Searched Text
-            users = Users.objects.filter(Q(account_status="OK") & Q(first_name__icontains=searched_text) | Q(last_name__icontains=searched_text) | Q(friend_code__contains=searched_text)).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
+            
+            users = Users.objects.filter(
+                Q(account_status="OK") & (
+                    Q(first_name__icontains=searched_text) | 
+                    Q(last_name__icontains=searched_text) | 
+                    Q(friend_code__contains=searched_text)
+                )
+            ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
             
             # Creates Valid Format For JSON Response
             users = [

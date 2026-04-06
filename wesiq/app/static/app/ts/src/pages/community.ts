@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     let all_users:NodeListOf<HTMLAnchorElement> = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
     const first_users:NodeListOf<HTMLAnchorElement> = all_users // Stores First Loaded Users
 
-    const loading:HTMLDivElement = all_users_container.querySelector(".loading") as HTMLDivElement // Gets Loading
+    const loading:HTMLDivElement = document.querySelector(".search_result_container .loading") as HTMLDivElement // Gets Loading
 
     let previous_search_bar_length:number = 0 // Stores The Previous Search Bar Input Length
 
