@@ -10,19 +10,21 @@ from django.utils.translation import gettext as _
 from django.core.cache import cache
 from quickchart import QuickChart
 from email.mime.image import MIMEImage
-from django.db.models import Q
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
 import json
 import math
 
 # Functions
+
+# Function For Capture Message to Logs
 def captureMessage(message):
     with open(f"{settings.LOGS_DIR}/celery_tasks.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
-def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle="", image_data=None):
+# Function For Send Mail
+def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
@@ -40,11 +42,99 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
 
-        if image_data:
-            image = MIMEImage(image_data)
+        mail_message.send()
 
-            image.add_header("Content-ID", "ID")
-            image.add_header("Content-Disposition", "inline", filename=f"Wesiq - Weekly Report {timezone.now().date()}.png")
+# Function For Send Weekly Report Mail
+def sendWeeklyReportMail(user, activity_data):
+    with translation.override(user.language):
+        # Mail With No Activity Info
+        if activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] == 0:
+            # Send Mail
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("V poslednej dobe sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+
+            html_content = f"""
+                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+
+                <p>{_('V poslednej dobe sme nezaznamenali žiadnu aktivitu.')}</p>
+
+                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+
+                <br>
+
+                <img src='cid:weekly_chart'>
+
+                <br>
+
+                {_('Tím')} Wesiq.</p>
+            """
+
+        # Mail With No This Week's Activity Info
+        elif activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] > 0:
+            # Send Mail
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+
+            html_content = f"""
+                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+
+                <p>{_('Minulý týždeň sme nezaznamenali žiadnu aktivitu.')}</p>
+
+                <h1>{_('Celkovo si dosiahol aktívneho času <span style="color: #df3535">0s</span> - to je o <span style="color: #df3535">100%</span> horšie oproti predchádzajúcemu týždňu')}</h1>
+
+                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+
+                <br>
+
+                <img src='cid:weekly_chart'>
+
+                <br>
+
+                {_('Tím')} Wesiq.</p>
+            """
+
+        # Mail With Activity Info
+        else:
+            # Send Mail
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": activity_data["most_active_day_time"]} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activities_percentage_improvement)s") % {"total_activity_time": activity_data["total_activity_time"], "activities_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activities_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+
+            html_content = f"""
+                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+
+                <p>{_('Pozri sa na svoj prehľad aktivít za posledný týždeň.')}</p>
+
+                <p>{_('Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s celkovým časom aktivity <strong>%(most_active_day_time)s</strong>') % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": activity_data["most_active_day_time"]}}</p>
+
+                <h1>{_('Priemerná aktivita trvala <span style="color: #52cf20">%(average_activity_time)s</span>') % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])}}</h1>
+
+                <h1>{_('Celkovo si dosiahol aktívneho času <span style="color: #52cf20">%(total_activity_time)s</span> - %(activities_percentage_improvement)s') % {"total_activity_time": activity_data["total_activity_time"], "activities_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activities_percentage_improvement"])}}</h1>
+
+                <h1>{_('Celkovo si zaznamenal <span style="color: #52cf20">%(total_activity_amount)s</span> aktivity') % {"total_activity_amount": activity_data["total_activity_amount"]}}</h1>
+
+                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+
+                <br>
+
+                <img src='cid:weekly_chart'>
+
+                <br>
+
+                {_('Tím')} Wesiq.</p>
+            """
+
+        subject = f"Wesiq - Tvoj týždenný prehľad"
+        sender = settings.EMAIL_HOST_USER
+        receiver = [user.email_address]
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+
+        if activity_data["image_data"]:
+            image = MIMEImage(activity_data["image_data"])
+            image.add_header("Content-ID", "<weekly_chart>")
+            image.add_header(
+                "Content-Disposition", 
+                "inline", 
+                filename=f"Wesiq - Weekly Report {timezone.now().date()}.png"
+            )
 
             mail_message.attach(image)
 
@@ -80,16 +170,32 @@ def getMinimalistFormattedTime(elapsed_time):
 
     return result
 
-# Function For Getting Weekly Activity Data
+# Function For Getting Total Amount of Recorded Activities of the User
+def getActivitiesAmount(user_id, weeks_before=0):
+    today = timezone.now().date() # Gets Today's Date
+    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days=6) # Start Date
+
+    # Counts Amount Of User's Activities
+    activities_amount = Activity.objects.filter(
+        user_id=user_id,
+        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+    ).count()
+
+    return activities_amount
+
+# Function For Getting User's Weekly Activity Data
 def getWeeklyActivityData(user_id, weeks_before=0):
-    today = timezone.now().date() - timedelta(days=1) if weeks_before == 0 else timezone.now().date() - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = today - timedelta(days=7) if weeks_before == 0 else today - timedelta(days=((weeks_before * 7) + 7)) # Start Date
+    today = timezone.now().date() # Gets Today's Date
+    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days=6) # Start Date
 
     # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
     weekly_activity = (
         Activity.objects
         .filter(
-            Q(user_id=user_id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
+            user_id=user_id,
+            end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
         )
         .annotate(day=TruncDate("end_time"))
         .values("day")
@@ -108,7 +214,7 @@ def getWeeklyActivityData(user_id, weeks_before=0):
 
     # Fills And Sorts Result From The Oldest Date To Today's Date 
     for i in range(6, -1, -1):
-        day = today - timedelta(days=i)
+        day = end_date - timedelta(days=i)
         label = weekday_labels[day.weekday()]
 
         weekly_activity_result.append({
@@ -119,33 +225,49 @@ def getWeeklyActivityData(user_id, weeks_before=0):
     return weekly_activity_result
 
 # Function For Getting Average Activity Time Improvement Text
-def getAverageActivityTimeImprovementText(activities_percentage_improvement):
+def getAverageActivityTimeImprovementText(activities_percentage_improvement, styled=True):
     if activities_percentage_improvement > 0:
-        return _("To je o %(value)s%% lepšie oproti predchádzajúcemu týždňu.") % {"value": round(activities_percentage_improvement)}  
+        if styled:
+            return _("to je o <span style='color: #52cf20'>%(value)s%%</span> lepšie oproti predchádzajúcemu týždňu") % {"value": round(activities_percentage_improvement)}
+
+        else:
+            return _("to je o %(value)s%% lepšie oproti predchádzajúcemu týždňu") % {"value": round(activities_percentage_improvement)}
         
     else:
-        return _("To je o %(value)s%% horšie oproti predchádzajúcemu týždňu.") % {"value": abs(round(activities_percentage_improvement))}
+        if styled:
+            return _("to je o <span style='color: #df3535'>%(value)s%%</span> horšie oproti predchádzajúcemu týždňu") % {"value": abs(round(activities_percentage_improvement))}
+
+        else:
+            return _("to je o %(value)s%% horšie oproti predchádzajúcemu týždňu") % {"value": abs(round(activities_percentage_improvement))}
+
+# Function To Set Theme Of Bars In The Chart Based On Values
+def setBarTheme(data):
+    bar_theme = {
+        "background_color": [],
+        "border_color": [],
+        "border_width": []
+    }
+    
+    for value in data:
+        if value != 0:
+            # Sets Bar Theme To Green
+            bar_theme["background_color"].append("rgb(195, 240, 175)")
+            bar_theme["border_color"].append("#52cf20")
+            bar_theme["border_width"].append(1)
+
+        else:
+            # Sets Bar Theme To Red
+            bar_theme["background_color"].append("#df3535")
+            bar_theme["border_color"].append("#df3535")
+            bar_theme["border_width"].append(0)
+
+    return bar_theme
 
 @shared_task
 def modelsWarmUp():
-    # Gets All Reviews
-    reviews = list(
-        Reviews.objects.all()
-        # .values("user", "rating", "review", "last_edit", "creation_time")
-    )
-
-    # Gets All Articles
-    articles = list(
-        Articles.objects.all()
-        # .values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")
-    )
-
-    # Gets All Exercises
-    exercises = list(
-        Exercises.objects.all()
-        .order_by("exercise")
-        # .values("exercise", "unit", "categories", "requires_weight")
-    )
+    reviews = list(Reviews.objects.all()) # Gets All Reviews
+    articles = list(Articles.objects.all()) # Gets All Articles
+    exercises = list(Exercises.objects.all().order_by("exercise")) # Gets All Exercises
     
     cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
     cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
@@ -234,24 +356,6 @@ def weeklyReport():
         labels = [one_item["day"] for one_item in weekly_activity_result] # Gets Days As Labels
         data = [one_item["total_elapsed_time"] for one_item in weekly_activity_result] # Gets Total Elapsed Time For Each Day As Data
 
-        # Function To Set Theme Of Bars In The Chart Based On Values
-        background_color = []
-        border_color = []
-        border_width = []
-        
-        for value in data:
-            if value != 0:
-                # Sets Bar Theme To Green
-                background_color.append("rgb(195, 240, 175)")
-                border_color.append("#52cf20")
-                border_width.append(1)
-
-            else:
-                # Sets Bar Theme To Red
-                background_color.append("#df3535")
-                border_color.append("#df3535")
-                border_width.append(0)
-
         # Generates The Chart Image
         qc = QuickChart()
 
@@ -271,9 +375,9 @@ def weeklyReport():
                     data: {json.dumps(data)},
                     borderRadius: 0,
                     minBarLength: 2,
-                    backgroundColor: {json.dumps(background_color)},
-                    borderColor: {json.dumps(border_color)},
-                    borderWidth: {json.dumps(border_width)}
+                    backgroundColor: {json.dumps(setBarTheme(data)["background_color"])},
+                    borderColor: {json.dumps(setBarTheme(data)["border_color"])},
+                    borderWidth: {json.dumps(setBarTheme(data)["border_width"])}
                 }}]
             }},
 
@@ -340,7 +444,7 @@ def weeklyReport():
 
         # Weekly Activity Result
         most_active_day = (max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
-        most_active_day_time = getMinimalistFormattedTime((max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("total_elapsed_time")) # Gets The Value Of The Most Active Day Of Week
+        most_active_day_time = (max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("total_elapsed_time") # Gets The Value Of The Most Active Day Of Week
         average_activity_time = sum(data) / len(data) # Gets The Weekly Average Activity Time
         total_activity_time = sum(data) # Gets The Total Activity Time
 
@@ -351,44 +455,19 @@ def weeklyReport():
 
         activities_percentage_improvement = ((average_activity_time - previous_average_activity_time) / previous_average_activity_time) * 100 if previous_average_activity_time != 0 else 100 # Gets The Activities Percentage Improvement / Decrease
 
-        # Mail With No Activity Info
-        if average_activity_time == 0 and previous_average_activity_time == 0:
-            # Send Mail
-            sendMail(
-                user,
-                _("Týždenný prehľad aktivít"), # Subject
-                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
-                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>V poslednej dobe sme nezaznamenali žiadnu aktivitu.'), # HTML Content
-                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
-                _('Priemerný čas bol 0s<br>Celkový čas bol 0s'), # HTML Middle Content
-                chart_data
-            )
+        # Stores All of the Activity Data
+        activity_data = {
+            "most_active_day": most_active_day,
+            "most_active_day_time": getMinimalistFormattedTime(most_active_day_time),
+            "average_activity_time": average_activity_time,
+            "previous_average_activity_time": previous_average_activity_time,
+            "total_activity_time": getMinimalistFormattedTime(total_activity_time),
+            "activities_percentage_improvement": activities_percentage_improvement,
+            "total_activity_amount": getActivitiesAmount(user.id),
+            "image_data": chart_data
+        }
 
-        # Mail With No This Week's Activity Info
-        elif average_activity_time == 0 and previous_average_activity_time > 0:
-            # Send Mail
-            sendMail(
-                user,
-                _("Týždenný prehľad aktivít"), # Subject
-                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
-                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>Tento týždeň sme nezaznamenali žiadnu aktivitu.'), # HTML Content
-                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
-                _('Priemerný čas bol %(average_activity_time)s<br>Celkový čas bol %(total_activity_time)s<br>%(activities_percentage_improvement)s') % {"average_activity_time": getMinimalistFormattedTime(average_activity_time), "activities_percentage_improvement": getAverageActivityTimeImprovementText(activities_percentage_improvement), "total_activity_time": getMinimalistFormattedTime(total_activity_time)}, # HTML Middle Content
-                chart_data
-            )
-
-        # Mail With Activity Info
-        else:
-            # Send Mail
-            sendMail(
-                user,
-                _("Týždenný prehľad aktivít"), # Subject
-                _("Pozri sa na svoj prehľad aktivít za posledný týždeň.\n\nhttp://127.0.0.1:8000/%(language)s/trening/\n\nZačni týždeň s prvou aktivitou\nTím Wesiq.") % {"language": user.language}, # Text Content
-                _('Pozri sa na svoj prehľad aktivít za posledný týždeň.<br>Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s dosiahnutým časom <strong>%(most_active_day_time)s</strong>') % {"most_active_day": most_active_day, "most_active_day_time": most_active_day_time}, # HTML Content
-                _('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}, # End Of HTML Content
-                _('Priemerný čas bol %(average_activity_time)s<br>Celkový čas bol %(total_activity_time)s<br>%(activities_percentage_improvement)s') % {"average_activity_time": getMinimalistFormattedTime(average_activity_time), "activities_percentage_improvement": getAverageActivityTimeImprovementText(activities_percentage_improvement), "total_activity_time": getMinimalistFormattedTime(total_activity_time)}, # HTML Middle Content
-                chart_data
-            )
+        sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
 
     # Sets Message
     message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
