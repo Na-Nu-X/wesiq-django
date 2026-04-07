@@ -54,6 +54,7 @@ class Activity(models.Model):
     gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     training_plan_day = models.IntegerField(verbose_name="Day", null=True, blank=True)
+    training_plan_summary = models.JSONField(verbose_name="Training Plan Summary", default=list, null=True, blank=True)
 
 class Reviews(models.Model):
     user = models.ForeignKey(
