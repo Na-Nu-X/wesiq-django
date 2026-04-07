@@ -12,8 +12,7 @@ from quickchart import QuickChart
 from email.mime.image import MIMEImage
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
-import json
-import math
+import math, random, json
 
 # Functions
 
@@ -62,6 +61,7 @@ def sendWeeklyReportMail(user, activity_data):
                 <br>
 
                 <img src='cid:weekly_chart'>
+                <img src='cid:exercise_summary_chart'>
 
                 <br>
 
@@ -85,6 +85,7 @@ def sendWeeklyReportMail(user, activity_data):
                 <br>
 
                 <img src='cid:weekly_chart'>
+                <img src='cid:exercise_summary_chart'>
 
                 <br>
 
@@ -114,6 +115,7 @@ def sendWeeklyReportMail(user, activity_data):
                 <br>
 
                 <img src='cid:weekly_chart'>
+                <img src='cid:exercise_summary_chart'>
 
                 <br>
 
@@ -130,6 +132,17 @@ def sendWeeklyReportMail(user, activity_data):
         if activity_data["image_data"]:
             image = MIMEImage(activity_data["image_data"])
             image.add_header("Content-ID", "<weekly_chart>")
+            image.add_header(
+                "Content-Disposition", 
+                "inline", 
+                filename=f"Wesiq - Weekly Report {timezone.now().date()}.png"
+            )
+
+            mail_message.attach(image)
+
+        if activity_data["exercise_summary_image_data"]:
+            image = MIMEImage(activity_data["exercise_summary_image_data"])
+            image.add_header("Content-ID", "<exercise_summary_chart>")
             image.add_header(
                 "Content-Disposition", 
                 "inline", 
@@ -170,7 +183,42 @@ def getMinimalistFormattedTime(elapsed_time):
 
     return result
 
-# Function For Getting Total Amount of Recorded Activities of the User
+# Function For Get Weekly Training Plan Summary
+def getWeeklyTrainingPlanSummary(user_id, weeks_before=0):
+    today = timezone.now().date() # Gets Today's Date
+    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days=6) # Start Date
+
+    # Gets Weekly Training Plan Summary Values
+    weekly_training_plan_summary = Activity.objects.filter(
+        user_id=user_id,
+        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+    ).exclude(training_plan_summary__isnull=True).values("training_plan_summary")
+
+    return weekly_training_plan_summary
+
+# Function For Get Weekly Training Plan Exercise Summary
+def getWeeklyTrainingPlanExerciseSummary(data):
+    result_dict = {}
+
+    for one_activity in data:
+        for one_item in one_activity["training_plan_summary"]:
+            exercise = one_item["exercise"]
+            elapsed_time = one_item["elapsed_time"]
+
+            if exercise not in result_dict:
+                result_dict[exercise] = 0
+
+            result_dict[exercise] += elapsed_time
+
+    result = [
+        {"color": randomColor(128, 255), "exercise": exercise, "elapsed_time": elapsed_time}
+        for exercise, elapsed_time in result_dict.items()
+    ]
+
+    return result
+
+# Function For Get Total Amount of Recorded Activities of the User
 def getActivitiesAmount(user_id, weeks_before=0):
     today = timezone.now().date() # Gets Today's Date
     end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
@@ -184,7 +232,7 @@ def getActivitiesAmount(user_id, weeks_before=0):
 
     return activities_amount
 
-# Function For Getting User's Weekly Activity Data
+# Function For Get User's Weekly Activity Data
 def getWeeklyActivityData(user_id, weeks_before=0):
     today = timezone.now().date() # Gets Today's Date
     end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
@@ -262,6 +310,10 @@ def setBarTheme(data):
             bar_theme["border_width"].append(0)
 
     return bar_theme
+
+# Function For Generate Random Color In The Specific Range
+def randomColor(from_=0, to=255):
+    return f"rgb({random.randint(from_, to)},{random.randint(from_, to)},{random.randint(from_, to)})"
 
 @shared_task
 def modelsWarmUp():
@@ -347,7 +399,7 @@ def cleanupUnverifiedUsers():
 
 @shared_task(name="app.tasks.weeklyReport")
 def weeklyReport():
-    users = Users.objects.filter(account_status="OK") # Gets All Users With Valid Account Status
+    users = Users.objects.filter(account_status="OK", id=16) # Gets All Users With Valid Account Status
 
     for user in users:
         weekly_activity_result = getWeeklyActivityData(user.id) # Gets The Weekly Activity Result
@@ -356,16 +408,16 @@ def weeklyReport():
         labels = [one_item["day"] for one_item in weekly_activity_result] # Gets Days As Labels
         data = [one_item["total_elapsed_time"] for one_item in weekly_activity_result] # Gets Total Elapsed Time For Each Day As Data
 
-        # Generates The Chart Image
-        qc = QuickChart()
+        # Generates the Image of the Weekly Activity Chart
+        bar_chart = QuickChart()
 
-        qc.version = "3"
-        qc.width = 500
-        qc.height = 250
-        qc.device_pixel_ratio = 2.0
-        qc.background_color = "#999999"
+        bar_chart.version = "3"
+        bar_chart.width = 500
+        bar_chart.height = 250
+        bar_chart.device_pixel_ratio = 2.0
+        bar_chart.background_color = "#999999"
 
-        qc.config = f"""{{
+        bar_chart.config = f"""{{
             type: "bar",
 
             data: {{
@@ -440,7 +492,73 @@ def weeklyReport():
             }},
         }}"""
 
-        chart_data = qc.get_bytes() # Gets The Chart Data
+        chart_data = bar_chart.get_bytes() # Gets The Chart Data
+
+        weekly_training_plan_summary = getWeeklyTrainingPlanSummary(user.id)
+        weekly_exercise_summary = getWeeklyTrainingPlanExerciseSummary(weekly_training_plan_summary)
+
+        # Extracts Data From Weekly Activity Data
+        exercise_summary_colors = [one_item["color"] for one_item in weekly_exercise_summary] # Gets Color For Each Exercise
+        exercise_summary_labels = [one_item["exercise"] for one_item in weekly_exercise_summary] # Gets Exercises As Labels
+        exercise_summary_data = [one_item["elapsed_time"] for one_item in weekly_exercise_summary] # Gets Elapsed Time For Each Exercise As Data
+
+        # Generates the Image of the Training Plan Summary Chart
+        doughnut_chart = QuickChart()
+
+        doughnut_chart.version = "3"
+        doughnut_chart.width = 250
+        doughnut_chart.height = 250
+        doughnut_chart.device_pixel_ratio = 2.0
+        doughnut_chart.background_color = "#999999"
+
+        doughnut_chart.config = f"""{{
+            type: "doughnut",
+
+            data: {{
+                labels: {json.dumps(exercise_summary_labels)},
+
+                datasets: [{{
+                    data: {json.dumps(exercise_summary_data)},
+                    backgroundColor: {json.dumps(exercise_summary_colors)},
+                    hoverBackgroundColor: {json.dumps(exercise_summary_colors)},
+                    borderColor: "#ffffff",
+                    hoverBorderColor: "#ffffff",
+                    borderWidth: 2,
+                    hoverBorderWidth: 2,
+                    borderRadius: 5,
+                    offset: 10,
+                }}]
+            }},
+
+            options: {{
+                plugins: {{
+                    legend: {{
+                        display: false
+                    }},
+
+                    datalabels: {{
+                        display: true,
+                        color: "#000000",
+
+                        font: {{
+                            weight: "bold",
+                            size: 8
+                        }},
+
+                        formatter: (value, ctx) => {{
+                            return ctx.chart.data.labels[ctx.dataIndex];
+                        }}
+                    }}
+                }},
+
+                cutout: "50%",
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+            }},
+        }}"""
+
+        exercise_summary_image_data = doughnut_chart.get_bytes() # Gets The Chart Data
 
         # Weekly Activity Result
         most_active_day = (max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
@@ -464,7 +582,9 @@ def weeklyReport():
             "total_activity_time": getMinimalistFormattedTime(total_activity_time),
             "activities_percentage_improvement": activities_percentage_improvement,
             "total_activity_amount": getActivitiesAmount(user.id),
-            "image_data": chart_data
+            "image_data": chart_data,
+            "exercise_summary_image_data": exercise_summary_image_data,
+            "weekly_exercise_summary": weekly_exercise_summary
         }
 
         sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
