@@ -120,13 +120,15 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
                 elapsed_time:number,
                 gained_xp:number,
                 type:string|null,
-                day:number|null
+                day:number|null,
+                training_plan_summary:exercise[]|null
             } = {
                 formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
                 elapsed_time, // Stores Formatted Elapsed Time
                 gained_xp, // Stores Gained XP
                 type: null, // Stores Training Plan Title
-                day: null // Stores Training Plan Day
+                day: null, // Stores Training Plan Day
+                training_plan_summary: null // Stores The Training Plan Summary
             }
 
             // Commits Activity
@@ -139,6 +141,7 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
 
                     new_activity_data.type = training_plan_title // Stores Training Plan Title
                     new_activity_data.day = training_plan_day // Stores Training Plan Day
+                    new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
 
                     renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
                 }
