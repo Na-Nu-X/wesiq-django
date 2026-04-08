@@ -95,7 +95,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With Activity Info
         else:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": activity_data["most_active_day_time"]} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activities_percentage_improvement)s") % {"total_activity_time": activity_data["total_activity_time"], "activities_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activities_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": activity_data["most_active_day_time"]} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activities_percentage_improvement)s") % {"total_activity_time": activity_data["total_activity_time"], "activities_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activities_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
@@ -109,6 +109,8 @@ def sendWeeklyReportMail(user, activity_data):
                 <h1>{_('Celkovo si dosiahol aktívneho času <span style="color: #52cf20">%(total_activity_time)s</span> - %(activities_percentage_improvement)s') % {"total_activity_time": activity_data["total_activity_time"], "activities_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activities_percentage_improvement"])}}</h1>
 
                 <h1>{_('Celkovo si zaznamenal <span style="color: #52cf20">%(total_activity_amount)s</span> aktivity') % {"total_activity_amount": activity_data["total_activity_amount"]}}</h1>
+
+                <p>{getFavoriteExerciseText(activity_data["favorite_exercise"])}</p>
 
                 <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
 
@@ -198,7 +200,7 @@ def getWeeklyTrainingPlanSummary(user_id, weeks_before=0):
     return weekly_training_plan_summary
 
 # Function For Get Weekly Training Plan Exercise Summary
-def getWeeklyTrainingPlanExerciseSummary(data):
+def getWeeklyTrainingPlanExerciseSummary(data, amount=5):
     result_dict = {}
 
     for one_activity in data:
@@ -216,7 +218,9 @@ def getWeeklyTrainingPlanExerciseSummary(data):
         for exercise, elapsed_time in result_dict.items()
     ]
 
-    return result
+    result.sort(key=lambda x: x["elapsed_time"], reverse=True) # Sorts The Exercises by The Longest Elapsed Time
+
+    return result[:amount] # Gets Only The Amount of Exercises by Entered Value
 
 # Function For Get Total Amount of Recorded Activities of the User
 def getActivitiesAmount(user_id, weeks_before=0):
@@ -287,6 +291,24 @@ def getAverageActivityTimeImprovementText(activities_percentage_improvement, sty
 
         else:
             return _("to je o %(value)s%% horšie oproti predchádzajúcemu týždňu") % {"value": abs(round(activities_percentage_improvement))}
+
+# Function For Getting Favorite Exercise Text Text
+def getFavoriteExerciseText(favorite_exercise, styled=True):
+    if favorite_exercise:
+        if styled:
+            favorite_exercise_text = _('Tvoj obľúbený cvik týždňa bol <span style="color: %(color)s">%(exercise)s</span>') % {"color": favorite_exercise["color"],"exercise": favorite_exercise["exercise"]}
+
+        else:
+            favorite_exercise_text = _('Tvoj obľúbený cvik týždňa bol %(exercise)s') % {"exercise": favorite_exercise["exercise"]}
+
+    else:
+        if styled:
+            favorite_exercise_text = _('Vytvor si <a href="https://delinquently-overdistraught-glynis.ngrok-free.dev/%(language)s/my-training-plans/?create" title="Vytvoriť tréningový plán" target="_blank">tréningový plán</a> pre získanie viac štatistík.')
+
+        else:
+            favorite_exercise_text = _('Vytvor si tréningový plán kliknutím na href="https://delinquently-overdistraught-glynis.ngrok-free.dev/%(language)s/my-training-plans/?create pre získanie viac štatistík.')
+
+    return favorite_exercise_text
 
 # Function To Set Theme Of Bars In The Chart Based On Values
 def setBarTheme(data):
@@ -415,7 +437,7 @@ def weeklyReport():
         bar_chart.width = 500
         bar_chart.height = 250
         bar_chart.device_pixel_ratio = 2.0
-        bar_chart.background_color = "#999999"
+        bar_chart.background_color = "transparent"
 
         bar_chart.config = f"""{{
             type: "bar",
@@ -443,7 +465,7 @@ def weeklyReport():
 
                     x: {{
                         ticks: {{
-                            color: "#ffffff",
+                            color: "#cccccc",
 
                             font: {{
                                 family: "'Balsamiq Sans', sans-serif",
@@ -495,70 +517,70 @@ def weeklyReport():
         chart_data = bar_chart.get_bytes() # Gets The Chart Data
 
         weekly_training_plan_summary = getWeeklyTrainingPlanSummary(user.id)
-        weekly_exercise_summary = getWeeklyTrainingPlanExerciseSummary(weekly_training_plan_summary)
 
-        # Extracts Data From Weekly Activity Data
-        exercise_summary_colors = [one_item["color"] for one_item in weekly_exercise_summary] # Gets Color For Each Exercise
-        exercise_summary_labels = [one_item["exercise"] for one_item in weekly_exercise_summary] # Gets Exercises As Labels
-        exercise_summary_data = [one_item["elapsed_time"] for one_item in weekly_exercise_summary] # Gets Elapsed Time For Each Exercise As Data
+        exercise_summary_image_data = None
+        favorite_exercise = None
 
-        # Generates the Image of the Training Plan Summary Chart
-        doughnut_chart = QuickChart()
+        if len(weekly_training_plan_summary) > 0:
+            weekly_exercise_summary = getWeeklyTrainingPlanExerciseSummary(weekly_training_plan_summary)
 
-        doughnut_chart.version = "3"
-        doughnut_chart.width = 250
-        doughnut_chart.height = 250
-        doughnut_chart.device_pixel_ratio = 2.0
-        doughnut_chart.background_color = "#999999"
+            favorite_exercise = max(weekly_exercise_summary, key=lambda x: x["elapsed_time"]) # Gets the Exercise From The Weekly Exercise Summary With Longest Elapsed Time
 
-        doughnut_chart.config = f"""{{
-            type: "doughnut",
+            # Extracts Data From Weekly Activity Data
+            exercise_summary_colors = [one_item["color"] for one_item in weekly_exercise_summary] # Gets Color For Each Exercise
+            exercise_summary_labels = [one_item["exercise"] for one_item in weekly_exercise_summary] # Gets Exercises As Labels
+            exercise_summary_data = [one_item["elapsed_time"] for one_item in weekly_exercise_summary] # Gets Elapsed Time For Each Exercise As Data
 
-            data: {{
-                labels: {json.dumps(exercise_summary_labels)},
+            # Generates the Image of the Training Plan Summary Chart
+            doughnut_chart = QuickChart()
 
-                datasets: [{{
-                    data: {json.dumps(exercise_summary_data)},
-                    backgroundColor: {json.dumps(exercise_summary_colors)},
-                    hoverBackgroundColor: {json.dumps(exercise_summary_colors)},
-                    borderColor: "#ffffff",
-                    hoverBorderColor: "#ffffff",
-                    borderWidth: 2,
-                    hoverBorderWidth: 2,
-                    borderRadius: 5,
-                    offset: 10,
-                }}]
-            }},
+            doughnut_chart.version = "3"
+            doughnut_chart.width = 250
+            doughnut_chart.height = 250
+            doughnut_chart.device_pixel_ratio = 2.0
+            doughnut_chart.background_color = "transparent"
 
-            options: {{
-                plugins: {{
-                    legend: {{
-                        display: false
-                    }},
+            doughnut_chart.config = {
+                "type": "doughnut",
 
-                    datalabels: {{
-                        display: true,
-                        color: "#000000",
+                "data": {
+                    "labels": exercise_summary_labels,
 
-                        font: {{
-                            weight: "bold",
-                            size: 8
-                        }},
+                    "datasets": [{
+                        "data": exercise_summary_data,
+                        "backgroundColor": exercise_summary_colors,
+                        "borderColor": "#cccccc",
+                        "borderWidth": 2,
+                        "borderRadius": 5,
+                        "offset": 10
+                    }]
+                },
 
-                        formatter: (value, ctx) => {{
-                            return ctx.chart.data.labels[ctx.dataIndex];
-                        }}
-                    }}
-                }},
+                "options": {
+                    "plugins": {
+                        "legend": {
+                            "display": True,
+                            "position": "top",
 
-                cutout: "50%",
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: false,
-            }},
-        }}"""
+                            "labels": {
+                                "boxWidth": 0,
+                                "fontSize": 5,
+                                "fontStyle": "bold",
+                                "color": "#cccccc",
+                                "padding": 5,
+                            }
+                        },
 
-        exercise_summary_image_data = doughnut_chart.get_bytes() # Gets The Chart Data
+                        "datalabels": {
+                            "display": False
+                        }
+                    },
+
+                    "cutout": "50%"
+                }
+            }
+
+            exercise_summary_image_data = doughnut_chart.get_bytes() # Gets The Chart Data
 
         # Weekly Activity Result
         most_active_day = (max(weekly_activity_result, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
@@ -584,10 +606,13 @@ def weeklyReport():
             "total_activity_amount": getActivitiesAmount(user.id),
             "image_data": chart_data,
             "exercise_summary_image_data": exercise_summary_image_data,
-            "weekly_exercise_summary": weekly_exercise_summary
+            "weekly_exercise_summary": weekly_exercise_summary,
+            "favorite_exercise": favorite_exercise
         }
 
         sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
+
+        return weekly_exercise_summary
 
     # Sets Message
     message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
