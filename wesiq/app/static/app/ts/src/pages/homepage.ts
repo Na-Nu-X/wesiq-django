@@ -26,10 +26,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Login Form
 
     // Login Form Dialog
-    const login_button:HTMLAnchorElement = document.querySelector(".login_button") as HTMLAnchorElement
-    const no_logged_in_button:HTMLAnchorElement = document.querySelector(".login") as HTMLAnchorElement
-    const login_form_dialog:HTMLDialogElement = document.querySelector(".login_form_dialog") as HTMLDialogElement
-    const login_form:HTMLFormElement = login_form_dialog.querySelector(".login_form") as HTMLFormElement
+    const login_button:HTMLAnchorElement = document.querySelector(".login_button") as HTMLAnchorElement // Gets The Login Button
+    const no_logged_in_button:HTMLAnchorElement = document.querySelector(".login") as HTMLAnchorElement // Gets The No Logged In Button
+    const login_form_dialog:HTMLDialogElement = document.querySelector(".login_form_dialog") as HTMLDialogElement // Gets The Login Form Dialog
+    const login_form:HTMLFormElement = login_form_dialog.querySelector(".login_form") as HTMLFormElement // Gets The Login Form
 
     login_button.addEventListener("click", function():void {
         login_form_dialog.showModal()
@@ -59,9 +59,9 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Registration Form
 
     // Registration Form Dialog
-    const registration_button:HTMLAnchorElement = document.querySelector(".registration_button") as HTMLAnchorElement
-    const registration_form_dialog:HTMLDialogElement = document.querySelector(".registration_form_dialog") as HTMLDialogElement
-    const registration_form:HTMLFormElement = registration_form_dialog.querySelector(".registration_form") as HTMLFormElement
+    const registration_button:HTMLAnchorElement = document.querySelector(".registration_button") as HTMLAnchorElement // Gets The Registration Button
+    const registration_form_dialog:HTMLDialogElement = document.querySelector(".registration_form_dialog") as HTMLDialogElement // Gets The Registration Form Dialog
+    const registration_form:HTMLFormElement = registration_form_dialog.querySelector(".registration_form") as HTMLFormElement // Gets The Registration Form
 
     registration_button.addEventListener("click", function():void {
         registration_form_dialog.showModal()

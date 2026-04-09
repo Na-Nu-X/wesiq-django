@@ -412,37 +412,7 @@ header {
             }
 
             input[type="text"], input[type="email"] {
-                width: 90%;
-                height: 50px;
-                margin-bottom: 10px;
-                padding: 0px 10px;
-                background: transparent;
-                color: $secondary-color;
-                border: none;
-                border-bottom: 1px solid darken($secondary-color, 40%);
-                outline: none;
-                transition: width 0.3s ease, border 0.3s ease;
-
-                &:hover,
-                &:focus {
-                    width: 100%;
-                    border-bottom: 1px solid darken($secondary-color, 20%);
-                }
-
-                &::placeholder {
-                    color: darken($secondary-color, 40%);
-                }
-
-                &:-webkit-autofill {
-                    -webkit-text-fill-color: rgb(255, 255, 255);
-                    transition: width 0.3s ease, background-color 9999s ease;
-
-                    &:hover,
-                    &:focus {
-                        -webkit-text-fill-color: rgb(255, 255, 255);
-                        transition: width 0.3s ease, background-color 9999s ease;
-                    }
-                }
+                @include form_input($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
             }
 
             .password_container {

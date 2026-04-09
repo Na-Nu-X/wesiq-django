@@ -1,24 +1,21 @@
 import { sendPOST } from "../../services/sendPOST.js"
 
-interface user {
-    id:number,
-    first_name:string,
-    last_name:string,
-    profile_picture_name:string,
-    friend_code:string,
-    following:string[],
-    followers:string[]
-}
+import { 
+    follow,
+    unfollow,
+    renderUsers,
+    resetSearchedUsers
+} from "./functions/searchUsers.js"
 
-interface searchBarResponse {
-    success:boolean,
-    logged_in_user_id:number,
-    users:user[]
-}
+import type { 
+    searchBarResponse
+} from "./functions/searchUsers.js"
 
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Search Users
+
     // Variables
 
     const search_bar_container:HTMLDivElement = document.querySelector(".search_bar_container") as HTMLDivElement // Gets Search Bar Container
@@ -57,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                     if(search_bar_response.success) {
                         all_users_container.innerHTML = "" // Deletes All Users Container
-                        search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id)) // Renders Users
+                        search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)) // Renders Users
                         all_users = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
                     }
                 }
@@ -87,8 +84,83 @@ document.addEventListener("DOMContentLoaded", function():void {
             previous_search_bar_length = this.value.length // Sets The Previous Search Bar Length
         }
 
-        else resetSearchedUsers() // Resets The Searched Users
+        else resetSearchedUsers(search_bar, all_users_container, first_users) // Resets The Searched Users
     })
 
-    delete_search_bar.addEventListener("click", resetSearchedUsers) // Delete Search Bar Icon Click Functionality
+    // Delete Search Bar Icon Click Functionality
+    delete_search_bar.addEventListener("click", function():void {
+        resetSearchedUsers(search_bar, all_users_container, first_users) // Resets The Searched Users
+    })
+
+    // Upload Post Form Dialog
+
+    // Variables
+
+    const upload_post_icon:HTMLElement = document.querySelector(".upload_post .fa-photo-film") as HTMLElement // Gets The Upload Post Icon
+    const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
+    const upload_post_form:HTMLFormElement = upload_post_form_dialog.querySelector(".upload_post_form") as HTMLFormElement // Gets The Upload Post Form
+
+    const public_visibility:HTMLElement = upload_post_form.querySelector(".public_visibility") as HTMLElement // Gets The Public Visibility Icon
+    const allow_comments:HTMLElement = upload_post_form.querySelector(".allow_comments") as HTMLElement // Gets The Allow Comments Icon
+    const hide_likes:HTMLElement = upload_post_form.querySelector(".hide_likes") as HTMLElement // Gets The Hide Likes Icon
+
+    // Events
+
+    upload_post_icon.addEventListener("click", function():void {
+        upload_post_form_dialog.showModal() // Shows The Upload Post Form Dialog
+    })
+
+    upload_post_form_dialog.addEventListener("click", function(event:PointerEvent):void {
+        const upload_post_form_dimensions:DOMRect = upload_post_form.getBoundingClientRect() // Gets The Upload Post Form Dimensions
+
+        if (
+            event.clientX < upload_post_form_dimensions.left ||
+            event.clientX > upload_post_form_dimensions.right ||
+            event.clientY < upload_post_form_dimensions.top ||
+            event.clientY > upload_post_form_dimensions.bottom ||
+            (event.target as HTMLAnchorElement).classList.contains("back") ||
+            ((event.target as HTMLElement).parentNode as HTMLAnchorElement).classList.contains("back")
+        ) {
+            this.close() // Hides The Upload Post Form Dialog
+        }
+    })
+
+    // Public Visibility Click Functionalities
+    public_visibility.addEventListener("click", function(event:PointerEvent):void {
+        // Sets The Private Visibility
+        if((event.target as HTMLElement).classList.contains("fa-eye")) {
+            (event.target as HTMLElement).classList.replace("fa-eye", "fa-eye-low-vision")
+        }
+
+        // Sets The Public Visibility
+        else if((event.target as HTMLElement).classList.contains("fa-eye-low-vision")) {
+            (event.target as HTMLElement).classList.replace("fa-eye-low-vision", "fa-eye")
+        }
+    })
+
+    // Allow Comments Click Functionalities
+    allow_comments.addEventListener("click", function(event:PointerEvent):void {
+        // Disables The Comments
+        if((event.target as HTMLElement).classList.contains("fa-comment")) {
+            (event.target as HTMLElement).classList.replace("fa-comment", "fa-comment-slash")
+        }
+
+        // Enables The Comments
+        else if((event.target as HTMLElement).classList.contains("fa-comment-slash")) {
+            (event.target as HTMLElement).classList.replace("fa-comment-slash", "fa-comment")
+        }
+    })
+
+    // Hide Likes Click Functionalities
+    hide_likes.addEventListener("click", function(event:PointerEvent):void {
+        // Hides The Like Counter
+        if((event.target as HTMLElement).classList.contains("fa-solid")) {
+            (event.target as HTMLElement).classList.replace("fa-solid", "fa-regular")
+        }
+
+        // Shows The Like Counter
+        else if((event.target as HTMLElement).classList.contains("fa-regular")) {
+            (event.target as HTMLElement).classList.replace("fa-regular", "fa-solid")
+        }
+    })
 })

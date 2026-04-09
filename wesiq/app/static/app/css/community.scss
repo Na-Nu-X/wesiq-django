@@ -16,7 +16,6 @@ header {
 
             .fa-photo-film {
                 @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                // color: $secondary-color;
                 font-size: 1.5em
             }
         }
@@ -28,6 +27,78 @@ header {
 ************/
 
 .content {
+    // Upload Post Form Dialog
+
+    .upload_post_form_dialog {
+        &::backdrop {
+            background-color: transparentize($main-color, 0.8);
+            backdrop-filter: blur(2px);
+        }
+
+        .upload_post_form {
+            @include position_center($position: fixed);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px 50px 50px;
+            text-align: center;
+            background-color: transparentize($main-color, 0.8);
+            backdrop-filter: blur(5px);
+            border: 2px solid $secondary-color;
+            border-radius: $medium-border-radius;
+            overflow: hidden;
+
+            &::before {
+                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
+            }
+
+            &::after {
+                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
+            }
+
+            h2 {
+                margin-bottom: 30px;
+                color: $secondary-color;
+                animation: fadeInScale 0.3s ease-out;
+            }
+
+            .back {
+                @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%))
+            }
+
+            textarea {
+                @include form_textarea($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+            }
+
+            input[type="text"] {
+                @include form_input($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+            }
+
+            .settings {
+                @include flex_center;
+                gap: 10px;
+
+                #public_visibility, #allow_comments, #hide_likes {
+                    display: none;
+                }
+
+                .public_visibility, .allow_comments, .hide_likes {
+                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    width: 20px;
+                }
+            }
+
+            .form_report {
+                @include form_report;
+            }
+
+            input[type="submit"] {
+                @include blue_button($width: 90%, $border-radius: $big-border-radius);
+                margin-top: 40px;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
     // Search Bar
 
     .search_bar_container {

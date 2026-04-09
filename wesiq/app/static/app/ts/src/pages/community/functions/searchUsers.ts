@@ -1,5 +1,23 @@
+import { sendPOST } from "../../../services/sendPOST.js";
+
+export interface user {
+    id:number,
+    first_name:string,
+    last_name:string,
+    profile_picture_name:string,
+    friend_code:string,
+    following:string[],
+    followers:string[]
+}
+
+export interface searchBarResponse {
+    success:boolean,
+    logged_in_user_id:number,
+    users:user[]
+}
+
 // Function For Add Follow
-function follow(event:PointerEvent):void {
+export function follow(event:PointerEvent):void {
     event.preventDefault() // Prevents Redirect To The User's Profile
 
     const clicked_user_id:string = ((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"] || "" // Gets Clicked User ID
@@ -13,7 +31,7 @@ function follow(event:PointerEvent):void {
 }
 
 // Function For Remove Follow
-function unfollow(event:PointerEvent):void {
+export function unfollow(event:PointerEvent):void {
     event.preventDefault() // Prevents Redirect To The User's Profile
 
     const clicked_user_id:string = ((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"] || "" // Gets Clicked User ID
@@ -27,7 +45,7 @@ function unfollow(event:PointerEvent):void {
 }
 
 // Function For Render Users From The POST Response
-function renderUsers(user_data:user, logged_in_user_id:number):void {
+export function renderUsers(user_data:user, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
     const user_name:HTMLParagraphElement = document.createElement("p") // Creates User Name Paragraph
@@ -61,7 +79,7 @@ function renderUsers(user_data:user, logged_in_user_id:number):void {
 }
 
 // Function For Reset Searched Users (Displays The Initial State)
-function resetSearchedUsers():void {
+export function resetSearchedUsers(search_bar:HTMLInputElement, all_users_container:HTMLDivElement, first_users:NodeListOf<HTMLAnchorElement>):void {
     search_bar.value = "" // Deletes Search Bar Value
     all_users_container.innerHTML = "" // Deletes All Users Container
     first_users.forEach(one_user => all_users_container.appendChild(one_user)) // Shows The First Loaded Users
