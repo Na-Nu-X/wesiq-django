@@ -1,4 +1,5 @@
 from django import forms
+from app.models import Post
 from django.utils.translation import gettext_lazy as _
 
 class contactForm(forms.Form):
@@ -84,6 +85,7 @@ class reviewForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"id": "delete_review"}),
         required=False,
     )
+
 class loginForm(forms.Form):
     email_address = forms.EmailField(
         widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": _("Zadajte váš e-mail")}),
@@ -356,9 +358,72 @@ class writeCommentForm(forms.Form):
         },
     )
 
-# class createPostForm(forms.ModelForm):
-#     files = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
 
-#     class Meta:
-#         model = Post
-#         fields = ['caption', 'files']
+class uploadPostForm(forms.ModelForm):
+    files = forms.FileField(
+        widget=MultipleFileInput(attrs={"multiple": True}),
+        required=True,
+        label=False,
+    )
+
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": _("Popis príspevku")}),
+        label=False,
+        max_length=500,
+        required=False,
+        error_messages={
+            "max_length": _("Popis príspevku je príliš dlhý"),
+        },
+    )
+
+    tagged_people = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": _("Označiť ľudí"), "autocomplete": "off"}),
+        label=False,
+        max_length=60, # Maximum Length of 3 Tagged Usernames
+        required=False,
+        error_messages={
+            "max_length": _("Označil si priveľa ľudí"),
+        },
+    )
+
+    hashtags = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": _("Hashtagy"), "autocomplete": "off"}),
+        label=False,
+        max_length=90, # Maximum Length of 3 Hashtags
+        required=False,
+        error_messages={
+            "max_length": _("Pridal si priveľa hashtagov"),
+        },
+    )
+
+    locality = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": _("Miesto"), "autocomplete": "off"}),
+        label=False,
+        max_length=100,
+        required=False,
+        error_messages={
+            "max_length": _("Zadané miesto je príliš dlhé"),
+        },
+    )
+
+    public_visibility = forms.BooleanField( 
+        widget=forms.CheckboxInput(attrs={"id": "public_visibility"}),
+        required=False,
+    )
+
+    allow_comments = forms.BooleanField( 
+        widget=forms.CheckboxInput(attrs={"id": "allow_comments"}),
+        required=False,
+    )
+
+    hide_likes = forms.BooleanField( 
+        widget=forms.CheckboxInput(attrs={"id": "hide_likes"}),
+        required=False,
+    )
+
+    class Meta:
+        model = Post
+
+        fields = ["description", "tagged_people", "hashtags", "locality", "public_visibility", "allow_comments", "hide_likes"]

@@ -8,7 +8,23 @@
     <link rel="stylesheet" href="{% static 'app/css/community.css' %}">
 {% endblock style %}
 
+{% block banner %}
+    <div class="upload_post">
+        <i class="fa-solid fa-photo-film"></i> <!-- https://fontawesome.com/icons/photo-film -->
+    </div>
+{% endblock banner %}
+
 {% block content %}
+    <dialog class="upload_post_form_dialog">
+        <form class="upload_post_form" action="{% url 'community_url' %}" method="POST">
+            {% csrf_token %}
+
+            <h2>{% translate "Zdieľať príspevok" %}</h2>
+
+            {{ upload_post_form }}
+        </form>
+    </dialog>
+
     <div class="search_bar_container">
         <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
@@ -62,5 +78,5 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/community.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/community/community.js' %}" type="module"></script>
 {% endblock script %}

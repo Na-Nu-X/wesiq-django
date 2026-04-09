@@ -1,6 +1,8 @@
 from enum import unique
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
+import os
 
 class Users(models.Model):
     role_choices = [
@@ -15,8 +17,9 @@ class Users(models.Model):
         ("deleted", "deleted"),
     ]
 
-    first_name = models.CharField(verbose_name="First Name", max_length=50)
-    last_name = models.CharField(verbose_name="Last Name", max_length=50)
+    first_name = models.CharField(verbose_name="First Name", max_length=50, null=False)
+    last_name = models.CharField(verbose_name="Last Name", max_length=50, null=False)
+    username = models.CharField(verbose_name="Username", max_length=20, default="@", null=False)
     email_address = models.CharField(verbose_name="E-mail Address", max_length=50)
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
     password = models.CharField(verbose_name="Password", max_length=255)
@@ -30,8 +33,8 @@ class Users(models.Model):
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
     friend_code = models.CharField(verbose_name="Friend Code", max_length=6, null=False)
-    following = ArrayField(models.CharField(verbose_name="Following", max_length=100), default=list, null=False)
-    followers = ArrayField(models.CharField(verbose_name="Followers", max_length=100), default=list, null=False)
+    following = ArrayField(models.CharField(verbose_name="Following", max_length=20), default=list, null=False)
+    followers = ArrayField(models.CharField(verbose_name="Followers", max_length=20), default=list, null=False)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
@@ -112,7 +115,7 @@ class ArticleForum(models.Model):
 
     comment = models.TextField(verbose_name="Comment", null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
-    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=100), default=list, null=False)
+    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
     parent = models.ForeignKey(
@@ -125,7 +128,7 @@ class ArticleForum(models.Model):
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
-    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=100), default=list, null=False)
+    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
 
 class TrainingPlan(models.Model):
     unit_choices = [
@@ -185,3 +188,36 @@ class Transactions(models.Model):
 
     def __str__(self):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
+
+def getPostUploadPath(instance, filename):
+    return f"posts/user_{instance.post.user.id}/{filename}"
+
+class Post(models.Model):
+    user = models.ForeignKey(
+        "Users",
+        verbose_name="User ID",
+        on_delete=models.CASCADE,
+        related_name="posts",
+        null=False,
+    )
+
+    description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
+    tagged_people = ArrayField(models.CharField(verbose_name="Tagged People", max_length=20), default=list, null=True, blank=True)
+    hashtags = ArrayField(models.CharField(verbose_name="Hashtags", max_length=30), default=list, null=True, blank=True)
+    locality = models.CharField(verbose_name="Locality", max_length=100, null=True, blank=True)
+    public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)
+    allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
+    hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+class PostMedia(models.Model):
+    post = models.ForeignKey(
+        Post,
+        verbose_name="Post",
+        on_delete=models.CASCADE,
+        related_name="media",
+        null=False,
+    )
+
+    file = models.FileField(upload_to=getPostUploadPath)
+    is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)

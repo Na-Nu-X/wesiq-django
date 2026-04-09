@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, PostMedia
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1675,39 +1675,47 @@ def communityView(request):
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
         if request.method == "POST":
-            searched_text = json.loads(request.body) # Gets The Searched Text
-            
-            users = Users.objects.filter(
-                Q(account_status="OK") & (
-                    Q(first_name__icontains=searched_text) | 
-                    Q(last_name__icontains=searched_text) | 
-                    Q(friend_code__contains=searched_text)
-                )
-            ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
-            
-            # Creates Valid Format For JSON Response
-            users = [
-                {
-                    "id": one_user.id, 
-                    "first_name": one_user.first_name, 
-                    "last_name": one_user.last_name, 
-                    "profile_picture_name": one_user.profile_picture_name, 
-                    "friend_code": one_user.friend_code,
-                    "following": list(one_user.following),
-                    "followers": list(one_user.followers),
-                }
+            # Upload Post Form POST
+            if request.POST.get("upload_post_form_submit"):
+                upload_post_form = uploadPostForm(request.POST, request.FILES)
 
-                for one_user in users
-            ]
+            # Search Users POST
+            else:
+                searched_text = json.loads(request.body) # Gets The Searched Text
+                
+                users = Users.objects.filter(
+                    Q(account_status="OK") & (
+                        Q(first_name__icontains=searched_text) | 
+                        Q(last_name__icontains=searched_text) | 
+                        Q(friend_code__contains=searched_text)
+                    )
+                ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
+                
+                # Creates Valid Format For JSON Response
+                users = [
+                    {
+                        "id": one_user.id, 
+                        "first_name": one_user.first_name, 
+                        "last_name": one_user.last_name, 
+                        "profile_picture_name": one_user.profile_picture_name, 
+                        "friend_code": one_user.friend_code,
+                        "following": list(one_user.following),
+                        "followers": list(one_user.followers),
+                    }
 
-            return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
+                    for one_user in users
+                ]
+
+                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
             "profile_picture_name": logged_in_user.profile_picture_name,
 
-            "users": users
+            "users": users,
+
+            "upload_post_form": uploadPostForm
         })
 
     return render(request, "app/community.html")

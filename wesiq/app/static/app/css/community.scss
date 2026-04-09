@@ -1,6 +1,28 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
+/**************
+ Header Styles
+**************/
+
+header {
+    // Banner
+
+    .banner {
+        // Upload Post
+
+        .upload_post {
+            width: max-content;
+
+            .fa-photo-film {
+                @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                // color: $secondary-color;
+                font-size: 1.5em
+            }
+        }
+    }
+}
+
 /************
  Main Styles
 ************/
