@@ -104,6 +104,9 @@ document.addEventListener("DOMContentLoaded", function():void {
     const allow_comments:HTMLElement = upload_post_form.querySelector(".allow_comments") as HTMLElement // Gets The Allow Comments Icon
     const hide_likes:HTMLElement = upload_post_form.querySelector(".hide_likes") as HTMLElement // Gets The Hide Likes Icon
 
+    const select_posts:HTMLInputElement = upload_post_form.querySelector("#select_posts") as HTMLInputElement // Gets The Select Posts Input
+    const posts_preview:HTMLDivElement = upload_post_form.querySelector(".posts_preview") as HTMLDivElement // Gets The Posts Preview
+
     // Events
 
     upload_post_icon.addEventListener("click", function():void {
@@ -129,25 +132,29 @@ document.addEventListener("DOMContentLoaded", function():void {
     public_visibility.addEventListener("click", function(event:PointerEvent):void {
         // Sets The Private Visibility
         if((event.target as HTMLElement).classList.contains("fa-eye")) {
-            (event.target as HTMLElement).classList.replace("fa-eye", "fa-eye-low-vision")
+            (event.target as HTMLElement).classList.replace("fa-eye", "fa-eye-low-vision");
+            (event.target as HTMLElement).title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
         }
 
         // Sets The Public Visibility
         else if((event.target as HTMLElement).classList.contains("fa-eye-low-vision")) {
-            (event.target as HTMLElement).classList.replace("fa-eye-low-vision", "fa-eye")
+            (event.target as HTMLElement).classList.replace("fa-eye-low-vision", "fa-eye");
+            (event.target as HTMLElement).title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
         }
     })
-
+    
     // Allow Comments Click Functionalities
     allow_comments.addEventListener("click", function(event:PointerEvent):void {
         // Disables The Comments
         if((event.target as HTMLElement).classList.contains("fa-comment")) {
-            (event.target as HTMLElement).classList.replace("fa-comment", "fa-comment-slash")
+            (event.target as HTMLElement).classList.replace("fa-comment", "fa-comment-slash");
+            (event.target as HTMLElement).title = gettext("Zapnúť komentáre")
         }
-
+        
         // Enables The Comments
         else if((event.target as HTMLElement).classList.contains("fa-comment-slash")) {
-            (event.target as HTMLElement).classList.replace("fa-comment-slash", "fa-comment")
+            (event.target as HTMLElement).classList.replace("fa-comment-slash", "fa-comment");
+            (event.target as HTMLElement).title = gettext("Vypnúť komentáre")
         }
     })
 
@@ -155,12 +162,54 @@ document.addEventListener("DOMContentLoaded", function():void {
     hide_likes.addEventListener("click", function(event:PointerEvent):void {
         // Hides The Like Counter
         if((event.target as HTMLElement).classList.contains("fa-solid")) {
-            (event.target as HTMLElement).classList.replace("fa-solid", "fa-regular")
+            (event.target as HTMLElement).classList.replace("fa-solid", "fa-regular");
+            (event.target as HTMLElement).title = gettext("Zobraziť počet označení páči sa mi to")
         }
 
         // Shows The Like Counter
         else if((event.target as HTMLElement).classList.contains("fa-regular")) {
-            (event.target as HTMLElement).classList.replace("fa-regular", "fa-solid")
+            (event.target as HTMLElement).classList.replace("fa-regular", "fa-solid");
+            (event.target as HTMLElement).title = gettext("Skryť počet označení páči sa mi to")
+        }
+    })
+
+    // Select Posts Change Functionality
+    select_posts.addEventListener("change", function(event:Event):void {
+        const input = event.target as HTMLInputElement
+        const files:FileList|null = input.files
+
+        if(!files) return
+
+        for(let i = 0; i < files.length; i++) {
+            const one_file:File = files[i] as File
+            const reader:FileReader = new FileReader()
+
+            reader.onload = function():void {
+                const result:string = reader.result as string
+
+                if(!result) return
+
+                let element:HTMLImageElement|HTMLVideoElement|undefined
+
+                if(one_file.type.startsWith("image/")) {
+                    element = document.createElement("img")
+                    
+                    element.src = result
+                } 
+                else if(one_file.type.startsWith("video/")) {
+                    element = document.createElement("video")
+
+                    element.src = result
+                    element.controls = false
+                    element.muted = true
+                }
+
+                if(element && posts_preview) {
+                    posts_preview.appendChild(element)
+                }
+            }
+
+            reader.readAsDataURL(one_file)
         }
     })
 })

@@ -1677,7 +1677,25 @@ def communityView(request):
         if request.method == "POST":
             # Upload Post Form POST
             if request.POST.get("upload_post_form_submit"):
-                upload_post_form = uploadPostForm(request.POST, request.FILES)
+                upload_post_form = uploadPostForm(request.POST)
+                files = request.FILES.getlist("select_posts") # Gets Files From the POST
+
+                # Saves Only if The Form is Valid And Includes at Least One File
+                if upload_post_form.is_valid() and files:
+                    new_post = upload_post_form.save(commit=False)
+                    new_post.user_id = logged_in_user_id
+                    new_post.save()
+
+                    for one_file in files:
+                        is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
+
+                        PostMedia.objects.create(
+                            post=new_post,
+                            file=one_file,
+                            is_video=is_video
+                        )
+
+                    return redirect("community_url")
 
             # Search Users POST
             else:

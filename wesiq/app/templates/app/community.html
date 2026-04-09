@@ -16,23 +16,40 @@
 
 {% block content %}
     <dialog class="upload_post_form_dialog">
-        <form class="upload_post_form" action="{% url 'community_url' %}" method="POST">
+        <form class="upload_post_form" action="{% url 'community_url' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             <h2>{% translate "Zdieľať príspevok" %}</h2>
 
             <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-            {% comment %} {{ upload_post_form }} {% endcomment %}
+            <div class="files_container">
+                <label for="select_posts"><i class="fa-solid fa-photo-film"></i></label> <!-- https://fontawesome.com/icons/photo-film -->
+                <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
+            </div>
+
+            <div class="posts_preview">
+                {% comment %} <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}">
+                <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}">
+                <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}">
+                <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}">
+                <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}">
+                <img src="{% static '/../media/posts/16/IMG-29a50f5ff9c4efb92afb.jpg' %}"> {% endcomment %}
+            </div>
+
+            {{ upload_post_form.description }}
+            {{ upload_post_form.tagged_people }}
+            {{ upload_post_form.hashtags }}
+            {{ upload_post_form.locality }}
 
             <div class="settings">
-                <label for="public_visibility"><i class="public_visibility fa-solid fa-eye"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
                 {{ upload_post_form.public_visibility }}
 
-                <label for="allow_comments"><i class="allow_comments fa-solid fa-comment"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
+                <label for="allow_comments"><i class="allow_comments fa-solid fa-comment" title="{% translate 'Vypnúť komentáre' %}"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
                 {{ upload_post_form.allow_comments }}
 
-                <label for="hide_likes"><i class="hide_likes fa-solid fa-heart"></i></label> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
+                <label for="hide_likes"><i class="hide_likes fa-solid fa-heart" title="{% translate 'Skryť počet označení páči sa mi to' %}"></i></label> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
                 {{ upload_post_form.hide_likes }}
             </div>
 
