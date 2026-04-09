@@ -268,7 +268,7 @@
 
 // Form Input
 
-@mixin form_input {
+@mixin form_input($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
     position: relative;
     width: 90%;
     height: 50px;
@@ -277,14 +277,14 @@
     background: transparent;
     color: $secondary-color;
     border: none;
-    border-bottom: 1px solid transparentize($blue-color, 0.5);
+    border-bottom: 1px solid $color;
     outline: none;
     transition: width 0.3s ease, border-color 0.3s ease;
 
     &:hover,
     &:focus {
         width: 100%;
-        border-color: $blue-color;
+        border-color: $hover_color;
     }
 
     &::placeholder {
@@ -305,7 +305,7 @@
 
 // Form Textarea
 
-@mixin form_textarea($width: 90%) {
+@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
     width: $width;
     min-height: 100px;
     field-sizing: content;
@@ -313,7 +313,7 @@
     padding: 5px 10px;
     background: transparent;
     color: $secondary-color;
-    border: 1px solid transparentize($blue-color, 0.5);
+    border: 1px solid $color;
     border-radius: $small-border-radius;
     outline: none;
     resize: none;
@@ -322,7 +322,7 @@
     &:hover,
     &:focus {
         width: 100%;
-        border-color: $blue-color;
+        border-color: $hover_color;
     }
 
     &::placeholder {
