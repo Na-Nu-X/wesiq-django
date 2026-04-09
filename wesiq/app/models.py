@@ -2,7 +2,8 @@ from enum import unique
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
-import os
+from pathlib import Path
+import secrets
 
 class Users(models.Model):
     role_choices = [
@@ -190,7 +191,9 @@ class Transactions(models.Model):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
 
 def getPostUploadPath(instance, filename):
-    return f"posts/user_{instance.post.user.id}/{filename}"
+    new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(filename).suffix}"
+    
+    return f"posts/{instance.post.user.id}/{new_image_name}"
 
 class Post(models.Model):
     user = models.ForeignKey(

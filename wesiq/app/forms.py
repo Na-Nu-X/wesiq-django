@@ -358,16 +358,7 @@ class writeCommentForm(forms.Form):
         },
     )
 
-class MultipleFileInput(forms.ClearableFileInput):
-    allow_multiple_selected = True
-
 class uploadPostForm(forms.ModelForm):
-    files = forms.FileField(
-        widget=MultipleFileInput(attrs={"multiple": True}),
-        required=True,
-        label=False,
-    )
-
     description = forms.CharField(
         widget=forms.Textarea(attrs={"placeholder": _("Popis príspevku")}),
         label=False,
@@ -410,11 +401,13 @@ class uploadPostForm(forms.ModelForm):
 
     public_visibility = forms.BooleanField( 
         widget=forms.CheckboxInput(attrs={"id": "public_visibility"}),
+        initial=True,
         required=False,
     )
 
     allow_comments = forms.BooleanField( 
         widget=forms.CheckboxInput(attrs={"id": "allow_comments"}),
+        initial=True,
         required=False,
     )
 
@@ -423,7 +416,16 @@ class uploadPostForm(forms.ModelForm):
         required=False,
     )
 
+    def clean_tagged_people(self):
+        data = self.cleaned_data.get("tagged_people")
+        if not data: return []
+        return [one_person.strip() for one_person in str(data).split(",") if one_person.strip()]
+
+    def clean_hashtags(self):
+        data = self.cleaned_data.get("hashtags")
+        if not data: return []
+        return [one_hashtag.strip() for one_hashtag in str(data).split(",") if one_hashtag.strip()]
+
     class Meta:
         model = Post
-
         fields = ["description", "tagged_people", "hashtags", "locality", "public_visibility", "allow_comments", "hide_likes"]
