@@ -186,83 +186,13 @@ def getMinimalistFormattedTime(elapsed_time):
 
     return result
 
-# Function For Get Weekly Training Plan Summary
-def getWeeklyTrainingPlanSummaryData(user_id, weeks_before=0, amount=5):
-    today = timezone.now().date() # Gets Today's Date
-    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = end_date - timedelta(days=6) # Start Date
-
-    # Gets Weekly Training Plan Summary Values
-    weekly_training_plan_summary_data = Activity.objects.filter(
-        user_id=user_id,
-        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
-    ).exclude(training_plan_summary__isnull=True).values("training_plan_summary")
-
-    result_dict = {}
-
-    for one_activity in weekly_training_plan_summary_data:
-        for one_item in one_activity["training_plan_summary"]:
-            exercise = one_item["exercise"]
-            elapsed_time = one_item["elapsed_time"]
-
-            if exercise not in result_dict:
-                result_dict[exercise] = 0
-
-            result_dict[exercise] += elapsed_time
-
-    result = [
-        {"color": randomColor(128, 255), "exercise": exercise, "elapsed_time": elapsed_time}
-        for exercise, elapsed_time in result_dict.items()
-    ]
-
-    result.sort(key=lambda x: x["elapsed_time"], reverse=True) # Sorts The Exercises by The Longest Elapsed Time
-
-    return result[:amount] # Gets Only The Amount of Exercises by Entered Value
-
-# Function For Get Weekly Training Plan Exercise Summary
-# def getWeeklyTrainingPlanExerciseSummary(data, amount=5):
-#     result_dict = {}
-
-#     for one_activity in data:
-#         for one_item in one_activity["training_plan_summary"]:
-#             exercise = one_item["exercise"]
-#             elapsed_time = one_item["elapsed_time"]
-
-#             if exercise not in result_dict:
-#                 result_dict[exercise] = 0
-
-#             result_dict[exercise] += elapsed_time
-
-#     result = [
-#         {"color": randomColor(128, 255), "exercise": exercise, "elapsed_time": elapsed_time}
-#         for exercise, elapsed_time in result_dict.items()
-#     ]
-
-#     result.sort(key=lambda x: x["elapsed_time"], reverse=True) # Sorts The Exercises by The Longest Elapsed Time
-
-#     return result[:amount] # Gets Only The Amount of Exercises by Entered Value
-
-# Function For Get Total Amount of Recorded Activities of the User
-def getActivitiesAmount(user_id, weeks_before=0):
-    today = timezone.now().date() # Gets Today's Date
-    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = end_date - timedelta(days=6) # Start Date
-
-    # Counts Amount Of User's Activities
-    activities_amount = Activity.objects.filter(
-        user_id=user_id,
-        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
-    ).count()
-
-    return activities_amount
-
 # Function For Get User's Weekly Activity Data
 def getWeeklyActivityData(user, weeks_before=0):
     today = timezone.now().date() # Gets Today's Date
     end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
     start_date = end_date - timedelta(days=6) # Start Date
 
-    # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+    # Gets Weekly Activity From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
     weekly_activity = (
         Activity.objects
         .filter(
@@ -296,6 +226,53 @@ def getWeeklyActivityData(user, weeks_before=0):
         })
 
     return weekly_activity_data
+
+# Function For Get Weekly Training Plan Summary
+def getWeeklyTrainingPlanSummaryData(user_id, weeks_before=0, amount=5):
+    today = timezone.now().date() # Gets Today's Date
+    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days=6) # Start Date
+
+    # Gets Weekly Training Plan Summary Values
+    weekly_training_plan_summary_data = Activity.objects.filter(
+        user_id=user_id,
+        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+    ).exclude(training_plan_summary__isnull=True).values("training_plan_summary")
+
+    result_dict = {}
+
+    for one_activity in weekly_training_plan_summary_data:
+        for one_item in one_activity["training_plan_summary"]:
+            exercise = one_item["exercise"]
+            elapsed_time = one_item["elapsed_time"]
+
+            if exercise not in result_dict:
+                result_dict[exercise] = 0
+
+            result_dict[exercise] += elapsed_time
+
+    result = [
+        {"color": randomColor(128, 255), "exercise": exercise, "elapsed_time": elapsed_time}
+        for exercise, elapsed_time in result_dict.items()
+    ]
+
+    result.sort(key=lambda x: x["elapsed_time"], reverse=True) # Sorts The Exercises by The Longest Elapsed Time
+
+    return result[:amount] # Gets Only The Amount of Exercises by Entered Value
+
+# Function For Get Total Amount of Recorded Activity of the User
+def getTotalActivityAmount(user_id, weeks_before=0):
+    today = timezone.now().date() # Gets Today's Date
+    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days=6) # Start Date
+
+    # Counts Amount Of User's Activity
+    total_activity_amount = Activity.objects.filter(
+        user_id=user_id,
+        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+    ).count()
+
+    return total_activity_amount
 
 # Function For Getting Average Activity Time Improvement Text
 def getAverageActivityTimeImprovementText(activity_percentage_improvement, styled=True):
@@ -603,18 +580,18 @@ def weeklyReport():
 
             weekly_training_plan_summary_chart_data = doughnut_chart.get_bytes() # Gets The Chart Data
 
-        # Weekly Activity Result
+        # Weekly Activity Data
         most_active_day = (max(weekly_activity_data, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
         most_active_day_time = (max(weekly_activity_data, key=lambda x: x["total_elapsed_time"])).get("total_elapsed_time") # Gets The Value Of The Most Active Day Of Week
         average_activity_time = sum(bar_chart_data) / len(bar_chart_data) # Gets The Weekly Average Activity Time
         total_activity_time = sum(bar_chart_data) # Gets The Total Activity Time
 
-        # Previous Weekly Activity Result
-        previous_weekly_activity_result = getWeeklyActivityData(user, 1) # Gets The Previous Weekly Activity Result
-        previous_data = [one_item["total_elapsed_time"] for one_item in previous_weekly_activity_result] # Gets Total Elapsed Time For Each Day As Data
-        previous_average_activity_time = sum(previous_data) / len(previous_data) # Gets The Previous Weekly Average Activity Time
+        # Previous Weekly Activity Data
+        previous_weekly_activity_data = getWeeklyActivityData(user, 1) # Gets The Previous Weekly Activity Data
+        previous_doughnut_chart_data = [one_item["total_elapsed_time"] for one_item in previous_weekly_activity_data] # Gets Total Elapsed Time For Each Day As Data
+        previous_average_activity_time = sum(previous_doughnut_chart_data) / len(previous_doughnut_chart_data) # Gets The Previous Weekly Average Activity Time
 
-        activity_percentage_improvement = ((average_activity_time - previous_average_activity_time) / previous_average_activity_time) * 100 if previous_average_activity_time != 0 else 100 # Gets The Activities Percentage Improvement / Decrease
+        activity_percentage_improvement = ((average_activity_time - previous_average_activity_time) / previous_average_activity_time) * 100 if previous_average_activity_time != 0 else 100 # Gets The Activity Percentage Improvement / Decrease
 
         # Stores All of the Activity Data
         activity_data = {
@@ -624,16 +601,13 @@ def weeklyReport():
             "previous_average_activity_time": previous_average_activity_time, # Stores The Previous Average Activity Time
             "total_activity_time": total_activity_time, # Stores The Total Activity Time
             "activity_percentage_improvement": activity_percentage_improvement, # Stores The Activity Percentage Improvement or Decrease
-            "total_activity_amount": getActivitiesAmount(user.id),
-            "weekly_activity_chart_data": weekly_activity_chart_data,
-            "weekly_training_plan_summary_chart_data": weekly_training_plan_summary_chart_data,
-            "weekly_exercise_summary": weekly_training_plan_summary_data,
-            "favorite_exercise": favorite_exercise
+            "total_activity_amount": getTotalActivityAmount(user.id), # Stores The Total Activity Amount
+            "weekly_activity_chart_data": weekly_activity_chart_data, # Stores The Weekly Activity Chart Data
+            "weekly_training_plan_summary_chart_data": weekly_training_plan_summary_chart_data, # Stores The Weekly Training Plan Summary Chart Data
+            "favorite_exercise": favorite_exercise # Stores The Favorite Exercise
         }
 
         sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
-
-        return weekly_training_plan_summary_data
 
     # Sets Message
     message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
