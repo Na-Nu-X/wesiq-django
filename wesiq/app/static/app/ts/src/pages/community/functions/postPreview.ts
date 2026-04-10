@@ -12,7 +12,7 @@ export function syncFiles(select_posts:HTMLInputElement, posts_preview:HTMLDivEl
 
 // Function For Render Post Preview
 function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputElement):void {
-    posts_preview.innerHTML = "" // Deletes The Post Preview
+    posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.remove()) // Deletes All Posts From The DOM
 
     posts_preview_state.current_files.forEach(function(one_file:File, index:number):void {
         const post:HTMLDivElement = document.createElement("div") // Creates The Post Container
@@ -21,6 +21,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
         const loading:HTMLDivElement = document.createElement("div") // Creates The Loading
         loading.classList.add("loading") // Adds Loading Class
 
+        post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
         post.appendChild(loading) // Appends Loading To The Post
         posts_preview.appendChild(post) // Appends The Post To The Post Preview
 
@@ -50,11 +51,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             }
 
             if(element) {
-                element.addEventListener("click", function():void {
-                    removeFile(index, select_posts, posts_preview)
-                })
-
-                post.appendChild(element) // Appends The Element To The Post
+                post.appendChild(element); // Appends The Element To The Post
 
                 // If Image is Fully Loaded
                 if(element instanceof HTMLImageElement) {
@@ -71,16 +68,21 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         loading.classList.add("hidden") // Hides The Loading
                     }
                 }
+
+                // Remove File By Clicking On X Mark Functionality
+                ((element.parentNode as HTMLDivElement).querySelector(".fa-xmark") as HTMLElement).addEventListener("click", function():void {
+                    removeFile(index, select_posts, posts_preview)
+                })
             }
         }
 
-        file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
-            if(event.lengthComputable) {
-                const progress_percentage:number = (event.loaded / event.total) * 100
+        // file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
+        //     if(event.lengthComputable) {
+        //         const progress_percentage:number = (event.loaded / event.total) * 100
 
-                console.log(progress_percentage)
-            }
-        }
+        //         console.log(progress_percentage)
+        //     }
+        // }
 
         file_reader.readAsDataURL(one_file) // Renders The Preview
     })

@@ -23,28 +23,39 @@
 
             <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-            <div class="files_container">
-                <label for="select_posts"><i class="fa-solid fa-photo-film"></i></label> <!-- https://fontawesome.com/icons/photo-film -->
-                <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
+            <div class="posts_preview">
+                <div class="select_posts_container">
+                    <label for="select_posts"><i class="fa-solid fa-photo-film"></i></label> <!-- https://fontawesome.com/icons/photo-film -->
+                    <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
+                </div>
             </div>
+            
+            <div class="post_info_container">
+                {{ upload_post_form.description }}
 
-            <div class="posts_preview"></div>
+                <div class="icons">
+                    <div class="settings">
+                        <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                        {{ upload_post_form.public_visibility }}
+        
+                        <label for="allow_comments"><i class="allow_comments fa-solid fa-comment" title="{% translate 'Vypnúť komentáre' %}"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
+                        {{ upload_post_form.allow_comments }}
+        
+                        <label for="hide_likes"><i class="hide_likes fa-solid fa-heart" title="{% translate 'Skryť počet označení páči sa mi to' %}"></i></label> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
+                        {{ upload_post_form.hide_likes }}
+                    </div>
 
-            {{ upload_post_form.description }}
-            {{ upload_post_form.tagged_people }}
-            {{ upload_post_form.hashtags }}
+                    <div class="tags">
+                        <i class="tag_people fa-solid fa-at" title="{% translate 'Označiť ľudí' %}"></i> <!-- https://fontawesome.com/icons/at -->
+                        <i class="add_hashtag fa-solid fa-hashtag" title="{% translate 'Pridať Hashtag' %}"></i> <!-- https://fontawesome.com/icons/hashtag -->
+                    </div>
+                </div>
+            </div>
+            
+            {% comment %} {{ upload_post_form.tagged_people }} {% endcomment %}
+            {% comment %} {{ upload_post_form.hashtags }} {% endcomment %}
+
             {{ upload_post_form.locality }}
-
-            <div class="settings">
-                <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
-                {{ upload_post_form.public_visibility }}
-
-                <label for="allow_comments"><i class="allow_comments fa-solid fa-comment" title="{% translate 'Vypnúť komentáre' %}"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
-                {{ upload_post_form.allow_comments }}
-
-                <label for="hide_likes"><i class="hide_likes fa-solid fa-heart" title="{% translate 'Skryť počet označení páči sa mi to' %}"></i></label> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
-                {{ upload_post_form.hide_likes }}
-            </div>
 
             <p class="form_report error" style="bottom: 241px;"></p>
             <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">
