@@ -1402,27 +1402,46 @@ header {
         }
         
         .message_container {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            margin: 20px auto 0px;
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $small-border-radius;
+            transition: border-color 0.3s ease;
+
+            &:hover {
+                border-color: $blue-color;
+            }
 
             textarea {
-                @include form_textarea;
+                width: 100%;
+                min-height: 100px;
+                field-sizing: content;
+                padding: 5px 10px;
+                background: transparent;
+                color: $secondary-color;
+                border: none;
+                outline: none;
+                resize: none;
+
+                &::placeholder {
+                    color: darken($secondary-color, 40%);
+                }
             }
 
             .attachment {
                 position: relative;
-                background-color: transparentize($main-color, 0.8);
-                position: absolute;
-                bottom: 7px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 90%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 height: 25px;
-                border-radius: 0px 0px 5px 5px;
-                transition: width 0.3s ease;
+                padding: 0px 10px;
+                background-color: transparentize($main-color, 0.5);
+                border-radius: 0px 0px $small-border-radius $small-border-radius;
 
                 p {
                     font-size: 0.8em;
-                    line-height: 25px;
                     color: darken($secondary-color, 40%);
                 }
 
@@ -1433,10 +1452,6 @@ header {
 
                     i {
                         @include icon;
-                        position: absolute;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        right: 4.5px;
                     }
                 }
 

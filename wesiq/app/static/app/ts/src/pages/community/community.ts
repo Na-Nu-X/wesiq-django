@@ -102,12 +102,19 @@ document.addEventListener("DOMContentLoaded", function():void {
     const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
     const upload_post_form:HTMLFormElement = upload_post_form_dialog.querySelector(".upload_post_form") as HTMLFormElement // Gets The Upload Post Form
 
-    const public_visibility:HTMLElement = upload_post_form.querySelector(".public_visibility") as HTMLElement // Gets The Public Visibility Icon
-    const allow_comments:HTMLElement = upload_post_form.querySelector(".allow_comments") as HTMLElement // Gets The Allow Comments Icon
-    const hide_likes:HTMLElement = upload_post_form.querySelector(".hide_likes") as HTMLElement // Gets The Hide Likes Icon
-
     const select_posts:HTMLInputElement = upload_post_form.querySelector("#select_posts") as HTMLInputElement // Gets The Select Posts Input
     const posts_preview:HTMLDivElement = upload_post_form.querySelector(".posts_preview") as HTMLDivElement // Gets The Posts Preview
+
+    const post_info_container:HTMLDivElement = upload_post_form.querySelector(".post_info_container") as HTMLDivElement // Gets The Post Info Container
+
+    const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
+
+    const public_visibility:HTMLElement = post_info_container.querySelector(".icons .settings .public_visibility") as HTMLElement // Gets The Public Visibility Icon
+    const allow_comments:HTMLElement = post_info_container.querySelector(".icons .settings .allow_comments") as HTMLElement // Gets The Allow Comments Icon
+    const hide_likes:HTMLElement = post_info_container.querySelector(".icons .settings .hide_likes") as HTMLElement // Gets The Hide Likes Icon
+
+    const tag_people:HTMLElement = post_info_container.querySelector(".icons .tags .tag_people") as HTMLElement // Gets The Tag People Icon
+    const add_hashtag:HTMLElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLElement // Gets The Add Hashtag Icon
 
     // Events
 
@@ -172,6 +179,18 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if((event.target as HTMLElement).classList.contains("fa-regular")) {
             (event.target as HTMLElement).classList.replace("fa-regular", "fa-solid");
             (event.target as HTMLElement).title = gettext("Skryť počet označení páči sa mi to")
+        }
+    })
+
+    tag_people.addEventListener("click", function():void {
+        if(description.value.length < description.maxLength) {
+            description.value += "@"
+        }
+    })
+
+    add_hashtag.addEventListener("click", function():void {
+        if(description.value.length < description.maxLength) {
+            description.value += "#"
         }
     })
 
