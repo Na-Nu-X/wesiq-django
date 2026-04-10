@@ -55,7 +55,10 @@
             {% comment %} {{ upload_post_form.tagged_people }} {% endcomment %}
             {% comment %} {{ upload_post_form.hashtags }} {% endcomment %}
 
-            {{ upload_post_form.locality }}
+            <div class="locality_container">
+                <i class="fa-solid fa-location-arrow"></i> <!-- https://fontawesome.com/icons/location-arrow -->
+                {{ upload_post_form.locality }}
+            </div>
 
             <p class="form_report error" style="bottom: 241px;"></p>
             <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">

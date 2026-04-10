@@ -62,15 +62,21 @@ header {
             }
 
             .back {
-                @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%))
+                @include form_back;
             }
 
             .posts_preview {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 gap: 10px;
-                // width: 90%;
                 margin: 0px auto 20px;
+
+                &.drag_active {
+                    background-color: transparentize($main-color, 0.8);
+                    border: 2px dashed transparentize($blue-color, 0.5);
+                    transition: background-color 0.3s ease;
+                    animation: postsPreviewDrag 1s infinite alternate;
+                }
 
                 .post,
                 .select_posts_container {
@@ -94,7 +100,7 @@ header {
                     }
 
                     .fa-xmark {
-                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                        @include icon;
                         position: absolute;
                         right: 0px;
                         padding: 5px;
@@ -112,11 +118,11 @@ header {
                 }
 
                 .select_posts_container {
-                    border: 1px solid darken($secondary-color, 40%);
+                    border: 1px solid transparentize($blue-color, 0.5);
                     transition: border-color 0.3s ease, transform 0.3s ease;
 
                     &:hover {
-                        border-color: darken($secondary-color, 20%);
+                        border-color: $blue-color;
                     }
                     
                     label {
@@ -127,13 +133,13 @@ header {
 
                         &:hover {
                             .fa-photo-film {
-                                color: darken($secondary-color, 20%);
+                                color: $blue-color;
                             }
                         }
 
                         .fa-photo-film {
                             font-size: 1.5em;
-                            color: darken($secondary-color, 40%);
+                            color: transparentize($blue-color, 0.5);
                             transition: color 0.3s ease;
                         }
                     }
@@ -142,18 +148,24 @@ header {
                         display: none;
                     }
                 }
+
+                .post {
+                    &.drag_active {
+                        transform: scale(0.9);
+                    }
+                }
             }
 
             .post_info_container {
                 display: flex;
                 flex-direction: column;
                 margin: 10px auto 0px;
-                border: 1px solid darken($secondary-color, 40%);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $small-border-radius;
                 transition: border-color 0.3s ease;
 
                 &:hover {
-                    border-color: darken($secondary-color, 20%);
+                    border-color: $blue-color;
                 }
 
                 textarea {
@@ -192,7 +204,7 @@ header {
 
                         label {
                             .public_visibility, .allow_comments, .hide_likes {
-                                @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                                @include icon;
                                 display: block;
                                 width: 18.75px;
                             }
@@ -206,16 +218,31 @@ header {
 
                         .tag_people,
                         .add_hashtag {
-                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            @include icon;
                         }
                     }
                 }
-
-
             }
 
-            input[type="text"] {
-                @include form_input($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+            .locality_container {
+                position: relative;
+
+                &:has(.locality:hover) .fa-location-arrow, &:has(.locality:focus) .fa-location-arrow {
+                    left: -16px;
+                }
+
+                .fa-location-arrow {
+                    @include icon;
+                    display: block;
+                    position: absolute;
+                    left: 3px;
+                    bottom: 10px;
+                    padding: 19px 0px 16px;
+                }
+
+                .locality {
+                    @include form_input;
+                }
             }
 
             .form_report {
@@ -323,5 +350,21 @@ header {
                 }
             }
         }
+    }
+}
+
+/***********
+ Key Frames
+***********/
+
+@keyframes postsPreviewDrag {
+    0% {
+        transform: scale(1);
+        border-color: transparentize($blue-color, 0.5);
+    }
+    
+    100% {
+        transform: scale(1.02);
+        border-color: $blue-color;
     }
 }

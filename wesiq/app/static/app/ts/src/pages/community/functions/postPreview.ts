@@ -15,81 +15,126 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
     posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.remove()) // Deletes All Posts From The DOM
 
     posts_preview_state.current_files.forEach(function(one_file:File, index:number):void {
-        const post:HTMLDivElement = document.createElement("div") // Creates The Post Container
-        post.classList.add("post") // Adds The Post Class
+        // Accepts Only The Image And Video Files
+        if(one_file.type.startsWith("image/") || one_file.type.startsWith("video/")) {
+            const post:HTMLDivElement = document.createElement("div") // Creates The Post Container
 
-        const loading:HTMLDivElement = document.createElement("div") // Creates The Loading
-        loading.classList.add("loading") // Adds Loading Class
+            post.classList.add("post") // Adds The Post Class
+            post.draggable = true // Allows Dragging
 
-        post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
-        post.appendChild(loading) // Appends Loading To The Post
-        posts_preview.appendChild(post) // Appends The Post To The Post Preview
+            // Post Drag & Drop Functionalities (Change The Order of The Posts)
+            post.addEventListener("dragstart", function(event:DragEvent):void {
+                event.dataTransfer?.setData("sourceIndex", index.toString())
 
-        const file_reader:FileReader = new FileReader() // Reads The Content of The File
+                post.style.opacity = "0.5" // Adds Transparency To The Dragged Post
+                post.style.transform = "scale(1)" // Adds Normal Scale To The Dragged Post
 
-        file_reader.onload = function():void {
-            const file_data:string = file_reader.result as string // Gets The File Data
-
-            if(!file_data) return
-
-            let element:HTMLImageElement|HTMLVideoElement|undefined // Stores The Created Element (Image / Video)
-
-            // Image
-            if(one_file.type.startsWith("image/")) {
-                element = document.createElement("img") // Creates The Image
-                
-                element.src = file_data // Sets The Source
-            }
-
-            // Video
-            else if(one_file.type.startsWith("video/")) {
-                element = document.createElement("video") // Creates The Video
-
-                element.src = file_data // Sets The Source
-                element.controls = false // Disables The Controls
-                element.muted = true // Mutes The Video
-            }
-
-            if(element) {
-                post.appendChild(element); // Appends The Element To The Post
-
-                // If Image is Fully Loaded
-                if(element instanceof HTMLImageElement) {
-                    element.onload = function():void {
-                        element.style.filter = "blur(0px)" // Sharpens The Image
-                        loading.classList.add("hidden") // Hides The Loading
-                    }
-                }
-
-                // If Video is Fully Loaded
-                else if(element instanceof HTMLVideoElement) {
-                    element.onloadeddata = function():void {
-                        element.style.filter = "blur(0px)" // Sharpens The Image
-                        loading.classList.add("hidden") // Hides The Loading
-                    }
-                }
-
-                // Remove File By Clicking On X Mark Functionality
-                ((element.parentNode as HTMLDivElement).querySelector(".fa-xmark") as HTMLElement).addEventListener("click", function():void {
-                    removeFile(index, select_posts, posts_preview)
+                posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(function(one_post:HTMLDivElement):void {
+                    if(one_post !== post) one_post.classList.add("drag_active") // Adds Drag Active Class To All Posts Except The One That Was Dragged
                 })
-            }
+            })
+
+            post.addEventListener("dragend", function():void {
+                post.style.opacity = "1" // Removes Transparency From The Dragged Post
+                post.removeAttribute("style") // Removes Hardcoded Style (style="transform: scale(1)) From The Dragged Post
+
+                posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.classList.remove("drag_active")) // Removes Drag Active Class From All Posts
+            })
+
+            post.addEventListener("dragover", (event:DragEvent) => event.preventDefault())
+
+            post.addEventListener("drop", function(event:DragEvent):void {
+                event.preventDefault()
+                event.stopPropagation()
+
+                posts_preview.classList.remove("drag_active") // Removes Drag Animation From The Post Preview
+
+                const from_index = parseInt(event.dataTransfer?.getData("sourceIndex") || "-1")
+                const to_index = index
+
+                if(from_index !== -1 && from_index !== to_index) changePostOrder(from_index, to_index, select_posts, posts_preview) // Changes Post Order
+            })
+
+            const loading:HTMLDivElement = document.createElement("div") // Creates The Loading
+            loading.classList.add("loading") // Adds Loading Class
+
+            post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
+            post.appendChild(loading) // Appends Loading To The Post
+            posts_preview.appendChild(post) // Appends The Post To The Post Preview
+
+            const file_reader:FileReader = new FileReader() // Reads The Content of The File
+
+            file_reader.addEventListener("load", function():void {
+                const file_data:string = file_reader.result as string // Gets The File Data
+
+                if(!file_data) return
+
+                let element:HTMLImageElement|HTMLVideoElement|undefined // Stores The Created Element (Image / Video)
+
+                // Image
+                if(one_file.type.startsWith("image/")) {
+                    element = document.createElement("img") // Creates The Image
+                    
+                    element.src = file_data // Sets The Source
+                }
+
+                // Video
+                else if(one_file.type.startsWith("video/")) {
+                    element = document.createElement("video") // Creates The Video
+
+                    element.src = file_data // Sets The Source
+                    element.controls = false // Disables The Controls
+                    element.muted = true // Mutes The Video
+                }
+
+                if(element) {
+                    post.appendChild(element); // Appends The Element To The Post
+
+                    // If Image is Fully Loaded
+                    if(element instanceof HTMLImageElement) {
+                        element.addEventListener("load", function() {
+                            element.style.filter = "blur(0px)" // Sharpens The Image
+                            loading.classList.add("hidden") // Hides The Loading
+                        })
+                    }
+
+                    // If Video is Fully Loaded
+                    else if(element instanceof HTMLVideoElement) {
+                        element.addEventListener("loadeddata", function() {
+                            element.style.filter = "blur(0px)" // Sharpens The Image
+                            loading.classList.add("hidden") // Hides The Loading
+                        })
+                    }
+
+                    // Remove File By Clicking On X Mark Functionality
+                    ((element.parentNode as HTMLDivElement).querySelector(".fa-xmark") as HTMLElement).addEventListener("click", function():void {
+                        removeFile(index, select_posts, posts_preview)
+                    })
+                }
+            })
+
+            // file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
+            //     if(event.lengthComputable) {
+            //         const progress_percentage:number = (event.loaded / event.total) * 100
+
+            //         console.log(progress_percentage)
+            //     }
+            // }
+
+            file_reader.readAsDataURL(one_file) // Renders The Preview
         }
-
-        // file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
-        //     if(event.lengthComputable) {
-        //         const progress_percentage:number = (event.loaded / event.total) * 100
-
-        //         console.log(progress_percentage)
-        //     }
-        // }
-
-        file_reader.readAsDataURL(one_file) // Renders The Preview
     })
 }
 
 // Function For Remove File
 function removeFile(index:number, select_posts:HTMLInputElement, posts_preview:HTMLDivElement):void {
     posts_preview_state.current_files.splice(index, 1) // Removes The File From The Current Files
+    syncFiles(select_posts, posts_preview) // Synchronizes Files
+}
+
+// Function For Change The Post Order
+function changePostOrder(from_index:number, to_index:number, select_posts:HTMLInputElement, posts_preview:HTMLDivElement):void {
+    const item_to_move:File = posts_preview_state.current_files.splice(from_index, 1)[0] as File // Gets The Item To Move
+    posts_preview_state.current_files.splice(to_index, 0, item_to_move) // Sets The New Position For The Moved Item
     syncFiles(select_posts, posts_preview) // Synchronizes Files
 }

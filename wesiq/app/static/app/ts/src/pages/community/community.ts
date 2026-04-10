@@ -182,12 +182,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Tag People Functionality
     tag_people.addEventListener("click", function():void {
         if(description.value.length < description.maxLength) {
             description.value += "@"
         }
     })
 
+    // Add Hashtag Functionality
     add_hashtag.addEventListener("click", function():void {
         if(description.value.length < description.maxLength) {
             description.value += "#"
@@ -201,7 +203,38 @@ document.addEventListener("DOMContentLoaded", function():void {
         const new_files = [...this.files] // Gets New Selected Files
 
         posts_preview_state.current_files = [...posts_preview_state.current_files, ...new_files] // Updates An Array of Current Files
-
         syncFiles(this, posts_preview) // Synchronizes Files
+    })
+
+    // Posts Preview Drag & Drop Functionalities (Drag Files From Local Storage)
+    posts_preview.addEventListener("dragover", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+
+        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
+
+        if(!is_reorder) {
+            this.classList.add("drag_active") // Adds Drag Animation Only When Moving a File From Local Storage
+            posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.style.pointerEvents = "none") // Allows File Drop To All Posts
+        }
+    })
+
+    posts_preview.addEventListener("dragleave", function():void {
+        this.classList.remove("drag_active") // Removes Drag Animation
+    })
+
+    posts_preview.addEventListener("drop", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+
+        this.classList.remove("drag_active") // Removes Drag Animation
+
+        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
+        const has_files:boolean|undefined = event.dataTransfer?.files && event.dataTransfer.files.length > 0 // Checks If There Are Any Dragged Files
+
+        // Adds Dragged File Only When Moving at Least One File From Local Storage
+        if(!is_reorder && has_files) {
+            const new_files = Array.from(event.dataTransfer!.files) // Gets New Dragged Files
+            posts_preview_state.current_files.push(...new_files) // Updates An Array of Current Files
+            syncFiles(select_posts, this) // Synchronizes Files
+        }
     })
 })

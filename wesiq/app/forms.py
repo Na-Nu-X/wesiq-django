@@ -390,7 +390,7 @@ class uploadPostForm(forms.ModelForm):
     )
 
     locality = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": _("Miesto"), "autocomplete": "off"}),
+        widget=forms.TextInput(attrs={"class": "locality", "placeholder": _("Miesto"), "autocomplete": "off"}),
         label=False,
         max_length=100,
         required=False,
