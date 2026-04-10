@@ -1,4 +1,6 @@
 import { sendPOST } from "../../services/sendPOST.js"
+import { syncFiles } from "./functions/postPreview.js"
+import { posts_preview_state } from "./state.js"
 
 import { 
     follow,
@@ -173,43 +175,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Select Posts Change Functionality
-    select_posts.addEventListener("change", function(event:Event):void {
-        const input = event.target as HTMLInputElement
-        const files:FileList|null = input.files
+    // Select Posts Change Functionalities
+    select_posts.addEventListener("change", function():void {
+        if(!this.files) return
+        
+        const new_files = [...this.files] // Gets New Selected Files
 
-        if(!files) return
+        posts_preview_state.current_files = [...posts_preview_state.current_files, ...new_files] // Updates An Array of Current Files
 
-        for(let i = 0; i < files.length; i++) {
-            const one_file:File = files[i] as File
-            const reader:FileReader = new FileReader()
-
-            reader.onload = function():void {
-                const result:string = reader.result as string
-
-                if(!result) return
-
-                let element:HTMLImageElement|HTMLVideoElement|undefined
-
-                if(one_file.type.startsWith("image/")) {
-                    element = document.createElement("img")
-                    
-                    element.src = result
-                } 
-                else if(one_file.type.startsWith("video/")) {
-                    element = document.createElement("video")
-
-                    element.src = result
-                    element.controls = false
-                    element.muted = true
-                }
-
-                if(element && posts_preview) {
-                    posts_preview.appendChild(element)
-                }
-            }
-
-            reader.readAsDataURL(one_file)
-        }
+        syncFiles(this, posts_preview) // Synchronizes Files
     })
 })
