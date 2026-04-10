@@ -191,7 +191,24 @@ class Transactions(models.Model):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
 
 def getPostUploadPath(instance, filename):
-    new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(filename).suffix}"
+    image_extensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
+    video_extensions = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
+
+    extension = Path(filename).suffix.lower() # Gets The File Extension
+    
+    # Sets The Filename Prefix
+    if extension in image_extensions:
+        prefix = "IMG"
+
+    elif extension in video_extensions:
+        prefix = "VID"
+
+    else:
+        prefix = "FILE"
+
+    random_filename = secrets.token_hex(nbytes=10) # Generates Random 20 Characters Long Filename (Numbers and Small Letters)
+
+    new_image_name = f"{prefix}-{random_filename + extension}" # Creates The New Filename
     
     return f"posts/{instance.post.user.id}/{new_image_name}"
 
