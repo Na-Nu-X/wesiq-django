@@ -244,6 +244,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Variables
 
     const location:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .location") as HTMLInputElement // Gets The Location Input
+    const latitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .latitude") as HTMLInputElement // Gets The Latitude Hidden Input
+    const longitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .longitude") as HTMLInputElement // Gets The Longitude Hidden Input
     const location_results:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results") as HTMLDivElement // Gets The Location Results
 
     let debounce_timeout:number // Debounce Timeout Between API Requests
@@ -271,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
         debounce_timeout = window.setTimeout(function() {
-            getLocation(searched_location, location_results, location)
+            getLocation(searched_location, location_results, location, latitude, longitude)
         }, 1000)
     })
 
@@ -282,7 +284,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Location Blur Functionality
     location.addEventListener("blur", function(event:FocusEvent):void {
-        console.log(event.relatedTarget)
         if(!(event.relatedTarget as HTMLDivElement).classList.contains("place") && !(event.relatedTarget as HTMLDivElement).classList.contains("location_results")) location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
     })
 })
