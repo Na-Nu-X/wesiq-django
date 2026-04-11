@@ -76,6 +76,18 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     element = document.createElement("img") // Creates The Image
                     
                     element.src = file_data // Sets The Source
+
+                    // Checks The Image Size
+                    if(one_file.size > posts_preview_state.MAX_IMAGE_SIZE) {
+                        const tooltip:HTMLDivElement = document.createElement("div") // Creates The Tooltip
+
+                        tooltip.classList.add("tooltip") // Adds Tooltip Class
+                        tooltip.dataset["tooltip"] = gettext("Obrázok je príliš veľký") // Adds Tooltip Message
+
+                        tooltip.innerHTML += "<i class='fa-solid fa-triangle-exclamation'></i>" // https://fontawesome.com/icons/triangle-exclamation
+
+                        post.appendChild(tooltip) // Appends The Tooltip With A Warning To The Post
+                    }
                 }
 
                 // Video
@@ -85,6 +97,18 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     element.src = file_data // Sets The Source
                     element.controls = false // Disables The Controls
                     element.muted = true // Mutes The Video
+
+                    // Checks The Video Size
+                    if(one_file.size > posts_preview_state.MAX_VIDEO_SIZE) {
+                        const tooltip:HTMLDivElement = document.createElement("div") // Creates The Tooltip
+
+                        tooltip.classList.add("tooltip") // Adds Tooltip Class
+                        tooltip.dataset["tooltip"] = gettext("Video je príliš veľké") // Adds Tooltip Message
+
+                        tooltip.innerHTML += "<i class='fa-solid fa-triangle-exclamation'></i>" // https://fontawesome.com/icons/triangle-exclamation
+
+                        post.appendChild(tooltip) // Appends The Tooltip With A Warning To The Post
+                    }
                 }
 
                 if(element) {

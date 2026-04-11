@@ -92,28 +92,7 @@ header {
                     &:hover,
                     &:after {
                         transform: scale(1.05);
-                    }
-
-                    .loading {
-                        @include loading($size: 5px);
-                        @include position_center;
-                    }
-
-                    .fa-xmark {
-                        @include icon;
-                        position: absolute;
-                        right: 0px;
-                        padding: 5px;
-                        z-index: 50;
-                    }
-
-                    img,
-                    video {
-                        width: inherit;
-                        height: inherit;
-                        object-fit: cover;
-                        filter: blur(2px);
-                        transition: filter 0.3s ease;
+                        cursor: move;
                     }
                 }
 
@@ -150,8 +129,51 @@ header {
                 }
 
                 .post {
+                    position: relative;
+
                     &.drag_active {
                         transform: scale(0.9);
+                    }
+
+                    .loading {
+                        @include loading($size: 5px);
+                        @include position_center;
+                    }
+
+                    .fa-xmark {
+                        @include icon;
+                        position: absolute;
+                        right: 0px;
+                        padding: 5px;
+                        z-index: 50;
+                    }
+
+                    img,
+                    video {
+                        width: inherit;
+                        height: inherit;
+                        object-fit: cover;
+                        filter: blur(2px);
+                        transition: filter 0.3s ease;
+                    }
+
+                    .tooltip {
+                        @include tooltip($top: 3.5px);
+                        position: absolute;
+                        bottom: 5px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 50;
+
+                        &::before {
+                            max-width: none;
+                            width: 100px;
+                        }
+
+                        .fa-triangle-exclamation {
+                            color: $article-color;
+                            cursor: pointer;
+                        }
                     }
                 }
             }
