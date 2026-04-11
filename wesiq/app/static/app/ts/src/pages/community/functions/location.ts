@@ -14,8 +14,23 @@ function getUniquePlaces(data:NominatimPlace[]):NominatimPlace[] {
     })
 }
 
+// Function For Store Coordinates To The Hidden Inputs
+function storeCoordinates(data:NominatimPlace[], searched_location:string, latitude:HTMLInputElement, longitude:HTMLInputElement):void {
+    const matching_location:NominatimPlace|null = data.find(one_place => one_place.display_name === searched_location) || null // Gets The Matching Location If There is Any
+
+    if(matching_location) {
+        latitude.value = matching_location.lat // Sets The Latitude
+        longitude.value = matching_location.lon // Sets The Longitude
+    }
+
+    else {
+        latitude.value = "" // Deletes The Latitude
+        longitude.value = "" // Deletes The Longitude
+    }
+}
+
 // Function For Get Locations By Searched Location
-export async function getLocation(searched_location:string, location_results:HTMLDivElement, location:HTMLInputElement):Promise<void> {
+export async function getLocation(searched_location:string, location_results:HTMLDivElement, location:HTMLInputElement, latitude:HTMLInputElement, longitude:HTMLInputElement):Promise<void> {
     const url:string = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searched_location)}&addressdetails=1&limit=10&featuretype=settlement` // Nominatim API https://nominatim.org/
     // Pridal som &featuretype=settlement na koniec reťazca
 
@@ -30,7 +45,8 @@ export async function getLocation(searched_location:string, location_results:HTM
         const data:NominatimPlace[] = await response.json() // Gets The Data
         const unique_data:NominatimPlace[] = getUniquePlaces(data) // Gets Only The Unique Data
 
-        renderLocationResults(unique_data, location_results, location) // Renders Location Results
+        storeCoordinates(unique_data, searched_location, latitude, longitude) // Stores The Coordinates
+        renderLocationResults(unique_data, location_results, location, latitude, longitude) // Renders Location Results
     }
     
     catch(error) {
@@ -39,7 +55,7 @@ export async function getLocation(searched_location:string, location_results:HTM
 }
 
 // Function For Render Location Results
-function renderLocationResults(results:any[], location_results:HTMLDivElement, location:HTMLInputElement):void {
+function renderLocationResults(results:any[], location_results:HTMLDivElement, location:HTMLInputElement, latitude:HTMLInputElement, longitude:HTMLInputElement):void {
     location_results.innerHTML = "" // Deletes Location Results
     
     if(results.length === 0) {
@@ -59,7 +75,8 @@ function renderLocationResults(results:any[], location_results:HTMLDivElement, l
             location.value = one_place.display_name // Sets The Location Input Value
             location_results.classList.add("hidden") // Hides The Location Results
 
-            console.log("Vybratá poloha:", one_place.lat, one_place.lon)
+            latitude.value = one_place.lat // Sets The Latitude
+            longitude.value = one_place.lon // Sets The Longitude
         })
         
         location_results.appendChild(place) // Appends The Place To The Location Results

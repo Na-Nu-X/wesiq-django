@@ -59,6 +59,9 @@
                 <div class="location_input_container">
                     <i class="fa-solid fa-location-arrow"></i> <!-- https://fontawesome.com/icons/location-arrow -->
                     {{ upload_post_form.location }}
+
+                    <input type="hidden" class="latitude" name="latitude">
+                    <input type="hidden" class="longitude" name="longitude">
                 </div>
 
                 <div class="location_results hidden" tabindex="-1"></div>
