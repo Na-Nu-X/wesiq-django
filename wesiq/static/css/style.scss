@@ -507,12 +507,30 @@ footer {
             }
         }
 
+        .nominatim_api,
         .copywrite {
             color: darken($secondary-color, 40%);
 
             font: {
                 family: $copywrite-font;
                 size: 0.8em;
+            }
+        }
+
+        .nominatim_api {
+            a {
+                text-decoration: none;
+                color: inherit;
+
+                font: {
+                    family: inherit;
+                    size: inherit;
+                }
+
+                &:hover,
+                &:active {
+                    text-decoration: underline;
+                }
             }
         }
     }

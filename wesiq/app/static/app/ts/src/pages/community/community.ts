@@ -1,5 +1,6 @@
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
+import { getLocation } from "./functions/location.js"
 import { posts_preview_state } from "./state.js"
 
 import { 
@@ -236,5 +237,52 @@ document.addEventListener("DOMContentLoaded", function():void {
             posts_preview_state.current_files.push(...new_files) // Updates An Array of Current Files
             syncFiles(select_posts, this) // Synchronizes Files
         }
+    })
+
+    // Location
+
+    // Variables
+
+    const location:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .location") as HTMLInputElement // Gets The Location Input
+    const location_results:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results") as HTMLDivElement // Gets The Location Results
+
+    let debounce_timeout:number // Debounce Timeout Between API Requests
+
+    // Events
+
+    // Location Input Functionality
+    location.addEventListener("input", function():void {
+        clearTimeout(debounce_timeout) // Clears The Debounce Timeout
+
+        const searched_location = location.value // Gets The Searched Location
+
+        if(searched_location.length < 3) {
+            const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll<HTMLDivElement>(".place") // Gets All Places
+
+            if(location_results.querySelectorAll(".place").length > 0) {
+                all_places.forEach(function(one_place:HTMLDivElement):void {
+                    one_place.remove() // Removes The Place From The DOM
+                })
+            }
+
+            location_results.classList.add("hidden") // Hides The Location Results
+            return
+        }
+
+        // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
+        debounce_timeout = window.setTimeout(function() {
+            getLocation(searched_location, location_results, location)
+        }, 1000)
+    })
+
+    // Location Focus Functionality
+    location.addEventListener("focus", function():void {
+        if(location_results.querySelectorAll(".place").length > 0) location_results.classList.remove("hidden") // Shows The Location Results (If There Are Any)
+    })
+
+    // Location Blur Functionality
+    location.addEventListener("blur", function(event:FocusEvent):void {
+        console.log(event.relatedTarget)
+        if(!(event.relatedTarget as HTMLDivElement).classList.contains("place") && !(event.relatedTarget as HTMLDivElement).classList.contains("location_results")) location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
     })
 })

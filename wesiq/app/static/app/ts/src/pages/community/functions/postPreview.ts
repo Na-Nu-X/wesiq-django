@@ -15,8 +15,11 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
     posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.remove()) // Deletes All Posts From The DOM
 
     posts_preview_state.current_files.forEach(function(one_file:File, index:number):void {
-        // Accepts Only The Image And Video Files
-        if(one_file.type.startsWith("image/") || one_file.type.startsWith("video/")) {
+        // Accepts Only 5 Files And Only The Image And Video Formats
+        if(
+            posts_preview_state.current_files.indexOf(one_file) < 5 && 
+            (one_file.type.startsWith("image/") || one_file.type.startsWith("video/"))
+        ) {
             const post:HTMLDivElement = document.createElement("div") // Creates The Post Container
 
             post.classList.add("post") // Adds The Post Class
