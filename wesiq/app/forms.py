@@ -389,10 +389,10 @@ class uploadPostForm(forms.ModelForm):
         },
     )
 
-    locality = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "locality", "placeholder": _("Miesto"), "autocomplete": "off"}),
+    location = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "location", "placeholder": _("Miesto"), "autocomplete": "off"}),
         label=False,
-        max_length=100,
+        max_length=255,
         required=False,
         error_messages={
             "max_length": _("Zadané miesto je príliš dlhé"),
@@ -428,4 +428,4 @@ class uploadPostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ["description", "tagged_people", "hashtags", "locality", "public_visibility", "allow_comments", "hide_likes"]
+        fields = ["description", "tagged_people", "hashtags", "location", "public_visibility", "allow_comments", "hide_likes"]

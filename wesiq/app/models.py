@@ -224,7 +224,7 @@ class Post(models.Model):
     description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
     tagged_people = ArrayField(models.CharField(verbose_name="Tagged People", max_length=20), default=list, null=True, blank=True)
     hashtags = ArrayField(models.CharField(verbose_name="Hashtags", max_length=30), default=list, null=True, blank=True)
-    locality = models.CharField(verbose_name="Locality", max_length=100, null=True, blank=True)
+    location = models.CharField(verbose_name="Location", max_length=255, null=True, blank=True)
     public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)
     allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
     hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)

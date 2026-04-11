@@ -55,9 +55,14 @@
             {% comment %} {{ upload_post_form.tagged_people }} {% endcomment %}
             {% comment %} {{ upload_post_form.hashtags }} {% endcomment %}
 
-            <div class="locality_container">
-                <i class="fa-solid fa-location-arrow"></i> <!-- https://fontawesome.com/icons/location-arrow -->
-                {{ upload_post_form.locality }}
+            <div class="location_container">
+                <div class="location_input_container">
+                    <i class="fa-solid fa-location-arrow"></i> <!-- https://fontawesome.com/icons/location-arrow -->
+                    {{ upload_post_form.location }}
+                </div>
+
+                <div class="location_results hidden" tabindex="-1"></div>
+                {% comment %} <div class="location_results"><div class="place">Žilina, District of Žilina, Region of Žilina, Central Slovakia, Slovakia</div><div class="place">Žilina, District of Žilina, Region of Žilina, Central Slovakia, Slovakia</div><div class="place">Žilina, SO POÚ Kladno, SO ORP Kladno, okres Kladno, Central Bohemian Region, Central Bohemia, Czechia</div><div class="place">Region of Žilina, Central Slovakia, Slovakia</div></div> {% endcomment %}
             </div>
 
             <p class="form_report error" style="bottom: 241px;"></p>
