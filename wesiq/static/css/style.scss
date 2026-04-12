@@ -605,6 +605,18 @@ footer {
     }
 }
 
+@keyframes dropZone {
+    0% {
+        transform: scale(1);
+        border-color: transparentize($blue-color, 0.5);
+    }
+    
+    100% {
+        transform: scale(1.02);
+        border-color: $blue-color;
+    }
+}
+
 /**************
  Media Queries
 **************/

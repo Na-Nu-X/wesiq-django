@@ -1441,6 +1441,13 @@ header {
             border-radius: $small-border-radius;
             transition: border-color 0.3s ease;
 
+            &.drag_active {
+                background-color: transparentize($main-color, 0.8);
+                border: 2px dashed transparentize($blue-color, 0.5);
+                transition: background-color 0.3s ease;
+                animation: dropZone 1s infinite alternate;
+            }
+
             &:hover {
                 border-color: $blue-color;
             }
@@ -1474,6 +1481,9 @@ header {
                 p {
                     font-size: 0.8em;
                     color: darken($secondary-color, 40%);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 // Attachment Tooltip

@@ -75,7 +75,7 @@ header {
                     background-color: transparentize($main-color, 0.8);
                     border: 2px dashed transparentize($blue-color, 0.5);
                     transition: background-color 0.3s ease;
-                    animation: postsPreviewDrag 1s infinite alternate;
+                    animation: dropZone 1s infinite alternate;
                 }
 
                 .post,
@@ -440,21 +440,5 @@ header {
                 }
             }
         }
-    }
-}
-
-/***********
- Key Frames
-***********/
-
-@keyframes postsPreviewDrag {
-    0% {
-        transform: scale(1);
-        border-color: transparentize($blue-color, 0.5);
-    }
-    
-    100% {
-        transform: scale(1.02);
-        border-color: $blue-color;
     }
 }
