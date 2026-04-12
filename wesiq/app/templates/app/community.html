@@ -64,8 +64,10 @@
                     <input type="hidden" class="longitude" name="longitude">
                 </div>
 
-                <div class="location_results hidden" tabindex="-1"></div>
-                {% comment %} <div class="location_results"><div class="place">Žilina, District of Žilina, Region of Žilina, Central Slovakia, Slovakia</div><div class="place">Žilina, District of Žilina, Region of Žilina, Central Slovakia, Slovakia</div><div class="place">Žilina, SO POÚ Kladno, SO ORP Kladno, okres Kladno, Central Bohemian Region, Central Bohemia, Czechia</div><div class="place">Region of Žilina, Central Slovakia, Slovakia</div></div> {% endcomment %}
+                <div class="location_results_container">
+                    <div class="loading hidden"></div>
+                    <div class="location_results hidden" tabindex="-1"></div>
+                </div>
             </div>
 
             <p class="form_report error" style="bottom: 241px;"></p>

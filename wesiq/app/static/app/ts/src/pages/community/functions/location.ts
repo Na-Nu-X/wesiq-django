@@ -32,7 +32,8 @@ function storeCoordinates(data:NominatimPlace[], searched_location:string, latit
 // Function For Get Locations By Searched Location
 export async function getLocation(searched_location:string, location_results:HTMLDivElement, location:HTMLInputElement, latitude:HTMLInputElement, longitude:HTMLInputElement):Promise<void> {
     const url:string = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searched_location)}&addressdetails=1&limit=10&featuretype=settlement` // Nominatim API https://nominatim.org/
-    // Pridal som &featuretype=settlement na koniec reťazca
+
+    const location_loading:HTMLDivElement = (location_results.parentNode as HTMLDivElement).querySelector(".loading") as HTMLDivElement // Gets The Loading
 
     try {
         const response:Response = await fetch(url, {
@@ -51,6 +52,10 @@ export async function getLocation(searched_location:string, location_results:HTM
     
     catch(error) {
         console.error("Chyba pri načítaní polohy:", error)
+    }
+
+    finally {
+        location_loading.classList.add("hidden") // Hides The Loader
     }
 }
 

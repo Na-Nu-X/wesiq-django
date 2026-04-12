@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     let all_users:NodeListOf<HTMLAnchorElement> = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
     const first_users:NodeListOf<HTMLAnchorElement> = all_users // Stores First Loaded Users
 
-    const loading:HTMLDivElement = document.querySelector(".search_result_container .loading") as HTMLDivElement // Gets Loading
+    const users_loading:HTMLDivElement = document.querySelector(".search_result_container .loading") as HTMLDivElement // Gets The Loading
 
     let previous_search_bar_length:number = 0 // Stores The Previous Search Bar Input Length
 
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             
             // Gets Users From The DB If The First Character Is Entered
             if(this.value.length === 1 && previous_search_bar_length !== 2) {
-                loading.classList.remove("hidden") // Shows The Loader
+                users_loading.classList.remove("hidden") // Shows The Loader
 
                 try {
                     const search_bar_response:searchBarResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 }
                 
                 finally {
-                    loading.classList.add("hidden") // Hides The Loader
+                    users_loading.classList.add("hidden") // Hides The Loader
                 }
             }
 
@@ -246,7 +246,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const location:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .location") as HTMLInputElement // Gets The Location Input
     const latitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .latitude") as HTMLInputElement // Gets The Latitude Hidden Input
     const longitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .longitude") as HTMLInputElement // Gets The Longitude Hidden Input
-    const location_results:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results") as HTMLDivElement // Gets The Location Results
+    const location_results:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results_container .location_results") as HTMLDivElement // Gets The Location Results
+    const location_loading:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results_container .loading") as HTMLDivElement // Gets The Location Loading
 
     let debounce_timeout:number // Debounce Timeout Between API Requests
 
@@ -267,9 +268,12 @@ document.addEventListener("DOMContentLoaded", function():void {
                 })
             }
 
+            location_loading.classList.add("hidden") // Hides The Loader
             location_results.classList.add("hidden") // Hides The Location Results
             return
         }
+
+        location_loading.classList.remove("hidden") // Shows The Loader
 
         // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
         debounce_timeout = window.setTimeout(function() {

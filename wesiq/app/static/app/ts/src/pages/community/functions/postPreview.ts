@@ -58,11 +58,11 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                 if(from_index !== -1 && from_index !== to_index) changePostOrder(from_index, to_index, select_posts, posts_preview) // Changes Post Order
             })
 
-            const loading:HTMLDivElement = document.createElement("div") // Creates The Loading
-            loading.classList.add("loading") // Adds Loading Class
+            const post_loading:HTMLDivElement = document.createElement("div") // Creates The Loading
+            post_loading.classList.add("loading") // Adds Loading Class
 
             post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
-            post.appendChild(loading) // Appends Loading To The Post
+            post.appendChild(post_loading) // Appends Loading To The Post
             posts_preview.appendChild(post) // Appends The Post To The Post Preview
 
             const file_reader:FileReader = new FileReader() // Reads The Content of The File
@@ -121,7 +121,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     if(element instanceof HTMLImageElement) {
                         element.addEventListener("load", function() {
                             element.style.filter = "blur(0px)" // Sharpens The Image
-                            loading.classList.add("hidden") // Hides The Loading
+                            post_loading.classList.add("hidden") // Hides The Loading
                         })
                     }
 
@@ -129,7 +129,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     else if(element instanceof HTMLVideoElement) {
                         element.addEventListener("loadeddata", function() {
                             element.style.filter = "blur(0px)" // Sharpens The Image
-                            loading.classList.add("hidden") // Hides The Loading
+                            post_loading.classList.add("hidden") // Hides The Loading
                         })
                     }
 
