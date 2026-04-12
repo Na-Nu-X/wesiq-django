@@ -19,9 +19,9 @@ class Users(models.Model):
         ("deleted", "deleted"),
     ]
 
-    first_name = models.CharField(verbose_name="First Name", max_length=50, null=False)
-    last_name = models.CharField(verbose_name="Last Name", max_length=50, null=False)
-    username = models.CharField(verbose_name="Username", max_length=20, default="@", null=False)
+    first_name = models.CharField(verbose_name="First Name", max_length=20, null=True, blank=True)
+    last_name = models.CharField(verbose_name="Last Name", max_length=50, null=True, blank=True)
+    username = models.CharField(verbose_name="Username", max_length=20, null=False)
     email_address = models.CharField(verbose_name="E-mail Address", max_length=50)
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
     password = models.CharField(verbose_name="Password", max_length=255)

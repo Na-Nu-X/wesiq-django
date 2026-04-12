@@ -1,13 +1,22 @@
 from django import forms
 from app.models import Post
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 
 class contactForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše meno")}),
+        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše meno"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
-        max_length=50,
+        max_length=20,
         required=True,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Meno môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané meno je príliš dlhé"),
             "required": _("Zadajte vaše meno"),
@@ -15,10 +24,18 @@ class contactForm(forms.Form):
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše priezvisko")}),
+        widget=forms.TextInput(attrs={"placeholder": _("Zadajte vaše priezvisko"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
         max_length=50,
         required=True,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Priezvisko môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané priezvisko je príliš dlhé"),
             "required": _("Zadajte vaše priezvisko"),
@@ -123,24 +140,57 @@ class passwordResetForm(forms.Form):
 
 class registrationForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Meno")}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Meno"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
-        max_length=50,
-        required=True,
+        max_length=20,
+        required=False,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Meno môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané meno je príliš dlhé"),
-            "required": _("Zadajte vaše meno"),
         },
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Priezvisko")}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Priezvisko"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
         max_length=50,
-        required=True,
+        required=False,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Priezvisko môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané priezvisko je príliš dlhé"),
-            "required": _("Zadajte vaše priezvisko"),
+        },
+    )
+
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "username", "placeholder": _("Používateľské meno"), "pattern": "(?![._-])(?!.*[._-]{2})[a-z0-9._-]+"}),
+        label=False,
+        max_length=20,
+        required=True,
+
+        validators=[
+            RegexValidator(
+                regex=r"^(?![._-])(?!.*[._-]{2})[a-z0-9._-]+(?<![._-])$", # Cannot Begin And End With ., _ Or -, No Double Characters, Allows Only Small Letters, Numbers And Characters Such As ., _ And -.
+                message=_("Zvoľte si iné používateľské meno")
+            )
+        ],
+
+        error_messages={
+            "max_length": _("Zadané používateľské meno je príliš dlhé"),
+            "required": _("Vytvorte používateľské meno"),
         },
     )
 
@@ -193,20 +243,36 @@ class registrationForm(forms.Form):
 
 class editAccountForm(forms.Form):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Zmeniť meno")}),
+        widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Zmeniť meno"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
-        max_length=50,
+        max_length=20,
         required=False,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Meno môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané meno je príliš dlhé"),
         },
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Zmeniť priezvisko")}),
+        widget=forms.TextInput(attrs={"class": "last_name", "placeholder": _("Zmeniť priezvisko"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
         max_length=50,
         required=False,
+
+        validators=[
+            RegexValidator(
+                regex=r"^[^\W\d_]+$", # Allows Only Letters
+                message=_("Priezvisko môže obsahovať iba písmená")
+            )
+        ],
+
         error_messages={
             "max_length": _("Zadané priezvisko je príliš dlhé"),
         },

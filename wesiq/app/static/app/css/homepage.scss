@@ -478,7 +478,10 @@ header {
                 align-items: center;
                 flex-wrap: wrap;
 
-                .first_name_container, .last_name_container, .email_address_container, .phone_number_container {
+                .first_name_container, 
+                .last_name_container, 
+                .email_address_container, 
+                .phone_number_container {
                     position: relative;
                     width: 50%;
                     transform-origin: left;
@@ -558,7 +561,35 @@ header {
                 }
             }
 
-            .password, input[type="password"] {
+            .username_container {
+                position: relative;
+
+                .fa-at {
+                    display: block;
+                    color: darken($secondary-color, 40%);
+                    position: absolute;
+                    bottom: 10px;
+                    left: 3px;
+                    padding-bottom: 16px;
+                    padding-top: 19px;
+                    transition: left 0.3s ease;
+
+                    &:hover {
+                        color: darken($secondary-color, 20%);
+                        cursor: pointer;
+                        transition: color 0.3s ease, left 0.3s ease;
+                    }
+                }
+
+                &:has(.username:hover) .fa-at, 
+                &:has(.username:focus) .fa-at {
+                    left: -16px;
+                }
+            }
+
+            .username, 
+            .password, 
+            input[type="password"] {
                 width: 90%;
                 height: 50px;
                 margin-bottom: 10px;
