@@ -31,6 +31,7 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 import string
 from django.views.decorators.http import require_POST
+from django.contrib.gis.geos import Point
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1682,20 +1683,29 @@ def communityView(request):
 
                 # Saves Only if The Form is Valid And Includes at Least One File
                 if upload_post_form.is_valid() and files:
-                    new_post = upload_post_form.save(commit=False)
-                    new_post.user_id = logged_in_user_id
-                    new_post.save()
+                    coordinates_data = {
+                        "latitude": request.POST.get("latitude"),
+                        "longitude": request.POST.get("longitude")
+                    }
 
-                    for one_file in files:
-                        is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
+                    coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"]))
 
-                        PostMedia.objects.create(
-                            post=new_post,
-                            file=one_file,
-                            is_video=is_video
-                        )
+                    print(coordinates)
 
-                    return redirect("community_url")
+                    # new_post = upload_post_form.save(commit=False)
+                    # new_post.user_id = logged_in_user_id
+                    # new_post.save()
+
+                    # for one_file in files:
+                    #     is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
+
+                    #     PostMedia.objects.create(
+                    #         post=new_post,
+                    #         file=one_file,
+                    #         is_video=is_video
+                    #     )
+
+                    # return redirect("community_url")
 
             # Search Users POST
             else:

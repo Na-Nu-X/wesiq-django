@@ -1,5 +1,6 @@
 from enum import unique
-from django.db import models
+# from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from pathlib import Path
@@ -225,6 +226,7 @@ class Post(models.Model):
     tagged_people = ArrayField(models.CharField(verbose_name="Tagged People", max_length=20), default=list, null=True, blank=True)
     hashtags = ArrayField(models.CharField(verbose_name="Hashtags", max_length=30), default=list, null=True, blank=True)
     location = models.CharField(verbose_name="Location", max_length=255, null=True, blank=True)
+    coordinates = models.PointField(verbose_name="Coordinates", null=True, blank=True, srid=4326) # WGS84 (Standardized, Geocentric Coordinate System Used Globally For Mapping, Navigation And GPS)
     public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)
     allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
     hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)
