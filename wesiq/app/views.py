@@ -1683,29 +1683,37 @@ def communityView(request):
 
                 # Saves Only if The Form is Valid And Includes at Least One File
                 if upload_post_form.is_valid() and files:
+                    # Gets The Coordinates Data
                     coordinates_data = {
-                        "latitude": request.POST.get("latitude"),
-                        "longitude": request.POST.get("longitude")
+                        "latitude": request.POST.get("latitude") or None,
+                        "longitude": request.POST.get("longitude") or None
                     }
+                    
+                    # Gets The Coordinates If They Are Available
+                    if coordinates_data["latitude"] and coordinates_data["longitude"]:
+                        coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
 
-                    coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"]))
+                    else:
+                        coordinates = None
 
-                    print(coordinates)
+                    new_post = upload_post_form.save(commit=False)
+                    new_post.user_id = logged_in_user_id
 
-                    # new_post = upload_post_form.save(commit=False)
-                    # new_post.user_id = logged_in_user_id
-                    # new_post.save()
+                    if coordinates:
+                        new_post.coordinates = coordinates
 
-                    # for one_file in files:
-                    #     is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
+                    new_post.save()
 
-                    #     PostMedia.objects.create(
-                    #         post=new_post,
-                    #         file=one_file,
-                    #         is_video=is_video
-                    #     )
+                    for one_file in files:
+                        is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
 
-                    # return redirect("community_url")
+                        PostMedia.objects.create(
+                            post=new_post,
+                            file=one_file,
+                            is_video=is_video
+                        )
+
+                    return redirect("community_url")
 
             # Search Users POST
             else:
