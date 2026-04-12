@@ -15,17 +15,21 @@ function getUniquePlaces(data:NominatimPlace[]):NominatimPlace[] {
 }
 
 // Function For Store Coordinates To The Hidden Inputs
-function storeCoordinates(data:NominatimPlace[], searched_location:string, latitude:HTMLInputElement, longitude:HTMLInputElement):void {
+function storeCoordinates(data:NominatimPlace[], searched_location:string, latitude:HTMLInputElement, longitude:HTMLInputElement):boolean {
     const matching_location:NominatimPlace|null = data.find(one_place => one_place.display_name === searched_location) || null // Gets The Matching Location If There is Any
 
     if(matching_location) {
         latitude.value = matching_location.lat // Sets The Latitude
         longitude.value = matching_location.lon // Sets The Longitude
+        
+        return true // Returns True If The Coordinates Were Stored
     }
 
     else {
         latitude.value = "" // Deletes The Latitude
         longitude.value = "" // Deletes The Longitude
+
+        return false // Returns False If The Coordinates Were Not Stored
     }
 }
 
@@ -46,7 +50,15 @@ export async function getLocation(searched_location:string, location_results:HTM
         const data:NominatimPlace[] = await response.json() // Gets The Data
         const unique_data:NominatimPlace[] = getUniquePlaces(data) // Gets Only The Unique Data
 
-        storeCoordinates(unique_data, searched_location, latitude, longitude) // Stores The Coordinates
+        // Stores The Coordinates
+        if(storeCoordinates(unique_data, searched_location, latitude, longitude)) {
+            location.style.borderColor = "#52cf20" // Sets Green Border To The Location Input
+        }
+
+        else {
+            location.removeAttribute("style") // Removes Hardcoded Style (style="border-color: rgb(82, 207, 32);") From The Location Input
+        }
+
         renderLocationResults(unique_data, location_results, location, latitude, longitude) // Renders Location Results
     }
     
@@ -78,6 +90,8 @@ function renderLocationResults(results:any[], location_results:HTMLDivElement, l
         // Adds The Location Name To The Location Input Value After Click
         place.addEventListener("click", function():void {
             location.value = one_place.display_name // Sets The Location Input Value
+            location.style.borderColor = "#52cf20" // Sets Green Border To The Location Input
+            
             location_results.classList.add("hidden") // Hides The Location Results
 
             latitude.value = one_place.lat // Sets The Latitude
