@@ -251,19 +251,55 @@ document.addEventListener("DOMContentLoaded", function():void {
     const attachment:HTMLInputElement = document.querySelector("#select_attachment") as HTMLInputElement
     const attachment_report:HTMLParagraphElement = document.querySelector(".attachment_report") as HTMLParagraphElement
 
+    // Function For Show The Attachment Report
+    function showAttachmentReport(file:File):void {
+        const MAX_ATTACHMENT_SIZE:number = 25 * 1024 * 1024 // 25MB
+
+        const attachment_name:string = file.name
+        const attachment_size:number = file.size
+
+        if(attachment_size <= MAX_ATTACHMENT_SIZE) attachment_report.textContent = `${gettext("Vybraný súbor")}: ${attachment_name}`
+        else if(attachment_size > MAX_ATTACHMENT_SIZE) attachment_report.textContent = gettext("Vybraný súbor je príliš veľký.")
+        else attachment_report.textContent = gettext("Nie je vybraný žiaden súbor.")
+    }
+
+    // Attachment Change Functionalities
     attachment.addEventListener("change", function(event:Event):void {
         if(!(event.target instanceof HTMLInputElement)) return
         if(!event.target.files || event.target.files.length === 0) return
 
-        const file = event.target.files[0]
+        const file:File|null = event.target.files[0] || null
 
         if(!file) return
+        
+        showAttachmentReport(file) // Shows The Attachment Report
+    })
 
-        const attachment_name = file.name
-        const attachment_size = file.size
+    // Message Container Drag & Drop Functionalities
 
-        if(attachment_size <= 25000000) attachment_report.textContent = `${gettext("Vybraný súbor")}: ${attachment_name}`
-        else if(attachment_size > 25000000) attachment_report.textContent = gettext("Vybraný súbor je príliš veľký.")
-        else attachment_report.textContent = gettext("Nie je vybraný žiaden súbor.")
+    const message_container:HTMLDivElement = document.querySelector(".message_container") as HTMLDivElement // Gets The Message Container
+
+    message_container.addEventListener("dragover", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+        
+        this.classList.add("drag_active") // Adds Drag Animation
+    })
+
+    message_container.addEventListener("dragleave", function():void {
+        this.classList.remove("drag_active") // Removes Drag Animation
+    })
+
+    message_container.addEventListener("drop", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+
+        this.classList.remove("drag_active") // Removes Drag Animation
+
+        const file = (event.dataTransfer!.files)[0] as File // Gets New Dragged File
+        const data_transfer:DataTransfer = new DataTransfer() // Creates New Data Transfer
+
+        data_transfer.items.add(file) // Adds File To The Stored File Data
+        attachment.files = data_transfer.files // Synchronizes Selected Files With Stored File Data
+
+        showAttachmentReport(file) // Shows The Attachment Report
     })
 })

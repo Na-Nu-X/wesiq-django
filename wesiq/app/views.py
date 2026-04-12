@@ -331,6 +331,7 @@ def homepageView(request):
                     new_user = Users(
                         first_name = registration_form.cleaned_data["first_name"],
                         last_name = registration_form.cleaned_data["last_name"],
+                        username = registration_form.cleaned_data["username"],
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
@@ -864,6 +865,7 @@ def registrationView(request):
                     new_user = Users(
                         first_name = registration_form.cleaned_data["first_name"],
                         last_name = registration_form.cleaned_data["last_name"],
+                        username = registration_form.cleaned_data["username"],
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
