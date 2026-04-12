@@ -9,6 +9,11 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
     gettext \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    python3-gdal \
+    libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/

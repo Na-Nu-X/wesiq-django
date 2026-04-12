@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django.contrib.gis', # GeoDjango
     'django.contrib.postgres', # PostgreSQL
 
     # Google OAuth 2.0
@@ -272,3 +273,16 @@ CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE')
 SECURE_HSTS_SECONDS = os.environ.get('SECURE_HSTS_SECONDS')
 SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS')
 SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD')
+
+# GeoDjango
+possible_gdal_paths = [
+    '/usr/lib/x86_64-linux-gnu/libgdal.so',
+    '/usr/lib/libgdal.so',
+]
+
+for path in possible_gdal_paths:
+    if os.path.exists(path):
+        GDAL_LIBRARY_PATH = path
+        break
+
+GEOS_LIBRARY_PATH = '/usr/lib/x86_64-linux-gnu/libgeos_c.so'
