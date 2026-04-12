@@ -250,9 +250,9 @@ header {
             .location_container {
                 position: relative;
 
-                &:has(.location:hover) .fa-location-arrow, &:has(.location:focus) .fa-location-arrow {
-                    left: -16px;
-                }
+                // &:has(.location:hover) .fa-location-arrow, &:has(.location:focus) .fa-location-arrow {
+                //     left: -16px;
+                // }
 
                 .location_input_container {
                     position: relative;
@@ -261,13 +261,16 @@ header {
                         @include icon;
                         display: block;
                         position: absolute;
-                        left: 3px;
-                        bottom: 10px;
+                        // left: 3px;
+                        bottom: 0px;
+                        left: -16px;
                         padding: 19px 0px 16px;
                     }
 
                     .location {
                         @include form_input;
+                        width: 100%;
+                        margin-bottom: 0px;
                     }
                 }
                 
@@ -284,18 +287,18 @@ header {
                         flex-direction: column;
                         gap: 5px;
                         max-height: calc((46px * 2) + 5px);
-                        margin-bottom: 10px;
+                        margin-bottom: 50px;
                         border-bottom-right-radius: $small-border-radius;
                         border-bottom-left-radius: $small-border-radius;
-                        backdrop-filter: blur(5px);
                         opacity: 1;
                         overflow-y: auto;
-                        transition: margin-bottom 0.3s ease, opacity 0.3s ease, display 0.3s ease allow-discrete;
+                        transition: visibility 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
 
                         &.hidden {
-                            margin-bottom: 0px;
+                            visibility: hidden;
                             opacity: 0;
-                            display: none;
+                            height: 50px;
+                            margin-bottom: 0px;
 
                             .place {
                                 pointer-events: none;
@@ -340,7 +343,6 @@ header {
 
             input[type="submit"] {
                 @include blue_button($width: 90%, $border-radius: $big-border-radius);
-                margin-top: 40px;
                 margin-bottom: 10px;
             }
         }
