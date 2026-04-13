@@ -1,6 +1,6 @@
 import { sendPOST } from "../../../services/sendPOST.js";
 
-export interface user {
+export interface searchedUser {
     id:number,
     first_name:string,
     last_name:string,
@@ -10,10 +10,10 @@ export interface user {
     followers:string[]
 }
 
-export interface searchBarResponse {
+export interface searchedUsersResponse {
     success:boolean,
     logged_in_user_id:number,
-    users:user[]
+    users:searchedUser[]
 }
 
 // Function For Add Follow
@@ -45,10 +45,10 @@ export function unfollow(event:PointerEvent):void {
 }
 
 // Function For Render Users From The POST Response
-export function renderUsers(user_data:user, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
+export function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
-    const user_name:HTMLParagraphElement = document.createElement("p") // Creates User Name Paragraph
+    const full_name:HTMLParagraphElement = document.createElement("p") // Creates Full Name Paragraph
     const followers:HTMLParagraphElement = document.createElement("p") // Creates Followers Paragraph
     const follow_unfollow_icon:HTMLElement = document.createElement("i") // Creates Follow / Unfollow Icon
 
@@ -65,9 +65,9 @@ export function renderUsers(user_data:user, logged_in_user_id:number, all_users_
     user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture Name
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container
 
-    user_name.classList.add("user_name") // Adds User Name Class
-    user_name.textContent = `${user_data.first_name} ${user_data.last_name}` // Sets First Name And Last Name
-    one_user.appendChild(user_name) // Appends The User Name To The One User Container
+    full_name.classList.add("full_name") // Adds Full Name Class
+    full_name.textContent = `${user_data.first_name} ${user_data.last_name}` // Sets First Name And Last Name
+    one_user.appendChild(full_name) // Appends The Full Name To The One User Container
 
     followers.classList.add("followers") // Adds Followers Class
     followers.textContent = `${user_data.followers.length}` // Sets Followers Amount
