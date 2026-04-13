@@ -99,6 +99,13 @@ document.addEventListener("DOMContentLoaded", function():void {
             language.value = "pt-br"
         }
 
+        // Simplified Chinese
+        else if(
+            this.value[0] === "+" && this.value[1] === "8" && this.value[2] === "6") {
+            flag.src = "/static/images/zh-hans.png"
+            language.value = "zh-hans"
+        }
+
         else {
             flag.src = ""
             language.value = "en"

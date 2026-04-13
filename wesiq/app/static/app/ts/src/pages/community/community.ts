@@ -1,7 +1,16 @@
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 import { getLocation } from "./functions/location.js"
-import { posts_preview_state } from "./state.js"
+
+import { 
+    posts_preview_state,
+    tag_user_state
+} from "./state.js"
+
+import { 
+    getUsersForTag,
+    tagUser
+} from "./functions/tagUser.js"
 
 import { 
     follow,
@@ -11,7 +20,7 @@ import {
 } from "./functions/searchUsers.js"
 
 import type { 
-    searchBarResponse
+    searchedUsersResponse
 } from "./functions/searchUsers.js"
 
 "use strict"
@@ -53,12 +62,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                 users_loading.classList.remove("hidden") // Shows The Loader
 
                 try {
-                    const search_bar_response:searchBarResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
+                    const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
 
                     if(search_bar_response.success) {
                         all_users_container.innerHTML = "" // Deletes All Users Container
                         search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)) // Renders Users
-                        all_users = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
                     }
                 }
 
@@ -108,13 +116,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const post_info_container:HTMLDivElement = upload_post_form.querySelector(".post_info_container") as HTMLDivElement // Gets The Post Info Container
 
-    const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
-
     const public_visibility:HTMLElement = post_info_container.querySelector(".icons .settings .public_visibility") as HTMLElement // Gets The Public Visibility Icon
     const allow_comments:HTMLElement = post_info_container.querySelector(".icons .settings .allow_comments") as HTMLElement // Gets The Allow Comments Icon
     const hide_likes:HTMLElement = post_info_container.querySelector(".icons .settings .hide_likes") as HTMLElement // Gets The Hide Likes Icon
 
-    const tag_people:HTMLElement = post_info_container.querySelector(".icons .tags .tag_people") as HTMLElement // Gets The Tag People Icon
     const add_hashtag:HTMLElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLElement // Gets The Add Hashtag Icon
 
     // Events
@@ -183,17 +188,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Tag People Functionality
-    tag_people.addEventListener("click", function():void {
-        if(description.value.length < description.maxLength) {
-            description.value += "@"
-        }
-    })
-
     // Add Hashtag Functionality
     add_hashtag.addEventListener("click", function():void {
-        if(description.value.length < description.maxLength) {
-            description.value += "#"
+        if(description.value.length < description.maxLength - 1) {
+            description.value += " #"
         }
     })
 
@@ -236,6 +234,71 @@ document.addEventListener("DOMContentLoaded", function():void {
             const new_files = Array.from(event.dataTransfer!.files) // Gets New Dragged Files
             posts_preview_state.current_files.push(...new_files) // Updates An Array of Current Files
             syncFiles(select_posts, this) // Synchronizes Files
+        }
+    })
+
+    // Tag Users
+
+    // Variables
+
+    const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
+    const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
+    const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
+
+    // Events
+
+    // Adds At Sign To The Description After Clicking On The Tag User Icon
+    tag_user.addEventListener("click", function():void {
+        if(description.value.length < description.maxLength - 1) {
+            description.value += " @" // Adds The At Sign
+            description.focus() // Adds Focus Into The Description
+
+            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
+            // }
+
+            // else {
+            //     console.log("VIAC SA NEDA OZNACIT")
+            // }
+        }
+    })
+
+    // Searches For Users For Tag If There Is At Sign In The Description
+    description.addEventListener("input", function():void {
+        console.log(tag_user_state.tagged_people)
+
+        if(this.value.includes("@")) {
+            getUsersForTag(this, users_for_tag_container) // Initializes Tag User Function
+
+            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
+            // }
+
+            // else {
+            //     console.log("VIAC SA NEDA OZNACIT")
+            // }
+        }
+
+        else {
+            users_for_tag_container.classList.remove("active"); // Hides The Container
+            (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
+        }
+    })
+
+    users_for_tag_container.addEventListener("click", function(event:PointerEvent):void {
+        if((event.target as HTMLDivElement).classList.contains("one_user")) {
+            const clicked_username:string|null = (event.target as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID
+
+            if(clicked_username) {
+                tagUser(clicked_username, users_for_tag_container, description) // Tags The User
+
+                // console.log(clicked_username)
+            }
+
+            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
+            // }
+
+            // else {
+            //     console.log("VIAC SA NEDA OZNACIT")
+            // }
         }
     })
 

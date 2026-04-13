@@ -46,10 +46,12 @@
                     </div>
 
                     <div class="tags">
-                        <i class="tag_people fa-solid fa-at" title="{% translate 'Označiť ľudí' %}"></i> <!-- https://fontawesome.com/icons/at -->
+                        <i class="tag_user fa-solid fa-at" title="{% translate 'Označiť ľudí' %}"></i> <!-- https://fontawesome.com/icons/at -->
                         <i class="add_hashtag fa-solid fa-hashtag" title="{% translate 'Pridať Hashtag' %}"></i> <!-- https://fontawesome.com/icons/hashtag -->
                     </div>
                 </div>
+
+                <div class="users_for_tag_container"></div>
             </div>
             
             {% comment %} {{ upload_post_form.tagged_people }} {% endcomment %}
@@ -103,7 +105,7 @@
                         "
                     >
 
-                    <p class="user_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
+                    <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
                     <p class="followers">{{ one_user.followers|length }}</p>
 

@@ -180,6 +180,7 @@ header {
             }
 
             .post_info_container {
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 margin: 10px auto 0px;
@@ -189,6 +190,10 @@ header {
 
                 &:hover {
                     border-color: $blue-color;
+
+                    .users_for_tag_container {
+                        border-color: $blue-color;
+                    }
                 }
 
                 textarea {
@@ -215,6 +220,7 @@ header {
                     padding: 0px 10px;
                     background-color: transparentize($main-color, 0.5);
                     border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    // z-index: 50;
 
                     .settings {
                         display: flex;
@@ -239,9 +245,88 @@ header {
                         align-items: center;
                         gap: 10px;
 
-                        .tag_people,
+                        .tag_user,
                         .add_hashtag {
                             @include icon;
+                        }
+                    }
+                }
+
+                .users_for_tag_container {
+                    display: none;
+                    top: 0%;
+                    opacity: 0;
+                    position: absolute;
+                    transform: translateX(-1px);
+                    flex-direction: column;
+                    gap: 10px;
+                    width: calc(100% + 2px);
+                    height: calc(3 * 48px + 20px + 2px);
+                    background-color: transparentize($main-color, 0.5);
+                    border-right: 1px solid transparentize($blue-color, 0.5);
+                    border-left: 1px solid transparentize($blue-color, 0.5);
+                    border-bottom: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    overflow-y: auto;
+                    transition: border-color 0.3s ease, display 0.5s ease allow-discrete, top 0.3s ease, opacity 0.5s ease;
+                    z-index: 50;
+
+                    &.active {
+                        display: flex;
+                        top: calc(100% - 1px);
+                        opacity: 1;
+
+                        @starting-style {
+                            top: 0%;
+                            opacity: 0;
+                        }
+                    }
+
+                    &::-webkit-scrollbar {
+                        width: 5px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background-color: darken($secondary-color, 40%);
+                        border-radius: 2.5px;
+
+                        &:hover {
+                            background-color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                        }
+                    }
+
+                    &::-webkit-scrollbar-track {
+                        background-color: lighten($main-color, 20%);
+                        border-radius: 2.5px;
+                    }
+
+                    .one_user {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        padding: 5px;
+                        color: $secondary-color;
+                        transition: background-color 0.3s ease, transform 0.3s ease, display 0.3s ease allow-discrete;
+                        
+                        &.hidden {
+                            transform: translateY(calc(300% + 20px));
+                            display: none;
+                        }
+
+                        &:hover {
+                            background-color: transparentize($blue-color, 0.9);
+                            cursor: pointer;
+                        }
+        
+                        .profile_picture {
+                            @include profile_picture;
+                            pointer-events: none;
+                        }
+                        
+                        .username {
+                            pointer-events: none;
+                            color: $secondary-color;
                         }
                     }
                 }
@@ -417,18 +502,22 @@ header {
                 color: $secondary-color;
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $small-border-radius;
-                transition: transform 0.3s ease, display 0.3s ease allow-discrete;
+                transition: background-color 0.3s ease, transform 0.3s ease, display 0.3s ease allow-discrete;
 
                 &.hidden {
                     transform: translateY(calc(300% + 20px));
                     display: none;
                 }
 
+                &:hover {
+                    background-color: transparentize($blue-color, 0.9);
+                }
+
                 .profile_picture {
                     @include profile_picture;
                 }
                 
-                .user_name {
+                .full_name {
                     color: $secondary-color;
                     flex-grow: 1
                 }
