@@ -21,7 +21,7 @@ export const tag_user_state:{
 
     tags:tag[]
 } = {
-    MAX_TAGGED_PEOPLE: 2, // Sets Maximum Amount Of Tagged People (10 By Default)
+    MAX_TAGGED_PEOPLE: 10, // Sets Maximum Amount Of Tagged People (10 By Default)
     tagged_people: [], // Stores All Tagged People
     tagged_person: "", // Stores The Tagged Person
 
