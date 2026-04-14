@@ -16,7 +16,11 @@ interface taggedUsersResponse {
     users:taggedUser[]
 }
 
-function storeAtSignPosition(data:tag):void {
+export function storeAtSignPosition(data:tag):void {
+    if(data.tag_start_index === tag_user_state.tags[tag_user_state.tags.length - 1]?.tag_start_index) {
+        tag_user_state.tags.pop() // Removes Last Entry
+    }
+
     tag_user_state.tags.push(data) // Pushes The Data Into An Array
 }
 
@@ -24,7 +28,17 @@ function storeAtSignPosition(data:tag):void {
 function getTagStartIndex(text:string):number {
     let tag_start_index:number = 0
 
-    tag_user_state.tags.length > 0 ? tag_start_index = text.indexOf("@", (tag_user_state.tags[tag_user_state.tags.length - 1]!.tag_start_index) + 1) : tag_start_index = text.indexOf("@", 0) // Gets The Index Of The Last At Sign
+    if(tag_user_state.tags.length > 0) {
+        tag_start_index = text.indexOf("@", (tag_user_state.tags[tag_user_state.tags.length - 1]!.tag_start_index) + 1)
+
+        if(tag_user_state.tags[tag_user_state.tags.length - 1]?.tagged_person === undefined) {
+            tag_start_index = text.indexOf("@", (tag_user_state.tags[tag_user_state.tags.length - 1]!.tag_start_index))
+        }
+    }
+
+    else {
+        tag_start_index = text.indexOf("@", 0) // Gets The Index Of The Last At Sign
+    }
 
     return tag_start_index
 }

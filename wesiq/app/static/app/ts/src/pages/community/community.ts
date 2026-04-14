@@ -8,6 +8,7 @@ import {
 } from "./state.js"
 
 import { 
+    storeAtSignPosition,
     getUsersForTag,
     tagUser
 } from "./functions/tagUser.js"
@@ -19,9 +20,8 @@ import {
     resetSearchedUsers
 } from "./functions/searchUsers.js"
 
-import type { 
-    searchedUsersResponse
-} from "./functions/searchUsers.js"
+import type { tag } from "./state.js"
+import type { searchedUsersResponse } from "./functions/searchUsers.js"
 
 "use strict"
 
@@ -250,9 +250,17 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Adds At Sign To The Description After Clicking On The Tag User Icon
     tag_user.addEventListener("click", function():void {
         if(description.value.length < description.maxLength - 1) {
-            const previous_last_character:string = description.value[description.value.length - 1] as string // Gets The Last Entered Character
+            const previous_last_character:string|null = description.value[description.value.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
 
-            previous_last_character === " " ? description.value += "@" : description.value += " @" // Adds The At Sign With Spacing If There Isn't Any
+            previous_last_character === " " || previous_last_character === null ? description.value += "@" : description.value += " @" // Adds The At Sign With Spacing If There Isn't Any
+
+            const at:tag = {
+                tag_start_index: description.value.length - 1,
+                tag_end_index: description.value.length - 1
+            }
+
+            storeAtSignPosition(at) // Stores The At Sign Position
+
             description.focus() // Adds Focus Into The Description
         }
     })
