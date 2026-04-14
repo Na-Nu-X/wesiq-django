@@ -220,7 +220,6 @@ header {
                     padding: 0px 10px;
                     background-color: transparentize($main-color, 0.5);
                     border-radius: 0px 0px $small-border-radius $small-border-radius;
-                    // z-index: 50;
 
                     .settings {
                         display: flex;
@@ -328,6 +327,40 @@ header {
                             pointer-events: none;
                             color: $secondary-color;
                         }
+                    }
+                }
+            }
+
+            .tags {
+                display: flex;
+                gap: 10px;
+                margin-top: 5px;
+                // padding: 0px 10px + 1px;
+                // color: $secondary-color;
+                
+                .tag {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    height: 25px;
+                    padding: 0px 5px;
+                    background-color: transparentize($main-color, 0.5);
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $big-border-radius;
+                    // background-color: red;
+                    transition: border-color 0.3s ease;
+
+                    &:hover {
+                        border-color: $blue-color;
+                    }
+                    
+                    p {
+                        font-size: 0.8em;
+                        color: darken($secondary-color, 40%);
+                    }
+
+                    .fa-xmark {
+                        @include icon;
                     }
                 }
             }

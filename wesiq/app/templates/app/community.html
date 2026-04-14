@@ -33,6 +33,8 @@
             <div class="post_info_container">
                 {{ upload_post_form.description }}
 
+                <input type="hidden" class="tagged_people" name="tagged_people" value="">
+
                 <div class="icons">
                     <div class="settings">
                         <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
@@ -52,6 +54,23 @@
                 </div>
 
                 <div class="users_for_tag_container"></div>
+            </div>
+
+            <div class="tags">
+                <div class="tag">
+                    <p>@test1</p>
+                    <i class="fa-solid fa-xmark" title="{% translate 'Odstrániť zmienku' %}"></i> <!-- https://fontawesome.com/icons/xmark -->
+                </div>
+
+                <div class="tag">
+                    <p>@test2</p>
+                    <i class="fa-solid fa-xmark" title="{% translate 'Odstrániť zmienku' %}"></i> <!-- https://fontawesome.com/icons/xmark -->
+                </div>
+
+                <div class="tag">
+                    <p>@test3</p>
+                    <i class="fa-solid fa-xmark" title="{% translate 'Odstrániť zmienku' %}"></i> <!-- https://fontawesome.com/icons/xmark -->
+                </div>
             </div>
             
             {% comment %} {{ upload_post_form.tagged_people }} {% endcomment %}

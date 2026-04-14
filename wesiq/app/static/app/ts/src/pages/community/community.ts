@@ -250,31 +250,20 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Adds At Sign To The Description After Clicking On The Tag User Icon
     tag_user.addEventListener("click", function():void {
         if(description.value.length < description.maxLength - 1) {
-            description.value += " @" // Adds The At Sign
+            const previous_last_character:string = description.value[description.value.length - 1] as string // Gets The Last Entered Character
+
+            previous_last_character === " " ? description.value += "@" : description.value += " @" // Adds The At Sign With Spacing If There Isn't Any
             description.focus() // Adds Focus Into The Description
-
-            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
-            // }
-
-            // else {
-            //     console.log("VIAC SA NEDA OZNACIT")
-            // }
         }
     })
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
-        console.log(tag_user_state.tagged_people)
+        const previous_last_character:string = this.value[this.value.length - 1 - 1] as string // Gets The Previous Last Entered Character
 
-        if(this.value.includes("@")) {
+        // Starts Getting Users For Tag Only If The Previous Last Entered Character Is The At Sign Or The User Already Starts Tagging
+        if(previous_last_character === "@" || tag_user_state.tagged_person) {
             getUsersForTag(this, users_for_tag_container) // Initializes Tag User Function
-
-            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
-            // }
-
-            // else {
-            //     console.log("VIAC SA NEDA OZNACIT")
-            // }
         }
 
         else {
@@ -289,16 +278,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if(clicked_username) {
                 tagUser(clicked_username, users_for_tag_container, description) // Tags The User
-
-                // console.log(clicked_username)
             }
-
-            // if(tag_user_state.tagged_people.length < tag_user_state.MAX_TAGGED_PEOPLE) {
-            // }
-
-            // else {
-            //     console.log("VIAC SA NEDA OZNACIT")
-            // }
         }
     })
 
