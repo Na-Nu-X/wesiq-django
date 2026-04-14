@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 users_loading.classList.remove("hidden") // Shows The Loader
 
                 try {
-                    const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, this.value) // Sends The Data With POST
+                    const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, this.value, "search-users") // Sends The Data With POST
 
                     if(search_bar_response.success) {
                         all_users_container.innerHTML = "" // Deletes All Users Container
@@ -81,11 +81,14 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Filters Users From Already Obtained Users
             else {
+                all_users = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
+
                 // Gets Unmatched Users
                 const filtered_users:HTMLAnchorElement[] = [...all_users].filter(function(one_user:HTMLAnchorElement):boolean {
+                    // Filters By Full Name And By Friend Code
                     return (
-                        !(one_user.querySelector(".user_name") as HTMLParagraphElement).textContent.toLowerCase().includes(search_bar.value.toLowerCase()) && // Filters By User Name
-                        !(one_user.dataset["friend_code"]!.includes(search_bar.value)) // Filters By Friend Code
+                        !(one_user.querySelector(".full_name") as HTMLParagraphElement).textContent.toLowerCase().includes(search_bar.value.toLowerCase()) && 
+                        !(one_user.dataset["friend_code"]!.includes(search_bar.value))
                     )
                 })
 
