@@ -59,6 +59,7 @@ function placeTag(input:HTMLTextAreaElement, tagged_person:string, container:HTM
 
     input.focus() // Adds Focus Into The Input
 
+    // Hides Users For Tag Container
     container.classList.remove("active"); // Hides The Container
     (container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
 
@@ -136,7 +137,7 @@ export async function getUsersForTag(input:HTMLTextAreaElement, container:HTMLDi
     // Sends The POST Only If The User Is Currently Tagging Someone
     if(tag_user_state.tagged_person) {
         try {
-            const tag_response:taggedUsersResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_person) // Sends The Data With POST
+            const tag_response:taggedUsersResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_person, "tag-user") // Sends The Data With POST
 
             if(tag_response.success) {
                 storeTaggedUser(container, tag_user_state.tagged_person, input) // Stores Tagged User
@@ -148,6 +149,7 @@ export async function getUsersForTag(input:HTMLTextAreaElement, container:HTMLDi
                 }
 
                 else {
+                    // Hides Users For Tag Container
                     container.classList.remove("active"); // Hides The Container
                     (container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
 
@@ -201,10 +203,13 @@ function renderUsersForTag(data:taggedUser, container:HTMLDivElement) {
     username.textContent = data.username // Sets The Username
     one_user.appendChild(username) // Appends The Username To The One User Container
 
-    container.classList.add("active"); // Shows The Container
-    (container.parentElement as HTMLDivElement).style.borderBottom = "none"; // Removes The Border
-    (container.parentElement as HTMLDivElement).style.borderBottomRightRadius = "0px"; // Removes The Border
-    (container.parentElement as HTMLDivElement).style.borderBottomLeftRadius = "0px" // Removes The Border
+    // Shows Users For Tag Container
+    if(!tag_user_state.tagged_people.includes(`@${tag_user_state.tagged_person}`)) {
+        container.classList.add("active"); // Shows The Container
+        (container.parentElement as HTMLDivElement).style.borderBottom = "none"; // Removes The Border
+        (container.parentElement as HTMLDivElement).style.borderBottomRightRadius = "0px"; // Removes The Border
+        (container.parentElement as HTMLDivElement).style.borderBottomLeftRadius = "0px" // Removes The Border
+    }
 }
 
 // Function For Tag The User

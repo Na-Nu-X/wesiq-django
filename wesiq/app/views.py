@@ -1717,7 +1717,37 @@ def communityView(request):
 
                     return redirect("community_url")
 
-            else:
+            # Search Users
+            if request.headers.get("X-Requested-Action") == "search-users":
+                searched_text = json.loads(request.body) # Gets The Searched Text
+                
+                users = Users.objects.filter(
+                    Q(account_status="OK") & (
+                        Q(first_name__icontains=searched_text) | 
+                        Q(last_name__icontains=searched_text) | 
+                        Q(friend_code__contains=searched_text)
+                    )
+                ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
+                
+                # Creates Valid Format For JSON Response
+                users = [
+                    {
+                        "id": one_user.id, 
+                        "first_name": one_user.first_name, 
+                        "last_name": one_user.last_name, 
+                        "profile_picture_name": one_user.profile_picture_name, 
+                        "friend_code": one_user.friend_code,
+                        "following": list(one_user.following),
+                        "followers": list(one_user.followers),
+                    }
+
+                    for one_user in users
+                ]
+
+                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
+
+            # Tag User
+            if request.headers.get("X-Requested-Action") == "tag-user":
                 searched_tag = json.loads(request.body) # Gets The Searched Tag
                 
                 # Gets All Relevant Users By Searched Tag
@@ -1740,35 +1770,6 @@ def communityView(request):
                 ]
 
                 return JsonResponse({"success": True, "users": users_for_tag})
-
-            # Search Users POST
-            # else:
-            #     searched_text = json.loads(request.body) # Gets The Searched Text
-                
-            #     users = Users.objects.filter(
-            #         Q(account_status="OK") & (
-            #             Q(first_name__icontains=searched_text) | 
-            #             Q(last_name__icontains=searched_text) | 
-            #             Q(friend_code__contains=searched_text)
-            #         )
-            #     ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
-                
-            #     # Creates Valid Format For JSON Response
-            #     users = [
-            #         {
-            #             "id": one_user.id, 
-            #             "first_name": one_user.first_name, 
-            #             "last_name": one_user.last_name, 
-            #             "profile_picture_name": one_user.profile_picture_name, 
-            #             "friend_code": one_user.friend_code,
-            #             "following": list(one_user.following),
-            #             "followers": list(one_user.followers),
-            #         }
-
-            #         for one_user in users
-            #     ]
-
-            #     return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
