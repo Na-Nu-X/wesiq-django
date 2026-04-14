@@ -435,16 +435,6 @@ class uploadPostForm(forms.ModelForm):
         },
     )
 
-    tagged_people = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": _("Označiť ľudí"), "autocomplete": "off"}),
-        label=False,
-        max_length=60, # Maximum Length of 3 Tagged Usernames
-        required=False,
-        error_messages={
-            "max_length": _("Označil si priveľa ľudí"),
-        },
-    )
-
     hashtags = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": _("Hashtagy"), "autocomplete": "off"}),
         label=False,
@@ -482,11 +472,6 @@ class uploadPostForm(forms.ModelForm):
         required=False,
     )
 
-    def clean_tagged_people(self):
-        data = self.cleaned_data.get("tagged_people")
-        if not data: return []
-        return [one_person.strip() for one_person in str(data).split(",") if one_person.strip()]
-
     def clean_hashtags(self):
         data = self.cleaned_data.get("hashtags")
         if not data: return []
@@ -494,4 +479,4 @@ class uploadPostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ["description", "tagged_people", "hashtags", "location", "public_visibility", "allow_comments", "hide_likes"]
+        fields = ["description", "hashtags", "location", "public_visibility", "allow_comments", "hide_likes"]

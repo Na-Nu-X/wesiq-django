@@ -99,6 +99,10 @@ function storeTaggedUser(container:HTMLDivElement, tagged_person:string, input:H
 
                 const tagged_people:HTMLInputElement = (input.parentElement as HTMLDivElement).querySelector(".tagged_people") as HTMLInputElement // Gets The Tagged People Hidden Input
                 tagged_people.value = JSON.stringify(tag_user_state.tagged_people) // Stores Tagged People Into The Hidden Input
+
+                const tagged_people_container:HTMLDivElement = ((tagged_people.parentElement as HTMLDivElement).parentElement as HTMLFormElement).querySelector(".tagged_people_container") as HTMLDivElement // Gets The Tagged People Container
+
+                renderTag(tagged_people_container) // Renders Tagged User On The Page
             }
 
             else {
@@ -206,4 +210,23 @@ function renderUsersForTag(data:taggedUser, container:HTMLDivElement) {
 // Function For Tag The User
 export function tagUser(username:string, container:HTMLDivElement, input:HTMLTextAreaElement):void {
     storeTaggedUser(container, username, input)
+}
+
+// Function For Render Tagged User On The Page
+function renderTag(container:HTMLDivElement):void {
+    const latest_tag:string|null = tag_user_state.tagged_people[tag_user_state.tagged_people.length - 1] || null // Gets The Latest Tag
+
+    if(latest_tag) {
+        const tag:HTMLDivElement = document.createElement("div") // Creates The Tag
+        const paragraph:HTMLParagraphElement = document.createElement("p") // Creates The Paragraph
+        
+        tag.classList.add("tag") // Adds The Tag Class
+
+        paragraph.textContent = latest_tag // Sets The Text In The Paragraph
+        tag.appendChild(paragraph) // Appends The Paragrapg To The Tag
+
+        tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>` // https://fontawesome.com/icons/xmark
+
+        container.appendChild(tag) // Appends The Tag To The Container
+    }
 }

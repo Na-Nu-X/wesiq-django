@@ -331,24 +331,22 @@ header {
                 }
             }
 
-            .tags {
+            .tagged_people_container {
                 display: flex;
                 gap: 10px;
-                margin-top: 5px;
-                // padding: 0px 10px + 1px;
-                // color: $secondary-color;
                 
                 .tag {
                     display: flex;
                     align-items: center;
                     gap: 10px;
                     height: 25px;
+                    margin-top: 5px;
                     padding: 0px 5px;
                     background-color: transparentize($main-color, 0.5);
                     border: 1px solid transparentize($blue-color, 0.5);
                     border-radius: $big-border-radius;
-                    // background-color: red;
                     transition: border-color 0.3s ease;
+                    animation: fadeInScale 0.3s ease-in forwards;
 
                     &:hover {
                         border-color: $blue-color;
