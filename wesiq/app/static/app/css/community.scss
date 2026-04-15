@@ -351,6 +351,10 @@ header {
                     &:hover {
                         border-color: $blue-color;
                     }
+
+                    &.hidden {
+                        display: none;
+                    }
                     
                     p {
                         font-size: 0.8em;
