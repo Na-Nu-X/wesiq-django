@@ -75,7 +75,7 @@ class contactForm(forms.Form):
     )
 
     select_attachment = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"id": "select_attachment", "accept": "image/*, video/*"}),
+        widget=forms.ClearableFileInput(attrs={"id": "select_attachment", "accept": "image/*, video/*, .pdf, .doc, .docx, .xls, .xlsx, .txt"}),
         label=False,
         required=False,
     )
