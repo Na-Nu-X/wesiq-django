@@ -276,10 +276,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
-        const previous_last_character:string = this.value[this.value.length - 1 - 1] as string // Gets The Previous Last Entered Character
+        const cursor_position:number = this.selectionStart ?? this.value.length
+        const nearest_at_before_cursor:number = this.value.lastIndexOf("@", Math.max(cursor_position - 1, 0))
+        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.value.slice(nearest_at_before_cursor + 1, cursor_position) : ""
+        const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ")
         
-        // Starts Getting Users For Tag Only If The Previous Last Entered Character Is The At Sign Or The User Already Starts Tagging
-        if(previous_last_character === "@" || tag_user_state.tagged_person) {
+        // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
+        if(is_typing_tag_at_cursor || tag_user_state.tagged_person) {
             getUsersForTag(this, users_for_tag_container) // Initializes Tag User Function
         }
         
@@ -307,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     tagged_people_container.addEventListener("click", function(event:PointerEvent):void {
         if((event.target as HTMLElement).classList.contains("fa-xmark")) {
             const tag:HTMLDivElement = (event.target as HTMLElement).parentElement as HTMLDivElement // Gets The Tag
-            removeTag(tag, description) // Removes Tag
+            removeTag(tag, description, tagged_people) // Removes Tag
         }
     })
 

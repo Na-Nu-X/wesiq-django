@@ -25,21 +25,9 @@ export function storeAtSignPosition(data:tag):void {
 }
 
 // Function For Get The Start Index Of The Last Tag
-function getTagStartIndex(text:string):number {
-    let tag_start_index:number = 0
-
-    if(tag_user_state.tags.length > 0) {
-        tag_start_index = text.indexOf("@", (tag_user_state.tags[tag_user_state.tags.length - 1]!.tag_start_index) + 1)
-
-        if(tag_user_state.tags[tag_user_state.tags.length - 1]?.tagged_person === undefined) {
-            tag_start_index = text.indexOf("@", (tag_user_state.tags[tag_user_state.tags.length - 1]!.tag_start_index))
-        }
-    }
-
-    else {
-        tag_start_index = text.indexOf("@", 0) // Gets The Index Of The Last At Sign
-    }
-
+function getTagStartIndex(text:string, cursor_position:number):number {
+    const search_position:number = Math.max(cursor_position - 1, 0)
+    const tag_start_index:number = text.lastIndexOf("@", search_position) // Gets The Latest At Sign Before Cursor
     return tag_start_index
 }
 
@@ -48,8 +36,10 @@ function placeTag(input:HTMLTextAreaElement, tagged_person:string, container:HTM
     if(!tagged_person.includes("@")) tagged_person = `@${tagged_person.trim()}`
 
     const text:string = input.value // Gets The Full Text
-    const tag_start_index:number = getTagStartIndex(text) // Gets The Tag Start Index
-    const entered_tag_end_index:number = text.length - 1 // Gets The End Index Of The Entered Tag (Could Be Unfinished)
+    const cursor_position:number = input.selectionStart
+    const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
+    if(tag_start_index === -1) return
+    const entered_tag_end_index:number = Math.max(cursor_position - 1, tag_start_index) // Gets The End Index Of The Entered Tag Until Cursor Position
     const tagged_person_length:number = tagged_person.length // Gets The Length Of The Tagged User
 
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
@@ -107,28 +97,27 @@ function storeTaggedUser(container:HTMLDivElement, tagged_person:string, input:H
             }
 
             else {
-                console.log(`@${tagged_person.trim()} už je označený`)
+                // console.log(`@${tagged_person.trim()} už je označený`)
             }
         }
 
         else {
-            console.log("VIAC SA NEDA OZNACIT")
+            // console.log("VIAC SA NEDA OZNACIT")
         }
     }
 }
 
 // Function For Get Users For Tag
 export async function getUsersForTag(input:HTMLTextAreaElement, container:HTMLDivElement) {
-    // console.log(tag_user_state.tags)
-    // console.log(tag_user_state.tagged_people)
-
     const text:string = input.value // Gets The Full Text
-    const tag_start_index:number = getTagStartIndex(text) // Gets The Tag Start Index
+    const cursor_position:number = input.selectionStart
+    const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
+    if(tag_start_index === -1) return
 
     tag_user_state.tagged_person = "" // Deletes Tagged Person Value
 
     // Reads Characters After At Sign
-    for(let i:number = tag_start_index + 1; i < text.length; i++) {
+    for(let i:number = tag_start_index + 1; i < cursor_position; i++) {
         // Adds Characters To Tag Until Hitting Space
         if(!tag_user_state.tagged_person.includes(" ")) tag_user_state.tagged_person += text[i]
         else tag_user_state.tagged_person = "" // Resets Tagged Person Value
@@ -237,33 +226,53 @@ function renderTag(container:HTMLDivElement):void {
 }
 
 function updateTagsPosition(step:number, start_from:number, operation:"add"|"sub"):void {
-    // Subtracts Positions
-    if(operation === "sub") {
-        tag_user_state.tags.forEach(function(one_tag:tag, index:number) {
-            if(index > start_from) {
-                console.log("A")
+    tag_user_state.tags.forEach(function(one_tag:tag, index:number) {
+        if(index > start_from) {
+            // Adds Positions
+            if(operation === "add") {
+                one_tag.tag_start_index += step // Increases Tag Start Index
+                one_tag.tag_end_index += step // Increases Tag End Index
+            }
+
+            // Subtracts Positions
+            else if(operation === "sub") {
                 one_tag.tag_start_index -= step // Decreases Tag Start Index
                 one_tag.tag_end_index -= step // Decreases Tag End Index
             }
-        })
-    }
+        }
+    })
+}
+
+function removeTagByTaggedPerson(tagged_person:string, container:HTMLDivElement, hidden_input:HTMLInputElement, cursor_position:number):void {
+    const tags:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".tag")
+
+    tags.forEach(function(one_tag:HTMLDivElement) {
+        const one_tagged_person:string = (one_tag.querySelector("p") as HTMLParagraphElement).textContent
+
+        if(one_tagged_person === tagged_person) one_tag.classList.add("hidden")
+    })
+
+    const tagged_person_index:number = tag_user_state.tagged_people.indexOf(tagged_person)
+    removeUserFromTaggedUsers(tagged_person_index)
+
+    const matching_tag:tag|undefined = tag_user_state.tags.find(one_tag => one_tag.tagged_person === tagged_person)
+    const tag_index:number|undefined = matching_tag ? tag_user_state.tags.indexOf(matching_tag) : undefined
+    removeTagFromTags(tag_index)
+
+    hidden_input.value = JSON.stringify(tag_user_state.tagged_people)
 }
 
 // Function For Remove Tag
-export function removeTag(tag:HTMLDivElement, input:HTMLTextAreaElement):void {
+export function removeTag(tag:HTMLDivElement, input:HTMLTextAreaElement, hidden_input:HTMLInputElement):void {
     const tagged_person:string = (tag.querySelector("p") as HTMLParagraphElement).textContent // Gets The Tagged Person
     const tagged_person_index:number = tag_user_state.tagged_people.indexOf(tagged_person) // Gets The Position Of Tagged Person
     const text:string = input.value // Gets The Full Text
 
-    // console.log(tag)
-
     tag.classList.add("hidden") // Hides The Tag
 
-    tag_user_state.tagged_people.splice(tagged_person_index) // Removes The Username From The Tagged People Array
+    removeUserFromTaggedUsers(tagged_person_index)
 
-    const matching_tag:tag|undefined = tag_user_state.tags.find(function(one_tag:tag) {
-        return one_tag.tagged_person === tagged_person
-    })
+    const matching_tag:tag|undefined = tag_user_state.tags.find(one_tag => one_tag.tagged_person === tagged_person) // Gets The Matching Tag From Tags
 
     if(matching_tag) {
         const text_with_deleted_tag:string = text.slice(0, matching_tag.tag_start_index) + text.slice(matching_tag.tag_end_index + 2) // Deletes The Tag From The Text, Also Removes The Space After It
@@ -273,6 +282,10 @@ export function removeTag(tag:HTMLDivElement, input:HTMLTextAreaElement):void {
         const deleted_tag_index:number = tag_user_state.tags.indexOf(matching_tag) // Gets The Index Of The Deleted Tag In The All Tags Array
 
         if(matching_tag.tagged_person) updateTagsPosition(matching_tag.tagged_person.length + 1, deleted_tag_index, "sub") // Updates Tags Position (Subtracts The Deleted Tag Length)
+
+        removeTagFromTags(deleted_tag_index)
+
+        hidden_input.value = JSON.stringify(tag_user_state.tagged_people) // Stores Tagged People Into The Hidden Input
     }
 }
 
@@ -286,24 +299,33 @@ export function removeCollidedTags(cursor_position:number, container:HTMLDivElem
     // Checks If The User Isn't Writing At The End Of The Text
     if(cursor_position < input.value.length) {
         const current_text_length:number = input.value.length // Gets The Current Text Length
-
+        const difference:number = Math.abs(previous_text_length - current_text_length)
+        const tagged_tags:tag[] = tag_user_state.tags.filter(one_tag => !!one_tag.tagged_person)
+        const tags_after_edit_area:tag[] = tagged_tags.filter(one_tag => one_tag.tag_start_index > cursor_position) // Gets only tagged users after edit area
+        
         // Text Deletion
         if(previous_text_length > current_text_length) {
-            const difference:number = Math.abs(previous_text_length - current_text_length)
-            const tags_after_edit_area:tag[] = tag_user_state.tags.filter(one_tag => one_tag.tag_start_index > cursor_position) // Gets All Tags After Edit Area
+            const collided_tag:tag|undefined = tagged_tags.find(function(one_tag:tag):boolean {
+                return isCursorInTag(cursor_position, one_tag.tag_start_index, one_tag.tag_end_index)
+            })
 
-            if(tags_after_edit_area.length > 0 && tags_after_edit_area[0]) {
-                const first_tag_after_edit_area_index:number = tag_user_state.tags.indexOf(tags_after_edit_area[0]) // Gets Index Of The First Tag After Edit Area
-
-                updateTagsPosition(difference, first_tag_after_edit_area_index - 1, "sub") // Updates Tags Position (Subtracts The Deleted Area Length), Includes The First Affected Tag
+            if(collided_tag?.tagged_person) {
+                removeTagByTaggedPerson(collided_tag.tagged_person, container, hidden_input, cursor_position)
             }
         }
+        
+        if(tags_after_edit_area.length > 0 && tags_after_edit_area[0]) {
+            const first_tag_after_edit_area_index:number = tag_user_state.tags.indexOf(tags_after_edit_area[0]) // Gets Index Of The First Tag After Edit Area
+            
+            // Text Writing
+            if(previous_text_length < current_text_length) {
+                updateTagsPosition(difference, first_tag_after_edit_area_index - 1, "add") // Updates Tags Position (Adds The Deleted Area Length), Includes The First Affected Tag
+            }
 
-        // Text Writing
-        else if(previous_text_length < current_text_length) {
-            const difference:number = Math.abs(current_text_length - previous_text_length)
-
-            // updateTagsPosition(step:number, start_from:number, "add")
+            // Text Deletion
+            else if(previous_text_length > current_text_length) {
+                updateTagsPosition(difference, first_tag_after_edit_area_index - 1, "sub") // Updates Tags Position (Subtracts The Deleted Area Length), Includes The First Affected Tag
+            }
         }
     }
 
@@ -311,32 +333,23 @@ export function removeCollidedTags(cursor_position:number, container:HTMLDivElem
     else {
         // If There Are Any Tags Written
         if(tag_user_state.tags.length > 0) {
-            const tags:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".tag") // Gets All Tags From The Container
-
             // Gets The Collided Tag If There Is Any
             const collided_tag:tag|undefined = tag_user_state.tags.find(function(one_tag:tag):boolean {
-                return isCursorInTag(cursor_position, one_tag.tag_start_index, one_tag.tag_end_index)
+                return !!one_tag.tagged_person && isCursorInTag(cursor_position, one_tag.tag_start_index, one_tag.tag_end_index)
             })
 
             // If There Is Any Collision
-            if(collided_tag) {
-                // Hides Element
-                tags.forEach(function(one_tag:HTMLDivElement) {
-                    const tagged_person:string = (one_tag.querySelector("p") as HTMLParagraphElement).textContent // Gets The Tagged Person
-
-                    if(tagged_person === collided_tag.tagged_person) {
-                        one_tag.classList.add("hidden") // Hides The Tag
-
-                        // Removes Tag From An Array
-                        const tagged_person_index:number = tag_user_state.tagged_people.indexOf(collided_tag.tagged_person) // Gets The Position Of Tagged Person
-
-                        if(tagged_person_index !== -1) tag_user_state.tagged_people.splice(tagged_person_index) // Removes The Username From The Tagged People Array
-
-                        // Removes Tag From The Hidden Input Value
-                        hidden_input.value = JSON.stringify(tag_user_state.tagged_people) // Stores Tagged People Into The Hidden Input
-                    }
-                })
-            }
+            if(collided_tag?.tagged_person) removeTagByTaggedPerson(collided_tag.tagged_person, container, hidden_input, cursor_position)
         }
     }
+}
+
+// Function For Remove The User From Tagged Users
+function removeUserFromTaggedUsers(index:number|undefined):void {
+    if(index !== undefined && index !== -1) tag_user_state.tagged_people.splice(index, 1) // Removes only one username from tagged people array
+}
+
+// Function For Remove The Tag From Tags
+function removeTagFromTags(index:number|undefined):void {
+    if(index !== undefined && index !== -1) tag_user_state.tags.splice(index, 1) // Removes only one tag from tags array
 }
