@@ -10,7 +10,9 @@ import {
 import { 
     storeAtSignPosition,
     getUsersForTag,
-    tagUser
+    tagUser,
+    removeTag,
+    removeCollidedTags
 } from "./functions/tagUser.js"
 
 import { 
@@ -247,6 +249,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
     const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
     const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
+    const tagged_people_container:HTMLDivElement = upload_post_form.querySelector(".tagged_people_container") as HTMLDivElement // Gets The Tagged People Container
+    const tagged_people:HTMLInputElement = upload_post_form.querySelector(".tagged_people") as HTMLInputElement // Gets The Tagged People Hidden Input
+
+    let previous_description_length:number = description.value.length // Stores The Previous Written Text Length
 
     // Events
 
@@ -271,18 +277,22 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
         const previous_last_character:string = this.value[this.value.length - 1 - 1] as string // Gets The Previous Last Entered Character
-
+        
         // Starts Getting Users For Tag Only If The Previous Last Entered Character Is The At Sign Or The User Already Starts Tagging
         if(previous_last_character === "@" || tag_user_state.tagged_person) {
             getUsersForTag(this, users_for_tag_container) // Initializes Tag User Function
         }
-
+        
         else {
             users_for_tag_container.classList.remove("active"); // Hides The Container
             (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
         }
+
+        removeCollidedTags(this.selectionStart, tagged_people_container, tagged_people, this, previous_description_length) // Updates The Position Of Tags
+        previous_description_length = this.value.length // Updates The Previous Description Length
     })
 
+    // Tags User
     users_for_tag_container.addEventListener("click", function(event:PointerEvent):void {
         if((event.target as HTMLDivElement).classList.contains("one_user")) {
             const clicked_username:string|null = (event.target as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID
@@ -290,6 +300,14 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(clicked_username) {
                 tagUser(clicked_username, users_for_tag_container, description) // Tags The User
             }
+        }
+    })
+
+    // Removes Tag
+    tagged_people_container.addEventListener("click", function(event:PointerEvent):void {
+        if((event.target as HTMLElement).classList.contains("fa-xmark")) {
+            const tag:HTMLDivElement = (event.target as HTMLElement).parentElement as HTMLDivElement // Gets The Tag
+            removeTag(tag, description) // Removes Tag
         }
     })
 

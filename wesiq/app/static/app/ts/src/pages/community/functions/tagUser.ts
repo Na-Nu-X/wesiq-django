@@ -137,7 +137,7 @@ export async function getUsersForTag(input:HTMLTextAreaElement, container:HTMLDi
     // Sends The POST Only If The User Is Currently Tagging Someone
     if(tag_user_state.tagged_person) {
         try {
-            const tag_response:taggedUsersResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_person, "tag-user") // Sends The Data With POST
+            const tag_response:taggedUsersResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_person.toLowerCase(), "tag-user") // Sends The Data With POST
 
             if(tag_response.success) {
                 storeTaggedUser(container, tag_user_state.tagged_person, input) // Stores Tagged User
@@ -233,5 +233,110 @@ function renderTag(container:HTMLDivElement):void {
         tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>` // https://fontawesome.com/icons/xmark
 
         container.appendChild(tag) // Appends The Tag To The Container
+    }
+}
+
+function updateTagsPosition(step:number, start_from:number, operation:"add"|"sub"):void {
+    // Subtracts Positions
+    if(operation === "sub") {
+        tag_user_state.tags.forEach(function(one_tag:tag, index:number) {
+            if(index > start_from) {
+                console.log("A")
+                one_tag.tag_start_index -= step // Decreases Tag Start Index
+                one_tag.tag_end_index -= step // Decreases Tag End Index
+            }
+        })
+    }
+}
+
+// Function For Remove Tag
+export function removeTag(tag:HTMLDivElement, input:HTMLTextAreaElement):void {
+    const tagged_person:string = (tag.querySelector("p") as HTMLParagraphElement).textContent // Gets The Tagged Person
+    const tagged_person_index:number = tag_user_state.tagged_people.indexOf(tagged_person) // Gets The Position Of Tagged Person
+    const text:string = input.value // Gets The Full Text
+
+    // console.log(tag)
+
+    tag.classList.add("hidden") // Hides The Tag
+
+    tag_user_state.tagged_people.splice(tagged_person_index) // Removes The Username From The Tagged People Array
+
+    const matching_tag:tag|undefined = tag_user_state.tags.find(function(one_tag:tag) {
+        return one_tag.tagged_person === tagged_person
+    })
+
+    if(matching_tag) {
+        const text_with_deleted_tag:string = text.slice(0, matching_tag.tag_start_index) + text.slice(matching_tag.tag_end_index + 2) // Deletes The Tag From The Text, Also Removes The Space After It
+
+        input.value = text_with_deleted_tag // Sets The New Value
+
+        const deleted_tag_index:number = tag_user_state.tags.indexOf(matching_tag) // Gets The Index Of The Deleted Tag In The All Tags Array
+
+        if(matching_tag.tagged_person) updateTagsPosition(matching_tag.tagged_person.length + 1, deleted_tag_index, "sub") // Updates Tags Position (Subtracts The Deleted Tag Length)
+    }
+}
+
+// Function To Check If The Cursor In Input Is In Tag
+function isCursorInTag(number:number, min:number, max:number):boolean {
+    return number >= min && number <= max
+}
+
+// Function For Update Tags Position Or Delete When Some Character Was Deleted
+export function removeCollidedTags(cursor_position:number, container:HTMLDivElement, hidden_input:HTMLInputElement, input:HTMLTextAreaElement, previous_text_length:number):void {
+    // Checks If The User Isn't Writing At The End Of The Text
+    if(cursor_position < input.value.length) {
+        const current_text_length:number = input.value.length // Gets The Current Text Length
+
+        // Text Deletion
+        if(previous_text_length > current_text_length) {
+            const difference:number = Math.abs(previous_text_length - current_text_length)
+            const tags_after_edit_area:tag[] = tag_user_state.tags.filter(one_tag => one_tag.tag_start_index > cursor_position) // Gets All Tags After Edit Area
+
+            if(tags_after_edit_area.length > 0 && tags_after_edit_area[0]) {
+                const first_tag_after_edit_area_index:number = tag_user_state.tags.indexOf(tags_after_edit_area[0]) // Gets Index Of The First Tag After Edit Area
+
+                updateTagsPosition(difference, first_tag_after_edit_area_index - 1, "sub") // Updates Tags Position (Subtracts The Deleted Area Length), Includes The First Affected Tag
+            }
+        }
+
+        // Text Writing
+        else if(previous_text_length < current_text_length) {
+            const difference:number = Math.abs(current_text_length - previous_text_length)
+
+            // updateTagsPosition(step:number, start_from:number, "add")
+        }
+    }
+
+    // If The User Is Deleting The Text From The End
+    else {
+        // If There Are Any Tags Written
+        if(tag_user_state.tags.length > 0) {
+            const tags:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".tag") // Gets All Tags From The Container
+
+            // Gets The Collided Tag If There Is Any
+            const collided_tag:tag|undefined = tag_user_state.tags.find(function(one_tag:tag):boolean {
+                return isCursorInTag(cursor_position, one_tag.tag_start_index, one_tag.tag_end_index)
+            })
+
+            // If There Is Any Collision
+            if(collided_tag) {
+                // Hides Element
+                tags.forEach(function(one_tag:HTMLDivElement) {
+                    const tagged_person:string = (one_tag.querySelector("p") as HTMLParagraphElement).textContent // Gets The Tagged Person
+
+                    if(tagged_person === collided_tag.tagged_person) {
+                        one_tag.classList.add("hidden") // Hides The Tag
+
+                        // Removes Tag From An Array
+                        const tagged_person_index:number = tag_user_state.tagged_people.indexOf(collided_tag.tagged_person) // Gets The Position Of Tagged Person
+
+                        if(tagged_person_index !== -1) tag_user_state.tagged_people.splice(tagged_person_index) // Removes The Username From The Tagged People Array
+
+                        // Removes Tag From The Hidden Input Value
+                        hidden_input.value = JSON.stringify(tag_user_state.tagged_people) // Stores Tagged People Into The Hidden Input
+                    }
+                })
+            }
+        }
     }
 }
