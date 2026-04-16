@@ -8,12 +8,13 @@ import {
 } from "./state.js"
 
 import { 
-    storeAtSignPosition,
     getUsersForTag,
+    checkTagsPositions,
     tagUser,
+    storeAtSignPosition,
     removeTag,
-    removeCollidedTags
-} from "./functions/tagUser.js"
+    hideUsersForTag
+} from "./functions/tagUsers.js"
 
 import { 
     follow,
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 }
 
                 catch(error) {
-                    console.error(gettext("An Error Occurred While Searching for Users."), error)
+                    console.error(gettext("Pri hľadaní užívateľov došlo k chybe."), error)
                 }
                 
                 finally {
@@ -249,49 +250,47 @@ document.addEventListener("DOMContentLoaded", function():void {
     const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
     const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
     const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
-    const tagged_people_container:HTMLDivElement = upload_post_form.querySelector(".tagged_people_container") as HTMLDivElement // Gets The Tagged People Container
-    const tagged_people:HTMLInputElement = upload_post_form.querySelector(".tagged_people") as HTMLInputElement // Gets The Tagged People Hidden Input
+    const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
+    const tagged_users:HTMLInputElement = upload_post_form.querySelector(".tagged_users") as HTMLInputElement // Gets The Hidden Input Of Tagged Users
 
-    let previous_description_length:number = description.value.length // Stores The Previous Written Text Length
+    let previous_description_length:number = description.value.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
 
     // Events
 
     // Adds At Sign To The Description After Clicking On The Tag User Icon
     tag_user.addEventListener("click", function():void {
+        // Checks For The Maximum Input Length
         if(description.value.length < description.maxLength - 1) {
-            const previous_last_character:string|null = description.value[description.value.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+            const previous_character:string|null = description.value[description.value.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
 
-            previous_last_character === " " || previous_last_character === null ? description.value += "@" : description.value += " @" // Adds The At Sign With Spacing If There Isn't Any
+            previous_character === " " || previous_character === null ? description.value += "@" : description.value += " @" // Adds At Sign At The End With Additional Spacing
 
             const at:tag = {
-                tag_start_index: description.value.length - 1,
-                tag_end_index: description.value.length - 1
+                position: {
+                    tag_start_index: description.value.length - 1,
+                    tag_end_index: description.value.length - 1
+                }
             }
 
             storeAtSignPosition(at) // Stores The At Sign Position
 
-            description.focus() // Adds Focus Into The Description
+            description.focus() // Adds Focus To The Description
         }
     })
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
-        const cursor_position:number = this.selectionStart ?? this.value.length
-        const nearest_at_before_cursor:number = this.value.lastIndexOf("@", Math.max(cursor_position - 1, 0))
-        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.value.slice(nearest_at_before_cursor + 1, cursor_position) : ""
-        const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ")
+        const cursor_position:number = this.selectionStart ?? this.value.length // Gets The Cursor Position
+        const nearest_at_before_cursor:number = this.value.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
+        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.value.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
+        const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
         
         // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
-        if(is_typing_tag_at_cursor || tag_user_state.tagged_person) {
-            getUsersForTag(this, users_for_tag_container) // Initializes Tag User Function
-        }
-        
-        else {
-            users_for_tag_container.classList.remove("active"); // Hides The Container
-            (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
-        }
+        if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
+        else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
 
-        removeCollidedTags(this.selectionStart, tagged_people_container, tagged_people, this, previous_description_length) // Updates The Position Of Tags
+        checkTagsPositions(this, this.selectionStart, previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
+
         previous_description_length = this.value.length // Updates The Previous Description Length
     })
 
@@ -301,16 +300,18 @@ document.addEventListener("DOMContentLoaded", function():void {
             const clicked_username:string|null = (event.target as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID
 
             if(clicked_username) {
-                tagUser(clicked_username, users_for_tag_container, description) // Tags The User
+                tagUser(users_for_tag_container, clicked_username, description) // Tags The User
+
+                previous_description_length = description.value.length // Updates The Previous Description Length
             }
         }
     })
 
     // Removes Tag
-    tagged_people_container.addEventListener("click", function(event:PointerEvent):void {
+    tagged_users_container.addEventListener("click", function(event:PointerEvent):void {
         if((event.target as HTMLElement).classList.contains("fa-xmark")) {
             const tag:HTMLDivElement = (event.target as HTMLElement).parentElement as HTMLDivElement // Gets The Tag
-            removeTag(tag, description, tagged_people) // Removes Tag
+            removeTag(tag, description, tagged_users) // Removes Tag
         }
     })
 

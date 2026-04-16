@@ -1,7 +1,10 @@
 export interface tag {
-    tagged_person?:string, // Stores The Tagged Person Only If The At Sign Is For The Tag And Not For Ordinary Symbol
-    tag_start_index:number,
-    tag_end_index:number
+    tagged_user?:string, // Stores The Tagged User Only If The At Sign Represents The Tag And Isn't Just An Ordinary Symbol
+
+    position: {
+        tag_start_index:number, // Stores The Starting Position
+        tag_end_index:number // Stores The Ending Position
+    }
 }
 
 export const posts_preview_state:{
@@ -15,15 +18,15 @@ export const posts_preview_state:{
 }
 
 export const tag_user_state:{
-    MAX_TAGGED_PEOPLE:number,
-    tagged_people:string[],
-    tagged_person:string,
+    MAX_TAGGED_USERS:number,
+    tagged_users:string[],
+    tagged_user:string,
 
     tags:tag[]
 } = {
-    MAX_TAGGED_PEOPLE: 10, // Sets Maximum Amount Of Tagged People (10 By Default)
-    tagged_people: [], // Stores All Tagged People
-    tagged_person: "", // Stores The Tagged Person
+    MAX_TAGGED_USERS: 10, // Sets Maximum Amount Of Tagged Users (10 By Default)
+    tagged_users: [], // Stores All Tagged People
+    tagged_user: "", // Stores The Tagged Person
 
     tags: [] // Stores All Tags And Their Position Or Only The Position Of An Ordinary At Sign
 }
