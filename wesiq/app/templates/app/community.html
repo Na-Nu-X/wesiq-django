@@ -31,8 +31,11 @@
             </div>
             
             <div class="post_info_container">
-                {{ upload_post_form.description }}
+                {% comment %} {{ upload_post_form.description }} {% endcomment %}
 
+                <div class="description" name="description" contenteditable="true"></div>
+                <input type="hidden" class="description_input" name="description" value="">
+                
                 <input type="hidden" class="tagged_users" name="tagged_users" value="[]">
 
                 <div class="icons">
