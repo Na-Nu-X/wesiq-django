@@ -1685,6 +1685,14 @@ def communityView(request):
 
                 # Saves Only if The Form is Valid And Includes at Least One File
                 if upload_post_form.is_valid() and files:
+                    tagged_users = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
+
+                    # Gets List Of IDs Of Tagged Users
+                    tagged_users_ids = list(
+                        Users.objects.filter(username__in=tagged_users)
+                        .values_list("id", flat=True)
+                    )
+
                     # Gets The Coordinates Data
                     coordinates_data = {
                         "latitude": request.POST.get("latitude") or None,
@@ -1700,6 +1708,7 @@ def communityView(request):
 
                     new_post = upload_post_form.save(commit=False)
                     new_post.user_id = logged_in_user_id
+                    new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
 
                     if coordinates:
                         new_post.coordinates = coordinates
