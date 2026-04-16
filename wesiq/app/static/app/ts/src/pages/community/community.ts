@@ -7,7 +7,9 @@ import {
     tag_user_state
 } from "./state.js"
 
-import { 
+import {
+    getCursorPosition,
+    focusAtEnd,
     getUsersForTag,
     checkTagsPositions,
     tagUser,
@@ -126,8 +128,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     const allow_comments:HTMLElement = post_info_container.querySelector(".icons .settings .allow_comments") as HTMLElement // Gets The Allow Comments Icon
     const hide_likes:HTMLElement = post_info_container.querySelector(".icons .settings .hide_likes") as HTMLElement // Gets The Hide Likes Icon
 
-    const add_hashtag:HTMLElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLElement // Gets The Add Hashtag Icon
-
     // Events
 
     upload_post_icon.addEventListener("click", function():void {
@@ -194,13 +194,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Add Hashtag Functionality
-    add_hashtag.addEventListener("click", function():void {
-        if(description.value.length < description.maxLength - 1) {
-            description.value += " #"
-        }
-    })
-
     // Select Posts Change Functionalities
     select_posts.addEventListener("change", function():void {
         if(!this.files) return
@@ -248,50 +241,55 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Variables
 
     const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
-    const description:HTMLTextAreaElement = upload_post_form.querySelector("textarea") as HTMLTextAreaElement // Gets The Description Textarea
+    const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
     const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
     const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
     const tagged_users:HTMLInputElement = upload_post_form.querySelector(".tagged_users") as HTMLInputElement // Gets The Hidden Input Of Tagged Users
 
-    let previous_description_length:number = description.value.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
+    const MAX_DESCRIPTION_LENGTH:number = 500 // Sets The Max Description Length
+
+    let previous_description_length:number = description.innerText.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
 
     // Events
 
     // Adds At Sign To The Description After Clicking On The Tag User Icon
     tag_user.addEventListener("click", function():void {
         // Checks For The Maximum Input Length
-        if(description.value.length < description.maxLength - 1) {
-            const previous_character:string|null = description.value[description.value.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+        // if(description.innerText.length < description.maxLength - 1) {
+        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
 
-            previous_character === " " || previous_character === null ? description.value += "@" : description.value += " @" // Adds At Sign At The End With Additional Spacing
+            console.log(previous_character)
+
+            previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing
 
             const at:tag = {
                 position: {
-                    tag_start_index: description.value.length - 1,
-                    tag_end_index: description.value.length - 1
+                    tag_start_index: description.innerText.length - 1,
+                    tag_end_index: description.innerText.length - 1
                 }
             }
 
             storeAtSignPosition(at) // Stores The At Sign Position
-
-            description.focus() // Adds Focus To The Description
+            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+            focusAtEnd(description) // Adds Focus To The Description
         }
     })
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
-        const cursor_position:number = this.selectionStart ?? this.value.length // Gets The Cursor Position
-        const nearest_at_before_cursor:number = this.value.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
-        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.value.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
+        const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
+        const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
+        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
         const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
         
         // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
         if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
         else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
 
-        checkTagsPositions(this, this.selectionStart, previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
+        checkTagsPositions(this, getCursorPosition(this), previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
 
-        previous_description_length = this.value.length // Updates The Previous Description Length
+        previous_description_length = this.innerText.length // Updates The Previous Description Length
     })
 
     // Tags User
@@ -302,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(clicked_username) {
                 tagUser(users_for_tag_container, clicked_username, description) // Tags The User
 
-                previous_description_length = description.value.length // Updates The Previous Description Length
+                previous_description_length = description.innerText.length // Updates The Previous Description Length
             }
         }
     })
@@ -312,6 +310,24 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLElement).classList.contains("fa-xmark")) {
             const tag:HTMLDivElement = (event.target as HTMLElement).parentElement as HTMLDivElement // Gets The Tag
             removeTag(tag, description, tagged_users) // Removes Tag
+        }
+    })
+
+    // Add Hashtags
+
+    // Variables
+
+    const add_hashtag:HTMLElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLElement // Gets The Add Hashtag Icon
+
+    // Events
+
+    // Add Hashtag Functionality
+    add_hashtag.addEventListener("click", function():void {
+        // Checks For The Maximum Input Length
+        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+    
+            previous_character === " " || previous_character === null ? description.innerText += "#" : description.innerText += " #" // Adds Hashtag Sign At The End With Additional Spacing
         }
     })
 

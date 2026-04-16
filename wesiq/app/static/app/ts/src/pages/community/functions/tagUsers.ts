@@ -16,10 +16,46 @@ interface searchedTagsResponse {
     users:taggedUser[]
 }
 
+// Function For Get Cursor Position
+export function getCursorPosition(description:HTMLDivElement):number {
+    const selection:Selection|null = window.getSelection() // Gets The Selection
+
+    if(selection!.rangeCount !== 0) {
+        const range:Range = selection!.getRangeAt(0)
+        const pre_caret_range:Range = range.cloneRange()
+
+        pre_caret_range.selectNodeContents(description)
+        pre_caret_range.setEnd(range.endContainer, range.endOffset);
+
+        return pre_caret_range.toString().length
+    }
+
+    return 0
+}
+
+// Function For Add Focus At End
+export function focusAtEnd(description:HTMLDivElement):void {
+    description.focus()
+
+    if(typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
+        const range:Range = document.createRange()
+
+        range.selectNodeContents(description) // Selects All Content
+        range.collapse(false) // End Of The Content
+        
+        const selection:Selection|null = window.getSelection() || null // Gets The Selection
+
+        if(selection) {
+            selection.removeAllRanges() // Removes All Selections
+            selection.addRange(range) // Applies Selection At The End
+        }
+    }
+}
+
 // Function For Get Users For Tag
-export async function getUsersForTag(description:HTMLTextAreaElement, users_for_tag_container:HTMLDivElement) {
-    const text:string = description.value // Gets The Text
-    const cursor_position:number = description.selectionStart // Gets The Cursor Position
+export async function getUsersForTag(description:HTMLDivElement, users_for_tag_container:HTMLDivElement) {
+    const text:string = description.innerText // Gets The Text
+    const cursor_position:number = getCursorPosition(description) // Gets The Cursor Position
     const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
 
     if(tag_start_index === -1) return
@@ -77,10 +113,10 @@ export async function getUsersForTag(description:HTMLTextAreaElement, users_for_
 }
 
 // Function For Check Tags Positions
-export function checkTagsPositions(description:HTMLTextAreaElement, cursor_position:number, previous_description_length:number, tagged_users_container:HTMLDivElement, tagged_users_input:HTMLInputElement):void {
+export function checkTagsPositions(description:HTMLDivElement, cursor_position:number, previous_description_length:number, tagged_users_container:HTMLDivElement, tagged_users_input:HTMLInputElement):void {
     // Checks If The User Isn't Editing At The End Of The Text
-    if(cursor_position < description.value.length) {
-        const description_length:number = description.value.length // Gets The Description Length
+    if(cursor_position < description.innerText.length) {
+        const description_length:number = description.innerText.length // Gets The Description Length
         const difference:number = Math.abs(previous_description_length - description_length) // Gets The Total Amount Of Added Or Removed Characters
         const tagged_users:tag[] = tag_user_state.tags.filter(one_tag => one_tag.tagged_user) // Gets Every Tagged User
         const tagged_users_after_edited_area:tag[] = tagged_users.filter(one_tag => one_tag.position.tag_start_index > cursor_position) // Gets Only Tagged Users After Edited Area (Behind The Position Of A Cursor)
@@ -127,7 +163,7 @@ export function checkTagsPositions(description:HTMLTextAreaElement, cursor_posit
 }
 
 // Function For Tag The User
-export function tagUser(users_for_tag_container:HTMLDivElement, tagged_user:string, description:HTMLTextAreaElement):void {
+export function tagUser(users_for_tag_container:HTMLDivElement, tagged_user:string, description:HTMLDivElement):void {
     // Checks The Maximum Amount Of Tagged Users
     if(tag_user_state.tagged_users.length < tag_user_state.MAX_TAGGED_USERS) {
         // Prevents Tagging Multiple Times The Same User
@@ -164,10 +200,10 @@ export function storeAtSignPosition(data:tag):void {
 }
 
 // Function For Remove Tag
-export function removeTag(tag:HTMLDivElement, description:HTMLTextAreaElement, tagged_users_input:HTMLInputElement):void {
+export function removeTag(tag:HTMLDivElement, description:HTMLDivElement, tagged_users_input:HTMLInputElement):void {
     const tagged_user:string = (tag.querySelector("p") as HTMLParagraphElement).textContent // Gets The Tagged User
     const tagged_user_index:number = tag_user_state.tagged_users.indexOf(tagged_user) // Gets The Position Of Tagged User
-    const text:string = description.value // Gets The Text
+    const text:string = description.innerText // Gets The Text
 
     tag.classList.add("hidden") // Hides The Tag
 
@@ -178,7 +214,13 @@ export function removeTag(tag:HTMLDivElement, description:HTMLTextAreaElement, t
     if(matching_tag) {
         const text_with_deleted_tag:string = text.slice(0, matching_tag.position.tag_start_index) + text.slice(matching_tag.position.tag_end_index + 2) // Deletes The Tag From The Text, Also Removes The Space After It
 
-        description.value = text_with_deleted_tag // Sets The New Value
+        const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>("span")
+
+        description.innerHTML = highlightTagsInText(text_with_deleted_tag, styled_tags_in_text) // Sets The New Value
+
+        const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
+
+        description_input.value = description.innerText // Sets The Description Input Value
 
         const deleted_tag_index:number = tag_user_state.tags.indexOf(matching_tag) // Gets The Index Of The Deleted Tag In The All Tags Array
 
@@ -234,12 +276,23 @@ function isExistingTag(users_for_tag_container:HTMLDivElement, tagged_user:strin
     })
 }
 
+// Function For Highlight Tags In Text (Format Them With Styled Span Elements)
+function highlightTagsInText(text:string, styled_tags_in_text:NodeListOf<HTMLSpanElement>):string {
+    let tags_in_text:string[] = [] // Stores Tags In Text
+    let text_with_formatted_tags = text // Stores Text With Formatted Tags
+
+    styled_tags_in_text.forEach(one_span => tags_in_text.push(one_span.textContent)) // Gets Only Text From Span Elements
+    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span style="color: #4b4bfa;">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+
+    return text_with_formatted_tags // Returns Text With Formatted Tags
+}
+
 // Function For Place The Tag To The Text
-function placeTagToText(description:HTMLTextAreaElement, tagged_user:string, users_for_tag_container:HTMLDivElement):void {
+function placeTagToText(description:HTMLDivElement, tagged_user:string, users_for_tag_container:HTMLDivElement):void {
     if(!tagged_user.includes("@")) tagged_user = `@${tagged_user.trim()}`
 
-    const text:string = description.value // Gets The Text
-    const cursor_position:number = description.selectionStart // Gets The Cursor Position
+    const text:string = description.innerText // Gets The Text
+    const cursor_position:number = getCursorPosition(description) // Gets The Cursor Position
     const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
 
     if(tag_start_index === -1) return
@@ -248,12 +301,17 @@ function placeTagToText(description:HTMLTextAreaElement, tagged_user:string, use
     const tagged_user_length:number = tagged_user.length // Gets The Length Of The Tagged User
 
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
-    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + tagged_user + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
+    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `<span class="tag">${tagged_user}</span>&nbsp;` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
+    
+    const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>("span")
+    
+    description.innerHTML = highlightTagsInText(text_with_finished_tag, styled_tags_in_text) // Sets The New Value
 
-    description.value = text_with_finished_tag + " " // Sets The New Value And Adds The Space At The End
+    const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
-    description.focus() // Adds Focus Into The Input
+    description_input.value = description.innerText // Sets The Description Input Value
 
+    focusAtEnd(description) // Adds Focus Into The Input
     hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
 
     // Stores The Tag With All Information

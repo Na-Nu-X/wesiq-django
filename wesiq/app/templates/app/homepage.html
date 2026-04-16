@@ -10,7 +10,7 @@
 
 {% block recaptcha %}
     <!-- Google reCAPTCHA V3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1"></script>
 {% endblock recaptcha %}
 
 {% block navigation_bar_items %}
@@ -128,7 +128,7 @@
                 if(registration_form) {
                     registration_form.addEventListener("submit", function(event) {
                         event.preventDefault()
-                        grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "registration_form"}).then(function(token) {
+                        grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "registration_form"}).then(function(token) {
                             document.getElementById("registration_form_recaptcha").value = token
                             registration_form.submit()
                         })
@@ -548,7 +548,7 @@
                     if(write_review_form) {
                         write_review_form.addEventListener("submit", function(event) {
                             event.preventDefault()
-                            grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "write_review_form"}).then(function(token) {
+                            grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "write_review_form"}).then(function(token) {
                                 document.getElementById("write_review_form_recaptcha").value = token
                                 write_review_form.submit()
                             })
@@ -591,7 +591,7 @@
             if(contact_form) {
                 contact_form.addEventListener("submit", function(event) {
                     event.preventDefault()
-                    grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "contact_form"}).then(function(token) {
+                    grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "contact_form"}).then(function(token) {
                         document.getElementById("contact_form_recaptcha").value = token
                         contact_form.submit()
                     })

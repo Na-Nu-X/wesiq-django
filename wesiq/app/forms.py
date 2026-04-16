@@ -425,16 +425,6 @@ class writeCommentForm(forms.Form):
     )
 
 class uploadPostForm(forms.ModelForm):
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": _("Popis príspevku")}),
-        label=False,
-        max_length=500,
-        required=False,
-        error_messages={
-            "max_length": _("Popis príspevku je príliš dlhý"),
-        },
-    )
-
     hashtags = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": _("Hashtagy"), "autocomplete": "off"}),
         label=False,

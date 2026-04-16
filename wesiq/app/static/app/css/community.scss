@@ -196,19 +196,19 @@ header {
                     }
                 }
 
-                textarea {
+                .description {
                     width: 100%;
                     min-height: 100px;
                     field-sizing: content;
                     padding: 5px 10px;
+                    text-align: left;
                     background: transparent;
                     color: $secondary-color;
-                    border: none;
                     outline: none;
-                    resize: none;
-
-                    &::placeholder {
-                        color: darken($secondary-color, 40%);
+                    
+                    .tag {
+                        color: $blue-color;
+                        animation: fadeInScale 0.3s ease-in-out forwards;
                     }
                 }
 

@@ -10,7 +10,7 @@
 
 {% block recaptcha %}
     <!-- Google reCAPTCHA V3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-&badge=inline"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1&badge=inline"></script>
     
     <script>
         grecaptcha.ready(function() {
@@ -25,7 +25,7 @@
             document.querySelector(".registration_form").addEventListener("submit", function(event) {
                 event.preventDefault()
 
-                grecaptcha.execute("6LffOQcsAAAAANNOtp0-u3rj2chAKpJcfkIBZXg-", {action: "submit"}).then(function(token) {
+                grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "submit"}).then(function(token) {
                     document.querySelector("#g-recaptcha-response").value = token
                     event.target.submit()
                 })
