@@ -1,5 +1,11 @@
+import { 
+    getCursorPosition, 
+    focusAtEnd 
+} from "../community.js"
+
 import { tag_user_state } from "../state.js"
 import { sendPOST } from "../../../services/sendPOST.js"
+import { highlightHashtagsInText } from "./addHashtags.js"
 
 import type { tag } from "../state.js"
 
@@ -14,42 +20,6 @@ interface taggedUser {
 interface searchedTagsResponse {
     success:boolean,
     users:taggedUser[]
-}
-
-// Function For Get Cursor Position
-export function getCursorPosition(description:HTMLDivElement):number {
-    const selection:Selection|null = window.getSelection() // Gets The Selection
-
-    if(selection!.rangeCount !== 0) {
-        const range:Range = selection!.getRangeAt(0)
-        const pre_caret_range:Range = range.cloneRange()
-
-        pre_caret_range.selectNodeContents(description)
-        pre_caret_range.setEnd(range.endContainer, range.endOffset);
-
-        return pre_caret_range.toString().length
-    }
-
-    return 0
-}
-
-// Function For Add Focus At End
-export function focusAtEnd(description:HTMLDivElement):void {
-    description.focus()
-
-    if(typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
-        const range:Range = document.createRange()
-
-        range.selectNodeContents(description) // Selects All Content
-        range.collapse(false) // End Of The Content
-        
-        const selection:Selection|null = window.getSelection() || null // Gets The Selection
-
-        if(selection) {
-            selection.removeAllRanges() // Removes All Selections
-            selection.addRange(range) // Applies Selection At The End
-        }
-    }
 }
 
 // Function For Get Users For Tag
@@ -214,9 +184,9 @@ export function removeTag(tag:HTMLDivElement, description:HTMLDivElement, tagged
     if(matching_tag) {
         const text_with_deleted_tag:string = text.slice(0, matching_tag.position.tag_start_index) + text.slice(matching_tag.position.tag_end_index + 2) // Deletes The Tag From The Text, Also Removes The Space After It
 
-        const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>("span")
+        const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
 
-        description.innerHTML = highlightTagsInText(text_with_deleted_tag, styled_tags_in_text) // Sets The New Value
+        description.innerHTML = highlightTagsInText(highlightHashtagsInText(text_with_deleted_tag), styled_tags_in_text) // Sets The New Value
 
         const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
@@ -277,12 +247,12 @@ function isExistingTag(users_for_tag_container:HTMLDivElement, tagged_user:strin
 }
 
 // Function For Highlight Tags In Text (Format Them With Styled Span Elements)
-function highlightTagsInText(text:string, styled_tags_in_text:NodeListOf<HTMLSpanElement>):string {
+export function highlightTagsInText(text:string, styled_tags_in_text:NodeListOf<HTMLSpanElement>):string {
     let tags_in_text:string[] = [] // Stores Tags In Text
     let text_with_formatted_tags = text // Stores Text With Formatted Tags
 
     styled_tags_in_text.forEach(one_span => tags_in_text.push(one_span.textContent)) // Gets Only Text From Span Elements
-    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span style="color: #4b4bfa;">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span class="tag">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
 
     return text_with_formatted_tags // Returns Text With Formatted Tags
 }
@@ -303,9 +273,9 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
     const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `<span class="tag">${tagged_user}</span>&nbsp;` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
     
-    const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>("span")
+    const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
     
-    description.innerHTML = highlightTagsInText(text_with_finished_tag, styled_tags_in_text) // Sets The New Value
+    description.innerHTML = highlightTagsInText(highlightHashtagsInText(text_with_finished_tag), styled_tags_in_text) // Sets The New Value
 
     const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 

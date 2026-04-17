@@ -1,22 +1,7 @@
-import { sendPOST } from "../../services/sendPOST.js"
-import { syncFiles } from "./functions/postPreview.js"
-import { getLocation } from "./functions/location.js"
-
 import { 
     posts_preview_state,
     tag_user_state
 } from "./state.js"
-
-import {
-    getCursorPosition,
-    focusAtEnd,
-    getUsersForTag,
-    checkTagsPositions,
-    tagUser,
-    storeAtSignPosition,
-    removeTag,
-    hideUsersForTag
-} from "./functions/tagUsers.js"
 
 import { 
     follow,
@@ -25,8 +10,58 @@ import {
     resetSearchedUsers
 } from "./functions/searchUsers.js"
 
-import type { tag } from "./state.js"
+import {
+    getUsersForTag,
+    checkTagsPositions,
+    tagUser,
+    storeAtSignPosition,
+    removeTag,
+    hideUsersForTag
+} from "./functions/tagUsers.js"
+
+import { sendPOST } from "../../services/sendPOST.js"
+import { syncFiles } from "./functions/postPreview.js"
+import { getLocation } from "./functions/location.js"
+import { checkHashtags } from "./functions/addHashtags.js"
+
 import type { searchedUsersResponse } from "./functions/searchUsers.js"
+import type { tag } from "./state.js"
+
+// Function For Get Cursor Position Of The Description
+export function getCursorPosition(description:HTMLDivElement):number {
+    const selection:Selection|null = window.getSelection() // Gets The Selection
+
+    if(selection!.rangeCount !== 0) {
+        const range:Range = selection!.getRangeAt(0)
+        const pre_caret_range:Range = range.cloneRange()
+
+        pre_caret_range.selectNodeContents(description)
+        pre_caret_range.setEnd(range.endContainer, range.endOffset);
+
+        return pre_caret_range.toString().length
+    }
+
+    return 0
+}
+
+// Function For Add Focus At End Of The Description
+export function focusAtEnd(description:HTMLDivElement):void {
+    description.focus()
+
+    if(typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
+        const range:Range = document.createRange()
+
+        range.selectNodeContents(description) // Selects All Content
+        range.collapse(false) // End Of The Content
+        
+        const selection:Selection|null = window.getSelection() || null // Gets The Selection
+
+        if(selection) {
+            selection.removeAllRanges() // Removes All Selections
+            selection.addRange(range) // Applies Selection At The End
+        }
+    }
+}
 
 "use strict"
 
@@ -250,18 +285,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     let previous_description_length:number = description.innerText.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
 
+    const added_hashtags:HTMLInputElement = upload_post_form.querySelector(".added_hashtags") as HTMLInputElement // Gets The Hidden Input Of Added Hashtags
+
     // Events
 
     // Adds At Sign To The Description After Clicking On The Tag User Icon
     tag_user.addEventListener("click", function():void {
         // Checks For The Maximum Input Length
-        // if(description.innerText.length < description.maxLength - 1) {
         if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
             const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
 
-            console.log(previous_character)
-
-            previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing
+            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing (If There Isn't Already)
 
             const at:tag = {
                 position: {
@@ -278,6 +312,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
+        // Tag Users
+
         const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
         const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
         const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
@@ -290,6 +326,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         checkTagsPositions(this, getCursorPosition(this), previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
 
         previous_description_length = this.innerText.length // Updates The Previous Description Length
+
+        // Add Hashtags
+
+        checkHashtags(this, added_hashtags)
     })
 
     // Tags User
@@ -327,7 +367,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
             const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
     
-            previous_character === " " || previous_character === null ? description.innerText += "#" : description.innerText += " #" // Adds Hashtag Sign At The End With Additional Spacing
+            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "#" : description.innerHTML += " #" // Adds Hashtag Sign At The End With Additional Spacing (If There Isn't Already)
+
+            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+            focusAtEnd(description) // Adds Focus To The Description
         }
     })
 
