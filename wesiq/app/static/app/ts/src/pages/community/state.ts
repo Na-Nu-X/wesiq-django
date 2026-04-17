@@ -25,8 +25,18 @@ export const tag_user_state:{
     tags:tag[]
 } = {
     MAX_TAGGED_USERS: 10, // Sets Maximum Amount Of Tagged Users (10 By Default)
-    tagged_users: [], // Stores All Tagged People
-    tagged_user: "", // Stores The Tagged Person
+    tagged_users: [], // Stores All Tagged Users
+    tagged_user: "", // Stores The Tagged User
 
     tags: [] // Stores All Tags And Their Position Or Only The Position Of An Ordinary At Sign
+}
+
+export const add_hashtag_state:{
+    MAX_ADDED_HASHTAGS:number,
+    added_hashtags:string[],
+    added_hashtag:string
+} = {
+    MAX_ADDED_HASHTAGS: 10, // Sets Maximum Amount Of Added Hashtags (10 By Default)
+    added_hashtags: [], // Stores All Added Hashtags
+    added_hashtag: "" // Stores The Added Hashtag
 }

@@ -205,10 +205,21 @@ header {
                     background: transparent;
                     color: $secondary-color;
                     outline: none;
+
+                    &:empty::before {
+                        content: attr(data-placeholder);
+                        color: darken($secondary-color, 40%);
+                        cursor: text;
+                    }
                     
                     .tag {
                         color: $blue-color;
-                        animation: fadeInScale 0.3s ease-in-out forwards;
+                        // animation: fadeInScale 0.3s ease-in-out forwards;
+                    }
+
+                    .hashtag {
+                        // color: darken($secondary-color, 40%);
+                        color: yellowgreen;
                     }
                 }
 

@@ -31,12 +31,11 @@
             </div>
             
             <div class="post_info_container">
-                {% comment %} {{ upload_post_form.description }} {% endcomment %}
-
-                <div class="description" name="description" contenteditable="true"></div>
+                <div class="description" name="description" contenteditable="true" data-placeholder="{% translate 'Popis príspevku' %}"></div>
                 <input type="hidden" class="description_input" name="description" value="">
                 
                 <input type="hidden" class="tagged_users" name="tagged_users" value="[]">
+                <input type="hidden" class="added_hashtags" name="added_hashtags" value="[]">
 
                 <div class="icons">
                     <div class="settings">
