@@ -233,11 +233,11 @@ def homepageView(request):
                 
                 else: # Wrong Password
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                    captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
             
             except Users.DoesNotExist: # Wrong E-mail Address
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
         if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
@@ -697,11 +697,11 @@ def loginView(request):
             
             else: # Wrong Password
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
         
         except Users.DoesNotExist: # Wrong E-mail Address
             messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-            captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- Password: {password},\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
