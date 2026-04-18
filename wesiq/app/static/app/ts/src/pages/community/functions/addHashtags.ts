@@ -74,6 +74,10 @@ function updateCollidedHashtag(collided_hashtag:string, added_hashtags_input:HTM
                     }
                 })
 
+                const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
+
+                description_input.value = description.innerText // Sets The Description Input Value
+
                 return
             }
             
@@ -218,6 +222,10 @@ function placeHashtagToText(description:HTMLDivElement, added_hashtag:string):vo
     const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
     
     description.innerHTML = highlightTagsInText(highlightHashtagsInText(text), styled_tags_in_text) // Sets The New Value
+
+    const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
+
+    description_input.value = description.innerText // Sets The Description Input Value
 
     focusAtEnd(description) // Adds Focus Into The Input
 

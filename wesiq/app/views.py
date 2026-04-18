@@ -1707,9 +1707,10 @@ def communityView(request):
                         coordinates = None
 
                     new_post = upload_post_form.save(commit=False)
-                    new_post.description = request.POST.get("description")
                     new_post.user_id = logged_in_user_id
+                    new_post.description = request.POST.get("description")
                     new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
+                    new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
                     if coordinates:
                         new_post.coordinates = coordinates
