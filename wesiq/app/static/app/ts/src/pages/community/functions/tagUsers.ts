@@ -211,6 +211,18 @@ export function hideUsersForTag(users_for_tag_container:HTMLDivElement):void {
     }
 }
 
+// Function For Change Focused Focused User For Tag
+export function changeFocusedUserForTag(index:number, users_for_tag_container:HTMLDivElement):void {
+    const all_users_for_tag:NodeListOf<HTMLDivElement> = users_for_tag_container.querySelectorAll(".one_user") // Gets All Users For Tag
+
+    tag_user_state.focused_user_for_tag_index = index // Updates Focused User For Tag Index
+
+    if(index > all_users_for_tag.length - 1) tag_user_state.focused_user_for_tag_index = 0 // Sets Focused User For Tag Index To Minimum
+    if(index < 0) tag_user_state.focused_user_for_tag_index = all_users_for_tag.length - 1; // Sets Focused User For Tag Index To Maximum
+
+    (all_users_for_tag[tag_user_state.focused_user_for_tag_index] as HTMLDivElement).focus() // Focuses The User
+}
+
 // Function For Render Users For Tag
 function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivElement) {
     const one_user:HTMLDivElement = document.createElement("div") // Creates One User Container
@@ -220,6 +232,7 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     one_user.classList.add("one_user") // Adds One User Class
     one_user.dataset["username"] = data.username // Stores User's Username
     one_user.title = gettext("Označiť") // Adds The Title
+    one_user.tabIndex = -1 // Makes The Element Focusable
     users_for_tag_container.appendChild(one_user) // Appends One User To The All Users Container
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
