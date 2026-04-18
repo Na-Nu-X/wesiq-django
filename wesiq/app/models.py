@@ -224,7 +224,7 @@ class Post(models.Model):
 
     description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
     tagged_users = ArrayField(models.CharField(verbose_name="Tagged Users", max_length=20), default=list, null=False)
-    hashtags = ArrayField(models.CharField(verbose_name="Hashtags", max_length=30), default=list, null=False)
+    added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     location = models.CharField(verbose_name="Location", max_length=255, null=True, blank=True)
     coordinates = models.PointField(verbose_name="Coordinates", null=True, blank=True, srid=4326) # WGS84 (Standardized, Geocentric Coordinate System Used Globally For Mapping, Navigation And GPS)
     public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)

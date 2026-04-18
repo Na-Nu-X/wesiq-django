@@ -425,16 +425,6 @@ class writeCommentForm(forms.Form):
     )
 
 class uploadPostForm(forms.ModelForm):
-    hashtags = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": _("Hashtagy"), "autocomplete": "off"}),
-        label=False,
-        max_length=90, # Maximum Length of 3 Hashtags
-        required=False,
-        error_messages={
-            "max_length": _("Pridal si priveľa hashtagov"),
-        },
-    )
-
     location = forms.CharField(
         widget=forms.TextInput(attrs={"class": "location", "placeholder": _("Miesto"), "autocomplete": "off"}),
         label=False,
@@ -462,11 +452,6 @@ class uploadPostForm(forms.ModelForm):
         required=False,
     )
 
-    def clean_hashtags(self):
-        data = self.cleaned_data.get("hashtags")
-        if not data: return []
-        return [one_hashtag.strip() for one_hashtag in str(data).split(",") if one_hashtag.strip()]
-
     class Meta:
         model = Post
-        fields = ["description", "hashtags", "location", "public_visibility", "allow_comments", "hide_likes"]
+        fields = ["location", "public_visibility", "allow_comments", "hide_likes"]
