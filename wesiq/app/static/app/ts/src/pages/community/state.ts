@@ -7,6 +7,15 @@ export interface tag {
     }
 }
 
+export interface hashtag {
+    added_hashtag?:string, // Stores The Added Hashtag Only If The Hash Sign Represents The Hashtag And Isn't Just An Ordinary Symbol
+
+    position: {
+        hashtag_start_index:number, // Stores The Starting Position
+        hashtag_end_index:number // Stores The Ending Position
+    }
+}
+
 export const posts_preview_state:{
     current_files:File[]
     MAX_IMAGE_SIZE:number
@@ -34,9 +43,13 @@ export const tag_user_state:{
 export const add_hashtag_state:{
     MAX_ADDED_HASHTAGS:number,
     added_hashtags:string[],
-    added_hashtag:string
+    added_hashtag:string,
+
+    hashtags:hashtag[]
 } = {
     MAX_ADDED_HASHTAGS: 10, // Sets Maximum Amount Of Added Hashtags (10 By Default)
     added_hashtags: [], // Stores All Added Hashtags
-    added_hashtag: "" // Stores The Added Hashtag
+    added_hashtag: "", // Stores The Added Hashtag
+
+    hashtags: [] // Stores All Hashtags And Their Position Or Only The Position Of An Ordinary Hash Sign
 }

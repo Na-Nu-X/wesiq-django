@@ -19,10 +19,14 @@ import {
     hideUsersForTag
 } from "./functions/tagUsers.js"
 
+import { 
+    checkHashtags,
+    checkHashtagsPositions
+} from "./functions/addHashtags.js"
+
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 import { getLocation } from "./functions/location.js"
-import { checkHashtags } from "./functions/addHashtags.js"
 
 import type { searchedUsersResponse } from "./functions/searchUsers.js"
 import type { tag } from "./state.js"
@@ -285,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     let previous_description_length:number = description.innerText.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
 
-    const added_hashtags:HTMLInputElement = upload_post_form.querySelector(".added_hashtags") as HTMLInputElement // Gets The Hidden Input Of Added Hashtags
+    const added_hashtags_input:HTMLInputElement = upload_post_form.querySelector(".added_hashtags") as HTMLInputElement // Gets The Hidden Input Of Added Hashtags
 
     // Events
 
@@ -325,11 +329,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         checkTagsPositions(this, getCursorPosition(this), previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
 
-        previous_description_length = this.innerText.length // Updates The Previous Description Length
-
         // Add Hashtags
 
-        checkHashtags(this, added_hashtags)
+        checkHashtags(this, added_hashtags_input)
+
+        checkHashtagsPositions(this, getCursorPosition(this), previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
+
+        previous_description_length = this.innerText.length // Updates The Previous Description Length
     })
 
     // Tags User
