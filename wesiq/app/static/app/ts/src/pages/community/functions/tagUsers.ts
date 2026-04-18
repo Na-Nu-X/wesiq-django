@@ -252,7 +252,7 @@ export function highlightTagsInText(text:string, styled_tags_in_text:NodeListOf<
     let text_with_formatted_tags = text // Stores Text With Formatted Tags
 
     styled_tags_in_text.forEach(one_span => tags_in_text.push(one_span.textContent)) // Gets Only Text From Span Elements
-    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span class="tag">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span class="tag" contenteditable="false">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
 
     return text_with_formatted_tags // Returns Text With Formatted Tags
 }
@@ -271,7 +271,7 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     const tagged_user_length:number = tagged_user.length // Gets The Length Of The Tagged User
 
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
-    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `<span class="tag">${tagged_user}</span>&nbsp;` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
+    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `<span class="tag" contenteditable="false">${tagged_user}</span>&nbsp;` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
     
     const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
     
@@ -360,8 +360,8 @@ function removeCollidedTag(collided_tag:string, tagged_users_container:HTMLDivEl
         if(one_tagged_person === collided_tag) one_tag.classList.add("hidden")
     })
 
-    const tagged_person_index:number = tag_user_state.tagged_users.indexOf(collided_tag)
-    removeUserFromTaggedUsers(tagged_person_index)
+    const tagged_user_index:number = tag_user_state.tagged_users.indexOf(collided_tag)
+    removeUserFromTaggedUsers(tagged_user_index)
 
     const matching_tag:tag|undefined = tag_user_state.tags.find(one_tag => one_tag.tagged_user === collided_tag)
     const tag_index:number|undefined = matching_tag ? tag_user_state.tags.indexOf(matching_tag) : undefined

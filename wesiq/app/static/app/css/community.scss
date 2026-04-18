@@ -212,14 +212,24 @@ header {
                         cursor: text;
                     }
                     
+                    .tag,
+                    .hashtag {
+                        display: inline-block;
+                        height: 25px;
+                        line-height: 25px;
+                        padding: 0px 5px;
+                        border-radius: $small-border-radius;
+                        font-size: 0.8em;
+                    }
+
                     .tag {
+                        background-color: transparentize($blue-color, 0.8);
                         color: $blue-color;
-                        // animation: fadeInScale 0.3s ease-in-out forwards;
                     }
 
                     .hashtag {
-                        // color: darken($secondary-color, 40%);
-                        color: yellowgreen;
+                        background-color: transparentize($success-color, 0.9);
+                        color: $success-color;
                     }
                 }
 
@@ -353,15 +363,10 @@ header {
                     height: 25px;
                     margin-top: 5px;
                     padding: 0px 5px;
-                    background-color: transparentize($main-color, 0.5);
-                    border: 1px solid transparentize($blue-color, 0.5);
-                    border-radius: $big-border-radius;
+                    background-color: transparentize($blue-color, 0.8);
+                    border-radius: $small-border-radius;
                     transition: border-color 0.3s ease;
                     animation: fadeInScale 0.3s ease-in forwards;
-
-                    &:hover {
-                        border-color: $blue-color;
-                    }
 
                     &.hidden {
                         display: none;
@@ -369,7 +374,7 @@ header {
                     
                     p {
                         font-size: 0.8em;
-                        color: darken($secondary-color, 40%);
+                        color: $blue-color;
                     }
 
                     .fa-xmark {
