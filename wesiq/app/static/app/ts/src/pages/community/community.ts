@@ -1,6 +1,7 @@
 import { 
     posts_preview_state,
-    tag_user_state
+    tag_user_state,
+    location_state
 } from "./state.js"
 
 import { 
@@ -25,9 +26,13 @@ import {
     checkHashtagsPositions
 } from "./functions/addHashtags.js"
 
+import { 
+    getLocation,
+    changeFocusedPlace
+} from "./functions/location.js"
+
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
-import { getLocation } from "./functions/location.js"
 
 import type { searchedUsersResponse } from "./functions/searchUsers.js"
 import type { tag } from "./state.js"
@@ -405,11 +410,12 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const location:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .location") as HTMLInputElement // Gets The Location Input
-    const latitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .latitude") as HTMLInputElement // Gets The Latitude Hidden Input
-    const longitude:HTMLInputElement = upload_post_form.querySelector(".location_container .location_input_container .longitude") as HTMLInputElement // Gets The Longitude Hidden Input
-    const location_results:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results_container .location_results") as HTMLDivElement // Gets The Location Results
-    const location_loading:HTMLDivElement = upload_post_form.querySelector(".location_container .location_results_container .loading") as HTMLDivElement // Gets The Location Loading
+    const location_container:HTMLDivElement = upload_post_form.querySelector(".location_container") as HTMLDivElement // Gets The Location Container
+    const location:HTMLInputElement = location_container.querySelector(".location_input_container .location") as HTMLInputElement // Gets The Location Input
+    const latitude:HTMLInputElement = location_container.querySelector(".location_input_container .latitude") as HTMLInputElement // Gets The Latitude Hidden Input
+    const longitude:HTMLInputElement = location_container.querySelector(".location_input_container .longitude") as HTMLInputElement // Gets The Longitude Hidden Input
+    const location_results:HTMLDivElement = location_container.querySelector(".location_results_container .location_results") as HTMLDivElement // Gets The Location Results
+    const location_loading:HTMLDivElement = location_container.querySelector(".location_results_container .loading") as HTMLDivElement // Gets The Location Loading
 
     let debounce_timeout:number // Debounce Timeout Between API Requests
 
@@ -451,5 +457,20 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Location Blur Functionality
     location.addEventListener("blur", function(event:FocusEvent):void {
         if(!(event.relatedTarget as HTMLDivElement).classList.contains("place") && !(event.relatedTarget as HTMLDivElement).classList.contains("location_results")) location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
+    })
+
+    // Change Focused Place In The Location Results
+    location_container.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") event.preventDefault() // Prevents Default Behaviour
+
+        if(event.key === "ArrowUp") changeFocusedPlace(location_state.focused_place_index - 1, location_results) // Changes Focused Place (Shows The Previous Place)
+        else if(event.key === "ArrowDown") changeFocusedPlace(location_state.focused_place_index + 1, location_results) // Changes Focused Place (Shows The Next Place)
+
+        else if(event.key === "Enter") {
+            const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll(".place"); // Gets All Places
+
+            (all_places[location_state.focused_place_index] as HTMLDivElement).click() // Adds The Location Name To The Location Input Value After Click
+            upload_post_form_dialog.showModal() // Shows The Upload Post Form Dialog
+        }
     })
 })

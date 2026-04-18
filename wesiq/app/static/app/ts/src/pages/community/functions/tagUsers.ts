@@ -156,6 +156,7 @@ export function tagUser(users_for_tag_container:HTMLDivElement, tagged_user:stri
 
         else {
             // User Is Already Tagged
+            console.log("Tento užívateľ už je označený")
         }
     }
 }
