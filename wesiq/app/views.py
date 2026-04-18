@@ -32,6 +32,7 @@ from django.views.decorators.csrf import csrf_exempt
 import string
 from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
+import magic
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1718,13 +1719,27 @@ def communityView(request):
                     new_post.save()
 
                     for one_file in files:
-                        is_video = one_file.name.lower().endswith((".mp4", ".mov", ".avi", ".mkv")) # Checks if the File is Video
+                        try:
+                            file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
+                            one_file.seek(0)
+                            mime_type = magic.from_buffer(file_head, mime=True)
 
-                        PostMedia.objects.create(
-                            post=new_post,
-                            file=one_file,
-                            is_video=is_video
-                        )
+                            print(file_head)
+                            
+                            if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
+                                messages.add_message(request, messages.ERROR, _("Súbor %(file)s má nepodporovaný formát") % {"file": one_file.name})
+                                continue
+
+                            is_video = mime_type.startswith("video/")
+
+                            PostMedia.objects.create(
+                                post=new_post,
+                                file=one_file,
+                                is_video=is_video
+                            )
+
+                        except Exception:
+                            messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru %(file)s") % {"file": one_file.name})
 
                     return redirect("community_url")
 
