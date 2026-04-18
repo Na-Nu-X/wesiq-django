@@ -30,12 +30,14 @@ export const tag_user_state:{
     MAX_TAGGED_USERS:number,
     tagged_users:string[],
     tagged_user:string,
+    focused_user_for_tag_index:number,
 
     tags:tag[]
 } = {
     MAX_TAGGED_USERS: 10, // Sets Maximum Amount Of Tagged Users (10 By Default)
     tagged_users: [], // Stores All Tagged Users
     tagged_user: "", // Stores The Tagged User
+    focused_user_for_tag_index: 0, // Focused User For Tag Index
 
     tags: [] // Stores All Tags And Their Position Or Only The Position Of An Ordinary At Sign
 }

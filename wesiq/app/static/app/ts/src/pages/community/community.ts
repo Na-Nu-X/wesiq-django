@@ -16,7 +16,8 @@ import {
     tagUser,
     storeAtSignPosition,
     removeTag,
-    hideUsersForTag
+    hideUsersForTag,
+    changeFocusedUserForTag
 } from "./functions/tagUsers.js"
 
 import { 
@@ -345,7 +346,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if(clicked_username) {
                 tagUser(users_for_tag_container, clicked_username, description) // Tags The User
-
                 previous_description_length = description.innerText.length // Updates The Previous Description Length
             }
         }
@@ -356,6 +356,27 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLElement).classList.contains("fa-xmark")) {
             const tag:HTMLDivElement = (event.target as HTMLElement).parentElement as HTMLDivElement // Gets The Tag
             removeTag(tag, description, tagged_users) // Removes Tag
+        }
+    })
+
+    // Change Focused User For Tag In The Users For Tag Container
+    post_info_container.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") event.preventDefault() // Prevents Default Behaviour
+
+        if(event.key === "ArrowUp") changeFocusedUserForTag(tag_user_state.focused_user_for_tag_index - 1, users_for_tag_container) // Changes Focused User For Tag (Shows The Previous User For Tag)
+        else if(event.key === "ArrowDown") changeFocusedUserForTag(tag_user_state.focused_user_for_tag_index + 1, users_for_tag_container) // Changes Focused User For Tag (Shows The Next User For Tag)
+
+        else if(event.key === "Enter") {
+            const all_users_for_tag:NodeListOf<HTMLDivElement> = users_for_tag_container.querySelectorAll(".one_user") // Gets All Users For Tag
+
+            const clicked_username:string|null = (all_users_for_tag[tag_user_state.focused_user_for_tag_index] as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID
+
+            if(clicked_username) {
+                tagUser(users_for_tag_container, clicked_username, description) // Tags The User
+
+                previous_description_length = description.innerText.length // Updates The Previous Description Length
+                tag_user_state.focused_user_for_tag_index = 0 // Resets Focused User For Tag Index
+            }
         }
     })
 

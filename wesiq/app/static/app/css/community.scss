@@ -327,6 +327,7 @@ header {
                         gap: 10px;
                         padding: 5px;
                         color: $secondary-color;
+                        outline: none;
                         transition: background-color 0.3s ease, transform 0.3s ease, display 0.3s ease allow-discrete;
                         
                         &.hidden {
@@ -334,8 +335,9 @@ header {
                             display: none;
                         }
 
-                        &:hover {
-                            background-color: transparentize($blue-color, 0.9);
+                        &:hover,
+                        &:focus {
+                            background-color: transparentize($blue-color, 0.8);
                             cursor: pointer;
                         }
         
