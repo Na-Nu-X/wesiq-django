@@ -146,7 +146,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(index > all_search_results.length - 1) focused_search_result_index = 0 // Sets Focused Search Result Index To Minimum
         if(index < 0) focused_search_result_index = all_search_results.length - 1; // Sets Focused Search Result Index To Maximum
 
-        ((all_search_results[focused_search_result_index] as HTMLDivElement).querySelector("a") as HTMLAnchorElement).focus() // Focuses Search Result Link
+        const link:HTMLAnchorElement = ((all_search_results[focused_search_result_index] as HTMLDivElement).querySelector("a") as HTMLAnchorElement) // Gets The Link
+
+        link.focus() // Focuses Search Result Link
+        search_bar.blur() // Removes Focus From The Search Bar
     }
 
     // Global Event Delegations
@@ -169,6 +172,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         if(event.key === "ArrowUp") changeFocusedSearchResult(focused_search_result_index - 1) // Changes Focused Search Result (Shows The Previous Search Result)
         else if(event.key === "ArrowDown") changeFocusedSearchResult(focused_search_result_index + 1) // Changes Focused Search Result (Shows The Next Search Result)
+
+        else if(event.key === "Enter") {
+            const all_search_results:NodeListOf<HTMLDivElement> = search_result_container.querySelectorAll(".search_result") // Gets All Search Results
+            const link:HTMLAnchorElement = ((all_search_results[focused_search_result_index] as HTMLDivElement).querySelector("a") as HTMLAnchorElement) // Gets The Link
+    
+            link.click() // Visits The Link
+        }
     })
 
     // Delete Search Bar Icon Click Functionality
@@ -226,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Search Result Container Key Functionalities
     search_result_container.addEventListener("keydown", function(event:KeyboardEvent):void {
-        event.preventDefault()
+        if(event.key === "ArrowUp" || event.key === "ArrowDown") event.preventDefault()
 
         if(event.key === "ArrowUp") changeFocusedSearchResult(focused_search_result_index - 1) // Changes Focused Search Result (Shows The Previous Search Result)
         else if(event.key === "ArrowDown") changeFocusedSearchResult(focused_search_result_index + 1) // Changes Focused Search Result (Shows The Next Search Result)
