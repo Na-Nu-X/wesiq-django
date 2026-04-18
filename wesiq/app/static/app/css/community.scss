@@ -335,10 +335,13 @@ header {
                             display: none;
                         }
 
-                        &:hover,
+                        &:hover {
+                            background-color: transparentize($blue-color, 0.9);
+                            cursor: pointer
+                        }
+
                         &:focus {
                             background-color: transparentize($blue-color, 0.8);
-                            cursor: pointer;
                         }
         
                         .profile_picture {
@@ -357,6 +360,26 @@ header {
             .tagged_users_container {
                 display: flex;
                 gap: 10px;
+                overflow-x: auto;
+
+                &::-webkit-scrollbar {
+                    height: 5px;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: darken($secondary-color, 40%);
+                    border-radius: 2.5px;
+
+                    &:hover {
+                        background-color: darken($secondary-color, 20%);
+                        cursor: pointer;
+                    }
+                }
+
+                &::-webkit-scrollbar-track {
+                    background-color: lighten($main-color, 20%);
+                    border-radius: 2.5px;
+                }
                 
                 .tag {
                     display: flex;
@@ -364,6 +387,7 @@ header {
                     gap: 10px;
                     height: 25px;
                     margin-top: 5px;
+                    margin-bottom: 5px;
                     padding: 0px 5px;
                     background-color: transparentize($blue-color, 0.8);
                     border-radius: $small-border-radius;
@@ -464,11 +488,16 @@ header {
 
                         .place {
                             color: $secondary-color;
+                            outline: none;
                             transition: background-color 0.3s ease;
 
                             &:hover {
                                 background-color: transparentize($blue-color, 0.9);
                                 cursor: pointer
+                            }
+
+                            &:focus {
+                                background-color: transparentize($blue-color, 0.8);
                             }
                         }
                     }

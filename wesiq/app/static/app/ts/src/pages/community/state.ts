@@ -49,9 +49,15 @@ export const add_hashtag_state:{
 
     hashtags:hashtag[]
 } = {
-    MAX_ADDED_HASHTAGS: 10, // Sets Maximum Amount Of Added Hashtags (10 By Default)
+    MAX_ADDED_HASHTAGS: 5, // Sets Maximum Amount Of Added Hashtags (5 By Default)
     added_hashtags: [], // Stores All Added Hashtags
     added_hashtag: "", // Stores The Added Hashtag
 
     hashtags: [] // Stores All Hashtags And Their Position Or Only The Position Of An Ordinary Hash Sign
+}
+
+export const location_state:{
+    focused_place_index:number
+} = {
+    focused_place_index:0
 }

@@ -5,6 +5,8 @@ interface NominatimPlace {
     [key:string]:any
 }
 
+import { location_state } from "../state.js"
+
 // Function For Get Unique Places From Fetched Data
 function getUniquePlaces(data:NominatimPlace[]):NominatimPlace[] {
     return data.filter(function(one_place:NominatimPlace, index:number, self:NominatimPlace[]) {
@@ -102,4 +104,16 @@ function renderLocationResults(results:any[], location_results:HTMLDivElement, l
     })
 
     location_results.classList.remove("hidden") // Shows The Location Results
+}
+
+// Function For Change Focused Place
+export function changeFocusedPlace(index:number, location_results:HTMLDivElement):void {
+    const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll(".place") // Gets All Places
+
+    location_state.focused_place_index = index // Updates Focused Place Index
+
+    if(index > all_places.length - 1) location_state.focused_place_index = 0 // Sets Focused Place Index To Minimum
+    if(index < 0) location_state.focused_place_index = all_places.length - 1; // Sets Focused Place Index To Maximum
+
+    (all_places[location_state.focused_place_index] as HTMLDivElement).focus() // Focuses The Place
 }
