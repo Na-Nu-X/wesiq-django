@@ -226,6 +226,8 @@ export function changeFocusedUserForTag(index:number, users_for_tag_container:HT
 
 // Function For Render Users For Tag
 function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivElement) {
+    let tagged_users_history:string[] = JSON.parse(localStorage.getItem("tagged_users_history") || "[]") as string[] // Gets The Tagged Users History From The Local Storage
+
     const one_user:HTMLDivElement = document.createElement("div") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
     const username:HTMLParagraphElement = document.createElement("p") // Creates Username Paragraph
@@ -234,7 +236,6 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     one_user.dataset["username"] = data.username // Stores User's Username
     one_user.title = gettext("Označiť") // Adds The Title
     one_user.tabIndex = -1 // Makes The Element Focusable
-    users_for_tag_container.appendChild(one_user) // Appends One User To The All Users Container
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
     data.profile_picture_name ? profile_picture.src = `/../media/images/${data.id}/${data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture Name
@@ -243,6 +244,20 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     username.classList.add("username") // Adds Username Class
     username.textContent = data.username // Sets The Username
     one_user.appendChild(username) // Appends The Username To The One User Container
+
+    // If The User Is Already In The History
+    if(tagged_users_history.includes(data.username)) {
+        users_for_tag_container.prepend(one_user) // Prepends One User To The All Users Container
+
+        const delete_from_history:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+
+        delete_from_history.classList.add("delete_from_history", "fa-solid", "fa-clock-rotate-left") // https://fontawesome.com/icons/clock-rotate-left
+        one_user.appendChild(delete_from_history) // Appends The Delete From History Icon
+    }
+
+    else {
+        users_for_tag_container.appendChild(one_user) // Appends One User To The All Users Container
+    }
 
     if(!tag_user_state.tagged_users.includes(`@${tag_user_state.tagged_user}`)) showUsersForTag(users_for_tag_container) // Shows Users For Tag Container
 }
@@ -297,6 +312,7 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
 
     focusAtEnd(description) // Adds Focus Into The Input
     hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+    storeTaggedUserToHistory(tagged_user) // Stores The Tagged User To The History
 
     // Stores The Tag With All Information
     const tag_end_index:number = tag_start_index + tagged_user_length - 1 // Gets The Tag End Index
@@ -400,4 +416,24 @@ function showUsersForTag(container:HTMLDivElement):void {
     (container.parentElement as HTMLDivElement).style.borderBottom = "none"; // Removes The Border
     (container.parentElement as HTMLDivElement).style.borderBottomRightRadius = "0px"; // Removes The Border
     (container.parentElement as HTMLDivElement).style.borderBottomLeftRadius = "0px" // Removes The Border
+}
+
+// Function For Store The Tagged User To The History
+function storeTaggedUserToHistory(tagged_user:string):void {
+    let tagged_users_history:string[] = JSON.parse(localStorage.getItem("tagged_users_history") || "[]") as string[] // Gets The Tagged Users History From The Local Storage
+
+    if(!tagged_users_history.includes(tagged_user)) {
+        tagged_users_history.unshift(tagged_user) // Updates The Tagged Users History
+        localStorage.setItem("tagged_users_history", JSON.stringify(tagged_users_history)) // Saves Updated Tagged Users History To The Local Storage
+    }
+
+    console.log(tagged_users_history)
+}
+
+// Function For Delete The User From The History
+export function deleteUserFromHistory(user:string):void {
+    let tagged_users_history:string[] = JSON.parse(localStorage.getItem("tagged_users_history") || "[]") as string[] // Gets The Tagged Users History From The Local Storage
+
+    tagged_users_history = tagged_users_history.filter(one_item => one_item !== user) // Removes The Clicked Item From The Tagged Users History
+    localStorage.setItem("tagged_users_history", JSON.stringify(tagged_users_history)) // Saves Updated Tagged Users History To The Local Storage
 }
