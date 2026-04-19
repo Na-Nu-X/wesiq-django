@@ -225,6 +225,10 @@ header {
                     .tag {
                         background-color: transparentize($blue-color, 0.8);
                         color: $blue-color;
+
+                        &.animate {
+                            animation: alreadyTaggedWarning 0.2s linear 3;
+                        }
                     }
 
                     .hashtag {
@@ -355,9 +359,6 @@ header {
                         }
 
                         .delete_from_history {
-                            // flex-grow: 1;
-                            // text-align: right;
-
                             right: 0px;
                             width: 15px + 10px;
                             height: 100%;
@@ -369,9 +370,6 @@ header {
 
                             &.fa-xmark {
                                 font-size: 20px;
-                            }
-
-                            .fa-clock-rotate-left {
                             }
                         }
                     }
@@ -632,5 +630,19 @@ header {
                 }
             }
         }
+    }
+}
+
+/***********
+ Key Frames
+***********/
+
+@keyframes alreadyTaggedWarning {
+    0% {
+        background-color: transparentize($blue-color, 0.8);
+    }
+
+    100% {
+        background-color: transparentize($blue-color, 0.5);
     }
 }

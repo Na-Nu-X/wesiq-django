@@ -155,8 +155,16 @@ export function tagUser(users_for_tag_container:HTMLDivElement, tagged_user:stri
         }
 
         else {
-            // User Is Already Tagged
-            console.log("Tento užívateľ už je označený")
+            const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag"); // Gets All Styled Tags From Text
+
+            const tag_in_text:HTMLSpanElement|undefined = [...styled_tags_in_text].find(one_tag => one_tag.textContent === tagged_user) // Gets The Tag From Text
+
+            if(tag_in_text) {
+                // Shows Animated Tag
+                tag_in_text.classList.remove("animate")
+                void tag_in_text.offsetWidth
+                tag_in_text.classList.add("animate")
+            }
         }
     }
 }
@@ -426,8 +434,6 @@ function storeTaggedUserToHistory(tagged_user:string):void {
         tagged_users_history.unshift(tagged_user) // Updates The Tagged Users History
         localStorage.setItem("tagged_users_history", JSON.stringify(tagged_users_history)) // Saves Updated Tagged Users History To The Local Storage
     }
-
-    console.log(tagged_users_history)
 }
 
 // Function For Delete The User From The History
