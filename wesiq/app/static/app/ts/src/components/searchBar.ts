@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         { id: 7, url: gettext("/blog"), title: gettext("Blog"), keywords: [gettext("Články")], icon: "<i class='fa-solid fa-book'></i>", is_from_history: false }, // https://fontawesome.com/icons/book
         { id: 8, url: gettext("/trening"), title: gettext("Tréning"), keywords: [gettext("Aktivita"), gettext("Spustiť aktivitu")], icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
         { id: 9, url: gettext("/moje-treningove-plany"), title: gettext("Moje tréningové plány"), keywords: [gettext("Vytvoriť tréningový plán"), gettext("Upraviť tréningový plán"), gettext("Odstrániť tréningový plán")], icon: "<i class='fa-solid fa-dumbbell'></i>", is_from_history: false }, // https://fontawesome.com/icons/dumbbell
+        { id: 10, url: gettext("/komunita"), title: gettext("Komunita"), keywords: [gettext("Zdieľať príspevok"), gettext("Uverejniť príspevok"), gettext("Nájsť užívateľa")], icon: "<i class='fa-solid fa-people-roof'></i>", is_from_history: false }, // https://fontawesome.com/icons/people-roof
     ]
 
     // Functions

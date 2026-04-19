@@ -230,6 +230,8 @@ class Post(models.Model):
     public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)
     allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
     hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)
+    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class PostMedia(models.Model):

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, PostMedia
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -33,6 +33,7 @@ import string
 from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
 import magic
+from collections import defaultdict
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1678,6 +1679,14 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
+        posts = Post.objects.all() # Gets All Posts
+        post_media = PostMedia.objects.all() # Gets All Post Media
+
+        post_media_by_post = defaultdict(list)
+
+        for one_post_media in post_media:
+            post_media_by_post[one_post_media.post_id].append(one_post_media)
+
         if request.method == "POST":
             # Upload Post Form POST
             if request.POST.get("upload_post_form_submit"):
@@ -1709,7 +1718,7 @@ def communityView(request):
 
                     new_post = upload_post_form.save(commit=False)
                     new_post.user_id = logged_in_user_id
-                    new_post.description = request.POST.get("description")
+                    new_post.description = request.POST.get("description").rstrip()
                     new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
                     new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
@@ -1801,9 +1810,10 @@ def communityView(request):
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
             "profile_picture_name": logged_in_user.profile_picture_name,
-
             "users": users,
-
+            "posts": posts,
+            "post_media": post_media,
+            # "post_media_by_post": post_media_by_post,
             "upload_post_form": uploadPostForm
         })
 

@@ -130,6 +130,231 @@
             {% endfor %}
         </div>
     </div>
+    
+    <div class="feed">
+        {% for one_post in posts %}
+            <div class="post_container" data-post_id="{{ one_post.id }}">
+                <div class="media">
+                    {% for one_post_media in post_media %}
+                        {% if one_post.id == one_post_media.post.id %}
+                            <div class="one_post">
+                                {% if one_post_media.is_video == True %}
+                                    <video class="video" controls autoplay loop muted>
+                                        <source src="/../media/{{ one_post_media.file }}">
+                                        
+                                        {% blocktranslate with user=one_post_media.post.user %}
+                                            Príspevok užívateľa {{ user }}
+                                        {% endblocktranslate %}
+                                    </video>
+                            
+                                {% elif one_post_media.is_video == False %}
+                                    <img 
+                                        class="image"
+                                        src="/../media/{{ one_post_media.file }}" 
+                                        alt="
+                                            {% blocktranslate with user=one_post_media.post.user %}
+                                                Príspevok užívateľa {{ user }}
+                                            {% endblocktranslate %}
+                                        "
+                                    >
+                                
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                    <i 
+                        class="
+                            {% if request.session.logged_in_user_id|stringformat:"i" in one_post.likes_from_users %}
+                                fa-solid
+
+                            {% else %}
+                                fa-regular
+                            
+                            {% endif %}
+                            fa-heart
+                        "
+                    ></i> <!-- https://fontawesome.com/icons/heart -->
+
+                    <p class="likes_counter">{{ one_post.likes }}</p>
+                </div>
+
+                <div class="details_container">
+                    <div class="details">
+                        <p class="description">{{ one_post.description }}</p>
+                        <p class="location"><i class="fa-solid fa-location-dot"></i> {{ one_post.location }}</p> <!-- https://fontawesome.com/icons/location-dot -->
+                        <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
+                    </div>
+                </div>
+
+                {% comment %} <div class="article_forum">
+                    <form class="write_comment_form" action="/en/blog/front-lever" method="POST">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="JrtlYWG0RUXVSlrQZkHdGORaXXGGk77RnEd2Az5qPJWKz0XvEbGAvwUwD8nZFOc3">
+                        
+                        <input type="text" name="comment" placeholder="Write a Comment" autocomplete="off" maxlength="200" required="" id="id_comment">
+        
+                        <img class="profile_picture" src="
+                                
+                                    /../media/images/16/IMG-5ac3f217c9974351fd4a.jpg
+        
+                                
+                            ">
+        
+                        <input type="hidden" name="write_comment_form" value="write_comment_form">
+                        
+                        <button type="submit">
+                            <img class="send" src="/static/images/send.png"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                        </button>
+                    </form>
+        
+                    <div class="all_comments">
+                        <h2 class="no_comments">
+                            
+                        </h2>
+        
+                        
+                            <div class="one_comment" data-id="1" data-article="front-lever">
+                                <div class="comment">
+                                    <img class="profile_picture" src="
+                                            
+                                                /../media/images/16/IMG-5ac3f217c9974351fd4a.jpg
+        
+                                            
+                                        " title="Show Profile Patrik Behul">
+        
+                                    <p>Prv├╜ koment├ír</p>
+                                </div>
+        
+                                <div class="interactions">
+                                    <div class="reply" title="Reply...">
+                                        <i class="fa-solid fa-reply" aria-hidden="true"></i> <!-- https://fontawesome.com/icons/reply -->
+                                        <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+                                    </div>
+                                    
+                                    <div class="likes" title="Like...">
+                                        <i class="
+                                                
+                                                    fa-solid
+        
+                                                
+                                                fa-heart
+                                            " aria-hidden="true" style="color: rgb(223, 53, 53);"></i> <!-- https://fontawesome.com/icons/heart -->
+        
+                                        <p class="likes_counter">1</p>
+                                    </div>
+        
+                                    <div class="report" title="Report...">
+                                        <i class="fa-regular fa-flag" aria-hidden="true"></i> <!-- https://fontawesome.com/icons/flag -->
+                                    </div>
+        
+                                    <div class="date" title="Publication Date">
+                                        <p>02.04. 2026</p>
+                                    </div>
+                                </div>
+        
+                                <form class="reply_comment_form" action="/en/blog/front-lever" method="POST">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="JrtlYWG0RUXVSlrQZkHdGORaXXGGk77RnEd2Az5qPJWKz0XvEbGAvwUwD8nZFOc3">
+                                    
+                                    <input type="text" name="comment" placeholder="Write a Comment" autocomplete="off" maxlength="200" required="" id="id_comment">
+        
+                                    <img class="profile_picture" src="
+                                            
+                                                /../media/images/16/IMG-5ac3f217c9974351fd4a.jpg
+        
+                                            
+                                        ">
+        
+                                    <input type="hidden" name="parent_id" value="1">
+        
+                                    <input type="hidden" name="reply_comment_form" value="reply_comment_form">
+                                    
+                                    <button type="submit">
+                                        <img class="send" src="/static/images/send.png"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                                    </button>
+                                </form>
+        
+                                <div class="all_replies">
+                                    
+                                        
+                                            <div class="one_reply" data-id="2">
+                                                <div class="comment" data-id="2">
+                                                    <img class="profile_picture" src="
+                                                            
+                                                                /../media/images/16/IMG-5ac3f217c9974351fd4a.jpg
+        
+                                                            
+                                                        " title="Show Profile Patrik Behul">
+        
+                                                    <p>Odpove─Å</p>
+                                                </div>
+        
+                                                <div class="interactions">
+                                                    <div class="reply" title="Reply...">
+                                                        <i class="fa-solid fa-reply" aria-hidden="true"></i> <!-- https://fontawesome.com/icons/reply -->
+                                                        <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+                                                    </div>
+                                                    
+                                                    <div class="likes" title="Like...">
+                                                        <i class="
+                                                                
+                                                                    fa-regular
+                                                                
+                                                                
+                                                                fa-heart
+                                                            " aria-hidden="true"></i> <!-- https://fontawesome.com/icons/heart -->
+        
+                                                        <p class="likes_counter">0</p>
+                                                    </div>
+        
+                                                    <div class="report" title="Report...">
+                                                        <i class="fa-regular fa-flag" aria-hidden="true"></i> <!-- https://fontawesome.com/icons/flag -->
+                                                    </div>
+        
+                                                    <div class="date" title="Publication Date">
+                                                        <p>02.04. 2026</p>
+                                                    </div>
+                                                </div>
+        
+                                                <form class="reply_comment_form" action="/en/blog/front-lever" method="POST">
+                                                    <input type="hidden" name="csrfmiddlewaretoken" value="JrtlYWG0RUXVSlrQZkHdGORaXXGGk77RnEd2Az5qPJWKz0XvEbGAvwUwD8nZFOc3">
+                                                    
+                                                    <input type="text" name="comment" placeholder="Write a Comment" autocomplete="off" maxlength="200" required="" id="id_comment">
+        
+                                                    <img class="profile_picture" src="
+                                                            
+                                                                /../media/images/16/IMG-5ac3f217c9974351fd4a.jpg
+        
+                                                            
+                                                        ">
+        
+                                                    <input type="hidden" name="parent_id" value="2">
+        
+                                                    <input type="hidden" name="reply_comment_form" value="reply_comment_form">
+                                                    
+                                                    <button type="submit">
+                                                        <img class="send" src="/static/images/send.png"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            
+                                        
+                                    
+                                        
+                                    
+                                </div>
+                            </div>
+        
+                        
+                    </div>
+                </div> {% endcomment %}
+            </div>
+
+        {% endfor %}
+    </div>
 {% endblock content %}
 
 {% block script %}
