@@ -490,7 +490,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Location Blur Functionality
     location.addEventListener("blur", function(event:FocusEvent):void {
-        if(!(event.relatedTarget as HTMLDivElement).classList.contains("place") && !(event.relatedTarget as HTMLDivElement).classList.contains("location_results")) location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
+        if(
+            !(event.relatedTarget as HTMLDivElement).classList.contains("place") && 
+            !(event.relatedTarget as HTMLDivElement).classList.contains("location_results") &&
+            !location_results.classList.contains("hidden")
+        ) {
+            location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
+        }
     })
 
     // Change Focused Place In The Location Results
