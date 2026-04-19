@@ -18,7 +18,8 @@ import {
     storeAtSignPosition,
     removeTag,
     hideUsersForTag,
-    changeFocusedUserForTag
+    changeFocusedUserForTag,
+    deleteUserFromHistory
 } from "./functions/tagUsers.js"
 
 import { 
@@ -344,15 +345,48 @@ document.addEventListener("DOMContentLoaded", function():void {
         previous_description_length = this.innerText.length // Updates The Previous Description Length
     })
 
-    // Tags User
+    // Users For Tag Container Click Functionalities
     users_for_tag_container.addEventListener("click", function(event:PointerEvent):void {
+        // Tags The User
         if((event.target as HTMLDivElement).classList.contains("one_user")) {
-            const clicked_username:string|null = (event.target as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID
+            const clicked_username:string|null = (event.target as HTMLDivElement).dataset["username"] || null // Gets The Clicked Username
 
             if(clicked_username) {
                 tagUser(users_for_tag_container, clicked_username, description) // Tags The User
                 previous_description_length = description.innerText.length // Updates The Previous Description Length
             }
+        }
+
+        // Deletes Tagged User From The History
+        else if((event.target as HTMLDivElement).classList.contains("delete_from_history")) {
+            const clicked_user:HTMLDivElement = (event.target as HTMLDivElement).closest(".one_user") as HTMLDivElement // Gets The Clicked User
+            const clicked_username:string|null = clicked_user.dataset["username"] || null // Gets The Clicked Username
+
+            if(clicked_username) {
+                deleteUserFromHistory(clicked_username) // Deletes User From The History
+                clicked_user.blur(); // Removes Focus From The Clicked User
+                (clicked_user.querySelector(".delete_from_history") as HTMLDivElement).remove() // Removes The Delete From History Icon From The DOM
+            }
+        }
+    })
+
+    // Users For Tag Container Mouse Over Functionality
+    users_for_tag_container.addEventListener("mouseover", function(event:MouseEvent):void {
+        // Change Appearance Of Delete From History Icon (Shows The X Icon)
+        if((event.target as HTMLElement).classList.contains("delete_from_history")) {
+            const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
+
+            delete_from_history.classList.replace("fa-clock-rotate-left", "fa-xmark") // Shows The X Icon
+        }
+    })
+
+    // Users For Tag Container Mouse Out Functionality
+    users_for_tag_container.addEventListener("mouseout", function(event:MouseEvent):void {
+        // Change Appearance Of Delete From History Icon (Shows The Clock Icon)
+        if((event.target as HTMLElement).classList.contains("delete_from_history")) {
+            const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
+
+            delete_from_history.classList.replace("fa-xmark", "fa-clock-rotate-left") // Shows The Clock Icon
         }
     })
 
@@ -371,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(event.key === "ArrowUp") changeFocusedUserForTag(tag_user_state.focused_user_for_tag_index - 1, users_for_tag_container) // Changes Focused User For Tag (Shows The Previous User For Tag)
         else if(event.key === "ArrowDown") changeFocusedUserForTag(tag_user_state.focused_user_for_tag_index + 1, users_for_tag_container) // Changes Focused User For Tag (Shows The Next User For Tag)
 
-        else if(event.key === "Enter") {
+        else if(event.key === "Enter" && users_for_tag_container.classList.contains("active")) {
             const all_users_for_tag:NodeListOf<HTMLDivElement> = users_for_tag_container.querySelectorAll(".one_user") // Gets All Users For Tag
 
             const clicked_username:string|null = (all_users_for_tag[tag_user_state.focused_user_for_tag_index] as HTMLDivElement).dataset["username"] || null // Gets The Clicked User ID

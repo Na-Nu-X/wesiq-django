@@ -281,7 +281,7 @@ header {
                     flex-direction: column;
                     gap: 10px;
                     width: calc(100% + 2px);
-                    height: calc(3 * 48px + 20px + 2px);
+                    max-height: calc(3 * 48px + 20px + 2px);
                     background-color: transparentize($main-color, 0.5);
                     border-right: 1px solid transparentize($blue-color, 0.5);
                     border-left: 1px solid transparentize($blue-color, 0.5);
@@ -352,6 +352,27 @@ header {
                         .username {
                             pointer-events: none;
                             color: $secondary-color;
+                        }
+
+                        .delete_from_history {
+                            // flex-grow: 1;
+                            // text-align: right;
+
+                            right: 0px;
+                            width: 15px + 10px;
+                            height: 100%;
+                            line-height: 38px;
+                            margin-left: auto;
+                            padding-right: 10px;
+                            pointer-events: all;
+                            cursor: pointer;
+
+                            &.fa-xmark {
+                                font-size: 20px;
+                            }
+
+                            .fa-clock-rotate-left {
+                            }
                         }
                     }
                 }
