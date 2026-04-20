@@ -545,5 +545,33 @@ document.addEventListener("DOMContentLoaded", function():void {
                 changePost(clicked_bar_index, post_bars, bar, all_media) // Changes The Post
             }
         })
+
+        // Post Change Buttons (Previous / Next) Click Functionalities
+        all_media.forEach(function(one_post:HTMLDivElement):void {
+            const previous:HTMLDivElement = one_post.querySelector(".previous") as HTMLDivElement // Gets The Previous Button
+            const next:HTMLDivElement = one_post.querySelector(".next") as HTMLDivElement // Gets The Next Button
+
+            // Previous Post
+            if(!previous.classList.contains("hidden")) {
+                previous.addEventListener("click", function():void {
+                    const post_index:number = [...all_media].indexOf(one_post) - 1 // Gets The Previous Post Index
+                    const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
+                    const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Bar
+                    
+                    changePost(post_index, post_bars, bar, all_media) // Changes The Post
+                })
+            }
+
+            // Next Post
+            if(!next.classList.contains("hidden")) {
+                next.addEventListener("click", function():void {
+                    const post_index:number = [...all_media].indexOf(one_post) + 1 // Gets The Next Post Index
+                    const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
+                    const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Bar
+                    
+                    changePost(post_index, post_bars, bar, all_media) // Changes The Post
+                })
+            }
+        })
     })
 })

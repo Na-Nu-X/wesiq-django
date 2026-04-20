@@ -138,7 +138,7 @@
                     {% for one_post_media in post_media %}
                         {% if one_post.id == one_post_media.post.id %}
                             <div class="one_post">
-                                <div class="previous">
+                                <div class="previous hidden">
                                     <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
                                 </div>
 
@@ -164,7 +164,7 @@
                                 
                                 {% endif %}
                                 
-                                <div class="next">
+                                <div class="next hidden">
                                     <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                                 </div>
                             </div>
