@@ -1679,13 +1679,14 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
-        posts = Post.objects.all() # Gets All Posts
+        posts = Post.objects.all().prefetch_related("tagged_users")
+
+        for one_post in posts:
+            one_post.tagged_users_json = json.dumps(
+                list(one_post.tagged_users.values_list("username", flat=True))
+            )
+
         post_media = PostMedia.objects.all() # Gets All Post Media
-
-        post_media_by_post = defaultdict(list)
-
-        for one_post_media in post_media:
-            post_media_by_post[one_post_media.post_id].append(one_post_media)
 
         if request.method == "POST":
             # Upload Post Form POST
@@ -1695,14 +1696,6 @@ def communityView(request):
 
                 # Saves Only if The Form is Valid And Includes at Least One File
                 if upload_post_form.is_valid() and files:
-                    tagged_users = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
-
-                    # Gets List Of IDs Of Tagged Users
-                    tagged_users_ids = list(
-                        Users.objects.filter(username__in=tagged_users)
-                        .values_list("id", flat=True)
-                    )
-
                     # Gets The Coordinates Data
                     coordinates_data = {
                         "latitude": request.POST.get("latitude") or None,
@@ -1719,7 +1712,7 @@ def communityView(request):
                     new_post = upload_post_form.save(commit=False)
                     new_post.user_id = logged_in_user_id
                     new_post.description = request.POST.get("description").rstrip()
-                    new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
+                    # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
                     new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
                     if coordinates:
@@ -1727,13 +1720,23 @@ def communityView(request):
 
                     new_post.save()
 
+                    tagged_users_data = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
+
+                    # Gets List Of IDs Of Tagged Users
+                    tagged_users_ids = list(
+                        Users.objects.filter(username__in=tagged_users_data)
+                        .values_list("id", flat=True)
+                    )
+
+                    tagged_users = Users.objects.filter(id__in=tagged_users_ids)
+
+                    new_post.tagged_users.set(tagged_users)
+
                     for one_file in files:
                         try:
                             file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
                             one_file.seek(0)
                             mime_type = magic.from_buffer(file_head, mime=True)
-
-                            print(file_head)
                             
                             if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
                                 messages.add_message(request, messages.ERROR, _("Súbor %(file)s má nepodporovaný formát") % {"file": one_file.name})
@@ -1813,7 +1816,6 @@ def communityView(request):
             "users": users,
             "posts": posts,
             "post_media": post_media,
-            # "post_media_by_post": post_media_by_post,
             "upload_post_form": uploadPostForm
         })
 
