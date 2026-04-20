@@ -1,3 +1,20 @@
+// Function For Generate Styled Description
+export function generateStyledDescription(text:string, tagged_users:string|null, added_hashtags:string|null):string {
+    if(tagged_users) {
+        const tagged_users_array:string[] = JSON.parse(tagged_users) // Converts The Data To An Array Of The Tagged Users
+    
+        tagged_users_array.forEach(one_tag => text = text.replace(one_tag, `<span class="tag">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+    }
+
+    if(added_hashtags) {
+        const added_hashtags_array:string[] = JSON.parse(added_hashtags.replace(/'/g, '"')) // Converts The Data To An Array Of The Added Hashtags
+
+        added_hashtags_array.forEach(one_hashtag => text = text.replace(one_hashtag, `<span class="hashtag">${one_hashtag}</span>`)) // Puts Every Hashtag To The Styled Span Element
+    }
+
+    return text // Returns The Text
+}
+
 // Function For Generate The Post Bars
 export function generatePostBars(all_media:NodeListOf<HTMLDivElement>, post_bars:HTMLDivElement):void {
     // Creates The Bars Only If There Are More Than One Media In Post

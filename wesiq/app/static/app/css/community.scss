@@ -792,6 +792,30 @@ header {
                     .description {
                         margin-bottom: 10px;
                         margin-left: 10px;
+
+                        .tag,
+                        .hashtag {
+                            display: inline-block;
+                            height: 25px;
+                            line-height: 25px;
+                            padding: 0px 5px;
+                            border-radius: $small-border-radius;
+                            font-size: 0.8em;
+                        }
+
+                        .tag {
+                            background-color: transparentize($blue-color, 0.8);
+                            color: $blue-color;
+
+                            &.animate {
+                                animation: alreadyTaggedWarning 0.2s linear 3;
+                            }
+                        }
+
+                        .hashtag {
+                            background-color: transparentize($success-color, 0.9);
+                            color: $success-color;
+                        }
                     }
 
                     .location,

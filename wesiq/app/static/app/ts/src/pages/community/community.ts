@@ -33,6 +33,7 @@ import {
 } from "./functions/location.js"
 
 import { 
+    generateStyledDescription,
     generatePostBars,
     changePost
 } from "./functions/feed.js"
@@ -534,6 +535,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
         const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
 
+        const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
+        const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
+        const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+
+        description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
         generatePostBars(all_media, post_bars) // Generates The Post Bars
 
         // Post Bars Click Functionalities
