@@ -138,6 +138,10 @@
                     {% for one_post_media in post_media %}
                         {% if one_post.id == one_post_media.post.id %}
                             <div class="one_post">
+                                <div class="previous">
+                                    <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                                </div>
+
                                 {% if one_post_media.is_video == True %}
                                     <video class="video" controls autoplay loop muted>
                                         <source src="/../media/{{ one_post_media.file }}">
@@ -159,12 +163,17 @@
                                     >
                                 
                                 {% endif %}
-
+                                
+                                <div class="next">
+                                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                </div>
                             </div>
 
                         {% endif %}
                     {% endfor %}
                 </div>
+
+                <div class="post_bars"></div>
 
                 <div class="likes" title="{% translate 'Páči sa mi...' %}">
                     <i 

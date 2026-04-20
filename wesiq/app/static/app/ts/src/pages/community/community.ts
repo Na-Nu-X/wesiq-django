@@ -32,6 +32,11 @@ import {
     changeFocusedPlace
 } from "./functions/location.js"
 
+import { 
+    generatePostBars,
+    changePost
+} from "./functions/feed.js"
+
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 
@@ -512,5 +517,33 @@ document.addEventListener("DOMContentLoaded", function():void {
             (all_places[location_state.focused_place_index] as HTMLDivElement).click() // Adds The Location Name To The Location Input Value After Click
             upload_post_form_dialog.showModal() // Shows The Upload Post Form Dialog
         }
+    })
+
+    // Feed
+
+    // Variables
+
+    const feed:HTMLDivElement = document.querySelector(".feed") as HTMLDivElement // Gets The Feed Container
+    const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+
+    // Events
+
+    // All Post Containers Functionalities
+    all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
+        const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+        const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+        const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+
+        generatePostBars(all_media, post_bars) // Generates The Post Bars
+
+        // Post Bars Click Functionalities
+        post_bars.addEventListener("click", function(event:PointerEvent):void {
+            if((event.target as HTMLDivElement).classList.contains("bar")) {
+                const bar:HTMLDivElement = event.target as HTMLDivElement // Gets The Bar
+                const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(bar) // Gets The Clicked Bar Index
+
+                changePost(clicked_bar_index, post_bars, bar, all_media) // Changes The Post
+            }
+        })
     })
 })
