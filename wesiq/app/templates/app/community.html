@@ -135,6 +135,46 @@
         <div class="feed">
             {% for one_post in posts %}
                 <div class="post_container" data-post_id="{{ one_post.id }}">
+                    <div class="author">
+                        <div class="info">
+                            <img 
+                                class="profile_picture skeleton_loading" 
+                                src="
+                                    {% if one_post.user.profile_picture_name %}
+                                        /../media/images/{{ one_post.user.id }}/{{ one_post.user.profile_picture_name }}
+    
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+    
+                            <p class="username">{{ one_post.user.username }}</p>
+                        </div>
+
+                        <div class="followers_container">
+                            <p class="followers">{{ one_post.user.followers|length }}</p>
+    
+                            <i 
+                                class="
+                                    fa-solid
+
+                                    {% if request.session.logged_in_user_id == one_post.user_id %}
+                                        fa-user
+    
+                                    {% elif not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
+                                        fa-user-plus
+    
+                                    {% else %}
+                                        fa-user-minus
+                                    
+                                    {% endif %}
+                                "
+                            ></i> <!-- https://fontawesome.com/icons/user --> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+                        </div>
+                    </div>
+
                     <div class="media">
                         {% for one_post_media in post_media %}
                             {% if one_post.id == one_post_media.post.id %}
