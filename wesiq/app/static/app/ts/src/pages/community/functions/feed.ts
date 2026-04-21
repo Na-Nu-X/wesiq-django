@@ -1,5 +1,9 @@
 import { sendPOST } from "../../../services/sendPOST.js"
 
+interface addCommentResponse {
+    success:boolean
+}
+
 // Function For Generate Styled Description
 export function generateStyledDescription(text:string, tagged_users:string|null, added_hashtags:string|null):string {
     if(tagged_users) {
@@ -67,6 +71,33 @@ export function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement|null, 
         icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
         if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
         sendPOST(`/cancel-like-post/${id}/`) // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
+    }
+}
+
+// Function For Add Comment
+export async function addComment(post_id:string, comment:string, all_comments:HTMLDivElement) {
+    try {
+        const comment_data:{
+            post_id:string,
+            comment:string
+        } = {
+            post_id,
+            comment
+        }
+
+        const searched_tags_response:addCommentResponse = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
+
+        if(searched_tags_response.success) {
+            console.log("SUCCESS")
+        }
+
+        else {
+            console.log("ERROR")
+        }
+    }
+
+    catch(error) {
+        console.error(gettext("Pri odosielaní komentáru došlo k chybe."), error)
     }
 }
 

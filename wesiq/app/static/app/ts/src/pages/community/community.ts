@@ -34,7 +34,8 @@ import {
     generateStyledDescription,
     generatePostBars,
     changePost,
-    toggleLike
+    toggleLike,
+    addComment
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -572,15 +573,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // All Post Containers Functionalities
     all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
-        const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
-        const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
-        const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-        const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
-        const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
-        const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+        // Follow / Unfollow
+
         const followers_container:HTMLDivElement = one_post_container.querySelector(".author .followers_container") as HTMLDivElement // Gets The Followers Container
-        const toggle_like:HTMLElement = one_post_container.querySelector(".likes .fa-heart") as HTMLElement // Gets The Heart Icon
-        const likes_counter:HTMLParagraphElement|null = one_post_container.querySelector(".likes .likes_counter") || null // Gets The Likes Counter
 
         // Followers Container Click Functionalities
         followers_container.addEventListener("click", function(event:PointerEvent):void {
@@ -602,6 +597,13 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
+        // Post Bars
+
+        const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+        const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+        const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+        
+
         // Post Bars Click Functionalities
         post_bars.addEventListener("click", function(event:PointerEvent):void {
             if((event.target as HTMLDivElement).classList.contains("bar")) {
@@ -612,10 +614,21 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
+        // Like Post
+
+        const toggle_like:HTMLElement = one_post_container.querySelector(".likes .fa-heart") as HTMLElement // Gets The Heart Icon
+        const likes_counter:HTMLParagraphElement|null = one_post_container.querySelector(".likes .likes_counter") || null // Gets The Likes Counter
+
         // Toggle Like Click Functionality
         toggle_like.addEventListener("click", function():void {
             if(one_post_container.dataset["post_id"]) toggleLike(this, likes_counter, one_post_container.dataset["post_id"]) // Adds Or Removes Like From The Post
         })
+
+        // Description And Bars
+
+        const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
+        const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
+        const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
 
         if(tagged_users || added_hashtags) description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
         generatePostBars(all_media, post_bars) // Generates The Post Bars
@@ -646,6 +659,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                     changePost(post_index, post_bars, bar, all_media) // Changes The Post
                 })
             }
+        })
+
+        // Comment Forum
+
+        const comment_forum:HTMLDivElement = one_post_container.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+        const write_comment_form:HTMLDivElement = comment_forum.querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+        const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+        const send_comment:HTMLImageElement = write_comment_form.querySelector(".send") as HTMLImageElement // Gets The Send Comment Icon
+        const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
+
+        send_comment.addEventListener("click", function():void {
+            if(one_post_container.dataset["post_id"]) addComment(one_post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
         })
     })
 })
