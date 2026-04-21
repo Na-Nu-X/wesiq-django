@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1679,14 +1679,25 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
-        posts = Post.objects.all().prefetch_related("tagged_users")
+        # posts = Post.objects.all().prefetch_related("tagged_users")
+
+        # for one_post in posts:
+        #     one_post.tagged_users_json = json.dumps(
+        #         list(one_post.tagged_users.values_list("username", flat=True))
+        #     )
+
+        post_media = PostMedia.objects.all() # Gets All Post Media
+
+        posts = Post.objects.all().prefetch_related(
+            "tagged_users", 
+            "comments__user",
+            "media"
+        )
 
         for one_post in posts:
             one_post.tagged_users_json = json.dumps(
                 list(one_post.tagged_users.values_list("username", flat=True))
             )
-
-        post_media = PostMedia.objects.all() # Gets All Post Media
 
         if request.method == "POST":
             # Upload Post Form POST
@@ -1811,6 +1822,20 @@ def communityView(request):
                 ]
 
                 return JsonResponse({"success": True, "users": users_for_tag})
+
+            # Add Comment
+            if request.headers.get("X-Requested-Action") == "add-comment":
+                comment_data = json.loads(request.body) # Gets The Comment Data
+
+                new_comment = PostForum(
+                    post_id = comment_data["post_id"],
+                    user_id = logged_in_user_id,
+                    comment = comment_data["comment"]
+                )
+
+                new_comment.save()
+
+                return JsonResponse({"success": True})
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,

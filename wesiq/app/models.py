@@ -246,3 +246,42 @@ class PostMedia(models.Model):
 
     file = models.FileField(upload_to=getPostUploadPath)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
+
+class PostForum(models.Model):
+    status_choices = [
+        ("OK", "OK"),
+        ("hidden", "hidden"),
+    ]
+
+    post = models.ForeignKey(
+        Post,
+        verbose_name="Post",
+        on_delete=models.CASCADE,
+        related_name="comments",
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User ID", 
+        on_delete=models.CASCADE, 
+        related_name="post_comments",
+        null=True,
+    )
+
+    comment = models.TextField(verbose_name="Comment", null=False)
+    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
+    creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies",
+    )
+
+    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
+    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
