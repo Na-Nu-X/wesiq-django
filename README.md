@@ -677,5 +677,118 @@ To help users navigate feedback efficiently, the interface provides robust displ
 
 - **Granular Filtering**: For targeted reading, users can apply strict filters to the review feed to display only entries matching a specific star rating (e.g., isolating only 4-star reviews).
 
-## 3. Features
+### 3.27. Social Post Publication
 
+To foster community engagement, the platform includes a sophisticated post-upload system. This module allows users to share their progress, insights, and media through a highly interactive multi-step interface.
+
+#### 3.27.1 Content Metadata and Tagging
+
+The upload process is handled via a non-intrusive dialog popup form, where users can enrich their posts with several layers of data:
+
+- **Contextual Information**: Users can write detailed descriptions and specify the locality of the post.
+
+- **Social Connections**: Support for tagging other users and adding hashtags is integrated to increase post discoverability and community interaction.
+
+- **Engagement Controls**: For every post, users can customize privacy and interaction settings:
+
+    - **Visibility**: Control who can see the content.
+
+    - **Interaction Toggles**: Option to disable comments or hide the "like" count from other users to focus on content rather than metrics.
+
+#### 3.27.2 Advanced File Selection and Validation
+
+The media handling logic is designed to be robust, ensuring server stability and data integrity:
+
+- **Strict Validation**: Before finalizing an upload, the system verifies all files against specific constraints:
+
+    - **Image Limit**: Maximum 10MB per file.
+
+    - **Video Limit**: Maximum 100MB per file.
+
+    - **Quantity Limit**: A maximum of 5 files per post.
+
+- **Proactive Warning System**: If a file exceeds the limit, a yellow exclamation mark icon appears. Upon hovering (using the tooltip system from Section 4.1.), the user is informed of the specific reason for the warning.
+
+- **Server-Side Security**: Every file is stored on the server under a unique generated name to prevent collisions and ensure secure referencing (as described in Section 3.23.).
+
+#### 3.27.3 Intuitive UX and Media Management
+
+The frontend provides a seamless "Desktop-class" experience for managing media before it is published:
+
+- **Drag-and-Drop Integration**: Users can manually select files or use the Drag-and-Drop zone, which automatically highlights when files are hovered over the area.
+
+- **Live Previews**: Selected media is displayed in a preview gallery, allowing users to verify their selection before committing to the upload.
+
+- **Interactive Reordering**: A standout feature of the UI is the ability to change the order of images by dragging them within the preview gallery. This includes smooth animations to make the manual sequencing intuitive and satisfying.
+
+- **Effortless Removal**: Individual files can be removed from the selection list with a single click on the remove icon, allowing for quick corrections.
+
+### 3.28. Post Locality and Geospatial Integration
+
+To provide geographic context to shared content, the platform includes a sophisticated location-tagging system powered by professional mapping tools and spatial database frameworks.
+
+#### 3.28.1 Dynamic Location Discovery
+
+- **OpenStreetMap Integration**: The system leverages the **Nominatim API**, the search engine for **OpenStreetMap**, to provide a global database of verified locations without the need for proprietary, paid mapping services.
+
+- **Real-time Search (Type-ahead)**: As a user types a location, the system performs asynchronous API calls to fetch the most relevant geographical results. These results are presented in a selection list for immediate user feedback.
+
+- **Feedback Mechanism**: To maintain a smooth experience during API communication, a Loading Spinner (as described in Section 3.22.) is displayed, informing the user that the system is actively retrieving data.
+
+#### 3.28.2 Verification and Custom Entries
+
+- **Verification Indicator**: The interface includes a visual cue that informs the user whether their entered location matches a verified place in the global database.
+
+- **Flexibility**: While the system encourages verified locations, it allows for custom text entries, ensuring users can describe their location even if it isn't indexed in the mapping API (e.g., "Private Garage Gym").
+
+#### 3.28.3 Advanced Geospatial Backend (GeoDjango)
+
+- **Spatial Data Storage**: For verified locations, the system doesn't just store a string of text; it captures and stores the exact GPS coordinates (latitude and longitude).
+
+- **GeoDjango Framework**: The platform utilizes the **GeoDjango Framework**, an add-on for Django that provides professional-grade support for geographic data. This allows the database to perform spatial queries, such as calculating distances or finding posts within a specific geographic boundary.
+
+- **Data Consistency**: Geographic information is bundled with the post’s metadata, ensuring that location data is perfectly synchronized with images, descriptions, and user tags.
+
+## 4. Features
+
+### 4.1. Contextual Tooltip System
+
+To maintain a clean and minimalist aesthetic without sacrificing clarity, the platform utilizes an integrated tooltip system. This feature provides on-demand explanations for various UI elements, ensuring a shallow learning curve for new users.
+
+#### 4.1.1 User Interface Clarity
+
+- **Non-Intrusive Guidance**: Tooltips act as a secondary layer of information that remains hidden by default. They only appear when a user demonstrates intent by hovering over specific interactive elements, such as abstract icons, action buttons, or complex data points in performance graphs.
+
+- **Brief Contextual Labels**: Each tooltip delivers a concise explanation or label, providing immediate clarity on an element's function without crowding the primary visual layout with unnecessary text.
+
+#### 4.1.2 Intelligent Interaction Design
+
+- **Timed Activation**: To prevent accidental triggering and visual flickering, tooltips are programmed with a short activation delay. They appear only after the cursor remains stationary over an element for a few seconds, ensuring that the information is presented only when the user likely requires it.
+
+- **Positioning**: The overlays are designed to be responsive, appearing in a non-obstructive position relative to the cursor, ensuring that the underlying content remains partially visible for context.
+
+### 4.2. Automated Weekly Performance Reports
+
+To drive user engagement and provide actionable insights, the platform generates a comprehensive activity summary every week. This report allows users to reflect on their progress and compare their current performance with previous data.
+
+#### 4.2.1 Performance Metrics and Analytics
+
+The report aggregates data from the past seven days to provide a clear picture of the user's training habits:
+
+- **Time Analytics**: Includes Total Activity Time and Average Daily Activity Time, providing a high-level view of the user’s commitment.
+
+- **Peak Performance**: Identifies the Most Active Day of the week, helping users recognize their most productive windows.
+
+- **Focus Identification**: Highlights the Favorite Exercise, which is dynamically determined based on the total time spent performing specific movements.
+
+- **Progress Tracking (Delta)**: The system calculates the Percentage Improvement or Decrease compared to the previous week, giving users a clear indicator of their current momentum.
+
+#### 4.2.2 Visual Data Representation (E-mail Integration)
+
+Recognizing that visual data is easier to digest, the report includes high-quality charts. Since standard e-mail clients do not support dynamic JavaScript rendering, the system utilizes a specialized backend approach:
+
+- **Server-Side Chart Generation**: The platform leverages the **QuickChart.io Python Library** to process **Chart.js** configurations.
+
+- **Image Conversion**: Complex data visualizations (Weekly Activity Summary and Weekly Exercises Summary) are converted into static image files on the server.
+
+- **Seamless Delivery**: These images are embedded directly into the report, ensuring that the user sees consistent, high-fidelity graphs regardless of the device or e-mail provider they use.
