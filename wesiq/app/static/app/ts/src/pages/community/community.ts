@@ -33,7 +33,8 @@ import {
 import { 
     generateStyledDescription,
     generatePostBars,
-    changePost
+    changePost,
+    toggleLike
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -85,8 +86,6 @@ function follow(event:PointerEvent, user_to_follow_id:number|null):void {
     if(user_to_follow_id) {
         sendPOST(`/follow/${user_to_follow_id}/`); // Sends Clicked User ID As A POST Data To Follow Page
         (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
-
-        console.log((event.target as HTMLButtonElement).dataset["action"])
 
         const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
 
@@ -483,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
             focusAtEnd(description) // Adds Focus To The Description
-            
+
             description_input.value = description.textContent.trim() // Sets The Description Input Value
         }
     })
@@ -576,12 +575,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
         const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
         const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-
         const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
         const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
         const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
         const followers_container:HTMLDivElement = one_post_container.querySelector(".author .followers_container") as HTMLDivElement // Gets The Followers Container
+        const toggle_like:HTMLElement = one_post_container.querySelector(".likes .fa-heart") as HTMLElement // Gets The Heart Icon
+        const likes_counter:HTMLParagraphElement|null = one_post_container.querySelector(".likes .likes_counter") || null // Gets The Likes Counter
 
+        // Followers Container Click Functionalities
         followers_container.addEventListener("click", function(event:PointerEvent):void {
             if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
                 const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
@@ -601,9 +602,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
-        description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
-        generatePostBars(all_media, post_bars) // Generates The Post Bars
-
         // Post Bars Click Functionalities
         post_bars.addEventListener("click", function(event:PointerEvent):void {
             if((event.target as HTMLDivElement).classList.contains("bar")) {
@@ -613,6 +611,14 @@ document.addEventListener("DOMContentLoaded", function():void {
                 changePost(clicked_bar_index, post_bars, bar, all_media) // Changes The Post
             }
         })
+
+        // Toggle Like Click Functionality
+        toggle_like.addEventListener("click", function():void {
+            if(one_post_container.dataset["post_id"]) toggleLike(this, likes_counter, one_post_container.dataset["post_id"]) // Adds Or Removes Like From The Post
+        })
+
+        if(tagged_users || added_hashtags) description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
+        generatePostBars(all_media, post_bars) // Generates The Post Bars
 
         // Post Change Buttons (Previous / Next) Click Functionalities
         all_media.forEach(function(one_post:HTMLDivElement):void {

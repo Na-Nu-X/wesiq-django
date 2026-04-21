@@ -1867,3 +1867,41 @@ def unfollow(request, user_id):
 
     except:
         return JsonResponse({"error": "Follow Could Not Be Removed."})
+
+@require_POST
+def likePost(request, post_id):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            post = Post.objects.get(id=post_id)
+
+            if(str(logged_in_user_id) not in post.likes_from_users):
+                post.likes_from_users.append(logged_in_user_id)
+                post.likes += 1
+                
+                post.save()
+
+        return JsonResponse({"success": "Like Has Been Recorded To The Post."})
+
+    except:
+        return JsonResponse({"error": "Like Could Not Be Recorded To The Post."})
+
+@require_POST
+def cancelLikePost(request, post_id):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            post = Post.objects.get(id=post_id)
+
+            if(str(logged_in_user_id) in post.likes_from_users):
+                post.likes_from_users.remove(str(logged_in_user_id))
+                post.likes -= 1
+                
+                post.save()
+
+        return JsonResponse({"success": "Like Has Been Removed From The Post."})
+
+    except:
+        return JsonResponse({"error": "Like Could Not Be Removed From The Post."})

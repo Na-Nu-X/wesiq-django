@@ -156,6 +156,8 @@
                         <div class="followers_container">
                             <p class="followers">{{ one_post.user.followers|length }}</p>
 
+                            <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+
                             {% if not request.session.logged_in_user_id == one_post.user_id %}
                                 <button 
                                     class="follow_button"
@@ -236,8 +238,14 @@
                                 fa-heart
                             "
                         ></i> <!-- https://fontawesome.com/icons/heart -->
+                        
+                        {% if one_post.hide_likes == False %}
+                            <p class="likes_counter">{{ one_post.likes }}</p>
 
-                        <p class="likes_counter">{{ one_post.likes }}</p>
+                        {% else %}
+                            <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
+                        
+                        {% endif %}
                     </div>
 
                     <div class="details_container">
@@ -246,6 +254,11 @@
                             <p class="location"><i class="fa-solid fa-location-dot"></i> {{ one_post.location }}</p> <!-- https://fontawesome.com/icons/location-dot -->
                             <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
                         </div>
+
+                        {% if request.session.logged_in_user_id == one_post.user_id %}
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        
+                        {% endif %}
                     </div>
 
                     {% comment %} <div class="article_forum">
