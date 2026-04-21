@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('follow/<int:user_id>/', views.follow, name='follow_url'),
     path('unfollow/<int:user_id>/', views.unfollow, name='unfollow_url'),
+    path('like-post/<int:post_id>/', views.likePost, name='like_post_url'),
+    path('cancel-like-post/<int:post_id>/', views.cancelLikePost, name='cancel_like_post_url'),
 ]
 
 urlpatterns += i18n_patterns(
