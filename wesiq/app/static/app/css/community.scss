@@ -669,13 +669,24 @@ header {
                 .followers_container {
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     gap: 10px;
 
-                    .fa-user,
-                    .fa-user-plus,
-                    .fa-user-minus {
-                        @include icon;
-                        display: block;
+                    .follow_button {
+                        padding: 5px 10px;
+                        text-align: center;
+                        background-color: transparent;
+                        color: $secondary-color;
+                        border: 1px solid transparentize($blue-color, 0.5);
+                        border-radius: $small-border-radius;
+                        outline: none;
+                        transition: border-color 0.3s ease;
+
+                        &:hover,
+                        &:focus {
+                            border-color: $blue-color;
+                            cursor: pointer;
+                        }
                     }
                 }
             }

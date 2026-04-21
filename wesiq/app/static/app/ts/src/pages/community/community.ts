@@ -5,8 +5,6 @@ import {
 } from "./state.js"
 
 import { 
-    follow,
-    unfollow,
     renderUsers,
     resetSearchedUsers
 } from "./functions/searchUsers.js"
@@ -80,6 +78,36 @@ export function focusAtEnd(description:HTMLDivElement):void {
     }
 }
 
+// Function For Add Follow
+function follow(event:PointerEvent, user_to_follow_id:number|null):void {
+    event.preventDefault() // Prevents Redirect To The User's Profile
+
+    if(user_to_follow_id) {
+        sendPOST(`/follow/${user_to_follow_id}/`); // Sends Clicked User ID As A POST Data To Follow Page
+        (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
+
+        console.log((event.target as HTMLButtonElement).dataset["action"])
+
+        const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+
+        followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+    }
+}
+
+// Function For Remove Follow
+function unfollow(event:PointerEvent, user_to_follow_id:number|null):void {
+    event.preventDefault() // Prevents Redirect To The User's Profile
+
+    if(user_to_follow_id) {
+        sendPOST(`/unfollow/${user_to_follow_id}/`); // Sends Clicked User ID As A POST Data To Unfollow Page
+        (event.target as HTMLElement).classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
+
+        const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+
+        followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+    }
+}
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
@@ -103,8 +131,15 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Global Event Delegations
 
     all_users_container.addEventListener("click", function(event:PointerEvent):void {
-        if((event.target as HTMLElement).classList.contains("fa-user-plus")) follow(event) // Follow
-        else if((event.target as HTMLElement).classList.contains("fa-user-minus")) unfollow(event) // Unfollow
+        if((event.target as HTMLElement).classList.contains("fa-user-plus")) {
+            const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
+            follow(event, clicked_user_id) // Follow
+        }
+
+        else if((event.target as HTMLElement).classList.contains("fa-user-minus")) {
+            const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
+            unfollow(event, clicked_user_id) // Unfollow
+        }
     })
 
     // Events
@@ -294,6 +329,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
     const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
+    const description_input:HTMLInputElement = upload_post_form.querySelector(".description_input") as HTMLInputElement // Gets The Description Hidden Input
     const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
     const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
     const tagged_users:HTMLInputElement = upload_post_form.querySelector(".tagged_users") as HTMLInputElement // Gets The Hidden Input Of Tagged Users
@@ -324,11 +360,15 @@ document.addEventListener("DOMContentLoaded", function():void {
             storeAtSignPosition(at) // Stores The At Sign Position
             hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
             focusAtEnd(description) // Adds Focus To The Description
+
+            description_input.value = description.textContent.trim() // Sets The Description Input Value
         }
     })
 
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
+        description_input.value = this.textContent.trim() // Sets The Description Input Value
+
         // Tag Users
 
         const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
@@ -443,6 +483,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
             focusAtEnd(description) // Adds Focus To The Description
+            
+            description_input.value = description.textContent.trim() // Sets The Description Input Value
         }
     })
 
@@ -538,6 +580,26 @@ document.addEventListener("DOMContentLoaded", function():void {
         const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
         const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
         const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+        const followers_container:HTMLDivElement = one_post_container.querySelector(".author .followers_container") as HTMLDivElement // Gets The Followers Container
+
+        followers_container.addEventListener("click", function(event:PointerEvent):void {
+            if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
+                const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
+                const clicked_user_id:number|null = Number((event.target as HTMLElement).dataset["id"]) || null // Gets Clicked User ID
+
+                if(follow_button.dataset["action"]?.trim() === "follow") {
+                    follow(event, clicked_user_id); // Follow
+                    follow_button.textContent = "Prestať sledovať"
+                    follow_button.dataset["action"] = "unfollow"
+                }
+    
+                else if(follow_button.dataset["action"]?.trim() === "unfollow") {
+                    unfollow(event, clicked_user_id); // Unfollow
+                    follow_button.textContent = "Začať sledovať"
+                    follow_button.dataset["action"] = "follow"
+                }
+            }
+        })
 
         description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
         generatePostBars(all_media, post_bars) // Generates The Post Bars

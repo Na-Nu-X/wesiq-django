@@ -155,23 +155,30 @@
 
                         <div class="followers_container">
                             <p class="followers">{{ one_post.user.followers|length }}</p>
-    
-                            <i 
-                                class="
-                                    fa-solid
 
-                                    {% if request.session.logged_in_user_id == one_post.user_id %}
-                                        fa-user
-    
-                                    {% elif not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
-                                        fa-user-plus
-    
+                            {% if not request.session.logged_in_user_id == one_post.user_id %}
+                                <button 
+                                    class="follow_button"
+                                    data-id="{{ one_post.user_id }}"
+                                    data-action="
+                                        {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
+                                            {% translate 'follow' %}
+
+                                        {% else %}
+                                            {% translate 'unfollow' %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                                    {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
+                                        {% translate "Začať sledovať" %}
+
                                     {% else %}
-                                        fa-user-minus
+                                        {% translate "Prestať sledovať" %}
                                     
                                     {% endif %}
-                                "
-                            ></i> <!-- https://fontawesome.com/icons/user --> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
 

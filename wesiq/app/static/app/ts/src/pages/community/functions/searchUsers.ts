@@ -1,5 +1,3 @@
-import { sendPOST } from "../../../services/sendPOST.js";
-
 export interface searchedUser {
     id:number,
     first_name:string,
@@ -14,34 +12,6 @@ export interface searchedUsersResponse {
     success:boolean,
     logged_in_user_id:number,
     users:searchedUser[]
-}
-
-// Function For Add Follow
-export function follow(event:PointerEvent):void {
-    event.preventDefault() // Prevents Redirect To The User's Profile
-
-    const clicked_user_id:string = ((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"] || "" // Gets Clicked User ID
-
-    sendPOST(`/follow/${clicked_user_id}/`); // Sends Clicked User ID As A POST Data To Follow Page
-    (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
-
-    const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
-
-    followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
-}
-
-// Function For Remove Follow
-export function unfollow(event:PointerEvent):void {
-    event.preventDefault() // Prevents Redirect To The User's Profile
-
-    const clicked_user_id:string = ((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"] || "" // Gets Clicked User ID
-
-    sendPOST(`/unfollow/${clicked_user_id}/`); // Sends Clicked User ID As A POST Data To Unfollow Page
-    (event.target as HTMLElement).classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
-
-    const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
-
-    followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
 }
 
 // Function For Render Users From The POST Response
