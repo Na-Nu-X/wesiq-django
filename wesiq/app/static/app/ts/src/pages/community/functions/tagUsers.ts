@@ -199,7 +199,7 @@ export function removeTag(tag:HTMLDivElement, description:HTMLDivElement, tagged
 
         const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
-        description_input.value = description.innerText // Sets The Description Input Value
+        description_input.value = description.textContent.trim() // Sets The Description Input Value
 
         const deleted_tag_index:number = tag_user_state.tags.indexOf(matching_tag) // Gets The Index Of The Deleted Tag In The All Tags Array
 
@@ -316,7 +316,7 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
 
     const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
-    description_input.value = description.innerText // Sets The Description Input Value
+    description_input.value = description.textContent.trim() // Sets The Description Input Value
 
     focusAtEnd(description) // Adds Focus Into The Input
     hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
