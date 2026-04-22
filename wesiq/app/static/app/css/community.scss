@@ -1,6 +1,16 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
+/***************
+ General Styles
+***************/
+
+// Grecaptcha Badge
+
+.grecaptcha-badge {
+    opacity: 0.8 !important;
+}
+
 /**************
  Header Styles
 **************/

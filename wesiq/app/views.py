@@ -1700,74 +1700,90 @@ def communityView(request):
             )
 
         if request.method == "POST":
-            # Upload Post Form POST
+            # Upload Post Form
             if request.POST.get("upload_post_form_submit"):
-                upload_post_form = uploadPostForm(request.POST)
-                files = request.FILES.getlist("select_posts") # Gets Files From the POST
+                # Loads Data From reCaptcha In Upload Post Form
+                recaptcha_response = request.POST.get("g-recaptcha-response")
+                recaptcha_data = {
+                    "secret": settings.RECAPTCHA_SECRET_KEY,
+                    "response": recaptcha_response
+                }
 
-                # Saves Only if The Form is Valid And Includes at Least One File
-                if upload_post_form.is_valid() and files:
-                    # Gets The Coordinates Data
-                    coordinates_data = {
-                        "latitude": request.POST.get("latitude") or None,
-                        "longitude": request.POST.get("longitude") or None
-                    }
-                    
-                    # Gets The Coordinates If They Are Available
-                    if coordinates_data["latitude"] and coordinates_data["longitude"]:
-                        coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
+                # Loads reCaptcha API
+                recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
-                    else:
-                        coordinates = None
+                # Checks Validity Of reCaptcha Response
+                if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+                    captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
 
-                    new_post = upload_post_form.save(commit=False)
-                    new_post.user_id = logged_in_user_id
-                    new_post.description = request.POST.get("description")
+                else:
+                    upload_post_form = uploadPostForm(request.POST)
+                    files = request.FILES.getlist("select_posts") # Gets Files From the POST
 
-                    print(request.POST.get("description"))
+                    # Saves Only if The Form is Valid And Includes at Least One File
+                    if upload_post_form.is_valid() and files:
+                        # Gets The Coordinates Data
+                        coordinates_data = {
+                            "latitude": request.POST.get("latitude") or None,
+                            "longitude": request.POST.get("longitude") or None
+                        }
+                        
+                        # Gets The Coordinates If They Are Available
+                        if coordinates_data["latitude"] and coordinates_data["longitude"]:
+                            coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
 
-                    # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
-                    new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
+                        else:
+                            coordinates = None
 
-                    if coordinates:
-                        new_post.coordinates = coordinates
+                        new_post = upload_post_form.save(commit=False)
+                        new_post.user_id = logged_in_user_id
+                        new_post.description = request.POST.get("description")
 
-                    new_post.save()
+                        print(request.POST.get("description"))
 
-                    tagged_users_data = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
+                        # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
+                        new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
-                    # Gets List Of IDs Of Tagged Users
-                    tagged_users_ids = list(
-                        Users.objects.filter(username__in=tagged_users_data)
-                        .values_list("id", flat=True)
-                    )
+                        if coordinates:
+                            new_post.coordinates = coordinates
 
-                    tagged_users = Users.objects.filter(id__in=tagged_users_ids)
+                        new_post.save()
 
-                    new_post.tagged_users.set(tagged_users)
+                        tagged_users_data = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
 
-                    for one_file in files:
-                        try:
-                            file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
-                            one_file.seek(0)
-                            mime_type = magic.from_buffer(file_head, mime=True)
-                            
-                            if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
-                                messages.add_message(request, messages.ERROR, _("Súbor %(file)s má nepodporovaný formát") % {"file": one_file.name})
-                                continue
+                        # Gets List Of IDs Of Tagged Users
+                        tagged_users_ids = list(
+                            Users.objects.filter(username__in=tagged_users_data)
+                            .values_list("id", flat=True)
+                        )
 
-                            is_video = mime_type.startswith("video/")
+                        tagged_users = Users.objects.filter(id__in=tagged_users_ids)
 
-                            PostMedia.objects.create(
-                                post=new_post,
-                                file=one_file,
-                                is_video=is_video
-                            )
+                        new_post.tagged_users.set(tagged_users)
 
-                        except Exception:
-                            messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru %(file)s") % {"file": one_file.name})
+                        for one_file in files:
+                            try:
+                                file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
+                                one_file.seek(0)
+                                mime_type = magic.from_buffer(file_head, mime=True)
+                                
+                                if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
+                                    messages.add_message(request, messages.ERROR, _("Súbor %(file)s má nepodporovaný formát") % {"file": one_file.name})
+                                    continue
 
-                    return redirect("community_url")
+                                is_video = mime_type.startswith("video/")
+
+                                PostMedia.objects.create(
+                                    post=new_post,
+                                    file=one_file,
+                                    is_video=is_video
+                                )
+
+                            except Exception:
+                                messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru %(file)s") % {"file": one_file.name})
+
+                        return redirect("community_url")
 
             # Search Users
             if request.headers.get("X-Requested-Action") == "search-users":

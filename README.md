@@ -723,6 +723,14 @@ The frontend provides a seamless "Desktop-class" experience for managing media b
 
 - **Effortless Removal**: Individual files can be removed from the selection list with a single click on the remove icon, allowing for quick corrections.
 
+#### 3.27.4 Deep Content Inspection (MIME-Type Validation)
+
+- **Beyond File Extensions**: To prevent malicious actors from bypassing security by simply renaming file extensions (e.g., renaming a script to .jpg), the system employs the **python-magic** Library.
+
+- **Magic Byte Analysis**: Every uploaded file is inspected at the binary level. The system reads the "magic bytes" (the initial bytes of the file's data) to determine its true **MIME** type.
+
+- **Integrity Enforcement**: If a file claims to be an image but its internal data structure reveals it is a binary executable or a text script, the system automatically rejects the upload. This provides a robust defense against "file spoofing" attacks and ensures that only genuine media files are ever processed by the server.
+
 ### 3.28. Post Locality and Geospatial Integration
 
 To provide geographic context to shared content, the platform includes a sophisticated location-tagging system powered by professional mapping tools and spatial database frameworks.
@@ -748,6 +756,80 @@ To provide geographic context to shared content, the platform includes a sophist
 - **GeoDjango Framework**: The platform utilizes the **GeoDjango Framework**, an add-on for Django that provides professional-grade support for geographic data. This allows the database to perform spatial queries, such as calculating distances or finding posts within a specific geographic boundary.
 
 - **Data Consistency**: Geographic information is bundled with the post’s metadata, ensuring that location data is perfectly synchronized with images, descriptions, and user tags.
+
+#### 3.28.4 Spatial Reference System (WGS84)
+
+- **Global Geodetic Standard**: All captured coordinates are stored using the **WGS84** (World Geodetic System 1984) standard. This is the industry-standard coordinate system used by GPS worldwide, ensuring that the location data is accurate and universally compatible.
+
+- **Database Precision (SRID 4326)**: In the backend, these spatial points are indexed using **SRID 4326**. This specific spatial reference identifier allows the application to communicate seamlessly with other mapping APIs and ensures that geographic metadata remains consistent during data migration or integration.
+
+- **Mathematical Accuracy**: By using a standardized geodetic system, the platform can perform precise spatial calculations (such as distance measurements or proximity searches) that account for the Earth's curvature, providing more reliable data than simple Cartesian (flat) coordinates.
+
+### 3.29. User Tagging and Mention System
+
+To facilitate community interaction, the platform features a highly sophisticated mentioning system, allowing users to tag others directly within post descriptions. While seemingly simple on the surface, this functionality is powered by a complex background architecture managing rich text and real-time data synchronization.
+
+#### 3.29.1 Intelligent Triggering and Real-Time Search
+
+- **Smart Input Mechanics**: Users can initiate a tag by typing the @ symbol or by clicking a dedicated @ icon. The system intelligently checks for preceding spaces, automatically adding one if missing, to ensure proper formatting.
+
+- **Asynchronous Live Search**: Upon typing the @ symbol followed by characters, an asynchronous JS Fetch request is triggered. This dynamically queries the database and populates a dropdown menu with relevant users in real-time.
+
+- **Data Sanitization**: The search results are strictly filtered to display only active, verified accounts, explicitly excluding suspended users.
+
+- **Keyboard Accessibility**: The dynamic dropdown fully supports keyboard navigation, allowing users to scroll through results with arrow keys and confirm a tag using the Enter key.
+
+#### 3.29.2 Rich Text Rendering and User Experience
+
+- **Custom Content Container**: Because standard **\<textarea\>** elements do not support internal HTML styling, the system utilizes a custom contenteditable container. This allows successfully tagged users to be rendered as highly visible, styled "pills" within the text flow.
+
+- **Secondary Tag Display**: For added clarity, all successfully recognized tags are concurrently displayed as a list below the input area, complete with quick-delete options.
+
+- **Duplicate Prevention**: The system enforces a strict "one tag per user" rule. Attempting to tag an already mentioned user triggers a short, intuitive warning animation rather than a disruptive error message.
+
+- **Text Fallback**: If an @ symbol is typed but no valid user is matched or selected, the system gracefully degrades, treating the input as an ordinary text word.
+
+#### 3.29.3 State Management and Deletion Logic
+
+- **Tag Limits**: To prevent spam, the system enforces a maximum limit of 10 tags per post.
+
+- **Intuitive Deletion**: Users can remove a tag in two ways:
+
+    - Clicking the "X" (delete sign) next to the user's name in the list below the text area.
+
+    - Using the Backspace key directly in the text editor. The system intelligently detects when the cursor collides with a styled tag pill and removes the entire tag entity seamlessly.
+
+#### 3.29.4 Underlying Technical Architecture
+
+- **Cursor and Position Tracking**: The frontend codebase meticulously tracks every user action - typing, deleting, and cursor repositioning—to continuously recalculate and maintain the correct index positions of all tags within the raw text string.
+
+- **Backend Integration**: Upon submission, the parsed list of tagged users is securely transmitted and stored in the relational database alongside the post's core metadata, enabling subsequent notifications and relational queries.
+
+### 3.30. Hashtag Integration and Formatting
+
+To categorize content and enhance global discoverability, the platform features a dynamic hashtag recognition system. This functionality is built upon the same robust, real-time text-parsing architecture used for user mentions.
+
+#### 3.30.1 Trigger Mechanisms and Validation
+
+- **Smart Input Options**: Users can initiate a hashtag manually by typing the # symbol or by interacting with a dedicated interface icon. When the icon is clicked, the system intelligently inserts the # symbol, automatically adding necessary spacing to ensure clean text flow.
+
+- **Space-Triggered Confirmation**: Hashtags are dynamically evaluated during typing. When a user types a keyword following the hash sign and hits the Space key, the system instantly processes the input.
+
+- **Regex Pattern Enforcement**: To maintain database integrity and prevent the creation of malformed or "nonsense" tags, every input is validated against strict Regular Expression (Regex) patterns. If the input fails to meet these specifications, it is gracefully ignored as a tag and treated purely as ordinary text.
+
+#### 3.30.2 Visual Feedback and Uniqueness
+
+- **Dynamic Pill Styling**: Successfully validated hashtags are immediately rendered as highlighted, colored "pills" within the text area, providing the user with immediate visual confirmation of the active tag.
+
+- **Duplicate Prevention**: The system enforces a strict uniqueness protocol. Each specific hashtag can only be active once per post. If a user attempts to type an identical hashtag again, the system processes the secondary instance simply as plain text.
+
+- **Content Limits**: To prevent tag-spamming and maintain optimal visual layout, the system restricts the maximum amount to 5 hashtags per post.
+
+#### 3.30.3 Real-Time Text Parsing and Collision Management
+
+- **Dynamic Re-evaluation**: The frontend continuously monitors keystrokes and cursor positions. If a user deletes text and the cursor collides with an existing styled hashtag, the system dynamically updates its stored position index.
+
+- **State Updates**: During deletion or modification, the system re-evaluates the collided string. If the modification breaks the Regex pattern or introduces a duplicate, the styled pill is instantly reverted to standard text, ensuring the underlying data structure remains perfectly synchronized with the visual output.
 
 ## 4. Features
 
@@ -792,3 +874,91 @@ Recognizing that visual data is easier to digest, the report includes high-quali
 - **Image Conversion**: Complex data visualizations (Weekly Activity Summary and Weekly Exercises Summary) are converted into static image files on the server.
 
 - **Seamless Delivery**: These images are embedded directly into the report, ensuring that the user sees consistent, high-fidelity graphs regardless of the device or e-mail provider they use.
+
+### 4.3. Advanced Password Security and Argon2 Hashing
+
+To ensure the highest level of data protection and user privacy, the platform implements industry-leading cryptographic standards for password storage, moving beyond default web framework configurations.
+
+#### 4.3.1 Argon2 Implementation
+
+- **State-of-the-Art Hashing**: The system utilizes Argon2, the winner of the Password Hashing Competition, as the primary hashing algorithm. Unlike traditional algorithms, Argon2 is specifically designed to resist brute-force attacks powered by specialized hardware (GPUs and ASICs).
+
+- **Memory-Hard Functionality**: By requiring a significant amount of memory to compute a hash, Argon2 makes it economically and technically unfeasible for attackers to run large-scale parallel cracking attempts, providing a superior layer of defense for user credentials.
+
+#### 4.3.2 Redundancy and Fallback Mechanisms
+
+- **Dynamic Hasher Selection**: While Argon2 is the primary standard, the application’s security architecture includes a prioritized list of fallback hashers (such as **PBKDF2**).
+
+- **Seamless Compatibility**: These fallbacks ensure that the system remains operational and secure even in the event of library unavailability or during the transition of legacy credentials.
+
+- **Automatic Upgrading**: The system is designed to automatically re-hash user passwords using Argon2 upon their next successful login if they were previously stored using an older, weaker algorithm.
+
+#### 4.3.3 Database Integrity
+
+- **Irreversible Encryption**: Passwords are never stored in plain text. Only the resulting high-entropy cryptographic hashes are saved, ensuring that even in the unlikely event of a database breach, the actual user passwords remain computationally impossible to retrieve.
+
+### 4.4. Local Production Simulation (Ngrok)
+
+To ensure that the application is fully "production-ready" before its final deployment, the development environment was augmented with Ngrok to create a secure, publicly accessible tunnel to the local server.
+
+#### 4.4.1 Secure Tunneling and HTTPS Testing
+
+- **Real-World Environment Emulation**: Ngrok provides a temporary, secured HTTPS domain that mirrors the security conditions of a live production server. This allows for the testing of features that strictly require encrypted connections (SSL/TLS).
+
+- **Cross-Device Testing**: By exposing the local development environment to the internet, the application can be tested on actual mobile devices and different operating systems in real-time, ensuring a consistent user experience across all platforms.
+
+#### 4.4.2 Webhook Integration and Debugging
+
+- **Stripe Webhook Validation**: One of the most critical uses of this setup is the verification of the Stripe payment system. Since Stripe’s servers must send asynchronous notifications (webhooks) to a reachable, secure URL, standard localhost (127.0.0.1) environments are insufficient.
+
+- **Asynchronous Flow Inspection**: Ngrok enables the developer to intercept, inspect, and replay webhook events, ensuring that the backend logic (Section 3.24.) correctly handles transaction updates, even in complex failure scenarios.
+
+#### 4.4.3 Pre-Deployment Quality Assurance
+
+- **End-to-End Verification**: This staging-like environment serves as a final checkpoint. It ensures that all third-party API integrations, callback URLs, and security headers are correctly configured and fully functional before the code is pushed to the actual production infrastructure.
+
+### 4.5. Modular Template Architecture (Base HTML)
+
+To ensure a consistent visual identity and maintainable codebase, the application utilizes a modular template system based on Template Inheritance. This architectural pattern follows the "DRY" (Don't Repeat Yourself) principle, significantly reducing code redundancy.
+
+#### 4.5.1 The Structural Blueprint
+
+- **Core Inheritance**: Every individual page (template) within the application inherits from a single, centralized Base HTML file. This file acts as a master blueprint, defining the fundamental structure of the document, including the **\<head\>** metadata, CSS links, and core JavaScript dependencies.
+
+- **Plug-and-Play Blocks**: The base file uses "blocks" (dynamic placeholders) that child templates fill with specific content. This allows the system to swap out only the unique parts of a page while keeping the surrounding structure intact.
+
+#### 4.5.2 Global Component Management
+
+- **Persistent Layout Elements**: Common UI components that remain constant throughout the user journey - such as the Header (Navigation Bar) and Footer - are defined exclusively in the Base HTML.
+
+- **Efficiency in Updates**: Since these global elements are centralized, any design change or update to the navigation logic is performed in a single location and instantly propagates across all sub-pages of the platform.
+
+#### 4.5.3 Optimized Codebase
+
+- **Reduced File Size**: Individual templates remain lightweight and focused only on their specific functionality (e.g., a Login Page or a Training Session Page), as they do not need to repeat boilerplate HTML code.
+
+- **Maintainability**: This structure simplifies the debugging process and makes the application much easier to scale, as the developer can manage the global layout independently from the page-specific logic.
+
+### 4.6. Dual-Layer Regex Validation and Pattern Enforcement
+
+To ensure maximum data integrity and protect the system against malformed or malicious inputs, the platform employs a synchronized dual-layer validation strategy. This approach balances immediate user feedback with rigorous server-side security.
+
+#### 4.6.1 Front-End: Real-Time Pattern Enforcement
+
+- **Immediate UX Feedback**: On the **client-side**, form inputs are protected using HTML5 pattern attributes and JavaScript-based listeners. This prevents users from entering prohibited characters or invalid formats (e.g., in usernames or other user information) in real-time.
+
+- **Proactive Error Prevention**: By restricting the input at the source, the system reduces unnecessary server requests and provides a smoother, more intuitive experience for the user.
+
+#### 4.6.2 Backend: Immutable Regex Security
+
+- **Robust Server-Side Logic**: Since Front-End protections can be bypassed by advanced users (e.g., via browser developer tools or intercepted requests), the backend serves as the ultimate authority. Every incoming data point is re-processed using Regular Expressions (Regex) in Python.
+
+- **Algorithm Synchronization**: The backend Regex patterns are meticulously mirrored from the Front-End logic, ensuring that the rules for data acceptance are consistent across the entire application stack.
+
+- **Unbypassable Defense**: This layer ensures that even if a request is manually crafted or manipulated, it will be rejected by the server if it does not strictly adhere to the defined patterns, preventing SQL injection attempts or data corruption.
+
+#### 4.6.3 Practical Applications
+
+- **Hashtags & Mentions**: Used to ensure that only valid characters are allowed."
+
+- **Credentials**: Ensures that sensitive data follows a predictable, secure format before it ever hits the database.
