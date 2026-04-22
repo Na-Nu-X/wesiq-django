@@ -70,6 +70,11 @@ def captureError(message):
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
+def captureLogin(message):
+    with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
+        # timezone.LocalTimezone
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+
 def getClientIp(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 
@@ -229,6 +234,7 @@ def homepageView(request):
                     )
 
                     messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+                    captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
                 
@@ -260,6 +266,7 @@ def homepageView(request):
             )
 
             messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+            captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
         return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -693,6 +700,7 @@ def loginView(request):
                 )
 
                 messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
+                captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
             
