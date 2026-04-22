@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="{% static 'app/css/community.css' %}">
 {% endblock style %}
 
+{% block recaptcha %}
+    <!-- Google reCAPTCHA V3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1"></script>
+{% endblock recaptcha %}
+
 {% block banner %}
     <div class="upload_post">
         <i class="fa-solid fa-photo-film" title="{% translate 'Uverejniť príspevok' %}"></i> <!-- https://fontawesome.com/icons/photo-film -->
@@ -16,6 +21,25 @@
 
 {% block content %}
     <dialog class="upload_post_form_dialog">
+        <!-- Google reCAPTCHA V3 -->
+        <script>
+            grecaptcha.ready(function() {
+                // Upload Post Form
+
+                const upload_post_form = document.querySelector(".upload_post_form")
+                if(upload_post_form) {
+                    upload_post_form.addEventListener("submit", function(event) {
+                        console.log("A")
+                        event.preventDefault()
+                        grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "upload_post_form"}).then(function(token) {
+                            document.getElementById("upload_post_form_recaptcha").value = token
+                            upload_post_form.submit()
+                        })
+                    })
+                }
+            })
+        </script>
+
         <form class="upload_post_form" action="{% url 'community_url' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
@@ -78,6 +102,9 @@
             <p class="form_report error" style="bottom: 241px;"></p>
             <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">
             <input class="upload_post_form_submit" type="submit" value="{% translate 'Uverejniť príspevok' %}">
+
+            <!-- Google reCAPTCHA V3 -->
+            <input type="hidden" name="g-recaptcha-response" id="upload_post_form_recaptcha">
         </form>
     </dialog>
 
