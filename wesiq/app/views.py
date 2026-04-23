@@ -1712,13 +1712,6 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
-        # posts = Post.objects.all().prefetch_related("tagged_users")
-
-        # for one_post in posts:
-        #     one_post.tagged_users_json = json.dumps(
-        #         list(one_post.tagged_users.values_list("username", flat=True))
-        #     )
-
         post_media = PostMedia.objects.all() # Gets All Post Media
 
         posts = Post.objects.all().prefetch_related(
@@ -1886,6 +1879,48 @@ def communityView(request):
 
                 return JsonResponse({"success": True})
 
+            # Like Comment
+            if request.headers.get("X-Requested-Action") == "like-comment":
+                comment_id = json.loads(request.body) # Gets The Comment Data
+
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=int(comment_id))
+
+                        if(str(logged_in_user_id) not in comment.likes_from_users):
+                            comment.likes_from_users.append(logged_in_user_id)
+                            comment.likes += 1
+                            
+                            comment.save()
+
+                    return JsonResponse({"success": True, "message": _("Like Has Been Recorded.")})
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Like Could Not Be Recorded.")})
+
+            # Cancel Like Comment
+            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
+                comment_id = json.loads(request.body) # Gets The Comment Data
+
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=int(comment_id))
+
+                        if(str(logged_in_user_id) in comment.likes_from_users):
+                            comment.likes_from_users.remove(str(logged_in_user_id))
+                            comment.likes -= 1
+                            
+                            comment.save()
+
+                    return JsonResponse({"success": True, "message": _("Like Has Been Removed.")})
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Like Could Not Be Removed.")})
+
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
@@ -1915,10 +1950,10 @@ def follow(request, user_id):
                 user_to_follow.followers.append(logged_in_user_id)
                 user_to_follow.save()
 
-        return JsonResponse({"success": "Follow Has Been Added."})
+        return JsonResponse({"success": True, "message": _("Follow Has Been Added.")})
 
     except:
-        return JsonResponse({"error": "Follow Could Not Be Added."})
+        return JsonResponse({"success": False, "message": _("Follow Could Not Be Added.")})
 
 @require_POST
 def unfollow(request, user_id):
@@ -1937,10 +1972,10 @@ def unfollow(request, user_id):
                 user_to_follow.followers.remove(str(logged_in_user_id))
                 user_to_follow.save()
 
-        return JsonResponse({"success": "Follow Has Been Removed."})
+        return JsonResponse({"success": True, "message": _("Follow Has Been Removed.")})
 
     except:
-        return JsonResponse({"error": "Follow Could Not Be Removed."})
+        return JsonResponse({"success": False, "message": _("Follow Could Not Be Removed.")})
 
 @require_POST
 def likePost(request, post_id):
@@ -1956,10 +1991,10 @@ def likePost(request, post_id):
                 
                 post.save()
 
-        return JsonResponse({"success": "Like Has Been Recorded To The Post."})
+        return JsonResponse({"success": True, "message": _("Like Has Been Recorded To The Post.")})
 
     except:
-        return JsonResponse({"error": "Like Could Not Be Recorded To The Post."})
+        return JsonResponse({"success": False, "message": _("Like Could Not Be Recorded On The Post.")})
 
 @require_POST
 def cancelLikePost(request, post_id):
@@ -1975,7 +2010,7 @@ def cancelLikePost(request, post_id):
                 
                 post.save()
 
-        return JsonResponse({"success": "Like Has Been Removed From The Post."})
+        return JsonResponse({"success": True, "message": _("Like Has Been Removed From The Post.")})
 
     except:
-        return JsonResponse({"error": "Like Could Not Be Removed From The Post."})
+        return JsonResponse({"success": False, "message": _("Like Could Not Be Removed From The Post.")})

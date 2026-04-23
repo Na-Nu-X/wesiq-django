@@ -6,4 +6,4 @@ declare global {
     function interpolate(fmt:string, obj:any[] | object, named?:boolean):string
 }
 
-export {};
+export {}

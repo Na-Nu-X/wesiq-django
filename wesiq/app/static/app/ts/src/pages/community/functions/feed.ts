@@ -1,6 +1,8 @@
 import { sendPOST } from "../../../services/sendPOST.js"
 import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 
+import type { response } from "../../../services/sendPOST.js"
+
 interface addCommentResponse {
     success:boolean
 }
@@ -79,22 +81,34 @@ function generateHeartParticles(particles:HTMLDivElement):void {
     }
 }
 
-// Function For Toggle Like And Cancel Like
-export function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement) {
+// Function For Toggle Post Like
+export function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement) {
     // If The Heart Is Empty
     if(icon.classList.contains("fa-regular")) {
-        generateHeartParticles(particles) // Generates The Heart Particles
+        try {
+            generateHeartParticles(particles) // Generates The Heart Particles
+    
+            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
+            sendPOST(`/like-post/${id}/`) // Sends Liked Post ID As A POST Data
+        }
 
-        icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
-        if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
-        sendPOST(`/like-post/${id}/`) // Sends Liked Commet ID As A POST Data To Like Comment Page
+        catch {
+            console.error(gettext("Pri pridávaní označenia páči sa mi to pre príspevok došlo k chybe."))
+        }
     }
 
     // If The Heart Is Already Clicked
     else if(icon.classList.contains("fa-solid")) {
-        icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
-        if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
-        sendPOST(`/cancel-like-post/${id}/`) // Sends Liked Commet ID As A POST Data To Cancel Like Comment Page
+        try {
+            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+            sendPOST(`/cancel-like-post/${id}/`) // Sends Liked Post ID As A POST Data
+        }
+
+        catch {
+            console.error(gettext("Pri rušení označenia páči sa mi to pre príspevok došlo k chybe."))
+        }
     }
 }
 
@@ -120,8 +134,43 @@ export async function addComment(post_id:string, comment:string, all_comments:HT
         }
     }
 
-    catch(error) {
-        console.error(gettext("Pri odosielaní komentáru došlo k chybe."), error)
+    catch {
+        console.error(gettext("Pri odosielaní komentáru došlo k chybe."))
+    }
+}
+
+// Function For Toggle Comment Like
+export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string) {
+    // If The Heart Is Empty
+    if(icon.classList.contains("fa-regular")) {
+        try {
+            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
+
+            const like_comment_response:response = await sendPOST(window.location.pathname, id, "like-comment") // Sends Liked Comment ID As A POST Data
+
+            if(!like_comment_response.success) console.log(like_comment_response.message)
+        }
+
+        catch {
+            console.error(gettext("Pri pridávaní označenia páči sa mi to pre komentár došlo k chybe."))
+        }
+    }
+
+    // If The Heart Is Already Clicked
+    else if(icon.classList.contains("fa-solid")) {
+        try {
+            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
+
+            const cancel_like_comment_response:response = await sendPOST(window.location.pathname, id, "cancel-like-comment") // Sends Liked Comment ID As A POST Data
+
+            if(!cancel_like_comment_response.success) console.log(cancel_like_comment_response.message)
+        }
+
+        catch {
+            console.error(gettext("Pri rušení označenia páči sa mi to pre komentár došlo k chybe."))
+        }
     }
 }
 
