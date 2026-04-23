@@ -17,6 +17,8 @@ import { getFormattedTime } from "../../../utils/timer.js"
 import { resetTrainingPlan } from "./trainingPlan.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 
+import type { response } from "../../../services/sendPOST.js"
+
 // Finction For Update Activity Summary
 function updateActivitySummary(exercise:HTMLDivElement|null):void {
     // Activity Summary
@@ -106,7 +108,7 @@ export function pauseActivity(playback:HTMLDivElement):void {
 }
 
 // Function For Stop Activity
-export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):void {
+export async function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):Promise<void> {
     if(activity_summary.elapsed_time > 0) {
         const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
         const elapsed_time:number = activity_summary.elapsed_time // Gets Activity Elapsed Time
@@ -146,7 +148,21 @@ export function stopActivity(container:HTMLDivElement, playback:HTMLDivElement):
                     renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
                 }
 
-                if(!container.querySelector(".no_logged_in")) sendPOST(window.location.pathname, new_activity_data) // Sends POST Data
+                if(!container.querySelector(".no_logged_in")) {
+                    try {
+                        const new_activity_response:response = await sendPOST(window.location.pathname, new_activity_data) // Sends POST Data
+
+                        // If The Response Isn't Success
+                        if(!new_activity_response.success) {
+                            console.error(new_activity_response.message)
+                            return
+                        }
+                    }
+
+                    catch {
+                        console.error(gettext("Pri zaznamenávaní aktivity došlo k chybe."))
+                    }
+                }
             }
         }
 

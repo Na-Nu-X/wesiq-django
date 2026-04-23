@@ -5,7 +5,9 @@ import { getPeriods } from "./periods.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 import { sendNotification } from "../../../utils/sendNotification.js"
 
-export function saveTrainingPlan(container:HTMLDivElement, state:{active_exercise_index:number}) {
+import type { response } from "../../../services/sendPOST.js"
+
+export async function saveTrainingPlan(container:HTMLDivElement, state:{active_exercise_index:number}):Promise<void> {
     const training_plan:HTMLDivElement = container.querySelector(".training_plan") as HTMLDivElement // Gets Training Plan
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
     const day_options:NodeListOf<HTMLDivElement> = container.querySelectorAll<HTMLDivElement>(".additional_info .day_select_menu .options_list .option") // Gets All Day Options
@@ -83,12 +85,24 @@ export function saveTrainingPlan(container:HTMLDivElement, state:{active_exercis
             training_plan_data.push(training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST 
+        try {
+            const save_training_plan_response:response = await sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST 
 
-        // Sends The Notification For The User
-        if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne pridaný."), [training_plan_title.value]))
-        if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne upravený."), [training_plan_title.value]))
+            // If The Response Isn't Success
+            if(!save_training_plan_response.success) {
+                console.error(save_training_plan_response.message)
+                return
+            }
+    
+            // Sends The Notification For The User
+            if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne pridaný."), [training_plan_title.value]))
+            if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne upravený."), [training_plan_title.value]))
+    
+            location.reload() // Reloads The Page
+        }
 
-        location.reload() // Reloads The Page
+        catch {
+            console.error(gettext("Pri ukladaní tréningového plánu došlo k chybe."))
+        }
     }
 }

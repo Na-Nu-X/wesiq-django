@@ -10,8 +10,9 @@ export interface searchedUser {
 
 export interface searchedUsersResponse {
     success:boolean,
-    logged_in_user_id:number,
-    users:searchedUser[]
+    logged_in_user_id?:number,
+    users?:searchedUser[],
+    message:string
 }
 
 // Function For Render Users From The POST Response

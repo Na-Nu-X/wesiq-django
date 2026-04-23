@@ -6,7 +6,7 @@ export interface response {
 }
 
 // Function For Send Data By POST Method
-export function sendPOST<T>(url_path:string = new URL(window.location.href).pathname, data:T|null = null, header_info:string = "") {
+export async function sendPOST<T>(url_path:string = new URL(window.location.href).pathname, data:T|null = null, header_info:string = "") {
     return fetch(url_path, {
         method: "POST",
         headers: {

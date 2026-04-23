@@ -42,7 +42,8 @@ import {
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 
-import type { searchedUsersResponse } from "./functions/searchUsers.js"
+import type { response } from "../../services/sendPOST.js"
+import type { searchedUser, searchedUsersResponse } from "./functions/searchUsers.js"
 import type { tag } from "./state.js"
 
 // Function For Get Cursor Position Of The Description
@@ -82,30 +83,56 @@ export function focusAtEnd(description:HTMLDivElement):void {
 }
 
 // Function For Add Follow
-function follow(event:PointerEvent, user_to_follow_id:number|null):void {
+async function follow(event:PointerEvent, user_to_follow_id:number|null):Promise<void> {
     event.preventDefault() // Prevents Redirect To The User's Profile
 
     if(user_to_follow_id) {
-        sendPOST(`/follow/${user_to_follow_id}/`); // Sends Clicked User ID As A POST Data To Follow Page
-        (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
+        try {
+            const follow_response:response = await sendPOST(window.location.pathname, user_to_follow_id, "follow"); // Sends Clicked User ID As A POST Data
 
-        const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+            // If The Response Isn't Success
+            if(!follow_response.success) {
+                console.error(follow_response.message)
+                return
+            }
 
-        followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+            (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
+    
+            const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+    
+            followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+        }
+
+        catch {
+            console.error(gettext("Pri pridávaní sledovania užívateľovi došlo k chybe."))
+        }
     }
 }
 
 // Function For Remove Follow
-function unfollow(event:PointerEvent, user_to_follow_id:number|null):void {
+async function unfollow(event:PointerEvent, user_to_unfollow_id:number|null):Promise<void> {
     event.preventDefault() // Prevents Redirect To The User's Profile
 
-    if(user_to_follow_id) {
-        sendPOST(`/unfollow/${user_to_follow_id}/`); // Sends Clicked User ID As A POST Data To Unfollow Page
-        (event.target as HTMLElement).classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
+    if(user_to_unfollow_id) {
+        try {
+            const unfollow_response:response = await sendPOST(window.location.pathname, user_to_unfollow_id, "unfollow"); // Sends Clicked User ID As A POST Data
 
-        const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+            // If The Response Isn't Success
+            if(!unfollow_response.success) {
+                console.error(unfollow_response.message)
+                return
+            }
+            
+            (event.target as HTMLElement).classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
 
-        followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+            const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+
+            followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+        }
+
+        catch {
+            console.error(gettext("Pri odstraňovaní sledovania užívateľovi došlo k chybe."))
+        }
     }
 }
 
@@ -157,14 +184,24 @@ document.addEventListener("DOMContentLoaded", function():void {
                 try {
                     const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, this.value, "search-users") // Sends The Data With POST
 
-                    if(search_bar_response.success) {
+                    // If The Response Isn't Success
+                    if(!search_bar_response.success) {
+                        console.error(search_bar_response.message)
+                        return
+                    }
+
+                    if(search_bar_response.users && search_bar_response.logged_in_user_id) {
                         all_users_container.innerHTML = "" // Deletes All Users Container
-                        search_bar_response.users.forEach(one_user_data => renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)) // Renders Users
+
+                        // Renders Users
+                        search_bar_response.users.forEach(function(one_user_data:searchedUser) {
+                            if(search_bar_response.logged_in_user_id) renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)
+                        })
                     }
                 }
 
-                catch(error) {
-                    console.error(gettext("Pri hľadaní užívateľov došlo k chybe."), error)
+                catch {
+                    console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
                 }
                 
                 finally {

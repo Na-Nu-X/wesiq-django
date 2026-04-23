@@ -35,6 +35,8 @@ import { getFormattedTime, getMinimalistFormattedTime } from "../../utils/timer.
 import { sendPOST } from "../../services/sendPOST.js"
 import { sendNotification } from "../../utils/sendNotification.js"
 
+import type { response } from "../../services/sendPOST.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
@@ -253,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         generateTrainingPlan(exercises_data, edit_training_plan)
     }
 
-    function deleteTrainingPlan(container:HTMLDivElement):void {
+    async function deleteTrainingPlan(container:HTMLDivElement):Promise<void> {
         const training_plan:HTMLDivElement = container.querySelector(".training_plan") as HTMLDivElement // Gets Training Plan
         const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
         const training_plan_title:HTMLInputElement = container.querySelector(".additional_info .title") as HTMLInputElement // Gets Training Plan Title
@@ -278,9 +280,22 @@ document.addEventListener("DOMContentLoaded", function():void {
             training_plan_data.push(delete_training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
         })
 
-        sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST
-        sendNotification(interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])) // Sends The Notification For The User
-        location.reload() // Reloads The Page
+        try {
+            const delete_training_plan_response:response = await sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST
+
+            // If The Response Isn't Success
+            if(!delete_training_plan_response.success) {
+                console.error(delete_training_plan_response.message)
+                return
+            }
+
+            sendNotification(interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])) // Sends The Notification For The User
+            location.reload() // Reloads The Page
+        }
+
+        catch {
+            console.error(gettext("Pri odstraňovaní tréningového plánu došlo k chybe."))
+        }
     }
 
     // Global Event Delegations
