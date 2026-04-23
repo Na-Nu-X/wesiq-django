@@ -33,7 +33,6 @@ import string
 from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
 import magic
-from collections import defaultdict
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -186,9 +185,9 @@ def createPaymentIntent(request):
             return JsonResponse({"client_secret": intent.client_secret})
 
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
             
-    return JsonResponse({"error": "Only POST is Allowed."}, status=405)
+    return JsonResponse({"success": False, "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")}, status=405)
 
 @csrf_exempt
 def stripeWebhook(request):
@@ -1374,7 +1373,7 @@ def blogThemeView(request, theme):
                     new_comment.save()
 
             # Reply Comment Form
-            elif request.POST.get("reply_comment_form"):
+            if request.POST.get("reply_comment_form"):
                 write_comment_form = writeCommentForm(request.POST)
                 if write_comment_form.is_valid():
                     new_comment_reply = ArticleForum(
@@ -1385,6 +1384,78 @@ def blogThemeView(request, theme):
                     )
 
                     new_comment_reply.save()
+
+            # Like Comment
+            if request.headers.get("X-Requested-Action") == "like-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = ArticleForum.objects.get(id=comment_id)
+
+                        if(str(logged_in_user_id) not in comment.likes_from_users):
+                            comment.likes_from_users.append(logged_in_user_id)
+                            comment.likes += 1
+                            
+                            comment.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nedá pridať bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
+
+            # Cancel Like Comment
+            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = ArticleForum.objects.get(id=comment_id)
+
+                        if(str(logged_in_user_id) in comment.likes_from_users):
+                            comment.likes_from_users.remove(str(logged_in_user_id))
+                            comment.likes -= 1
+                            
+                            comment.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
+
+            # Report Comment
+            if request.headers.get("X-Requested-Action") == "report-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = ArticleForum.objects.get(id=comment_id)
+
+                        if(str(logged_in_user_id) not in comment.reports_from_users):
+                            comment.reports_from_users.append(logged_in_user_id)
+                            comment.reports += 1
+
+                            if comment.reports >= 5:
+                                comment.status = "hidden"
+                            
+                            comment.save()
+
+                        return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Nahlásenie sa nepodarilo odoslať.")}, status=404)
 
         response = render(request, "app/articles.html", {
             "first_name": user.first_name,
@@ -1440,66 +1511,6 @@ def writeArticleView(request):
     return render(request, "app/write_article.html", {
         "write_article_form": writeArticleForm
     })
-
-@require_POST
-def likeComment(request, comment_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            comment = ArticleForum.objects.get(id=comment_id)
-
-            if(str(logged_in_user_id) not in comment.likes_from_users):
-                comment.likes_from_users.append(logged_in_user_id)
-                comment.likes += 1
-                
-                comment.save()
-
-        return JsonResponse({"success": "Like Has Been Recorded."})
-
-    except:
-        return JsonResponse({"error": "Like Could Not Be Recorded."})
-
-@require_POST
-def cancelLikeComment(request, comment_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            comment = ArticleForum.objects.get(id=comment_id)
-
-            if(str(logged_in_user_id) in comment.likes_from_users):
-                comment.likes_from_users.remove(str(logged_in_user_id))
-                comment.likes -= 1
-                
-                comment.save()
-
-        return JsonResponse({"success": "Like Has Been Removed."})
-
-    except:
-        return JsonResponse({"error": "Like Could Not Be Removed."})
-
-@require_POST
-def reportComment(request, comment_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            comment = ArticleForum.objects.get(id=comment_id)
-
-            if(str(logged_in_user_id) not in comment.reports_from_users):
-                comment.reports_from_users.append(logged_in_user_id)
-                comment.reports += 1
-
-                if comment.reports >= 5:
-                    comment.status = "hidden"
-                
-                comment.save()
-
-        return JsonResponse({"success": "Report Has Been Sent."})
-
-    except:
-        return JsonResponse({"error": "Report Could Not Be Sent."})
 
 def trainingSessionView(request):
     # Gets Logged In User
@@ -1573,28 +1584,32 @@ def trainingSessionView(request):
         )
         
         if request.method == "POST":
-            new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+            try:
+                new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
 
-            gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
+                gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
-            # Increments Gained XP For The User In The Database
-            logged_in_user.xp += int(gained_xp)
-            logged_in_user.save()
+                # Increments Gained XP For The User In The Database
+                logged_in_user.xp += int(gained_xp)
+                logged_in_user.save()
 
-            # Saves New Activity To Database
-            new_activity = Activity(
-                user_id = logged_in_user_id,
-                formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
-                elapsed_time = int(new_activity_data["elapsed_time"]),
-                gained_xp = int(gained_xp),
-                type = new_activity_data["type"],
-                training_plan_day = new_activity_data["day"],
-                training_plan_summary = new_activity_data["training_plan_summary"]
-            )
+                # Saves New Activity To Database
+                new_activity = Activity(
+                    user_id = logged_in_user_id,
+                    formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
+                    elapsed_time = int(new_activity_data["elapsed_time"]),
+                    gained_xp = int(gained_xp),
+                    type = new_activity_data["type"],
+                    training_plan_day = new_activity_data["day"],
+                    training_plan_summary = new_activity_data["training_plan_summary"]
+                )
 
-            new_activity.save()
+                new_activity.save()
 
-            return JsonResponse({"success": "Amount Of XP Has Been Increased."})
+                return JsonResponse({"success": True, "message": _("Množstvo XP bolo úspešne navýšené.")}, status=201)
+
+            except:
+                return JsonResponse({"success": False, "message": _("Množstvo XP sa nepodarilo navýšiť.")}, status=404)
 
         return render(request, "app/training_session.html", {
             "first_name": logged_in_user.first_name,
@@ -1652,46 +1667,56 @@ def manageTrainingPlansView(request):
         )
 
         if request.method == "POST":
-            training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
-            
-            # Gets Each Object From The Training Plan Data
-            for one_object in training_plan_data:
-                # New Training Plan
-                if one_object["action"] == "new_training_plan":
-                    new_training_plan = TrainingPlan(
-                        user_id = logged_in_user_id,
-                        training_plan_key = one_object["training_plan_key"],
-                        day = one_object["day"],
-                        type = one_object["type"],
-                        exercise = one_object["exercise"],
-                        periods = one_object["periods"],
-                        unit = one_object["unit"],
-                        order = one_object["order"],
-                    )
+            try:
+                training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+                
+                # Gets Each Object From The Training Plan Data
+                for one_object in training_plan_data:
+                    # New Training Plan
+                    if one_object["action"] == "new_training_plan":
+                        new_training_plan = TrainingPlan(
+                            user_id = logged_in_user_id,
+                            training_plan_key = one_object["training_plan_key"],
+                            day = one_object["day"],
+                            type = one_object["type"],
+                            exercise = one_object["exercise"],
+                            periods = one_object["periods"],
+                            unit = one_object["unit"],
+                            order = one_object["order"],
+                        )
 
-                    new_training_plan.save() # Saves New Training Plan
+                        new_training_plan.save() # Saves New Training Plan
 
-                # Edited Training Plan
-                elif one_object["action"] == "edited_training_plan":
-                    training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
+                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne vytvorený / upravený.")}, status=201) # Returns Success Response
 
-                    edited_training_plan = TrainingPlan(
-                        user_id = logged_in_user_id,
-                        training_plan_key = one_object["training_plan_key"],
-                        day = one_object["day"],
-                        type = one_object["type"],
-                        exercise = one_object["exercise"],
-                        periods = one_object["periods"],
-                        unit = one_object["unit"],
-                        order = one_object["order"],
-                    )
+                    # Edited Training Plan
+                    elif one_object["action"] == "edited_training_plan":
+                        training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
 
-                    edited_training_plan.save() # Saves Edited Training Plan
+                        edited_training_plan = TrainingPlan(
+                            user_id = logged_in_user_id,
+                            training_plan_key = one_object["training_plan_key"],
+                            day = one_object["day"],
+                            type = one_object["type"],
+                            exercise = one_object["exercise"],
+                            periods = one_object["periods"],
+                            unit = one_object["unit"],
+                            order = one_object["order"],
+                        )
 
-                elif one_object["action"] == "delete_training_plan":
-                    training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
+                        edited_training_plan.save() # Saves Edited Training Plan
 
-            return JsonResponse({"success": "true"}) # Returns Success Response
+                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne vytvorený.")}, status=201) # Returns Success Response
+
+                    elif one_object["action"] == "delete_training_plan":
+                        training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
+
+                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne odstránený.")}, status=200) # Returns Success Response
+
+                    return JsonResponse({"success": False, "message": _("Nepodarilo sa vykonať zmeny v tréningovom pláne.")}, status=404)
+
+            except:
+                return JsonResponse({"success": False, "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")}, status=404)
         
         return render(request, "app/manage_training_plans.html", {
             "first_name": logged_in_user.first_name,
@@ -1813,77 +1838,183 @@ def communityView(request):
 
             # Search Users
             if request.headers.get("X-Requested-Action") == "search-users":
-                searched_text = json.loads(request.body) # Gets The Searched Text
-                
-                users = Users.objects.filter(
-                    Q(account_status="OK") & (
-                        Q(first_name__icontains=searched_text) | 
-                        Q(last_name__icontains=searched_text) | 
-                        Q(friend_code__contains=searched_text)
-                    )
-                ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
-                
-                # Creates Valid Format For JSON Response
-                users = [
-                    {
-                        "id": one_user.id, 
-                        "first_name": one_user.first_name, 
-                        "last_name": one_user.last_name, 
-                        "profile_picture_name": one_user.profile_picture_name, 
-                        "friend_code": one_user.friend_code,
-                        "following": list(one_user.following),
-                        "followers": list(one_user.followers),
-                    }
+                try:
+                    searched_text = json.loads(request.body) # Gets The Searched Text
+                    
+                    users = Users.objects.filter(
+                        Q(account_status="OK") & (
+                            Q(first_name__icontains=searched_text) | 
+                            Q(last_name__icontains=searched_text) | 
+                            Q(friend_code__contains=searched_text)
+                        )
+                    ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
+                    
+                    # Creates Valid Format For JSON Response
+                    users = [
+                        {
+                            "id": one_user.id, 
+                            "first_name": one_user.first_name, 
+                            "last_name": one_user.last_name, 
+                            "profile_picture_name": one_user.profile_picture_name, 
+                            "friend_code": one_user.friend_code,
+                            "following": list(one_user.following),
+                            "followers": list(one_user.followers),
+                        }
 
-                    for one_user in users
-                ]
+                        for one_user in users
+                    ]
 
-                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users})
+                    return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Nepodarilo sa nájsť užívateľov.")}, status=404)
+
+            # Follow
+            if request.headers.get("X-Requested-Action") == "follow":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+
+                        user_to_follow_id = json.loads(request.body)
+                        user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
+
+                        if(str(user_to_follow_id) not in logged_in_user.following):
+                            logged_in_user.following.append(user_to_follow_id)
+                            logged_in_user.save()
+
+                        if(str(logged_in_user_id) not in user_to_follow.followers):
+                            user_to_follow.followers.append(logged_in_user_id)
+                            user_to_follow.save()
+
+                        return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné pridať bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Sledovanie sa nepodarilo pridať.")}, status=404)
+
+            # Unfollow
+            if request.headers.get("X-Requested-Action") == "unfollow":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+
+                        user_to_unfollow_id = json.loads(request.body)
+                        user_to_unfollow = Users.objects.get(id=user_to_unfollow_id) # Gets User To Unfollow From The DB
+
+                        if(str(user_to_unfollow_id) in logged_in_user.following):
+                            logged_in_user.following.remove(str(user_to_unfollow_id))
+                            logged_in_user.save()
+
+                        if(str(logged_in_user_id) in user_to_unfollow.followers):
+                            user_to_unfollow.followers.remove(str(logged_in_user_id))
+                            user_to_unfollow.save()
+
+                        return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Sledovanie sa nepodarilo odstrániť.")}, status=404)
+
+            # Like Post
+            if request.headers.get("X-Requested-Action") == "like-post":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        post_id = json.loads(request.body)
+                        post = Post.objects.get(id=post_id)
+
+                        if(str(logged_in_user_id) not in post.likes_from_users):
+                            post.likes_from_users.append(logged_in_user_id)
+                            post.likes += 1
+                            
+                            post.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné pridať bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
+
+            # Cancel Like Post
+            if request.headers.get("X-Requested-Action") == "cancel-like-post":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        post_id = json.loads(request.body)
+                        post = Post.objects.get(id=post_id)
+
+                        if(str(logged_in_user_id) in post.likes_from_users):
+                            post.likes_from_users.remove(str(logged_in_user_id))
+                            post.likes -= 1
+                            
+                            post.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
 
             # Tag User
             if request.headers.get("X-Requested-Action") == "tag-user":
-                searched_tag = json.loads(request.body) # Gets The Searched Tag
-                
-                # Gets All Relevant Users By Searched Tag
-                users_for_tag = Users.objects.filter(
-                    account_status="OK", 
-                    username__contains=searched_tag
-                ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
+                try:
+                    searched_tag = json.loads(request.body) # Gets The Searched Tag
+                    
+                    # Gets All Relevant Users By Searched Tag
+                    users_for_tag = Users.objects.filter(
+                        account_status="OK", 
+                        username__contains=searched_tag
+                    ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
 
-                # Creates Valid Format For JSON Response
-                users_for_tag = [
-                    {
-                        "id": one_user.id,
-                        "first_name": one_user.first_name,
-                        "last_name": one_user.last_name,
-                        "username": one_user.username,
-                        "profile_picture_name": one_user.profile_picture_name,
-                    }
+                    # Creates Valid Format For JSON Response
+                    users_for_tag = [
+                        {
+                            "id": one_user.id,
+                            "first_name": one_user.first_name,
+                            "last_name": one_user.last_name,
+                            "username": one_user.username,
+                            "profile_picture_name": one_user.profile_picture_name,
+                        }
 
-                    for one_user in users_for_tag
-                ]
+                        for one_user in users_for_tag
+                    ]
 
-                return JsonResponse({"success": True, "users": users_for_tag})
+                    return JsonResponse({"success": True, "users": users_for_tag, "message": "Užívatelia pre označenie boli úspešne nájdený."}, status=200)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Nepodarilo sa nájsť užívateľov pre označenie.")}, status=404)
 
             # Add Comment
             if request.headers.get("X-Requested-Action") == "add-comment":
-                comment_data = json.loads(request.body) # Gets The Comment Data
+                try:
+                    comment_data = json.loads(request.body) # Gets The Comment Data
 
-                new_comment = PostForum(
-                    post_id = comment_data["post_id"],
-                    user_id = logged_in_user_id,
-                    comment = comment_data["comment"]
-                )
+                    new_comment = PostForum(
+                        post_id = comment_data["post_id"],
+                        user_id = logged_in_user_id,
+                        comment = comment_data["comment"]
+                    )
 
-                new_comment.save()
+                    new_comment.save()
 
-                return JsonResponse({"success": True})
+                    return JsonResponse({"success": True, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+
+                except:
+                    return JsonResponse({"success": False, "message": _("Komentár pre príspevok sa nepodarilo pridať.")}, status=404)
 
             # Like Comment
             if request.headers.get("X-Requested-Action") == "like-comment":
-                comment_id = json.loads(request.body) # Gets The Comment Data
-
                 try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
@@ -1895,16 +2026,16 @@ def communityView(request):
                             
                             comment.save()
 
-                    return JsonResponse({"success": True, "message": _("Like Has Been Recorded.")})
+                    return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Like Could Not Be Recorded.")})
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
 
             # Cancel Like Comment
             if request.headers.get("X-Requested-Action") == "cancel-like-comment":
-                comment_id = json.loads(request.body) # Gets The Comment Data
-
                 try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
@@ -1916,10 +2047,10 @@ def communityView(request):
                             
                             comment.save()
 
-                    return JsonResponse({"success": True, "message": _("Like Has Been Removed.")})
+                    return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Like Could Not Be Removed.")})
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
@@ -1932,85 +2063,3 @@ def communityView(request):
         })
 
     return render(request, "app/community.html")
-
-@require_POST
-def follow(request, user_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
-            user_to_follow = Users.objects.get(id=user_id) # Gets User To Follow From The DB
-
-            if(str(user_id) not in logged_in_user.following):
-                logged_in_user.following.append(user_id)
-                logged_in_user.save()
-
-            if(str(logged_in_user_id) not in user_to_follow.followers):
-                user_to_follow.followers.append(logged_in_user_id)
-                user_to_follow.save()
-
-        return JsonResponse({"success": True, "message": _("Follow Has Been Added.")})
-
-    except:
-        return JsonResponse({"success": False, "message": _("Follow Could Not Be Added.")})
-
-@require_POST
-def unfollow(request, user_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
-            user_to_follow = Users.objects.get(id=user_id) # Gets User To Follow From The DB
-
-            if(str(user_id) in logged_in_user.following):
-                logged_in_user.following.remove(str(user_id))
-                logged_in_user.save()
-
-            if(str(logged_in_user_id) in user_to_follow.followers):
-                user_to_follow.followers.remove(str(logged_in_user_id))
-                user_to_follow.save()
-
-        return JsonResponse({"success": True, "message": _("Follow Has Been Removed.")})
-
-    except:
-        return JsonResponse({"success": False, "message": _("Follow Could Not Be Removed.")})
-
-@require_POST
-def likePost(request, post_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            post = Post.objects.get(id=post_id)
-
-            if(str(logged_in_user_id) not in post.likes_from_users):
-                post.likes_from_users.append(logged_in_user_id)
-                post.likes += 1
-                
-                post.save()
-
-        return JsonResponse({"success": True, "message": _("Like Has Been Recorded To The Post.")})
-
-    except:
-        return JsonResponse({"success": False, "message": _("Like Could Not Be Recorded On The Post.")})
-
-@require_POST
-def cancelLikePost(request, post_id):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            post = Post.objects.get(id=post_id)
-
-            if(str(logged_in_user_id) in post.likes_from_users):
-                post.likes_from_users.remove(str(logged_in_user_id))
-                post.likes -= 1
-                
-                post.save()
-
-        return JsonResponse({"success": True, "message": _("Like Has Been Removed From The Post.")})
-
-    except:
-        return JsonResponse({"success": False, "message": _("Like Could Not Be Removed From The Post.")})

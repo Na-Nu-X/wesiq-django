@@ -3,10 +3,6 @@ import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
-interface addCommentResponse {
-    success:boolean
-}
-
 // Function For Generate Styled Description
 export function generateStyledDescription(text:string, tagged_users:string|null, added_hashtags:string|null):string {
     if(tagged_users) {
@@ -82,15 +78,21 @@ function generateHeartParticles(particles:HTMLDivElement):void {
 }
 
 // Function For Toggle Post Like
-export function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement) {
+export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement):Promise<void> {
     // If The Heart Is Empty
     if(icon.classList.contains("fa-regular")) {
         try {
+            const like_post_response:response = await sendPOST(window.location.pathname, id, "like-post") // Sends Liked Post ID As A POST Data
+
+            // If The Response Isn't Success
+            if(!like_post_response.success) {
+                console.error(like_post_response.message)
+                return
+            }
+
             generateHeartParticles(particles) // Generates The Heart Particles
-    
             icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
             if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
-            sendPOST(`/like-post/${id}/`) // Sends Liked Post ID As A POST Data
         }
 
         catch {
@@ -101,9 +103,16 @@ export function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|nu
     // If The Heart Is Already Clicked
     else if(icon.classList.contains("fa-solid")) {
         try {
+            const cancel_like_post_response:response = await sendPOST(window.location.pathname, id, "cancel-like-post") // Sends Liked Post ID As A POST Data
+
+            // If The Response Isn't Success
+            if(!cancel_like_post_response.success) {
+                console.error(cancel_like_post_response.message)
+                return
+            }
+
             icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
             if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
-            sendPOST(`/cancel-like-post/${id}/`) // Sends Liked Post ID As A POST Data
         }
 
         catch {
@@ -113,7 +122,7 @@ export function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|nu
 }
 
 // Function For Add Comment
-export async function addComment(post_id:string, comment:string, all_comments:HTMLDivElement) {
+export async function addComment(post_id:string, comment:string, all_comments:HTMLDivElement):Promise<void> {
     try {
         const comment_data:{
             post_id:string,
@@ -123,14 +132,12 @@ export async function addComment(post_id:string, comment:string, all_comments:HT
             comment
         }
 
-        const searched_tags_response:addCommentResponse = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
+        const searched_tags_response:response = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
 
-        if(searched_tags_response.success) {
-            console.log("SUCCESS")
-        }
-
-        else {
-            console.log("ERROR")
+        // If The Response Isn't Success
+        if(!searched_tags_response.success) {
+            console.error(searched_tags_response.message)
+            return
         }
     }
 
@@ -140,16 +147,20 @@ export async function addComment(post_id:string, comment:string, all_comments:HT
 }
 
 // Function For Toggle Comment Like
-export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string) {
+export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string):Promise<void> {
     // If The Heart Is Empty
     if(icon.classList.contains("fa-regular")) {
         try {
-            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
-            if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
-
             const like_comment_response:response = await sendPOST(window.location.pathname, id, "like-comment") // Sends Liked Comment ID As A POST Data
 
-            if(!like_comment_response.success) console.log(like_comment_response.message)
+            // If The Response Isn't Success
+            if(!like_comment_response.success) {
+                console.error(like_comment_response.message)
+                return
+            }
+
+            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
         }
 
         catch {
@@ -160,12 +171,16 @@ export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphE
     // If The Heart Is Already Clicked
     else if(icon.classList.contains("fa-solid")) {
         try {
-            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
-            if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
-
             const cancel_like_comment_response:response = await sendPOST(window.location.pathname, id, "cancel-like-comment") // Sends Liked Comment ID As A POST Data
 
-            if(!cancel_like_comment_response.success) console.log(cancel_like_comment_response.message)
+            // If The Response Isn't Success
+            if(!cancel_like_comment_response.success) {
+                console.error(cancel_like_comment_response.message)
+                return
+            }
+
+            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
+            if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
         }
 
         catch {

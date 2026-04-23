@@ -19,7 +19,8 @@ interface taggedUser {
 
 interface searchedTagsResponse {
     success:boolean,
-    users:taggedUser[]
+    users?:taggedUser[],
+    message:string
 }
 
 // Function For Get Users For Tag
@@ -44,14 +45,20 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
         try {
             const searched_tags_response:searchedTagsResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_user.toLowerCase(), "tag-user") // Sends The Data With POST
 
-            if(searched_tags_response.success) {
-                // Checks If Searched Tag Exists
-                if(isExistingTag(users_for_tag_container, tag_user_state.tagged_user)) {
-                    tagUser(users_for_tag_container, tag_user_state.tagged_user, description) // Tags The User
-                }
+            // If The Response Isn't Success
+            if(!searched_tags_response.success) {
+                console.error(searched_tags_response.message)
+                return
+            }
 
-                users_for_tag_container.innerHTML = "" // Deletes All Previous Data From The Container
-                
+            // Checks If Searched Tag Exists
+            if(isExistingTag(users_for_tag_container, tag_user_state.tagged_user)) {
+                tagUser(users_for_tag_container, tag_user_state.tagged_user, description) // Tags The User
+            }
+
+            users_for_tag_container.innerHTML = "" // Deletes All Previous Data From The Container
+            
+            if(searched_tags_response.users) {
                 // Checks If There Were Any Tags Found And User Didn't Ended Typing The Tag
                 if(searched_tags_response.users.length > 0 && !tag_user_state.tagged_user.includes(" ")) {
                     searched_tags_response.users.forEach(one_user_data => renderUsersForTag(one_user_data, users_for_tag_container)) // Renders Each User For Tag
@@ -76,8 +83,8 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
             }
         }
 
-        catch(error) {
-            console.error(gettext("Pri hľadaní užívateľov došlo k chybe."), error)
+        catch {
+            console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
         }
     }
 }
