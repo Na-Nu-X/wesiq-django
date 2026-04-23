@@ -313,7 +313,7 @@
 
                         <div class="all_comments">
                             {% for one_comment in one_post.comments.all %}
-                                <div class="one_comment">
+                                <div class="one_comment" data-comment_id={{ one_comment.id }}>
                                     <div class="comment_container">
                                         <div class="user">
                                             <img 

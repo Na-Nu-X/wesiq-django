@@ -1,5 +1,10 @@
 import { getCookie } from "../utils/getCookie.js"
 
+export interface response {
+    "success": boolean,
+    "message": string
+}
+
 // Function For Send Data By POST Method
 export function sendPOST<T>(url_path:string = new URL(window.location.href).pathname, data:T|null = null, header_info:string = "") {
     return fetch(url_path, {

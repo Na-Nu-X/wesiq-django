@@ -34,8 +34,9 @@ import {
     generateStyledDescription,
     generatePostBars,
     changePost,
-    toggleLike,
-    addComment
+    togglePostLike,
+    addComment,
+    toggleCommentLike
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -622,7 +623,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Toggle Like Click Functionality
         toggle_like.addEventListener("click", function():void {
-            if(one_post_container.dataset["post_id"]) toggleLike(this, likes_counter, one_post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
+            if(one_post_container.dataset["post_id"]) togglePostLike(this, likes_counter, one_post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
         })
 
         // Description And Bars
@@ -672,6 +673,16 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         send_comment.addEventListener("click", function():void {
             if(one_post_container.dataset["post_id"]) addComment(one_post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
+        })
+
+        // Comment Forum Click Functionalities
+        comment_forum.addEventListener("click", function(event:PointerEvent):void {
+            if((event.target as HTMLElement).classList.contains("fa-heart")) {
+                const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                const comment_likes_counter:HTMLParagraphElement|null = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") || null // Gets The Likes Counter
+
+                if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+            }
         })
     })
 })
