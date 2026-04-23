@@ -1,4 +1,5 @@
 import { sendPOST } from "../../../services/sendPOST.js"
+import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 
 interface addCommentResponse {
     success:boolean
@@ -57,10 +58,33 @@ export function changePost(clicked_bar_index:number, post_bars:HTMLDivElement, b
     })
 }
 
+// Function For Generates The Heart Particles
+function generateHeartParticles(particles:HTMLDivElement):void {
+    particles.innerHTML = "" // Deletes The Particles Container
+
+    const heart_amount:number = generateNumberRange(1, 5) // 1 - 5 Hearts
+
+    for(let i:number = 0; i < heart_amount; i++) {
+        // https://fontawesome.com/icons/heart
+        const heart:HTMLElement = document.createElement("i") // Creates The Heart Icon 
+        const heart_classes:string[] = ["fa-solid", "fa-regular"] // Stores The Heart Classes
+        const random_heart_classes_index:number = Math.floor(Math.random() * heart_classes.length) // Gets The Random Index Of Heart Classes
+    
+        heart.classList.add("fa-heart", heart_classes[random_heart_classes_index] as string) // Adds The Classes
+
+        heart.style.setProperty("--x", `${generateNumberRange(10, 100)}px`) // Generates And Sets The Random X Position
+        heart.style.setProperty("--y", `-${generateNumberRange(10, 100)}px`) // Generates And Sets The Random Y Position
+
+        particles.appendChild(heart) // Appends The Heart To The Particles Container
+    }
+}
+
 // Function For Toggle Like And Cancel Like
-export function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string) {
+export function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement) {
     // If The Heart Is Empty
     if(icon.classList.contains("fa-regular")) {
+        generateHeartParticles(particles) // Generates The Heart Particles
+
         icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
         if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
         sendPOST(`/like-post/${id}/`) // Sends Liked Commet ID As A POST Data To Like Comment Page
