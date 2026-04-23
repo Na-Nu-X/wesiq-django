@@ -618,10 +618,11 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         const toggle_like:HTMLElement = one_post_container.querySelector(".likes .fa-heart") as HTMLElement // Gets The Heart Icon
         const likes_counter:HTMLParagraphElement|null = one_post_container.querySelector(".likes .likes_counter") || null // Gets The Likes Counter
+        const particles:HTMLDivElement = media_container.querySelector(".particles") as HTMLDivElement // Gets The Particles Container
 
         // Toggle Like Click Functionality
         toggle_like.addEventListener("click", function():void {
-            if(one_post_container.dataset["post_id"]) toggleLike(this, likes_counter, one_post_container.dataset["post_id"]) // Adds Or Removes Like From The Post
+            if(one_post_container.dataset["post_id"]) toggleLike(this, likes_counter, one_post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
         })
 
         // Description And Bars

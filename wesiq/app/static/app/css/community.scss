@@ -708,6 +708,7 @@ header {
             }
 
             .media {
+                position: relative;
                 display: flex;
                 justify-content: center;
                 width: 100%;
@@ -764,6 +765,27 @@ header {
                         right: 10px;
                     }
                 }
+
+                .particles {
+                    position: absolute;
+                    bottom: 0px;
+                    left: 0px;
+
+                    .fa-heart {
+                        --x: 0px; // 100px
+                        --y: 0px; // -100px
+
+                        position: absolute;
+                        bottom: 0px;
+                        left: 0px;
+                        display: block;
+                        font-size: 1.2em;
+                        color: $error-color;
+                        pointer-events: none;
+                        user-select: none;
+                        animation: flyFadeOut 1s ease-out forwards;
+                    }
+                }
             }
 
             .post_bars {
@@ -808,6 +830,10 @@ header {
                         color: $error-color !important;
                         cursor: pointer;
                         transition: color 0.3s ease;
+                    }
+
+                    &:active {
+                        transform: scale(1.05);
                     }
                 }
 
@@ -1248,5 +1274,17 @@ header {
 
     100% {
         background-color: transparentize($blue-color, 0.5);
+    }
+}
+
+@keyframes flyFadeOut {
+    0% {
+        transform: translate(0px, 0px) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0.5);
+        opacity: 0;
     }
 }

@@ -828,11 +828,15 @@ def passwordResetView(request):
     })
 
 def logoutView(request):
-    logout(request)
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
+        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
-    messages.add_message(request, messages.ERROR, _("Boli ste odhlásený"))
+        captureLogin(f"Logout From the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {user.email_address},\n\t- IP Address: {getClientIp(request)}\n")
+        logout(request)
+        messages.add_message(request, messages.ERROR, _("Boli ste odhlásený"))
 
-    return HttpResponseRedirect(reverse("homepage_url"))
+        return HttpResponseRedirect(reverse("homepage_url"))
 
 def registrationView(request):
     if request.method == "POST":
