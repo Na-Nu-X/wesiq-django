@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     'django_celery_beat', # Django Celery Beat (Added Periodic Tasks Section To The Admin Site)
 
     'rosetta', # Rosetta (Language Admin Site)
+
+    'django_user_agents',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +87,8 @@ MIDDLEWARE = [
 
     # Google OAuth 2.0
     'allauth.account.middleware.AccountMiddleware',
+
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -295,3 +299,5 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     'django.contrib.auth.hashers.ScryptPasswordHasher',
 ]
+
+DOMAIN_URL = os.environ.get('DOMAIN_URL') # Stores The Domain URL
