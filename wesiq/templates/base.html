@@ -84,7 +84,7 @@
             <div class="left">{% block banner %}{% endblock banner %}</div>
             
             <div class="right">
-                {% if request.session.logged_in_user_id %}
+                {% if request.session.logged_in_user_id and first_name and last_name %}
                     {% comment %} <div class="notifications">
                         <p class="label">9+</p>
                         <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->

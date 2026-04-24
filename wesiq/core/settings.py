@@ -218,7 +218,7 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-# Cache
+# Redis Caching
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
