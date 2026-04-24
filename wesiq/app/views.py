@@ -33,6 +33,8 @@ import string
 from django.views.decorators.http import require_POST
 from django.contrib.gis.geos import Point
 import magic
+from django_ratelimit.decorators import ratelimit
+from django_ratelimit.core import get_usage
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -229,7 +231,15 @@ def stripeWebhook(request):
 def homepageView(request):
     # Login Form
     if request.method == "POST" and request.POST.get("login_form_submit"):
+        usage = get_usage(request, key="ip", rate="3/m", method="POST", increment=True, group="homepage_login")
+        
+        if usage and usage["should_limit"]:
+            messages.add_message(request, messages.ERROR, _("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
+            captureError(f"Too Many Login Attempts\n\t- IP Address: {getClientIp(request)}\n")
+            return HttpResponseRedirect(reverse("homepage_url"))
+
         login_form = loginForm(request.POST)
+
         if login_form.is_valid():
             email_address = login_form.cleaned_data["email_address"]
             password = login_form.cleaned_data["password"]
@@ -696,10 +706,21 @@ def homepageView(request):
         "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
     })
 
+@ratelimit(key="ip", rate="3/m", method="POST", block=False)
 def loginView(request):
+    was_limited = getattr(request, "limited", False)
+
     if request.method == "POST":
-        email_address = request.POST.get("email_address")
-        password = request.POST.get("password")
+        if was_limited:
+            messages.add_message(request, messages.ERROR, _("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
+            captureError(f"Too Many Login Attempts\n\t- IP Address: {getClientIp(request)}\n")
+            return HttpResponseRedirect(reverse("login_url"))
+
+        login_form = loginForm(request.POST)
+
+        if login_form.is_valid():
+            email_address = login_form.cleaned_data["email_address"]
+            password = login_form.cleaned_data["password"]
 
         try:
             user = Users.objects.get(email_address=email_address)
@@ -762,6 +783,17 @@ def loginView(request):
 
         else:
             return redirect(request.path)
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
+        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+
+        return render(request, "app/login.html", {
+            "login_form": loginForm,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
+        })
 
     return render(request, "app/login.html", {
         "login_form": loginForm,
@@ -931,7 +963,18 @@ def registrationView(request):
                 captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
-        
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
+        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+
+        return render(request, "app/registration.html", {
+            "registration_form": registrationForm,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture_name": user.profile_picture_name,
+        })
+
     return render(request, "app/registration.html", {
         "registration_form": registrationForm,
     })

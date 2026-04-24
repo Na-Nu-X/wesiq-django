@@ -158,12 +158,15 @@ body {
 // Messages
 
 .message {
+    pointer-events: none;
+    user-select: none;
     visibility: hidden;
     position: absolute;
     top: 75%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    white-space: pre-line;
     animation: fadeOutMessage 5s ease;
     z-index: 3000;
 
