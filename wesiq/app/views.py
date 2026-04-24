@@ -189,6 +189,7 @@ def createPaymentIntent(request):
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=400)
             
+    captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
     return JsonResponse({"success": False, "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")}, status=405)
 
 @csrf_exempt
@@ -235,7 +236,7 @@ def homepageView(request):
         
         if usage and usage["should_limit"]:
             messages.add_message(request, messages.ERROR, _("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
-            captureError(f"Too Many Login Attempts\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
             return HttpResponseRedirect(reverse("homepage_url"))
 
         login_form = loginForm(request.POST)
@@ -269,11 +270,11 @@ def homepageView(request):
                 
                 else: # Wrong Password
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                    captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
             
             except Users.DoesNotExist: # Wrong E-mail Address
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
         if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
@@ -345,14 +346,14 @@ def homepageView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
             registration_form = registrationForm(request.POST)
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
                     messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
                     messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
@@ -398,7 +399,7 @@ def homepageView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Registration failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
@@ -415,7 +416,7 @@ def homepageView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
             contact_form = contactForm(request.POST, request.FILES)
@@ -446,7 +447,7 @@ def homepageView(request):
 
                     else:
                         messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
-                        captureError(f"The Attachment is Too Large\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                        captureError(f"The attachment is too large.\n\t- URL: {request.build_absolute_uri()}\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                 else: # Sends Mail Without An Attachment
                     mail_message.send()
@@ -455,7 +456,7 @@ def homepageView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Správu sa nepodarilo odoslať"))
-                captureError(f"The Message Could Not be Sent\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"The message could not be sent.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
         return HttpResponseRedirect(reverse("homepage_url"))
             
@@ -617,7 +618,7 @@ def homepageView(request):
             # Checks Validity Of reCaptcha Response
             if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
                 messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-                captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
             
@@ -648,7 +649,7 @@ def homepageView(request):
                         
                 else:
                     messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
-                    captureError(f"Review Could Not be Published\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Review could not be published.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
@@ -713,7 +714,7 @@ def loginView(request):
     if request.method == "POST":
         if was_limited:
             messages.add_message(request, messages.ERROR, _("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
-            captureError(f"Too Many Login Attempts\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
             return HttpResponseRedirect(reverse("login_url"))
 
         login_form = loginForm(request.POST)
@@ -747,11 +748,11 @@ def loginView(request):
             
             else: # Wrong Password
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect Login Credentials (Wrong Password)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
         
         except Users.DoesNotExist: # Wrong E-mail Address
             messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-            captureError(f"Incorrect Login Credentials (Unregistered E-mail Address)\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -828,11 +829,11 @@ def passwordResetView(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
-                    captureError(f"Verification Code Does Not Match\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
 
             else:
                 messages.add_message(request, messages.ERROR, _("Overenie zlyhalo"))
-                captureError(f"Verification Failed\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Verification failed.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
 
         if request.GET.get("password-reset"):
             email_address = request.COOKIES.get("email_address")
@@ -905,7 +906,7 @@ def registrationView(request):
         # Checks Validity Of reCaptcha Response
         if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-            captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
 
@@ -914,7 +915,7 @@ def registrationView(request):
             if registration_form.is_valid():
                 if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
                     messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError(f"This e-mail is Already Registered\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
                 elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
                     messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
@@ -960,7 +961,7 @@ def registrationView(request):
                 
             else:
                 messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError(f"Registration Failed\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Registration failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
 
@@ -1002,7 +1003,7 @@ def editAccountView(request):
                     logged_in_user.save()
 
                     messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                    captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s Account Status Has Been Changed to Suspended\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                     del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
@@ -1063,7 +1064,7 @@ def editAccountView(request):
             
             else:
                 messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                captureError(f"Changes Could Not be Made While Editing Account)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("edit_account_url"))
         
@@ -1142,7 +1143,7 @@ def editReviewView(request):
                 
                 else:
                     messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                    captureError(f"Changes Could Not be Made While Editing Review)\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Changes could not be made while editing review.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("edit_review_url"))
             
@@ -1449,7 +1450,8 @@ def blogThemeView(request, theme):
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nedá pridať bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Cancel Like Comment
             if request.headers.get("X-Requested-Action") == "cancel-like-comment":
@@ -1472,7 +1474,8 @@ def blogThemeView(request, theme):
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-comment":
@@ -1498,7 +1501,8 @@ def blogThemeView(request, theme):
                     return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Nahlásenie sa nepodarilo odoslať.")}, status=404)
+                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
 
         response = render(request, "app/articles.html", {
             "first_name": user.first_name,
@@ -1649,10 +1653,11 @@ def trainingSessionView(request):
 
                 new_activity.save()
 
-                return JsonResponse({"success": True, "message": _("Množstvo XP bolo úspešne navýšené.")}, status=201)
+                return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
 
             except:
-                return JsonResponse({"success": False, "message": _("Množstvo XP sa nepodarilo navýšiť.")}, status=404)
+                captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
 
         return render(request, "app/training_session.html", {
             "first_name": logged_in_user.first_name,
@@ -1759,6 +1764,7 @@ def manageTrainingPlansView(request):
                     return JsonResponse({"success": False, "message": _("Nepodarilo sa vykonať zmeny v tréningovom pláne.")}, status=404)
 
             except:
+                captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
                 return JsonResponse({"success": False, "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")}, status=404)
         
         return render(request, "app/manage_training_plans.html", {
@@ -1809,7 +1815,7 @@ def communityView(request):
                 # Checks Validity Of reCaptcha Response
                 if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
                     messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-                    captureError(f"Verification by reCaptcha Failed\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
                 else:
                     upload_post_form = uploadPostForm(request.POST)
@@ -1910,7 +1916,8 @@ def communityView(request):
                     return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Nepodarilo sa nájsť užívateľov.")}, status=404)
+                    captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
 
             # Follow
             if request.headers.get("X-Requested-Action") == "follow":
@@ -1935,7 +1942,8 @@ def communityView(request):
                     return JsonResponse({"success": False, "message": _("Sledovanie nie je možné pridať bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Sledovanie sa nepodarilo pridať.")}, status=404)
+                    captureError(f"An error occurred while adding follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní sledovania došlo k chybe.")}, status=404)
 
             # Unfollow
             if request.headers.get("X-Requested-Action") == "unfollow":
@@ -1960,7 +1968,8 @@ def communityView(request):
                     return JsonResponse({"success": False, "message": _("Sledovanie nie je možné odstrániť bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Sledovanie sa nepodarilo odstrániť.")}, status=404)
+                    captureError(f"An error occurred while unfollowing.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení sledovania došlo k chybe.")}, status=404)
 
             # Like Post
             if request.headers.get("X-Requested-Action") == "like-post":
@@ -1982,7 +1991,8 @@ def communityView(request):
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné pridať bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Cancel Like Post
             if request.headers.get("X-Requested-Action") == "cancel-like-post":
@@ -2004,7 +2014,8 @@ def communityView(request):
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Tag User
             if request.headers.get("X-Requested-Action") == "tag-user":
@@ -2033,7 +2044,8 @@ def communityView(request):
                     return JsonResponse({"success": True, "users": users_for_tag, "message": "Užívatelia pre označenie boli úspešne nájdený."}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Nepodarilo sa nájsť užívateľov pre označenie.")}, status=404)
+                    captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov pre označenie došlo k chybe.")}, status=404)
 
             # Add Comment
             if request.headers.get("X-Requested-Action") == "add-comment":
@@ -2051,7 +2063,8 @@ def communityView(request):
                     return JsonResponse({"success": True, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Komentár pre príspevok sa nepodarilo pridať.")}, status=404)
+                    captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=404)
 
             # Like Comment
             if request.headers.get("X-Requested-Action") == "like-comment":
@@ -2072,7 +2085,8 @@ def communityView(request):
                     return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo pridať.")}, status=404)
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Cancel Like Comment
             if request.headers.get("X-Requested-Action") == "cancel-like-comment":
@@ -2093,7 +2107,8 @@ def communityView(request):
                     return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
 
                 except:
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nepodarilo odstrániť.")}, status=404)
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,

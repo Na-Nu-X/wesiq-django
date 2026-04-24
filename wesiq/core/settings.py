@@ -249,6 +249,7 @@ LANGUAGES = [
     ('ru', _('Russian')),
     ('pt-br', _('Portuguese (Brazil)')),
     ('zh-hans', _('Simplified Chinese')),
+    ('de', _('German')),
 ]
 
 # Translations Directories (.po And .mo Files)
