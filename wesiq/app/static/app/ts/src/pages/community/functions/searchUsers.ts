@@ -2,6 +2,7 @@ export interface searchedUser {
     id:number,
     first_name:string,
     last_name:string,
+    username:string,
     profile_picture_name:string,
     friend_code:string,
     following:string[],
@@ -24,7 +25,7 @@ export function renderUsers(user_data:searchedUser, logged_in_user_id:number, al
     const follow_unfollow_icon:HTMLElement = document.createElement("i") // Creates Follow / Unfollow Icon
 
     one_user.classList.add("one_user") // Adds One User Class
-    one_user.href = "#" // Sets The Link To The User's Profile
+    one_user.href = interpolate(gettext("/sk/profil/%s"), [user_data.username]) // Sets The Link To The User's Profile
     one_user.title = gettext("Zobraziť užívateľa") // Sets The Title
     one_user.target = "_self" // Sets The Target
     one_user.dataset["id"] = String(user_data.id) // Stores User's ID
