@@ -121,7 +121,7 @@
 
         <div class="all_users">
             {% for one_user in users %}
-                <a class="one_user" href="#" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
+                <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
                     <img 
                         class="profile_picture skeleton_loading" 
                         src="
@@ -164,18 +164,20 @@
                 <div class="post_container" data-post_id="{{ one_post.id }}">
                     <div class="author">
                         <div class="user">
-                            <img 
-                                class="profile_picture skeleton_loading" 
-                                src="
-                                    {% if one_post.user.profile_picture_name %}
-                                        /../media/images/{{ one_post.user.id }}/{{ one_post.user.profile_picture_name }}
-    
-                                    {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                    
-                                    {% endif %}
-                                "
-                            >
+                            <a href="{% url 'profile_url' one_post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if one_post.user.profile_picture_name %}
+                                            /../media/images/{{ one_post.user.id }}/{{ one_post.user.profile_picture_name }}
+        
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                            </a>
     
                             <p class="username">{{ one_post.user.username }}</p>
                         </div>
@@ -316,18 +318,20 @@
                                 <div class="one_comment" data-comment_id={{ one_comment.id }}>
                                     <div class="comment_container">
                                         <div class="user">
-                                            <img 
-                                                class="profile_picture" 
-                                                src="
-                                                    {% if one_comment.user.profile_picture_name %}
-                                                        /../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}
-                            
-                                                    {% else %}
-                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                    
-                                                    {% endif %}
-                                                "
-                                            >
+                                            <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                                <img 
+                                                    class="profile_picture" 
+                                                    src="
+                                                        {% if one_comment.user.profile_picture_name %}
+                                                            /../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}
+                                
+                                                        {% else %}
+                                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                        
+                                                        {% endif %}
+                                                    "
+                                                >
+                                            </a>
                                             
                                             <p class="username">{{ one_comment.user.username }}</p>
                                         </div>

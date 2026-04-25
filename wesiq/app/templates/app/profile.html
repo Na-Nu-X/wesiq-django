@@ -1,8 +1,165 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{% endblock title %}
+{% block title %}{% translate "Môj účet" %}{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'app/css/edit_account.css' %}">
+{% endblock style %}
 
 {% block content %}
+    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+        <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
+            <h2><a href="{% url 'edit_account_url' %}" target="_self">{% translate "Môj&nbsp;účet" %}</a></h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+
+            <div class="profile_picture_container">
+                <label for="select_profile_picture">
+                    <img 
+                        class="profile_picture" 
+                        src="
+                            {% if logged_in_user.profile_picture_name %}
+                                /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                        title="{% translate 'Nahrať obrázok' %}"
+                    >
+                </label>
+
+                {{ edit_account_form.select_profile_picture }}
+                
+                <label for="delete_profile_picture"><img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť obrázok' %}"></label> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                
+                {{ edit_account_form.delete_profile_picture }}
+            </div>
+
+            <div class="first_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ edit_account_form.first_name }}
+            </div>
+            
+            <div class="last_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ edit_account_form.last_name }}
+            </div>
+            
+            <div class="email_address_container">
+                <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                {{ edit_account_form.email_address }}
+            </div>
+            
+            <div class="phone_number_container">
+                <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                {{ edit_account_form.phone_number }}
+            </div>
+
+            <p class="form_report" style="bottom: 194px;"></p>
+            <input type="submit" value="{% translate 'Uložiť zmeny' %}">
+
+            <div class="form_questions">
+                <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+            </div>
+
+            <label for="delete_account"><img class="delete_account" src="{% static 'images/delete_account.png' %}" title="{% translate 'Odstrániť účet' %}"></label> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
+            
+            {{ edit_account_form.delete_account }}
+        </form>
+
+    {% else %}
+        <div class="profile">
+            <h2><a href="{% url 'edit_account_url' %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h2>
+
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+
+            <div class="top">
+                <div class="info">
+                    <img 
+                        class="profile_picture" 
+                        src="
+                            {% if user.profile_picture_name %}
+                                /media/images/{{ user.id }}/{{ user.profile_picture_name }}
+        
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
+        
+                    <p class="username">{{ user.username }}</p>
+                </div>
+
+                <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
+            </div>
+
+            <div class="middle">
+                <div class="follow_container">
+                    <div>
+                        <p class="label">{% translate "sledujú" %}</p>
+                        <p class="amount">{{ user.followers|length }}</p>
+                    </div>
+
+                    <div>
+                        <p class="label">{% translate "sleduje" %}</p>
+                        <p class="amount">{{ user.following|length }}</p>
+                    </div>
+
+                    <button 
+                        class="follow_button"
+                        data-id="{{ one_post.user_id }}"
+                        data-action="
+                            {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
+                                {% translate 'follow' %}
+
+                            {% else %}
+                                {% translate 'unfollow' %}
+                            
+                            {% endif %}
+                        "
+                    >
+                        {% if not request.session.logged_in_user_id|stringformat:"i" in user.followers %}
+                            {% translate "Začať sledovať" %}
+
+                        {% else %}
+                            {% translate "Prestať sledovať" %}
+                        
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <div class="posts_container">
+                    <div class="posts">
+                        <img src="https://picsum.photos/200?random=1">
+                        <img src="https://picsum.photos/200?random=2">
+                        <img src="https://picsum.photos/200?random=3">
+                        <img src="https://picsum.photos/200?random=4">
+                        <img src="https://picsum.photos/200?random=5">
+                        <img src="https://picsum.photos/200?random=6">
+                        <img src="https://picsum.photos/200?random=7">
+                        <img src="https://picsum.photos/200?random=8">
+                        <img src="https://picsum.photos/200?random=9">
+                        <img src="https://picsum.photos/200?random=10">
+                        <img src="https://picsum.photos/200?random=11">
+                        <img src="https://picsum.photos/200?random=12">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
 {% endblock content %}
+
+{% block script %}
+    <script src="{% url 'javascript_catalog_url' %}"></script>
+    <script src="{% static 'app/ts/dist/pages/edit_account.js' %}" type="module"></script>
+{% endblock script %}
