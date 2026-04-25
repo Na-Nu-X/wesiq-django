@@ -10,6 +10,8 @@
 
 {% block content %}
     {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+        <script src="{% static 'app/ts/dist/pages/profile/edit_account.js' %}" type="module"></script>
+
         <form class="edit_account_form" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
@@ -114,9 +116,9 @@
 
                     <button 
                         class="follow_button"
-                        data-id="{{ one_post.user_id }}"
+                        data-id="{{ user.user_id }}"
                         data-action="
-                            {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
+                            {% if not request.session.logged_in_user_id|stringformat:"i" in user.user.followers %}
                                 {% translate 'follow' %}
 
                             {% else %}
@@ -137,22 +139,58 @@
             </div>
 
             <div class="bottom">
-                <div class="posts_container">
-                    <div class="posts">
-                        <img src="https://picsum.photos/200?random=1">
-                        <img src="https://picsum.photos/200?random=2">
-                        <img src="https://picsum.photos/200?random=3">
-                        <img src="https://picsum.photos/200?random=4">
-                        <img src="https://picsum.photos/200?random=5">
-                        <img src="https://picsum.photos/200?random=6">
-                        <img src="https://picsum.photos/200?random=7">
-                        <img src="https://picsum.photos/200?random=8">
-                        <img src="https://picsum.photos/200?random=9">
-                        <img src="https://picsum.photos/200?random=10">
-                        <img src="https://picsum.photos/200?random=11">
-                        <img src="https://picsum.photos/200?random=12">
+                {% if user.posts.all|length > 0 %}
+                    <div class="posts_container">
+                        <div class="posts">
+                            {% for one_post in user.posts.all %}
+                                {% for one_post_media in post_media %}
+                                    {% if one_post.id == one_post_media.post.id %}
+                                        {% if one_post_media.is_video == True %}
+                                            <video class="video" data-post_id="{{ one_post.id }}" controls autoplay loop muted>
+                                                <source src="/../media/{{ one_post_media.file }}">
+                                                
+                                                {% blocktranslate with user=one_post_media.post.user %}
+                                                    Príspevok užívateľa {{ user }}
+                                                {% endblocktranslate %}
+                                            </video>
+                                    
+                                        {% elif one_post_media.is_video == False %}
+                                            <img 
+                                                class="image"
+                                                src="/../media/{{ one_post_media.file }}" 
+                                                alt="
+                                                    {% blocktranslate with user=one_post_media.post.user %}
+                                                        Príspevok užívateľa {{ user }}
+                                                    {% endblocktranslate %}
+                                                "
+                                                data-post_id="{{ one_post.id }}"
+                                            >
+                                        
+                                        {% endif %}
+                                    
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            <img src="https://picsum.photos/200?random=1">
+                            <img src="https://picsum.photos/200?random=2">
+                            <img src="https://picsum.photos/200?random=3">
+                            <img src="https://picsum.photos/200?random=4">
+                            <img src="https://picsum.photos/200?random=5">
+                            <img src="https://picsum.photos/200?random=6">
+                            <img src="https://picsum.photos/200?random=7">
+                            <img src="https://picsum.photos/200?random=8">
+                            <img src="https://picsum.photos/200?random=9">
+                            <img src="https://picsum.photos/200?random=10">
+                            <img src="https://picsum.photos/200?random=11">
+                            <img src="https://picsum.photos/200?random=12">
+                        </div>
                     </div>
-                </div>
+
+                {% else %}
+                    <p>Zatial žiadne príspevky.</p>
+
+                {% endif %}
             </div>
         </div>
 
@@ -161,5 +199,4 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/edit_account.js' %}" type="module"></script>
 {% endblock script %}
