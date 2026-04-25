@@ -367,18 +367,37 @@
             {% for one_review in reviews %}
                 <div class="one_review">
                     <div class="reviewer">
-                        <img 
-                            class="profile_picture skeleton_loading" 
-                            src="
-                                {% if one_review.user.profile_picture_name %}
-                                    /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+                        {% if one_review.user.username %}
+                            <a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if one_review.user.profile_picture_name %}
+                                            /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
 
-                                {% else %}
-                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                
-                                {% endif %}
-                            "
-                        >
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                            </a>
+
+                        {% else %}
+                            <img 
+                                class="profile_picture skeleton_loading" 
+                                src="
+                                    {% if one_review.user.profile_picture_name %}
+                                        /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+
+                        {% endif %}
 
                         <p class="full_name">
                             {% if one_review.user == None %}

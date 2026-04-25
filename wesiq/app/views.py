@@ -673,6 +673,7 @@ def homepageView(request):
             "email_address": user.email_address,
             "phone_number": user.phone_number,
             "role": user.role,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
             "reviews": reviews,
@@ -793,6 +794,7 @@ def loginView(request):
             "login_form": loginForm,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
         })
 
@@ -973,141 +975,13 @@ def registrationView(request):
             "registration_form": registrationForm,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
         })
 
     return render(request, "app/registration.html", {
         "registration_form": registrationForm,
     })
-
-def editAccountView(request):
-    logged_in_user_id = request.session.get("logged_in_user_id")
-
-    if logged_in_user_id:
-        logged_in_user = Users.objects.get(id=logged_in_user_id)
-
-        if request.method == "POST":
-            edit_account_form = editAccountForm(request.POST, request.FILES)
-            if edit_account_form.is_valid():
-                delete_account = edit_account_form.cleaned_data["delete_account"]
-                if delete_account:
-                    sendMail(
-                        logged_in_user,
-                        _("Odstránenie účtu"), # Subject
-                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\nhttp://127.0.0.1:8000/%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"language": logged_in_user.language}, # Text Content
-                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="http://127.0.0.1:8000/%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"language": logged_in_user.language}, # HTML Content
-                        _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
-                    )
-
-                    logged_in_user.account_status = "suspended" # Changes Account Status
-                    logged_in_user.save()
-
-                    messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                    captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
-
-                    del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
-
-                    return HttpResponseRedirect(reverse("homepage_url"))
-
-                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
-                    profile_picture_file = request.FILES.get("select_profile_picture")
-                    if profile_picture_file:
-                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-
-                        current_profile_picture_name = logged_in_user.profile_picture_name
-                        if current_profile_picture_name != "" and current_profile_picture_name != None:
-                            os.remove(f"{path}/{current_profile_picture_name}")
-
-                        new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
-
-                        image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                        image_save_location.save(new_image_name, profile_picture_file)
-
-                        logged_in_user.profile_picture_name = new_image_name
-
-                        logged_in_user.last_edit = timezone.now()
-
-                    delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
-                    if delete_profile_picture:
-                        current_profile_picture_name = logged_in_user.profile_picture_name
-                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                        os.remove(f"{path}/{current_profile_picture_name}")
-
-                        logged_in_user.profile_picture_name = ""
-
-                        logged_in_user.last_edit = timezone.now()
-
-                    if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
-                        logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
-                        logged_in_user.last_edit = timezone.now()
-
-                    if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
-                        logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
-                        logged_in_user.last_edit = timezone.now()
-
-                    if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
-                        logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
-                        logged_in_user.last_edit = timezone.now()
-
-                    if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
-                        logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
-                        logged_in_user.last_edit = timezone.now()
-
-                    logged_in_user.save()
-
-                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
-
-                    return HttpResponseRedirect(reverse("homepage_url"))
-
-                else:
-                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
-            
-            else:
-                messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
-
-            return HttpResponseRedirect(reverse("edit_account_url"))
-        
-        if request.GET.get("password-reset"):
-            code = generateCode() # Generates Random 6-Digit Code
-
-            sendMail(
-                logged_in_user,
-                _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\nhttp://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"language": logged_in_user.language, "code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"language": logged_in_user.language, "code": code}, # HTML Content
-                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                code
-            )
-
-            # Saves Password Reset Code To Database
-            logged_in_user.password_reset_code = code
-            logged_in_user.save()
-
-            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
-
-            # Redirect After Sending Mail
-            response = HttpResponseRedirect(reverse("password_reset_url"))
-            # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
-            return response
-
-        filled_edit_account_form = editAccountForm(initial={
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "email_address": logged_in_user.email_address,
-            "phone_number": logged_in_user.phone_number,
-        })
-
-        return render(request, "app/edit_account.html", {
-            "edit_account_form": filled_edit_account_form,
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "email_address": logged_in_user.email_address,
-            "phone_number": logged_in_user.phone_number,
-            "profile_picture_name": logged_in_user.profile_picture_name,
-        })
-    
-    return render(request, "app/edit_account.html")
     
 def editReviewView(request):
     if "logged_in_user_id" in request.session:
@@ -1160,6 +1034,7 @@ def editReviewView(request):
         return render(request, "app/edit_review.html", {
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
             "review_form": filled_review_form,
             "review": review,
@@ -1364,6 +1239,7 @@ def blogView(request):
         return render(request, "app/blog.html", {
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
             "articles": articles,
             "no_articles": no_articles,
@@ -1507,6 +1383,7 @@ def blogThemeView(request, theme):
         response = render(request, "app/articles.html", {
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "profile_picture_name": user.profile_picture_name,
             "article": article,
             "comments": comments,
@@ -1662,6 +1539,7 @@ def trainingSessionView(request):
         return render(request, "app/training_session.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
+            "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "latest_activity": latest_activity,
             "longest_activity": longest_activity,
@@ -1770,6 +1648,7 @@ def manageTrainingPlansView(request):
         return render(request, "app/manage_training_plans.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
+            "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "exercises": exercises,
             "training_plan": training_plan,
@@ -2114,6 +1993,7 @@ def communityView(request):
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
+            "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "users": users,
             "posts": posts,
@@ -2216,7 +2096,7 @@ def profileView(request, username):
                         messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
                         captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-                    return HttpResponseRedirect(reverse("edit_account_url"))
+                    return HttpResponseRedirect(reverse("profile_url", kwargs={"username": user.username}))
                 
                 if request.GET.get("password-reset"):
                     code = generateCode() # Generates Random 6-Digit Code
@@ -2254,6 +2134,7 @@ def profileView(request, username):
                     "edit_account_form": filled_edit_account_form,
                     "first_name": logged_in_user.first_name,
                     "last_name": logged_in_user.last_name,
+                    "username": logged_in_user.username,
                     "email_address": logged_in_user.email_address,
                     "phone_number": logged_in_user.phone_number,
                     "profile_picture_name": logged_in_user.profile_picture_name,
@@ -2263,6 +2144,7 @@ def profileView(request, username):
                 "user": user,
                 "first_name": logged_in_user.first_name,
                 "last_name": logged_in_user.last_name,
+                "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
             })
         

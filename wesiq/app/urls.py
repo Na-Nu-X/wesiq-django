@@ -9,7 +9,6 @@ urlpatterns = [
     path(_('obnova-hesla/'), views.passwordResetView, name='password_reset_url'),
     path(_('odhlasenie/'), views.logoutView, name='logout_url'),
     path(_('registracia/'), views.registrationView, name='registration_url'),
-    path(_('moj-ucet/'), views.editAccountView, name='edit_account_url'),
     path(_('profil/<str:username>'), views.profileView, name='profile_url'),
     path(_('moje-hodnotenie/'), views.editReviewView, name='edit_review_url'),
     path(_('pridat-clanok/'), views.writeArticleView, name='write_article_url'),
