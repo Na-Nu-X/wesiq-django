@@ -282,8 +282,16 @@
 
                     <div class="details_container">
                         <div class="details">
-                            <p class="description" data-tagged_users="{{ one_post.tagged_users_json }}" data-added_hashtags="{{ one_post.added_hashtags }}">{{ one_post.description }}</p>
-                            <p class="location"><i class="fa-solid fa-location-dot"></i> {{ one_post.location }}</p> <!-- https://fontawesome.com/icons/location-dot -->
+                            {% if one_post.description %}
+                                <p class="description" data-tagged_users="{{ one_post.tagged_users_json }}" data-added_hashtags="{{ one_post.added_hashtags }}">{{ one_post.description }}</p>
+
+                            {% endif %}
+
+                            {% if one_post.location %}
+                                <p class="location"><i class="fa-solid fa-location-dot"></i> {{ one_post.location }}</p> <!-- https://fontawesome.com/icons/location-dot -->
+
+                            {% endif %}
+
                             <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
                         </div>
 

@@ -2008,6 +2008,7 @@ def profileView(request, username):
     if Users.objects.filter(username=username).exists():
         user = Users.objects.get(username=username) # Gets The User By Username
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        post_media = PostMedia.objects.all() # Gets All Post Media
 
         # If The User Is Logged In
         if logged_in_user_id:
@@ -2138,6 +2139,7 @@ def profileView(request, username):
                     "email_address": logged_in_user.email_address,
                     "phone_number": logged_in_user.phone_number,
                     "profile_picture_name": logged_in_user.profile_picture_name,
+                    "post_media": post_media,
                 })
 
             return render(request, "app/profile.html", {
@@ -2146,6 +2148,7 @@ def profileView(request, username):
                 "last_name": logged_in_user.last_name,
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
+                "post_media": post_media,
             })
         
         return render(request, "app/profile.html")
