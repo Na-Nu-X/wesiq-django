@@ -988,7 +988,6 @@ header {
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $small-border-radius;
                 box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
-                transition: transform 0.3s ease, background-color 0.3s ease;
                 overflow: hidden;
 
                 &::before {
@@ -997,11 +996,6 @@ header {
 
                 &.animate {
                     animation: fadeIn 1s ease-out forwards;
-                }
-
-                &:hover {
-                    transform: scale(1.01);
-                    cursor: pointer;
                 }
 
                 .reviewer .date {
@@ -1033,6 +1027,18 @@ header {
                 position: relative;
                 height: 38px;
                 text-align: left;
+
+                a {
+                    .profile_picture {
+                        @include profile_picture($width: 38px, $height: 38px);
+                        display: block;
+                        transition: transform 0.3s ease;
+
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+                    }
+                }
 
                 .profile_picture {
                     @include profile_picture($width: 38px, $height: 38px);

@@ -5,15 +5,15 @@
 {% block title %}{% translate "Môj účet" %}{% endblock title %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'app/css/edit_account.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
 {% endblock style %}
 
 {% block content %}
     {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
-        <form class="edit_account_form" action="{% url 'edit_account_url' %}" method="POST" enctype="multipart/form-data">
+        <form class="edit_account_form" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <h2><a href="{% url 'edit_account_url' %}" target="_self">{% translate "Môj&nbsp;účet" %}</a></h2>
+            <h2><a href="{% url 'profile_url' logged_in_user.username %}" target="_self">{% translate "Môj&nbsp;účet" %}</a></h2>
 
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
@@ -75,7 +75,7 @@
 
     {% else %}
         <div class="profile">
-            <h2><a href="{% url 'edit_account_url' %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h2>
+            <h2><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h2>
 
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 

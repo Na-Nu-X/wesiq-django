@@ -91,7 +91,7 @@
                     </div> {% endcomment %}
 
                     <div class="account">
-                        <a href="{% url 'edit_account_url' %}" title="{% translate 'Môj účet' %}" target="_self">
+                        <a href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">
                             <img 
                                 class="profile_picture skeleton_loading" 
                                 src="
@@ -106,7 +106,7 @@
                             >
                         </a>
 
-                        <a class="user_name" href="{% url 'edit_account_url' %}" title="{% translate 'Môj účet' %}" target="_self">{{ first_name }} {{ last_name }}</a>
+                        <a class="user_name" href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">{{ first_name }} {{ last_name }}</a>
 
                         <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ first_name }} {{ last_name }}" target="_self">{% translate "Odhlásiť" %}</a>
                     </div>
