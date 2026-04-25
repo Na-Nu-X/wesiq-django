@@ -149,9 +149,21 @@ If a user has already created an account, they can log back in when their sessio
 
 To maintain high security standards and monitor potential brute-force attacks, the system logs every unsuccessful login attempt into a dedicated error.log file.
 
-- **Logged Metadata**: Each entry includes the Timestamp, the IP Address of the requester, the provided e-mail address, and additional metadata regarding the failed attempt.
+- **Logged Metadata & Advanced Security Alerts**: Each log entry includes the Timestamp, the IP Address of the requester, the provided e-mail address, and additional metadata regarding the authentication attempt. To elevate account security and maintain absolute transparency, successful logins automatically trigger a highly detailed notification email. This acts as a crucial first line of defense and includes:
+
+    - **Device and Browser Identification**: By leveraging the **django-user-agents Library**, the system parses the request's User-Agent string to explicitly detail the hardware device, operating system, and web browser used for the session.
+
+    - **Real-Time Geolocation**: Through integration with the **ip-api** service, the system dynamically translates the raw IP address into a readable geographical location (city and country).
+
+    - **Proactive Protection**: Delivering these specific data points directly to the user empowers them to instantly spot anomalous or international login attempts and take immediate action (such as changing their Argon2 hashed password) if an unrecognized session is detected.
 
 - **Developer Access**: This log is strictly for developer use to identify system issues or malicious patterns.
+
+#### 3.5.5 Brute-Force Protection (Rate Limiting)
+
+- **Security Enforcement**: To prevent automated attacks, login attempts are strictly capped at 3 failed requests per minute per IP address using the **django-ratelimit** library.
+
+- **Dynamic Feedback**: Once the limit is reached, the system triggers an automatic cooldown period and displays an informative alert, protecting the infrastructure while keeping the user informed.
 
 ### 3.6. Registration
 
@@ -731,6 +743,10 @@ The frontend provides a seamless "Desktop-class" experience for managing media b
 
 - **Integrity Enforcement**: If a file claims to be an image but its internal data structure reveals it is a binary executable or a text script, the system automatically rejects the upload. This provides a robust defense against "file spoofing" attacks and ensures that only genuine media files are ever processed by the server.
 
+#### 3.27.5 Automated Submission Protection
+
+- **Invisible Bot Defense**: The post submission process is secured by an integrated **reCAPTCHA v3** layer. This provides a frictionless experience for legitimate users while silently blocking automated scripts and spam bots from flooding the platform with fake content.
+
 ### 3.28. Post Locality and Geospatial Integration
 
 To provide geographic context to shared content, the platform includes a sophisticated location-tagging system powered by professional mapping tools and spatial database frameworks.
@@ -781,7 +797,7 @@ To facilitate community interaction, the platform features a highly sophisticate
 
 #### 3.29.2 Rich Text Rendering and User Experience
 
-- **Custom Content Container**: Because standard **\<textarea\>** elements do not support internal HTML styling, the system utilizes a custom contenteditable container. This allows successfully tagged users to be rendered as highly visible, styled "pills" within the text flow.
+- **Custom Content Container**: Because standard ```<textarea>``` elements do not support internal HTML styling, the system utilizes a custom contenteditable container. This allows successfully tagged users to be rendered as highly visible, styled "pills" within the text flow.
 
 - **Secondary Tag Display**: For added clarity, all successfully recognized tags are concurrently displayed as a list below the input area, complete with quick-delete options.
 
@@ -830,6 +846,92 @@ To categorize content and enhance global discoverability, the platform features 
 - **Dynamic Re-evaluation**: The frontend continuously monitors keystrokes and cursor positions. If a user deletes text and the cursor collides with an existing styled hashtag, the system dynamically updates its stored position index.
 
 - **State Updates**: During deletion or modification, the system re-evaluates the collided string. If the modification breaks the Regex pattern or introduces a duplicate, the styled pill is instantly reverted to standard text, ensuring the underlying data structure remains perfectly synchronized with the visual output.
+
+### 3.31. Community Search and Asynchronous Follow System
+
+The Community Page serves as the central hub for user discovery and networking. It features a highly optimized search engine and real-time interaction capabilities designed to provide a seamless social experience while minimizing server load.
+
+#### 3.31.1 Optimized Search Architecture
+
+- **Hybrid Filtering System**: To ensure rapid response times and reduce database strain, the search functionality utilizes a combined server-client approach. Upon typing the first character in the search bar, a single database request is triggered to load a batch of relevant users. All subsequent filtering as the user continues to type is processed purely on the client side (JavaScript), eliminating redundant Back-End queries.
+
+- **Query Parameters & Sanitization**: Users can be searched using either their Display Name or their unique Friend Code. To maintain community integrity, the search query strictly filters out suspended or unverified accounts, displaying only users with an "Approved" account status.
+
+- **UI Constraint**: For optimal visual clarity and to prevent layout shifts, the search results dropdown is constrained to display a maximum of 3 highly relevant users at a time.
+
+#### 3.31.2 Interactive UX and State Management
+
+- **Instant State Reset**: The search bar includes a dedicated "Delete" (clear) button. Clicking this button or manually deleting the input instantly clears the search state and automatically refreshes the results UI without any delay.
+
+- **Visual Processing Feedback**: During the brief wait time when the initial request is being fetched from the database, the search area applies a sophisticated blur effect accompanied by "Loading" text. This provides clear contextual feedback, assuring the user that the system is processing their request.
+
+#### 3.31.3 Real-Time Social Interactions
+
+- **Asynchronous Following**: The ability to follow other users is engineered for maximum fluidity. Instead of relying on traditional form submissions, the "Follow" action is powered by the JavaScript Fetch API (POST requests).
+
+- **Seamless State Updates**: This allows the relationship status to be updated in the database and reflected in the user interface in real-time, completely bypassing the need for disruptive page reloads.
+
+### 3.32. Real-Time Notifications and Informative Messaging
+
+To ensure a transparent and responsive user experience, the platform features a centralized messaging system. This module provides immediate visual confirmation for user actions and critical system events, ensuring that the user is always aware of the application’s state.
+
+#### 3.32.1 Transactional Feedback (CRUD Operations)
+
+The system automatically triggers informative messages following significant user interactions, particularly regarding training data:
+
+- **Creation & Updates**: Upon successfully creating or editing a training plan, the user receives a confirmation message, validating that their data has been successfully saved to the database.
+
+- **Deletion Alerts**: When a user removes a plan or an exercise, the system provides a final confirmation of the deletion, preventing any ambiguity regarding the action's success.
+
+#### 3.32.2 Categorized System Messages
+
+To provide context-specific feedback, messages are categorized into distinct types, often utilizing standard color-coding for rapid recognition:
+
+- **Success Messages**: Highlighted for positive outcomes, such as profile updates or successful donations.
+
+- **Error & Warning Alerts**: Inform the user if a specific action could not be completed (e.g., invalid form data).
+
+- **General Information**: Used for non-critical updates or status changes that enhance the overall awareness of the platform's functionality.
+
+#### 3.32.3 Visual Presentation and UX
+
+- **Non-Intrusive Delivery**: These messages are designed to appear as sleek overlays or banners (toasts) that do not disrupt the primary workflow.
+
+- **Ephemeral Existence**: Most informative messages are programmed to be temporary, appearing long enough to be read and then automatically dismissing themselves to maintain a clean and clutter-free interface.
+
+### 3.33. Dynamic Post Feed and Interactive Social Engagement
+
+The Post Feed serves as the central hub for community activity, where users can discover, view, and interact with content seamlessly. It combines a sophisticated media presentation engine with robust, asynchronous social features.
+
+#### 3.33.1 Smart Media Presentation (Carousel)
+
+- **Dynamic Gallery Generation**: Posts containing multiple media files (images or videos) are displayed in an interactive carousel. By default, only the first item is visible.
+
+- **Contextual Navigation**: The UI intelligently adapts to the content. If a post contains multiple files, the system automatically renders navigation arrows and a pagination bar (indicator dots) underneath. If the post contains only a single file, these UI elements are cleanly omitted to prevent visual clutter.
+
+#### 3.33.2 Author Context and Networking
+
+- **Integrated Profiles**: Every post header prominently displays the author's profile picture, username, and current follower count.
+
+- **Smart Follow System**: A "Follow / Unfollow" button is directly integrated into the post header, reflecting the current user's relationship with the author. The system intelligently detects if the user is viewing their own post and automatically hides this button to prevent illogical self-following.
+
+#### 3.33.3 Gamified Micro-Interactions (Likes)
+
+- **Privacy-Respecting Metrics**: Users can like posts, but the total like counter dynamically respects the original author's privacy settings (as configured in the Post Upload process).
+
+- **Enhanced UX Animations**: To provide delightful user feedback, clicking the like button triggers a custom particle animation. A random quantity of hearts (between 1 and 5) spawns and flies in random directions at varying speeds before fading out. This gamified micro-interaction significantly elevates the overall user experience.
+
+#### 3.33.4 Hierarchical Commenting Architecture
+
+- **Engaging Discussions**: Users can share opinions, react to posts, and tag others within the dedicated comment section. To surface the best content, comments are automatically sorted by popularity (most liked first).
+
+- **Nested Reply System**: The platform supports replying to specific comments, creating discussion threads. To maintain a clean UI layout and prevent interface breakage on smaller screens, deep nesting is strictly capped at a maximum depth of 5 levels.
+
+#### 3.33.5 Fully Asynchronous Engine
+
+- **Zero-Reload Interactions**: Every core social action—liking a post, posting a comment, replying to a thread, or liking a specific comment / reply—is fully asynchronous.
+
+- **Fetch API Integration**: These functionalities are powered by secure JavaScript Fetch POST requests (Section 4.8.), ensuring that the user's position in the feed is never disrupted by a page refresh, mirroring the fluid experience of native mobile applications.
 
 ## 4. Features
 
@@ -923,7 +1025,7 @@ To ensure a consistent visual identity and maintainable codebase, the applicatio
 
 #### 4.5.1 The Structural Blueprint
 
-- **Core Inheritance**: Every individual page (template) within the application inherits from a single, centralized Base HTML file. This file acts as a master blueprint, defining the fundamental structure of the document, including the **\<head\>** metadata, CSS links, and core JavaScript dependencies.
+- **Core Inheritance**: Every individual page (template) within the application inherits from a single, centralized Base HTML file. This file acts as a master blueprint, defining the fundamental structure of the document, including the ```<head>``` metadata, CSS links, and core JavaScript dependencies.
 
 - **Plug-and-Play Blocks**: The base file uses "blocks" (dynamic placeholders) that child templates fill with specific content. This allows the system to swap out only the unique parts of a page while keeping the surrounding structure intact.
 
@@ -962,3 +1064,57 @@ To ensure maximum data integrity and protect the system against malformed or mal
 - **Hashtags & Mentions**: Used to ensure that only valid characters are allowed."
 
 - **Credentials**: Ensures that sensitive data follows a predictable, secure format before it ever hits the database.
+
+### 4.7. Custom Dropdown and Select Menus
+
+To maintain a cohesive, premium visual identity, the application completely replaces the default, browser-native ```<select>``` elements with custom-engineered dropdown menus.
+
+#### 4.7.1 Unified Visual Language
+
+- **Aesthetic Consistency**: Standard web select menus are notoriously difficult to style and often clash with modern UI designs. The custom implementation ensures that every dropdown perfectly matches the platform's established design system, integrating seamless typography, consistent color palettes, and appropriate border radii.
+
+- **Cross-Browser Uniformity**: By bypassing the default browser rendering engine for these elements, the custom select menus guarantee a pixel-perfect, identical appearance across all devices and web browsers (Chrome, Safari, Firefox), eliminating visual fragmentation.
+
+#### 4.7.2 Enhanced Interaction Design
+
+- **Polished User Experience**: The custom dropdown architecture allows for sophisticated interaction states that native HTML elements lack. This includes smooth opening and closing animations, distinct hover effects on individual dropdown options, and custom scrollbars.
+
+- **Architectural Control**: Building these menus from scratch using structural HTML (like ```<div>``` and ```<ul>``` elements) combined with JavaScript provides total control over the DOM, allowing for advanced functionalities such as the integration of the dynamic search filters.
+
+### 4.8. Secure Asynchronous Data Handling (Fetch API)
+
+To provide a seamless, page-reload-free experience without compromising application stability, the platform implements a highly secure, end-to-end asynchronous communication flow using **JavaScript Fetch POST Requests**. This architecture prioritizes robust error handling and structured data exchange.
+
+#### 4.8.1 Server-Side Exception Handling (Python/Django)
+
+- **Robust Processing**: Every asynchronous request reaching the Back-End is rigorously validated and processed within strict ```try``` and ```except``` blocks.
+
+- **Controlled JSON Responses**: Instead of allowing the server to crash or return unhandled **500 Internal Server Errors**, the Back-End intelligently evaluates the data. If a validation check fails or an unexpected error occurs, the system safely catches the exception. It then returns a structured **JSON** payload containing a success: false flag, along with any relevant contextual data or error messages.
+
+#### 4.8.2 Client-Side Resilience (JavaScript)
+
+- **Dynamic Evaluation**: Upon receiving the response, the Front-End utilizes ```if``` or ```else``` control structures to evaluate the returned success status. If true, the JavaScript seamlessly updates the DOM with the new data in real-time.
+
+- **Graceful Error Catching**: All Fetch operations are wrapped in JavaScript ```try``` and ```catch``` blocks. Whether the Back-End explicitly returns a false status or a network-level disruption occurs, the client-side logic intercepts the failure.
+
+- **User Feedback**: Instead of failing silently or breaking the UI, the system translates these caught errors into user-friendly notifications (as detailed in Section 3.32.), keeping the user fully informed about why their action could not be completed.
+
+## 5. Security
+
+### 5.1 Authentication Audit Logging (login.log)
+
+To ensure high accountability and enable forensic analysis of user sessions, the application maintains a dedicated, server-side audit trail for all authentication events.
+
+- **Persistent Event Capture**: Every instance of a user logging in or out is strictly captured and appended to a centralized **login.log** file. This provides a permanent record that exists independently of the primary database state.
+
+- **Structured Metadata**: To facilitate rapid investigation of suspicious activities, each log entry contains a detailed snapshot of the event:
+
+    - **Event Context**: The specific reason for the log (e.g., successful login, session termination / logout).
+
+    - **Identity Tracking**: The unique User ID, allowing administrators to correlate sessions with specific accounts.
+
+    - **Network Origin**: The client's IP address, essential for identifying unauthorized access from unexpected geographical locations.
+
+    - **Precise Timestamps**: Every entry is timestamped to the second, allowing for accurate chronological sequencing of events.
+
+    - **Security Utility**: This log serves as a primary diagnostic tool for identifying patterns such as "credential stuffing" or suspicious session-hopping, ensuring that administrators can respond to threats with documented evidence.

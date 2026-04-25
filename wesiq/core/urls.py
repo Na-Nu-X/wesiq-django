@@ -8,7 +8,7 @@ import os
 from app import views
 
 urlpatterns = [
-    path(os.environ.get('ADMIN_URL'), admin.site.urls), # admin/
+    path(os.environ.get('ADMIN_URL'), admin.site.urls), # Admin Page
     path('accounts/', include('allauth.urls')), # Google OAuth 2.0
     path('i18n/', include('django.conf.urls.i18n')), # Translation
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript_catalog_url'), # JS Translation
