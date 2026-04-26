@@ -615,27 +615,26 @@ document.addEventListener("DOMContentLoaded", function():void {
         all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             // Follow / Unfollow
 
-            const followers_container:HTMLDivElement = one_post_container.querySelector(".header .right .top .followers_container") as HTMLDivElement // Gets The Followers Container
+            const follow_button:HTMLDivElement|null = one_post_container.querySelector(".header .right .top .follow_button") as HTMLDivElement || null // Gets The Follow Button
 
-            // Followers Container Click Functionalities
-            followers_container.addEventListener("click", function(event:PointerEvent):void {
-                if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
-                    const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
-                    const clicked_user_id:number|null = Number((event.target as HTMLElement).dataset["id"]) || null // Gets Clicked User ID
+            if(follow_button) {
+                // Follow Button Click Functionalities
+                follow_button.addEventListener("click", function(event:PointerEvent):void {
+                    const clicked_user_id:number|null = Number(this.dataset["id"]) || null // Gets Clicked User ID
 
-                    if(follow_button.dataset["action"]?.trim() === "follow") {
+                    if(this.dataset["action"]?.trim() === "follow") {
                         follow(event, clicked_user_id); // Follow
-                        follow_button.textContent = "Prestať sledovať"
-                        follow_button.dataset["action"] = "unfollow"
+                        this.textContent = "Prestať sledovať"
+                        this.dataset["action"] = "unfollow"
                     }
         
-                    else if(follow_button.dataset["action"]?.trim() === "unfollow") {
+                    else if(this.dataset["action"]?.trim() === "unfollow") {
                         unfollow(event, clicked_user_id); // Unfollow
-                        follow_button.textContent = "Začať sledovať"
-                        follow_button.dataset["action"] = "follow"
+                        this.textContent = "Začať sledovať"
+                        this.dataset["action"] = "follow"
                     }
-                }
-            })
+                })
+            }
 
             // Post Bars
 
@@ -715,6 +714,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
                 const send_comment:HTMLImageElement = write_comment_form.querySelector(".send") as HTMLImageElement // Gets The Send Comment Icon
                 const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
+                const comment_icon:HTMLElement = one_post_container.querySelector(".society .comments .fa-comment") as HTMLElement // Gets The Comment Icon
+
+                comment_icon.addEventListener("click", function():void {
+                    !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                })
 
                 send_comment.addEventListener("click", function():void {
                     if(one_post_container.dataset["post_id"]) addComment(one_post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
@@ -730,6 +734,22 @@ document.addEventListener("DOMContentLoaded", function():void {
                     }
                 })
             }
+
+            // Save Post
+
+            const save_icon:HTMLElement = one_post_container.querySelector(".society .save .fa-bookmark") as HTMLElement // Gets The Save Icon
+
+            save_icon.addEventListener("mouseover", function():void {
+                this.classList.replace("fa-regular", "fa-solid")
+            })
+
+            save_icon.addEventListener("mouseleave", function():void {
+                this.classList.replace("fa-solid", "fa-regular")
+            })
+
+            save_icon.addEventListener("click", function():void {
+
+            })
         })
     }
 })

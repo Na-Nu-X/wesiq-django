@@ -8,7 +8,7 @@ export function generateStyledDescription(text:string, tagged_users:string|null,
     if(tagged_users) {
         const tagged_users_array:string[] = JSON.parse(tagged_users) // Converts The Data To An Array Of The Tagged Users
     
-        tagged_users_array.forEach(one_tag => text = text.replace(one_tag, `<span class="tag">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+        tagged_users_array.forEach(one_tag => text = text.replace(one_tag, `<a class="tag" href="${interpolate(gettext('/sk/profil/%s'), [one_tag])}">${one_tag}</a>`)) // Puts Every Tag To The Styled Span Element
     }
 
     if(added_hashtags) {
@@ -75,8 +75,8 @@ function generateHeartParticles(particles:HTMLDivElement):void {
     
         heart.classList.add("fa-heart", heart_classes[random_heart_classes_index] as string) // Adds The Classes
 
-        heart.style.setProperty("--x", `${generateNumberRange(10, 100)}px`) // Generates And Sets The Random X Position
-        heart.style.setProperty("--y", `-${generateNumberRange(10, 100)}px`) // Generates And Sets The Random Y Position
+        heart.style.setProperty("--x", `${generateNumberRange(20, 110)}px`) // Generates And Sets The Random X Position
+        heart.style.setProperty("--y", `-${generateNumberRange(20, 110)}px`) // Generates And Sets The Random Y Position
 
         particles.appendChild(heart) // Appends The Heart To The Particles Container
     }
