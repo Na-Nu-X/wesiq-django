@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             // Follow / Unfollow
 
-            const followers_container:HTMLDivElement = one_post_container.querySelector(".author .followers_container") as HTMLDivElement // Gets The Followers Container
+            const followers_container:HTMLDivElement = one_post_container.querySelector(".header .right .top .followers_container") as HTMLDivElement // Gets The Followers Container
 
             // Followers Container Click Functionalities
             followers_container.addEventListener("click", function(event:PointerEvent):void {
@@ -667,11 +667,15 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Description And Bars
 
-            const description:HTMLParagraphElement = one_post_container.querySelector(".details_container .details .description") as HTMLParagraphElement // Gets The Description
-            const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
-            const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+            const description:HTMLParagraphElement|null = one_post_container.querySelector(".description") as HTMLParagraphElement || null // Gets The Description
 
-            if(tagged_users || added_hashtags) description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
+            if(description) {
+                const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
+                const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+            
+                if(tagged_users || added_hashtags) description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
+            }
+            
             generatePostBars(all_media, post_bars) // Generates The Post Bars
 
             // Post Change Buttons (Previous / Next) Click Functionalities
@@ -704,25 +708,28 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Comment Forum
 
-            const comment_forum:HTMLDivElement = one_post_container.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
-            const write_comment_form:HTMLDivElement = comment_forum.querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
-            const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
-            const send_comment:HTMLImageElement = write_comment_form.querySelector(".send") as HTMLImageElement // Gets The Send Comment Icon
-            const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
+            const comment_forum:HTMLDivElement|null = one_post_container.querySelector(".comment_forum") as HTMLDivElement || null // Gets The Comment Forum
 
-            send_comment.addEventListener("click", function():void {
-                if(one_post_container.dataset["post_id"]) addComment(one_post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
-            })
+            if(comment_forum) {
+                const write_comment_form:HTMLDivElement = comment_forum.querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+                const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+                const send_comment:HTMLImageElement = write_comment_form.querySelector(".send") as HTMLImageElement // Gets The Send Comment Icon
+                const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
 
-            // Comment Forum Click Functionalities
-            comment_forum.addEventListener("click", function(event:PointerEvent):void {
-                if((event.target as HTMLElement).classList.contains("fa-heart")) {
-                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-                    const comment_likes_counter:HTMLParagraphElement|null = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") || null // Gets The Likes Counter
+                send_comment.addEventListener("click", function():void {
+                    if(one_post_container.dataset["post_id"]) addComment(one_post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
+                })
 
-                    if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
-                }
-            })
+                // Comment Forum Click Functionalities
+                comment_forum.addEventListener("click", function(event:PointerEvent):void {
+                    if((event.target as HTMLElement).classList.contains("fa-heart")) {
+                        const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                        const comment_likes_counter:HTMLParagraphElement|null = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") || null // Gets The Likes Counter
+
+                        if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+                    }
+                })
+            }
         })
     }
 })

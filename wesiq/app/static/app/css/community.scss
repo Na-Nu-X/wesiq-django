@@ -441,10 +441,6 @@ header {
             .location_container {
                 position: relative;
 
-                // &:has(.location:hover) .fa-location-arrow, &:has(.location:focus) .fa-location-arrow {
-                //     left: -16px;
-                // }
-
                 .location_input_container {
                     position: relative;
 
@@ -452,7 +448,6 @@ header {
                         @include icon;
                         display: block;
                         position: absolute;
-                        // left: 3px;
                         bottom: 0px;
                         left: -16px;
                         padding: 19px 0px 16px;
@@ -657,23 +652,22 @@ header {
             gap: 10px;
             max-width: 600px;
             width: 100%;
-            padding: 10px 0px;
-            border: 1px solid transparentize($blue-color, 0.5);
-            border-radius: $small-border-radius;
+            // padding: 10px 0px;
+            padding: 20px;
+            // border: 1px solid transparentize($blue-color, 0.5);
+            background-color: transparentize($secondary-color, 0.95);
+            border-radius: $medium-border-radius;
 
-            .author {
+            .header {
                 display: flex;
-                justify-content: space-between;
-                padding: 0px 10px;
-                
-                .user {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
 
+                .left {
                     a {
                         .profile_picture {
-                            @include profile_picture($width: 38px, $height: 38px);
+                            @include profile_picture($width: 45px, $height: 45px);
                             display: block;
                             transition: transform 0.3s ease;
     
@@ -684,32 +678,88 @@ header {
                     }
                 }
 
-                .followers_container {
+                .right {
                     display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 10px;
+                    flex-direction: column;
+                    flex: 1;
+                    min-width: 0;
 
-                    .fa-user {
-                        @include icon;
-                        display: block;
+                    .top {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        .username {
+                            flex: 1;
+                            font-weight: bold;
+                        }
+
+                        .followers_container {
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+
+                            .followers {
+                                color: darken($secondary-color, 40%);
+                            }
+        
+                            .fa-user {
+                                color: darken($secondary-color, 40%);
+                            }
+                        }
+
+                        .fa-ellipsis-vertical {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            font-size: 1.2em;
+                        }
+    
+                        .follow_button {
+                            padding: 5px 10px;
+                            text-align: center;
+                            background-color: transparent;
+                            color: $secondary-color;
+                            border: 1px solid transparentize($blue-color, 0.5);
+                            border-radius: $big-border-radius;
+                            outline: none;
+                            transition: border-color 0.3s ease;
+    
+                            &:hover,
+                            &:focus {
+                                border-color: $blue-color;
+                                cursor: pointer;
+                            }
+                        }
                     }
 
-                    .follow_button {
-                        padding: 5px 10px;
-                        margin-left: 10px;
-                        text-align: center;
-                        background-color: transparent;
-                        color: $secondary-color;
-                        border: 1px solid transparentize($blue-color, 0.5);
-                        border-radius: $big-border-radius;
-                        outline: none;
-                        transition: border-color 0.3s ease;
+                    .bottom {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 10px;
 
-                        &:hover,
-                        &:focus {
-                            border-color: $blue-color;
-                            cursor: pointer;
+                        .location {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            color: darken($secondary-color, 40%);
+                            font-size: 0.8em;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+
+                            span {
+                                display: inline-block;
+                                width: 4px;
+                                height: 4px;
+                                border-radius: 50%;
+                                background-color: darken($secondary-color, 40%);
+                            }
+                        }
+
+                        .created_at {
+                            color: darken($secondary-color, 40%);
+                            font-size: 0.8em;
+                            white-space: nowrap;
                         }
                     }
                 }
@@ -735,6 +785,7 @@ header {
                     .video {
                         display: block;
                         width: 100%;
+                        border-radius: $big-border-radius
                     }
 
                     .previous, 
@@ -794,168 +845,179 @@ header {
                         animation: flyFadeOut 1s ease-out forwards;
                     }
                 }
-            }
 
-            .post_bars {
-                position: relative;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                gap: 10px;
-                width: 100%;
-                padding: 0px 10px;
-
-                .bar {
-                    position: relative;
+                .post_bars {
+                    position: absolute;
+                    bottom: 10px;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 12px;
                     width: 100%;
-                    height: 10px;
-                    border: 1px solid transparentize($blue-color, 0.5);
-                    border-radius: calc(10px / 2);
-                    transition: background-color 0.3s ease;
-
-                    &.active,
-                    &:hover {
-                        cursor: pointer;
-                        background-color: $blue-color;
-                        box-shadow: 0px 0px 10px $blue-color;
+                    padding: 0px 10px;
+    
+                    .bar {
+                        position: relative;
+                        width: 12px;
+                        height: 12px;
+                        background-color: darken($secondary-color, 40%);
+                        box-shadow: 0px 0px 10px darken($secondary-color, 40%);
+                        border-radius: 50%;
+                        transition: background-color 0.3s ease;
+    
+                        &.active,
+                        &:hover {
+                            cursor: pointer;
+                            background-color: darken($secondary-color, 20%);
+                        }
                     }
                 }
             }
 
-            .likes {
+            .society {
                 display: flex;
                 align-items: center;
-                gap: 5px;
-                height: 20px;
-                margin-top: 8px;
-                margin-left: 10px;
+                gap: 20px;
 
-                .fa-heart {
-                    font-size: 1.2em;
-                    color: darken($secondary-color, 40%);
+                .likes {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    height: 20px;
 
-                    &:hover {
-                        color: $error-color !important;
-                        cursor: pointer;
-                        transition: color 0.3s ease;
+                    .fa-heart {
+                        font-size: 1.5em;
+                        display: block;
+                        color: darken($secondary-color, 40%);
+
+                        &:hover {
+                            color: $error-color !important;
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+
+                        &:active {
+                            transform: scale(1.05);
+                        }
                     }
 
-                    &:active {
-                        transform: scale(1.05);
+                    .fa-solid {
+                        color: $error-color;
+                    }
+
+                    .likes_counter,
+                    .hidden_likes_counter {
+                        display: inline-block;
+                        color: darken($secondary-color, 40%);
+                    }
+
+                    .likes_counter {
+                        font-size: 1.2em;
+                    }
+
+                    .hidden_likes_counter {
+                        font-size: 0.8em;
                     }
                 }
 
-                .fa-solid {
-                    color: $error-color;
+                .comments {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+
+                    .fa-comment {
+                        font-size: 1.5em;
+                        display: block;
+                        color: darken($secondary-color, 40%);
+
+                        &:hover {
+                            color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+                    }
+
+                    .comments_counter,
+                    .hidden_comments_counter {
+                        display: inline-block;
+                        color: darken($secondary-color, 40%);
+                    }
+
+                    .comments_counter {
+                        font-size: 1.2em;
+                    }
+
+                    .hidden_comments_counter {
+                        font-size: 0.8em;
+                    }
                 }
 
-                .likes_counter,
-                .hidden_likes_counter {
-                    display: inline-block;
-                    color: darken($secondary-color, 40%);
-                }
+                .save {
+                    margin-left: auto;
 
-                .hidden_likes_counter {
-                    font-size: 0.8em;
+                    .fa-bookmark {
+                        font-size: 1.5em;
+                        display: block;
+                        color: darken($secondary-color, 40%);
+
+                        &:hover {
+                            color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+                    }
                 }
             }
 
-            .details_container {
-                padding-right: 5px;
+            .description {
+                .tag,
+                .hashtag {
+                    display: inline-block;
+                    height: 25px;
+                    line-height: 25px;
+                    padding: 0px 5px;
+                    border-radius: $small-border-radius;
+                    font-size: 0.8em;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
 
-                .details {
-                    max-height: calc(23px * 4); // 4 Lines
-                    overflow-y: auto;
+                .tag {
+                    background-color: transparentize($blue-color, 0.8);
+                    color: $blue-color;
 
-                    &::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-                    &::-webkit-scrollbar-thumb {
-                        background-color: darken($secondary-color, 40%);
-                        border-radius: 2.5px;
-
-                        &:hover {
-                            background-color: darken($secondary-color, 20%);
-                            cursor: pointer;
-                        }
-                    }
-
-                    &::-webkit-scrollbar-track {
-                        background-color: lighten($main-color, 20%);
-                        border-radius: 2.5px;
-                    }
-
-                    .description {
-                        margin-bottom: 10px;
-                        margin-left: 10px;
-
-                        .tag,
-                        .hashtag {
-                            display: inline-block;
-                            height: 25px;
-                            line-height: 25px;
-                            padding: 0px 5px;
-                            border-radius: $small-border-radius;
-                            font-size: 0.8em;
-                            cursor: pointer;
-                            transition: background-color 0.2s ease;
-                        }
-
-                        .tag {
-                            background-color: transparentize($blue-color, 0.8);
-                            color: $blue-color;
-
-                            &:hover {
-                                background-color: transparentize($blue-color, 0.7);
-                            }
-                        }
-
-                        .hashtag {
-                            background-color: transparentize($success-color, 0.9);
-                            color: $success-color;
-
-                            &:hover {
-                                background-color: transparentize($success-color, 0.8);
-                            }
-                        }
-                    }
-
-                    .location,
-                    .created_at {
-                        width: 50%;
-                        margin-left: 10px;
-                        color: darken($secondary-color, 40%);
-                        font-size: 0.8em;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                    &:hover {
+                        background-color: transparentize($blue-color, 0.7);
                     }
                 }
 
-                .fa-ellipsis-vertical {
-                    @include icon;
-                    display: block;
-                    margin-top: 8px;
-                    margin-left: 10px;
-                    font-size: 1.2em;
+                .hashtag {
+                    background-color: transparentize($success-color, 0.9);
+                    color: $success-color;
+
+                    &:hover {
+                        background-color: transparentize($success-color, 0.8);
+                    }
                 }
             }
 
             .comment_forum {
+                margin-top: 10px;
+
                 .write_comment_form {
                     position: relative;
-                    padding: 0px 10px;
 
                     .comment {
                         width: 100%;
                         min-height: 50px;
                         field-sizing: content;
-                        padding: 12px 38px + 5px + 10px 12px 38px + 6px + 10px;
+                        padding-top: 12px;
+                        padding-right: 30px + 10px + 10px;
+                        padding-bottom: 12px;
+                        padding-left: 38px + 6px + 10px;
                         text-align: left;
-                        background: transparent;
+                        background-color: lighten($main-color, 20%);
                         color: $secondary-color;
-                        border: 1px solid $secondary-color;
                         border-radius: $big-border-radius;
                         outline: none;
                         transition: padding 0.3s ease;
@@ -992,7 +1054,7 @@ header {
                     .profile_picture {
                         position: absolute;
                         top: 6px;
-                        left: 6px + 10px;
+                        left: 6px;
                         width: 38px;
                         height: 38px;
                         padding: 2px;
@@ -1003,25 +1065,33 @@ header {
                     .send {
                         position: absolute;
                         top: 50%;
-                        right: 15px + 10px;
+                        right: 10px;
                         transform: translateY(-50%) scale(1);
-                        transition: transform 0.3s ease;
+                        width: 30px;
+                        height: 30px;
+                        color: darken($secondary-color, 40%);
+                        transition: transform 0.3s ease, color 0.3s ease;
     
                         &:hover {
                             transform: translateY(-50%) scale(1.1);
+                            color: darken($secondary-color, 20%);
                             cursor: pointer;
                         }
                     }
                 }
 
                 .all_comments {
-                    margin-top: 10px;
+                    margin-top: 20px;
 
                     .one_comment {
-                        margin-bottom: 20px;
+                        margin-bottom: 10px;
+
+                        &:last-child {
+                            margin-bottom: 0px;
+                        }
         
                         .comment_container {
-                            margin-left: 6px + 10px;
+                            margin-left: 6px;
 
                             .user {
                                 display: flex;
@@ -1039,15 +1109,20 @@ header {
                                         }
                                     }
                                 }
+
+                                .username {
+                                    font-weight: bold;
+                                }
                             }
 
                             .comment {
+                                margin-bottom: 7.5px;
                                 margin-left: 38px + 10px;
                             }
                         }
 
                         .interactions {
-                            margin-left: 6px + 10px + 38px + 10px;
+                            margin-left: 6px + 10px + 38px;
                             display: flex;
                             align-items: center;
                             gap: 10px;
@@ -1075,10 +1150,33 @@ header {
                             }
 
                             .likes {
-                                margin: 0;
-                
+                                display: flex;
+                                align-items: center;
+                                gap: 5px;
+                                height: 20px;
+            
                                 .fa-heart {
-                                    font-size: 1em;
+                                    display: block;
+                                    color: darken($secondary-color, 40%);
+            
+                                    &:hover {
+                                        color: $error-color !important;
+                                        cursor: pointer;
+                                        transition: color 0.3s ease;
+                                    }
+            
+                                    &:active {
+                                        transform: scale(1.05);
+                                    }
+                                }
+            
+                                .fa-solid {
+                                    color: $error-color;
+                                }
+            
+                                .likes_counter {
+                                    display: inline-block;
+                                    color: darken($secondary-color, 40%);
                                 }
                             }
         
@@ -1104,177 +1202,9 @@ header {
                                 }
                             }
                         }
-        
-                        
-        
-                        // .reply_comment_form {
-                        //     display: none;
-                        //     margin-top: 10px;
-                        //     margin-left: 50px + 4px;
-                        //     padding-left: 10px;
-                        //     border-left: 2px solid darken($secondary-color, 20%);
-        
-                        //     &.visible {
-                        //         display: block;
-                        //     }
-        
-                        //     .profile_picture {
-                        //         left: 6px + 10px;
-                        //     }
-                        // }
-        
-                        // .all_replies {
-                        //     margin-left: 50px + 4px;
-                        //     padding-left: 10px;
-                        //     border-left: 2px solid darken($secondary-color, 20%);
-        
-                        //     .one_reply {
-                        //         margin-top: 10px;
-                        //     }
-                        // }
                     }
                 }
             }
-
-            // .article_forum {
-            //     width: 90%;
-            //     margin: 50px auto 0px;
-        
-            //     .all_comments {
-            //         margin-top: 50px;
-        
-            //         .no_comments {
-            //             margin-bottom: 10px;
-            //             font-family: $article-heading-font;
-            //             font-size: 2em;
-            //             color: $secondary-color;
-            //         }
-        
-            //         .one_comment {
-            //             margin-bottom: 20px;
-        
-            //             .comment {
-            //                 display: flex;
-            //                 flex-direction: row;
-            //                 align-items: center;
-            //                 margin-left: 6px;
-        
-            //                 .profile_picture {
-            //                     width: 38px;
-            //                     height: 38px;
-            //                     margin-right: 10px;
-            //                     padding: 2px;
-            //                     border: 1px solid $secondary-color;
-            //                     border-radius: 50%;
-            //                     transition: transform 0.3s ease;
-        
-            //                     &:hover {
-            //                         transform: scale(1.1);
-            //                         cursor: pointer;
-            //                     }
-            //                 }
-            //             }
-        
-            //             .interactions {
-            //                 margin-left: 50px + 4px;
-            //                 display: flex;
-            //                 align-items: center;
-            //                 gap: 10px;
-        
-            //                 .reply {
-            //                     .fa-reply {
-            //                         font-size: 1em;
-            //                         color: darken($secondary-color, 40%);
-        
-            //                         &:hover {
-            //                             color: darken($secondary-color, 20%);
-            //                             cursor: pointer;
-            //                             transition: color 0.3s ease;
-            //                         }
-            //                     }
-        
-            //                     .fa-xmark {
-            //                         font-size: 1em;
-            //                         color: darken($secondary-color, 40%);
-        
-            //                         &:hover {
-            //                             color: $error-color;
-            //                             cursor: pointer;
-            //                             transition: color 0.3s ease;
-            //                         }
-            //                     }
-            //                 }
-                            
-            //                 .likes {
-            //                     .fa-heart {
-            //                         font-size: 1em;
-            //                         color: darken($secondary-color, 40%);
-        
-            //                         &:hover {
-            //                             color: $error-color !important;
-            //                             cursor: pointer;
-            //                             transition: color 0.3s ease;
-            //                         }
-            //                     }
-        
-            //                     p {
-            //                         display: inline-block;
-            //                         color: darken($secondary-color, 40%);
-            //                     }
-            //                 }
-        
-            //                 .report {
-            //                     .fa-flag {
-            //                         font-size: 1em;
-            //                         color: darken($secondary-color, 40%);
-        
-            //                         &:hover {
-            //                             color: $error-color;
-            //                             cursor: pointer;
-            //                             transition: color 0.3s ease;
-            //                         }
-            //                     }
-            //                 }
-        
-            //                 .date {
-            //                     margin-left: 10px;
-        
-            //                     p {
-            //                         font-size: 0.9em;
-            //                         font-style: italic;
-            //                         color: darken($secondary-color, 40%);
-            //                     }
-            //                 }
-            //             }
-        
-            //             .reply_comment_form {
-            //                 display: none;
-            //                 margin-top: 10px;
-            //                 margin-left: 50px + 4px;
-            //                 padding-left: 10px;
-            //                 border-left: 2px solid darken($secondary-color, 20%);
-        
-            //                 &.visible {
-            //                     display: block;
-            //                 }
-        
-            //                 .profile_picture {
-            //                     left: 6px + 10px;
-            //                 }
-            //             }
-        
-            //             .all_replies {
-            //                 margin-left: 50px + 4px;
-            //                 padding-left: 10px;
-            //                 border-left: 2px solid darken($secondary-color, 20%);
-        
-            //                 .one_reply {
-            //                     margin-top: 10px;
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
         }
     }
 }
