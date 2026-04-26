@@ -306,7 +306,7 @@
                                 <p class="comments_counter">{{ one_post.comments.all|length }}</p>
     
                             {% else %}
-                                <p class="hidden_comments_counter">{% translate "Zakázané" %}</p>
+                                <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
                             
                             {% endif %}
                         </div>
@@ -322,7 +322,7 @@
                     {% endif %}
 
                     {% if one_post.allow_comments %}
-                        <div class="comment_forum">
+                        <div class="comment_forum hidden">
                             <div class="write_comment_form">
                                 <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
                 
