@@ -29,6 +29,11 @@ export function generatePostBars(all_media:NodeListOf<HTMLDivElement>, post_bars
 
             generateButtons(i, all_media) // Generates The Change Buttons (Previous / Next)
             bar.classList.add("bar") // Adds The Bar Class
+
+            if(i === 0) {
+                bar.classList.add("active")
+            }
+
             post_bars.appendChild(bar) // Appends The Bar To The Post Bars
         }
     }

@@ -1678,6 +1678,9 @@ def communityView(request):
                 list(one_post.tagged_users.values_list("username", flat=True))
             )
 
+            if one_post.coordinates:
+                one_post.location = one_post.location.replace(",", "<span></span>")
+
         if request.method == "POST":
             # Upload Post Form
             if request.POST.get("upload_post_form_submit"):
