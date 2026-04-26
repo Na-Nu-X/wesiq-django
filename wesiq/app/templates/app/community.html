@@ -222,8 +222,13 @@
 
                             <div class="bottom">
                                 {% if one_post.location %}
-                                    <p class="location">{{ one_post.location|safe }}</p> <!-- https://fontawesome.com/icons/location-dot -->
-    
+                                    {% if one_post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ one_post.latitude }},{{ one_post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ one_post.location|safe }}</a>
+
+                                    {% else %}
+                                        <p class="location">{{ one_post.location }}</p>
+
+                                    {% endif %}
                                 {% endif %}
     
                                 <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
