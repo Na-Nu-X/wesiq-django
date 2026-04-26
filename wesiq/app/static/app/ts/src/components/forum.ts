@@ -22,7 +22,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
             }
 
             catch {
-                console.error(gettext("Pri pridávaní označenia páči sa mi to pre komentár došlo k chybe."))
+                console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
             }
         }
 
@@ -43,7 +43,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
             }
 
             catch {
-                console.error(gettext("Pri rušení označenia páči sa mi to pre komentár došlo k chybe."))
+                console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
             }
         }
     })
@@ -95,7 +95,7 @@ export function commentFunctionality(one_comment:HTMLDivElement):void {
         }
 
         catch {
-            console.error(gettext("Pri nahlasovaní komentáru došlo k chybe."))
+            console.error(gettext("Pri odosielaní nahlásenia došlo k chybe."))
         }
     })
 }
