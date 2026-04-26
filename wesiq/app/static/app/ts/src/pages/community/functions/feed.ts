@@ -213,6 +213,16 @@ export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
     }
 }
 
+// Function For Reply On The Comment
+export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, id:string):Promise<void> {
+    console.log(reply_container)
+
+    const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
+
+    reply_container.innerHTML = "" // Deletes The Reply Container
+    reply_container.appendChild(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
+}
+
 // Function For Generate Change Buttons (Previous / Next)
 function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):void {
     if(index === 0) ((all_media[index] as HTMLDivElement).querySelector(".next") as HTMLDivElement).classList.remove("hidden") // Shows The Next Button In The First Post

@@ -1240,6 +1240,87 @@ header {
                                 }
                             }
                         }
+
+                        .reply_container {
+                            margin-left: 6px + 10px + 38px;
+                            margin-right: 10px;
+
+                            .write_comment_form {
+                                position: relative;
+            
+                                .comment {
+                                    width: 100%;
+                                    min-height: 50px;
+                                    field-sizing: content;
+                                    padding-top: 12px;
+                                    padding-right: 30px + 10px + 10px;
+                                    padding-bottom: 12px;
+                                    padding-left: 38px + 6px + 10px;
+                                    text-align: left;
+                                    background-color: lighten($main-color, 20%);
+                                    color: $secondary-color;
+                                    border-radius: $big-border-radius;
+                                    outline: none;
+                                    transition: padding 0.3s ease;
+                
+                                    &:empty::before {
+                                        content: attr(data-placeholder);
+                                        color: darken($secondary-color, 40%);
+                                        cursor: text;
+                                    }
+                                    
+                                    .tag,
+                                    .hashtag {
+                                        display: inline-block;
+                                        height: 25px;
+                                        line-height: 25px;
+                                        padding: 0px 5px;
+                                        border-radius: $small-border-radius;
+                                        font-size: 0.8em;
+                                        cursor: pointer;
+                                        transition: background-color 0.2s ease;
+                                    }
+            
+                                    .tag {
+                                        background-color: transparentize($blue-color, 0.8);
+                                        color: $blue-color;
+                                    }
+            
+                                    .hashtag {
+                                        background-color: transparentize($success-color, 0.9);
+                                        color: $success-color;
+                                    }
+                                }
+            
+                                .profile_picture {
+                                    position: absolute;
+                                    top: 6px;
+                                    left: 6px;
+                                    width: 38px;
+                                    height: 38px;
+                                    padding: 2px;
+                                    border: 1px solid $secondary-color;
+                                    border-radius: 50%;
+                                }
+                    
+                                .send {
+                                    position: absolute;
+                                    top: 50%;
+                                    right: 10px;
+                                    transform: translateY(-50%) scale(1);
+                                    width: 30px;
+                                    height: 30px;
+                                    color: darken($secondary-color, 40%);
+                                    transition: transform 0.3s ease, color 0.3s ease;
+                
+                                    &:hover {
+                                        transform: translateY(-50%) scale(1.1);
+                                        color: darken($secondary-color, 20%);
+                                        cursor: pointer;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
