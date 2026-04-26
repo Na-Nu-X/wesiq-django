@@ -308,7 +308,7 @@
                             <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
 
                             {% if one_post.allow_comments %}
-                                <p class="comments_counter">{{ one_post.comments.all|length }}</p>
+                                <p class="comments_counter">{{ one_post.visible_comments|length }}</p>
     
                             {% else %}
                                 <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
@@ -351,7 +351,7 @@
                             </div>
 
                             <div class="all_comments">
-                                {% for one_comment in one_post.comments.all %}
+                                {% for one_comment in one_post.visible_comments %}
                                     <div class="one_comment" data-comment_id={{ one_comment.id }}>
                                         <div class="comment_container">
                                             <div class="user">
@@ -371,6 +371,8 @@
                                                 </a>
                                                 
                                                 <p class="username">{{ one_comment.user.username }}</p>
+
+                                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                                             </div>
 
                                             <p class="comment">{{ one_comment.comment }}</p>
@@ -401,7 +403,17 @@
                                             </div>
                 
                                             <div class="report" title="{% translate 'Nahlásiť...' %}">
-                                                <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
+                                                <!-- https://fontawesome.com/icons/flag -->
+                                                <i 
+                                                    class="
+                                                        fa-regular fa-flag
+
+                                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.reports_from_users %}
+                                                            active
+    
+                                                        {% endif %}
+                                                    "
+                                                ></i>
                                             </div>
                 
                                             <div class="date" title="{% translate 'Dátum zverejnenia' %}">

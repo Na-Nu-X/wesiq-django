@@ -101,7 +101,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
         }
 
         catch {
-            console.error(gettext("Pri pridávaní označenia páči sa mi to pre príspevok došlo k chybe."))
+            console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
         }
     }
 
@@ -121,7 +121,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
         }
 
         catch {
-            console.error(gettext("Pri rušení označenia páči sa mi to pre príspevok došlo k chybe."))
+            console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
         }
     }
 }
@@ -152,7 +152,7 @@ export async function addComment(post_id:string, comment:string, all_comments:HT
 }
 
 // Function For Toggle Comment Like
-export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string):Promise<void> {
+export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):Promise<void> {
     // If The Heart Is Empty
     if(icon.classList.contains("fa-regular")) {
         try {
@@ -165,11 +165,11 @@ export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphE
             }
 
             icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
-            if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
+            counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
         }
 
         catch {
-            console.error(gettext("Pri pridávaní označenia páči sa mi to pre komentár došlo k chybe."))
+            console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
         }
     }
 
@@ -189,8 +189,27 @@ export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphE
         }
 
         catch {
-            console.error(gettext("Pri rušení označenia páči sa mi to pre komentár došlo k chybe."))
+            console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
         }
+    }
+}
+
+// Function For Report The Comment
+export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
+    try {
+        const report_comment_response:response = await sendPOST(window.location.pathname, id, "report-comment") // Sends Liked Comment ID As A POST Data
+
+        // If The Response Isn't Success
+        if(!report_comment_response.success) {
+            console.error(report_comment_response.message)
+            return
+        }
+
+        icon.classList.add("active") // Adds The Active Class
+    }
+
+    catch {
+        console.error(gettext("Pri odosielaní nahlásenia došlo k chybe."))
     }
 }
 

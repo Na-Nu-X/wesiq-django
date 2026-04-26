@@ -35,6 +35,7 @@ from django.contrib.gis.geos import Point
 import magic
 from django_ratelimit.decorators import ratelimit
 from django_ratelimit.core import get_usage
+from django.db.models import Prefetch
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1669,14 +1670,21 @@ def communityView(request):
 
         posts = Post.objects.all().prefetch_related(
             "tagged_users", 
-            "comments__user",
-            "media"
+            "media",
+
+            Prefetch(
+                "comments",
+                queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
+                to_attr="visible_comments"
+            )
         )
 
         for one_post in posts:
             one_post.tagged_users_json = json.dumps(
                 list(one_post.tagged_users.values_list("username", flat=True))
             )
+
+            # one_post.comments = one_post.comments.exclude(status="hidden")
 
             if one_post.coordinates:
                 one_post.location = one_post.location.replace(",", "<span></span>")
@@ -1901,6 +1909,38 @@ def communityView(request):
                 except:
                     captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
                     return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+
+            # Report Comment
+            if request.headers.get("X-Requested-Action") == "report-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=comment_id)
+
+                        if(str(logged_in_user_id) not in comment.reports_from_users):
+                            comment.reports_from_users.append(logged_in_user_id)
+                            comment.reports += 1
+
+
+                            if comment.reports >= 5:
+                                post = Post.objects.get(id=comment.post_id) # Gets The Post
+                                report_percentage = (comment.reports / post.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
+
+                                if report_percentage > 10:
+                                    comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
+                            
+                            comment.save()
+
+                        return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+                except:
+                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
 
             # Tag User
             if request.headers.get("X-Requested-Action") == "tag-user":

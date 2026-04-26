@@ -36,7 +36,8 @@ import {
     changePost,
     togglePostLike,
     addComment,
-    toggleCommentLike
+    toggleCommentLike,
+    reportComment
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -104,7 +105,7 @@ async function follow(event:PointerEvent, user_to_follow_id:number|null):Promise
         }
 
         catch {
-            console.error(gettext("Pri pridávaní sledovania užívateľovi došlo k chybe."))
+            console.error(gettext("Pri pridávaní sledovania došlo k chybe."))
         }
     }
 }
@@ -131,7 +132,7 @@ async function unfollow(event:PointerEvent, user_to_unfollow_id:number|null):Pro
         }
 
         catch {
-            console.error(gettext("Pri odstraňovaní sledovania užívateľovi došlo k chybe."))
+            console.error(gettext("Pri rušení sledovania došlo k chybe."))
         }
     }
 }
@@ -726,11 +727,19 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 // Comment Forum Click Functionalities
                 comment_forum.addEventListener("click", function(event:PointerEvent):void {
+                    // Like Comment
                     if((event.target as HTMLElement).classList.contains("fa-heart")) {
                         const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-                        const comment_likes_counter:HTMLParagraphElement|null = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") || null // Gets The Likes Counter
+                        const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
 
                         if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+                    }
+
+                    // Report Comment
+                    if((event.target as HTMLElement).classList.contains("fa-flag")) {
+                        const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+
+                        if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
                     }
                 })
             }

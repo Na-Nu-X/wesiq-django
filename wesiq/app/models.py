@@ -223,7 +223,6 @@ class Post(models.Model):
     )
 
     description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
-    # tagged_users = ArrayField(models.CharField(verbose_name="Tagged Users", max_length=20), default=list, null=False)
     tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     location = models.CharField(verbose_name="Location", max_length=255, null=True, blank=True)
@@ -270,6 +269,8 @@ class PostForum(models.Model):
     )
 
     comment = models.TextField(verbose_name="Comment", null=False)
+    # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
+    # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
     likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
