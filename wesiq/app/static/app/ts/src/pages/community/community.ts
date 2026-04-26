@@ -37,7 +37,8 @@ import {
     togglePostLike,
     addComment,
     toggleCommentLike,
-    reportComment
+    reportComment,
+    replyOnComment
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -740,6 +741,14 @@ document.addEventListener("DOMContentLoaded", function():void {
                         const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
 
                         if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
+                    }
+
+                    // Reply On Comment
+                    if((event.target as HTMLElement).classList.contains("fa-reply")) {
+                        const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                        const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+
+                        if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, one_comment.dataset["comment_id"]) // Replies On The Comment
                     }
                 })
             }
