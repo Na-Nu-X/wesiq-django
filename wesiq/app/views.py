@@ -1680,6 +1680,8 @@ def communityView(request):
 
             if one_post.coordinates:
                 one_post.location = one_post.location.replace(",", "<span></span>")
+                one_post.latitude = str(one_post.coordinates.y).replace(",", ".")
+                one_post.longitude = str(one_post.coordinates.x).replace(",", ".")
 
         if request.method == "POST":
             # Upload Post Form
