@@ -1,0 +1,687 @@
+@import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
+
+/************
+ Main Styles
+************/
+
+.post_container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0px auto;
+    padding: 20px;
+    background-color: transparentize($secondary-color, 0.95);
+    border-radius: $medium-border-radius;
+
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+
+        .left {
+            a {
+                .profile_picture {
+                    @include profile_picture($width: 45px, $height: 45px);
+                    display: block;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+            }
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+
+            .top {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .username {
+                    flex: 1;
+                    font-weight: bold;
+                }
+
+                .followers_container {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+
+                    .followers {
+                        color: darken($secondary-color, 40%);
+                    }
+
+                    .fa-user {
+                        color: darken($secondary-color, 40%);
+                    }
+                }
+
+                .fa-ellipsis-vertical {
+                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    font-size: 1.2em;
+                }
+
+                .follow_button {
+                    padding: 5px 10px;
+                    text-align: center;
+                    background-color: transparent;
+                    color: $secondary-color;
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $big-border-radius;
+                    outline: none;
+                    transition: border-color 0.3s ease;
+
+                    &:hover,
+                    &:focus {
+                        border-color: $blue-color;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .bottom {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+
+                .location {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    color: darken($secondary-color, 40%);
+                    font-size: 0.8em;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-decoration: none;
+
+                    span {
+                        display: inline-block;
+                        width: 4px;
+                        height: 4px;
+                        border-radius: 50%;
+                        background-color: darken($secondary-color, 40%);
+                    }
+                }
+
+                .created_at {
+                    color: darken($secondary-color, 40%);
+                    font-size: 0.8em;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+
+    .media {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+
+        .post {
+            position: relative;
+            width: 100%;
+            height: 100%;
+
+            &:not(:nth-child(1)) {
+                display: none;
+            }
+
+            .image,
+            .video {
+                display: block;
+                width: 100%;
+                border-radius: $big-border-radius
+            }
+
+            .previous, 
+            .next {
+                @include blue_button(50px);
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                opacity: 0;
+                transition: border-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+                z-index: 50;
+
+                &.hidden {
+                    display: none;
+                }
+
+                &:hover,
+                &:focus {
+                    transform: translateY(-50%) scale(1.05);
+                    opacity: 1;
+                }
+
+                .fa-angle-right,
+                .fa-angle-left {
+                    @include position_center;
+                    font-size: 30px;
+                    color: $blue-color;
+                }
+            }
+
+            .previous {
+                left: 10px;
+            }
+
+            .next {
+                right: 10px;
+            }
+        }
+
+        .particles {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+
+            .fa-heart {
+                --x: 0px; // 100px
+                --y: 0px; // -100px
+
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                display: block;
+                font-size: 1.2em;
+                color: $error-color;
+                pointer-events: none;
+                user-select: none;
+                animation: flyFadeOut 1s ease-out forwards;
+            }
+        }
+
+        .post_bars {
+            position: absolute;
+            bottom: 0px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 5px 10px;
+            background-color: transparentize($main-color, 0.9);
+
+            .bar {
+                position: relative;
+                width: 12px;
+                height: 12px;
+                background-color: darken($secondary-color, 40%);
+                box-shadow: 0px 0px 10px darken($secondary-color, 40%);
+                border-radius: 50%;
+                transition: background-color 0.3s ease;
+
+                &.active,
+                &:hover {
+                    cursor: pointer;
+                    background-color: darken($secondary-color, 20%);
+                }
+            }
+        }
+    }
+
+    .society {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 10px;
+
+        .likes {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 20px;
+
+            .fa-heart {
+                font-size: 1.5em;
+                display: block;
+                color: darken($secondary-color, 40%);
+
+                &:hover {
+                    color: $error-color !important;
+                    cursor: pointer;
+                    transition: color 0.3s ease;
+                }
+            }
+
+            .fa-solid {
+                color: $error-color;
+            }
+
+            .likes_counter,
+            .hidden_likes_counter {
+                display: inline-block;
+                color: darken($secondary-color, 40%);
+            }
+
+            .likes_counter {
+                font-size: 1.2em;
+            }
+
+            .hidden_likes_counter {
+                font-size: 0.8em;
+            }
+        }
+
+        .comments {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .fa-comment {
+                font-size: 1.5em;
+                display: block;
+                color: darken($secondary-color, 40%);
+
+                &:hover {
+                    color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                    transition: color 0.3s ease;
+                }
+            }
+
+            .comments_counter,
+            .hidden_comments_counter {
+                display: inline-block;
+                color: darken($secondary-color, 40%);
+            }
+
+            .comments_counter {
+                font-size: 1.2em;
+            }
+
+            .hidden_comments_counter {
+                font-size: 0.8em;
+            }
+        }
+
+        .save {
+            margin-left: auto;
+
+            .fa-bookmark {
+                font-size: 1.5em;
+                display: block;
+                color: darken($secondary-color, 40%);
+
+                &:hover {
+                    color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                    transition: color 0.3s ease;
+                }
+            }
+        }
+    }
+
+    .description {
+        margin-top: 10px;
+
+        .tag,
+        .hashtag {
+            display: inline-block;
+            height: 25px;
+            line-height: 25px;
+            padding: 0px 5px;
+            border-radius: $small-border-radius;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .tag {
+            text-decoration: none;
+            background-color: transparentize($blue-color, 0.8);
+            color: $blue-color;
+
+            &:hover {
+                background-color: transparentize($blue-color, 0.7);
+            }
+        }
+
+        .hashtag {
+            background-color: transparentize($success-color, 0.9);
+            color: $success-color;
+
+            &:hover {
+                background-color: transparentize($success-color, 0.8);
+            }
+        }
+    }
+
+    .comment_forum {
+        margin-top: 10px;
+
+        &.hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .write_comment_form {
+            position: relative;
+
+            .comment {
+                width: 100%;
+                min-height: 50px;
+                field-sizing: content;
+                padding-top: 12px;
+                padding-right: 30px + 10px + 10px;
+                padding-bottom: 12px;
+                padding-left: 38px + 6px + 10px;
+                text-align: left;
+                background-color: lighten($main-color, 20%);
+                color: $secondary-color;
+                border-radius: $big-border-radius;
+                outline: none;
+                transition: padding 0.3s ease;
+
+                &:empty::before {
+                    content: attr(data-placeholder);
+                    color: darken($secondary-color, 40%);
+                    cursor: text;
+                }
+                
+                .tag,
+                .hashtag {
+                    display: inline-block;
+                    height: 25px;
+                    line-height: 25px;
+                    padding: 0px 5px;
+                    border-radius: $small-border-radius;
+                    font-size: 0.8em;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
+
+                .tag {
+                    background-color: transparentize($blue-color, 0.8);
+                    color: $blue-color;
+                }
+
+                .hashtag {
+                    background-color: transparentize($success-color, 0.9);
+                    color: $success-color;
+                }
+            }
+
+            .profile_picture {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                width: 38px;
+                height: 38px;
+                padding: 2px;
+                border: 1px solid $secondary-color;
+                border-radius: 50%;
+            }
+
+            .send {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%) scale(1);
+                width: 30px;
+                height: 30px;
+                color: darken($secondary-color, 40%);
+                transition: transform 0.3s ease, color 0.3s ease;
+
+                &:hover {
+                    transform: translateY(-50%) scale(1.1);
+                    color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .all_comments {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: darken($secondary-color, 40%);
+                border-radius: 2.5px;
+
+                &:hover {
+                    background-color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                }
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: lighten($main-color, 20%);
+                border-radius: 2.5px;
+            }
+
+            .one_comment {
+                margin-bottom: 10px;
+
+                &:last-child {
+                    margin-bottom: 0px;
+                }
+
+                .comment_container {
+                    margin-left: 6px;
+
+                    .user {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+    
+                        a {
+                            .profile_picture {
+                                @include profile_picture($width: 38px, $height: 38px);
+                                display: block;
+                                transition: transform 0.3s ease;
+        
+                                &:hover {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        .username {
+                            font-weight: bold;
+                        }
+
+                        .fa-ellipsis-vertical {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            display: block;
+                            margin-left: auto;
+                            margin-right: 10px;
+                            font-size: 1.2em;
+                        }
+                    }
+
+                    .comment {
+                        margin-bottom: 7.5px;
+                        margin-left: 38px + 10px;
+                        padding-right: 10px;
+                        text-align: justify;
+                    }
+                }
+
+                .interactions {
+                    margin-left: 6px + 10px + 38px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    .reply {
+                        .fa-comment {
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: darken($secondary-color, 20%);
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+
+                        .fa-xmark {
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: $error-color;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+                    }
+
+                    .likes {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        height: 20px;
+    
+                        .fa-heart {
+                            display: block;
+                            color: darken($secondary-color, 40%);
+    
+                            &:hover {
+                                color: $error-color !important;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+    
+                        .fa-solid {
+                            color: $error-color;
+                        }
+    
+                        .likes_counter {
+                            display: inline-block;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
+                    .report {
+                        .fa-flag {
+                            color: darken($secondary-color, 40%);
+
+                            &:hover {
+                                color: $error-color;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+
+                            &.active {
+                                color: $error-color;
+                            }
+                        }
+                    }
+
+                    .date {
+                        margin-left: 10px;
+
+                        p {
+                            font-size: 0.8em;
+                            font-style: italic;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+                }
+
+                .reply_container {
+                    margin-left: 6px + 10px + 38px;
+                    margin-right: 10px;
+
+                    .write_comment_form {
+                        position: relative;
+    
+                        .comment {
+                            width: 100%;
+                            min-height: 50px;
+                            field-sizing: content;
+                            padding-top: 12px;
+                            padding-right: 30px + 10px + 10px;
+                            padding-bottom: 12px;
+                            padding-left: 38px + 6px + 10px;
+                            text-align: left;
+                            background-color: lighten($main-color, 20%);
+                            color: $secondary-color;
+                            border-radius: $big-border-radius;
+                            outline: none;
+                            transition: padding 0.3s ease;
+        
+                            &:empty::before {
+                                content: attr(data-placeholder);
+                                color: darken($secondary-color, 40%);
+                                cursor: text;
+                            }
+                            
+                            .tag,
+                            .hashtag {
+                                display: inline-block;
+                                height: 25px;
+                                line-height: 25px;
+                                padding: 0px 5px;
+                                border-radius: $small-border-radius;
+                                font-size: 0.8em;
+                                cursor: pointer;
+                                transition: background-color 0.2s ease;
+                            }
+    
+                            .tag {
+                                background-color: transparentize($blue-color, 0.8);
+                                color: $blue-color;
+                            }
+    
+                            .hashtag {
+                                background-color: transparentize($success-color, 0.9);
+                                color: $success-color;
+                            }
+                        }
+    
+                        .profile_picture {
+                            position: absolute;
+                            top: 6px;
+                            left: 6px;
+                            width: 38px;
+                            height: 38px;
+                            padding: 2px;
+                            border: 1px solid $secondary-color;
+                            border-radius: 50%;
+                        }
+            
+                        .send {
+                            position: absolute;
+                            top: 50%;
+                            right: 10px;
+                            transform: translateY(-50%) scale(1);
+                            width: 30px;
+                            height: 30px;
+                            color: darken($secondary-color, 40%);
+                            transition: transform 0.3s ease, color 0.3s ease;
+        
+                            &:hover {
+                                transform: translateY(-50%) scale(1.1);
+                                color: darken($secondary-color, 20%);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

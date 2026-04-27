@@ -1666,8 +1666,6 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
-        post_media = PostMedia.objects.all() # Gets All Post Media
-
         posts = Post.objects.all().prefetch_related(
             "tagged_users", 
             "media",
@@ -2042,11 +2040,39 @@ def communityView(request):
             "profile_picture_name": logged_in_user.profile_picture_name,
             "users": users,
             "posts": posts,
-            "post_media": post_media,
             "upload_post_form": uploadPostForm
         })
 
     return render(request, "app/community.html")
+
+def postView(request, post_id):
+    logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+
+    # If The User Is Logged In
+    if logged_in_user_id:
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+        # Gets The Post With All Related Data
+        post = Post.objects.filter(id=post_id).prefetch_related(
+            "tagged_users", 
+            "media",
+
+            Prefetch(
+                "comments",
+                queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
+                to_attr="visible_comments"
+            )
+        ).first()
+
+        return render(request, "app/post.html", {
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "username": logged_in_user.username,
+            "profile_picture_name": logged_in_user.profile_picture_name,
+            "post": post
+        })
+
+    return render(request, "app/post.html")
 
 def profileView(request, username):
     # Checks If The Profile With Searched Username Exists

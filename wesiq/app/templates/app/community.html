@@ -237,7 +237,7 @@
                     </div>
 
                     <div class="media">
-                        {% for one_post_media in post_media %}
+                        {% for one_post_media in one_post.media.all %}
                             {% if one_post.id == one_post_media.post.id %}
                                 <div class="one_post">
                                     <div class="previous hidden">
@@ -380,7 +380,7 @@
 
                                         <div class="interactions">
                                             <div class="reply" title="{% translate 'Odpovedať...' %}">
-                                                <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
+                                                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                                                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
                                             </div>
                                             

@@ -145,45 +145,47 @@
                             {% for one_post in user.posts.all %}
                                 {% for one_post_media in post_media %}
                                     {% if one_post.id == one_post_media.post.id %}
-                                        {% if one_post_media.is_video == True %}
-                                            <video class="video" data-post_id="{{ one_post.id }}" controls autoplay loop muted>
-                                                <source src="/../media/{{ one_post_media.file }}">
-                                                
-                                                {% blocktranslate with user=one_post_media.post.user %}
-                                                    Príspevok užívateľa {{ user }}
-                                                {% endblocktranslate %}
-                                            </video>
-                                    
-                                        {% elif one_post_media.is_video == False %}
-                                            <img 
-                                                class="image"
-                                                src="/../media/{{ one_post_media.file }}" 
-                                                alt="
+                                        <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                            {% if one_post_media.is_video == True %}
+                                                <video class="video" data-post_id="{{ one_post.id }}" controls autoplay loop muted>
+                                                    <source src="/../media/{{ one_post_media.file }}">
+                                                    
                                                     {% blocktranslate with user=one_post_media.post.user %}
                                                         Príspevok užívateľa {{ user }}
                                                     {% endblocktranslate %}
-                                                "
-                                                data-post_id="{{ one_post.id }}"
-                                            >
+                                                </video>
                                         
-                                        {% endif %}
+                                            {% elif one_post_media.is_video == False %}
+                                                <img 
+                                                    class="image"
+                                                    src="/../media/{{ one_post_media.file }}" 
+                                                    alt="
+                                                        {% blocktranslate with user=one_post_media.post.user %}
+                                                            Príspevok užívateľa {{ user }}
+                                                        {% endblocktranslate %}
+                                                    "
+                                                    data-post_id="{{ one_post.id }}"
+                                                >
+                                            
+                                            {% endif %}
+                                        </a>
                                     
                                     {% endif %}
                                 {% endfor %}
                             {% endfor %}
 
-                            <img src="https://picsum.photos/200?random=1">
-                            <img src="https://picsum.photos/200?random=2">
-                            <img src="https://picsum.photos/200?random=3">
-                            <img src="https://picsum.photos/200?random=4">
-                            <img src="https://picsum.photos/200?random=5">
-                            <img src="https://picsum.photos/200?random=6">
-                            <img src="https://picsum.photos/200?random=7">
-                            <img src="https://picsum.photos/200?random=8">
-                            <img src="https://picsum.photos/200?random=9">
-                            <img src="https://picsum.photos/200?random=10">
-                            <img src="https://picsum.photos/200?random=11">
-                            <img src="https://picsum.photos/200?random=12">
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=1"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=2"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=3"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=4"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=5"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=6"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=7"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=8"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=9"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=10"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=11"></a>
+                            <a href="#"><img class="image" src="https://picsum.photos/200?random=12"></a>
                         </div>
                     </div>
 
