@@ -108,58 +108,66 @@
         </form>
     </dialog>
 
-    <div class="search_bar_container">
-        <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
-        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-        <input class="search_bar" type="text" placeholder="{% translate 'Nájsť užívateľa' %}" autocomplete="off">
-    </div>
-
-    <div class="search_result_container">
-        <div class="loading hidden">
-            <p>{% translate "Načítavam..." %}</p>
+    <div class="search_users">
+        <div class="search_bar_container">
+            <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+            <input class="search_bar" type="text" placeholder="{% translate 'Nájsť užívateľa' %}" autocomplete="off">
         </div>
 
-        <div class="all_users">
-            {% for one_user in users %}
-                <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
-                    <img 
-                        class="profile_picture skeleton_loading" 
-                        src="
-                            {% if one_user.profile_picture_name %}
-                                /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
+        <div class="search_result_container">
+            <div class="loading hidden">
+                <p>{% translate "Načítavam..." %}</p>
+            </div>
 
-                            {% else %}
-                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                            
-                            {% endif %}
-                        "
-                    >
+            <div class="all_users">
+                {% for one_user in users %}
+                    <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
+                        <img 
+                            class="profile_picture skeleton_loading" 
+                            src="
+                                {% if one_user.profile_picture_name %}
+                                    /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
 
-                    <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
 
-                    <p class="followers">{{ one_user.followers|length }}</p>
+                        <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
-                    <i 
-                        class="
-                            fa-solid
+                        <p class="followers">{{ one_user.followers|length }}</p>
 
-                            {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
-                                fa-user-plus
+                        <i 
+                            class="
+                                fa-solid
 
-                            {% else %}
-                                fa-user-minus
-                            
-                            {% endif %}
-                        "
-                    ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
-                </a>
-            
-            {% endfor %}
+                                {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
+                                    fa-user-plus
+
+                                {% else %}
+                                    fa-user-minus
+                                
+                                {% endif %}
+                            "
+                        ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+                    </a>
+                
+                {% endfor %}
+            </div>
         </div>
     </div>
     
     {% if posts|length > 0 %}
         <div class="feed">
+            <div class="search_posts_container">
+                <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
+            </div>
+
             {% for one_post in posts %}
                 <div class="post_container" data-post_id="{{ one_post.id }}">
                     <div class="header">
