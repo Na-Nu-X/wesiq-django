@@ -107,7 +107,7 @@ header {
                 }
 
                 .select_posts_container {
-                    border: 1px solid transparentize($blue-color, 0.5);
+                    border: 2px dashed transparentize($blue-color, 0.5);
                     transition: border-color 0.3s ease, transform 0.3s ease;
 
                     &:hover {
@@ -652,9 +652,7 @@ header {
             gap: 10px;
             max-width: 600px;
             width: 100%;
-            // padding: 10px 0px;
             padding: 20px;
-            // border: 1px solid transparentize($blue-color, 0.5);
             background-color: transparentize($secondary-color, 0.95);
             border-radius: $medium-border-radius;
 
@@ -1166,7 +1164,7 @@ header {
                             gap: 10px;
         
                             .reply {
-                                .fa-reply {
+                                .fa-comment {
                                     color: darken($secondary-color, 40%);
         
                                     &:hover {
