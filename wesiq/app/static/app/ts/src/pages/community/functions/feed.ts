@@ -214,13 +214,20 @@ export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
 }
 
 // Function For Reply On The Comment
-export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, id:string):Promise<void> {
-    console.log(reply_container)
-
-    const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
-
-    reply_container.innerHTML = "" // Deletes The Reply Container
-    reply_container.appendChild(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
+export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, icon:HTMLElement, id:string):Promise<void> {
+    if(!reply_container.querySelector(".write_comment_form")) {
+        const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
+    
+        reply_container.appendChild(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
+        icon.classList.remove("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+        icon.classList.add("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+    }
+    
+    else {
+        reply_container.innerHTML = "" // Deletes The Reply Container
+        icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+        icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+    }
 }
 
 // Function For Generate Change Buttons (Previous / Next)
