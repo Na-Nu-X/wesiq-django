@@ -685,3 +685,19 @@
         }
     }
 }
+
+/***********
+ Key Frames
+***********/
+
+@keyframes flyFadeOut {
+    0% {
+        transform: translate(0px, 0px) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0.5);
+        opacity: 0;
+    }
+}

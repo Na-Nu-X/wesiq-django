@@ -1682,8 +1682,6 @@ def communityView(request):
                 list(one_post.tagged_users.values_list("username", flat=True))
             )
 
-            # one_post.comments = one_post.comments.exclude(status="hidden")
-
             if one_post.coordinates:
                 one_post.location = one_post.location.replace(",", "<span></span>")
                 one_post.latitude = str(one_post.coordinates.y).replace(",", ".")
@@ -2052,6 +2050,148 @@ def postView(request, post_id):
     if logged_in_user_id:
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
+        if request.method == "POST":
+            # Like Post
+            if request.headers.get("X-Requested-Action") == "like-post":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        post_id = json.loads(request.body)
+                        post = Post.objects.get(id=post_id)
+
+                        if(str(logged_in_user_id) not in post.likes_from_users):
+                            post.likes_from_users.append(logged_in_user_id)
+                            post.likes += 1
+                            
+                            post.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné pridať bez prihlásenia.")}, status=401)
+
+                except:
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
+
+            # Cancel Like Post
+            if request.headers.get("X-Requested-Action") == "cancel-like-post":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        post_id = json.loads(request.body)
+                        post = Post.objects.get(id=post_id)
+
+                        if(str(logged_in_user_id) in post.likes_from_users):
+                            post.likes_from_users.remove(str(logged_in_user_id))
+                            post.likes -= 1
+                            
+                            post.save()
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except:
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+
+            # Report Comment
+            if request.headers.get("X-Requested-Action") == "report-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=comment_id)
+
+                        if(str(logged_in_user_id) not in comment.reports_from_users):
+                            comment.reports_from_users.append(logged_in_user_id)
+                            comment.reports += 1
+
+
+                            if comment.reports >= 5:
+                                post = Post.objects.get(id=comment.post_id) # Gets The Post
+                                report_percentage = (comment.reports / post.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
+
+                                if report_percentage > 10:
+                                    comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
+                            
+                            comment.save()
+
+                        return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+                except:
+                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
+
+            # Add Comment
+            if request.headers.get("X-Requested-Action") == "add-comment":
+                try:
+                    comment_data = json.loads(request.body) # Gets The Comment Data
+
+                    new_comment = PostForum(
+                        post_id = comment_data["post_id"],
+                        user_id = logged_in_user_id,
+                        comment = comment_data["comment"]
+                    )
+
+                    new_comment.save()
+
+                    return JsonResponse({"success": True, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+
+                except:
+                    captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=404)
+
+            # Like Comment
+            if request.headers.get("X-Requested-Action") == "like-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=int(comment_id))
+
+                        if(str(logged_in_user_id) not in comment.likes_from_users):
+                            comment.likes_from_users.append(logged_in_user_id)
+                            comment.likes += 1
+                            
+                            comment.save()
+
+                    return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+                except:
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
+
+            # Cancel Like Comment
+            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
+                try:
+                    comment_id = json.loads(request.body) # Gets The Comment Data
+
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+                        comment = PostForum.objects.get(id=int(comment_id))
+
+                        if(str(logged_in_user_id) in comment.likes_from_users):
+                            comment.likes_from_users.remove(str(logged_in_user_id))
+                            comment.likes -= 1
+                            
+                            comment.save()
+
+                    return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+
+                except:
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+
         # Gets The Post With All Related Data
         post = Post.objects.filter(id=post_id).prefetch_related(
             "tagged_users", 
@@ -2063,6 +2203,15 @@ def postView(request, post_id):
                 to_attr="visible_comments"
             )
         ).first()
+
+        post.tagged_users_json = json.dumps(
+            list(post.tagged_users.values_list("username", flat=True))
+        )
+
+        if post.coordinates:
+            post.location = post.location.replace(",", "<span></span>")
+            post.latitude = str(post.coordinates.y).replace(",", ".")
+            post.longitude = str(post.coordinates.x).replace(",", ".")
 
         return render(request, "app/post.html", {
             "first_name": logged_in_user.first_name,
