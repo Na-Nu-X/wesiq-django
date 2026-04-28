@@ -29,7 +29,9 @@ export function renderUsers(user_data:searchedUser, logged_in_user_id:number, al
     one_user.title = gettext("Zobraziť užívateľa") // Sets The Title
     one_user.target = "_self" // Sets The Target
     one_user.dataset["id"] = String(user_data.id) // Stores User's ID
-    one_user.dataset["friend_code"] = String(user_data.friend_code) // Stores User's Friend Code
+    one_user.dataset["full_name"] = `${user_data.first_name} ${user_data.last_name}`
+    one_user.dataset["username"] = user_data.username
+    one_user.dataset["friend_code"] = user_data.friend_code // Stores User's Friend Code
     all_users_container.appendChild(one_user) // Appends One User To The All Users Container
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class

@@ -122,7 +122,7 @@
 
             <div class="all_users">
                 {% for one_user in users %}
-                    <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-friend_code="{{ one_user.friend_code }}">
+                    <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-full_name="{{ one_user.first_name }} {{ one_user.last_name }}" data-username="{{ one_user.username }}" data-friend_code="{{ one_user.friend_code }}">
                         <img 
                             class="profile_picture skeleton_loading" 
                             src="
