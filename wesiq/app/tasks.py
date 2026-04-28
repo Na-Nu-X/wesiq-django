@@ -48,14 +48,14 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With No Activity Info
         if activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] == 0:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("V poslednej dobe sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("V poslednej dobe sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
 
                 <p>{_('V poslednej dobe sme nezaznamenali žiadnu aktivitu.')}</p>
 
-                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+                <p>{_('Začni týždeň s prvou <a href="%(domain)s%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language}}</p>
 
                 <br>
 
@@ -70,7 +70,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With No This Week's Activity Info
         elif activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] > 0:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
@@ -79,7 +79,7 @@ def sendWeeklyReportMail(user, activity_data):
 
                 <h1>{_('Celkovo si dosiahol aktívneho času <span style="color: #df3535">0s</span> - to je o <span style="color: #df3535">100%</span> horšie oproti predchádzajúcemu týždňu')}</h1>
 
-                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+                <p>{_('Začni týždeň s prvou <a href="%(domain)s%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language}}</p>
 
                 <br>
 
@@ -94,7 +94,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With Activity Info
         else:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("http://127.0.0.1:8000/%(language)s/trening/" % {"language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
@@ -111,7 +111,7 @@ def sendWeeklyReportMail(user, activity_data):
 
                 <p>{getFavoriteExerciseText(activity_data["favorite_exercise"])}</p>
 
-                <p>{_('Začni týždeň s prvou <a href="http://127.0.0.1:8000/%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"language": user.language}}</p>
+                <p>{_('Začni týždeň s prvou <a href="%(domain)s%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language}}</p>
 
                 <br>
 
@@ -377,9 +377,9 @@ def cleanupSuspendedUsers():
             sendMail(
                 user,
                 _("Odstránenie účtu"), # Subject
-                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\nhttp://127.0.0.1:8000/%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"language": user.language}, # Text Content
+                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\n%(domain)s%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language}, # Text Content
                 _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
-                _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="http://127.0.0.1:8000/%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"language": user.language} # End Of HTML Content
+                _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="%(domain)s%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language} # End Of HTML Content
             )
 
         users_for_deletion.delete() # Deletes Users

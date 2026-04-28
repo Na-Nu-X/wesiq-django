@@ -13,13 +13,33 @@ document.addEventListener("DOMContentLoaded", function():void {
     const password_input:HTMLInputElement = password_container.querySelector(".password") as HTMLInputElement // Gets Password Input
 
     const otp_container:HTMLDivElement = document.querySelector(".otp_container") as HTMLDivElement // Gets OTP Container
-    const password_reset_code:HTMLInputElement = otp_container.querySelector(".password_reset_code") as HTMLInputElement // Gets Password Reset Code Input
-    const otp_inputs:NodeListOf<HTMLInputElement> = otp_container.querySelectorAll<HTMLInputElement>("input[type='text']"); // Gets All OTP Inputs
+    const password_reset_code_input:HTMLInputElement = otp_container.querySelector(".password_reset_code") as HTMLInputElement // Gets Password Reset Code Input
+    const otp_inputs:NodeListOf<HTMLInputElement> = otp_container.querySelectorAll<HTMLInputElement>("input[type='text']") // Gets All OTP Inputs
+
+    const password_reset_code:string[]|null = otp_container.dataset["password_reset_code"]?.replace(/\D/g, '').split('').slice(0, otp_inputs.length) || null; // Gets An Array Of The Password Reset Code If Is Available (Cleans The Data And Allows Only Numbers)
 
     // OTP
     (otp_inputs[0] as HTMLInputElement).focus() // Sets Focus On The First OTP Input
 
     otp_inputs.forEach(function(one_input:HTMLInputElement, index:number):void {
+        // Auto Fill
+        if(password_reset_code && password_reset_code.length === 6) {
+            password_reset_code.forEach(function(one_number:string, index:number):void {
+                if(otp_inputs[index]) {
+                    otp_inputs[index].setAttribute("disabled", "true") // Disables All Filled Inputs
+                    otp_inputs[index].classList.add("active") // Adds Active Class To All Filled Inputs
+                    otp_inputs[index].value = one_number // Sets Value For Every Filled Input
+                }
+            })
+
+            const last_filled_index:number = password_reset_code.length > 0 ? password_reset_code.length - 1 : 0 // Gets Last Filled Index
+            const focused_index:number = Math.min(last_filled_index + 1, otp_inputs.length - 1); // Gets Focused Index
+
+            (otp_inputs[focused_index] as HTMLInputElement).classList.add("active"); // Adds Active Class To Current Input
+            (otp_inputs[focused_index] as HTMLInputElement).removeAttribute("disabled"); // Enables Current Input
+            (otp_inputs[focused_index] as HTMLInputElement).focus() // Sets Focus On Current Input
+        }
+
         // Input Functionality
         one_input.addEventListener("input", function():void {
             // Allows Only Numbers
@@ -56,10 +76,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Final Code
             if(index === otp_inputs.length - 1 && !this.disabled && this.value !== "") {
-                otp_inputs.forEach((one_input:HTMLInputElement) => password_reset_code.value += one_input.value) // Sets Final Code Value
+                otp_inputs.forEach((one_input:HTMLInputElement) => password_reset_code_input.value += one_input.value) // Sets Final Code Value
             }
 
-            else password_reset_code.value = "" // Deletes Final Code Value
+            else password_reset_code_input.value = "" // Deletes Final Code Value
         })
 
         // Paste Functionality
