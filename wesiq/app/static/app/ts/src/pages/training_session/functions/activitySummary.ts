@@ -103,6 +103,10 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
         total_elapsed_time:number
     }[] = JSON.parse(weekly_activity_chart.dataset["activities"] || '[{"day": "PO", "total_elapsed_time": 0}, {"day": "UT", "total_elapsed_time": 0}, {"day": "ST", "total_elapsed_time": 0}, {"day": "ŠT", "total_elapsed_time": 0}, {"day": "PI", "total_elapsed_time": 0}, {"day": "SO", "total_elapsed_time": 0}, {"day": "NE", "total_elapsed_time": 0}]')
 
+    const last_day_index:number = weekly_activity_data.length - 1 // Gets The Last Possible Day Index
+
+    if(weekly_activity_data[last_day_index]) weekly_activity_data[last_day_index].total_elapsed_time += elapsed_time // Stores The Elapsed Time Of The Current Activity In Order To Show Exact Chart
+
     // Extracts Data From Weekly Activity Data
     const labels:string[] = weekly_activity_data.map(one_item => one_item.day) // Gets Days As Labels
     const data:number[] = weekly_activity_data.map(one_item => one_item.total_elapsed_time) // Gets Total Elapsed Time For Each Day As Data
