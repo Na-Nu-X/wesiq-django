@@ -131,6 +131,20 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
                         })
+
+                        element.addEventListener("loadedmetadata", function() {
+                            // Checks The Video Duration
+                            if(this.duration > posts_preview_state.MAX_VIDEO_DURATION) {
+                                const tooltip:HTMLDivElement = document.createElement("div") // Creates The Tooltip
+
+                                tooltip.classList.add("tooltip") // Adds Tooltip Class
+                                tooltip.dataset["tooltip"] = gettext("Video je príliš dlhé") // Adds Tooltip Message
+
+                                tooltip.innerHTML += "<i class='fa-solid fa-triangle-exclamation'></i>" // https://fontawesome.com/icons/triangle-exclamation
+
+                                post.appendChild(tooltip) // Appends The Tooltip With A Warning To The Post
+                            }
+                        })
                     }
 
                     // Remove File By Clicking On X Mark Functionality
