@@ -36,6 +36,7 @@ import magic
 from django_ratelimit.decorators import ratelimit
 from django_ratelimit.core import get_usage
 from django.db.models import Prefetch
+from moviepy import VideoFileClip
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1750,8 +1751,6 @@ def communityView(request):
                         new_post.user_id = logged_in_user_id
                         new_post.description = request.POST.get("description")
 
-                        print(request.POST.get("description"))
-
                         # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
                         new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
@@ -1772,6 +1771,10 @@ def communityView(request):
 
                         new_post.tagged_users.set(tagged_users)
 
+                        MAX_IMAGE_SIZE = 10 * 1024 * 1024, # 10MB
+                        MAX_VIDEO_SIZE = 100 * 1024 * 1024, # 100MB
+                        MAX_VIDEO_DURATION = 60 * 2 # 2 Minutes
+
                         for one_file in files:
                             try:
                                 file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
@@ -1779,10 +1782,51 @@ def communityView(request):
                                 mime_type = magic.from_buffer(file_head, mime=True)
                                 
                                 if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
-                                    messages.add_message(request, messages.ERROR, _("Súbor %(file)s má nepodporovaný formát") % {"file": one_file.name})
-                                    continue
+                                    new_post.delete()
+                                    messages.add_message(request, messages.ERROR, _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name})
+                                    return redirect("community_url")
 
                                 is_video = mime_type.startswith("video/")
+
+                                # Image
+                                if not is_video:
+                                    if one_file.size > MAX_IMAGE_SIZE:
+                                        new_post.delete()
+                                        messages.add_message(request, messages.ERROR, _("Obrázok je príliš veľký:\n%(file)s") % {"file": one_file.name})
+                                        return redirect("community_url")
+                                
+                                # Video
+                                elif is_video:
+                                    if one_file.size > MAX_VIDEO_SIZE:
+                                        new_post.delete()
+                                        messages.add_message(request, messages.ERROR, _("Video je príliš veľké:\n%(file)s") % {"file": one_file.name})
+                                        return redirect("community_url")
+
+                                    # Creates A Temporary File For The moviepy Library
+                                    temporary_path = f"temp_{one_file.name}"
+
+                                    with open(temporary_path, 'wb+') as destination:
+                                        for one_chunk in one_file.chunks():
+                                            destination.write(one_chunk)
+                                    
+                                    try:
+                                        video = VideoFileClip(temporary_path)
+                                        duration = video.duration
+                                        video.close()
+                                        os.remove(temporary_path) # Deletes The Temporary File
+
+                                        if duration > MAX_VIDEO_DURATION:
+                                            new_post.delete()
+                                            messages.add_message(request, messages.ERROR, _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name})
+                                            return redirect("community_url")
+
+                                    except Exception:
+                                        if os.path.exists(temporary_path): 
+                                            os.remove(temporary_path)
+
+                                        new_post.delete()
+                                        messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní videa:\n%(file)s") % {"file": one_file.name})
+                                        return redirect("community_url")
 
                                 PostMedia.objects.create(
                                     post=new_post,
@@ -1791,8 +1835,12 @@ def communityView(request):
                                 )
 
                             except Exception:
-                                messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru %(file)s") % {"file": one_file.name})
+                                new_post.delete()
 
+                                messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
+                                return redirect("community_url")
+
+                        messages.add_message(request, messages.SUCCESS, _("Príspevok bol pridaný"))
                         return redirect("community_url")
 
             # Search Users
