@@ -219,10 +219,16 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                     // Gets Unmatched Users
                     const filtered_users:HTMLAnchorElement[] = [...all_users].filter(function(one_user:HTMLAnchorElement):boolean {
-                        // Filters By Full Name And By Friend Code
+                        // Filters By Full Name, Username And By Friend Code
+                        const full_name:string = one_user.dataset["full_name"]?.toLowerCase() || ""
+                        const username:string = one_user.dataset["username"]?.toLowerCase() || ""
+                        const friend_code:string = one_user.dataset["friend_code"]?.toLowerCase() || ""
+                        const text:string = search_bar.value.toLowerCase() || ""
+
                         return (
-                            !(one_user.querySelector(".full_name") as HTMLParagraphElement).textContent.toLowerCase().includes(search_bar.value.toLowerCase()) && 
-                            !(one_user.dataset["friend_code"]!.includes(search_bar.value))
+                            !full_name.includes(text) && 
+                            !username.includes(text) && 
+                            !friend_code.includes(text)
                         )
                     })
 

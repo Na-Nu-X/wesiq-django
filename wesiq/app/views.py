@@ -1782,6 +1782,7 @@ def communityView(request):
                         Q(account_status="OK") & (
                             Q(first_name__icontains=searched_text) | 
                             Q(last_name__icontains=searched_text) | 
+                            Q(username__icontains=searched_text) | 
                             Q(friend_code__contains=searched_text)
                         )
                     ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Text (Case-Insensitive)
