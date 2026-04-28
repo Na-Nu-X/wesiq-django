@@ -135,19 +135,6 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
             // Commits Activity
             if(gained_xp > 0) {
-                renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
-
-                if(training_plan_summary.length > 0) {
-                    const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["title"] || "" // Gets Training Plan Title
-                    const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["day"]) || null // Gets Training Plan Day
-
-                    new_activity_data.type = training_plan_title // Stores Training Plan Title
-                    new_activity_data.day = training_plan_day // Stores Training Plan Day
-                    new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
-
-                    renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
-                }
-
                 if(!container.querySelector(".no_logged_in")) {
                     try {
                         const new_activity_response:response = await sendPOST(window.location.pathname, new_activity_data) // Sends POST Data
@@ -161,6 +148,21 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                     catch {
                         console.error(gettext("Pri zaznamenávaní aktivity došlo k chybe."))
+                    }
+
+                    finally {
+                        renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
+
+                        if(training_plan_summary.length > 0) {
+                            const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["title"] || "" // Gets Training Plan Title
+                            const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["day"]) || null // Gets Training Plan Day
+
+                            new_activity_data.type = training_plan_title // Stores Training Plan Title
+                            new_activity_data.day = training_plan_day // Stores Training Plan Day
+                            new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
+
+                            renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
+                        }
                     }
                 }
             }
