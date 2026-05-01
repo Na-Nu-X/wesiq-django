@@ -3,6 +3,48 @@ import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
+export interface searchedPost {
+    user:{
+        id:number,
+        first_name:string,
+        last_name:string,
+        username:string
+    },
+
+    id:number,
+    description:string|null,
+
+    tagged_users:{
+        id:number,
+        first_name:string,
+        last_name:string,
+        username:string
+    }[]|[],
+
+    added_hashtags:string[]|[],
+    location:string|null,
+    latitude:string|null,
+    longitude:string|null,
+    public_visibility:boolean,
+    allow_comments:boolean,
+    hide_likes:boolean,
+    likes:number,
+    likes_from_users:string[],
+    created_at:string,
+
+    media:{
+        file:string,
+        is_video:boolean
+    }[]
+}
+
+export interface searchedPostsResponse {
+    success:boolean,
+    logged_in_user_id?:number,
+    posts:searchedPost[],
+    message:string
+}
+
 // Function For Generate Styled Description
 export function generateStyledDescription(text:string, tagged_users:string|null, added_hashtags:string|null):string {
     if(tagged_users) {
@@ -239,4 +281,42 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
         ((all_media[index] as HTMLDivElement).querySelector(".previous") as HTMLDivElement).classList.remove("hidden"); // Shows The Previous Button In The Last Post
         ((all_media[index] as HTMLDivElement).querySelector(".next") as HTMLDivElement).classList.remove("hidden") // Shows The Next Button In The First Post
     }
+}
+
+// Function For Get The Searched Posts
+export async function getSearchedPosts(searched_text:string, all_post_containers:NodeListOf<HTMLDivElement>):Promise<void> {
+    try {
+        const searched_posts_response:searchedPostsResponse = await sendPOST(window.location.pathname, searched_text, "search-posts") // Sends The Data With POST
+
+        // If The Response Isn't Success
+        if(!searched_posts_response.success) {
+            console.error(searched_posts_response.message)
+            return
+        }
+
+        // Gets Only The Posts Data Of Posts Which Aren't Already Rendered
+        const no_already_rendered_posts_data:searchedPost[] = searched_posts_response.posts.filter(function(one_searched_post:searchedPost):boolean {
+            return (
+                ![...all_post_containers].some(function(one_post_container:HTMLDivElement):boolean {
+                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
+                })
+            )
+        })
+
+        renderSearchedPosts(no_already_rendered_posts_data) // Renders The Searched Posts
+    }
+
+    catch {
+        console.error(gettext("Pri hľadaní príspevkov došlo k chybe."))
+    }
+    
+    finally {
+        // users_loading.classList.add("hidden") // Hides The Loader
+    }
+}
+
+function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[]):void {
+    no_already_rendered_posts_data.forEach(function(one_post:searchedPost):void {
+        console.log(one_post)
+    })
 }
