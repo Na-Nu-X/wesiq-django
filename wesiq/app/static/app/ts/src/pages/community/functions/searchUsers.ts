@@ -36,7 +36,7 @@ export function renderUsers(user_data:searchedUser, logged_in_user_id:number, al
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
     // profile_picture.classList.add("skeleton_loading") // Adds Skeleton Loading Class
-    user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture Name
+    user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container
 
     full_name.classList.add("full_name") // Adds Full Name Class
