@@ -45,8 +45,12 @@ import {
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 
+import type { 
+    searchedUser, 
+    searchedUsersResponse 
+} from "./functions/searchUsers.js"
+
 import type { response } from "../../services/sendPOST.js"
-import type { searchedUser, searchedUsersResponse } from "./functions/searchUsers.js"
 import type { tag } from "./state.js"
 
 // Function For Get Cursor Position Of The Description
@@ -634,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         search_posts_input.addEventListener("input", async function():Promise<void> {
             // Gets The Posts After 2 Seconds Of Delay
             search_posts_timeout = window.setTimeout(function() {
-                getSearchedPosts(search_posts_input.value, all_post_containers)
+                getSearchedPosts(search_posts_input.value, all_post_containers, feed)
             }, 200)
         })
 
