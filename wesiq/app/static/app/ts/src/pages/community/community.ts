@@ -642,58 +642,79 @@ document.addEventListener("DOMContentLoaded", function():void {
             }, 200)
         })
 
-        // All Post Containers Functionalities
-        all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
-            // Follow / Unfollow
+        feed.addEventListener("click", function(event:PointerEvent):void {
+            // Follow Button Click Functionalities
+            if((event.target as HTMLDivElement).classList.contains("follow_button")) {
+                const follow_button:HTMLDivElement = event.target as HTMLDivElement // Gets The Follow Button
+                const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
 
-            const follow_button:HTMLDivElement|null = one_post_container.querySelector(".header .right .top .follow_button") as HTMLDivElement || null // Gets The Follow Button
+                if(follow_button.dataset["action"]?.trim() === "follow") {
+                    follow(event, clicked_user_id); // Follow
+                    follow_button.textContent = "Prestať sledovať"
+                    follow_button.dataset["action"] = "unfollow"
+                }
+    
+                else if(follow_button.dataset["action"]?.trim() === "unfollow") {
+                    unfollow(event, clicked_user_id); // Unfollow
+                    follow_button.textContent = "Začať sledovať"
+                    follow_button.dataset["action"] = "follow"
+                }
+            }
+            
+            // Post Bars Click Functionalities
+            if((event.target as HTMLDivElement).classList.contains("bar")) {
+                const clicked_bar:HTMLDivElement = event.target as HTMLDivElement // Gets The Clicked Bar
+                const media_container:HTMLDivElement = clicked_bar.closest(".media") as HTMLDivElement // Gets The Media Container
+                const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+                const post_bars:HTMLDivElement = clicked_bar.parentElement as HTMLDivElement // Gets The Post Bars Container
+                const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
 
-            if(follow_button) {
-                // Follow Button Click Functionalities
-                follow_button.addEventListener("click", function(event:PointerEvent):void {
-                    const clicked_user_id:number|null = Number(this.dataset["id"]) || null // Gets Clicked User ID
-
-                    if(this.dataset["action"]?.trim() === "follow") {
-                        follow(event, clicked_user_id); // Follow
-                        this.textContent = "Prestať sledovať"
-                        this.dataset["action"] = "unfollow"
-                    }
-        
-                    else if(this.dataset["action"]?.trim() === "unfollow") {
-                        unfollow(event, clicked_user_id); // Unfollow
-                        this.textContent = "Začať sledovať"
-                        this.dataset["action"] = "follow"
-                    }
-                })
+                changePost(clicked_bar_index, post_bars, clicked_bar, all_media) // Changes The Post
             }
 
-            // Post Bars
+            // Toggle Post Like Click Functionality
+            if(
+                (event.target as HTMLElement).classList.contains("fa-heart") &&
+                (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("society")
+            ) {
+                const toggle_like:HTMLElement = event.target as HTMLElement // Gets The Heart Icon
+                const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
+                const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
 
+                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
+            }
+
+            // Previous Post
+            if((event.target as HTMLDivElement).classList.contains("previous") && !(event.target as HTMLDivElement).classList.contains("hidden")) {
+                const previous:HTMLDivElement = event.target as HTMLDivElement // Gets The Previous Button
+                const all_media:NodeListOf<HTMLDivElement> = (previous.closest(".media") as HTMLDivElement).querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+                const post_index:number = [...all_media].indexOf(previous.parentElement as HTMLDivElement) - 1 // Gets The Previous Post Index
+                const post_bars:HTMLDivElement = ((previous.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+                const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
+                const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Previous Bar
+
+                changePost(post_index, post_bars, bar, all_media) // Changes The Post
+            }
+
+            // Next Post
+            if((event.target as HTMLDivElement).classList.contains("next") && !(event.target as HTMLDivElement).classList.contains("hidden")) {
+                const next:HTMLDivElement = event.target as HTMLDivElement // Gets The Next Button
+                const all_media:NodeListOf<HTMLDivElement> = (next.closest(".media") as HTMLDivElement).querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+                const post_index:number = [...all_media].indexOf(next.parentElement as HTMLDivElement) + 1 // Gets The Next Post Index
+                const post_bars:HTMLDivElement = ((next.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+                const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
+                const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Next Bar
+
+                changePost(post_index, post_bars, bar, all_media) // Changes The Post
+            }
+        })
+
+        // All Post Containers Functionalities
+        all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
             const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
             const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-            
-
-            // Post Bars Click Functionalities
-            post_bars.addEventListener("click", function(event:PointerEvent):void {
-                if((event.target as HTMLDivElement).classList.contains("bar")) {
-                    const bar:HTMLDivElement = event.target as HTMLDivElement // Gets The Bar
-                    const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(bar) // Gets The Clicked Bar Index
-
-                    changePost(clicked_bar_index, post_bars, bar, all_media) // Changes The Post
-                }
-            })
-
-            // Like Post
-
-            const toggle_like:HTMLElement = one_post_container.querySelector(".likes .fa-heart") as HTMLElement // Gets The Heart Icon
-            const likes_counter:HTMLParagraphElement|null = one_post_container.querySelector(".likes .likes_counter") || null // Gets The Likes Counter
-            const particles:HTMLDivElement = media_container.querySelector(".particles") as HTMLDivElement // Gets The Particles Container
-
-            // Toggle Like Click Functionality
-            toggle_like.addEventListener("click", function():void {
-                if(one_post_container.dataset["post_id"]) togglePostLike(this, likes_counter, one_post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
-            })
 
             // Description And Bars
 
@@ -707,34 +728,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
             
             generatePostBars(all_media, post_bars) // Generates The Post Bars
-
-            // Post Change Buttons (Previous / Next) Click Functionalities
-            all_media.forEach(function(one_post:HTMLDivElement):void {
-                const previous:HTMLDivElement = one_post.querySelector(".previous") as HTMLDivElement // Gets The Previous Button
-                const next:HTMLDivElement = one_post.querySelector(".next") as HTMLDivElement // Gets The Next Button
-
-                // Previous Post
-                if(!previous.classList.contains("hidden")) {
-                    previous.addEventListener("click", function():void {
-                        const post_index:number = [...all_media].indexOf(one_post) - 1 // Gets The Previous Post Index
-                        const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
-                        const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Bar
-                        
-                        changePost(post_index, post_bars, bar, all_media) // Changes The Post
-                    })
-                }
-
-                // Next Post
-                if(!next.classList.contains("hidden")) {
-                    next.addEventListener("click", function():void {
-                        const post_index:number = [...all_media].indexOf(one_post) + 1 // Gets The Next Post Index
-                        const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
-                        const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Bar
-                        
-                        changePost(post_index, post_bars, bar, all_media) // Changes The Post
-                    })
-                }
-            })
 
             // Comment Forum
 

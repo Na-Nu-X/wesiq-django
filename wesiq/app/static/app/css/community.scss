@@ -822,6 +822,7 @@ header {
                         .fa-angle-right,
                         .fa-angle-left {
                             @include position_center;
+                            pointer-events: none;
                             font-size: 30px;
                             color: $blue-color;
                         }

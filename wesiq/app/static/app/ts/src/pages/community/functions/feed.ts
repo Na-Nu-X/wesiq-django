@@ -331,8 +331,6 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
             )
         })
 
-        // console.log(all_post_containers[0])
-
         renderSearchedPosts(no_already_rendered_posts_data, feed, searched_posts_response.logged_in_user_id, searched_posts_response.profile_picture_name) // Renders The Searched Posts
     }
 
@@ -349,7 +347,7 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
 function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):void {
     // Renders Only No Already Rendered Posts
     no_already_rendered_posts_data.forEach(function(one_post:searchedPost):void {
-        console.log(one_post)
+        // console.log(one_post)
 
         const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
         const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
@@ -617,13 +615,11 @@ function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed
             const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
             date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
 
-            console.log(all_comments)
-            // console.log(one_comment_container)
-            // console.log(one_visible_comment)
+            // console.log(all_comments)
         })
 
         feed.appendChild(post_container_template_clone) // Appends The Post Container Template Clone To The Feed
 
-        console.log(feed)
+        // console.log(feed)
     })
 }
