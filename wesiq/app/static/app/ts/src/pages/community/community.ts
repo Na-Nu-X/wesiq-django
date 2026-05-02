@@ -629,17 +629,20 @@ document.addEventListener("DOMContentLoaded", function():void {
         const search_posts_container:HTMLDivElement = feed.querySelector(".search_posts_container") as HTMLDivElement // Gets The Search Posts Container
         const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
 
-        const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
-
         let search_posts_timeout:number // Debounce Timeout Between API Requests
+
+        const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
 
         // Events
 
         search_posts_input.addEventListener("input", async function():Promise<void> {
-            // Gets The Posts After 2 Seconds Of Delay
-            search_posts_timeout = window.setTimeout(function() {
-                getSearchedPosts(search_posts_input.value, all_post_containers, feed)
-            }, 200)
+            if(this.value.trim() !== "") {
+                // Gets The Posts After 2 Seconds Of Delay
+                search_posts_timeout = window.setTimeout(function() {
+                    const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+                    getSearchedPosts(search_posts_input.value, all_post_containers, feed)
+                }, 2000)
+            }
         })
 
         feed.addEventListener("click", function(event:PointerEvent):void {
