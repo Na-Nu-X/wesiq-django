@@ -115,20 +115,22 @@ export function generatePostBars(all_media:NodeListOf<HTMLDivElement>, post_bars
 
 // Function For Change The Post
 export function changePost(clicked_bar_index:number, post_bars:HTMLDivElement, bar:HTMLDivElement, all_media:NodeListOf<HTMLDivElement>):void {
-    all_media.forEach(function(one_post:HTMLDivElement, index:number):void {
-        if(index !== clicked_bar_index) {
-            one_post.style.display = "none"
+    if(clicked_bar_index >= 0 && clicked_bar_index <= all_media.length - 1) {
+        all_media.forEach(function(one_post:HTMLDivElement, index:number):void {
+            if(index !== clicked_bar_index) {
+                one_post.style.display = "none"
 
-            const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
+                const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
 
-            all_bars.forEach(one_bar => one_bar.classList.remove("active")) // Removes The Active Class From All Bars
-            bar.classList.add("active") // Adds The Active Class
-        }
+                all_bars.forEach(one_bar => one_bar.classList.remove("active")) // Removes The Active Class From All Bars
+                bar.classList.add("active") // Adds The Active Class
+            }
 
-        else {
-            one_post.style.display = "block"
-        }
-    })
+            else {
+                one_post.style.display = "block"
+            }
+        })
+    }
 }
 
 // Function For Generates The Heart Particles
@@ -347,8 +349,6 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
 function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):void {
     // Renders Only No Already Rendered Posts
     no_already_rendered_posts_data.forEach(function(one_post:searchedPost):void {
-        // console.log(one_post)
-
         const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
         const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
     
@@ -465,6 +465,7 @@ function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed
 
                 source.src = `/../media/${one_post_media.file}` // Sets The File Path
 
+                video.appendChild(source) // Appends The Source To The Video
                 one_post_container.appendChild(video) // Appends The Video To The One Post Container
                 media.appendChild(one_post_container)
             }
@@ -527,10 +528,15 @@ function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed
         // Description
         const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
         description.classList.add("description") // Adds The Description Class
-        description.dataset["tagged_users"] = JSON.stringify(one_post.tagged_users) // Stores The Tagged Users
-        description.dataset["added_hashtags"] = JSON.stringify(one_post.added_hashtags) // Stores The Added Hashtags
+
+        const tagged_users:string[] = one_post.tagged_users.map(one_tagged_user => one_tagged_user.username)
+        const added_hashtags:string[] = one_post.added_hashtags
+        description.dataset["tagged_users"] = JSON.stringify(tagged_users) // Stores The Tagged Users
+        description.dataset["added_hashtags"] = JSON.stringify(added_hashtags) // Stores The Added Hashtags
         description.textContent = one_post.description // Sets The Description Text
         post_container.appendChild(description) // Appends The Description To The Post Container
+
+        if(tagged_users.length > 0 || added_hashtags.length > 0) description.innerHTML = generateStyledDescription(description.textContent, JSON.stringify(tagged_users), JSON.stringify(added_hashtags)) // Generates The Styled Description
 
         const comment_forum_template:HTMLTemplateElement = feed.querySelector(".comment_forum_template") as HTMLTemplateElement // Gets The Comment Forum Template
         const comment_forum_template_clone:DocumentFragment = comment_forum_template.content.cloneNode(true) as DocumentFragment // Clones The Comment Forum Template Content
@@ -614,12 +620,14 @@ function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed
 
             const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
             date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
-
-            // console.log(all_comments)
         })
 
-        feed.appendChild(post_container_template_clone) // Appends The Post Container Template Clone To The Feed
+        // Bars
+        const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+        const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+        
+        generatePostBars(all_media, post_bars) // Generates The Post Bars
 
-        // console.log(feed)
+        feed.appendChild(post_container_template_clone) // Appends The Post Container Template Clone To The Feed
     })
 }
