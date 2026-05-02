@@ -2239,7 +2239,7 @@ def communityView(request):
             "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "users": users,
-            "posts": posts[:2],
+            "posts": posts[:1],
             "upload_post_form": uploadPostForm
         })
 

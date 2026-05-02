@@ -333,6 +333,16 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
             )
         })
 
+        // Gets Inappropriate Post Containers From The DOM
+        const inappropriate_post_containers:HTMLDivElement[] = [...all_post_containers].filter(function(one_post_container:HTMLDivElement):boolean {
+            return (
+                !searched_posts_response.posts.some(function(one_searched_post:searchedPost):boolean {
+                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
+                })
+            )
+        })
+
+        deleteInappropriatePosts(inappropriate_post_containers) // Deletes The Inappropriate Post
         renderSearchedPosts(no_already_rendered_posts_data, feed, searched_posts_response.logged_in_user_id, searched_posts_response.profile_picture_name) // Renders The Searched Posts
     }
 
@@ -343,6 +353,11 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
     finally {
         // users_loading.classList.add("hidden") // Hides The Loader
     }
+}
+
+// Function For Delete The Inappropriate Posts
+function deleteInappropriatePosts(inappropriate_post_containers:HTMLDivElement[]):void {
+    inappropriate_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes The Post Container From The DOM
 }
 
 // Function For Render Searched Posts
