@@ -439,6 +439,7 @@ function storeTaggedUserToHistory(tagged_user:string):void {
 
     if(!tagged_users_history.includes(tagged_user)) {
         tagged_users_history.unshift(tagged_user) // Updates The Tagged Users History
+        if(tagged_users_history.length > tag_user_state.MAX_HISTORY_LENGTH) tagged_users_history = tagged_users_history.slice(0, tag_user_state.MAX_HISTORY_LENGTH) // Shows Maximum Of 3 Results From The Tagged Users History, Others Will Be Deleted From The Tagged Users History
         localStorage.setItem("tagged_users_history", JSON.stringify(tagged_users_history)) // Saves Updated Tagged Users History To The Local Storage
     }
 }

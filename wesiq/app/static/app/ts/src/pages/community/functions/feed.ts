@@ -345,9 +345,20 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
         deleteInappropriatePosts(inappropriate_post_containers) // Deletes The Inappropriate Post
         renderSearchedPosts(no_already_rendered_posts_data, feed, searched_posts_response.logged_in_user_id, searched_posts_response.profile_picture_name) // Renders The Searched Posts
 
-        // No Posts Message
+        // Checks If Any Posts Were Found
         const no_posts:HTMLParagraphElement = feed.querySelector(".no_posts") as HTMLParagraphElement // Gets The No Posts Paragraph
-        feed.querySelectorAll<HTMLDivElement>(".post_container").length === 0 ? no_posts.classList.remove("hidden") : no_posts.classList.add("hidden") // Shows / Hides The No Posts Message
+
+        if(feed.querySelectorAll<HTMLDivElement>(".post_container").length === 0) {
+            no_posts.classList.remove("hidden") // Shows The No Posts Message
+        }
+
+        else {
+            no_posts.classList.add("hidden") // Hides The No Posts Message
+
+            // History
+            console.log("HISTORY")
+            console.log(searched_text)
+        }
     }
 
     catch {

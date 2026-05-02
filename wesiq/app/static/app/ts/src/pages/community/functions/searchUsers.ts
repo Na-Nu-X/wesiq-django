@@ -1,4 +1,6 @@
-export interface searchedUser {
+import { sendPOST } from "../../../services/sendPOST.js"
+
+interface searchedUser {
     id:number,
     first_name:string,
     last_name:string,
@@ -9,15 +11,45 @@ export interface searchedUser {
     followers:string[]
 }
 
-export interface searchedUsersResponse {
+interface searchedUsersResponse {
     success:boolean,
     logged_in_user_id?:number,
     users?:searchedUser[],
     message:string
 }
 
+// Function For Get Searched Users
+export async function getSearchedUsers(searched_text:string, all_users_container:HTMLDivElement, users_loading:HTMLDivElement):Promise<void> {
+    try {
+        const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, searched_text, "search-users") // Sends The Data With POST
+
+        // If The Response Isn't Success
+        if(!search_bar_response.success) {
+            console.error(search_bar_response.message)
+            return
+        }
+
+        if(search_bar_response.users && search_bar_response.logged_in_user_id) {
+            all_users_container.innerHTML = "" // Deletes All Users Container
+
+            // Renders Users
+            search_bar_response.users.forEach(function(one_user_data:searchedUser) {
+                if(search_bar_response.logged_in_user_id) renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)
+            })
+        }
+    }
+
+    catch {
+        console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
+    }
+    
+    finally {
+        users_loading.classList.add("hidden") // Hides The Loader
+    }
+}
+
 // Function For Render Users From The POST Response
-export function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
+function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
     const full_name:HTMLParagraphElement = document.createElement("p") // Creates Full Name Paragraph

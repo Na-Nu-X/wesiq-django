@@ -29,6 +29,7 @@ export const posts_preview_state:{
 }
 
 export const tag_user_state:{
+    MAX_HISTORY_LENGTH:number,
     MAX_TAGGED_USERS:number,
     tagged_users:string[],
     tagged_user:string,
@@ -36,6 +37,7 @@ export const tag_user_state:{
 
     tags:tag[]
 } = {
+    MAX_HISTORY_LENGTH: 3,
     MAX_TAGGED_USERS: 10, // Sets Maximum Amount Of Tagged Users (10 By Default)
     tagged_users: [], // Stores All Tagged Users
     tagged_user: "", // Stores The Tagged User

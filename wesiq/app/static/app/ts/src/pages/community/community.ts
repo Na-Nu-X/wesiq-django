@@ -5,7 +5,7 @@ import {
 } from "./state.js"
 
 import { 
-    renderUsers,
+    getSearchedUsers,
     resetSearchedUsers
 } from "./functions/searchUsers.js"
 
@@ -44,11 +44,6 @@ import {
 
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
-
-import type { 
-    searchedUser, 
-    searchedUsersResponse 
-} from "./functions/searchUsers.js"
 
 import type { response } from "../../services/sendPOST.js"
 import type { tag } from "./state.js"
@@ -164,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const users_loading:HTMLDivElement = document.querySelector(".search_result_container .loading") as HTMLDivElement // Gets The Loading
 
         let previous_search_bar_length:number = 0 // Stores The Previous Search Bar Input Length
+        let search_users_timeout:number // Debounce Timeout Between Requests
 
         // Global Event Delegations
 
@@ -190,32 +186,12 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if(this.value.length === 1 && previous_search_bar_length !== 2) {
                     users_loading.classList.remove("hidden") // Shows The Loader
 
-                    try {
-                        const search_bar_response:searchedUsersResponse = await sendPOST(window.location.pathname, this.value, "search-users") // Sends The Data With POST
+                    if(search_users_timeout) clearTimeout(search_users_timeout) // Deletes The Previous Search Users Timeout
 
-                        // If The Response Isn't Success
-                        if(!search_bar_response.success) {
-                            console.error(search_bar_response.message)
-                            return
-                        }
-
-                        if(search_bar_response.users && search_bar_response.logged_in_user_id) {
-                            all_users_container.innerHTML = "" // Deletes All Users Container
-
-                            // Renders Users
-                            search_bar_response.users.forEach(function(one_user_data:searchedUser) {
-                                if(search_bar_response.logged_in_user_id) renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)
-                            })
-                        }
-                    }
-
-                    catch {
-                        console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
-                    }
-                    
-                    finally {
-                        users_loading.classList.add("hidden") // Hides The Loader
-                    }
+                    // Gets The Users After 1 Second Of Delay
+                    search_users_timeout = window.setTimeout(function() {
+                        getSearchedUsers(search_bar.value, all_users_container, users_loading) // Gets The Searched Users
+                    }, 1000)
                 }
 
                 // Filters Users From Already Obtained Users
@@ -630,7 +606,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
         const delete_search_posts_input:HTMLElement = search_posts_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Posts Input Icon
-        let search_posts_timeout:number // Debounce Timeout Between API Requests
+        let search_posts_timeout:number // Debounce Timeout Between Requests
 
         // Events
 
