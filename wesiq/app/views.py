@@ -1824,7 +1824,9 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
-        posts = Post.objects.all().prefetch_related(
+        posts = Post.objects.order_by(
+            "-created_at"
+        ).prefetch_related(
             "tagged_users", 
             "media",
 
@@ -1833,7 +1835,7 @@ def communityView(request):
                 queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
                 to_attr="visible_comments"
             )
-        )
+        )[:2]
 
         for one_post in posts:
             one_post.tagged_users_json = json.dumps(
@@ -2044,7 +2046,7 @@ def communityView(request):
                             queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
                             to_attr="visible_comments"
                         )
-                    )
+                    )[:2]
 
                     # Creates Valid Format For JSON Response
                     posts = [
@@ -2239,7 +2241,7 @@ def communityView(request):
             "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "users": users,
-            "posts": posts[:1],
+            "posts": posts,
             "upload_post_form": uploadPostForm
         })
 
