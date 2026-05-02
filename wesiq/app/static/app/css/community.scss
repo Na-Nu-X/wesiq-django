@@ -1095,6 +1095,10 @@ header {
                             color: darken($secondary-color, 20%);
                             cursor: pointer;
                         }
+
+                        path {
+                            pointer-events: none;
+                        }
                     }
                 }
 
@@ -1326,6 +1330,10 @@ header {
                                         transform: translateY(-50%) scale(1.1);
                                         color: darken($secondary-color, 20%);
                                         cursor: pointer;
+                                    }
+
+                                    path {
+                                        pointer-events: none;
                                     }
                                 }
                             }
