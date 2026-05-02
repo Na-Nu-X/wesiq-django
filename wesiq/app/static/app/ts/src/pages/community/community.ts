@@ -636,16 +636,16 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Events
 
         search_posts_input.addEventListener("input", async function():Promise<void> {
-            if(this.value.trim() !== "") {
-                const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+            if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
 
-                all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
+            const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
 
-                // Gets The Posts After 2 Seconds Of Delay
-                search_posts_timeout = window.setTimeout(function() {
-                    getSearchedPosts(search_posts_input.value, all_post_containers, feed)
-                }, 2000)
-            }
+            all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
+
+            // Gets The Posts After 2 Seconds Of Delay
+            search_posts_timeout = window.setTimeout(function() {
+                getSearchedPosts(search_posts_input.value, all_post_containers, feed)
+            }, 2000)
         })
 
         feed.addEventListener("click", function(event:PointerEvent):void {
