@@ -628,26 +628,43 @@ document.addEventListener("DOMContentLoaded", function():void {
     if(feed) {
         const search_posts_container:HTMLDivElement = feed.querySelector(".search_posts_container") as HTMLDivElement // Gets The Search Posts Container
         const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
-
-        let search_posts_timeout:number // Debounce Timeout Between API Requests
-
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+        const delete_search_posts_input:HTMLElement = search_posts_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Posts Input Icon
+        let search_posts_timeout:number // Debounce Timeout Between API Requests
 
         // Events
 
+        // Search Posts Input Functionality
         search_posts_input.addEventListener("input", async function():Promise<void> {
             if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
 
             const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
-
             all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
             // Gets The Posts After 2 Seconds Of Delay
             search_posts_timeout = window.setTimeout(function() {
-                getSearchedPosts(search_posts_input.value, all_post_containers, feed)
+                getSearchedPosts(search_posts_input.value, all_post_containers, feed) // Gets The Searched Posts
             }, 2000)
         })
 
+        // Delete Search Posts Input Icon Click Functionality
+        delete_search_posts_input.addEventListener("click", function():void {
+            if(search_posts_input.value !== "") {
+                search_posts_input.value = "" // Deletes Search Posts Input Value
+
+                if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+
+                const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+                all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
+
+                // Gets The Posts After 2 Seconds Of Delay
+                search_posts_timeout = window.setTimeout(function() {
+                    getSearchedPosts(search_posts_input.value, all_post_containers, feed) // Gets The Searched Posts
+                }, 2000)
+            }
+        })
+
+        // Feed Click Functionalities
         feed.addEventListener("click", function(event:PointerEvent):void {
             // Follow Button Click Functionalities
             if((event.target as HTMLDivElement).classList.contains("follow_button")) {
@@ -782,6 +799,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
+        // Feed Mouse Over Functionality
         feed.addEventListener("mouseover", function(event:MouseEvent):void {
             if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
@@ -790,6 +808,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
+        // Feed Mouse Out Functionality
         feed.addEventListener("mouseout", function(event:MouseEvent):void {
             if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
