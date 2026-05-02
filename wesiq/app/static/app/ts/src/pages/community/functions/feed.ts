@@ -341,9 +341,13 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
                 })
             )
         })
-
+        
         deleteInappropriatePosts(inappropriate_post_containers) // Deletes The Inappropriate Post
         renderSearchedPosts(no_already_rendered_posts_data, feed, searched_posts_response.logged_in_user_id, searched_posts_response.profile_picture_name) // Renders The Searched Posts
+
+        // No Posts Message
+        const no_posts:HTMLParagraphElement = feed.querySelector(".no_posts") as HTMLParagraphElement // Gets The No Posts Paragraph
+        feed.querySelectorAll<HTMLDivElement>(".post_container").length === 0 ? no_posts.classList.remove("hidden") : no_posts.classList.add("hidden") // Shows / Hides The No Posts Message
     }
 
     catch {
@@ -351,7 +355,7 @@ export async function getSearchedPosts(searched_text:string, all_post_containers
     }
     
     finally {
-        // users_loading.classList.add("hidden") // Hides The Loader
+        all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.add("hidden")) // Hides The Loader
     }
 }
 
