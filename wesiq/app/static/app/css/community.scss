@@ -656,6 +656,14 @@ header {
             z-index: 100;
         }
 
+        // Posts
+
+        .no_posts {
+            &.hidden {
+                display: none;
+            }
+        }
+
         .post_container {
             position: relative;
             display: flex;
@@ -790,6 +798,22 @@ header {
 
                     &:not(:nth-child(1)) {
                         display: none;
+                    }
+
+                    .loading {
+                        @include position_center;
+                        @include flex_center;
+                        width: 100%;
+                        height: 100%;
+                        backdrop-filter: blur(5px);
+                        border-radius: $small-border-radius;
+                        opacity: 1;
+                        transition: opacity 0.3s ease, display 0.3s ease allow-discrete;
+        
+                        &.hidden {
+                            opacity: 0;
+                            display: none;
+                        }
                     }
 
                     .image,

@@ -207,6 +207,10 @@
     
             <template class="one_post_template">
                 <div class="one_post">
+                    <div class="loading hidden">
+                        <p>{% translate "Načítavam..." %}</p>
+                    </div>
+
                     <div class="previous hidden">
                         <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
                     </div>
@@ -279,6 +283,8 @@
                 <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
                 <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
             </div>
+
+            <p class="no_posts hidden">{% translate "Nenašli sa žiadne príspevky." %}</p>
 
             {% for one_post in posts %}
                 <div class="post_container" data-post_id="{{ one_post.id }}">
@@ -358,6 +364,10 @@
                         {% for one_post_media in one_post.media.all %}
                             {% if one_post.id == one_post_media.post.id %}
                                 <div class="one_post">
+                                    <div class="loading hidden">
+                                        <p>{% translate "Načítavam..." %}</p>
+                                    </div>
+
                                     <div class="previous hidden">
                                         <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
                                     </div>
