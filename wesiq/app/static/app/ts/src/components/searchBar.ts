@@ -249,7 +249,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(!(event.target as HTMLInputElement).classList.contains("search_bar") && !(event.target as HTMLDivElement).classList.contains("search_result_container") && !(event.target as HTMLElement).classList.contains("delete_from_history")) {
             search_result_container.innerHTML = "" // Deletes Search Result Container
             hideSearchResult() // Hides Search Result
-
             return
         }
     })

@@ -279,9 +279,13 @@
             </template>
 
             <div class="search_posts_container">
-                <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
-                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
+                <div class="search_bar_container">
+                    <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                    <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
+                </div>
+
+                <div class="history_container"></div>
             </div>
 
             <p class="no_posts hidden">{% translate "Nenašli sa žiadne príspevky." %}</p>
