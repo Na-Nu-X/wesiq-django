@@ -63,5 +63,13 @@ export const add_hashtag_state:{
 export const location_state:{
     focused_place_index:number
 } = {
-    focused_place_index:0
+    focused_place_index: 0
+}
+
+export const feed_state:{
+    MAX_HISTORY_LENGTH:number,
+    focused_searched_post_index:number
+} = {
+    MAX_HISTORY_LENGTH: 3,
+    focused_searched_post_index: 0 // Focused Searched Post Index
 }

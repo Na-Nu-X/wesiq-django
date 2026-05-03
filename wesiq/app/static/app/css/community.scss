@@ -651,9 +651,86 @@ header {
         // Search Bar
 
         .search_posts_container {
-            @include search_bar;
+            position: relative;
+            max-width: 500px;
+            width: 100%;
             margin: 0px auto;
-            z-index: 100;
+
+            .search_bar_container {
+                @include search_bar;
+                margin: 0px auto;
+                z-index: 100;
+            }
+
+            .history_container {
+                position: absolute;
+                top: 40px - 40px;
+                width: 100%;
+                max-height: calc(40px * 3);
+                border-bottom-right-radius: $small-border-radius;
+                border-bottom-left-radius: $small-border-radius;
+                backdrop-filter: blur(5px);
+                opacity: 0;
+                transition: top 0.3s ease, border 0.3s ease, width 0.3s ease, opacity 0.5s ease;
+                z-index: 50;
+
+                &.active {
+                    top: 40px;
+                    opacity: 1;
+                }
+
+                .searched_post {
+                    position: relative;
+                    height: 40px;
+
+                    i {
+                        pointer-events: none;
+                        position: absolute;
+                        top: 50%;
+                        left: 10px;
+                        transform: translateY(-50%);
+                        color: $secondary-color;
+                        z-index: 100;
+                    }
+
+                    .delete_from_history {
+                        left: 0px;
+                        width: 15px + 10px;
+                        height: 100%;
+                        line-height: 40px;
+                        padding-left: 10px;
+                        pointer-events: all;
+                        cursor: pointer;
+
+                        &.fa-xmark {
+                            font-size: 20px;
+                        }
+                    }
+
+                    p {
+                        position: relative;
+                        display: block;
+                        height: inherit;
+                        line-height: 40px;
+                        color: $secondary-color;
+                        text-align: center;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+
+                        &:hover,
+                        &:focus {
+                            background-color: transparentize($blue-color, 0.9);
+                            letter-spacing: 0.5px;
+                            outline: none;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+
+            &:has(.search_bar:hover) .history_container, &:has(.search_bar:focus) .history_container {
+                border-color: $blue-color !important;
+            }
         }
 
         // Posts
