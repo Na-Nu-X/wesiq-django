@@ -68,6 +68,7 @@ export interface searchedPost {
 
 export interface searchedPostsResponse {
     success:boolean,
+    has_next?:boolean,
     logged_in_user_id?:number,
     profile_picture_name?:string,
     posts:searchedPost[],
@@ -381,287 +382,292 @@ function deleteInappropriatePosts(inappropriate_post_containers:HTMLDivElement[]
 function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):void {
     // Renders Only No Already Rendered Posts
     no_already_rendered_posts_data.forEach(function(one_post:searchedPost):void {
-        const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
-        const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
-    
-        // Post Container
-        const post_container:HTMLDivElement = post_container_template_clone.querySelector(".post_container") as HTMLDivElement // Creates The Post Container
-        post_container.dataset["post_id"] = String(one_post.id) // Stores The Post ID
+        feed.appendChild(createPostHTML(one_post, feed, logged_in_user_id, profile_picture_name)) // Appends The Post To The Feed
+    })
+}
 
-        // Post Author Profile Picture Link
-        const post_author_profile_picture_link:HTMLAnchorElement = post_container.querySelector(".header .left a") as HTMLAnchorElement // Gets The Post Author Profile Picture Link
-        post_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [one_post.user.username]) // Sets The Link To The User's Profile
-        post_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+// Function For Create Post HTML Structure
+function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):DocumentFragment {
+    const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
+    const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
 
-        // Post Author Profile Picture
-        const post_author_profile_picture:HTMLImageElement = post_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Post Author Profile Picture 
-        post_author_profile_picture.src = one_post.user.profile_picture_name ? `/../media/images/${one_post.user.id}/${one_post.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+    // Post Container
+    const post_container:HTMLDivElement = post_container_template_clone.querySelector(".post_container") as HTMLDivElement // Creates The Post Container
+    post_container.dataset["post_id"] = String(post_data.id) // Stores The Post ID
 
-        const right:HTMLDivElement = post_container.querySelector(".header .right") as HTMLDivElement // Gets The Right Container Of The Header
-        const top:HTMLDivElement = right.querySelector(".top") as HTMLDivElement // Gets The Top Container Of The Right Container
+    // Post Author Profile Picture Link
+    const post_author_profile_picture_link:HTMLAnchorElement = post_container.querySelector(".header .left a") as HTMLAnchorElement // Gets The Post Author Profile Picture Link
+    post_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
+    post_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
 
-        // Post Author Username
-        const post_author_username:HTMLParagraphElement = top.querySelector(".username") as HTMLParagraphElement // Gets The Post Author Username
-        post_author_username.textContent = one_post.user.username // Sets The Username
+    // Post Author Profile Picture
+    const post_author_profile_picture:HTMLImageElement = post_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Post Author Profile Picture 
+    post_author_profile_picture.src = post_data.user.profile_picture_name ? `/../media/images/${post_data.user.id}/${post_data.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
 
-        // Post Author Followers
-        const post_author_followers:HTMLParagraphElement = top.querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Post Author Followers
-        post_author_followers.textContent = String(one_post.user.followers.length) // Sets The Amount Of Post Author Followers
+    const right:HTMLDivElement = post_container.querySelector(".header .right") as HTMLDivElement // Gets The Right Container Of The Header
+    const top:HTMLDivElement = right.querySelector(".top") as HTMLDivElement // Gets The Top Container Of The Right Container
 
-        // Follow Button
-        if(logged_in_user_id && logged_in_user_id !== one_post.user.id) {
-            const follow_button:HTMLButtonElement = document.createElement("button") // Creates The Follow Button
+    // Post Author Username
+    const post_author_username:HTMLParagraphElement = top.querySelector(".username") as HTMLParagraphElement // Gets The Post Author Username
+    post_author_username.textContent = post_data.user.username // Sets The Username
 
-            follow_button.classList.add("follow_button") // Adds The Follow Button Class
-            follow_button.dataset["id"] = String(one_post.user.id) // Stores The User ID
-            follow_button.dataset["action"] = !one_post.user.followers.includes(String(logged_in_user_id)) ? "follow" : "unfollow"
-            follow_button.textContent = !one_post.user.followers.includes(String(logged_in_user_id)) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
+    // Post Author Followers
+    const post_author_followers:HTMLParagraphElement = top.querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Post Author Followers
+    post_author_followers.textContent = String(post_data.user.followers.length) // Sets The Amount Of Post Author Followers
 
-            top.appendChild(follow_button) // Appends The Follow Button To The Top Container
+    // Follow Button
+    if(logged_in_user_id && logged_in_user_id !== post_data.user.id) {
+        const follow_button:HTMLButtonElement = document.createElement("button") // Creates The Follow Button
+
+        follow_button.classList.add("follow_button") // Adds The Follow Button Class
+        follow_button.dataset["id"] = String(post_data.user.id) // Stores The User ID
+        follow_button.dataset["action"] = !post_data.user.followers.includes(String(logged_in_user_id)) ? "follow" : "unfollow"
+        follow_button.textContent = !post_data.user.followers.includes(String(logged_in_user_id)) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
+
+        top.appendChild(follow_button) // Appends The Follow Button To The Top Container
+    }
+
+    // Triple Dots Icon
+    else {
+        const icon:HTMLElement = document.createElement("i") // Creates The Icon
+
+        icon.classList.add("fa-solid", "fa-ellipsis-vertical") // https://fontawesome.com/icons/ellipsis-vertical
+
+        top.appendChild(icon) // Appends The Icon To The Top Container
+    }
+
+    const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
+
+    // Location
+    if(post_data.location) {
+        if(post_data.coordinates) {
+            const location:HTMLAnchorElement = document.createElement("a") // Creates The Location Link
+
+            location.classList.add("location") // Adds The Location Class
+            location.href = `https://www.google.com/maps?q=${post_data.coordinates.latitude},${post_data.coordinates.longitude}` // Creates The Link For Google Maps
+            location.title = gettext("Otvoriť mapy") // Sets The Title
+            location.target = "_blank"
+            location.innerHTML = post_data.location // Sets The Styled Location Text
+
+            bottom.prepend(location) // Appends The Location To The Bottom Container
         }
 
-        // Triple Dots Icon
         else {
-            const icon:HTMLElement = document.createElement("i") // Creates The Icon
+            const location:HTMLParagraphElement = document.createElement("p") // Creates The Location Paragraph
 
-            icon.classList.add("fa-solid", "fa-ellipsis-vertical") // https://fontawesome.com/icons/ellipsis-vertical
+            location.classList.add("location") // Adds The Location Class
+            location.textContent = post_data.location // Sets The Location Text
 
-            top.appendChild(icon) // Appends The Icon To The Top Container
+            bottom.prepend(location) // Appends The Location To The Bottom Container
+        }
+    }
+
+    // Created At
+    const created_at:HTMLParagraphElement = bottom.querySelector(".created_at") as HTMLParagraphElement // Gets The Created At Paragraph
+    created_at.textContent = getFormattedDate(post_data.created_at) // Sets The Formatted Date Text
+
+    // Media
+    const media:HTMLDivElement = post_container_template_clone.querySelector(".media") as HTMLDivElement // Gets The Media Container
+
+    post_data.media.forEach(function(one_post_media:{
+        file:string,
+        is_video:boolean
+    }) {
+        const one_post_template:HTMLTemplateElement = feed.querySelector(".one_post_template") as HTMLTemplateElement // Gets The One Post Template
+        const one_post_template_clone:DocumentFragment = one_post_template.content.cloneNode(true) as DocumentFragment // Clones The One Post Template Content
+        const one_post_container:HTMLDivElement = one_post_template_clone.querySelector(".one_post") as HTMLDivElement // Gets The One Post Container
+
+        // Image
+        if(!one_post_media.is_video) {
+            const image:HTMLImageElement = document.createElement("img") // Creates The Image
+
+            image.classList.add("image") // Adds The Image Class
+            image.src = `/../media/${one_post_media.file}` // Sets The File Path
+            image.alt = interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`]) // Sets The Alternative Text For The Image
+
+            one_post_container.appendChild(image) // Appends The Image To The One Post Container
+            media.appendChild(one_post_container)
         }
 
-        const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
+        // Video
+        else if(one_post_media.is_video) {
+            const video:HTMLVideoElement = document.createElement("video") // Creates The Video
 
-        // Location
-        if(one_post.location) {
-            if(one_post.coordinates) {
-                const location:HTMLAnchorElement = document.createElement("a") // Creates The Location Link
+            video.classList.add("video") // Adds The Video Class
+            video.controls = true
+            video.autoplay = true
+            video.loop = true
+            video.muted = true
+            video.textContent = interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`]) // Sets The Alternative Text For The Video
 
-                location.classList.add("location") // Adds The Location Class
-                location.href = `https://www.google.com/maps?q=${one_post.coordinates.latitude},${one_post.coordinates.longitude}` // Creates The Link For Google Maps
-                location.title = gettext("Otvoriť mapy") // Sets The Title
-                location.target = "_blank"
-                location.innerHTML = one_post.location // Sets The Styled Location Text
+            const source:HTMLSourceElement = document.createElement("source") // Creates The Source Element
 
-                bottom.prepend(location) // Appends The Location To The Bottom Container
-            }
+            source.src = `/../media/${one_post_media.file}` // Sets The File Path
 
-            else {
-                const location:HTMLParagraphElement = document.createElement("p") // Creates The Location Paragraph
-
-                location.classList.add("location") // Adds The Location Class
-                location.textContent = one_post.location // Sets The Location Text
-
-                bottom.prepend(location) // Appends The Location To The Bottom Container
-            }
+            video.appendChild(source) // Appends The Source To The Video
+            one_post_container.appendChild(video) // Appends The Video To The One Post Container
+            media.appendChild(one_post_container)
         }
+    })
 
-        // Created At
-        const created_at:HTMLParagraphElement = bottom.querySelector(".created_at") as HTMLParagraphElement // Gets The Created At Paragraph
-        created_at.textContent = getFormattedDate(one_post.created_at) // Sets The Formatted Date Text
+    // Particles
+    const particles:HTMLDivElement = document.createElement("div") // Creates The Particles Container
+    particles.classList.add("particles") // Adds The Particles Class
+    media.appendChild(particles) // Appends The Particles To The Media Container
 
-        // Media
-        const media:HTMLDivElement = post_container_template_clone.querySelector(".media") as HTMLDivElement // Gets The Media Container
+    // Post Bars
+    const post_bars:HTMLDivElement = document.createElement("div") // Creates The Post Bars Container
+    post_bars.classList.add("post_bars") // Adds The Post Bars Class
+    media.appendChild(post_bars) // Appends The Post Bars To The Media Container
 
-        one_post.media.forEach(function(one_post_media:{
-            file:string,
-            is_video:boolean
-        }) {
-            const one_post_template:HTMLTemplateElement = feed.querySelector(".one_post_template") as HTMLTemplateElement // Gets The One Post Template
-            const one_post_template_clone:DocumentFragment = one_post_template.content.cloneNode(true) as DocumentFragment // Clones The One Post Template Content
-            const one_post_container:HTMLDivElement = one_post_template_clone.querySelector(".one_post") as HTMLDivElement // Gets The One Post Container
+    // Society
+    const society:HTMLDivElement = post_container_template_clone.querySelector(".society") as HTMLDivElement // Gets The Society Container
 
-            // Image
-            if(!one_post_media.is_video) {
-                const image:HTMLImageElement = document.createElement("img") // Creates The Image
+    // Likes
+    const likes:HTMLDivElement = society.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
 
-                image.classList.add("image") // Adds The Image Class
-                image.src = `/../media/${one_post_media.file}` // Sets The File Path
-                image.alt = interpolate(gettext('Príspevok užívateľa %s'), [`${one_post.user.first_name} ${one_post.user.last_name}`]) // Sets The Alternative Text For The Image
+    const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+    logged_in_user_id && post_data.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
-                one_post_container.appendChild(image) // Appends The Image To The One Post Container
-                media.appendChild(one_post_container)
-            }
+    // Likes Counter
+    if(!post_data.hide_likes) {
+        const likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Likes Counter
+        likes_counter.classList.add("likes_counter") // Adds The Likes Counter
+        likes_counter.textContent = String(post_data.likes) // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+    }
 
-            // Video
-            else if(one_post_media.is_video) {
-                const video:HTMLVideoElement = document.createElement("video") // Creates The Video
+    // Hidden Likes Counter
+    else {
+        const hidden_likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Likes Counter
+        hidden_likes_counter.classList.add("hidden_likes_counter") // Adds The Hidden Likes Counter
+        hidden_likes_counter.textContent = gettext("Skryté")
+        likes.appendChild(hidden_likes_counter) // Appends The Hidden Likes Counter To The Likes
+    }
 
-                video.classList.add("video") // Adds The Video Class
-                video.controls = true
-                video.autoplay = true
-                video.loop = true
-                video.muted = true
-                video.textContent = interpolate(gettext('Príspevok užívateľa %s'), [`${one_post.user.first_name} ${one_post.user.last_name}`]) // Sets The Alternative Text For The Video
+    // Comments
+    const comments:HTMLDivElement = society.querySelector(".comments") as HTMLDivElement // Gets The Comments Container
 
-                const source:HTMLSourceElement = document.createElement("source") // Creates The Source Element
+    // Comments Counter
+    if(post_data.allow_comments) {
+        const comments_counter:HTMLParagraphElement = document.createElement("p") // Creates The Comments Counter
+        comments_counter.classList.add("comments_counter") // Adds The Comments Counter
+        comments_counter.textContent = String(post_data.visible_comments.length) // Sets The Comments Counter
+        comments.appendChild(comments_counter) // Appends The Comments Counter To The Likes
+    }
 
-                source.src = `/../media/${one_post_media.file}` // Sets The File Path
+    // Hidden Comments Counter
+    else {
+        const hidden_comments_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Comments Counter
+        hidden_comments_counter.classList.add("hidden_comments_counter") // Adds The Hidden Comments Counter
+        hidden_comments_counter.textContent = gettext("Vypnuté")
+        comments.appendChild(hidden_comments_counter) // Appends The Hidden Comments Counter To The Likes
+    }
 
-                video.appendChild(source) // Appends The Source To The Video
-                one_post_container.appendChild(video) // Appends The Video To The One Post Container
-                media.appendChild(one_post_container)
-            }
-        })
+    // Description
+    const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
+    description.classList.add("description") // Adds The Description Class
 
-        // Particles
-        const particles:HTMLDivElement = document.createElement("div") // Creates The Particles Container
-        particles.classList.add("particles") // Adds The Particles Class
-        media.appendChild(particles) // Appends The Particles To The Media Container
+    const tagged_users:string[] = post_data.tagged_users.map(one_tagged_user => one_tagged_user.username)
+    const added_hashtags:string[] = post_data.added_hashtags
+    description.dataset["tagged_users"] = JSON.stringify(tagged_users) // Stores The Tagged Users
+    description.dataset["added_hashtags"] = JSON.stringify(added_hashtags) // Stores The Added Hashtags
+    description.textContent = post_data.description // Sets The Description Text
+    post_container.appendChild(description) // Appends The Description To The Post Container
 
-        // Post Bars
-        const post_bars:HTMLDivElement = document.createElement("div") // Creates The Post Bars Container
-        post_bars.classList.add("post_bars") // Adds The Post Bars Class
-        media.appendChild(post_bars) // Appends The Post Bars To The Media Container
+    if(tagged_users.length > 0 || added_hashtags.length > 0) description.innerHTML = generateStyledDescription(description.textContent, JSON.stringify(tagged_users), JSON.stringify(added_hashtags)) // Generates The Styled Description
 
-        // Society
-        const society:HTMLDivElement = post_container_template_clone.querySelector(".society") as HTMLDivElement // Gets The Society Container
+    const comment_forum_template:HTMLTemplateElement = feed.querySelector(".comment_forum_template") as HTMLTemplateElement // Gets The Comment Forum Template
+    const comment_forum_template_clone:DocumentFragment = comment_forum_template.content.cloneNode(true) as DocumentFragment // Clones The Comment Forum Template Content
+
+    // Write Comment Form Profile Picture
+    const write_comment_form_profile_picture:HTMLImageElement = comment_forum_template_clone.querySelector(".comment_forum .write_comment_form .profile_picture") as HTMLImageElement // Gets The Write Comment Form Profile Picture
+    write_comment_form_profile_picture.src = profile_picture_name ? `/../media/images/${logged_in_user_id}/${profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+
+    const all_comments:HTMLDivElement = comment_forum_template_clone.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets The All Comments Container
+
+    post_container.appendChild(comment_forum_template_clone) // Appends The Comment Forum Template Clone To The Post Container
+
+    post_data.visible_comments.forEach(function(one_visible_comment:{
+        id:number,
+
+        user:{
+            id:number,
+            first_name:string,
+            last_name:string,
+            username:string,
+            profile_picture_name:string|null
+        },
+
+        comment:string,
+        likes:number,
+        likes_from_users:string[],
+        creation_time:string,
+        parent_id:number|null,
+        reports_from_users:string[]
+    }):void {
+        const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
+        const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
+        const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
+
+        one_comment_container.dataset["comment_id"] = String(one_visible_comment.id) // Stores The Comment ID
+
+        // Comment Author Profile Picture Link
+        const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
+        comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
+        comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+
+        // Comment Author Profile Picture
+        const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
+        comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+
+        // Comment Author Username
+        const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
+        comment_author_username.classList.add("username") // Adds The Username Class
+        comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
+
+        // Comment
+        const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
+        comment.textContent = one_visible_comment.comment // Sets The Comment Text
+
+        all_comments.appendChild(one_comment_container)
+
+        // Interactions
+        const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
 
         // Likes
-        const likes:HTMLDivElement = society.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
+        const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
 
         const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-        logged_in_user_id && one_post.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+        logged_in_user_id && one_visible_comment.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
         // Likes Counter
-        if(!one_post.hide_likes) {
-            const likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Likes Counter
-            likes_counter.classList.add("likes_counter") // Adds The Likes Counter
-            likes_counter.textContent = String(one_post.likes) // Sets The Likes Counter
-            likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+        const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+        likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+
+        // Report
+        if(logged_in_user_id && one_visible_comment.reports_from_users.includes(String(logged_in_user_id))) {
+            const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
+
+            const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon
+            report_icon.classList.add("active") // Adds The Active Class
         }
 
-        // Hidden Likes Counter
-        else {
-            const hidden_likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Likes Counter
-            hidden_likes_counter.classList.add("hidden_likes_counter") // Adds The Hidden Likes Counter
-            hidden_likes_counter.textContent = gettext("Skryté")
-            likes.appendChild(hidden_likes_counter) // Appends The Hidden Likes Counter To The Likes
-        }
+        // Date
+        const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
 
-        // Comments
-        const comments:HTMLDivElement = society.querySelector(".comments") as HTMLDivElement // Gets The Comments Container
-
-        // Comments Counter
-        if(one_post.allow_comments) {
-            const comments_counter:HTMLParagraphElement = document.createElement("p") // Creates The Comments Counter
-            comments_counter.classList.add("comments_counter") // Adds The Comments Counter
-            comments_counter.textContent = String(one_post.visible_comments.length) // Sets The Comments Counter
-            comments.appendChild(comments_counter) // Appends The Comments Counter To The Likes
-        }
-
-        // Hidden Comments Counter
-        else {
-            const hidden_comments_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Comments Counter
-            hidden_comments_counter.classList.add("hidden_comments_counter") // Adds The Hidden Comments Counter
-            hidden_comments_counter.textContent = gettext("Vypnuté")
-            comments.appendChild(hidden_comments_counter) // Appends The Hidden Comments Counter To The Likes
-        }
-
-        // Description
-        const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
-        description.classList.add("description") // Adds The Description Class
-
-        const tagged_users:string[] = one_post.tagged_users.map(one_tagged_user => one_tagged_user.username)
-        const added_hashtags:string[] = one_post.added_hashtags
-        description.dataset["tagged_users"] = JSON.stringify(tagged_users) // Stores The Tagged Users
-        description.dataset["added_hashtags"] = JSON.stringify(added_hashtags) // Stores The Added Hashtags
-        description.textContent = one_post.description // Sets The Description Text
-        post_container.appendChild(description) // Appends The Description To The Post Container
-
-        if(tagged_users.length > 0 || added_hashtags.length > 0) description.innerHTML = generateStyledDescription(description.textContent, JSON.stringify(tagged_users), JSON.stringify(added_hashtags)) // Generates The Styled Description
-
-        const comment_forum_template:HTMLTemplateElement = feed.querySelector(".comment_forum_template") as HTMLTemplateElement // Gets The Comment Forum Template
-        const comment_forum_template_clone:DocumentFragment = comment_forum_template.content.cloneNode(true) as DocumentFragment // Clones The Comment Forum Template Content
-
-        // Write Comment Form Profile Picture
-        const write_comment_form_profile_picture:HTMLImageElement = comment_forum_template_clone.querySelector(".comment_forum .write_comment_form .profile_picture") as HTMLImageElement // Gets The Write Comment Form Profile Picture
-        write_comment_form_profile_picture.src = profile_picture_name ? `/../media/images/${logged_in_user_id}/${profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
-
-        const all_comments:HTMLDivElement = comment_forum_template_clone.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets The All Comments Container
-
-        post_container.appendChild(comment_forum_template_clone) // Appends The Comment Forum Template Clone To The Post Container
-
-        one_post.visible_comments.forEach(function(one_visible_comment:{
-            id:number,
-
-            user:{
-                id:number,
-                first_name:string,
-                last_name:string,
-                username:string,
-                profile_picture_name:string|null
-            },
-
-            comment:string,
-            likes:number,
-            likes_from_users:string[],
-            creation_time:string,
-            parent_id:number|null,
-            reports_from_users:string[]
-        }):void {
-            const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
-            const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
-            const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
-
-            one_comment_container.dataset["comment_id"] = String(one_visible_comment.id) // Stores The Comment ID
-
-            // Comment Author Profile Picture Link
-            const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
-            comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [one_post.user.username]) // Sets The Link To The User's Profile
-            comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
-
-            // Comment Author Profile Picture
-            const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
-            comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
-
-            // Comment Author Username
-            const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
-            comment_author_username.classList.add("username") // Adds The Username Class
-            comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
-
-            // Comment
-            const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
-            comment.textContent = one_visible_comment.comment // Sets The Comment Text
-
-            all_comments.appendChild(one_comment_container)
-
-            // Interactions
-            const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
-
-            // Likes
-            const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
-
-            const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-            logged_in_user_id && one_visible_comment.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
-
-            // Likes Counter
-            const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
-            likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
-            likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
-
-            // Report
-            if(logged_in_user_id && one_visible_comment.reports_from_users.includes(String(logged_in_user_id))) {
-                const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
-    
-                const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon
-                report_icon.classList.add("active") // Adds The Active Class
-            }
-
-            // Date
-            const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
-
-            const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
-            date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
-        })
-
-        // Bars
-        const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
-        const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
-        
-        generatePostBars(all_media, post_bars) // Generates The Post Bars
-
-        feed.appendChild(post_container_template_clone) // Appends The Post Container Template Clone To The Feed
+        const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
+        date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
     })
+
+    // Bars
+    const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+    const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+    
+    generatePostBars(all_media, post_bars) // Generates The Post Bars
+
+    return post_container_template_clone // Returns The Post Container Template Clone
 }
 
 // Function For Check The Searched Posts History
@@ -747,4 +753,52 @@ export function changeFocusedSearchedPost(index:number, all_searched_posts:NodeL
 
     searched_post.focus() // Focuses Searched Post
     search_bar.blur() // Removes Focus From The Search Bar
+}
+
+// Function For Load Posts
+export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphElement, searched_text:string, observer:IntersectionObserver):Promise<void> {
+    if(feed_state.is_loading || !feed_state.has_more_posts) return
+
+    feed_state.is_loading = true // Sets The Is Loading To True
+    feed_report.style.display = "block" // Shows The Feed Report
+
+    try {
+        // Gets Full Loaded Posts Response
+        const full_loaded_posts_response:Response = await fetch(`/api/load-posts/?page=${feed_state.current_page}&searched_text=${searched_text}`, {
+            method: "GET",
+
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        })
+
+        // If The Response Isn't Success
+        if(!full_loaded_posts_response.ok) {
+            feed_report.textContent = gettext("Pri hľadaní príspevkov došlo k chybe.")
+            return
+        }
+
+        const loaded_posts_response:searchedPostsResponse = await full_loaded_posts_response.json() // Gets Loaded Posts Response
+
+        // If The Response Isn't Success
+        if(!loaded_posts_response.success) {
+            feed_report.textContent = loaded_posts_response.message
+            return
+        }
+
+        console.log(loaded_posts_response)
+
+        loaded_posts_response.posts.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user_id, loaded_posts_response.profile_picture_name), feed_report)) // Appends The Post To The Feed
+        feed_state.has_more_posts = loaded_posts_response.has_next || false // Sets The Has More Posts
+        feed_state.has_more_posts ? feed_state.current_page++ : feed_report.textContent = gettext("Videli ste všetky príspevky.") // Shows The Message If The User Has Already Viewed All Posts
+    }
+    
+    catch {
+        feed_report.textContent = gettext("Pri hľadaní príspevkov došlo k chybe.")
+    }
+    
+    finally {
+        feed_state.is_loading = false // Sets The Is Loading To False
+        if(!feed_state.has_more_posts) observer.disconnect() // Stops The Observation
+    }
 }

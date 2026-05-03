@@ -160,410 +160,136 @@
         </div>
     </div>
     
-    {% if posts|length > 0 %}
-        <div class="feed">
-            <template class="post_container_template">
-                <div class="post_container">
-                    <div class="header">
-                        <div class="left">
-                            <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
-                                <img class="profile_picture skeleton_loading" src="">
-                            </a>
-                        </div>
-                        
-                        <div class="right">
-                            <div class="top">
-                                <p class="username"></p>
-    
-                                <div class="followers_container">
-                                    <p class="followers"></p>
-                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                                </div>
-                            </div>
-    
-                            <div class="bottom">
-                                <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="media"></div>
-    
-                    <div class="society">
-                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                            <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                        </div>
-    
-                        <div class="comments">
-                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                        </div>
-    
-                        <div class="save">
-                            <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                        </div>
-                    </div>
-                </div>
-            </template>
-    
-            <template class="one_post_template">
-                <div class="one_post">
-                    <div class="loading hidden">
-                        <p>{% translate "Načítavam..." %}</p>
-                    </div>
-
-                    <div class="previous hidden">
-                        <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+    <div class="feed">
+        <template class="post_container_template">
+            <div class="post_container">
+                <div class="header">
+                    <div class="left">
+                        <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
+                            <img class="profile_picture skeleton_loading" src="">
+                        </a>
                     </div>
                     
-                    <div class="next hidden">
-                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                    </div>
-                </div>
-            </template>
-    
-            <template class="comment_forum_template">
-                <div class="comment_forum hidden">
-                    <div class="write_comment_form">
-                        <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
-        
-                        <img class="profile_picture" src="">
-                        
-                        <!-- https://heroicons.com/ -->
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                        </svg>
-                    </div>
-    
-                    <div class="all_comments"></div>
-                </div>
-            </template>
-    
-            <template class="one_comment_template">
-                <div class="one_comment">
-                    <div class="comment_container">
-                        <div class="user">
-                            <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
-                                <img class="profile_picture" src="">
-                            </a>
-                            
+                    <div class="right">
+                        <div class="top">
                             <p class="username"></p>
-    
-                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+
+                            <div class="followers_container">
+                                <p class="followers"></p>
+                                <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                            </div>
                         </div>
-    
-                        <p class="comment"></p>
+
+                        <div class="bottom">
+                            <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
+                        </div>
                     </div>
+                </div>
+
+                <div class="media"></div>
+
+                <div class="society">
+                    <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                        <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                    </div>
+
+                    <div class="comments">
+                        <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                    </div>
+
+                    <div class="save">
+                        <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template class="one_post_template">
+            <div class="one_post">
+                <div class="loading hidden">
+                    <p>{% translate "Načítavam..." %}</p>
+                </div>
+
+                <div class="previous hidden">
+                    <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                </div>
+                
+                <div class="next hidden">
+                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+            </div>
+        </template>
+
+        <template class="comment_forum_template">
+            <div class="comment_forum hidden">
+                <div class="write_comment_form">
+                    <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
     
-                    <div class="interactions">
-                        <div class="reply" title="{% translate 'Odpovedať...' %}">
-                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                            <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                        </div>
+                    <img class="profile_picture" src="">
+                    
+                    <!-- https://heroicons.com/ -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    </svg>
+                </div>
+
+                <div class="all_comments"></div>
+            </div>
+        </template>
+
+        <template class="one_comment_template">
+            <div class="one_comment">
+                <div class="comment_container">
+                    <div class="user">
+                        <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
+                            <img class="profile_picture" src="">
+                        </a>
                         
-                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                            <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                            <p class="likes_counter">{{ one_comment.likes }}</p>
-                        </div>
-    
-                        <div class="report" title="{% translate 'Nahlásiť...' %}">
-                            <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
-                        </div>
-    
-                        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                            <p></p>
-                        </div>
+                        <p class="username"></p>
+
+                        <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                     </div>
-    
-                    <div class="reply_container"></div>
-                </div>
-            </template>
 
-            <div class="search_posts_container">
-                <div class="search_bar_container">
-                    <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
-                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                    <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
+                    <p class="comment"></p>
                 </div>
 
-                <div class="history_container"></div>
+                <div class="interactions">
+                    <div class="reply" title="{% translate 'Odpovedať...' %}">
+                        <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                        <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+                    </div>
+                    
+                    <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                        <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                        <p class="likes_counter">{{ one_comment.likes }}</p>
+                    </div>
+
+                    <div class="report" title="{% translate 'Nahlásiť...' %}">
+                        <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
+                    </div>
+
+                    <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="reply_container"></div>
+            </div>
+        </template>
+
+        <div class="search_posts_container">
+            <div class="search_bar_container">
+                <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť príspevky' %}" autocomplete="off">
             </div>
 
-            <p class="no_posts hidden">{% translate "Nenašli sa žiadne príspevky." %}</p>
-
-            {% for one_post in posts %}
-                <div class="post_container" data-post_id="{{ one_post.id }}">
-                    <div class="header">
-                        <div class="left">
-                            <a href="{% url 'profile_url' one_post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
-                                <img 
-                                    class="profile_picture skeleton_loading" 
-                                    src="
-                                        {% if one_post.user.profile_picture_name %}
-                                            /../media/images/{{ one_post.user.id }}/{{ one_post.user.profile_picture_name }}
-        
-                                        {% else %}
-                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                        
-                                        {% endif %}
-                                    "
-                                >
-                            </a>
-                        </div>
-                        
-                        <div class="right">
-                            <div class="top">
-                                <p class="username">{{ one_post.user.username }}</p>
-
-                                <div class="followers_container">
-                                    <p class="followers">{{ one_post.user.followers|length }}</p>
-                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                                </div>
-                                
-                                {% if not request.session.logged_in_user_id == one_post.user_id %}
-                                    <button 
-                                        class="follow_button"
-                                        data-id="{{ one_post.user_id }}"
-                                        data-action="
-                                            {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
-                                                {% translate 'follow' %}
-    
-                                            {% else %}
-                                                {% translate 'unfollow' %}
-                                            
-                                            {% endif %}
-                                        "
-                                    >
-                                        {% if not request.session.logged_in_user_id|stringformat:"i" in one_post.user.followers %}
-                                            {% translate "Začať sledovať" %}
-    
-                                        {% else %}
-                                            {% translate "Prestať sledovať" %}
-                                        
-                                        {% endif %}
-                                    </button>
-    
-                                {% else %}
-                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                                
-                                {% endif %}
-                            </div>
-
-                            <div class="bottom">
-                                {% if one_post.location %}
-                                    {% if one_post.coordinates %}
-                                        <a class="location" href="https://www.google.com/maps?q={{ one_post.latitude }},{{ one_post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ one_post.location|safe }}</a>
-
-                                    {% else %}
-                                        <p class="location">{{ one_post.location }}</p>
-
-                                    {% endif %}
-                                {% endif %}
-    
-                                <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="media">
-                        {% for one_post_media in one_post.media.all %}
-                            {% if one_post.id == one_post_media.post.id %}
-                                <div class="one_post">
-                                    <div class="loading hidden">
-                                        <p>{% translate "Načítavam..." %}</p>
-                                    </div>
-
-                                    <div class="previous hidden">
-                                        <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
-                                    </div>
-
-                                    {% if one_post_media.is_video == True %}
-                                        <video class="video" controls autoplay loop muted>
-                                            <source src="/../media/{{ one_post_media.file }}">
-                                            
-                                            {% blocktranslate with user=one_post_media.post.user %}
-                                                Príspevok užívateľa {{ user }}
-                                            {% endblocktranslate %}
-                                        </video>
-                                
-                                    {% elif one_post_media.is_video == False %}
-                                        <img 
-                                            class="image"
-                                            src="/../media/{{ one_post_media.file }}" 
-                                            alt="
-                                                {% blocktranslate with user=one_post_media.post.user %}
-                                                    Príspevok užívateľa {{ user }}
-                                                {% endblocktranslate %}
-                                            "
-                                        >
-                                    
-                                    {% endif %}
-                                    
-                                    <div class="next hidden">
-                                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                                    </div>
-                                </div>
-
-                            {% endif %}
-                        {% endfor %}
-
-                        <div class="particles"></div>
-
-                        <div class="post_bars"></div>
-                    </div>
-
-                    <div class="society">
-                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                            <i 
-                                class="
-                                    {% if request.session.logged_in_user_id|stringformat:"i" in one_post.likes_from_users %}
-                                        fa-solid
-    
-                                    {% else %}
-                                        fa-regular
-                                    
-                                    {% endif %}
-                                    
-                                    fa-heart
-                                "
-                            ></i> <!-- https://fontawesome.com/icons/heart -->
-                            
-                            {% if one_post.hide_likes == False %}
-                                <p class="likes_counter">{{ one_post.likes }}</p>
-    
-                            {% else %}
-                                <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
-                            
-                            {% endif %}
-                        </div>
-
-                        <div class="comments">
-                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-
-                            {% if one_post.allow_comments %}
-                                <p class="comments_counter">{{ one_post.visible_comments|length }}</p>
-    
-                            {% else %}
-                                <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
-                            
-                            {% endif %}
-                        </div>
-
-                        <div class="save">
-                            <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                        </div>
-                    </div>
-
-                    {% if one_post.description %}
-                        <p class="description" data-tagged_users="{{ one_post.tagged_users_json }}" data-added_hashtags="{{ one_post.added_hashtags }}">{{ one_post.description }}</p>
-
-                    {% endif %}
-
-                    {% if one_post.allow_comments %}
-                        <div class="comment_forum hidden">
-                            <div class="write_comment_form">
-                                <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
-                
-                                <img 
-                                    class="profile_picture" 
-                                    src="
-                                        {% if profile_picture_name %}
-                                            /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-                
-                                        {% else %}
-                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                        
-                                        {% endif %}
-                                    "
-                                >
-                                
-                                <!-- https://heroicons.com/ -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                                </svg>
-                            </div>
-
-                            <div class="all_comments">
-                                {% for one_comment in one_post.visible_comments %}
-                                    <div class="one_comment" data-comment_id={{ one_comment.id }}>
-                                        <div class="comment_container">
-                                            <div class="user">
-                                                <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
-                                                    <img 
-                                                        class="profile_picture" 
-                                                        src="
-                                                            {% if one_comment.user.profile_picture_name %}
-                                                                /../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}
-                                    
-                                                            {% else %}
-                                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                            
-                                                            {% endif %}
-                                                        "
-                                                    >
-                                                </a>
-                                                
-                                                <p class="username">{{ one_comment.user.username }}</p>
-
-                                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                                            </div>
-
-                                            <p class="comment">{{ one_comment.comment }}</p>
-                                        </div>
-
-                                        <div class="interactions">
-                                            <div class="reply" title="{% translate 'Odpovedať...' %}">
-                                                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                                                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                                            </div>
-                                            
-                                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                                                <i 
-                                                    class="
-                                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
-                                                            fa-solid
-                
-                                                        {% else %}
-                                                            fa-regular
-                                                        
-                                                        {% endif %}
-
-                                                        fa-heart
-                                                    "
-                                                ></i> <!-- https://fontawesome.com/icons/heart -->
-                
-                                                <p class="likes_counter">{{ one_comment.likes }}</p>
-                                            </div>
-                
-                                            <div class="report" title="{% translate 'Nahlásiť...' %}">
-                                                <!-- https://fontawesome.com/icons/flag -->
-                                                <i 
-                                                    class="
-                                                        fa-regular fa-flag
-
-                                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.reports_from_users %}
-                                                            active
-    
-                                                        {% endif %}
-                                                    "
-                                                ></i>
-                                            </div>
-                
-                                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                                                <p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="reply_container"></div>
-                                    </div>
-
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
+            <div class="history_container"></div>
         </div>
-    {% endif %}
+
+        <p class="no_posts hidden">{% translate "Nenašli sa žiadne príspevky." %}</p>
+        <p class="feed_report">{% translate "Načítavam..." %}</p>
+    </div>
 {% endblock content %}
 
 {% block script %}
