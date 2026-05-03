@@ -43,7 +43,8 @@ import {
     getSearchedPosts,
     checkSearchedPostsHistory,
     hideHistoryContainer,
-    changeFocusedSearchedPost
+    changeFocusedSearchedPost,
+    loadPosts
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -968,5 +969,24 @@ document.addEventListener("DOMContentLoaded", function():void {
             
             generatePostBars(all_media, post_bars) // Generates The Post Bars
         })
+
+        // Infinite Feed Scroll
+    
+        const feed_report:HTMLParagraphElement = feed.querySelector(".feed_report") as HTMLParagraphElement // Gets The Feed Report
+        
+        const observer:IntersectionObserver = new IntersectionObserver((entries:IntersectionObserverEntry[]) => {
+            if(entries[0] && entries[0].isIntersecting) {
+                loadPosts(feed, feed_report, search_posts_input.value, observer) // Loads The Posts
+            }
+        }, {
+            root: null,
+            rootMargin: "500px",
+            threshold: 0.1
+        })
+        
+        if(feed_report && feed) {
+            loadPosts(feed, feed_report, search_posts_input.value, observer) // Loads The First Posts After Loading The Page
+            observer.observe(feed_report) // Starts The Observation
+        }
     }
 })

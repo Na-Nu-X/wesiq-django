@@ -68,8 +68,14 @@ export const location_state:{
 
 export const feed_state:{
     MAX_HISTORY_LENGTH:number,
-    focused_searched_post_index:number
+    focused_searched_post_index:number,
+    current_page:number,
+    is_loading:boolean,
+    has_more_posts:boolean
 } = {
     MAX_HISTORY_LENGTH: 3,
-    focused_searched_post_index: 0 // Focused Searched Post Index
+    focused_searched_post_index: 0, // Focused Searched Post Index
+    current_page: 1, // Stores The Corrent Page
+    is_loading: false, // Stores If The User Hits The Bottom Of The Feed
+    has_more_posts: true // Stores If There Are More Posts
 }
