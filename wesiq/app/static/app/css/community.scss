@@ -336,6 +336,7 @@ header {
                     }
 
                     .one_user {
+                        position: relative;
                         display: flex;
                         align-items: center;
                         gap: 10px;
@@ -369,14 +370,22 @@ header {
                         }
 
                         .delete_from_history {
+                            position: absolute;
+                            top: 50%;
                             right: 0px;
+                            transform: translateY(-50%);
                             width: 15px + 10px;
                             height: 100%;
-                            line-height: 38px;
-                            margin-left: auto;
+                            line-height: 48px;
                             padding-right: 10px;
                             pointer-events: all;
                             cursor: pointer;
+                            transition: display 0.15s ease allow-discrete, opacity 0.15s ease;
+
+                            &.hidden {
+                                display: none;
+                                opacity: 0;
+                            }
 
                             &.fa-xmark {
                                 font-size: 20px;
@@ -682,25 +691,26 @@ header {
                 .searched_post {
                     position: relative;
                     height: 40px;
-
-                    i {
-                        pointer-events: none;
+                    
+                    .delete_from_history {
                         position: absolute;
                         top: 50%;
-                        left: 10px;
-                        transform: translateY(-50%);
-                        color: $secondary-color;
-                        z-index: 100;
-                    }
-
-                    .delete_from_history {
                         left: 0px;
+                        transform: translateY(-50%);
                         width: 15px + 10px;
                         height: 100%;
                         line-height: 40px;
                         padding-left: 10px;
                         pointer-events: all;
                         cursor: pointer;
+                        color: $secondary-color;
+                        transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+                        z-index: 100;
+
+                        &.hidden {
+                            display: none;
+                            opacity: 0;
+                        }
 
                         &.fa-xmark {
                             font-size: 20px;

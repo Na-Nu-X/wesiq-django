@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if(clicked_username) {
                     deleteUserFromHistory(clicked_username) // Deletes User From The History
                     clicked_user.blur(); // Removes Focus From The Clicked User
-                    (clicked_user.querySelector(".delete_from_history") as HTMLDivElement).remove() // Removes The Delete From History Icon From The DOM
+                    clicked_user.querySelectorAll<HTMLElement>(".delete_from_history").forEach(one_icon => one_icon.remove()) // Removes The Delete From History Icon From The DOM
                 }
             }
         })
@@ -459,7 +459,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLElement).classList.contains("delete_from_history")) {
                 const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-                delete_from_history.classList.replace("fa-clock-rotate-left", "fa-xmark") // Shows The X Icon
+                // Shows The X Icon
+                if(delete_from_history.classList.contains("fa-clock-rotate-left")) {
+                    delete_from_history.classList.add("hidden");
+                    (delete_from_history.nextSibling as HTMLElement).classList.remove("hidden")
+                }
             }
         })
 
@@ -469,7 +473,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLElement).classList.contains("delete_from_history")) {
                 const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-                delete_from_history.classList.replace("fa-xmark", "fa-clock-rotate-left") // Shows The Clock Icon
+                // Shows The Clock Icon
+                if(delete_from_history.classList.contains("fa-xmark")) {
+                    delete_from_history.classList.add("hidden");
+                    (delete_from_history.previousSibling as HTMLElement).classList.remove("hidden")
+                }
             }
         })
 
@@ -902,7 +910,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLElement).classList.contains("delete_from_history")) {
                 const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-                delete_from_history.classList.replace("fa-clock-rotate-left", "fa-xmark") // Shows The X Icon
+                // Shows The X Icon
+                if(delete_from_history.classList.contains("fa-clock-rotate-left")) {
+                    delete_from_history.classList.add("hidden");
+                    (delete_from_history.nextSibling as HTMLElement).classList.remove("hidden")
+                }
             }
         })
 
@@ -912,7 +924,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLElement).classList.contains("delete_from_history")) {
                 const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-                delete_from_history.classList.replace("fa-xmark", "fa-clock-rotate-left") // Shows The Clock Icon
+                // Shows The Clock Icon
+                if(delete_from_history.classList.contains("fa-xmark")) {
+                    delete_from_history.classList.add("hidden");
+                    (delete_from_history.previousSibling as HTMLElement).classList.remove("hidden")
+                }
             }
         })
 

@@ -127,8 +127,18 @@ document.addEventListener("DOMContentLoaded", function():void {
             
             // If The Page Is From History
             else {
-                search_result.innerHTML = "<i class='delete_from_history fa-solid fa-clock-rotate-left'></i>" // https://fontawesome.com/icons/clock-rotate-left
+                // search_result.innerHTML = "<i class='delete_from_history fa-solid fa-clock-rotate-left'></i>" // https://fontawesome.com/icons/clock-rotate-left
                 search_result_link.innerHTML = one_page.title // Sets Title
+
+                const delete_from_history:HTMLElement = document.createElement("i") // Creates The History Icon
+                delete_from_history.classList.add("delete_from_history", "fa-solid", "fa-clock-rotate-left") // https://fontawesome.com/icons/clock-rotate-left
+                delete_from_history.ariaHidden = "true"
+                search_result.appendChild(delete_from_history) // Appends The History Icon To The Searched Post
+
+                const delete_from_history_hidden:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+                delete_from_history_hidden.classList.add("delete_from_history", "hidden", "fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+                delete_from_history_hidden.ariaHidden = "true"
+                search_result.appendChild(delete_from_history_hidden) // Appends The Delete From History Icon To The Searched Post
             }
 
             search_result.appendChild(search_result_link) // Appends Search Result Link To The Search Result
@@ -221,7 +231,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLElement).classList.contains("delete_from_history")) {
             const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-            delete_from_history.classList.replace("fa-clock-rotate-left", "fa-xmark") // Shows The X Icon
+            // Shows The X Icon
+            if(delete_from_history.classList.contains("fa-clock-rotate-left")) {
+                delete_from_history.classList.add("hidden");
+                (delete_from_history.nextSibling as HTMLElement).classList.remove("hidden")
+            }
         }
     })
 
@@ -231,7 +245,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLElement).classList.contains("delete_from_history")) {
             const delete_from_history:HTMLElement = event.target as HTMLElement // Gets The Delete From History Icon
 
-            delete_from_history.classList.replace("fa-xmark", "fa-clock-rotate-left") // Shows The Clock Icon
+            // Shows The Clock Icon
+            if(delete_from_history.classList.contains("fa-xmark")) {
+                delete_from_history.classList.add("hidden");
+                (delete_from_history.previousSibling as HTMLElement).classList.remove("hidden")
+            }
         }
     })
 
