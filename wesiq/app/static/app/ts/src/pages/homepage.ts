@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Function For Show The Attachment Report
     function showAttachmentReport(file:File):void {
-        const MAX_ATTACHMENT_SIZE:number = 25 * 1024 * 1024 // 25MB
+        const MAX_ATTACHMENT_SIZE:number = 25 * 1000 * 1000 // 25MB
 
         const attachment_name:string = file.name
         const attachment_size:number = file.size

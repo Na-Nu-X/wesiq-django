@@ -23,9 +23,9 @@ export const posts_preview_state:{
     MAX_VIDEO_DURATION:number
 } = {
     current_files: [], // Stores Current Selected Files
-    MAX_IMAGE_SIZE: 10 * 1024 * 1024, // 10MB
-    MAX_VIDEO_SIZE: 100 * 1024 * 1024, // 100MB
-    MAX_VIDEO_DURATION: 60 * 2 // 2 Minutes
+    MAX_IMAGE_SIZE: 10 * 1000 * 1000, // 10MB
+    MAX_VIDEO_SIZE: 1000 * 1000 * 500, // 500MB
+    MAX_VIDEO_DURATION: 60 * 20 // 20 Minutes
 }
 
 export const tag_user_state:{

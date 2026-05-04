@@ -1,8 +1,8 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from app.models import Users, Reviews, Articles, Exercises, Activity
-import os, shutil
+from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia
+import os, shutil, io, subprocess, math, random, json
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import translation
@@ -12,7 +12,9 @@ from quickchart import QuickChart
 from email.mime.image import MIMEImage
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
-import math, random, json
+from django.core.files.base import ContentFile
+from PIL import Image
+from django.core.files import File
 
 # Functions
 
@@ -613,3 +615,137 @@ def weeklyReport():
     message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
     captureMessage(message)
     return message
+
+@shared_task
+def compressImage(post_media_id):
+    try:
+        media_object = PostMedia.objects.get(id=post_media_id)
+        
+        # If The File Was Not Found
+        if not media_object.file:
+            message = f"The Image To Compress Was Not Found."
+            captureMessage(message)
+            return message
+
+        old_file_path = media_object.file.path # Stores The File Path Of The Original File
+
+        with Image.open(media_object.file) as image:
+            # Resizes The Image
+            max_width = 1920
+
+            if image.width > max_width:
+                ratio = max_width / float(image.width)
+                new_height = int(float(image.height) * float(ratio))
+                image = image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+            # Converts The Image To RGB Format
+            if image.mode in ("RGBA", "P"):
+                image = image.convert("RGB")
+            
+            # Stores To Memory
+            buffer = io.BytesIO()
+            image.save(buffer, format="JPEG", quality=70, optimize=True, progressive=True) # Compresses The Image
+            
+            new_file_name = os.path.basename(old_file_path).split('.')[0] + '_compressed.jpg'
+
+            # Saves The Data To The Database
+            media_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            media_object.is_processed = True
+            media_object.save()
+
+        media_object.file.close()
+        
+        # Removes Original Image File From Disk
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+        message = f"Image {post_media_id} Was Successfully Compressed."
+        captureMessage(message)
+        return message
+        
+    except PostMedia.DoesNotExist:
+        message = f"Image {post_media_id} Does Not Exist."
+        captureMessage(message)
+        return message
+
+    except Exception as e:
+        message = f"An Error Occurred During Compression: {str(e)}"
+        captureMessage(message)
+        return message
+
+@shared_task
+def compressVideo(post_media_id):
+    try:
+        media_object = PostMedia.objects.get(id=post_media_id)
+        
+        # If The File Was Not Found
+        if not media_object.file:
+            message = f"The Video To Compress Was Not Found."
+            captureMessage(message)
+            return message
+
+        input_path = media_object.file.path
+        old_file_path = input_path # Stores The File Path Of The Original File
+
+        output_filename = f"compressed_{post_media_id}.mp4"
+        output_path = os.path.join(settings.MEDIA_ROOT, 'temp', output_filename)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+        # FFmpeg Compression
+        command = [
+            'ffmpeg', '-y', '-i', input_path,
+            '-vcodec', 'libx264', 
+            '-crf', '32',
+            '-preset', 'fast',
+            '-acodec', 'aac',
+            '-b:a', '128k',
+            output_path
+        ]
+
+        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        original_size = os.path.getsize(input_path)
+        compressed_size = os.path.getsize(output_path)
+
+        # Stores The Original File (If The Compressed Is Larger)
+        if compressed_size >= original_size:
+            # Saves The Data To The Database
+            media_object.is_processed = True
+            media_object.save()
+
+        # Stores The Compressed Video File
+        else:
+            with open(output_path, 'rb') as f:
+                new_file_name = os.path.basename(input_path).split('.')[0] + '_compressed.mp4'
+                
+                # Saves The Data To The Database
+                media_object.file.save(new_file_name, File(f), save=False)
+                media_object.is_processed = True
+                media_object.save()
+
+        # Removes Original Video File From Disk
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+        # Removes Temporary Video File From Disk
+        if os.path.exists(output_path):
+            os.remove(output_path)
+
+        message = f"Video {post_media_id} Was Successfully Compressed."
+        captureMessage(message)
+        return message
+
+    except PostMedia.DoesNotExist:
+        message = f"Video {post_media_id} Does Not Exist."
+        captureMessage(message)
+        return message
+
+    except subprocess.CalledProcessError as e:
+        message = f"FFmpeg Error Occurred During Video Compression: {e.stderr.decode('utf-8')}"
+        captureMessage(message)
+        return message
+
+    except Exception as e:
+        message = f"An Error Occurred During Video Compression: {str(e)}"
+        captureMessage(message)
+        return message

@@ -38,6 +38,7 @@ from django_ratelimit.core import get_usage
 from django.db.models import Prefetch
 from moviepy import VideoFileClip
 from django.core.paginator import Paginator
+from .tasks import compressImage, compressVideo
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1886,37 +1887,29 @@ def communityView(request):
 
                         new_post.tagged_users.set(tagged_users)
 
-                        MAX_IMAGE_SIZE = 10 * 1024 * 1024 # 10MB
-                        MAX_VIDEO_SIZE = 100 * 1024 * 1024 # 100MB
-                        MAX_VIDEO_DURATION = 60 * 2 # 2 Minutes
+                        MAX_IMAGE_SIZE = 10 * 1000 * 1000 # 10MB
+                        MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
+                        MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
 
                         for one_file in files:
                             try:
                                 file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
                                 one_file.seek(0)
                                 mime_type = magic.from_buffer(file_head, mime=True)
-                                
-                                if not (mime_type.startswith("image/") or mime_type.startswith("video/")):
-                                    new_post.delete()
-                                    messages.add_message(request, messages.ERROR, _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name})
-                                    return redirect("community_url")
-
                                 is_video = mime_type.startswith("video/")
-
-                                # Image
-                                if not is_video:
-                                    if one_file.size > MAX_IMAGE_SIZE:
-                                        new_post.delete()
-                                        messages.add_message(request, messages.ERROR, _("Obrázok je príliš veľký:\n%(file)s") % {"file": one_file.name})
-                                        return redirect("community_url")
                                 
-                                # Video
-                                elif is_video:
-                                    if one_file.size > MAX_VIDEO_SIZE:
-                                        new_post.delete()
-                                        messages.add_message(request, messages.ERROR, _("Video je príliš veľké:\n%(file)s") % {"file": one_file.name})
-                                        return redirect("community_url")
+                                # Catches An Unsupported File
+                                if not (mime_type.startswith("image/") or is_video):
+                                    return JsonResponse({"success": False, "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}}, status=400)
 
+                                max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE
+
+                                # Catches Too Large File
+                                if one_file.size > max_file_size:
+                                    return JsonResponse({"success": False, "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}}, status=400)
+
+                                # Catches A Too Long Video
+                                if is_video:
                                     # Creates A Temporary File For The moviepy Library
                                     temporary_path = f"temp_{one_file.name}"
 
@@ -1931,26 +1924,30 @@ def communityView(request):
                                         os.remove(temporary_path) # Deletes The Temporary File
 
                                         if duration > MAX_VIDEO_DURATION:
-                                            new_post.delete()
-                                            messages.add_message(request, messages.ERROR, _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name})
-                                            return redirect("community_url")
+                                            return JsonResponse({"success": False, "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}}, status=400)
 
                                     except Exception:
                                         if os.path.exists(temporary_path): 
                                             os.remove(temporary_path)
 
-                                        new_post.delete()
-                                        messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní videa:\n%(file)s") % {"file": one_file.name})
-                                        return redirect("community_url")
-
-                                PostMedia.objects.create(
+                                        return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                
+                                # Saves The New Post Media
+                                new_post_media = PostMedia.objects.create(
                                     post=new_post,
                                     file=one_file,
                                     is_video=is_video
                                 )
 
+                                # Video
+                                if is_video:
+                                    compressVideo.delay(new_post_media.id)
+                                
+                                # Image
+                                elif not is_video:
+                                    compressImage.delay(new_post_media.id)
+
                             except Exception as e:
-                                print(e)
                                 new_post.delete()
                                 messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
                                 return redirect("community_url")
