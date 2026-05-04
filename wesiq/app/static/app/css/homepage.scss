@@ -121,23 +121,24 @@ header {
                     height: 40px;
 
                     i {
-                        pointer-events: none;
                         position: absolute;
                         top: 50%;
-                        left: 10px;
-                        transform: translateY(-50%);
-                        color: $secondary-color;
-                        z-index: 100;
-                    }
-
-                    .delete_from_history {
                         left: 0px;
+                        transform: translateY(-50%);
                         width: 15px + 10px;
                         height: 100%;
                         line-height: 40px;
                         padding-left: 10px;
                         pointer-events: all;
                         cursor: pointer;
+                        color: $secondary-color;
+                        transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+                        z-index: 100;
+
+                        &.hidden {
+                            display: none;
+                            opacity: 0;
+                        }
 
                         &.fa-xmark {
                             font-size: 20px;

@@ -688,10 +688,15 @@ function renderSearchedPostsHistory(history_container:HTMLDivElement, search_bar
         searched_post.classList.add("searched_post") // Adds The Searched Post Class
         history_container.appendChild(searched_post) // Appends The Searched Post To The History Container
 
-        const delete_from_history:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+        const delete_from_history:HTMLElement = document.createElement("i") // Creates The History Icon
         delete_from_history.classList.add("delete_from_history", "fa-solid", "fa-clock-rotate-left") // https://fontawesome.com/icons/clock-rotate-left
         delete_from_history.ariaHidden = "true"
-        searched_post.appendChild(delete_from_history) // Appends The Delete From History Icon To The Searched Post
+        searched_post.appendChild(delete_from_history) // Appends The History Icon To The Searched Post
+
+        const delete_from_history_hidden:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+        delete_from_history_hidden.classList.add("delete_from_history", "hidden", "fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+        delete_from_history_hidden.ariaHidden = "true"
+        searched_post.appendChild(delete_from_history_hidden) // Appends The Delete From History Icon To The Searched Post
 
         const paragraph:HTMLParagraphElement = document.createElement("p") // Creates The Paragraph
         paragraph.dataset["searched_post"] = one_searched_post // Stores The Index
@@ -786,7 +791,7 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
             return
         }
 
-        console.log(loaded_posts_response)
+        // console.log(loaded_posts_response)
 
         loaded_posts_response.posts.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user_id, loaded_posts_response.profile_picture_name), feed_report)) // Appends The Post To The Feed
         feed_state.has_more_posts = loaded_posts_response.has_next || false // Sets The Has More Posts

@@ -264,10 +264,20 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     if(tagged_users_history.includes(data.username)) {
         users_for_tag_container.prepend(one_user) // Prepends One User To The All Users Container
 
-        const delete_from_history:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
-
+        const delete_from_history:HTMLElement = document.createElement("i") // Creates The History Icon
         delete_from_history.classList.add("delete_from_history", "fa-solid", "fa-clock-rotate-left") // https://fontawesome.com/icons/clock-rotate-left
-        one_user.appendChild(delete_from_history) // Appends The Delete From History Icon
+        delete_from_history.ariaHidden = "true"
+        one_user.appendChild(delete_from_history) // Appends The History Icon To The Searched Post
+
+        const delete_from_history_hidden:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+        delete_from_history_hidden.classList.add("delete_from_history", "hidden", "fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+        delete_from_history_hidden.ariaHidden = "true"
+        one_user.appendChild(delete_from_history_hidden) // Appends The Delete From History Icon To The Searched Post
+
+        // const delete_from_history:HTMLElement = document.createElement("i") // Creates The Delete From History Icon
+
+        // delete_from_history.classList.add("delete_from_history", "fa-solid", "fa-clock-rotate-left") // https://fontawesome.com/icons/clock-rotate-left
+        // one_user.appendChild(delete_from_history) // Appends The Delete From History Icon
     }
 
     else {
