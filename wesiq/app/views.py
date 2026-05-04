@@ -1995,120 +1995,6 @@ def communityView(request):
                     captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
                     return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
 
-            # Search Posts
-            if request.headers.get("X-Requested-Action") == "search-posts":
-                try:
-                    searched_text = json.loads(request.body) # Gets The Searched Text
-
-                    # Filters Posts By Searched Text
-                    posts_query = Post.objects.filter(
-                        Q(user__first_name__icontains=searched_text) | 
-                        Q(user__last_name__icontains=searched_text) | 
-                        Q(user__username__icontains=searched_text) | 
-                        Q(description__icontains=searched_text) | 
-                        Q(tagged_users__username__icontains=searched_text) |
-                        Q(added_hashtags__icontains=searched_text) | 
-                        Q(location__icontains=searched_text) | 
-                        Q(tagged_users__first_name__icontains=searched_text) |
-                        Q(tagged_users__last_name__icontains=searched_text)
-                    ).select_related(
-                        "user"
-                    ).distinct().exclude(
-                        tagged_users__account_status="suspended"
-                    ).order_by(
-                        "-created_at"
-                    ).prefetch_related(
-                        "tagged_users",
-                        "media",
-
-                        Prefetch(
-                            "comments",
-                            queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
-                            to_attr="visible_comments"
-                        )
-                    )[:5]
-
-                    # Creates Valid Format For JSON Response
-                    posts = [
-                        {
-                            "user": {
-                                "id": one_post.user.id,
-                                "first_name": one_post.user.first_name,
-                                "last_name": one_post.user.last_name,
-                                "username": one_post.user.username,
-                                "profile_picture_name": one_post.user.profile_picture_name,
-                                "following": one_post.user.following,
-                                "followers": one_post.user.followers
-                            },
-
-                            "id": one_post.id,
-
-                            "description": (
-                                one_post.description
-                                if one_post.description
-                                else None
-                            ),
-
-                            "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
-                            "added_hashtags": list(one_post.added_hashtags),
-
-                            "location": (
-                                one_post.location.replace(",", "<span></span>")
-                                if one_post.coordinates
-                                else one_post.location if one_post.location else None
-                            ),
-
-                            "coordinates": (
-                                {
-                                    "latitude": str(one_post.coordinates.y).replace(",", "."),
-                                    "longitude": str(one_post.coordinates.x).replace(",", ".")
-                                }
-
-                                if one_post.coordinates and one_post.coordinates.x is not None and one_post.coordinates.y is not None
-                                else None
-                            ),
-
-                            "public_visibility": one_post.public_visibility,
-                            "allow_comments": one_post.allow_comments,
-                            "hide_likes": one_post.hide_likes,
-                            "likes": one_post.likes,
-                            "likes_from_users": list(one_post.likes_from_users),
-                            "created_at": one_post.created_at.isoformat(),
-                            "media": list(one_post.media.values("file", "is_video")),
-
-                            "visible_comments": [
-                                {
-                                    "id": one_comment.id,
-
-                                    "user": {
-                                        "id": one_comment.user.id,
-                                        "first_name": one_comment.user.first_name,
-                                        "last_name": one_comment.user.last_name,
-                                        "username": one_comment.user.username,
-                                        "profile_picture_name": one_comment.user.profile_picture_name
-                                    },
-
-                                    "comment": one_comment.comment,
-                                    "likes": one_comment.likes,
-                                    "likes_from_users": list(one_comment.likes_from_users),
-                                    "creation_time": one_comment.creation_time.isoformat(),
-                                    "parent_id": one_comment.parent_id,
-                                    "reports_from_users": list(one_comment.reports_from_users)
-                                }
-
-                                for one_comment in one_post.visible_comments
-                            ]
-                        }
-
-                        for one_post in posts_query
-                    ]
-
-                    return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "profile_picture_name": logged_in_user.profile_picture_name, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
-
-                except:
-                    captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-                    return JsonResponse({"success": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
-
             # Follow
             if request.headers.get("X-Requested-Action") == "follow":
                 try:
@@ -2234,27 +2120,13 @@ def loadPostsView(request):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         page_number = request.GET.get("page", 1) # Gets Current Page Number
-        searched_text = request.GET.get("searched_text") # Gets Current Page Number
+        searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
 
-        # Filters Posts By Searched Text
-        posts_query = Post.objects.all().filter(
-            Q(user__first_name__icontains=searched_text) | 
-            Q(user__last_name__icontains=searched_text) | 
-            Q(user__username__icontains=searched_text) | 
-            Q(description__icontains=searched_text) | 
-            Q(tagged_users__username__icontains=searched_text) |
-            Q(added_hashtags__icontains=searched_text) | 
-            Q(location__icontains=searched_text) | 
-            Q(tagged_users__first_name__icontains=searched_text) |
-            Q(tagged_users__last_name__icontains=searched_text)
-        ).select_related(
+        # Gets The Post With All Related Data
+        posts_query = Post.objects.all().select_related(
             "user"
-        ).distinct().exclude(
-            tagged_users__account_status="suspended"
-        ).order_by(
-            "-created_at"
         ).prefetch_related(
-            "tagged_users",
+            "tagged_users", 
             "media",
 
             Prefetch(
@@ -2263,6 +2135,29 @@ def loadPostsView(request):
                 to_attr="visible_comments"
             )
         )
+
+        # Filters Posts By Searched Text
+        if searched_text:
+            posts_query = posts_query.filter(
+                Q(user__first_name__icontains=searched_text) | 
+                Q(user__last_name__icontains=searched_text) | 
+                Q(user__username__icontains=searched_text) | 
+                Q(description__icontains=searched_text) | 
+                Q(tagged_users__username__icontains=searched_text) |
+                Q(added_hashtags__icontains=searched_text) | 
+                Q(location__icontains=searched_text) | 
+                Q(tagged_users__first_name__icontains=searched_text) |
+                Q(tagged_users__last_name__icontains=searched_text)
+            ).select_related(
+                "user"
+            ).distinct().exclude(
+                tagged_users__account_status="suspended"
+            ).order_by(
+                "-created_at"
+            ).prefetch_related(
+                "tagged_users",
+                "media",
+            )
 
         paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
 
