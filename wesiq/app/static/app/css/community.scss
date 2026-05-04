@@ -745,12 +745,6 @@ header {
 
         // Posts
 
-        .no_posts {
-            &.hidden {
-                display: none;
-            }
-        }
-
         .post_container {
             position: relative;
             display: flex;

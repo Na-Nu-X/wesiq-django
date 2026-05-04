@@ -40,7 +40,6 @@ import {
     toggleCommentLike,
     reportComment,
     replyOnComment,
-    getSearchedPosts,
     checkSearchedPostsHistory,
     hideHistoryContainer,
     changeFocusedSearchedPost,
@@ -630,15 +629,21 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
 
         // Search Posts Input Functionality
-        search_posts_input.addEventListener("input", async function():Promise<void> {
+        search_posts_input.addEventListener("input", function():void {
             if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+            feed_state.is_loading = true
+            feed_report.textContent = gettext("Načítavam...")
 
             const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
             all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
             // Gets The Posts After 2 Seconds Of Delay
             search_posts_timeout = window.setTimeout(function() {
-                getSearchedPosts(search_posts_input, all_post_containers, feed, history_container) // Gets The Searched Posts
+                feed_state.current_page = 1
+                feed_state.is_loading = false
+                feed_state.has_more_posts = true
+                all_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes Every Post Container From The DOM
+                loadPosts(feed, feed_report, search_posts_input, history_container) // Loads The Posts
             }, 2000)
         })
 
@@ -665,13 +670,19 @@ document.addEventListener("DOMContentLoaded", function():void {
                 search_posts_input.value = searched_post.textContent // Sets The Search Posts Input Value
 
                 if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+                feed_state.is_loading = true
+                feed_report.textContent = gettext("Načítavam...")
 
                 const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
                 all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
                 // Gets The Posts After 2 Seconds Of Delay
                 search_posts_timeout = window.setTimeout(function() {
-                    getSearchedPosts(search_posts_input, all_post_containers, feed, history_container) // Gets The Searched Posts
+                    feed_state.current_page = 1
+                    feed_state.is_loading = false
+                    feed_state.has_more_posts = true
+                    all_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes Every Post Container From The DOM
+                    loadPosts(feed, feed_report, search_posts_input, history_container) // Loads The Posts
                 }, 2000)
             }
         })
@@ -682,13 +693,19 @@ document.addEventListener("DOMContentLoaded", function():void {
                 search_posts_input.value = "" // Deletes Search Posts Input Value
 
                 if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+                feed_state.is_loading = true
+                feed_report.textContent = gettext("Načítavam...")
 
                 const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
                 all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
                 // Gets The Posts After 2 Seconds Of Delay
                 search_posts_timeout = window.setTimeout(function() {
-                    getSearchedPosts(search_posts_input, all_post_containers, feed, history_container) // Gets The Searched Posts
+                    feed_state.current_page = 1
+                    feed_state.is_loading = false
+                    feed_state.has_more_posts = true
+                    all_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes Every Post Container From The DOM
+                    loadPosts(feed, feed_report, search_posts_input, history_container) // Loads The Posts
                 }, 2000)
             }
         })
@@ -879,13 +896,19 @@ document.addEventListener("DOMContentLoaded", function():void {
                     search_posts_input.value = clicked_searched_post // Sets The Search Posts Input Value
 
                     if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+                    feed_state.is_loading = true
+                    feed_report.textContent = gettext("Načítavam...")
 
                     const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
                     all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
                     // Gets The Posts After 2 Seconds Of Delay
                     search_posts_timeout = window.setTimeout(function() {
-                        getSearchedPosts(search_posts_input, all_post_containers, feed, history_container) // Gets The Searched Posts
+                        feed_state.current_page = 1
+                        feed_state.is_loading = false
+                        feed_state.has_more_posts = true
+                        all_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes Every Post Container From The DOM
+                        loadPosts(feed, feed_report, search_posts_input, history_container) // Loads The Posts
                     }, 2000)
                 }
             }
@@ -955,13 +978,19 @@ document.addEventListener("DOMContentLoaded", function():void {
                 search_posts_input.value = searched_post.textContent // Sets The Search Posts Input Value
 
                 if(search_posts_timeout) clearTimeout(search_posts_timeout) // Deletes The Previous Search Posts Timeout
+                feed_state.is_loading = true
+                feed_report.textContent = gettext("Načítavam...")
 
                 const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
                 all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
                 // Gets The Posts After 2 Seconds Of Delay
                 search_posts_timeout = window.setTimeout(function() {
-                    getSearchedPosts(search_posts_input, all_post_containers, feed, history_container) // Gets The Searched Posts
+                    feed_state.current_page = 1
+                    feed_state.is_loading = false
+                    feed_state.has_more_posts = true
+                    all_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes Every Post Container From The DOM
+                    loadPosts(feed, feed_report, search_posts_input, history_container) // Loads The Posts
                 }, 2000)
             }
         })
@@ -992,17 +1021,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         
         const observer:IntersectionObserver = new IntersectionObserver((entries:IntersectionObserverEntry[]) => {
             if(entries[0] && entries[0].isIntersecting) {
-                loadPosts(feed, feed_report, search_posts_input.value, observer) // Loads The Posts
+                loadPosts(feed, feed_report) // Loads The Posts
             }
         }, {
             root: null,
-            rootMargin: "500px",
+            rootMargin: "250px",
             threshold: 0.1
         })
         
-        if(feed_report && feed) {
-            loadPosts(feed, feed_report, search_posts_input.value, observer) // Loads The First Posts After Loading The Page
-            observer.observe(feed_report) // Starts The Observation
-        }
+        loadPosts(feed, feed_report) // Loads The Posts
+        observer.observe(feed_report) // Starts The Observation
     }
 })

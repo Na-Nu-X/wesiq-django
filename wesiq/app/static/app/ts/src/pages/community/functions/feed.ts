@@ -315,77 +315,6 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
     }
 }
 
-// Function For Get The Searched Posts
-export async function getSearchedPosts(search_bar:HTMLInputElement, all_post_containers:NodeListOf<HTMLDivElement>, feed:HTMLDivElement, history_container:HTMLDivElement):Promise<void> {
-    try {
-        const searched_posts_response:searchedPostsResponse = await sendPOST(window.location.pathname, search_bar.value, "search-posts") // Sends The Data With POST
-
-        // If The Response Isn't Success
-        if(!searched_posts_response.success) {
-            console.error(searched_posts_response.message)
-            return
-        }
-
-        // Gets Only The Posts Data Of Posts Which Aren't Already Rendered
-        const no_already_rendered_posts_data:searchedPost[] = searched_posts_response.posts.filter(function(one_searched_post:searchedPost):boolean {
-            return (
-                ![...all_post_containers].some(function(one_post_container:HTMLDivElement):boolean {
-                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
-                })
-            )
-        })
-
-        // Gets Inappropriate Post Containers From The DOM
-        const inappropriate_post_containers:HTMLDivElement[] = [...all_post_containers].filter(function(one_post_container:HTMLDivElement):boolean {
-            return (
-                !searched_posts_response.posts.some(function(one_searched_post:searchedPost):boolean {
-                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
-                })
-            )
-        })
-        
-        deleteInappropriatePosts(inappropriate_post_containers) // Deletes The Inappropriate Post
-        renderSearchedPosts(no_already_rendered_posts_data, feed, searched_posts_response.logged_in_user_id, searched_posts_response.profile_picture_name) // Renders The Searched Posts
-
-        // Checks If Any Posts Were Found
-        const no_posts:HTMLParagraphElement = feed.querySelector(".no_posts") as HTMLParagraphElement // Gets The No Posts Paragraph
-
-        if(feed.querySelectorAll<HTMLDivElement>(".post_container").length === 0) {
-            no_posts.classList.remove("hidden") // Shows The No Posts Message
-        }
-
-        else {
-            no_posts.classList.add("hidden") // Hides The No Posts Message
-
-            if(search_bar.value.trim() !== "") {
-                storeSearchedPostToHistory(search_bar.value) // Stores The Searched Text To The Searched Posts History
-                renderSearchedPostsHistory(history_container, search_bar) // Renders The Searched Posts History
-            }
-        }
-    }
-
-    catch {
-        console.error(gettext("Pri hľadaní príspevkov došlo k chybe."))
-    }
-    
-    finally {
-        all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.add("hidden")) // Hides The Loader
-    }
-}
-
-// Function For Delete The Inappropriate Posts
-function deleteInappropriatePosts(inappropriate_post_containers:HTMLDivElement[]):void {
-    inappropriate_post_containers.forEach(one_post_container => one_post_container.remove()) // Removes The Post Container From The DOM
-}
-
-// Function For Render Searched Posts
-function renderSearchedPosts(no_already_rendered_posts_data:searchedPost[], feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):void {
-    // Renders Only No Already Rendered Posts
-    no_already_rendered_posts_data.forEach(function(one_post:searchedPost):void {
-        feed.appendChild(createPostHTML(one_post, feed, logged_in_user_id, profile_picture_name)) // Appends The Post To The Feed
-    })
-}
-
 // Function For Create Post HTML Structure
 function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
@@ -712,9 +641,21 @@ function renderSearchedPostsHistory(history_container:HTMLDivElement, search_bar
 function storeSearchedPostToHistory(searched_text:string):void {
     let searched_posts_history:string[] = JSON.parse(localStorage.getItem("searched_posts_history") || "[]") as string[] // Gets The Searched Posts History From The Local Storage
 
+    // Stores The New Result
     if(!searched_posts_history.includes(searched_text)) {
         searched_posts_history.unshift(searched_text) // Updates The Searched Posts History
         if(searched_posts_history.length > feed_state.MAX_HISTORY_LENGTH) searched_posts_history = searched_posts_history.slice(0, feed_state.MAX_HISTORY_LENGTH) // Shows Maximum Of 3 Results From The Searched Posts History, Others Will Be Deleted From The Searched Posts History
+        localStorage.setItem("searched_posts_history", JSON.stringify(searched_posts_history)) // Saves Updated Searched Posts History To The Local Storage
+    }
+
+    // Updates The Order
+    else {
+        const searched_post_index = searched_posts_history.indexOf(searched_text)
+
+        if(searched_post_index !== -1) searched_posts_history.splice(searched_post_index, 1) // Deletes The Previous Searched Post From The Searched Posts History
+        searched_posts_history.unshift(searched_text) // Updates Searched Posts History
+        if(searched_posts_history.length > feed_state.MAX_HISTORY_LENGTH) searched_posts_history = searched_posts_history.slice(0, feed_state.MAX_HISTORY_LENGTH) // Shows Maximum Of 3 Results From The Searched Posts History, Others Will Be Deleted From The Searched Posts History
+
         localStorage.setItem("searched_posts_history", JSON.stringify(searched_posts_history)) // Saves Updated Searched Posts History To The Local Storage
     }
 }
@@ -761,15 +702,20 @@ export function changeFocusedSearchedPost(index:number, all_searched_posts:NodeL
 }
 
 // Function For Load Posts
-export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphElement, searched_text:string, observer:IntersectionObserver):Promise<void> {
+export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphElement, search_bar?:HTMLInputElement, history_container?:HTMLDivElement):Promise<void> {
     if(feed_state.is_loading || !feed_state.has_more_posts) return
 
     feed_state.is_loading = true // Sets The Is Loading To True
     feed_report.style.display = "block" // Shows The Feed Report
 
     try {
+        const params:URLSearchParams = new URLSearchParams({
+            page: String(feed_state.current_page),
+            searched_text: search_bar?.value || ""
+        })
+
         // Gets Full Loaded Posts Response
-        const full_loaded_posts_response:Response = await fetch(`/api/load-posts/?page=${feed_state.current_page}&searched_text=${searched_text}`, {
+        const full_loaded_posts_response:Response = await fetch(`/api/load-posts?${params.toString()}`, {
             method: "GET",
 
             headers: {
@@ -791,9 +737,20 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
             return
         }
 
-        // console.log(loaded_posts_response)
+        console.log(loaded_posts_response)
 
-        loaded_posts_response.posts.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user_id, loaded_posts_response.profile_picture_name), feed_report)) // Appends The Post To The Feed
+        const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+
+        // Gets Only The Posts Data Of Posts Which Aren't Already Rendered
+        const no_already_rendered_posts_data:searchedPost[] = loaded_posts_response.posts.filter(function(one_searched_post:searchedPost):boolean {
+            return (
+                ![...all_post_containers].some(function(one_post_container:HTMLDivElement):boolean {
+                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
+                })
+            )
+        })
+
+        no_already_rendered_posts_data.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user_id, loaded_posts_response.profile_picture_name), feed_report)) // Appends The Post To The Feed
         feed_state.has_more_posts = loaded_posts_response.has_next || false // Sets The Has More Posts
         feed_state.has_more_posts ? feed_state.current_page++ : feed_report.textContent = gettext("Videli ste všetky príspevky.") // Shows The Message If The User Has Already Viewed All Posts
     }
@@ -804,6 +761,17 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
     
     finally {
         feed_state.is_loading = false // Sets The Is Loading To False
-        if(!feed_state.has_more_posts) observer.disconnect() // Stops The Observation
+        const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+
+        if(all_post_containers.length === 0) {
+            feed_report.textContent = gettext("Nenašli sa žiadne príspevky.")
+        }
+
+        else {
+            if(search_bar && history_container && search_bar.value.trim() !== "") {
+                storeSearchedPostToHistory(search_bar.value) // Stores The Searched Text To The Searched Posts History
+                renderSearchedPostsHistory(history_container, search_bar) // Renders The Searched Posts History
+            }
+        }
     }
 }

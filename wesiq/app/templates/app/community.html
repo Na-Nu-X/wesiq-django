@@ -166,7 +166,7 @@
                 <div class="header">
                     <div class="left">
                         <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
-                            <img class="profile_picture skeleton_loading" src="">
+                            <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                         </a>
                     </div>
                     
@@ -225,7 +225,7 @@
                 <div class="write_comment_form">
                     <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
     
-                    <img class="profile_picture" src="">
+                    <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                     
                     <!-- https://heroicons.com/ -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
@@ -242,7 +242,7 @@
                 <div class="comment_container">
                     <div class="user">
                         <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
-                            <img class="profile_picture" src="">
+                            <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                         </a>
                         
                         <p class="username"></p>
@@ -287,7 +287,6 @@
             <div class="history_container"></div>
         </div>
 
-        <p class="no_posts hidden">{% translate "Nenašli sa žiadne príspevky." %}</p>
         <p class="feed_report">{% translate "Načítavam..." %}</p>
     </div>
 {% endblock content %}
