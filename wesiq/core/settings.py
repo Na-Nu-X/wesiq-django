@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     'rosetta', # Rosetta (Language Admin Site)
 
     'django_user_agents',
+
+    'django_cleanup.apps.CleanupConfig', # Cleanup Temporary Media
 ]
 
 MIDDLEWARE = [

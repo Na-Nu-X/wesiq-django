@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     gdal-bin \
     python3-gdal \
     libgdal-dev \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/

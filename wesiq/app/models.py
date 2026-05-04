@@ -245,6 +245,7 @@ class PostMedia(models.Model):
 
     file = models.FileField(upload_to=getPostUploadPath)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
+    is_processed = models.BooleanField(verbose_name="Is Processed", default=False, null=False)
 
 class PostForum(models.Model):
     status_choices = [
