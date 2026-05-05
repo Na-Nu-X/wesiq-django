@@ -192,26 +192,30 @@ class Transactions(models.Model):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
 
 def getPostUploadPath(instance, filename):
-    image_extensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
-    video_extensions = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
+    # Checks If The Name Is Already Generated
+    if not hasattr(instance, '_random_uuid'):
+        instance._random_uuid = secrets.token_hex(nbytes=10) # Generates Random 20 Characters Long Filename (Numbers and Small Letters)
+
+    IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
+    VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
 
     extension = Path(filename).suffix.lower() # Gets The File Extension
     
     # Sets The Filename Prefix
-    if extension in image_extensions:
-        prefix = "IMG"
+    if filename.startswith('THUMB-'):
+        prefix = "THUMB"
 
-    elif extension in video_extensions:
+    elif extension in VIDEO_EXTENSIONS:
         prefix = "VID"
+
+    elif extension in IMAGE_EXTENSIONS:
+        prefix = "IMG"
 
     else:
         prefix = "FILE"
 
-    random_filename = secrets.token_hex(nbytes=10) # Generates Random 20 Characters Long Filename (Numbers and Small Letters)
-
-    new_image_name = f"{prefix}-{random_filename + extension}" # Creates The New Filename
-    
-    return f"posts/{instance.post.user.id}/{new_image_name}"
+    new_filename = f"{prefix}-{instance._random_uuid}{extension}" # Creates The New Filename
+    return f"posts/{instance.post.user_id}/{new_filename}" # Returns The Full Path
 
 class Post(models.Model):
     user = models.ForeignKey(
@@ -244,6 +248,7 @@ class PostMedia(models.Model):
     )
 
     file = models.FileField(upload_to=getPostUploadPath)
+    thumbnail = models.ImageField(upload_to=getPostUploadPath, null=True, blank=True)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
     is_processed = models.BooleanField(verbose_name="Is Processed", default=False, null=False)
 

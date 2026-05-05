@@ -745,7 +745,8 @@ header {
 
         // Posts
 
-        .post_container {
+        .post_container,
+        .processing_posts_container {
             position: relative;
             display: flex;
             flex-direction: column;
