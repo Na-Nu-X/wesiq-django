@@ -687,6 +687,35 @@ def compressVideo(post_media_id):
         input_path = media_object.file.path
         old_file_path = input_path # Stores The File Path Of The Original File
 
+        # Thumbnail Generation
+
+        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, 'temp', f"thumb_{post_media_id}.jpg")
+        os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
+
+        # Gets The Frame From The First Second Of The Video
+        thumb_command = [
+            'ffmpeg', '-y', '-ss', '00:00:01', '-i', input_path,
+            '-vframes', '1', '-q:v', '2', thumb_temp_path
+        ]
+
+        try:
+            subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            with open(thumb_temp_path, 'rb') as f:
+                media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
+
+        except subprocess.CalledProcessError as e:
+            message = f"Video {post_media_id} Is Shorter Than 1 Second."
+            captureMessage(message)
+            return message
+
+        finally:
+            # Removes Temporary Thumbnail Image File From Disk
+            if os.path.exists(thumb_temp_path):
+                os.remove(thumb_temp_path)
+
+        # Video Compression
+
         output_filename = f"compressed_{post_media_id}.mp4"
         output_path = os.path.join(settings.MEDIA_ROOT, 'temp', output_filename)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -716,16 +745,17 @@ def compressVideo(post_media_id):
         # Stores The Compressed Video File
         else:
             with open(output_path, 'rb') as f:
-                new_file_name = os.path.basename(input_path).split('.')[0] + '_compressed.mp4'
-                
                 # Saves The Data To The Database
+                new_file_name = f"VID_{post_media_id}.mp4" 
                 media_object.file.save(new_file_name, File(f), save=False)
                 media_object.is_processed = True
                 media_object.save()
 
-        # Removes Original Video File From Disk
-        if os.path.exists(old_file_path):
-            os.remove(old_file_path)
+            media_object.file.close()
+
+            # Removes Original Video File From Disk
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
 
         # Removes Temporary Video File From Disk
         if os.path.exists(output_path):

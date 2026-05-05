@@ -1826,6 +1826,17 @@ def communityView(request):
 
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
+        # Gets The User's Currently Processed Post With All Related Data
+        processing_posts = Post.objects.select_related(
+            "user"
+        ).filter(
+            user__id=logged_in_user_id,
+            media__is_processed=False
+        ).prefetch_related(
+            "tagged_users",
+            "media"
+        ).distinct()
+
         if request.method == "POST":
             # Upload Post Form
             if request.POST.get("upload_post_form_submit"):
@@ -2104,7 +2115,8 @@ def communityView(request):
             "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "users": users,
-            "upload_post_form": uploadPostForm
+            "upload_post_form": uploadPostForm,
+            "processing_posts": processing_posts
         })
 
     return render(request, "app/community.html")
@@ -2119,7 +2131,7 @@ def loadPostsView(request):
         page_number = request.GET.get("page", 1) # Gets Current Page Number
         searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
 
-        # Gets The Post With All Related Data
+        # Gets The Posts With All Related Data
         posts_query = Post.objects.all().select_related(
             "user"
         ).prefetch_related(
@@ -2131,12 +2143,16 @@ def loadPostsView(request):
                 queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
                 to_attr="visible_comments"
             )
-        )
+        ).filter(
+            media__isnull=False
+        ).exclude(
+            media__is_processed=False
+        ).distinct()
 
         # Filters Posts By Searched Text
         if searched_text:
             posts_query = posts_query.filter(
-                Q(user__first_name__icontains=searched_text) | 
+                (Q(user__first_name__icontains=searched_text) | 
                 Q(user__last_name__icontains=searched_text) | 
                 Q(user__username__icontains=searched_text) | 
                 Q(description__icontains=searched_text) | 
@@ -2144,17 +2160,19 @@ def loadPostsView(request):
                 Q(added_hashtags__icontains=searched_text) | 
                 Q(location__icontains=searched_text) | 
                 Q(tagged_users__first_name__icontains=searched_text) |
-                Q(tagged_users__last_name__icontains=searched_text)
+                Q(tagged_users__last_name__icontains=searched_text)) &
+                Q(media__isnull=False)
             ).select_related(
                 "user"
-            ).distinct().exclude(
-                tagged_users__account_status="suspended"
+            ).exclude(
+                tagged_users__account_status="suspended",
+                media__is_processed=False
             ).order_by(
                 "-created_at"
             ).prefetch_related(
                 "tagged_users",
                 "media",
-            )
+            ).distinct()
 
         paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
 

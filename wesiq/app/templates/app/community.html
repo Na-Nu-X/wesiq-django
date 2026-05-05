@@ -287,6 +287,119 @@
             <div class="history_container"></div>
         </div>
 
+        {% if processing_posts|length > 0 %}
+            {% for one_post in processing_posts %}
+                <div class="processing_posts_container" data-post_id="{{ one_post.id }}">
+                    <div class="header">
+                        <div class="left">
+                            <a href="{% url 'profile_url' one_post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if one_post.user.profile_picture_name %}
+                                            /../media/images/{{ one_post.user.id }}/{{ one_post.user.profile_picture_name }}
+        
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                            </a>
+                        </div>
+
+                        <div class="right">
+                            <div class="top">
+                                <p class="username">{{ one_post.user.username }}</p>
+
+                                <div class="followers_container">
+                                    <p class="followers">{{ one_post.user.followers|length }}</p>
+                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                </div>
+
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </div>
+
+                            <div class="bottom">
+                                {% if one_post.location %}
+                                    {% if one_post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ one_post.latitude }},{{ one_post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ one_post.location|safe }}</a>
+
+                                    {% else %}
+                                        <p class="location">{{ one_post.location }}</p>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                <p class="created_at">{{ one_post.created_at|date:"d.m. Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="media">
+                        {% for one_post_media in one_post.media.all %}
+                            {% if one_post.id == one_post_media.post.id %}
+                                <div class="one_post">
+                                    <div class="previous hidden">
+                                        <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                                    </div>
+
+                                    {% if one_post_media.is_video == True %}
+                                        <video class="video" controls autoplay loop muted>
+                                            <source src="{{ one_post_media.file.url }}">
+
+                                            {% blocktranslate with user=one_post_media.post.user %}
+                                                Príspevok užívateľa {{ user }}
+                                            {% endblocktranslate %}
+                                        </video>
+
+                                    {% elif one_post_media.is_video == False %}
+                                        <img 
+                                            class="image"
+                                            src="{{ one_post_media.file.url }}" 
+                                            alt="
+                                                {% blocktranslate with user=one_post_media.post.user %}
+                                                    Príspevok užívateľa {{ user }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
+
+                                    {% endif %}
+
+                                    <div class="next hidden">
+                                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="post_bars"></div>
+                    </div>
+
+                    <div class="society">
+                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                            <p class="likes_counter">0</p>
+                        </div>
+
+                        <div class="comments">
+                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                            <p class="comments_counter">0</p>
+                        </div>
+
+                        <div class="save">
+                            <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
+                    </div>
+
+                    {% if one_post.description %}
+                        <p class="description" data-tagged_users="{{ one_post.tagged_users_json }}" data-added_hashtags="{{ one_post.added_hashtags }}">{{ one_post.description }}</p>
+
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <p class="feed_report">{% translate "Načítavam..." %}</p>
     </div>
 {% endblock content %}
