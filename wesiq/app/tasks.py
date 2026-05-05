@@ -2,7 +2,7 @@ from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
 from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia
-import os, shutil, io, subprocess, math, random, json
+import os, shutil, io, subprocess, math, random, json, re
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import translation
@@ -616,18 +616,21 @@ def weeklyReport():
     captureMessage(message)
     return message
 
-@shared_task
-def compressImage(post_media_id):
+@shared_task(bind=True)
+def compressImage(self, post_media_id):
     try:
+        self.update_state(state="PROGRESS", meta={"percentage": 10}) # 10%
+
         media_object = PostMedia.objects.get(id=post_media_id)
         
         # If The File Was Not Found
         if not media_object.file:
-            message = f"The Image To Compress Was Not Found."
-            captureMessage(message)
-            return message
+            message = "The Image To Compress Was Not Found."
+            raise Exception(message)
 
         old_file_path = media_object.file.path # Stores The File Path Of The Original File
+
+        self.update_state(state="PROGRESS", meta={"percentage": 50}) # 50%
 
         with Image.open(media_object.file) as image:
             # Resizes The Image
@@ -646,7 +649,7 @@ def compressImage(post_media_id):
             buffer = io.BytesIO()
             image.save(buffer, format="JPEG", quality=70, optimize=True, progressive=True) # Compresses The Image
             
-            new_file_name = os.path.basename(old_file_path).split('.')[0] + '_compressed.jpg'
+            new_file_name = f"IMG-{post_media_id}.jpg"
 
             # Saves The Data To The Database
             media_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
@@ -659,79 +662,94 @@ def compressImage(post_media_id):
         if os.path.exists(old_file_path):
             os.remove(old_file_path)
 
-        message = f"Image {post_media_id} Was Successfully Compressed."
-        captureMessage(message)
+        message = "Image Was Successfully Compressed."
         return message
         
     except PostMedia.DoesNotExist:
-        message = f"Image {post_media_id} Does Not Exist."
-        captureMessage(message)
-        return message
+        message = "Image Does Not Exist."
+        raise Exception(message)
 
-    except Exception as e:
-        message = f"An Error Occurred During Compression: {str(e)}"
-        captureMessage(message)
-        return message
+    except Exception:
+        message = "An Error Occurred During Image Compression."
+        raise Exception(message)
 
-@shared_task
-def compressVideo(post_media_id):
+@shared_task(bind=True)
+def compressVideo(self, post_media_id):
     try:
         media_object = PostMedia.objects.get(id=post_media_id)
         
         # If The File Was Not Found
         if not media_object.file:
-            message = f"The Video To Compress Was Not Found."
-            captureMessage(message)
-            return message
+            message = "The Video To Compress Was Not Found."
+            raise Exception(message)
 
         input_path = media_object.file.path
         old_file_path = input_path # Stores The File Path Of The Original File
 
         # Thumbnail Generation
 
-        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, 'temp', f"thumb_{post_media_id}.jpg")
+        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{post_media_id}.jpg")
         os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
 
         # Gets The Frame From The First Second Of The Video
         thumb_command = [
-            'ffmpeg', '-y', '-ss', '00:00:01', '-i', input_path,
-            '-vframes', '1', '-q:v', '2', thumb_temp_path
+            "ffmpeg", "-y", "-ss", "00:00:01", "-i", input_path,
+            "-vframes", "1", "-q:v", "2", thumb_temp_path
         ]
 
         try:
             subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            with open(thumb_temp_path, 'rb') as f:
+            with open(thumb_temp_path, "rb") as f:
                 media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
 
-        except subprocess.CalledProcessError as e:
-            message = f"Video {post_media_id} Is Shorter Than 1 Second."
-            captureMessage(message)
-            return message
+        except subprocess.CalledProcessError:
+            message = "Video Is Shorter Than 1 Second."
+            raise Exception(message)
 
         finally:
             # Removes Temporary Thumbnail Image File From Disk
             if os.path.exists(thumb_temp_path):
                 os.remove(thumb_temp_path)
 
+        # Progress Calculation
+
+        duration_cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path]
+        duration_result = subprocess.run(duration_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        total_duration = float(duration_result.stdout.decode().strip())
+
         # Video Compression
 
         output_filename = f"compressed_{post_media_id}.mp4"
-        output_path = os.path.join(settings.MEDIA_ROOT, 'temp', output_filename)
+        output_path = os.path.join(settings.MEDIA_ROOT, "temp", output_filename)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         # FFmpeg Compression
         command = [
-            'ffmpeg', '-y', '-i', input_path,
-            '-vcodec', 'libx264', 
-            '-crf', '32',
-            '-preset', 'fast',
-            '-acodec', 'aac',
-            '-b:a', '128k',
+            "ffmpeg", "-y", "-i", input_path,
+            "-progress", "pipe:1",
+            "-vcodec", "libx264", 
+            "-crf", "32",
+            "-preset", "fast",
+            "-acodec", "aac",
+            "-b:a", "128k",
             output_path
         ]
 
-        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+
+        for line in process.stdout:
+            if "out_time_ms" in line:
+                try:
+                    time_ms = int(line.split("=")[1].strip())
+                    current_time = time_ms / 1000000.0
+                    percentage = min(99, int((current_time / total_duration) * 100))
+                    self.update_state(state="PROGRESS", meta={"percentage": percentage})
+
+                except:
+                    pass
+
+        process.wait()
 
         original_size = os.path.getsize(input_path)
         compressed_size = os.path.getsize(output_path)
@@ -744,7 +762,7 @@ def compressVideo(post_media_id):
 
         # Stores The Compressed Video File
         else:
-            with open(output_path, 'rb') as f:
+            with open(output_path, "rb") as f:
                 # Saves The Data To The Database
                 new_file_name = f"VID_{post_media_id}.mp4" 
                 media_object.file.save(new_file_name, File(f), save=False)
@@ -761,21 +779,17 @@ def compressVideo(post_media_id):
         if os.path.exists(output_path):
             os.remove(output_path)
 
-        message = f"Video {post_media_id} Was Successfully Compressed."
-        captureMessage(message)
+        message = "Video Was Successfully Compressed."
         return message
 
     except PostMedia.DoesNotExist:
-        message = f"Video {post_media_id} Does Not Exist."
-        captureMessage(message)
-        return message
+        message = "Video Does Not Exist."
+        raise Exception(message)
 
-    except subprocess.CalledProcessError as e:
-        message = f"FFmpeg Error Occurred During Video Compression: {e.stderr.decode('utf-8')}"
-        captureMessage(message)
-        return message
+    except subprocess.CalledProcessError:
+        message = "FFmpeg Error Occurred During Video Compression."
+        raise Exception(message)
 
-    except Exception as e:
-        message = f"An Error Occurred During Video Compression: {str(e)}"
-        captureMessage(message)
-        return message
+    except Exception:
+        message = "An Error Occurred During Video Compression."
+        raise Exception(message)

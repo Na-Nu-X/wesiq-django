@@ -21,26 +21,7 @@
 
 {% block content %}
     <dialog class="upload_post_form_dialog">
-        <!-- Google reCAPTCHA V3 -->
-        <script>
-            grecaptcha.ready(function() {
-                // Upload Post Form
-
-                const upload_post_form = document.querySelector(".upload_post_form")
-                if(upload_post_form) {
-                    upload_post_form.addEventListener("submit", function(event) {
-                        console.log("A")
-                        event.preventDefault()
-                        grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "upload_post_form"}).then(function(token) {
-                            document.getElementById("upload_post_form_recaptcha").value = token
-                            upload_post_form.submit()
-                        })
-                    })
-                }
-            })
-        </script>
-
-        <form class="upload_post_form" action="{% url 'community_url' %}" method="POST" enctype="multipart/form-data">
+        <form class="upload_post_form" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             <h2>{% translate "Zdieľať príspevok" %}</h2>
@@ -289,7 +270,9 @@
 
         {% if processing_posts|length > 0 %}
             {% for one_post in processing_posts %}
-                <div class="processing_posts_container" data-post_id="{{ one_post.id }}">
+                <div class="processing_post_container" data-post_id="{{ one_post.id }}">
+                    <div class="loading" data-progress="50%"></div>
+
                     <div class="header">
                         <div class="left">
                             <a href="{% url 'profile_url' one_post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
@@ -345,13 +328,15 @@
                                     </div>
 
                                     {% if one_post_media.is_video == True %}
-                                        <video class="video" controls autoplay loop muted>
-                                            <source src="{{ one_post_media.file.url }}">
-
-                                            {% blocktranslate with user=one_post_media.post.user %}
-                                                Príspevok užívateľa {{ user }}
-                                            {% endblocktranslate %}
-                                        </video>
+                                        <img 
+                                            class="thumbnail"
+                                            src="{{ one_post_media.thumbnail.url }}" 
+                                            alt="
+                                                {% blocktranslate with user=one_post_media.post.user %}
+                                                    Príspevok užívateľa {{ user }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
 
                                     {% elif one_post_media.is_video == False %}
                                         <img 

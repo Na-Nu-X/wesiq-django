@@ -1,3 +1,5 @@
+declare var grecaptcha:any
+
 import { 
     posts_preview_state,
     tag_user_state,
@@ -43,7 +45,8 @@ import {
     checkSearchedPostsHistory,
     hideHistoryContainer,
     changeFocusedSearchedPost,
-    loadPosts
+    loadPosts,
+    getUploadProgress
 } from "./functions/feed.js"
 
 import { sendPOST } from "../../services/sendPOST.js"
@@ -269,6 +272,44 @@ document.addEventListener("DOMContentLoaded", function():void {
                 ((event.target as HTMLElement).parentNode as HTMLAnchorElement).classList.contains("back")
             ) {
                 this.close() // Hides The Upload Post Form Dialog
+            }
+        })
+
+        // Upload Post Form Submit
+        upload_post_form.addEventListener("submit", async function(event:SubmitEvent):Promise<void> {
+            event.preventDefault() // Prevents Default Behaviour
+
+            const upload_post_form_submit:HTMLInputElement = upload_post_form.querySelector(".upload_post_form_submit") as HTMLInputElement // Gets The Upload Post Form Submit Button
+
+            upload_post_form_submit.disabled = true // Disables The Upload Post Form Submit Button
+            upload_post_form_submit.value = gettext("Overuje sa...")
+
+            try {
+                const token:string = await grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", { action: "upload_post_form" }) // Gets The reCAPTCHA token
+                const form_data:FormData = new FormData(event.target as HTMLFormElement) // Gets The Form Data
+                
+                form_data.append("g-recaptcha-response", token) // Appends The reCAPTCHA Response To The Form Data
+                upload_post_form_submit.value = gettext("Spracuváva sa...")
+
+                const result:{
+                    success:boolean,
+                    task_id:number,
+                    post_media_id:number
+                } = await sendPOST(window.location.pathname, form_data)
+
+                if(result.success && result.task_id) getUploadProgress(result.task_id) // Gets The Upload Progress
+                
+                // Error
+                else {
+                    upload_post_form_submit.disabled = false // Enables The Upload Post Form Submit Button
+                    upload_post_form_submit.value = gettext("Uverejniť príspevok")
+                }
+            } 
+            
+            // Error
+            catch {
+                upload_post_form_submit.disabled = false // Enables The Upload Post Form Submit Button
+                upload_post_form_submit.value = gettext("Uverejniť príspevok")
             }
         })
 
@@ -617,6 +658,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const search_posts_container:HTMLDivElement = feed.querySelector(".search_posts_container") as HTMLDivElement // Gets The Search Posts Container
         const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+        const all_processing_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".processing_post_container") // Gets All Processing Post Containers
         const delete_search_posts_input:HTMLElement = search_posts_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Posts Input Icon
         const history_container:HTMLDivElement = search_posts_container.querySelector(".history_container") as HTMLDivElement // Gets The History Container
         let search_posts_timeout:number // Debounce Timeout Between Requests
@@ -723,21 +765,97 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Feed Click Functionalities
         feed.addEventListener("click", function(event:PointerEvent):void {
-            // Follow Button Click Functionalities
-            if((event.target as HTMLDivElement).classList.contains("follow_button")) {
-                const follow_button:HTMLDivElement = event.target as HTMLDivElement // Gets The Follow Button
-                const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
-
-                if(follow_button.dataset["action"]?.trim() === "follow") {
-                    follow(event, clicked_user_id); // Follow
-                    follow_button.textContent = "Prestať sledovať"
-                    follow_button.dataset["action"] = "unfollow"
-                }
+            // Post Container
+            if((event.target as HTMLElement).closest(".post_container") as HTMLDivElement) {
+                // Follow Button Click Functionalities
+                if((event.target as HTMLDivElement).classList.contains("follow_button")) {
+                    const follow_button:HTMLDivElement = event.target as HTMLDivElement // Gets The Follow Button
+                    const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
     
-                else if(follow_button.dataset["action"]?.trim() === "unfollow") {
-                    unfollow(event, clicked_user_id); // Unfollow
-                    follow_button.textContent = "Začať sledovať"
-                    follow_button.dataset["action"] = "follow"
+                    if(follow_button.dataset["action"]?.trim() === "follow") {
+                        follow(event, clicked_user_id); // Follow
+                        follow_button.textContent = "Prestať sledovať"
+                        follow_button.dataset["action"] = "unfollow"
+                    }
+        
+                    else if(follow_button.dataset["action"]?.trim() === "unfollow") {
+                        unfollow(event, clicked_user_id); // Unfollow
+                        follow_button.textContent = "Začať sledovať"
+                        follow_button.dataset["action"] = "follow"
+                    }
+                }
+
+                // Toggle Post Like Click Functionality
+                if(
+                    (event.target as HTMLElement).classList.contains("fa-heart") &&
+                    (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("society")
+                ) {
+                    const toggle_like:HTMLElement = event.target as HTMLElement // Gets The Heart Icon
+                    const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
+                    const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
+
+                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
+                }
+
+                // Comment Forum
+
+                // Toggle Show / Hide Comment Forum
+                if(
+                    (event.target as HTMLElement).classList.contains("fa-comment") &&
+                    ((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("comments")
+                ) {
+                    const comment_forum:HTMLDivElement = (((event.target as HTMLElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+
+                    !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                }
+
+                // Send Comment
+                if((event.target as HTMLImageElement).classList.contains("send")) {
+                    const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
+                    const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const comment:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form .comment") as HTMLDivElement // Gets The Comment Input
+                    const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
+
+                    if(post_container.dataset["post_id"]) addComment(post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
+                }
+
+                // Toggle Comment Like Click Functionality
+                if(
+                    (event.target as HTMLElement).classList.contains("fa-heart") &&
+                    (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions")
+                ) {
+                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+
+                    if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+                }
+
+                // Report Comment
+                if((event.target as HTMLElement).classList.contains("fa-flag")) {
+                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+
+                    if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
+                }
+
+                // Reply On Comment
+                if( 
+                    (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions") &&
+                    ((event.target as HTMLElement).classList.contains("fa-comment") || 
+                    (event.target as HTMLElement).classList.contains("fa-xmark"))
+                ) {
+                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+                    const write_comment_form:HTMLDivElement = ((one_comment.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+
+                    if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
+                }
+
+                // Save Post
+                if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
+                    const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
+
+                    console.log(save_icon)
                 }
             }
             
@@ -750,19 +868,6 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
 
                 changePost(clicked_bar_index, post_bars, clicked_bar, all_media) // Changes The Post
-            }
-
-            // Toggle Post Like Click Functionality
-            if(
-                (event.target as HTMLElement).classList.contains("fa-heart") &&
-                (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("society")
-            ) {
-                const toggle_like:HTMLElement = event.target as HTMLElement // Gets The Heart Icon
-                const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
-                const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
-                const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
-
-                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
             }
 
             // Previous Post
@@ -793,66 +898,6 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Next Bar
 
                 changePost(post_index, post_bars, bar, all_media) // Changes The Post
-            }
-
-            // Comment Forum
-
-            // Toggle Show / Hide Comment Forum
-            if(
-                (event.target as HTMLElement).classList.contains("fa-comment") &&
-                ((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("comments")
-            ) {
-                const comment_forum:HTMLDivElement = (((event.target as HTMLElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
-
-                !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
-            }
-
-            // Send Comment
-            if((event.target as HTMLImageElement).classList.contains("send")) {
-                const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
-                const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
-                const comment:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form .comment") as HTMLDivElement // Gets The Comment Input
-                const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
-
-                if(post_container.dataset["post_id"]) addComment(post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
-            }
-
-            // Toggle Comment Like Click Functionality
-            if(
-                (event.target as HTMLElement).classList.contains("fa-heart") &&
-                (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions")
-            ) {
-                const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-                const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
-
-                if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
-            }
-
-            // Report Comment
-            if((event.target as HTMLElement).classList.contains("fa-flag")) {
-                const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-
-                if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
-            }
-
-            // Reply On Comment
-            if( 
-                (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions") &&
-                ((event.target as HTMLElement).classList.contains("fa-comment") || 
-                (event.target as HTMLElement).classList.contains("fa-xmark"))
-            ) {
-                const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-                const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
-                const write_comment_form:HTMLDivElement = ((one_comment.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
-
-                if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
-            }
-
-            // Save Post
-            if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
-                const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
-
-                console.log(save_icon)
             }
 
             return
@@ -997,6 +1042,26 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // All Post Containers Functionalities
         all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
+            // Description
+            const description:HTMLParagraphElement|null = one_post_container.querySelector(".description") as HTMLParagraphElement || null // Gets The Description
+
+            if(description) {
+                const tagged_users:string|null = description.dataset["tagged_users"] || null // Gets The Tagged Users Data
+                const added_hashtags:string|null = description.dataset["added_hashtags"] || null // Gets The Added Hashtags
+            
+                if(tagged_users || added_hashtags) description.innerHTML = generateStyledDescription(description.textContent, tagged_users, added_hashtags) // Generates The Styled Description
+            }
+
+            // Bars
+            const media_container:HTMLDivElement = one_post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+            const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+            
+            generatePostBars(all_media, post_bars) // Generates The Post Bars
+        })
+
+        // All Processing Post Containers Functionalities
+        all_processing_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             // Description
             const description:HTMLParagraphElement|null = one_post_container.querySelector(".description") as HTMLParagraphElement || null // Gets The Description
 
