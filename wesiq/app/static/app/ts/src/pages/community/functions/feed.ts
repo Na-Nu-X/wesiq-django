@@ -775,3 +775,45 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
         }
     }
 }
+
+// Function For Get The Upload Progress
+export function getUploadProgress(task_id:number):void {
+    // Checks The Upload Progress Every Second
+    const upload_progress_interval = setInterval(async function() {
+        try {
+            // Gets Full Upload Progress Response
+            const full_upload_progress_response:Response = await fetch(`/api/compression-status/${task_id}/`)
+
+            // If The Response Isn't Success
+            if(!full_upload_progress_response.ok) {
+                // feed_report.textContent = gettext("Pri hľadaní príspevkov došlo k chybe.")
+                return
+            }
+
+            // Gets Upload Progress Response
+            const upload_progress_response:{
+                task_id:number,
+                state:"PENDING"|"PROGRESS"|"SUCCESS"|"FAILURE",
+                progress:number
+            } = await full_upload_progress_response.json()
+
+            if(upload_progress_response.state === 'PROGRESS') {
+                console.log(upload_progress_response.progress)
+            } 
+            
+            else if(upload_progress_response.state === 'SUCCESS') {
+                clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
+                console.log("SUCCESS")
+            } 
+            
+            else if(upload_progress_response.state === 'FAILURE') {
+                clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
+                console.log("FAILURE")
+            }
+        }
+        
+        catch(error) {
+            console.error("Chyba pri kontrole stavu:", error)
+        }
+    }, 1000)
+}

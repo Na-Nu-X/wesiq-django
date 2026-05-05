@@ -6,20 +6,30 @@ export interface response {
 }
 
 // Function For Send Data By POST Method
-export async function sendPOST<T>(url_path:string = new URL(window.location.href).pathname, data:T|null = null, header_info:string = "") {
-    return fetch(url_path, {
+export async function sendPOST(url_path:string = new URL(window.location.href).pathname, data:any|null = null, header_info:string = "") {
+    const is_form_data:boolean = data instanceof FormData // Checks If The Data Are From The Form
+    
+    const options:RequestInit = {
         method: "POST",
 
         headers: {
             "X-CSRFToken": getCookie("csrftoken") || "",
             "Accept": "application/json",
-            "X-Requested-Action": header_info
+            "X-Requested-Action": header_info,
         },
-        
-        body: JSON.stringify(data)
-    }).then(
-        response => response.json()
-    ).catch(
-        error => console.error(error)
-    )
+
+        body: is_form_data ? data : JSON.stringify(data)
+    }
+
+    if(!is_form_data && data) (options.headers as any)["Content-Type"] = "application/json"
+
+    const response:Response = await fetch(url_path, options)
+    
+    if(!response.ok) {
+        const error:string = await response.text()
+        console.error(error)
+        throw new Error()
+    }
+
+    return response.json()
 }

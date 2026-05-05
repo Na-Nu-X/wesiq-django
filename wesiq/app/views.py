@@ -39,6 +39,7 @@ from django.db.models import Prefetch
 from moviepy import VideoFileClip
 from django.core.paginator import Paginator
 from .tasks import compressImage, compressVideo
+from celery.result import AsyncResult
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -1952,13 +1953,25 @@ def communityView(request):
 
                                 # Video
                                 if is_video:
-                                    compressVideo.delay(new_post_media.id)
+                                    compress_video_task = compressVideo.delay(new_post_media.id)
+
+                                    return JsonResponse({
+                                        "success": True,
+                                        "task_id": compress_video_task.id,
+                                        "post_media_id": new_post_media.id
+                                    })
                                 
                                 # Image
                                 elif not is_video:
-                                    compressImage.delay(new_post_media.id)
+                                    compress_image_task = compressImage.delay(new_post_media.id)
 
-                            except Exception as e:
+                                    return JsonResponse({
+                                        "success": True,
+                                        "task_id": compress_image_task.id,
+                                        "post_media_id": new_post_media.id
+                                    })
+
+                            except Exception:
                                 new_post.delete()
                                 messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
                                 return redirect("community_url")
@@ -2261,6 +2274,26 @@ def loadPostsView(request):
         return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user_id": logged_in_user_id, "profile_picture_name": logged_in_user.profile_picture_name, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
 
     return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
+
+def getCompressionStatus(request, task_id):
+    result = AsyncResult(task_id)
+    
+    upload_progress_response = {
+        "task_id": task_id,
+        "state": result.state, # PENDING, PROGRESS, SUCCESS, FAILURE
+        "progress": 0
+    }
+
+    if result.state == "PROGRESS":
+        upload_progress_response["progress"] = result.info.get("percentage", 0)
+    
+    elif result.state == "SUCCESS":
+        upload_progress_response["progress"] = 100
+    
+    elif result.state == "FAILURE":
+        upload_progress_response["progress"] = 0
+
+    return JsonResponse(upload_progress_response)
 
 def postView(request, post_id):
     logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
