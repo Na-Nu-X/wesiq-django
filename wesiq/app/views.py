@@ -1903,6 +1903,8 @@ def communityView(request):
                         MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
                         MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
 
+                        compress_tasks = [] # Stores All Compress Tasks
+
                         for one_file in files:
                             try:
                                 file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
@@ -1955,29 +1957,34 @@ def communityView(request):
                                 if is_video:
                                     compress_video_task = compressVideo.delay(new_post_media.id)
 
-                                    return JsonResponse({
-                                        "success": True,
+                                    compress_tasks.append({
                                         "task_id": compress_video_task.id,
-                                        "post_media_id": new_post_media.id
+                                        "post_media_id": new_post_media.id,
+                                        "post_id": new_post_media.post.id
                                     })
                                 
                                 # Image
                                 elif not is_video:
                                     compress_image_task = compressImage.delay(new_post_media.id)
 
-                                    return JsonResponse({
-                                        "success": True,
+                                    compress_tasks.append({
                                         "task_id": compress_image_task.id,
-                                        "post_media_id": new_post_media.id
+                                        "post_media_id": new_post_media.id,
+                                        "post_id": new_post_media.post.id
                                     })
 
                             except Exception:
-                                new_post.delete()
+                                # new_post.delete()
                                 messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
                                 return redirect("community_url")
 
-                        messages.add_message(request, messages.SUCCESS, _("Príspevok bol pridaný"))
-                        return redirect("community_url")
+                        return JsonResponse({
+                            "success": True,
+                            "compress_tasks": compress_tasks
+                        })
+
+                        # messages.add_message(request, messages.SUCCESS, _("Príspevok bol pridaný"))
+                        # return redirect("community_url")
 
             # Search Users
             if request.headers.get("X-Requested-Action") == "search-users":

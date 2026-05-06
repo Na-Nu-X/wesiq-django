@@ -49,6 +49,11 @@ import {
     getUploadProgress
 } from "./functions/feed.js"
 
+import type { 
+    compressTask,
+    uploadPostResponse
+} from "./functions/feed.js"
+
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 
@@ -291,13 +296,20 @@ document.addEventListener("DOMContentLoaded", function():void {
                 form_data.append("g-recaptcha-response", token) // Appends The reCAPTCHA Response To The Form Data
                 upload_post_form_submit.value = gettext("Spracuváva sa...")
 
-                const result:{
-                    success:boolean,
-                    task_id:number,
-                    post_media_id:number
-                } = await sendPOST(window.location.pathname, form_data)
+                const upload_post_response:uploadPostResponse = await sendPOST(window.location.pathname, form_data)
 
-                if(result.success && result.task_id) getUploadProgress(result.task_id) // Gets The Upload Progress
+                if(upload_post_response.success && upload_post_response.compress_tasks && upload_post_response.compress_tasks.length > 0) {
+                    upload_post_response.compress_tasks.forEach(function(one_task:compressTask):void {
+
+                        let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+    
+                        processing_posts.push({"task_id": one_task.task_id, "post_media_id": one_task.post_media_id, "post_id": one_task.post_id})
+                        localStorage.setItem("processing_posts", JSON.stringify(processing_posts)) // Saves Updated Processing Posts To The Local Storage
+    
+                    })
+                    
+                    window.location.reload() // Reloads The Page
+                }
                 
                 // Error
                 else {
@@ -1078,6 +1090,20 @@ document.addEventListener("DOMContentLoaded", function():void {
             const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
             
             generatePostBars(all_media, post_bars) // Generates The Post Bars
+
+            // Upload Progress Generation
+            let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+
+            processing_posts.forEach(function(one_task:compressTask) {
+                const one_post:HTMLDivElement|undefined = [...all_media].find(function(one_post:HTMLDivElement) {
+                    return one_post.dataset["post_media_id"] === String(one_task.post_media_id)
+                })
+
+                if(one_post) {
+                    const upload_progress:HTMLDivElement = one_post.querySelector(".upload_progress") as HTMLDivElement // Gets The Upload Progress Container
+                    getUploadProgress(one_task.task_id, upload_progress) // Gets The Upload Progress
+                }
+            })
         })
 
         // Infinite Feed Scroll
