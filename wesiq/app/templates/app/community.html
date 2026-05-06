@@ -271,8 +271,6 @@
         {% if processing_posts|length > 0 %}
             {% for one_post in processing_posts %}
                 <div class="processing_post_container" data-post_id="{{ one_post.id }}">
-                    <div class="loading" data-progress="50%"></div>
-
                     <div class="header">
                         <div class="left">
                             <a href="{% url 'profile_url' one_post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
@@ -322,21 +320,25 @@
                     <div class="media">
                         {% for one_post_media in one_post.media.all %}
                             {% if one_post.id == one_post_media.post.id %}
-                                <div class="one_post">
+                                <div class="one_post" data-post_media_id="{{ one_post_media.id }}">
+                                    <div class="upload_progress" data-progress="100%"></div>
+
                                     <div class="previous hidden">
                                         <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
                                     </div>
 
                                     {% if one_post_media.is_video == True %}
-                                        <img 
-                                            class="thumbnail"
-                                            src="{{ one_post_media.thumbnail.url }}" 
-                                            alt="
-                                                {% blocktranslate with user=one_post_media.post.user %}
-                                                    Príspevok užívateľa {{ user }}
-                                                {% endblocktranslate %}
-                                            "
-                                        >
+                                        {% if one_post_media.thumbnail.url %}
+                                            <img 
+                                                class="thumbnail"
+                                                src="{{ one_post_media.thumbnail.url }}" 
+                                                alt="
+                                                    {% blocktranslate with user=one_post_media.post.user %}
+                                                        Príspevok užívateľa {{ user }}
+                                                    {% endblocktranslate %}
+                                                "
+                                            >
+                                        {% endif %}
 
                                     {% elif one_post_media.is_video == False %}
                                         <img 

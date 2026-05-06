@@ -75,6 +75,23 @@ export interface searchedPostsResponse {
     message:string
 }
 
+export interface compressTask {
+    task_id:number,
+    post_media_id:number,
+    post_id:number
+}
+
+export interface uploadPostResponse {
+    success:boolean,
+    compress_tasks:compressTask[]
+}
+
+interface uploadProgressResponse {
+    task_id:number,
+    state:"PENDING"|"PROGRESS"|"SUCCESS"|"FAILURE",
+    progress:number
+}
+
 // Function For Generate Styled Description
 export function generateStyledDescription(text:string, tagged_users:string|null, added_hashtags:string|null):string {
     if(tagged_users) {
@@ -777,8 +794,11 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
 }
 
 // Function For Get The Upload Progress
-export function getUploadProgress(task_id:number):void {
-    // Checks The Upload Progress Every Second
+export function getUploadProgress(task_id:number, upload_progress:HTMLDivElement):void {
+    const MAX_RED:number = 255
+    const MIN_RED:number = 82
+
+    // Checks The Upload Progress Every 3 Seconds
     const upload_progress_interval = setInterval(async function() {
         try {
             // Gets Full Upload Progress Response
@@ -786,34 +806,68 @@ export function getUploadProgress(task_id:number):void {
 
             // If The Response Isn't Success
             if(!full_upload_progress_response.ok) {
-                // feed_report.textContent = gettext("Pri hľadaní príspevkov došlo k chybe.")
                 return
             }
 
             // Gets Upload Progress Response
-            const upload_progress_response:{
-                task_id:number,
-                state:"PENDING"|"PROGRESS"|"SUCCESS"|"FAILURE",
-                progress:number
-            } = await full_upload_progress_response.json()
+            const upload_progress_response:uploadProgressResponse = await full_upload_progress_response.json()
 
-            if(upload_progress_response.state === 'PROGRESS') {
-                console.log(upload_progress_response.progress)
-            } 
+            if(upload_progress_response.state === "PROGRESS") {
+                let red:number = MAX_RED - (upload_progress_response.progress / 100) * (MAX_RED - MIN_RED) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+
+                upload_progress.dataset["progress"] = `${upload_progress_response.progress}%` // Updates The Progress Percentage Label
+                upload_progress.style.setProperty("--progress", `${upload_progress_response.progress}%`) // Updates The Width Of The Progress Bar
+                upload_progress.style.setProperty("--progress-color", `rgb(${red}, 207, 32)`) // Updates The Color Of The Progress Bar
+            }
             
-            else if(upload_progress_response.state === 'SUCCESS') {
-                clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
+            else if(upload_progress_response.state === "SUCCESS") {
                 console.log("SUCCESS")
-            } 
-            
-            else if(upload_progress_response.state === 'FAILURE') {
                 clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
+                removeProcessingPost(task_id) // Removes Current Processing Post Data From The Local Storage
+
+                // upload_progress.remove() // Removes The Upload Progress Container
+
+                upload_progress.dataset["progress"] = `100%` // Updates The Progress Percentage Label
+                upload_progress.style.setProperty("--progress", `100%`) // Updates The Width Of The Progress Bar
+                upload_progress.style.setProperty("--progress-color", `rgb(82, 207, 32)`) // Updates The Color Of The Progress Bar
+            }
+            
+            else if(upload_progress_response.state === "FAILURE") {
                 console.log("FAILURE")
+                clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
+                removeProcessingPost(task_id) // Removes Current Processing Post Data From The Local Storage
             }
         }
         
-        catch(error) {
-            console.error("Chyba pri kontrole stavu:", error)
+        catch {
+            return
         }
     }, 1000)
+}
+
+// Function For Remove The Current Processing Post Data From The Local Storage
+function removeProcessingPost(task_id:number):void {
+    // Gets All Processing Posts From The Local Storage
+    let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+
+    // Gets The Current Processing Post From The Local Storage
+    const processing_post:compressTask|undefined = processing_posts.find(function(one_task:compressTask) {
+        return one_task.task_id === task_id
+    })
+
+    if(processing_post) {
+        const processing_post_index:number = processing_posts.indexOf(processing_post) // Gets The Index Of The Current Processing Post In The Local Storage
+
+        if(processing_post_index !== -1) processing_posts.splice(processing_post_index, 1) // Deletes The Current Processing Post From The Processing Posts In The Local Storage
+        localStorage.setItem("processing_posts", JSON.stringify(processing_posts)) // Saves Updated Processing Posts To The Local Storage
+
+        // // Checks If There Aren't Another Stored Processing Media In The Local Storage For The Same Post
+        // const is_last_media_in_post:boolean = processing_posts.some(function(one_task:compressTask):boolean {
+        //     return one_task.post_id === processing_post.post_id
+        // })
+
+        // if(is_last_media_in_post) {
+        //     window.location.reload() // Reloads The Page
+        // }
+    }
 }
