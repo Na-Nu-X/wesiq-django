@@ -66,11 +66,16 @@ export interface searchedPost {
     }[]
 }
 
-export interface searchedPostsResponse {
+interface searchedPostsResponse {
     success:boolean,
     has_next?:boolean,
-    logged_in_user_id?:number,
-    profile_picture_name?:string,
+
+    logged_in_user?:{
+        logged_in_user_id:number,
+        profile_picture_name:string,
+        saved_posts:string[]
+    },
+
     posts:searchedPost[],
     message:string
 }
@@ -217,6 +222,49 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
     }
 }
 
+// Function For Save Or Unsave The Post
+export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> {
+    // If The Save Icon Is Inactive
+    if(!icon.classList.contains("active")) {
+        try {
+            const save_post_response:response = await sendPOST(window.location.pathname, id, "save-post") // Sends Saved Post ID As A POST Data
+
+            // If The Response Isn't Success
+            if(!save_post_response.success) {
+                console.error(save_post_response.message)
+                return
+            }
+
+            icon.classList.add("active") // Adds The Active Class
+            icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Bookmark Image
+        }
+
+        catch {
+            console.error(gettext("Pri ukladaní príspevku došlo k chybe."))
+        }
+    }
+
+    // If The Save Icon Is Active
+    else if(icon.classList.contains("active")) {
+        try {
+            const unsave_post_response:response = await sendPOST(window.location.pathname, id, "unsave-post") // Sends Saved Post ID As A POST Data
+
+            // If The Response Isn't Success
+            if(!unsave_post_response.success) {
+                console.error(unsave_post_response.message)
+                return
+            }
+
+            icon.classList.remove("active") // Removes The Active Class
+            icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Bookmark Image
+        }
+
+        catch {
+            console.error(gettext("Pri rušení uloženia príspevku došlo k chybe."))
+        }
+    }
+}
+
 // Function For Add Comment
 export async function addComment(post_id:string, comment:string, all_comments:HTMLDivElement):Promise<void> {
     try {
@@ -333,7 +381,7 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
 }
 
 // Function For Create Post HTML Structure
-function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined):DocumentFragment {
+function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined, saved_posts:string[]|undefined):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
     const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
 
@@ -471,8 +519,8 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
     // Likes
     const likes:HTMLDivElement = society.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
-
     const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+
     logged_in_user_id && post_data.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
     // Hidden Likes Counter
@@ -509,6 +557,18 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
         hidden_comments_counter.textContent = gettext("Vypnuté")
         comments.appendChild(hidden_comments_counter) // Appends The Hidden Comments Counter To The Likes
     }
+
+    // Save
+    const save:HTMLDivElement = society.querySelector(".save") as HTMLDivElement // Gets The Save Container
+    const save_icon:HTMLElement = save.querySelector(".fa-bookmark") as HTMLElement // Gets The Save Icon
+
+    // https://fontawesome.com/icons/bookmark
+    if(saved_posts && saved_posts.includes(String(post_data.id))) {
+        save_icon.classList.add("fa-solid") // Shows The Filled Bookmark Icon
+        save_icon.classList.add("active") // Adds The Active Class
+    }
+    
+    else save_icon.classList.add("fa-regular") // Shows The Empty Bookmark Icon
 
     // Description
     const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
@@ -767,7 +827,7 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
             )
         })
 
-        no_already_rendered_posts_data.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user_id, loaded_posts_response.profile_picture_name), feed_report)) // Appends The Post To The Feed
+        no_already_rendered_posts_data.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user?.logged_in_user_id, loaded_posts_response.logged_in_user?.profile_picture_name, loaded_posts_response.logged_in_user?.saved_posts), feed_report)) // Appends The Post To The Feed
         feed_state.has_more_posts = loaded_posts_response.has_next || false // Sets The Has More Posts
         feed_state.has_more_posts ? feed_state.current_page++ : feed_report.textContent = gettext("Videli ste všetky príspevky.") // Shows The Message If The User Has Already Viewed All Posts
     }

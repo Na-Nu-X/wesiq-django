@@ -17,15 +17,17 @@ export interface hashtag {
 }
 
 export const posts_preview_state:{
-    current_files:File[]
-    MAX_IMAGE_SIZE:number
-    MAX_VIDEO_SIZE:number
-    MAX_VIDEO_DURATION:number
+    current_files:File[],
+    MAX_IMAGE_SIZE:number,
+    MAX_VIDEO_SIZE:number,
+    MAX_VIDEO_DURATION:number,
+    MIN_VIDEO_DURATION:number
 } = {
     current_files: [], // Stores Current Selected Files
     MAX_IMAGE_SIZE: 10 * 1000 * 1000, // 10MB
     MAX_VIDEO_SIZE: 1000 * 1000 * 500, // 500MB
-    MAX_VIDEO_DURATION: 60 * 20 // 20 Minutes
+    MAX_VIDEO_DURATION: 60 * 20, // 20 Minutes
+    MIN_VIDEO_DURATION: 1 // 1 Second
 }
 
 export const tag_user_state:{
