@@ -746,11 +746,19 @@ header {
         // Posts
 
         .processing_post_container {
+            .processing_post_report {
+                text-align: center;
+                font-family: $article-heading-font;
+            }
+
             .media {
                 .one_post {
+                    border-radius: $big-border-radius;
+                    overflow: hidden;
+
                     .upload_progress {
-                        --progress: 100%;
-                        --progress-color: rgb(82, 207, 32);
+                        --progress: 0%;
+                        --progress-color: rgb(255, 207, 32);
         
                         position: relative;
                         top: 25px;
@@ -773,16 +781,21 @@ header {
                             top: calc(50% - 12px);
                             transform: translateY(-50%);
                             width: var(--progress);
+                            max-width: 100%;
+                            padding: 0px 10px;
                             text-align: right;
+                            font-family: $article-heading-font;
                             font-size: 0.8em;
                             font-weight: bold;
+                            color: white;
+                            mix-blend-mode: difference;
                             transition: width 0.5s linear;
                         }
                     }
 
                     .image,
                     .thumbnail {
-                        filter: blur(1px);
+                        filter: blur(2px) grayscale(0.8);
                     }
                 }
             }

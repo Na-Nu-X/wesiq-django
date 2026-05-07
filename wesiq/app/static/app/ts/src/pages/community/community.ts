@@ -46,7 +46,9 @@ import {
     hideHistoryContainer,
     changeFocusedSearchedPost,
     loadPosts,
-    getUploadProgress
+    getUploadProgress,
+    setCompletedUploadProgress,
+    checkProcessingPosts
 } from "./functions/feed.js"
 
 import type { 
@@ -307,8 +309,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                         localStorage.setItem("processing_posts", JSON.stringify(processing_posts)) // Saves Updated Processing Posts To The Local Storage
     
                     })
-                    
-                    window.location.reload() // Reloads The Page
+
+                    // Reloads The Page After 1 Second Timeout
+                    window.setTimeout(function() {
+                        window.location.reload()
+                    }, 1000)
                 }
                 
                 // Error
@@ -670,10 +675,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         const search_posts_container:HTMLDivElement = feed.querySelector(".search_posts_container") as HTMLDivElement // Gets The Search Posts Container
         const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
-        const all_processing_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".processing_post_container") // Gets All Processing Post Containers
         const delete_search_posts_input:HTMLElement = search_posts_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Posts Input Icon
         const history_container:HTMLDivElement = search_posts_container.querySelector(".history_container") as HTMLDivElement // Gets The History Container
         let search_posts_timeout:number // Debounce Timeout Between Requests
+
+        const all_processing_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".processing_post_container") // Gets All Processing Post Containers
 
         // Events
 
@@ -1073,6 +1079,9 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
 
         // All Processing Post Containers Functionalities
+        let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+        const processing_posts_media_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_media_id) // Gets All Current Media IDs From The Local Storage
+        
         all_processing_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             // Description
             const description:HTMLParagraphElement|null = one_post_container.querySelector(".description") as HTMLParagraphElement || null // Gets The Description
@@ -1092,7 +1101,8 @@ document.addEventListener("DOMContentLoaded", function():void {
             generatePostBars(all_media, post_bars) // Generates The Post Bars
 
             // Upload Progress Generation
-            let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+            const processing_post_report:HTMLParagraphElement = one_post_container.querySelector(".processing_post_report") as HTMLParagraphElement // Gets The Processing Post Report
+            const post_id:number|undefined = Number(one_post_container.dataset["post_id"]) // Gets The Post ID Of The Post Container
 
             processing_posts.forEach(function(one_task:compressTask) {
                 const one_post:HTMLDivElement|undefined = [...all_media].find(function(one_post:HTMLDivElement) {
@@ -1101,9 +1111,23 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 if(one_post) {
                     const upload_progress:HTMLDivElement = one_post.querySelector(".upload_progress") as HTMLDivElement // Gets The Upload Progress Container
-                    getUploadProgress(one_task.task_id, upload_progress) // Gets The Upload Progress
+                    getUploadProgress(one_task.task_id, one_task.post_id, upload_progress, processing_post_report) // Gets The Upload Progress
                 }
             })
+
+            const all_processing_posts_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+
+            all_processing_posts_media.forEach(function(one_post:HTMLDivElement):void {
+                const media_id:string|undefined = one_post.dataset["post_media_id"] // Gets The Media ID From The Dataset
+
+                // Shows The Completed Upload Progress For Already Completed Media In The Post
+                if(media_id && !processing_posts_media_ids.includes(Number(media_id))) {
+                    const upload_progress:HTMLDivElement = one_post.querySelector(".upload_progress") as HTMLDivElement // Gets The Upload Progress Container
+                    setCompletedUploadProgress(upload_progress) // Sets The State For The Completed Upload Progress
+                }
+            })
+
+            if(post_id) checkProcessingPosts(post_id, processing_post_report) // Checks If There Is Any Other Media From Selected Post In The Processing Posts
         })
 
         // Infinite Feed Scroll
