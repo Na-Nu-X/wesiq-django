@@ -290,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
 
             sendNotification(interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])) // Sends The Notification For The User
-            location.reload() // Reloads The Page
+            window.location.reload() // Reloads The Page
         }
 
         catch {

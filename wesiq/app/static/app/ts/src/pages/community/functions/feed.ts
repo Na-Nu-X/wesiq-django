@@ -475,20 +475,20 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
     logged_in_user_id && post_data.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
-    // Likes Counter
-    if(!post_data.hide_likes) {
-        const likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Likes Counter
-        likes_counter.classList.add("likes_counter") // Adds The Likes Counter
-        likes_counter.textContent = String(post_data.likes) // Sets The Likes Counter
-        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
-    }
-
     // Hidden Likes Counter
-    else {
+    if(post_data.hide_likes && post_data.user.id !== logged_in_user_id) {
         const hidden_likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Likes Counter
         hidden_likes_counter.classList.add("hidden_likes_counter") // Adds The Hidden Likes Counter
         hidden_likes_counter.textContent = gettext("Skryté")
         likes.appendChild(hidden_likes_counter) // Appends The Hidden Likes Counter To The Likes
+    }
+
+    // Likes Counter
+    else {
+        const likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Likes Counter
+        likes_counter.classList.add("likes_counter") // Adds The Likes Counter
+        likes_counter.textContent = String(post_data.likes) // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
     }
 
     // Comments
@@ -794,7 +794,7 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
 }
 
 // Function For Get The Upload Progress
-export function getUploadProgress(task_id:number, upload_progress:HTMLDivElement):void {
+export function getUploadProgress(task_id:number, post_id:number, upload_progress:HTMLDivElement, processing_post_report:HTMLParagraphElement):void {
     const MAX_RED:number = 255
     const MIN_RED:number = 82
 
@@ -806,7 +806,7 @@ export function getUploadProgress(task_id:number, upload_progress:HTMLDivElement
 
             // If The Response Isn't Success
             if(!full_upload_progress_response.ok) {
-                return
+                processing_post_report.textContent = gettext("Pri spracovávaní príspevku došlo k chybe!") // Shows The Error Message
             }
 
             // Gets Upload Progress Response
@@ -821,28 +821,38 @@ export function getUploadProgress(task_id:number, upload_progress:HTMLDivElement
             }
             
             else if(upload_progress_response.state === "SUCCESS") {
-                console.log("SUCCESS")
                 clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
                 removeProcessingPost(task_id) // Removes Current Processing Post Data From The Local Storage
-
-                // upload_progress.remove() // Removes The Upload Progress Container
-
-                upload_progress.dataset["progress"] = `100%` // Updates The Progress Percentage Label
-                upload_progress.style.setProperty("--progress", `100%`) // Updates The Width Of The Progress Bar
-                upload_progress.style.setProperty("--progress-color", `rgb(82, 207, 32)`) // Updates The Color Of The Progress Bar
+                checkProcessingPosts(post_id, processing_post_report) // Checks If There Is Any Other Media From Selected Post In The Processing Posts
+                setCompletedUploadProgress(upload_progress) // Sets The State For The Completed Upload Progress
             }
             
             else if(upload_progress_response.state === "FAILURE") {
-                console.log("FAILURE")
                 clearInterval(upload_progress_interval) // Deletes The Upload Progress Interval
                 removeProcessingPost(task_id) // Removes Current Processing Post Data From The Local Storage
+                processing_post_report.textContent = gettext("Pri spracovávaní príspevku došlo k chybe!") // Shows The Error Message
             }
         }
         
         catch {
-            return
+            processing_post_report.textContent = gettext("Pri spracovávaní príspevku došlo k chybe!") // Shows The Error Message
         }
     }, 1000)
+}
+
+// Function For Check If There Is Any Other Media From Selected Post In The Processing Posts
+export function checkProcessingPosts(post_id:number, processing_post_report:HTMLParagraphElement):void {
+    const processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+    const processing_posts_post_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_id) // Gets All Current Post IDs From The Local Storage
+
+    if(!processing_posts_post_ids.includes(post_id)) processing_post_report.textContent = gettext("Príspevok bol úspešne pridaný.") // Shows The Success Message
+}
+
+// Function For Set The State Of Completed Upload Progress
+export function setCompletedUploadProgress(upload_progress:HTMLDivElement):void {
+    upload_progress.dataset["progress"] = `100%` // Updates The Progress Percentage Label
+    upload_progress.style.setProperty("--progress", `100%`) // Updates The Width Of The Progress Bar
+    upload_progress.style.setProperty("--progress-color", `rgb(82, 207, 32)`) // Updates The Color Of The Progress Bar
 }
 
 // Function For Remove The Current Processing Post Data From The Local Storage
@@ -860,14 +870,5 @@ function removeProcessingPost(task_id:number):void {
 
         if(processing_post_index !== -1) processing_posts.splice(processing_post_index, 1) // Deletes The Current Processing Post From The Processing Posts In The Local Storage
         localStorage.setItem("processing_posts", JSON.stringify(processing_posts)) // Saves Updated Processing Posts To The Local Storage
-
-        // // Checks If There Aren't Another Stored Processing Media In The Local Storage For The Same Post
-        // const is_last_media_in_post:boolean = processing_posts.some(function(one_task:compressTask):boolean {
-        //     return one_task.post_id === processing_post.post_id
-        // })
-
-        // if(is_last_media_in_post) {
-        //     window.location.reload() // Reloads The Page
-        // }
     }
 }

@@ -98,7 +98,7 @@ export async function saveTrainingPlan(container:HTMLDivElement, state:{active_e
             if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne pridaný."), [training_plan_title.value]))
             if(action === "new_training_plan") sendNotification(interpolate(gettext("Tréningový plán %s bol úspešne upravený."), [training_plan_title.value]))
     
-            location.reload() // Reloads The Page
+            window.location.reload() // Reloads The Page
         }
 
         catch {
