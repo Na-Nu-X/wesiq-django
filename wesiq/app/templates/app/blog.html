@@ -86,10 +86,18 @@
     </div>
 
     <div class="articles">
-        {% if no_articles %}
-            <h2 class="no_articles">{% translate "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články." %}</h2>
+        <h2 
+            class="
+                no_articles
 
-        {% endif %}
+                {% if not no_articles %}
+                    hidden
+
+                {% endif %}
+            "
+        >
+            {% translate "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články." %}
+        </h2>
 
         {% comment %} article class="skeleton_loading" {% endcomment %}
         {% for one_article in articles %}

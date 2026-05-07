@@ -5,6 +5,10 @@
  Main Styles
 ************/
 
+h2 {
+    font-family: $article-heading-font;
+}
+
 .post_container {
     position: relative;
     display: flex;

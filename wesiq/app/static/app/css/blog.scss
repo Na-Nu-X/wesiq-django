@@ -77,6 +77,10 @@
     .no_articles {
         font-family: $article-heading-font;
         color: $secondary-color;
+
+        &.hidden {
+            display: none;
+        }
     }
 
     article {

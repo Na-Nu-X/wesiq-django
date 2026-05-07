@@ -53,8 +53,7 @@ export function renderArticles(search_bar:HTMLInputElement, all_articles:NodeLis
     // No Articles Message
     const no_articles:HTMLHeadingElement = document.querySelector(".no_articles") as HTMLHeadingElement
 
-    no_articles.innerHTML = "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
-    found_articles_count === 0 ? no_articles.innerHTML = "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články." : no_articles.innerHTML = ""
+    found_articles_count === 0 ? no_articles.classList.remove("hidden") : no_articles.classList.add("hidden") // Shows Or Hides The No Article Message
 
     // Found Articles Messages
     if(found_articles_count == 1) num_articles.innerHTML = `Našiel sa <span>${found_articles_count}</span> článok.`
