@@ -279,15 +279,12 @@ def cancelLikePost(request):
         return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
 def savePost(request):
-    print("SAVE")
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
 
             post_id = json.loads(request.body)
             user = Users.objects.get(id=logged_in_user_id)
-
-            print(post_id)
 
             if(str(post_id) not in user.saved_posts):
                 user.saved_posts.append(post_id)
@@ -2417,21 +2414,30 @@ def postView(request, post_id):
             )
         ).first()
 
-        post.tagged_users_json = json.dumps(
-            list(post.tagged_users.values_list("username", flat=True))
-        )
+        if post != None:
+            post.tagged_users_json = json.dumps(
+                list(post.tagged_users.values_list("username", flat=True))
+            )
 
-        if post.coordinates:
-            post.location = post.location.replace(",", "<span></span>")
-            post.latitude = str(post.coordinates.y).replace(",", ".")
-            post.longitude = str(post.coordinates.x).replace(",", ".")
+            if post.coordinates:
+                post.location = post.location.replace(",", "<span></span>")
+                post.latitude = str(post.coordinates.y).replace(",", ".")
+                post.longitude = str(post.coordinates.x).replace(",", ".")
+
+            return render(request, "app/post.html", {
+                "first_name": logged_in_user.first_name,
+                "last_name": logged_in_user.last_name,
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "saved_posts": logged_in_user.saved_posts,
+                "post": post
+            })
 
         return render(request, "app/post.html", {
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
             "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
-            "post": post
         })
 
     return render(request, "app/post.html")
