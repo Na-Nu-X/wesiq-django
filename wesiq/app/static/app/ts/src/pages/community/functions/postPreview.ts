@@ -144,6 +144,17 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
 
                                 post.appendChild(tooltip) // Appends The Tooltip With A Warning To The Post
                             }
+
+                            else if(this.duration < posts_preview_state.MIN_VIDEO_DURATION) {
+                                const tooltip:HTMLDivElement = document.createElement("div") // Creates The Tooltip
+
+                                tooltip.classList.add("tooltip") // Adds Tooltip Class
+                                tooltip.dataset["tooltip"] = gettext("Video je príliš krátke") // Adds Tooltip Message
+
+                                tooltip.innerHTML += "<i class='fa-solid fa-triangle-exclamation'></i>" // https://fontawesome.com/icons/triangle-exclamation
+
+                                post.appendChild(tooltip) // Appends The Tooltip With A Warning To The Post
+                            }
                         })
                     }
 

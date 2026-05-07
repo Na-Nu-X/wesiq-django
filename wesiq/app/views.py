@@ -278,6 +278,49 @@ def cancelLikePost(request):
         captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
         return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
+def savePost(request):
+    print("SAVE")
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            post_id = json.loads(request.body)
+            user = Users.objects.get(id=logged_in_user_id)
+
+            print(post_id)
+
+            if(str(post_id) not in user.saved_posts):
+                user.saved_posts.append(post_id)
+                user.save()
+
+            return JsonResponse({"success": True, "message": _("Príspevok bol úspešne uložený.")}, status=200)
+
+        return JsonResponse({"success": False, "message": _("Príspevok nie je možné uložiť bez prihlásenia.")}, status=401)
+
+    except:
+        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        return JsonResponse({"success": False, "message": _("Pri ukladaní príspevku došlo k chybe.")}, status=404)
+
+def unsavePost(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+
+            post_id = json.loads(request.body)
+            user = Users.objects.get(id=logged_in_user_id)
+
+            if(str(post_id) in user.saved_posts):
+                user.saved_posts.remove(str(post_id))
+                user.save()
+
+            return JsonResponse({"success": True, "message": _("Príspevok bol odstránený zo zoznamu uložených.")}, status=200)
+
+        return JsonResponse({"success": False, "message": _("Príspevok nie je možné odstrániť zo zoznamu uložených bez prihlásenia.")}, status=401)
+
+    except:
+        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=404)
+
 def reportComment(request):
     try:
         comment_id = json.loads(request.body) # Gets The Comment Data
@@ -1902,6 +1945,7 @@ def communityView(request):
                         MAX_IMAGE_SIZE = 10 * 1000 * 1000 # 10MB
                         MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
                         MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
+                        MIN_VIDEO_DURATION = 1 # 1 Second
 
                         compress_tasks = [] # Stores All Compress Tasks
 
@@ -1939,6 +1983,9 @@ def communityView(request):
 
                                         if duration > MAX_VIDEO_DURATION:
                                             return JsonResponse({"success": False, "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}}, status=400)
+
+                                        elif duration < MIN_VIDEO_DURATION:
+                                            return JsonResponse({"success": False, "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}}, status=400)
 
                                     except Exception:
                                         if os.path.exists(temporary_path): 
@@ -2001,7 +2048,7 @@ def communityView(request):
                         )
                     ).exclude(id=logged_in_user_id).order_by("-creation_time")
                     
-                    # Creates Valid Format For JSON Response
+                    # Creates Valid Format Of Users For JSON Response
                     users = [
                         {
                             "id": one_user.id, 
@@ -2083,6 +2130,14 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "cancel-like-post":
                 return cancelLikePost(request)
 
+            # Save Post
+            if request.headers.get("X-Requested-Action") == "save-post":
+                return savePost(request)
+
+            # Unsave Post
+            if request.headers.get("X-Requested-Action") == "unsave-post":
+                return unsavePost(request)
+
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-comment":
                 return reportComment(request)
@@ -2098,7 +2153,7 @@ def communityView(request):
                         username__contains=searched_tag
                     ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
 
-                    # Creates Valid Format For JSON Response
+                    # Creates Valid Format Of Users For Tag For JSON Response
                     users_for_tag = [
                         {
                             "id": one_user.id,
@@ -2203,7 +2258,7 @@ def loadPostsView(request):
             captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
             return JsonResponse({"success": False, "has_next": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
 
-        # Creates Valid Format For JSON Response
+        # Creates Valid Format Of Posts For JSON Response
         posts = [
             {
                 "user": {
@@ -2278,7 +2333,13 @@ def loadPostsView(request):
             for one_post in page_posts
         ]
 
-        return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user_id": logged_in_user_id, "profile_picture_name": logged_in_user.profile_picture_name, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
+        logged_in_user = {
+            "logged_in_user_id": logged_in_user_id, 
+            "profile_picture_name": logged_in_user.profile_picture_name,
+            "saved_posts": logged_in_user.saved_posts
+        }
+
+        return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user": logged_in_user, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
 
     return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
 
@@ -2317,6 +2378,14 @@ def postView(request, post_id):
             # Cancel Like Post
             if request.headers.get("X-Requested-Action") == "cancel-like-post":
                 return cancelLikePost(request)
+
+            # Save Post
+            if request.headers.get("X-Requested-Action") == "save-post":
+                return savePost(request)
+
+            # Unsave Post
+            if request.headers.get("X-Requested-Action") == "unsave-post":
+                return unsavePost(request)
 
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-comment":

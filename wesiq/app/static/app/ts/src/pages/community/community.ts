@@ -38,6 +38,7 @@ import {
     generatePostBars,
     changePost,
     togglePostLike,
+    togglePostSave,
     addComment,
     toggleCommentLike,
     reportComment,
@@ -872,8 +873,9 @@ document.addEventListener("DOMContentLoaded", function():void {
                 // Save Post
                 if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
                     const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
+                    const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    console.log(save_icon)
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Save Or Unsave The Post
                 }
             }
             
@@ -923,7 +925,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Feed Mouse Over Functionality
         feed.addEventListener("mouseover", function(event:MouseEvent):void {
-            if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
+            if((event.target as HTMLElement).classList.contains("fa-bookmark") && !(event.target as HTMLElement).classList.contains("active")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
 
                 save_icon.classList.replace("fa-regular", "fa-solid")
@@ -932,7 +934,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Feed Mouse Out Functionality
         feed.addEventListener("mouseout", function(event:MouseEvent):void {
-            if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
+            if((event.target as HTMLElement).classList.contains("fa-bookmark") && !(event.target as HTMLElement).classList.contains("active")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
 
                 save_icon.classList.replace("fa-solid", "fa-regular")
