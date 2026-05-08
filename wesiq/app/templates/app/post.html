@@ -96,7 +96,7 @@
 
                                 {% if one_post_media.is_video == True %}
                                     <div class="video_container">
-                                        <video class="video" poster="{{ one_post_media.thumbnail.url }}"  loop>
+                                        <video class="video" poster="{{ one_post_media.thumbnail.url }}" loop muted>
                                             <source src="{{ one_post_media.file.url }}">
                                             
                                             {% blocktranslate with user=one_post_media.post.user %}
@@ -106,17 +106,15 @@
 
                                         <div class="controls">
                                             <div class="buttons">
-                                                <div class="play_pause_container">
-                                                    <button class="play_pause">
-                                                        <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
-                                                        {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
-                                                    </button>
-                                                    
-                                                    <p class="time">0:08 / 3:51</p>
-                                                </div>
+                                                <button class="play_pause">
+                                                    <i class="fa-solid fa-play" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/play -->
+                                                    {% comment %} <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
+                                                </button>
+
+                                                <p class="timer"><span class="elapsed">0:00</span> / 3:51</p>
                                                 
                                                 <div class="volume_container">
-                                                    <input type="range" class="volume" min="0" max="1" step="0.1" value="0">
+                                                    <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
                                                     <i class="mute_unmute fa-solid fa-volume-xmark" title="{% translate 'Hlasitosť...' %}"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
                                                     {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low -->
                                                     <i class="fa-solid fa-volume"></i> <!-- https://fontawesome.com/icons/volume -->

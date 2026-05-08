@@ -2,6 +2,7 @@ import { sendPOST } from "../../../services/sendPOST.js"
 import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import { feed_state } from "../state.js"
+import { getFormattedTime } from "../../../utils/timer.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
@@ -987,26 +988,74 @@ function removeProcessingPost(task_id:number):void {
 
 // Function For Play Or Pause The Video
 export function playPauseVideo(play_pause_icon:HTMLElement, video:HTMLVideoElement):void {
-    console.log(play_pause_icon)
-    console.log(video)
+    // Play
+    if(play_pause_icon.classList.contains("fa-play")) {
+        play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
+        video.play() // Plays The Video
+    }
+
+    // Pause
+    else if(play_pause_icon.classList.contains("fa-pause")) {
+        play_pause_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
+        video.pause() // Pauses The Video
+    }
 }
 
 // Function For Mute Or Unmute The Video
 export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputElement, video:HTMLVideoElement):void {
-    console.log(volume_icon)
-    console.log(volume_input)
-    console.log(video)
+    // Unmute
+    if(volume_icon.classList.contains("fa-volume-xmark")) {
+        volume_icon.classList.replace("fa-volume-xmark", "fa-volume-high") // Shows The High Volume Icon
+        video.muted = false // Unmutes The Video
+        volume_input.value = "0.5" // Sets The Volume Input To 0.5
+    }
+
+    // Mute
+    else {
+        volume_icon.classList.replace("fa-volume-high", "fa-volume-xmark") // Shows The Muted Icon
+        video.muted = true // Mutes The Video
+        volume_input.value = "0" // Sets The Volume Input To 0
+    }
 }
 
 // Function For Change The Video Volume
 export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement):void {
-    console.log(volume_input)
-    console.log(volume_icon)
-    console.log(video)
+    const volume:number = Number(volume_input.value) // Gets The Volume Value
+
+    // Unmute
+    if(volume > 0) {
+        volume_icon.classList.replace("fa-volume-xmark", "fa-volume-high") // Shows The High Volume Icon
+        video.muted = false // Unmutes The Video
+        video.volume = volume // Sets The Volume
+    }
+
+    // Mute
+    else {
+        volume_icon.classList.replace("fa-volume-high", "fa-volume-xmark") // Shows The Muted Icon
+        video.muted = true // Mutes The Video
+    }
 }
 
 // Function For Play Or Pause The Video
-export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video:HTMLVideoElement):void {
-    console.log(toggle_fullscreen_icon)
-    console.log(video)
+export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video_container:HTMLDivElement):void {
+    // Fullscreen Mode
+    if(toggle_fullscreen_icon.classList.contains("fa-expand")) {
+        if(!document.fullscreenElement) {
+            toggle_fullscreen_icon.classList.replace("fa-expand", "fa-compress") // Shows The Compress Icon
+            video_container.requestFullscreen() // Makes The Video Full Screen Sized
+        }
+    }
+
+    // Exit The Fullscreen Mode
+    if(toggle_fullscreen_icon.classList.contains("fa-compress")) {
+        if(document.fullscreenElement) {
+            toggle_fullscreen_icon.classList.replace("fa-compress", "fa-expand") // Shows The Expand Icon
+            document.exitFullscreen() // Makes The Video Normal Screen Sized
+        }
+    }
+}
+
+// Function For Update The Video Timer
+export function updateVideoTimer(elapsed_time:number, elapsed_timer:HTMLParagraphElement, scrubber:HTMLDivElement) {
+    elapsed_timer.textContent = `${getFormattedTime("minutes", elapsed_time)}:${getFormattedTime("seconds", elapsed_time, true)}` // Sets The Elapsed Timer
 }
