@@ -2301,7 +2301,7 @@ def loadPostsView(request):
                 "likes": one_post.likes,
                 "likes_from_users": list(one_post.likes_from_users),
                 "created_at": one_post.created_at.isoformat(),
-                "media": list(one_post.media.values("file", "is_video")),
+                "media": list(one_post.media.values("file", "thumbnail", "is_video")),
 
                 "visible_comments": [
                     {

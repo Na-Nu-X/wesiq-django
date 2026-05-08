@@ -21,6 +21,7 @@ h2 {
     padding: 20px;
     background-color: transparentize($secondary-color, 0.95);
     border-radius: $medium-border-radius;
+    outline: none;
 
     .header {
         display: flex;
@@ -150,6 +151,7 @@ h2 {
             .video {
                 display: block;
                 width: 100%;
+                outline: none;
                 border-radius: $big-border-radius
             }
 
@@ -176,6 +178,7 @@ h2 {
                 .fa-angle-right,
                 .fa-angle-left {
                     @include position_center;
+                    pointer-events: none;
                     font-size: 30px;
                     color: $blue-color;
                 }
@@ -312,6 +315,20 @@ h2 {
 
             .hidden_comments_counter {
                 font-size: 0.8em;
+            }
+        }
+
+        .share {
+            .fa-share-nodes {
+                font-size: 1.5em;
+                display: block;
+                color: darken($secondary-color, 40%);
+
+                &:hover {
+                    color: darken($secondary-color, 20%);
+                    cursor: pointer;
+                    transition: color 0.3s ease;
+                }
             }
         }
 

@@ -11,7 +11,7 @@
 {% block content %}
     {% if post %}
         <div class="feed">
-            <div class="post_container" data-post_id="{{ post.id }}">
+            <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
                 <div class="header">
                     <div class="left">
                         <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
@@ -86,7 +86,7 @@
                     </div>
                 </div>
 
-                <div class="media">
+                <div class="media" data-active_index="0">
                     {% for one_post_media in post.media.all %}
                         {% if post.id == one_post_media.post.id %}
                             <div class="one_post">
@@ -95,8 +95,8 @@
                                 </div>
 
                                 {% if one_post_media.is_video == True %}
-                                    <video class="video" controls autoplay loop muted>
-                                        <source src="/../media/{{ one_post_media.file }}">
+                                    <video class="video" poster="{{ one_post_media.thumbnail.url }}" controls autoplay loop muted>
+                                        <source src="{{ one_post_media.file.url }}">
                                         
                                         {% blocktranslate with user=one_post_media.post.user %}
                                             Príspevok užívateľa {{ user }}
@@ -106,7 +106,7 @@
                                 {% elif one_post_media.is_video == False %}
                                     <img 
                                         class="image"
-                                        src="/../media/{{ one_post_media.file }}" 
+                                        src="{{ one_post_media.file.url }}" 
                                         alt="
                                             {% blocktranslate with user=one_post_media.post.user %}
                                                 Príspevok užívateľa {{ user }}
@@ -144,12 +144,12 @@
                                 fa-heart
                             "
                         ></i> <!-- https://fontawesome.com/icons/heart -->
-                        
-                        {% if post.hide_likes == False %}
-                            <p class="likes_counter">{{ post.likes }}</p>
 
-                        {% else %}
+                        {% if post.hide_likes and post.user.id != request.session.logged_in_user_id %}
                             <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
+                        
+                        {% else %}
+                            <p class="likes_counter">{{ post.likes }}</p>
                         
                         {% endif %}
                     </div>
@@ -164,6 +164,10 @@
                             <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
                         
                         {% endif %}
+                    </div>
+
+                    <div class="share" data-author="{{ post.user.username }}">
+                        <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                     </div>
 
                     <div class="save">
