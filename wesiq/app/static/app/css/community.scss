@@ -813,6 +813,7 @@ header {
             padding: 20px;
             background-color: transparentize($secondary-color, 0.95);
             border-radius: $medium-border-radius;
+            outline: none;
 
             .header {
                 display: flex;
@@ -959,6 +960,7 @@ header {
                     .thumbnail {
                         display: block;
                         width: 100%;
+                        outline: none;
                         border-radius: $big-border-radius
                     }
 

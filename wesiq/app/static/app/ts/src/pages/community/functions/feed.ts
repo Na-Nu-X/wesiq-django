@@ -43,6 +43,7 @@ export interface searchedPost {
 
     media:{
         file:string,
+        thumbnail:string,
         is_video:boolean
     }[],
 
@@ -138,16 +139,20 @@ export function generatePostBars(all_media:NodeListOf<HTMLDivElement>, post_bars
 }
 
 // Function For Change The Post
-export function changePost(clicked_bar_index:number, post_bars:HTMLDivElement, bar:HTMLDivElement, all_media:NodeListOf<HTMLDivElement>):void {
-    if(clicked_bar_index >= 0 && clicked_bar_index <= all_media.length - 1) {
+export function changePost(post_index:number, media_container:HTMLDivElement, post_bars:HTMLDivElement):void {
+    const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
+
+    if(post_index >= 0 && post_index <= all_media.length - 1) {
+        media_container.dataset["active_index"] = String(post_index) // Stores The New Index As A Active Index
+
         all_media.forEach(function(one_post:HTMLDivElement, index:number):void {
-            if(index !== clicked_bar_index) {
+            if(index !== post_index) {
                 one_post.style.display = "none"
 
                 const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
 
                 all_bars.forEach(one_bar => one_bar.classList.remove("active")) // Removes The Active Class From All Bars
-                bar.classList.add("active") // Adds The Active Class
+                if(all_bars[post_index]) all_bars[post_index].classList.add("active") // Adds The Active Class
             }
 
             else {
@@ -227,7 +232,7 @@ export async function sharePost(id:string, author:string):Promise<void> {
     const link:string = interpolate(gettext("/sk/prispevok/%s"), [id]) // Sets The Link To The Post
 
     // Creates And Fill Object With Data Values
-    let share_data:{
+    const share_data:{
         title:string,
         url:string
     } = {
@@ -235,7 +240,32 @@ export async function sharePost(id:string, author:string):Promise<void> {
         url: window.location.origin + link
     }
 
-    await navigator.share(share_data) // Opens The Share Menu
+    const message:HTMLParagraphElement|null = document.body.querySelector(".message") as HTMLParagraphElement || null // Gets The Message If Exists
+
+    if(message) message.remove() // Removes The Message From The DOM
+
+    try {
+        if(navigator.share) {
+            await navigator.share(share_data) // Opens The Share Menu
+            return
+        }
+
+        await navigator.clipboard.writeText(window.location.origin + link) // Copies The Link
+        
+        // Success Message
+        const success_message:HTMLParagraphElement = document.createElement("p") // Creates The Message Paragraph
+        success_message.classList.add("message", "success") // Adds The Message And Success Class
+        success_message.textContent = gettext("Odkaz bol skopírovaný")
+        document.body.appendChild(success_message)
+    }
+    
+    catch {
+        // Error Message
+        const error_message:HTMLParagraphElement = document.createElement("p") // Creates The Message Paragraph
+        error_message.classList.add("message", "error") // Adds The Message And Error Class
+        error_message.textContent = gettext("Odkaz sa nepodarilo skopírovať")
+        document.body.appendChild(error_message)
+    }
 }
 
 // Function For Save Or Unsave The Post
@@ -481,6 +511,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
     post_data.media.forEach(function(one_post_media:{
         file:string,
+        thumbnail:string,
         is_video:boolean
     }) {
         const one_post_template:HTMLTemplateElement = feed.querySelector(".one_post_template") as HTMLTemplateElement // Gets The One Post Template
@@ -504,6 +535,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             const video:HTMLVideoElement = document.createElement("video") // Creates The Video
 
             video.classList.add("video") // Adds The Video Class
+            video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
             video.controls = true
             video.autoplay = true
             video.loop = true

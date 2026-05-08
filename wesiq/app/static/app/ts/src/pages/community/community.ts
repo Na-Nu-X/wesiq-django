@@ -597,7 +597,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Variables
 
         const location_container:HTMLDivElement = upload_post_form.querySelector(".location_container") as HTMLDivElement // Gets The Location Container
-        const location:HTMLInputElement = location_container.querySelector(".location_input_container .location") as HTMLInputElement // Gets The Location Input
+        const location_input:HTMLInputElement = location_container.querySelector(".location_input_container .location") as HTMLInputElement // Gets The Location Input
         const latitude:HTMLInputElement = location_container.querySelector(".location_input_container .latitude") as HTMLInputElement // Gets The Latitude Hidden Input
         const longitude:HTMLInputElement = location_container.querySelector(".location_input_container .longitude") as HTMLInputElement // Gets The Longitude Hidden Input
         const location_results:HTMLDivElement = location_container.querySelector(".location_results_container .location_results") as HTMLDivElement // Gets The Location Results
@@ -608,10 +608,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Events
 
         // Location Input Functionality
-        location.addEventListener("input", function():void {
+        location_input.addEventListener("input", function():void {
             clearTimeout(debounce_timeout) // Clears The Debounce Timeout
 
-            const searched_location = location.value // Gets The Searched Location
+            const searched_location = location_input.value // Gets The Searched Location
 
             if(searched_location.length < 3) {
                 const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll<HTMLDivElement>(".place") // Gets All Places
@@ -631,17 +631,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
             debounce_timeout = window.setTimeout(function() {
-                getLocation(searched_location, location_results, location, latitude, longitude)
+                getLocation(searched_location, location_results, location_input, latitude, longitude)
             }, 1000)
         })
 
         // Location Focus Functionality
-        location.addEventListener("focus", function():void {
+        location_input.addEventListener("focus", function():void {
             if(location_results.querySelectorAll(".place").length > 0) location_results.classList.remove("hidden") // Shows The Location Results (If There Are Any)
         })
 
         // Location Blur Functionality
-        location.addEventListener("blur", function(event:FocusEvent):void {
+        location_input.addEventListener("blur", function(event:FocusEvent):void {
             if(
                 !(event.relatedTarget as HTMLDivElement).classList.contains("place") && 
                 !(event.relatedTarget as HTMLDivElement).classList.contains("location_results") &&
@@ -1030,11 +1030,10 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLDivElement).classList.contains("bar")) {
                 const clicked_bar:HTMLDivElement = event.target as HTMLDivElement // Gets The Clicked Bar
                 const media_container:HTMLDivElement = clicked_bar.closest(".media") as HTMLDivElement // Gets The Media Container
-                const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
                 const post_bars:HTMLDivElement = clicked_bar.parentElement as HTMLDivElement // Gets The Post Bars Container
                 const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
 
-                changePost(clicked_bar_index, post_bars, clicked_bar, all_media) // Changes The Post
+                changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
             }
 
             // Previous Post
@@ -1043,13 +1042,12 @@ document.addEventListener("DOMContentLoaded", function():void {
                 !(event.target as HTMLDivElement).classList.contains("hidden")
             ) {
                 const previous:HTMLDivElement = event.target as HTMLDivElement // Gets The Previous Button
-                const all_media:NodeListOf<HTMLDivElement> = (previous.closest(".media") as HTMLDivElement).querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
-                const post_index:number = [...all_media].indexOf(previous.parentElement as HTMLDivElement) - 1 // Gets The Previous Post Index
+                const media_container:HTMLDivElement = previous.closest(".media") as HTMLDivElement // Gets The Media Container
                 const post_bars:HTMLDivElement = ((previous.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-                const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
-                const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Previous Bar
+                const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+                const post_index:number = [...all_media].indexOf(previous.parentElement as HTMLDivElement) - 1 // Gets The Previous Post Index
 
-                changePost(post_index, post_bars, bar, all_media) // Changes The Post
+                changePost(post_index, media_container, post_bars) // Changes The Post
             }
 
             // Next Post
@@ -1058,13 +1056,12 @@ document.addEventListener("DOMContentLoaded", function():void {
                 !(event.target as HTMLDivElement).classList.contains("hidden")
             ) {
                 const next:HTMLDivElement = event.target as HTMLDivElement // Gets The Next Button
-                const all_media:NodeListOf<HTMLDivElement> = (next.closest(".media") as HTMLDivElement).querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
-                const post_index:number = [...all_media].indexOf(next.parentElement as HTMLDivElement) + 1 // Gets The Next Post Index
+                const media_container:HTMLDivElement = next.closest(".media") as HTMLDivElement // Gets The Media Container
                 const post_bars:HTMLDivElement = ((next.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-                const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
-                const bar:HTMLDivElement = all_bars[post_index] as HTMLDivElement // Gets The Next Bar
+                const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+                const post_index:number = [...all_media].indexOf(next.parentElement as HTMLDivElement) + 1 // Gets The Next Post Index
 
-                changePost(post_index, post_bars, bar, all_media) // Changes The Post
+                changePost(post_index, media_container, post_bars) // Changes The Post
             }
 
             return
@@ -1085,6 +1082,25 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
 
                 save_icon.classList.replace("fa-solid", "fa-regular")
+            }
+        })
+
+        // Feed Key Functionalities
+        feed.addEventListener("keydown", function(event:KeyboardEvent):void {
+            const post_container:HTMLDivElement = (event.target as HTMLElement).closest(".post_container") as HTMLDivElement // Gets The Post Container
+            const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
+            const post_bars:HTMLDivElement = media_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+
+            if(event.key === "ArrowLeft" || event.key === "ArrowRight") event.preventDefault() // Prevents Default Behaviour
+
+            if(event.key === "ArrowLeft") {
+                const post_index:number = Number(media_container.dataset["active_index"]) - 1 // Gets The Previous Post Index
+                changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
+            }
+
+            else if(event.key === "ArrowRight") {
+                const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
+                changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
             }
         })
 
