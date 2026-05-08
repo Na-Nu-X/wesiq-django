@@ -208,6 +208,21 @@ h2 {
                     }
                 }
 
+                &:fullscreen {
+                    top: 0px !important;
+                    left: 0px !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    margin: 0px !important;
+                    padding: 0px !important;
+
+                    .controls {
+                        .buttons {
+                            padding: 0px calc(50px);
+                        }
+                    }
+                }
+                
                 .controls {
                     display: none;
                     opacity: 0;
@@ -226,7 +241,7 @@ h2 {
                     .buttons {
                         display: flex;
                         align-items: center;
-                        gap: 20px;
+                        gap: 10px;
                         padding: 0px calc($big-border-radius / 2);
 
                         i {
@@ -236,23 +251,37 @@ h2 {
                             transition: transform 0.3s ease;
                         }
 
-                        .play_pause_container,
+                        .play_pause,
+                        .fullscreen {
+                            all: unset;
+                            cursor: pointer;
+
+                            &:hover {
+                                i {
+                                    transform: scale(1.1);
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+
+                        .timer {
+                            font-size: 0.8em;
+                            margin-right: auto;
+
+                            .elapsed {
+                                font-size: inherit;
+                            }
+                        }
+
                         .volume_container {
                             display: flex;
                             align-items: center;
                             gap: 10px;
                         }
 
-                        .play_pause_container {
-                            margin-right: auto;
-
-                            .time {
-                                font-size: 0.8em;
-                            }
-                        }
-
                         .volume_container {
                             .volume {
+                                appearance: none !important;
                                 -webkit-appearance: none !important;
                                 height: 5px;
                                 background-color: lighten($blue-color, 2%);
@@ -286,17 +315,8 @@ h2 {
                             }
                         }
 
-                        .play_pause,
                         .fullscreen {
-                            all: unset;
-                            cursor: pointer;
-
-                            &:hover {
-                                i {
-                                    transform: scale(1.1);
-                                    cursor: pointer;
-                                }
-                            }
+                            margin-left: 10px;
                         }
                     }
 

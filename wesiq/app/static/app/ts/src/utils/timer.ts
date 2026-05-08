@@ -2,7 +2,7 @@
 export function getFormattedTime(unit:string = "seconds", elapsed_seconds:number = 0, leading_zero:boolean = false):string {
     // Formats Seconds
     if(unit === "seconds") {
-        const result:string = String(elapsed_seconds % 60) // Number Value Of Elapsed Seconds
+        const result:string = String(Math.floor(elapsed_seconds) % 60) // Number Value Of Elapsed Seconds
         return leading_zero === true ? result.toString().padStart(2, "0") : result // Returns Formatted Style Of Elapsed Seconds If Format Parameter Is Set As True
     }
 

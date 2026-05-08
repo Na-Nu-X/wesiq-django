@@ -54,7 +54,8 @@ import {
     playPauseVideo,
     muteUnmuteVideo,
     changeVideoVolume,
-    toogleVideoFullscreen
+    toogleVideoFullscreen,
+    updateVideoTimer
 } from "./functions/feed.js"
 
 import type { 
@@ -680,6 +681,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     if(feed) {
         const search_posts_container:HTMLDivElement|null = feed.querySelector(".search_posts_container") as HTMLDivElement || null // Gets The Search Posts Container
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+        const all_videos:NodeListOf<HTMLVideoElement> = feed.querySelectorAll<HTMLVideoElement>(".post_container .media .one_post .video_container .video") // Gets All Videos
 
         if(search_posts_container) {
             const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
@@ -1088,9 +1090,9 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Toogle Video Fullscreen
             if((event.target as HTMLButtonElement).classList.contains("fullscreen")) {
                 const toggle_fullscreen_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Toggle Fullscreen Icon
-                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+                const video_container:HTMLDivElement = (event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement // Gets The Video Container
 
-                toogleVideoFullscreen(toggle_fullscreen_icon, video) // Plays Or Pauses The Video
+                toogleVideoFullscreen(toggle_fullscreen_icon, video_container) // Plays Or Pauses The Video
             }
 
             return
@@ -1140,7 +1142,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Change Video Volume
             if((event.target as HTMLDivElement).classList.contains("volume")) {
                 const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input
-                const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".volume") as HTMLElement // Gets the Volume Icon
+                const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".mute_unmute") as HTMLElement // Gets the Volume Icon
                 const video:HTMLVideoElement = (volume_input.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
                 changeVideoVolume(volume_input, volume_icon, video) // Changes The Video Volume
@@ -1218,6 +1220,18 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
 
             if(post_id) checkProcessingPosts(post_id, processing_post_report) // Checks If There Is Any Other Media From Selected Post In The Processing Posts
+        })
+
+        // All Videos Functionalities
+        all_videos.forEach(function(one_video:HTMLVideoElement):void {
+            // Video Time Update Functionality
+            one_video.addEventListener("timeupdate", function():void {
+                const video_container:HTMLDivElement = this.closest(".video_container") as HTMLDivElement // Gets The Video Container
+                const elapsed_timer:HTMLParagraphElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLParagraphElement // Gets The Elapsed Timer
+                const scrubber:HTMLDivElement = video_container.querySelector(".controls .scrubber") as HTMLDivElement // Gets The Scrubber
+                
+                updateVideoTimer(this.currentTime, elapsed_timer, scrubber) // Updates The Video Timer
+            })
         })
     }
 })
