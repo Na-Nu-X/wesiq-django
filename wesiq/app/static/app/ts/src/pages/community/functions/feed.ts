@@ -984,3 +984,29 @@ function removeProcessingPost(task_id:number):void {
         localStorage.setItem("processing_posts", JSON.stringify(processing_posts)) // Saves Updated Processing Posts To The Local Storage
     }
 }
+
+// Function For Play Or Pause The Video
+export function playPauseVideo(play_pause_icon:HTMLElement, video:HTMLVideoElement):void {
+    console.log(play_pause_icon)
+    console.log(video)
+}
+
+// Function For Mute Or Unmute The Video
+export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputElement, video:HTMLVideoElement):void {
+    console.log(volume_icon)
+    console.log(volume_input)
+    console.log(video)
+}
+
+// Function For Change The Video Volume
+export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement):void {
+    console.log(volume_input)
+    console.log(volume_icon)
+    console.log(video)
+}
+
+// Function For Play Or Pause The Video
+export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video:HTMLVideoElement):void {
+    console.log(toggle_fullscreen_icon)
+    console.log(video)
+}

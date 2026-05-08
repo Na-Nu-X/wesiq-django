@@ -50,7 +50,11 @@ import {
     loadPosts,
     getUploadProgress,
     setCompletedUploadProgress,
-    checkProcessingPosts
+    checkProcessingPosts,
+    playPauseVideo,
+    muteUnmuteVideo,
+    changeVideoVolume,
+    toogleVideoFullscreen
 } from "./functions/feed.js"
 
 import type { 
@@ -1064,11 +1068,37 @@ document.addEventListener("DOMContentLoaded", function():void {
                 changePost(post_index, media_container, post_bars) // Changes The Post
             }
 
+            // Play / Pause Video
+            if((event.target as HTMLButtonElement).classList.contains("play_pause")) {
+                const play_pause_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Play / Pause Icon
+                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                playPauseVideo(play_pause_icon, video) // Plays Or Pauses The Video
+            }
+
+            // Mute / Unmute Video
+            if((event.target as HTMLDivElement).classList.contains("mute_unmute")) {
+                const volume_icon:HTMLElement = event.target as HTMLElement // Gets The Volume Icon
+                const volume_input:HTMLInputElement = (volume_icon.closest(".volume_container") as HTMLDivElement).querySelector(".volume") as HTMLInputElement // Gets the Volume Input
+                const video:HTMLVideoElement = (volume_icon.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                muteUnmuteVideo(volume_icon, volume_input, video) // Mutes Or Unmutes The Video
+            }
+
+            // Toogle Video Fullscreen
+            if((event.target as HTMLButtonElement).classList.contains("fullscreen")) {
+                const toggle_fullscreen_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Toggle Fullscreen Icon
+                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                toogleVideoFullscreen(toggle_fullscreen_icon, video) // Plays Or Pauses The Video
+            }
+
             return
         })
 
         // Feed Mouse Over Functionality
         feed.addEventListener("mouseover", function(event:MouseEvent):void {
+            // Save Icon
             if((event.target as HTMLElement).classList.contains("fa-bookmark") && !(event.target as HTMLElement).classList.contains("active")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
 
@@ -1078,6 +1108,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Feed Mouse Out Functionality
         feed.addEventListener("mouseout", function(event:MouseEvent):void {
+            // Save Icon
             if((event.target as HTMLElement).classList.contains("fa-bookmark") && !(event.target as HTMLElement).classList.contains("active")) {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
 
@@ -1101,6 +1132,18 @@ document.addEventListener("DOMContentLoaded", function():void {
             else if(event.key === "ArrowRight") {
                 const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
                 changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
+            }
+        })
+
+        // Feed Input Functionalities
+        feed.addEventListener("input", function(event:Event):void {
+            // Change Video Volume
+            if((event.target as HTMLDivElement).classList.contains("volume")) {
+                const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input
+                const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".volume") as HTMLElement // Gets the Volume Icon
+                const video:HTMLVideoElement = (volume_input.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                changeVideoVolume(volume_input, volume_icon, video) // Changes The Video Volume
             }
         })
 
