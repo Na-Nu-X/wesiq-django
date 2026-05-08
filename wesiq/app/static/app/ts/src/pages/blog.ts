@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 url: `${document.location.href + link}` // http://127.0.0.1:8000/blog/${link}
             }
 
-            await navigator.share(share_data) // Opens Share Menu
+            await navigator.share(share_data) // Opens The Share Menu
         })
     })
 

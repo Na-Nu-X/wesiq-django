@@ -178,6 +178,10 @@
                         <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                     </div>
 
+                    <div class="share">
+                        <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                    </div>
+
                     <div class="save">
                         <i class="fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
                     </div>
@@ -330,17 +334,15 @@
                                     </div>
 
                                     {% if one_post_media.is_video == True %}
-                                        {% if one_post_media.thumbnail.url %}
-                                            <img 
-                                                class="thumbnail"
-                                                src="{{ one_post_media.thumbnail.url }}" 
-                                                alt="
-                                                    {% blocktranslate with user=one_post_media.post.user %}
-                                                        Príspevok užívateľa {{ user }}
-                                                    {% endblocktranslate %}
-                                                "
-                                            >
-                                        {% endif %}
+                                        <img 
+                                            class="thumbnail"
+                                            src="{{ one_post_media.thumbnail.url }}" 
+                                            alt="
+                                                {% blocktranslate with user=one_post_media.post.user %}
+                                                    Príspevok užívateľa {{ user }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
 
                                     {% elif one_post_media.is_video == False %}
                                         <img 
