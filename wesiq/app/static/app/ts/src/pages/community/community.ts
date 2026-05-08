@@ -38,6 +38,7 @@ import {
     generatePostBars,
     changePost,
     togglePostLike,
+    sharePost,
     togglePostSave,
     addComment,
     toggleCommentLike,
@@ -1007,12 +1008,21 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
                 }
 
+                // Share Post
+                if((event.target as HTMLElement).classList.contains("fa-share-nodes")) {
+                    const share_icon:HTMLElement = event.target as HTMLElement // Gets The Share Icon
+                    const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
+                    const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(post_container.dataset["post_id"], share.dataset["author"]) // Shares The Post
+                }
+
                 // Save Post
                 if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
                     const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
                     const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Save Or Unsave The Post
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Saves Or Unsaves The Post
                 }
             }
             

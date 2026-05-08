@@ -222,6 +222,22 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
     }
 }
 
+// Function For Share The Post
+export async function sharePost(id:string, author:string):Promise<void> {
+    const link:string = interpolate(gettext("/sk/prispevok/%s"), [id]) // Sets The Link To The Post
+
+    // Creates And Fill Object With Data Values
+    let share_data:{
+        title:string,
+        url:string
+    } = {
+        title: `Wesiq - Príspevok užívateľa ${author}`,
+        url: window.location.origin + link
+    }
+
+    await navigator.share(share_data) // Opens The Share Menu
+}
+
 // Function For Save Or Unsave The Post
 export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> {
     // If The Save Icon Is Inactive
@@ -557,6 +573,10 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
         hidden_comments_counter.textContent = gettext("Vypnuté")
         comments.appendChild(hidden_comments_counter) // Appends The Hidden Comments Counter To The Likes
     }
+
+    // Share
+    const share:HTMLDivElement = society.querySelector(".share") as HTMLDivElement // Gets The Share Container
+    share.dataset["author"] = post_data.user.username // Stores The Author's Username
 
     // Save
     const save:HTMLDivElement = society.querySelector(".save") as HTMLDivElement // Gets The Save Container

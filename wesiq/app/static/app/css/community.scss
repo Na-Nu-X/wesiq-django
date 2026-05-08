@@ -1125,6 +1125,20 @@ header {
                     }
                 }
 
+                .share {
+                    .fa-share-nodes {
+                        font-size: 1.5em;
+                        display: block;
+                        color: darken($secondary-color, 40%);
+
+                        &:hover {
+                            color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+                    }
+                }
+
                 .save {
                     margin-left: auto;
 
