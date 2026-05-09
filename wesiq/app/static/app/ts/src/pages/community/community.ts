@@ -58,8 +58,8 @@ import {
     setVideoDuration,
     updateVideoTimer,
     updateBufferingBar,
-    showVideoSpinner,
-    hideVideoSpinner
+    showVideoLoader,
+    hideVideoLoader
 } from "./functions/feed.js"
 
 import type { 
@@ -1261,23 +1261,23 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Video Loading Functionalities
             one_video.addEventListener("waiting", () => {
-                showVideoSpinner(loading) // Shows The Video Spinner
+                showVideoLoader(loading) // Shows The Video Loader
             })
             
             one_video.addEventListener("playing", () => {
-                hideVideoSpinner(loading) // Hides The Video Spinner
+                hideVideoLoader(loading) // Hides The Video Loader
             })
 
             one_video.addEventListener("seeking", () => {
-                showVideoSpinner(loading) // Shows The Video Spinner
+                showVideoLoader(loading) // Shows The Video Loader
             })
 
             one_video.addEventListener("seeked", () => {
-                hideVideoSpinner(loading) // Hides The Video Spinner
+                hideVideoLoader(loading) // Hides The Video Loader
             })
 
             one_video.addEventListener("stalled", () => {
-                showVideoSpinner(loading) // Shows The Video Spinner
+                showVideoLoader(loading) // Shows The Video Loader
             })
         })
     }

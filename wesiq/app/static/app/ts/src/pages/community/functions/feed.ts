@@ -1013,6 +1013,7 @@ export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputE
     // Mute
     else {
         volume_icon.classList.replace("fa-volume-high", "fa-volume-xmark") // Shows The Muted Icon
+        volume_icon.classList.replace("fa-volume-low", "fa-volume-xmark") // Shows The Muted Icon
         video.muted = true // Mutes The Video
         volume_input.value = "0" // Sets The Volume Input To 0
     }
@@ -1022,17 +1023,26 @@ export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputE
 export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement):void {
     const volume:number = Number(volume_input.value) // Gets The Volume Value
 
-    // Unmute
-    if(volume > 0) {
-        volume_icon.classList.replace("fa-volume-xmark", "fa-volume-high") // Shows The High Volume Icon
+    // Mute
+    if(volume === 0) {
+        volume_icon.classList.replace("fa-volume-low", "fa-volume-xmark") // Shows The Muted Icon
+        video.muted = true // Mutes The Video
+        console.log(0)
+    }
+
+    // Low Volume
+    else if(volume > 0 && volume <= 0.5) {
+        volume_icon.classList.replace("fa-volume-xmark", "fa-volume-low") // Shows The Low Volume Icon
+        volume_icon.classList.replace("fa-volume-high", "fa-volume-low") // Shows The Low Volume Icon
         video.muted = false // Unmutes The Video
         video.volume = volume // Sets The Volume
     }
 
-    // Mute
+    // High Volume
     else {
-        volume_icon.classList.replace("fa-volume-high", "fa-volume-xmark") // Shows The Muted Icon
-        video.muted = true // Mutes The Video
+        volume_icon.classList.replace("fa-volume-low", "fa-volume-high") // Shows The High Volume Icon
+        video.muted = false // Unmutes The Video
+        video.volume = volume // Sets The Volume
     }
 }
 
@@ -1092,12 +1102,12 @@ export function updateBufferingBar(video:HTMLVideoElement, buffering_bar:HTMLDiv
     }
 }
 
-// Function For Show The Video Spinner
-export function showVideoSpinner(loading:HTMLDivElement):void {
+// Function For Show The Video Loader
+export function showVideoLoader(loading:HTMLDivElement):void {
     loading.classList.remove("hidden") // Shows The Loading
 }
 
-// Function For Hide The Video Spinner
-export function hideVideoSpinner(loading:HTMLDivElement):void {
+// Function For Hide The Video Loader
+export function hideVideoLoader(loading:HTMLDivElement):void {
     loading.classList.add("hidden") // Hides The Loading
 }
