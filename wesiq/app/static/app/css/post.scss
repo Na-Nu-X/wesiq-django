@@ -323,6 +323,7 @@ h2 {
                             .volume {
                                 appearance: none !important;
                                 -webkit-appearance: none !important;
+                                direction: rtl;
                                 height: 5px;
                                 background-color: lighten($blue-color, 2%);
                                 border-radius: calc(5px / 2);
