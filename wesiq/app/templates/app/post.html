@@ -100,7 +100,7 @@
 
                                 {% if one_post_media.is_video == True %}
                                     <div class="video_container">
-                                        <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="metadata" loop muted>
+                                        <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="none" autoplay loop muted>
                                             <source src="{{ one_post_media.file.url }}">
                                             
                                             {% blocktranslate with user=one_post_media.post.user %}
@@ -111,8 +111,8 @@
                                         <div class="controls">
                                             <div class="buttons">
                                                 <button class="play_pause">
-                                                    <i class="fa-solid fa-play" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/play -->
-                                                    {% comment %} <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
+                                                    <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                                                    {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
                                                 </button>
 
                                                 <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>

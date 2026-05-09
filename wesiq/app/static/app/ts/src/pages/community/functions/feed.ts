@@ -1027,7 +1027,6 @@ export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTM
     if(volume === 0) {
         volume_icon.classList.replace("fa-volume-low", "fa-volume-xmark") // Shows The Muted Icon
         video.muted = true // Mutes The Video
-        console.log(0)
     }
 
     // Low Volume

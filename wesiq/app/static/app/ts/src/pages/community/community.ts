@@ -67,6 +67,7 @@ import type {
     uploadPostResponse
 } from "./functions/feed.js"
 
+import { getFormattedTime } from "../../utils/timer.js"
 import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 
@@ -1238,6 +1239,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             const loading:HTMLDivElement = one_post?.querySelector(".loading") as HTMLDivElement // Gets The Loading
             let is_hovered_scrubber:boolean = false // Checks If The Scrubber Is Hovered
             let previous_scrubber_progress:string = scrubber.style.getPropertyValue("--progress") || "0%"// Gets The Previous Scrubber Progress
+            let previous_elapsed_time:number = one_video.currentTime // Gets The Previous Elapsed Time
 
             // Set Video Duration Functionality
             if(!isNaN(one_video.duration)) setVideoDuration(one_video.duration, total_time) // Sets The Video Duration
@@ -1248,9 +1250,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Video Time Update Functionality
             one_video.addEventListener("timeupdate", function():void {
+                const is_playing:boolean = !one_video.paused && !one_video.ended && one_video.readyState > 2
+
                 // if(one_video.seeking) return
                 if(!is_hovered_scrubber) updateVideoTimer(this.currentTime, this.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                if(!is_playing) elapsed_timer.textContent = `${getFormattedTime("minutes", this.currentTime)}:${getFormattedTime("seconds", this.currentTime, true)}` // Sets The Elapsed Timer
                 previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
+                previous_elapsed_time = one_video.currentTime // Updates The Previous Elapsed Time
             })
 
             // Video Buffering Bar Functionalities
@@ -1291,15 +1297,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
                 const hovered_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Hovered Scrubber Position
                 const scrubber_progress:number = Math.min(Math.max((hovered_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
+                const hovered_video_time:number = (scrubber_progress / 100) * one_video.duration || 0 // Gets The Hovered Video Time
 
                 is_hovered_scrubber = true
                 scrubber.style.setProperty("--progress", `${scrubber_progress}%`) // Shows The Progress In Scrubber
+                elapsed_timer.textContent = `${getFormattedTime("minutes", hovered_video_time)}:${getFormattedTime("seconds", hovered_video_time, true)}` // Sets The Elapsed Timer
             })
 
             // Scrubber Hitbox Mouse Out Functionalities
             scrubber_hitbox.addEventListener("mouseout", function():void {
                 is_hovered_scrubber = false
                 scrubber.style.setProperty("--progress", previous_scrubber_progress) // Shows The Progress In Scrubber
+                elapsed_timer.textContent = `${getFormattedTime("minutes", previous_elapsed_time)}:${getFormattedTime("seconds", previous_elapsed_time, true)}` // Sets The Elapsed Timer
             })
 
             // Scrubber Hitbox Click Functionalities
@@ -1310,12 +1319,13 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
                 const clicked_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Clicked Scrubber Position
                 const scrubber_progress:number = Math.min(Math.max((clicked_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
-                const clicked_video_time:number = (scrubber_progress / 100) * one_video.duration
+                const clicked_video_time:number = (scrubber_progress / 100) * one_video.duration || 0 // Gets The Clicked Video Time
 
                 if(one_video.readyState === 4) {
                     one_video.currentTime = clicked_video_time // Sets The New Current Video Time Position
                     updateVideoTimer(one_video.currentTime, one_video.duration, elapsed_timer, scrubber) // Updates The Video Timer
                     previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
+                    previous_elapsed_time = one_video.currentTime // Updates The Previous Elapsed Time
                 }
             })
         })
