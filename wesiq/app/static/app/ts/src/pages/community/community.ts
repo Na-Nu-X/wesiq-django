@@ -1231,10 +1231,13 @@ document.addEventListener("DOMContentLoaded", function():void {
             const video_container:HTMLDivElement = one_video.closest(".video_container") as HTMLDivElement // Gets The Video Container
             const total_time:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .total") as HTMLSpanElement // Gets The Elapsed Timer
             const elapsed_timer:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLSpanElement // Gets The Elapsed Timer
-            const scrubber:HTMLDivElement = video_container.querySelector(".controls .scrubber") as HTMLDivElement // Gets The Scrubber
+            const scrubber_hitbox:HTMLDivElement = video_container.querySelector(".controls .scrubber_hitbox") as HTMLDivElement // Gets The Scrubber Hitbox
+            const scrubber:HTMLDivElement = scrubber_hitbox.querySelector(".scrubber") as HTMLDivElement // Gets The Scrubber
             const buffering_bar:HTMLDivElement = video_container.querySelector(".controls .scrubber .buffering_bar") as HTMLDivElement // Gets The Buffering Bar
             const one_post:HTMLDivElement = one_video.closest(".one_post") as HTMLDivElement // Gets The One Post Container
             const loading:HTMLDivElement = one_post?.querySelector(".loading") as HTMLDivElement // Gets The Loading
+            let is_hovered_scrubber:boolean = false // Checks If The Scrubber Is Hovered
+            let previous_scrubber_progress:string = scrubber.style.getPropertyValue("--progress") || "0%"// Gets The Previous Scrubber Progress
 
             // Set Video Duration Functionality
             if(!isNaN(one_video.duration)) setVideoDuration(one_video.duration, total_time) // Sets The Video Duration
@@ -1245,7 +1248,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Video Time Update Functionality
             one_video.addEventListener("timeupdate", function():void {
-                updateVideoTimer(this.currentTime, this.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                // if(one_video.seeking) return
+                if(!is_hovered_scrubber) updateVideoTimer(this.currentTime, this.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
             })
 
             // Video Buffering Bar Functionalities
@@ -1278,6 +1283,40 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             one_video.addEventListener("stalled", () => {
                 showVideoLoader(loading) // Shows The Video Loader
+            })
+
+            // Scrubber Hitbox Mouse Move Functionalities
+            scrubber_hitbox.addEventListener("mousemove", function(event:MouseEvent):void {
+                const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
+                const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
+                const hovered_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Hovered Scrubber Position
+                const scrubber_progress:number = Math.min(Math.max((hovered_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
+
+                is_hovered_scrubber = true
+                scrubber.style.setProperty("--progress", `${scrubber_progress}%`) // Shows The Progress In Scrubber
+            })
+
+            // Scrubber Hitbox Mouse Out Functionalities
+            scrubber_hitbox.addEventListener("mouseout", function():void {
+                is_hovered_scrubber = false
+                scrubber.style.setProperty("--progress", previous_scrubber_progress) // Shows The Progress In Scrubber
+            })
+
+            // Scrubber Hitbox Click Functionalities
+            scrubber_hitbox.addEventListener("click", function(event:PointerEvent):void {
+                // if(one_video.duration === 0 || isNaN(one_video.duration)) return;
+
+                const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
+                const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
+                const clicked_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Clicked Scrubber Position
+                const scrubber_progress:number = Math.min(Math.max((clicked_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
+                const clicked_video_time:number = (scrubber_progress / 100) * one_video.duration
+
+                if(one_video.readyState === 4) {
+                    one_video.currentTime = clicked_video_time // Sets The New Current Video Time Position
+                    updateVideoTimer(one_video.currentTime, one_video.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                    previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
+                }
             })
         })
     }
