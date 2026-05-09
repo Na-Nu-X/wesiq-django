@@ -1074,9 +1074,9 @@ export function setVideoDuration(duration:number, total_time:HTMLSpanElement):vo
 export function updateVideoTimer(elapsed_time:number, duration:number, elapsed_timer:HTMLSpanElement, scrubber:HTMLDivElement) {
     elapsed_timer.textContent = `${getFormattedTime("minutes", elapsed_time)}:${getFormattedTime("seconds", elapsed_time, true)}` // Sets The Elapsed Timer
 
-    const progress:number = (elapsed_time / duration) * 100
+    const progress:number = (elapsed_time / duration) * 100 // Calculates The Progress
 
-    scrubber.style.setProperty("--progress", `${progress}%`)
+    scrubber.style.setProperty("--progress", `${progress}%`) // Shows The Progress In Scrubber
 }
 
 // Function For Update The Video Buffering Bar
