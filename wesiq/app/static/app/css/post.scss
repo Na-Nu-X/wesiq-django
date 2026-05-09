@@ -339,7 +339,10 @@ h2 {
                                 }
                             }
 
-                            i {
+                            .mute_unmute {
+                                display: block;
+                                width: 22.5px;
+                                text-align: right;
                                 pointer-events: all;
 
                                 &:hover {
