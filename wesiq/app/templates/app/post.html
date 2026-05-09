@@ -90,6 +90,10 @@
                     {% for one_post_media in post.media.all %}
                         {% if post.id == one_post_media.post.id %}
                             <div class="one_post">
+                                <div class="loading hidden">
+                                    <p>{% translate "Načítavam..." %}</p>
+                                </div>
+
                                 <div class="previous hidden">
                                     <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
                                 </div>
@@ -111,7 +115,7 @@
                                                     {% comment %} <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
                                                 </button>
 
-                                                <p class="timer"><span class="elapsed">0:00</span> / 3:51</p>
+                                                <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>
                                                 
                                                 <div class="volume_container">
                                                     <input type="range" class="volume" min="0" max="1" step="0.01" value="0">

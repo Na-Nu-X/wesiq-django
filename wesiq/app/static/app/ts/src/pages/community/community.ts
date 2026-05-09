@@ -55,7 +55,11 @@ import {
     muteUnmuteVideo,
     changeVideoVolume,
     toogleVideoFullscreen,
-    updateVideoTimer
+    setVideoDuration,
+    updateVideoTimer,
+    updateBufferingBar,
+    showVideoSpinner,
+    hideVideoSpinner
 } from "./functions/feed.js"
 
 import type { 
@@ -1224,13 +1228,56 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // All Videos Functionalities
         all_videos.forEach(function(one_video:HTMLVideoElement):void {
+            const video_container:HTMLDivElement = one_video.closest(".video_container") as HTMLDivElement // Gets The Video Container
+            const total_time:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .total") as HTMLSpanElement // Gets The Elapsed Timer
+            const elapsed_timer:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLSpanElement // Gets The Elapsed Timer
+            const scrubber:HTMLDivElement = video_container.querySelector(".controls .scrubber") as HTMLDivElement // Gets The Scrubber
+            const buffering_bar:HTMLDivElement = video_container.querySelector(".controls .scrubber .buffering_bar") as HTMLDivElement // Gets The Buffering Bar
+            const one_post:HTMLDivElement = one_video.closest(".one_post") as HTMLDivElement // Gets The One Post Container
+            const loading:HTMLDivElement = one_post?.querySelector(".loading") as HTMLDivElement // Gets The Loading
+
+            // Set Video Duration Functionality
+            if(!isNaN(one_video.duration)) setVideoDuration(one_video.duration, total_time) // Sets The Video Duration
+
+            one_video.addEventListener("loadedmetadata", function():void {
+                setVideoDuration(this.duration, total_time) // Sets The Video Duration
+            })
+
             // Video Time Update Functionality
             one_video.addEventListener("timeupdate", function():void {
-                const video_container:HTMLDivElement = this.closest(".video_container") as HTMLDivElement // Gets The Video Container
-                const elapsed_timer:HTMLParagraphElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLParagraphElement // Gets The Elapsed Timer
-                const scrubber:HTMLDivElement = video_container.querySelector(".controls .scrubber") as HTMLDivElement // Gets The Scrubber
-                
-                updateVideoTimer(this.currentTime, elapsed_timer, scrubber) // Updates The Video Timer
+                updateVideoTimer(this.currentTime, this.duration, elapsed_timer, scrubber) // Updates The Video Timer
+            })
+
+            // Video Buffering Bar Functionalities
+            updateBufferingBar(one_video, buffering_bar) // Updates The Video Buffering Bar
+            
+            one_video.addEventListener("canplaythrough", function():void {
+                updateBufferingBar(this, buffering_bar) // Updates The Video Buffering Bar
+            })
+
+            one_video.addEventListener("progress", function():void {
+                updateBufferingBar(this, buffering_bar) // Updates The Video Buffering Bar
+            })
+
+            // Video Loading Functionalities
+            one_video.addEventListener("waiting", () => {
+                showVideoSpinner(loading) // Shows The Video Spinner
+            })
+            
+            one_video.addEventListener("playing", () => {
+                hideVideoSpinner(loading) // Hides The Video Spinner
+            })
+
+            one_video.addEventListener("seeking", () => {
+                showVideoSpinner(loading) // Shows The Video Spinner
+            })
+
+            one_video.addEventListener("seeked", () => {
+                hideVideoSpinner(loading) // Hides The Video Spinner
+            })
+
+            one_video.addEventListener("stalled", () => {
+                showVideoSpinner(loading) // Shows The Video Spinner
             })
         })
     }

@@ -1055,7 +1055,49 @@ export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video_
     }
 }
 
+// Function For Set The Video Duration
+export function setVideoDuration(duration:number, total_time:HTMLSpanElement):void {
+    total_time.textContent = `${getFormattedTime("minutes", duration)}:${getFormattedTime("seconds", duration, true)}` // Sets The Total Time
+}
+
 // Function For Update The Video Timer
-export function updateVideoTimer(elapsed_time:number, elapsed_timer:HTMLParagraphElement, scrubber:HTMLDivElement) {
+export function updateVideoTimer(elapsed_time:number, duration:number, elapsed_timer:HTMLSpanElement, scrubber:HTMLDivElement) {
     elapsed_timer.textContent = `${getFormattedTime("minutes", elapsed_time)}:${getFormattedTime("seconds", elapsed_time, true)}` // Sets The Elapsed Timer
+
+    const progress:number = (elapsed_time / duration) * 100
+
+    scrubber.style.setProperty("--progress", `${progress}%`)
+}
+
+// Function For Update The Video Buffering Bar
+export function updateBufferingBar(video:HTMLVideoElement, buffering_bar:HTMLDivElement):void {
+    if(video.duration > 0 && video.buffered.length > 0) {
+        let current_buffered_end:number = 0
+
+        for(let i:number = 0; i < video.buffered.length; i++) {
+            if(video.currentTime >= video.buffered.start(i) && video.currentTime <= video.buffered.end(i)) {
+                current_buffered_end = video.buffered.end(i)
+                break
+            }
+        }
+
+        if(current_buffered_end === 0 && video.buffered.length > 0) {
+            current_buffered_end = video.buffered.end(0)
+        }
+
+        const duration:number = video.duration
+        const buffer_percentage:number = (current_buffered_end / duration) * 100
+        
+        buffering_bar.style.setProperty("--progress", `${buffer_percentage}%`)
+    }
+}
+
+// Function For Show The Video Spinner
+export function showVideoSpinner(loading:HTMLDivElement):void {
+    loading.classList.remove("hidden") // Shows The Loading
+}
+
+// Function For Hide The Video Spinner
+export function hideVideoSpinner(loading:HTMLDivElement):void {
+    loading.classList.add("hidden") // Hides The Loading
 }
