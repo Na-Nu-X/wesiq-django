@@ -727,6 +727,7 @@ def compressVideo(self, post_media_id):
         # FFmpeg Compression
         command = [
             "ffmpeg", "-y", "-i", input_path,
+            "-movflags", "+faststart",
             "-progress", "pipe:1",
             "-vcodec", "libx264", 
             "-crf", "32",
