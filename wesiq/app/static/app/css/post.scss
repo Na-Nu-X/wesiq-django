@@ -346,6 +346,37 @@ h2 {
                                 }
                             }
 
+                            // .volume {
+                            //     appearance: none !important;
+                            //     -webkit-appearance: none !important;
+                            //     direction: rtl;
+                            //     height: 5px;
+                            //     background-color: lighten($blue-color, 5%);
+                            //     border-radius: calc(5px / 2);
+                            //     cursor: pointer;
+                            //     overflow: hidden;
+                            
+                            //     &::-webkit-slider-runnable-track {
+                            //         height: 5px;
+                            //         -webkit-appearance: none;
+                            //     }
+
+                            //     &::-webkit-slider-thumb {
+                            //         -webkit-appearance: none !important;
+                            //         width: 10px;
+                            //         height: inherit;
+                            //         background-color: lighten($blue-color, 2%);
+                            //         box-shadow: -200px 0 0 200px darken($secondary-color, 40%);
+                            //         transition: background-color 0.3s ease;
+                            //     }
+                            
+                            //     &:hover {
+                            //         &::-webkit-slider-thumb {
+                            //             background-color: $blue-color;
+                            //         }
+                            //     }
+                            // }
+
                             .mute_unmute {
                                 display: block;
                                 width: 22.5px;
