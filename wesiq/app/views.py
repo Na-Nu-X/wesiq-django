@@ -40,9 +40,11 @@ from moviepy import VideoFileClip
 from django.core.paginator import Paginator
 from .tasks import compressImage, compressVideo
 from celery.result import AsyncResult
+from django.http import Http404
+from ranged_response import RangedFileResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
+ 
 # Functions
 
 def changeLanguage(request):
@@ -2340,6 +2342,16 @@ def loadPostsView(request):
 
     return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
 
+def streamVideo(request, user_id, filename):
+    path = os.path.join(settings.MEDIA_ROOT, f"posts/{str(user_id)}/{filename}")
+    
+    if not os.path.exists(path):
+        raise Http404(f"Video {filename} was not found.")
+        
+    video_file = open(path, "rb")
+    
+    return RangedFileResponse(request, video_file, content_type="video/mp4")
+
 def getCompressionStatus(request, task_id):
     result = AsyncResult(task_id)
     
@@ -2406,7 +2418,7 @@ def postView(request, post_id):
         ).prefetch_related(
             "tagged_users", 
             "media",
-
+ 
             Prefetch(
                 "comments",
                 queryset=PostForum.objects.exclude(status="hidden").select_related("user"),

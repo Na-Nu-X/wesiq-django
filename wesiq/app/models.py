@@ -4,7 +4,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from pathlib import Path
-import secrets
+import secrets, os
 
 class Users(models.Model):
     role_choices = [
@@ -252,6 +252,10 @@ class PostMedia(models.Model):
     thumbnail = models.ImageField(upload_to=getPostUploadPath, null=True, blank=True)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
     is_processed = models.BooleanField(verbose_name="Is Processed", default=False, null=False)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.file.name)
 
 class PostForum(models.Model):
     status_choices = [
