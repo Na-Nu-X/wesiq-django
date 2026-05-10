@@ -929,6 +929,18 @@ header {
                 justify-content: center;
                 width: 100%;
                 overflow: hidden;
+
+                &:has(.one_post .video_container:hover) .post_bars {
+                    visibility: hidden;
+                    opacity: 0;
+                    transition: visibility 0s, opacity 0s;
+                }
+        
+                &:has(.one_post .loading:hover) .post_bars {
+                    visibility: hidden;
+                    opacity: 0;
+                    transition: visibility 0s, opacity 0s;
+                }
     
                 .one_post {
                     position: relative;
@@ -937,6 +949,11 @@ header {
 
                     &:not(:nth-child(1)) {
                         display: none;
+                    }
+
+                    &:has(.loading:hover) .video_container .controls {
+                        display: flex;
+                        opacity: 1;
                     }
 
                     .loading {
@@ -948,6 +965,7 @@ header {
                         border-radius: $small-border-radius;
                         opacity: 1;
                         transition: opacity 0.3s ease, display 0.3s ease allow-discrete;
+                        z-index: 50;
         
                         &.hidden {
                             opacity: 0;
@@ -1000,6 +1018,254 @@ header {
                     .next {
                         right: 10px;
                     }
+
+                    .video_container {
+                        position: relative;
+        
+                        &:hover {
+                            .controls {
+                                display: flex;
+                                opacity: 1;
+                            }
+                        }
+        
+                        &:fullscreen {
+                            top: 0px !important;
+                            left: 0px !important;
+                            width: 100vw !important;
+                            height: 100vh !important;
+                            margin: 0px !important;
+                            padding: 0px !important;
+        
+                            .controls {
+                                .buttons {
+                                    padding: 0px calc(50px);
+                                }
+                            }
+                        }
+                        
+                        .controls {
+                            display: none;
+                            opacity: 0;
+                            position: absolute;
+                            bottom: calc($big-border-radius / 2);
+                            flex-direction: column;
+                            gap: 10px;
+                            width: 100%;
+                            transition: display 0.3s ease allow-discrete 1s, opacity 0.3s ease 1s;
+                            z-index: 100;
+        
+                            .buttons {
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
+                                padding: 0px calc($big-border-radius / 2);
+        
+                                i {
+                                    display: block;
+                                    pointer-events: none;
+                                    font-size: 1.2em;
+                                    transition: transform 0.3s ease;
+                                }
+        
+                                .play_pause,
+                                .fullscreen {
+                                    all: unset;
+                                    cursor: pointer;
+        
+                                    &:hover {
+                                        i {
+                                            transform: scale(1.1);
+                                            cursor: pointer;
+                                        }
+                                    }
+                                }
+        
+                                .play_pause {
+                                    width: 13.5px;
+                                }
+        
+                                .timer {
+                                    display: inline-flex;
+                                    align-items: center;
+                                    margin-right: auto;
+                                    padding: 5px 10px;
+                                    font-family: $article-heading-font;
+                                    font-size: 0.8em;
+                                    font-variant-numeric: tabular-nums;
+                                    background-color: transparentize($main-color, 0.8);
+                                    border-radius: calc(28px / 2);
+                                
+                                    span {
+                                        width: 4ch;
+                                        text-align: center;
+                                        font-size: inherit;
+                                    }
+                                }
+        
+                                .volume_container {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                    padding: 5px 10px;
+                                    background-color: transparentize($main-color, 0.8);
+                                    border-radius: calc(28px / 2);
+                                }
+        
+                                .volume_container {
+                                    .volume {
+                                        appearance: none !important;
+                                        -webkit-appearance: none !important;
+                                        direction: rtl;
+                                        height: 5px;
+                                        background-color: lighten($blue-color, 2%);
+                                        border-radius: calc(5px / 2);
+                                        cursor: pointer;
+        
+                                        &:hover {
+                                            &::-webkit-slider-thumb {
+                                                background-color: $blue-color;
+                                                scale: 1.2;
+                                            }
+                                        }
+        
+                                        &::-webkit-slider-thumb {
+                                            -webkit-appearance: none !important;
+                                            height: 10px;
+                                            width: 10px;
+                                            background-color: lighten($blue-color, 2%);
+                                            border-radius: 50%;
+                                            transition: background-color 0.3s ease, scale 0.3s ease;
+                                        }
+                                    }
+        
+                                    // .volume {
+                                    //     appearance: none !important;
+                                    //     -webkit-appearance: none !important;
+                                    //     direction: rtl;
+                                    //     height: 5px;
+                                    //     background-color: lighten($blue-color, 5%);
+                                    //     border-radius: calc(5px / 2);
+                                    //     cursor: pointer;
+                                    //     overflow: hidden;
+                                    
+                                    //     &::-webkit-slider-runnable-track {
+                                    //         height: 5px;
+                                    //         -webkit-appearance: none;
+                                    //     }
+        
+                                    //     &::-webkit-slider-thumb {
+                                    //         -webkit-appearance: none !important;
+                                    //         width: 10px;
+                                    //         height: inherit;
+                                    //         background-color: lighten($blue-color, 2%);
+                                    //         box-shadow: -200px 0 0 200px darken($secondary-color, 40%);
+                                    //         transition: background-color 0.3s ease;
+                                    //     }
+                                    
+                                    //     &:hover {
+                                    //         &::-webkit-slider-thumb {
+                                    //             background-color: $blue-color;
+                                    //         }
+                                    //     }
+                                    // }
+        
+                                    .mute_unmute {
+                                        display: block;
+                                        width: 22.5px;
+                                        text-align: right;
+                                        pointer-events: all;
+        
+                                        &:hover {
+                                            transform: scale(1.1);
+                                            cursor: pointer;
+                                        }
+                                    }
+                                }
+        
+                                .fullscreen {
+                                    margin-left: 10px;
+                                }
+                            }
+        
+                            .scrubber_hitbox {
+                                width: calc(100% - $big-border-radius);
+                                margin: 0px auto;
+                                padding: 5px 0px;
+        
+                                &:hover {
+                                    .scrubber {
+                                        &::before {
+                                            transition: width 0s;
+                                        }
+        
+                                        &::after {
+                                            transition: transform 0s, margin-left 0s;
+                                        }
+                                    }
+                                }
+        
+                                .scrubber {
+                                    --progress: 0%;
+            
+                                    position: relative;
+                                    width: 100%;
+                                    height: 5px;
+                                    background-color: darken($secondary-color, 40%);
+                                    border-radius: calc(8px / 2);
+                                    cursor: pointer;
+            
+                                    &:hover {
+                                        // height: 8px;
+            
+                                        &::after {
+                                            background-color: $blue-color;
+                                            transform: translateY(-50%) scale(1.2);
+                                        }
+                                    }
+            
+                                    &::before {
+                                        content: "";
+                                        position: absolute;
+                                        width: var(--progress);
+                                        max-width: 100%;
+                                        height: inherit;
+                                        background-color: lighten($blue-color, 2%);
+                                        border-radius: inherit;
+                                        transition: width 0.1s linear;
+                                        z-index: 100;
+                                    }
+            
+                                    &::after {
+                                        content: "";
+                                        position: absolute;
+                                        top: 50%;
+                                        transform: translateY(-50%);
+                                        width: 10px;
+                                        height: 10px;
+                                        margin-left: calc(var(--progress) - (10px / 2));
+                                        background-color: lighten($blue-color, 2%);
+                                        border-radius: 50%;
+                                        transition: transform 0.3s ease, margin-left 0.1s linear, background-color 0.3s ease;
+                                        z-index: 100;
+                                    }
+            
+                                    .buffering_bar {
+                                        --progress: 0%;
+            
+                                        position: relative;
+                                        width: var(--progress);
+                                        max-width: 100%;
+                                        height: inherit;
+                                        background-color: darken($secondary-color, 20%);
+                                        border-radius: inherit;
+                                        transition: width 1s linear;
+                                        z-index: 50;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 .particles {
@@ -1024,6 +1290,8 @@ header {
                 }
 
                 .post_bars {
+                    visibility: visible;
+                    opacity: 1;
                     position: absolute;
                     bottom: 0px;
                     display: flex;
@@ -1033,7 +1301,9 @@ header {
                     width: 100%;
                     padding: 5px 10px;
                     background-color: transparentize($main-color, 0.9);
-    
+                    transition: visibility 1s ease 1s, opacity 1s ease 1s;
+                    z-index: 100;
+        
                     .bar {
                         position: relative;
                         width: 12px;
@@ -1042,7 +1312,7 @@ header {
                         box-shadow: 0px 0px 10px darken($secondary-color, 40%);
                         border-radius: 50%;
                         transition: background-color 0.3s ease;
-    
+        
                         &.active,
                         &:hover {
                             cursor: pointer;

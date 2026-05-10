@@ -533,23 +533,18 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
         // Video
         else if(one_post_media.is_video) {
-            const video:HTMLVideoElement = document.createElement("video") // Creates The Video
+            const video_container_template:HTMLTemplateElement = feed.querySelector(".video_container_template") as HTMLTemplateElement // Gets The Video Container Template
+            const video_container_template_clone:DocumentFragment = video_container_template.content.cloneNode(true) as DocumentFragment // Clones The Video Container Template Content
+            const video_container:HTMLDivElement = video_container_template_clone.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
+            const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
+            const source:HTMLSourceElement = video.querySelector("source") as HTMLSourceElement // Gets The Video Source
 
-            video.classList.add("video") // Adds The Video Class
             video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
-            video.controls = true
-            video.autoplay = true
-            video.loop = true
-            video.muted = true
-            video.textContent = interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`]) // Sets The Alternative Text For The Video
+            source.src = interpolate(gettext("/sk/stream-video/%s/%s"), [post_data.user.id, one_post_media.file.substring(one_post_media.file.lastIndexOf('/') + 1)], false) // Sets The File Path
+            video.append(interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`])) // Sets The Alternative Text For The Video
 
-            const source:HTMLSourceElement = document.createElement("source") // Creates The Source Element
-
-            source.src = `/../media/${one_post_media.file}` // Sets The File Path
-
-            video.appendChild(source) // Appends The Source To The Video
-            one_post_container.appendChild(video) // Appends The Video To The One Post Container
-            media.appendChild(one_post_container)
+            one_post_container.appendChild(video_container) // Appends The Video Container To The One Post Container
+            media.appendChild(one_post_container) // Appends The One Post Container To The Media Container
         }
     })
 
@@ -725,6 +720,113 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
     
     generatePostBars(all_media, post_bars) // Generates The Post Bars
+
+    // Video Events
+    all_media.forEach(function(one_post:HTMLDivElement):void {
+        const one_video:HTMLVideoElement|null = one_post.querySelector(".video_container .video") as HTMLVideoElement || null // Gets The Video
+
+        if(one_video) {
+            const video_container:HTMLDivElement = one_video.closest(".video_container") as HTMLDivElement // Gets The Video Container
+            const total_time:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .total") as HTMLSpanElement // Gets The Elapsed Timer
+            const elapsed_timer:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLSpanElement // Gets The Elapsed Timer
+            const scrubber_hitbox:HTMLDivElement = video_container.querySelector(".controls .scrubber_hitbox") as HTMLDivElement // Gets The Scrubber Hitbox
+            const scrubber:HTMLDivElement = scrubber_hitbox.querySelector(".scrubber") as HTMLDivElement // Gets The Scrubber
+            const buffering_bar:HTMLDivElement = video_container.querySelector(".controls .scrubber .buffering_bar") as HTMLDivElement // Gets The Buffering Bar
+            const one_post:HTMLDivElement = one_video.closest(".one_post") as HTMLDivElement // Gets The One Post Container
+            const loading:HTMLDivElement = one_post?.querySelector(".loading") as HTMLDivElement // Gets The Loading
+            let is_hovered_scrubber:boolean = false // Checks If The Scrubber Is Hovered
+            let previous_scrubber_progress:string = scrubber.style.getPropertyValue("--progress") || "0%"// Gets The Previous Scrubber Progress
+            let previous_elapsed_time:number = one_video.currentTime // Gets The Previous Elapsed Time
+
+            // Set Video Duration Functionality
+            if(!isNaN(one_video.duration)) setVideoDuration(one_video.duration, total_time) // Sets The Video Duration
+
+            one_video.addEventListener("loadedmetadata", function():void {
+                setVideoDuration(this.duration, total_time) // Sets The Video Duration
+            })
+
+            // Video Time Update Functionality
+            one_video.addEventListener("timeupdate", function():void {
+                const is_playing:boolean = !one_video.paused && !one_video.ended && one_video.readyState > 2
+
+                // if(one_video.seeking) return
+                if(!is_hovered_scrubber) updateVideoTimer(this.currentTime, this.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                if(!is_playing) elapsed_timer.textContent = `${getFormattedTime("minutes", this.currentTime)}:${getFormattedTime("seconds", this.currentTime, true)}` // Sets The Elapsed Timer
+                previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
+                previous_elapsed_time = one_video.currentTime // Updates The Previous Elapsed Time
+            })
+
+            // Video Buffering Bar Functionalities
+            updateBufferingBar(one_video, buffering_bar) // Updates The Video Buffering Bar
+            
+            one_video.addEventListener("canplaythrough", function():void {
+                updateBufferingBar(this, buffering_bar) // Updates The Video Buffering Bar
+            })
+
+            one_video.addEventListener("progress", function():void {
+                updateBufferingBar(this, buffering_bar) // Updates The Video Buffering Bar
+            })
+
+            // Video Loading Functionalities
+            one_video.addEventListener("waiting", () => {
+                showVideoLoader(loading) // Shows The Video Loader
+            })
+            
+            one_video.addEventListener("playing", () => {
+                hideVideoLoader(loading) // Hides The Video Loader
+            })
+
+            one_video.addEventListener("seeking", () => {
+                showVideoLoader(loading) // Shows The Video Loader
+            })
+
+            one_video.addEventListener("seeked", () => {
+                hideVideoLoader(loading) // Hides The Video Loader
+            })
+
+            one_video.addEventListener("stalled", () => {
+                showVideoLoader(loading) // Shows The Video Loader
+            })
+
+            // Scrubber Hitbox Mouse Move Functionalities
+            scrubber_hitbox.addEventListener("mousemove", function(event:MouseEvent):void {
+                const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
+                const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
+                const hovered_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Hovered Scrubber Position
+                const scrubber_progress:number = Math.min(Math.max((hovered_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
+                const hovered_video_time:number = (scrubber_progress / 100) * one_video.duration || 0 // Gets The Hovered Video Time
+
+                is_hovered_scrubber = true
+                scrubber.style.setProperty("--progress", `${scrubber_progress}%`) // Shows The Progress In Scrubber
+                elapsed_timer.textContent = `${getFormattedTime("minutes", hovered_video_time)}:${getFormattedTime("seconds", hovered_video_time, true)}` // Sets The Elapsed Timer
+            })
+
+            // Scrubber Hitbox Mouse Out Functionalities
+            scrubber_hitbox.addEventListener("mouseout", function():void {
+                is_hovered_scrubber = false
+                scrubber.style.setProperty("--progress", previous_scrubber_progress) // Shows The Progress In Scrubber
+                elapsed_timer.textContent = `${getFormattedTime("minutes", previous_elapsed_time)}:${getFormattedTime("seconds", previous_elapsed_time, true)}` // Sets The Elapsed Timer
+            })
+
+            // Scrubber Hitbox Click Functionalities
+            scrubber_hitbox.addEventListener("click", function(event:PointerEvent):void {
+                // if(one_video.duration === 0 || isNaN(one_video.duration)) return;
+
+                const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
+                const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
+                const clicked_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Clicked Scrubber Position
+                const scrubber_progress:number = Math.min(Math.max((clicked_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
+                const clicked_video_time:number = (scrubber_progress / 100) * one_video.duration || 0 // Gets The Clicked Video Time
+
+                if(one_video.readyState === 4) {
+                    one_video.currentTime = clicked_video_time // Sets The New Current Video Time Position
+                    updateVideoTimer(one_video.currentTime, one_video.duration, elapsed_timer, scrubber) // Updates The Video Timer
+                    previous_scrubber_progress = scrubber.style.getPropertyValue("--progress") || "0%"// Updates The Previous Scrubber Progress
+                    previous_elapsed_time = one_video.currentTime // Updates The Previous Elapsed Time
+                }
+            })
+        }
+    })
 
     return post_container_template_clone // Returns The Post Container Template Clone
 }
