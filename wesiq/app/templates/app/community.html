@@ -191,7 +191,7 @@
 
         <template class="one_post_template">
             <div class="one_post">
-                <div class="loading ">
+                <div class="loading hidden">
                     <p>{% translate "Načítavam..." %}</p>
                 </div>
 
@@ -201,6 +201,43 @@
                 
                 <div class="next hidden">
                     <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+            </div>
+        </template>
+
+        <template class="video_container_template">
+            <div class="video_container">
+                <video class="video" poster="" preload="metadata" autoplay loop muted>
+                    <source src="">
+                </video>
+
+                <div class="controls">
+                    <div class="buttons">
+                        <button class="play_pause">
+                            <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                            {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                        </button>
+
+                        <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>
+                        
+                        <div class="volume_container">
+                            <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
+                            <i class="mute_unmute fa-solid fa-volume-xmark" title="{% translate 'Hlasitosť...' %}"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
+                            {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
+                            {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
+                        </div>
+
+                        <button class="fullscreen">
+                            <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
+                            {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
+                        </button>
+                    </div>
+
+                    <div class="scrubber_hitbox">
+                        <div class="scrubber">
+                            <div class="buffering_bar"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>

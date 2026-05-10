@@ -101,11 +101,10 @@
                                 {% if one_post_media.is_video == True %}
                                     <div class="video_container">
                                         <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="metadata" autoplay loop muted>
-                                            {% comment %} <source src="{{ one_post_media.file.url }}"> {% endcomment %}
                                             <source src="{% url 'stream_video_url' user_id=post.user.id filename=one_post_media.filename %}">
                                             
-                                            {% blocktranslate with user=one_post_media.post.user %}
-                                                Príspevok užívateľa {{ user }}
+                                            {% blocktranslate with first_name=post.user.first_name last_name=post.user.last_name %}
+                                                Príspevok užívateľa {{ first_name }} {{ last_name }}
                                             {% endblocktranslate %}
                                         </video>
 
@@ -144,8 +143,8 @@
                                         class="image"
                                         src="{{ one_post_media.file.url }}" 
                                         alt="
-                                            {% blocktranslate with user=one_post_media.post.user %}
-                                                Príspevok užívateľa {{ user }}
+                                            {% blocktranslate with first_name=post.user.first_name last_name=post.user.last_name %}
+                                                Príspevok užívateľa {{ first_name }} {{ last_name }}
                                             {% endblocktranslate %}
                                         "
                                     >
