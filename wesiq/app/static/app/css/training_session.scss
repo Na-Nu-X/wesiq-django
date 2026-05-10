@@ -84,7 +84,7 @@
 
                 .fa-play, .fa-pause, .fa-stop {
                     @include position_center;
-                    font-size: 30px;
+                    font-size: 2em;
                     color: $secondary-color;
                 }
 
@@ -192,7 +192,7 @@
                     .fa-plus,
                     .fa-stop {
                         @include position_center;
-                        font-size: 30px;
+                        font-size: 2em;
                         color: $blue-color;
                     }
 

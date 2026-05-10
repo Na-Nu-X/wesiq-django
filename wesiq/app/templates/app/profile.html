@@ -81,25 +81,34 @@
         {% endif %}
         
         <div class="profile">
-            <div class="top">
-                <div class="info">
-                    <img 
-                        class="profile_picture" 
-                        src="
-                            {% if user.profile_picture_name %}
-                                /media/images/{{ user.id }}/{{ user.profile_picture_name }}
-        
-                            {% else %}
-                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                            
-                            {% endif %}
-                        "
-                    >
-        
-                    <p class="username">{{ user.username }}</p>
+            <div class="header">
+                <div class="top">
+                    <div class="info">
+                        <img 
+                            class="profile_picture" 
+                            src="
+                                {% if user.profile_picture_name %}
+                                    /media/images/{{ user.id }}/{{ user.profile_picture_name }}
+            
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
+            
+                        <p class="username">{{ user.username }}</p>
+                    </div>
+    
+                    <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
                 </div>
-
-                <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
+    
+                <div class="bottom">
+                    {% if user.bio %}
+                        <p class="bio">{{ user.bio }}</p>
+                    
+                    {% endif %}
+                </div>
             </div>
 
             <div class="middle">
@@ -141,8 +150,13 @@
             <div class="bottom">
                 {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
                     <div class="grid_select">
-                        <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
-                        <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        <div class="all_posts_icon">
+                            <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
+                        </div>
+
+                        <div class="saved_posts_icon">
+                            <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
                     </div>
 
                 {% endif %}
