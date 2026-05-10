@@ -174,43 +174,56 @@
     }
 
     .profile {
-        .top {
+        .header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 5px;
             margin-bottom: 30px;
 
-            .info {
+            .top {
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
-                gap: 10px;
-
-                .profile_picture {
-                    @include profile_picture($width: 50px, $height: 50px);
-                    transition: transform 0.3s ease;
-            
-                    &:hover {
-                        transform: scale(1.05);
+    
+                .info {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+    
+                    .profile_picture {
+                        @include profile_picture($width: 50px, $height: 50px);
+                        transition: transform 0.3s ease;
+                
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+                    }
+    
+                    .username {
+                        font-size: 1.2em;
                     }
                 }
-
-                .username {
-                    font-size: 1.2em;
+    
+                .streak {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+    
+                    .fa-fire {
+                        color: $article-color;
+                        font-size: 1.2em;
+                    }
+    
+                    span {
+                        font-size: 1.2em;
+                    }
                 }
             }
 
-            .streak {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-
-                .fa-fire {
-                    color: $article-color;
-                    font-size: 1.2em;
-                }
-
-                span {
-                    font-size: 1.2em;
+            .bottom {
+                .bio {
+                    font-size: 0.9em;
+                    text-align: justify;
                 }
             }
         }
@@ -220,7 +233,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 30px;
+                margin-bottom: 25px;
 
                 div {
                     .label {
@@ -257,6 +270,7 @@
             display: flex;
             flex-direction: column;
             gap: 30px;
+            padding-top: 5px;
             overflow: hidden;
 
             .grid_select {
@@ -264,14 +278,21 @@
                 justify-content: center;
                 gap: 50px;
 
-                .fa-buffer,
-                .fa-bookmark {
-                    font-size: 1.5em;
-                    transition: transform 0.3s ease;
+                .all_posts_icon,
+                .saved_posts_icon {
+                    @include blue_button(50px);
+                    position: relative;
 
-                    &:hover {
-                        transform: scale(1.1);
-                        cursor: pointer;
+                    &.active {
+                        border-color: $blue-color;
+                        transform: scale(1.05);
+                    }
+                    
+                    .fa-buffer,
+                    .fa-bookmark {
+                        @include position_center;
+                        font-size: 2em;
+                        color: $blue-color;
                     }
                 }
             }
