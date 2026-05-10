@@ -9,193 +9,239 @@
 {% endblock style %}
 
 {% block content %}
-    <div class="profile">
+    <div class="profile_container">
         <h2><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h2>
 
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-        <div class="top">
-            <div class="info">
-                <img 
-                    class="profile_picture" 
-                    src="
-                        {% if user.profile_picture_name %}
-                            /media/images/{{ user.id }}/{{ user.profile_picture_name }}
-    
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                >
-    
-                <p class="username">{{ user.username }}</p>
-            </div>
+        {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+            <script src="{% static 'app/ts/dist/pages/profile/edit_account.js' %}" type="module"></script>
 
-            <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
-        </div>
+            <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
 
-        <div class="middle">
-            <div class="follow_container">
-                <div>
-                    <p class="label">{% translate "sledujú" %}</p>
-                    <p class="amount">{{ user.followers|length }}</p>
-                </div>
+            <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
 
-                <div>
-                    <p class="label">{% translate "sleduje" %}</p>
-                    <p class="amount">{{ user.following|length }}</p>
-                </div>
+                <div class="profile_picture_container">
+                    <label for="select_profile_picture">
+                        <img 
+                            class="profile_picture" 
+                            src="
+                                {% if logged_in_user.profile_picture_name %}
+                                    /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
 
-                <button 
-                    class="follow_button"
-                    data-id="{{ user.user_id }}"
-                    data-action="
-                        {% if not request.session.logged_in_user_id|stringformat:"i" in user.user.followers %}
-                            {% translate 'follow' %}
-
-                        {% else %}
-                            {% translate 'unfollow' %}
-                        
-                        {% endif %}
-                    "
-                >
-                    {% if not request.session.logged_in_user_id|stringformat:"i" in user.followers %}
-                        {% translate "Začať sledovať" %}
-
-                    {% else %}
-                        {% translate "Prestať sledovať" %}
-                    
-                    {% endif %}
-                </button>
-            </div>
-        </div>
-
-        <div class="bottom">
-            {% if posts|length > 0 %}
-                <div class="posts_container">
-                    <div class="posts">
-                        {% for one_post in posts %}
-                            <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
-                                {% if one_post.media.first.is_video == True %}
-                                    {% comment %} <video class="video" data-post_id="{{ one_post.id }}" controls autoplay loop muted>
-                                        <source src="/../media/{{ one_post.media.first.file }}">
-                                        
-                                        {% blocktranslate with user=one_post.user %}
-                                            Príspevok užívateľa {{ user }}
-                                        {% endblocktranslate %}
-                                    </video> {% endcomment %}
-
-                                    <img 
-                                        class="thumbnail"
-                                        src="{{ one_post.media.first.thumbnail.url }}" 
-                                        alt="
-                                            {% blocktranslate with user=one_post.user %}
-                                                Príspevok užívateľa {{ user }}
-                                            {% endblocktranslate %}
-                                        "
-                                    >
-                            
                                 {% else %}
-                                    <img 
-                                        class="image"
-                                        src="/../media/{{ one_post.media.first.file }}" 
-                                        alt="
-                                            {% blocktranslate with user=one_post.user %}
-                                                Príspevok užívateľa {{ user }}
-                                            {% endblocktranslate %}
-                                        "
-                                        data-post_id="{{ one_post.id }}"
-                                    >
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                 
                                 {% endif %}
+                            "
+                            title="{% translate 'Nahrať obrázok' %}"
+                        >
+                    </label>
 
-                                {% if one_post.media.all|length > 1 %}
-                                    <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
-                                
-                                {% endif %}
-                            </a>
-
-                        {% endfor %}
-                    </div>
+                    {{ edit_account_form.select_profile_picture }}
+                    
+                    <label for="delete_profile_picture"><img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť obrázok' %}"></label> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
+                    
+                    {{ edit_account_form.delete_profile_picture }}
                 </div>
 
-            {% else %}
-                <p>Zatial žiadne príspevky.</p>
+                <div class="first_name_container">
+                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                    {{ edit_account_form.first_name }}
+                </div>
+                
+                <div class="last_name_container">
+                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                    {{ edit_account_form.last_name }}
+                </div>
+                
+                <div class="email_address_container">
+                    <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                    {{ edit_account_form.email_address }}
+                </div>
+                
+                <div class="phone_number_container">
+                    <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                    {{ edit_account_form.phone_number }}
+                </div>
 
-            {% endif %}
-        </div>
-    </div>
+                <p class="form_report" style="bottom: 194px;"></p>
+                <input type="submit" value="{% translate 'Uložiť zmeny' %}">
 
-    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
-        <script src="{% static 'app/ts/dist/pages/profile/edit_account.js' %}" type="module"></script>
+                <div class="form_questions">
+                    <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+                </div>
 
-        <form class="edit_account_form" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+                <label for="delete_account"><img class="delete_account" src="{% static 'images/delete_account.png' %}" title="{% translate 'Odstrániť účet' %}"></label> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
+                
+                {{ edit_account_form.delete_account }}
+            </form>
 
-            <h2><a href="{% url 'profile_url' logged_in_user.username %}" target="_self">{% translate "Môj&nbsp;účet" %}</a></h2>
-
-            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
-
-            <div class="profile_picture_container">
-                <label for="select_profile_picture">
+        {% endif %}
+        
+        <div class="profile">
+            <div class="top">
+                <div class="info">
                     <img 
                         class="profile_picture" 
                         src="
-                            {% if logged_in_user.profile_picture_name %}
-                                /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
-
+                            {% if user.profile_picture_name %}
+                                /media/images/{{ user.id }}/{{ user.profile_picture_name }}
+        
                             {% else %}
                                 {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                             
                             {% endif %}
                         "
-                        title="{% translate 'Nahrať obrázok' %}"
                     >
-                </label>
+        
+                    <p class="username">{{ user.username }}</p>
+                </div>
 
-                {{ edit_account_form.select_profile_picture }}
-                
-                <label for="delete_profile_picture"><img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť obrázok' %}"></label> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
-                
-                {{ edit_account_form.delete_profile_picture }}
+                <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
             </div>
 
-            <div class="first_name_container">
-                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                {{ edit_account_form.first_name }}
-            </div>
-            
-            <div class="last_name_container">
-                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                {{ edit_account_form.last_name }}
-            </div>
-            
-            <div class="email_address_container">
-                <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
-                {{ edit_account_form.email_address }}
-            </div>
-            
-            <div class="phone_number_container">
-                <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
-                {{ edit_account_form.phone_number }}
+            <div class="middle">
+                <div class="follow_container">
+                    <div>
+                        <p class="label">{% translate "sledujú" %}</p>
+                        <p class="amount">{{ user.followers|length }}</p>
+                    </div>
+
+                    <div>
+                        <p class="label">{% translate "sleduje" %}</p>
+                        <p class="amount">{{ user.following|length }}</p>
+                    </div>
+
+                    <button 
+                        class="follow_button"
+                        data-id="{{ user.user_id }}"
+                        data-action="
+                            {% if not request.session.logged_in_user_id|stringformat:"i" in user.user.followers %}
+                                {% translate 'follow' %}
+
+                            {% else %}
+                                {% translate 'unfollow' %}
+                            
+                            {% endif %}
+                        "
+                    >
+                        {% if not request.session.logged_in_user_id|stringformat:"i" in user.followers %}
+                            {% translate "Začať sledovať" %}
+
+                        {% else %}
+                            {% translate "Prestať sledovať" %}
+                        
+                        {% endif %}
+                    </button>
+                </div>
             </div>
 
-            <p class="form_report" style="bottom: 194px;"></p>
-            <input type="submit" value="{% translate 'Uložiť zmeny' %}">
+            <div class="bottom">
+                {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                    <div class="grid_select">
+                        <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
+                        <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                    </div>
 
-            <div class="form_questions">
-                <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+                {% endif %}
+
+                {% if posts|length > 0 %}
+                    <div class="posts_container">
+                        <div class="posts">
+                            {% for one_post in posts %}
+                                <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                    {% if one_post.media.first.is_video == True %}
+                                        <img 
+                                            class="thumbnail"
+                                            src="{{ one_post.media.first.thumbnail.url }}" 
+                                            alt="
+                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
+                                
+                                    {% else %}
+                                        <img 
+                                            class="image"
+                                            src="/../media/{{ one_post.media.first.file }}" 
+                                            alt="
+                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                {% endblocktranslate %}
+                                            "
+                                            data-post_id="{{ one_post.id }}"
+                                        >
+                                    
+                                    {% endif %}
+
+                                    {% if one_post.media.all|length > 1 %}
+                                        <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                    
+                                    {% endif %}
+                                </a>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                {% else %}
+                    <p>{% translate "Zatial žiadne príspevky." %}</p>
+
+                {% endif %}
+
+                {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                    <div class="saved_posts_container hidden">
+                        <div class="saved_posts">
+                            {% for one_post in saved_posts %}
+                                <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                    {% if one_post.media.first.is_video == True %}
+                                        <img 
+                                            class="thumbnail"
+                                            src="{{ one_post.media.first.thumbnail.url }}" 
+                                            alt="
+                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
+                                
+                                    {% else %}
+                                        <img 
+                                            class="image"
+                                            src="/../media/{{ one_post.media.first.file }}" 
+                                            alt="
+                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                {% endblocktranslate %}
+                                            "
+                                            data-post_id="{{ one_post.id }}"
+                                        >
+                                    
+                                    {% endif %}
+
+                                    {% if one_post.media.all|length > 1 %}
+                                        <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                    
+                                    {% endif %}
+                                </a>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                    <p>{% translate "Žiadne uložené príspevky." %}</p>
+
+                {% endif %}
             </div>
-
-            <label for="delete_account"><img class="delete_account" src="{% static 'images/delete_account.png' %}" title="{% translate 'Odstrániť účet' %}"></label> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
-            
-            {{ edit_account_form.delete_account }}
-        </form>
-
-    {% endif %}
+        </div>
+    </div>
 {% endblock content %}
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
+    <script src="{% static 'app/ts/dist/pages/profile/profile.js' %}" type="module"></script>
 {% endblock script %}
