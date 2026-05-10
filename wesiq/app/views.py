@@ -1870,14 +1870,16 @@ def communityView(request):
         users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
 
         # Gets The User's Currently Processed Post With All Related Data
-        processing_posts = Post.objects.select_related(
-            "user"
-        ).filter(
+        processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
             media__is_processed=False
+        ).select_related(
+            "user"
         ).prefetch_related(
             "tagged_users",
             "media"
+        ).order_by(
+            "-created_at"
         ).distinct()
 
         if request.method == "POST":
@@ -2221,6 +2223,8 @@ def loadPostsView(request):
             media__isnull=False
         ).exclude(
             media__is_processed=False
+        ).order_by(
+            "-created_at"
         ).distinct()
 
         # Filters Posts By Searched Text
@@ -2238,14 +2242,14 @@ def loadPostsView(request):
                 Q(media__isnull=False)
             ).select_related(
                 "user"
+            ).prefetch_related(
+                "tagged_users",
+                "media",
             ).exclude(
                 tagged_users__account_status="suspended",
                 media__is_processed=False
             ).order_by(
                 "-created_at"
-            ).prefetch_related(
-                "tagged_users",
-                "media",
             ).distinct()
 
         paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
@@ -2459,7 +2463,19 @@ def profileView(request, username):
     if Users.objects.filter(username=username).exists():
         user = Users.objects.get(username=username) # Gets The User By Username
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-        posts = Post.objects.filter(user_id=user.id).select_related("user").prefetch_related("media") # Gets All User's Posts With All Related Data
+
+        # Gets All User's Posts With All Related Data
+        posts = Post.objects.filter(
+            user_id=user.id
+        ).select_related(
+            "user"
+        ).prefetch_related(
+            "media",
+        ).exclude(
+            media__is_processed=False
+        ).order_by(
+            "-created_at"
+        ).distinct()
 
         # If The User Is Logged In
         if logged_in_user_id:
@@ -2467,6 +2483,17 @@ def profileView(request, username):
 
             # If Searched Profile Belongs To The Logged In User
             if logged_in_user == user:
+                saved_posts = Post.objects.filter(
+                    user_id=logged_in_user.id,
+                    id__in=logged_in_user.saved_posts
+                ).select_related(
+                    "user"
+                ).prefetch_related(
+                    "media",
+                ).order_by(
+                    "-created_at"
+                ).distinct()
+
                 if request.method == "POST":
                     edit_account_form = editAccountForm(request.POST, request.FILES)
 
@@ -2590,7 +2617,8 @@ def profileView(request, username):
                     "email_address": logged_in_user.email_address,
                     "phone_number": logged_in_user.phone_number,
                     "profile_picture_name": logged_in_user.profile_picture_name,
-                    "posts": posts
+                    "posts": posts,
+                    "saved_posts": saved_posts
                 })
 
             return render(request, "app/profile.html", {

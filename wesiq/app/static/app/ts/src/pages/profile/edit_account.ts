@@ -1,6 +1,23 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    const profile_container:HTMLDivElement = document.querySelector(".profile_container") as HTMLDivElement // Gets The Profile Container
+    const edit_account_form:HTMLFormElement = profile_container.querySelector(".edit_account_form") as HTMLFormElement // Gets The Edir Account Form
+    const profile:HTMLDivElement = profile_container.querySelector(".profile") as HTMLDivElement // Gets The Profile Container
+    const toggle_settings:HTMLElement = profile_container.querySelector(".fa-gear") as HTMLElement // Gets The Toggle Settings Icon
+
+    toggle_settings.addEventListener("click", function():void {
+        if(edit_account_form.classList.contains("hidden")) {
+            profile.classList.add("hidden")
+            edit_account_form.classList.remove("hidden")
+        }
+
+        else if(profile.classList.contains("hidden")) {
+            edit_account_form.classList.add("hidden")
+            profile.classList.remove("hidden")
+        }
+    })
+
     // Delete Profile Picture Warning
 
     const delete_profile_picture_checkbox:HTMLInputElement = document.querySelector("#delete_profile_picture") as HTMLInputElement
