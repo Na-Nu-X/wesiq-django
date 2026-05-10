@@ -100,6 +100,11 @@
 
                                 {% if one_post_media.is_video == True %}
                                     <div class="video_container">
+                                        <div class="video_icon hidden">
+                                            <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                                            {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                                        </div>
+
                                         <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="metadata" autoplay loop muted>
                                             <source src="{% url 'stream_video_url' user_id=post.user.id filename=one_post_media.filename %}">
                                             

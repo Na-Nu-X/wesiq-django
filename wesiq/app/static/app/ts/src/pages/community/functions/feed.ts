@@ -788,6 +788,14 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                 showVideoLoader(loading) // Shows The Video Loader
             })
 
+            one_video.addEventListener("click", function():void {
+                const play_pause_icon:HTMLElement = video_container.querySelector(".controls .buttons .play_pause i") as HTMLElement // Gets The Play / Pause Icon
+                const video_icon:HTMLDivElement = video_container.querySelector(".video_icon") as HTMLDivElement // Gets The Video
+                const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                playPauseVideo(play_pause_icon, video_icon, video) // Plays Or Pauses The Video
+            })
+
             // Scrubber Hitbox Mouse Move Functionalities
             scrubber_hitbox.addEventListener("mousemove", function(event:MouseEvent):void {
                 const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
@@ -1089,16 +1097,46 @@ function removeProcessingPost(task_id:number):void {
 }
 
 // Function For Play Or Pause The Video
-export function playPauseVideo(play_pause_icon:HTMLElement, video:HTMLVideoElement):void {
+export function playPauseVideo(play_pause_icon:HTMLElement, video_icon:HTMLDivElement, video:HTMLVideoElement):void {
+    const is_playing:boolean = !video.paused && !video.ended && video.readyState > 2
+
     // Play
-    if(play_pause_icon.classList.contains("fa-play")) {
-        play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
+    if(!is_playing) {
+        play_pause_icon.classList.replace("fa-play", "fa-pause"); // Shows The Pause Icon
+
+        const video_play_pause_icon:HTMLElement = video_icon.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
+
+        video_play_pause_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
+
+        // Video Icon
+        video_icon.classList.add("hidden")
+        void video_icon.offsetWidth
+        video_icon.classList.remove("hidden")
+
+        setTimeout(() => {
+            video_icon.classList.add("hidden")
+        }, 300)
+
         video.play() // Plays The Video
     }
 
     // Pause
-    else if(play_pause_icon.classList.contains("fa-pause")) {
-        play_pause_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
+    else {
+        play_pause_icon.classList.replace("fa-pause", "fa-play"); // Shows The Play Icon
+
+        const video_play_pause_icon:HTMLElement = video_icon.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
+
+        video_play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
+
+        // Video Icon
+        video_icon.classList.add("hidden")
+        void video_icon.offsetWidth
+        video_icon.classList.remove("hidden")
+
+        setTimeout(() => {
+            video_icon.classList.add("hidden")
+        }, 300)
+
         video.pause() // Pauses The Video
     }
 }
