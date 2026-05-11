@@ -42,6 +42,7 @@ from .tasks import compressImage, compressVideo
 from celery.result import AsyncResult
 from django.http import Http404
 from ranged_response import RangedFileResponse
+from django.core.exceptions import ValidationError
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -256,7 +257,7 @@ def likePost(request):
 
     except:
         captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def cancelLikePost(request):
     try:
@@ -278,7 +279,7 @@ def cancelLikePost(request):
 
     except:
         captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def savePost(request):
     try:
@@ -298,7 +299,7 @@ def savePost(request):
 
     except:
         captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri ukladaní príspevku došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri ukladaní príspevku došlo k chybe.")}, status=500)
 
 def unsavePost(request):
     try:
@@ -318,7 +319,7 @@ def unsavePost(request):
 
     except:
         captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=500)
 
 def reportComment(request):
     try:
@@ -349,7 +350,7 @@ def reportComment(request):
 
     except:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
 
 def addComment(request, logged_in_user_id):
     try:
@@ -358,16 +359,34 @@ def addComment(request, logged_in_user_id):
         new_comment = PostForum(
             post_id = comment_data["post_id"],
             user_id = logged_in_user_id,
-            comment = comment_data["comment"]
+            comment = comment_data["comment"],
+            parent_id = comment_data["parent_id"]
         )
 
         new_comment.save()
 
-        return JsonResponse({"success": True, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+        # Creates Valid Format Of Comment For JSON Response
+        comment = {
+            "id": new_comment.id,
+
+            "user": {
+                "id": new_comment.user.id,
+                "username": new_comment.user.username,
+                "profile_picture_name": new_comment.user.profile_picture_name
+            },
+
+            "creation_time": new_comment.creation_time,
+            "level": new_comment.level
+        }
+
+        return JsonResponse({"success": True, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+
+    except ValidationError as e:
+        return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
 
     except:
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
 
 def likeComment(request):
     try:
@@ -388,7 +407,7 @@ def likeComment(request):
 
     except:
         captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def cancelLikeComment(request):
     try:
@@ -409,7 +428,7 @@ def cancelLikeComment(request):
 
     except:
         captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def homepageView(request):
     # Login Form
@@ -2216,13 +2235,17 @@ def loadPostsView(request):
 
             Prefetch(
                 "comments",
-                queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
+                queryset=PostForum.objects.exclude(
+                    status="hidden"
+                ).select_related(
+                    "user"
+                ).order_by(
+                    "creation_time"
+                ),
                 to_attr="visible_comments"
             )
         ).filter(
-            media__isnull=False
-        ).exclude(
-            media__is_processed=False
+            media__is_processed=True
         ).order_by(
             "-created_at"
         ).distinct()
@@ -2326,7 +2349,8 @@ def loadPostsView(request):
                         "likes_from_users": list(one_comment.likes_from_users),
                         "creation_time": one_comment.creation_time.isoformat(),
                         "parent_id": one_comment.parent_id,
-                        "reports_from_users": list(one_comment.reports_from_users)
+                        "reports_from_users": list(one_comment.reports_from_users),
+                        "level": one_comment.level
                     }
 
                     for one_comment in one_post.visible_comments

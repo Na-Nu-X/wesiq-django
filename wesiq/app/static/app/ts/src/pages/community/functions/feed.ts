@@ -64,7 +64,8 @@ export interface searchedPost {
         likes_from_users:string[],
         creation_time:string,
         parent_id:number|null,
-        reports_from_users:string[]
+        reports_from_users:string[],
+        level:number
     }[]
 }
 
@@ -80,6 +81,25 @@ interface searchedPostsResponse {
 
     posts:searchedPost[],
     message:string
+}
+
+interface addCommentResponse {
+    success: boolean,
+
+    comment: {
+        id:number,
+
+        user: {
+            id:number,
+            username:string,
+            profile_picture_name:string
+        },
+
+        creation_time:string,
+        level:number
+    },
+
+    message: string
 }
 
 export interface compressTask {
@@ -313,23 +333,88 @@ export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> 
 }
 
 // Function For Add Comment
-export async function addComment(post_id:string, comment:string, all_comments:HTMLDivElement):Promise<void> {
+export async function addComment(post_id:string, comment_input:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_comment:HTMLDivElement|null):Promise<void> {
     try {
         const comment_data:{
-            post_id:string,
-            comment:string
+            post_id:number,
+            comment:string,
+            parent_id:number|null
         } = {
-            post_id,
-            comment
+            post_id: Number(post_id),
+            comment: comment_input.textContent,
+            parent_id: Number(parent_comment?.dataset["comment_id"]) || null
         }
 
-        const searched_tags_response:response = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
+        const add_comment_response:addCommentResponse = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
 
         // If The Response Isn't Success
-        if(!searched_tags_response.success) {
-            console.error(searched_tags_response.message)
+        if(!add_comment_response.success) {
+            console.error(add_comment_response.message)
             return
         }
+
+        const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
+        const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
+        const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
+        
+        one_comment_container.dataset["comment_id"] = String(add_comment_response.comment.id) // Stores The Comment ID
+
+        // Comment Author Profile Picture Link
+        const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
+        comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [add_comment_response.comment.user.username]) // Sets The Link To The User's Profile
+        comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+
+        // Comment Author Profile Picture
+        const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
+        comment_author_profile_picture.src = add_comment_response.comment.user.profile_picture_name ? `/../media/images/${add_comment_response.comment.user.id}/${add_comment_response.comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+
+        // Comment Author Username
+        const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
+        comment_author_username.classList.add("username") // Adds The Username Class
+        comment_author_username.textContent = add_comment_response.comment.user.username // Sets The Comment Author Username Text
+
+        // Comment
+        const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
+        comment.textContent = comment_input.textContent // Sets The Comment Text
+
+        comment_input.innerHTML = "" // Deletes The Comment Input
+
+        if(parent_comment) {
+            const reply_container:HTMLDivElement = parent_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+
+            if(reply_container.querySelector(".write_comment_form") as HTMLDivElement) (reply_container.querySelector(".write_comment_form") as HTMLDivElement).remove() // Removes The Write Comment Form From The DOM
+
+            const icon:HTMLElement = parent_comment.querySelector(".interactions .reply i") as HTMLElement
+
+            icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+            icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+
+            reply_container.prepend(one_comment_container)
+        }
+
+        else {
+            all_comments.prepend(one_comment_container)
+        }
+
+        // Interactions
+        const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
+
+        // Likes
+        const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
+
+        const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+        like_icon.classList.add("fa-regular") // Shows The Empty Heart Icon - https://fontawesome.com/icons/heart
+
+        // Likes Counter
+        const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+        likes_counter.textContent = "0" // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+
+        // Date
+        const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
+
+        const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
+        date_paragraph.textContent = getFormattedDate(add_comment_response.comment.creation_time)
     }
 
     catch {
@@ -401,10 +486,13 @@ export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
 
 // Function For Reply On The Comment
 export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, icon:HTMLElement, id:string):Promise<void> {
+    // console.log(write_comment_form)
+    // console.log(reply_container)
+
     if(!reply_container.querySelector(".write_comment_form")) {
         const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
     
-        reply_container.appendChild(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
+        reply_container.prepend(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
         icon.classList.remove("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
         icon.classList.add("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
     }
@@ -642,78 +730,97 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
     post_container.appendChild(comment_forum_template_clone) // Appends The Comment Forum Template Clone To The Post Container
 
-    post_data.visible_comments.forEach(function(one_visible_comment:{
-        id:number,
+    // Comments
+    if(post_data.visible_comments.length > 0) {
+        console.log(post_data.visible_comments)
 
-        user:{
+        post_data.visible_comments.forEach(function(one_visible_comment:{
             id:number,
-            first_name:string,
-            last_name:string,
-            username:string,
-            profile_picture_name:string|null
-        },
 
-        comment:string,
-        likes:number,
-        likes_from_users:string[],
-        creation_time:string,
-        parent_id:number|null,
-        reports_from_users:string[]
-    }):void {
-        const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
-        const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
-        const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
+            user:{
+                id:number,
+                first_name:string,
+                last_name:string,
+                username:string,
+                profile_picture_name:string|null
+            },
 
-        one_comment_container.dataset["comment_id"] = String(one_visible_comment.id) // Stores The Comment ID
+            comment:string,
+            likes:number,
+            likes_from_users:string[],
+            creation_time:string,
+            parent_id:number|null,
+            reports_from_users:string[]
+        }):void {
+            const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
+            const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
+            const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
 
-        // Comment Author Profile Picture Link
-        const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
-        comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
-        comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+            one_comment_container.dataset["comment_id"] = String(one_visible_comment.id) // Stores The Comment ID
 
-        // Comment Author Profile Picture
-        const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
-        comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+            // Comment Author Profile Picture Link
+            const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
+            comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
+            comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
 
-        // Comment Author Username
-        const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
-        comment_author_username.classList.add("username") // Adds The Username Class
-        comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
+            // Comment Author Profile Picture
+            const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
+            comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
 
-        // Comment
-        const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
-        comment.textContent = one_visible_comment.comment // Sets The Comment Text
+            // Comment Author Username
+            const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
+            comment_author_username.classList.add("username") // Adds The Username Class
+            comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
-        all_comments.appendChild(one_comment_container)
+            // Comment
+            const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
+            comment.textContent = one_visible_comment.comment // Sets The Comment Text
 
-        // Interactions
-        const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
+            // Appends The Comment
+            if(!one_visible_comment.parent_id) {
+                all_comments.prepend(one_comment_container)
+            }
+            
+            // Appends The Reply
+            else {
+                const parent_comment:HTMLDivElement|null = all_comments.querySelector(`[data-comment_id="${one_visible_comment.parent_id}"]`) as HTMLDivElement || null // Gets The Parent Comment
 
-        // Likes
-        const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
+                if(parent_comment) {
+                    const reply_container:HTMLDivElement = parent_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+        
+                    reply_container.prepend(one_comment_container)
+                }
+            }
 
-        const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-        logged_in_user_id && one_visible_comment.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+            // Interactions
+            const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
 
-        // Likes Counter
-        const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
-        likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
-        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+            // Likes
+            const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
 
-        // Report
-        if(logged_in_user_id && one_visible_comment.reports_from_users.includes(String(logged_in_user_id))) {
-            const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
+            const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+            logged_in_user_id && one_visible_comment.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
-            const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon
-            report_icon.classList.add("active") // Adds The Active Class
-        }
+            // Likes Counter
+            const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+            likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
+            likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
-        // Date
-        const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
+            // Report
+            if(logged_in_user_id && one_visible_comment.reports_from_users.includes(String(logged_in_user_id))) {
+                const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
 
-        const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
-        date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
-    })
+                const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon
+                report_icon.classList.add("active") // Adds The Active Class
+            }
+
+            // Date
+            const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
+
+            const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
+            date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
+        })
+    }
 
     // Bars
     const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container

@@ -1,8 +1,8 @@
 import { getCookie } from "../utils/getCookie.js"
 
 export interface response {
-    "success": boolean,
-    "message": string
+    success: boolean,
+    message: string
 }
 
 // Function For Send Data By POST Method

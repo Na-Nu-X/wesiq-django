@@ -982,10 +982,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if((event.target as HTMLImageElement).classList.contains("send")) {
                     const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
                     const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
-                    const comment:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form .comment") as HTMLDivElement // Gets The Comment Input
+                    const comment:HTMLDivElement = (send_comment.closest(".write_comment_form") as HTMLDivElement).querySelector(".comment") as HTMLDivElement // Gets The Comment Input
                     const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
+                    const parent_comment:HTMLDivElement|null = send_comment.closest(".one_comment") as HTMLDivElement || null // Gets The Parent Comment If It Is A Reply
 
-                    if(post_container.dataset["post_id"]) addComment(post_container.dataset["post_id"], comment.textContent, all_comments) // Adds Comment To The Post
+                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(post_container.dataset["post_id"], comment, all_comments, feed, parent_comment) // Adds Comment To The Post
                 }
 
                 // Toggle Comment Like Click Functionality
@@ -1014,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 ) {
                     const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
-                    const write_comment_form:HTMLDivElement = ((one_comment.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+                    const write_comment_form:HTMLDivElement = (one_comment.closest(".comment_forum") as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
 
                     if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
                 }
