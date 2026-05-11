@@ -23,13 +23,19 @@ export async function sendPOST(url_path:string = new URL(window.location.href).p
 
     if(!is_form_data && data) (options.headers as any)["Content-Type"] = "application/json"
 
-    const response:Response = await fetch(url_path, options)
+    try {
+        const response:Response = await fetch(url_path, options)
+        
+        // if(!response.ok) {
+        //     const error:string = await response.text()
+        //     console.error(error)
+        //     throw new Error()
+        // }
     
-    if(!response.ok) {
-        const error:string = await response.text()
-        console.error(error)
-        throw new Error()
+        return response.json()
     }
 
-    return response.json()
+    catch(error) {
+        console.error(error)
+    }
 }
