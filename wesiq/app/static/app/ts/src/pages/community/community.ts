@@ -59,7 +59,8 @@ import {
     updateVideoTimer,
     updateBufferingBar,
     showVideoLoader,
-    hideVideoLoader
+    hideVideoLoader,
+    toggleShowReplies
 } from "./functions/feed.js"
 
 import type { 
@@ -1013,11 +1014,27 @@ document.addEventListener("DOMContentLoaded", function():void {
                     ((event.target as HTMLElement).classList.contains("fa-comment") || 
                     (event.target as HTMLElement).classList.contains("fa-xmark"))
                 ) {
-                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const reply_icon:HTMLElement = event.target as HTMLElement // Gets The Reply Icon
+                    const one_comment:HTMLDivElement = reply_icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
                     const write_comment_form:HTMLDivElement = (one_comment.closest(".comment_forum") as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
 
-                    if(one_comment.dataset["comment_id"]) replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
+                    if(one_comment.dataset["comment_id"]) {
+                        const show_replies_icon:HTMLElement|null = one_comment.querySelector(".interactions .show_replies i") as HTMLElement || null
+
+                        replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
+                        toggleShowReplies(show_replies_icon, reply_container, reply_icon) // Toggles Visibility Of The Comment Replies
+                    }
+                }
+
+                // Show Replies
+                if(((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("show_replies")) {
+                    const show_replies_icon:HTMLElement = event.target as HTMLElement // Gets The Show Replies Icon
+                    const one_comment:HTMLDivElement = show_replies_icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+                    const reply_icon:HTMLElement = one_comment.querySelector(".interactions .reply i") as HTMLElement // Gets The Reply Icon
+                    
+                    toggleShowReplies(show_replies_icon, reply_container, reply_icon) // Toggles Visibility Of The Comment Replies
                 }
 
                 // Share Post
