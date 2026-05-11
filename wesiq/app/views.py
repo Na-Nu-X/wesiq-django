@@ -43,6 +43,7 @@ from celery.result import AsyncResult
 from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
+from collections import defaultdict
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -2449,12 +2450,27 @@ def postView(request, post_id):
  
             Prefetch(
                 "comments",
-                queryset=PostForum.objects.exclude(status="hidden").select_related("user"),
+                queryset=PostForum.objects.exclude(
+                    status="hidden"
+                ).select_related(
+                    "user"
+                ).order_by(
+                    "-creation_time"
+                ),
                 to_attr="visible_comments"
             )
         ).first()
 
         if post != None:
+            # Splits Comments Into Parent And Child Comments
+            comments_by_parent = defaultdict(list)
+            
+            for one_comment in post.visible_comments:
+                comments_by_parent[one_comment.parent_id].append(one_comment)
+            
+            post.nested_comments = dict(comments_by_parent)
+            post.root_comments = comments_by_parent[None]
+
             post.tagged_users_json = json.dumps(
                 list(post.tagged_users.values_list("username", flat=True))
             )

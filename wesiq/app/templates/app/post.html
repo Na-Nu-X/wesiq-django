@@ -11,6 +11,41 @@
 {% block content %}
     {% if post %}
         <div class="feed">
+            <template class="one_comment_template">
+                <div class="one_comment">
+                    <div class="comment_container">
+                        <div class="user">
+                            <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                            </a>
+                            
+                            <p class="username"></p>
+    
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </div>
+    
+                        <p class="comment"></p>
+                    </div>
+    
+                    <div class="interactions">
+                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                            <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                            <p class="likes_counter">{{ one_comment.likes }}</p>
+                        </div>
+    
+                        <div class="report" title="{% translate 'Nahlásiť...' %}">
+                            <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
+                        </div>
+    
+                        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+                            <p></p>
+                        </div>
+                    </div>
+    
+                    <div class="reply_container hidden"></div>
+                </div>
+            </template>
+
             <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
                 <div class="header">
                     <div class="left">
@@ -258,78 +293,8 @@
                         </div>
 
                         <div class="all_comments">
-                            {% for one_comment in post.visible_comments %}
-                                <div class="one_comment" data-comment_id={{ one_comment.id }}>
-                                    <div class="comment_container">
-                                        <div class="user">
-                                            <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
-                                                <img 
-                                                    class="profile_picture" 
-                                                    src="
-                                                        {% if one_comment.user.profile_picture_name %}
-                                                            /../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}
-                                
-                                                        {% else %}
-                                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                        
-                                                        {% endif %}
-                                                    "
-                                                >
-                                            </a>
-                                            
-                                            <p class="username">{{ one_comment.user.username }}</p>
-
-                                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                                        </div>
-
-                                        <p class="comment">{{ one_comment.comment }}</p>
-                                    </div>
-
-                                    <div class="interactions">
-                                        <div class="reply" title="{% translate 'Odpovedať...' %}">
-                                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                                            <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                                        </div>
-                                        
-                                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                                            <i 
-                                                class="
-                                                    {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
-                                                        fa-solid
-            
-                                                    {% else %}
-                                                        fa-regular
-                                                    
-                                                    {% endif %}
-
-                                                    fa-heart
-                                                "
-                                            ></i> <!-- https://fontawesome.com/icons/heart -->
-            
-                                            <p class="likes_counter">{{ one_comment.likes }}</p>
-                                        </div>
-            
-                                        <div class="report" title="{% translate 'Nahlásiť...' %}">
-                                            <!-- https://fontawesome.com/icons/flag -->
-                                            <i 
-                                                class="
-                                                    fa-regular fa-flag
-
-                                                    {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.reports_from_users %}
-                                                        active
-
-                                                    {% endif %}
-                                                "
-                                            ></i>
-                                        </div>
-            
-                                        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                                            <p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="reply_container"></div>
-                                </div>
+                            {% for one_comment in post.root_comments %}
+                                {% include "partials/comment.html" with one_comment=one_comment level=1 %}
 
                             {% endfor %}
                         </div>
