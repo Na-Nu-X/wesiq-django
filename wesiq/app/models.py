@@ -1,10 +1,9 @@
-from enum import unique
-# from django.db import models
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.conf import settings
 from pathlib import Path
 import secrets, os
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 class Users(models.Model):
     role_choices = [
@@ -298,3 +297,19 @@ class PostForum(models.Model):
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
     reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
+
+    level = models.PositiveIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        if self.parent:
+            calculated_level = self.parent.level + 1
+            
+            if calculated_level > 5:
+                raise ValidationError(_("Maximum level of nested comments has been reached."))
+            
+            self.level = calculated_level
+            
+        else:
+            self.level = 1
+            
+        super().save(*args, **kwargs)
