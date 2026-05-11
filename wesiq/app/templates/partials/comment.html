@@ -1,0 +1,85 @@
+{% load filters %}
+{% load static %}
+{% load i18n %}
+
+<div class="one_comment" data-comment_id="{{ one_comment.id }}">
+    <div class="comment_container">
+        <div class="user">
+            <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                <img 
+					class="profile_picture" 
+					src="
+						{% if one_comment.user.profile_picture_name %}
+							/../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}
+
+						{% else %}
+							{% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+						
+						{% endif %}
+					"
+				>
+            </a>
+            
+            <p class="username">{{ one_comment.user.username }}</p>
+
+            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+        </div>
+
+        <p class="comment">{{ one_comment.comment }}</p>
+    </div>
+
+    <div class="interactions">
+        {% if level < 5 %}
+            <div class="reply" title="{% translate 'Odpovedať...' %}">
+                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
+            </div>
+
+        {% endif %}
+
+        <div class="likes" title="{% translate 'Páči sa mi...' %}">
+			<i 
+				class="
+					{% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
+						fa-solid
+
+					{% else %}
+						fa-regular
+					
+					{% endif %}
+
+					fa-heart
+				"
+			></i> <!-- https://fontawesome.com/icons/heart -->
+
+			<p class="likes_counter">{{ one_comment.likes }}</p>
+		</div>
+
+        <div class="report" title="{% translate 'Nahlásiť...' %}">
+			<!-- https://fontawesome.com/icons/flag -->
+			<i 
+				class="
+					fa-regular fa-flag
+
+					{% if request.session.logged_in_user_id|stringformat:"i" in one_comment.reports_from_users %}
+						active
+
+					{% endif %}
+				"
+			></i>
+		</div>
+
+        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+			<p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
+		</div>
+    </div>
+
+    <div class="reply_container hidden">
+        {% with nested_comments=post.nested_comments|get_item:one_comment.id %}
+            {% for one_comment in nested_comments %}
+                {% include "partials/comment.html" with one_comment=one_comment level=level|add:1 %}
+
+            {% endfor %}
+        {% endwith %}
+    </div>
+</div>

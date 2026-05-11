@@ -391,6 +391,16 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
         // Interactions
         const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
 
+        // Reply
+        // Displays The Reply Option Only If The Nested Level Of The Comment Is Less Than 5
+        if(add_comment_response.comment.level < 5) {
+            const reply:HTMLDivElement = document.createElement("div") // Creates The Reply Container
+            reply.classList.add("reply") // Adds The Reply Class
+            reply.title = gettext("Odpovedať...")
+            reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
+            interactions.prepend(reply) // Prepends The Reply Container To The Interactions
+        }
+
         // Likes
         const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
 
@@ -409,7 +419,8 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
         date_paragraph.textContent = getFormattedDate(add_comment_response.comment.creation_time)
     }
 
-    catch {
+    catch(error) {
+        console.log(error)
         console.error(gettext("Pri odosielaní komentáru došlo k chybe."))
     }
 }
@@ -721,8 +732,6 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
     // Comments
     if(post_data.visible_comments.length > 0) {
-        console.log(post_data.visible_comments)
-
         post_data.visible_comments.forEach(function(one_visible_comment:comment):void {
             const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
             const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
@@ -1065,8 +1074,6 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
             feed_report.textContent = loaded_posts_response.message
             return
         }
-
-        console.log(loaded_posts_response)
 
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
 
