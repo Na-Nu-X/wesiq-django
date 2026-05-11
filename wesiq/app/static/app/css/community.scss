@@ -1669,7 +1669,7 @@ header {
                                 }
         
                                 .fa-xmark {
-                                    color: $error-color;
+                                    color: $error-color !important;
                                     width: 15px;
                                 }
                             }
@@ -1726,18 +1726,26 @@ header {
                                     color: darken($secondary-color, 40%);
                                 }
                             }
+
+                            .show_replies {
+                                .fa-angle-down,
+                                .fa-angle-up {
+                                    @include icon;
+                                }
+                            }
                         }
 
                         .reply_container {
-                            margin-left: 6px + 10px + 38px;
+                            margin-left: 6px + 10px + 32px;
                             margin-right: 10px;
 
-                            // &.hidden {
-                            //     display: none;
-                            // }
+                            &.hidden {
+                                display: none;
+                            }
 
                             .write_comment_form {
                                 position: relative;
+                                margin: 10px 0px;
             
                                 .comment {
                                     width: 100%;
@@ -1814,6 +1822,11 @@ header {
                                         pointer-events: none;
                                     }
                                 }
+                            }
+
+                            .one_comment .comment_container .user a .profile_picture {
+                                width: 32px;
+                                height: 32px;
                             }
                         }
                     }

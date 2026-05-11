@@ -72,6 +72,16 @@
         <div class="date" title="{% translate 'Dátum zverejnenia' %}">
 			<p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
 		</div>
+
+		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
+			{% if nested_comments|length > 0 %}
+				<div class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
+					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
+					{% comment %} <i class="fa-solid fa-angle-up"></i> <!-- https://fontawesome.com/icons/angle-up --> {% endcomment %}
+				</div>
+			
+			{% endif %}
+		{% endwith %}
     </div>
 
     <div class="reply_container hidden">

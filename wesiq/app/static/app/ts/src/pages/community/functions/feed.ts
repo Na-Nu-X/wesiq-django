@@ -417,6 +417,22 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
 
         const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
         date_paragraph.textContent = getFormattedDate(add_comment_response.comment.creation_time)
+
+        // Show Replies
+        const new_parent_comment:HTMLDivElement|null = (one_comment_container.parentElement as HTMLDivElement).closest(".one_comment") as HTMLDivElement || null // Gets The New Parent Comment (If Is Not In The 1st Level)
+
+        if(new_parent_comment) {
+            const new_parent_comment_interactions:HTMLDivElement = new_parent_comment.querySelector(".interactions") as HTMLDivElement // Gets The Interactions Container Of The New Parent Comment
+
+            // Checks If The Toggle Show Replies Button Isn't Already In DOM
+            if(!new_parent_comment_interactions.querySelector(".show_replies")) {
+                const show_replies:HTMLDivElement = document.createElement("div") // Creates The Show Replies Container
+                show_replies.classList.add("show_replies") // Adds The Show Replies Class
+                show_replies.title = gettext("Zobraziť odpovede...")
+                show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
+                new_parent_comment_interactions.appendChild(show_replies) // Appends The Show Replies To The New Parent Comment
+            }
+        }
     }
 
     catch(error) {
@@ -498,7 +514,7 @@ export async function replyOnComment(write_comment_form:HTMLDivElement, reply_co
     }
     
     else {
-        reply_container.innerHTML = "" // Deletes The Reply Container
+        (reply_container.querySelector(".write_comment_form") as HTMLDivElement).remove() // Deletes The Write Comment Form
         icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
         icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
     }
@@ -810,6 +826,21 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
             const date_paragraph:HTMLParagraphElement = date.querySelector("p") as HTMLParagraphElement // Gets The Date Paragraph
             date_paragraph.textContent = getFormattedDate(one_visible_comment.creation_time)
+
+            // Shows Replies
+            if(one_visible_comment.parent_id) {
+                const new_parent_comment:HTMLDivElement = (one_comment_container.parentElement as HTMLDivElement).closest(".one_comment") as HTMLDivElement // Gets The New Parent Comment (If Is Not In The 1st Level)
+                const new_parent_comment_interactions:HTMLDivElement = new_parent_comment.querySelector(".interactions") as HTMLDivElement // Gets The Interactions Container Of The New Parent Comment
+
+                // Checks If The Toggle Show Replies Button Isn't Already In DOM
+                if(!new_parent_comment_interactions.querySelector(".show_replies")) {
+                    const show_replies:HTMLDivElement = document.createElement("div") // Creates The Show Replies Container
+                    show_replies.classList.add("show_replies") // Adds The Show Replies Class
+                    show_replies.title = gettext("Zobraziť odpovede...")
+                    show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
+                    new_parent_comment_interactions.appendChild(show_replies) // Appends The Show Replies To The New Parent Comment
+                }
+            }
         })
     }
 
@@ -1345,4 +1376,27 @@ export function showVideoLoader(loading:HTMLDivElement):void {
 // Function For Hide The Video Loader
 export function hideVideoLoader(loading:HTMLDivElement):void {
     loading.classList.add("hidden") // Hides The Loading
+}
+
+// Function For Toggle Visibility Of The Comment Replies
+export function toggleShowReplies(icon:HTMLElement|null, reply_container:HTMLDivElement, reply_icon:HTMLElement):void {
+    // Shows The Replies
+    if(reply_container.classList.contains("hidden")) {
+        if(icon) icon.classList.replace("fa-angle-down", "fa-angle-up") // Shows The Up Icon
+        reply_container.classList.remove("hidden") // Shows The Replies
+
+        // Shows The X Mark Icon
+        reply_icon.classList.remove("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+        reply_icon.classList.add("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+    }
+
+    // Hides The Replies
+    else {
+        if(icon) icon.classList.replace("fa-angle-up", "fa-angle-down") // Shows The Down Icon
+        reply_container.classList.add("hidden") // Hides The Replies
+
+        // Shows The Comment Icon
+        reply_icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+        reply_icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+    }
 }

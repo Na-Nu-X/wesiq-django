@@ -858,24 +858,22 @@ h2 {
                     gap: 10px;
 
                     .reply {
-                        .fa-comment {
+                        .fa-comment,
+                        .fa-xmark {
                             color: darken($secondary-color, 40%);
+                            cursor: pointer;
+                        }
 
+                        .fa-comment {
                             &:hover {
                                 color: darken($secondary-color, 20%);
-                                cursor: pointer;
                                 transition: color 0.3s ease;
                             }
                         }
 
                         .fa-xmark {
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: $error-color;
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
+                            color: $error-color !important;
+                            width: 15px;
                         }
                     }
 
@@ -931,18 +929,26 @@ h2 {
                             color: darken($secondary-color, 40%);
                         }
                     }
+
+                    .show_replies {
+                        .fa-angle-down,
+                        .fa-angle-up {
+                            @include icon;
+                        }
+                    }
                 }
 
                 .reply_container {
-                    margin-left: 6px + 10px + 38px;
+                    margin-left: 6px + 10px + 32px;
                     margin-right: 10px;
 
-                    // &.hidden {
-                    //     display: none;
-                    // }
+                    &.hidden {
+                        display: none;
+                    }
 
                     .write_comment_form {
                         position: relative;
+                        margin: 10px 0px;
     
                         .comment {
                             width: 100%;
@@ -1015,6 +1021,11 @@ h2 {
                                 cursor: pointer;
                             }
                         }
+                    }
+
+                    .one_comment .comment_container .user a .profile_picture {
+                        width: 32px;
+                        height: 32px;
                     }
                 }
             }
