@@ -3,10 +3,25 @@ import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import { feed_state } from "../state.js"
 import { getFormattedTime } from "../../../utils/timer.js"
+import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
-export interface searchedPost {
+interface searchedPostsResponse {
+    success:boolean,
+    has_next?:boolean,
+
+    logged_in_user?:{
+        logged_in_user_id:number,
+        profile_picture_name:string,
+        saved_posts:string[]
+    },
+
+    posts:searchedPost[],
+    message:string
+}
+
+interface searchedPost {
     user:{
         id:number,
         first_name:string,
@@ -48,39 +63,27 @@ export interface searchedPost {
         is_video:boolean
     }[],
 
-    visible_comments:{
-        id:number,
-
-        user:{
-            id:number,
-            first_name:string,
-            last_name:string,
-            username:string,
-            profile_picture_name:string|null
-        },
-
-        comment:string,
-        likes:number,
-        likes_from_users:string[],
-        creation_time:string,
-        parent_id:number|null,
-        reports_from_users:string[],
-        level:number
-    }[]
+    visible_comments:comment[]
 }
 
-interface searchedPostsResponse {
-    success:boolean,
-    has_next?:boolean,
+interface comment {
+    id:number,
 
-    logged_in_user?:{
-        logged_in_user_id:number,
-        profile_picture_name:string,
-        saved_posts:string[]
+    user:{
+        id:number,
+        first_name:string,
+        last_name:string,
+        username:string,
+        profile_picture_name:string|null
     },
 
-    posts:searchedPost[],
-    message:string
+    comment:string,
+    likes:number,
+    likes_from_users:string[],
+    creation_time:string,
+    parent_id:number|null,
+    reports_from_users:string[],
+    level:number
 }
 
 interface addCommentResponse {
@@ -261,10 +264,6 @@ export async function sharePost(id:string, author:string):Promise<void> {
         url: window.location.origin + link
     }
 
-    const message:HTMLParagraphElement|null = document.body.querySelector(".message") as HTMLParagraphElement || null // Gets The Message If Exists
-
-    if(message) message.remove() // Removes The Message From The DOM
-
     try {
         if(navigator.share) {
             await navigator.share(share_data) // Opens The Share Menu
@@ -272,20 +271,12 @@ export async function sharePost(id:string, author:string):Promise<void> {
         }
 
         await navigator.clipboard.writeText(window.location.origin + link) // Copies The Link
-        
-        // Success Message
-        const success_message:HTMLParagraphElement = document.createElement("p") // Creates The Message Paragraph
-        success_message.classList.add("message", "success") // Adds The Message And Success Class
-        success_message.textContent = gettext("Odkaz bol skopírovaný")
-        document.body.appendChild(success_message)
+
+        displayMessage("Odkaz bol skopírovaný", "success") // Displays The Success Message
     }
     
     catch {
-        // Error Message
-        const error_message:HTMLParagraphElement = document.createElement("p") // Creates The Message Paragraph
-        error_message.classList.add("message", "error") // Adds The Message And Error Class
-        error_message.textContent = gettext("Odkaz sa nepodarilo skopírovať")
-        document.body.appendChild(error_message)
+        displayMessage("Odkaz sa nepodarilo skopírovať", "error") // Displays The Error Message
     }
 }
 
@@ -350,6 +341,7 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
         // If The Response Isn't Success
         if(!add_comment_response.success) {
             console.error(add_comment_response.message)
+            displayMessage(add_comment_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -486,9 +478,6 @@ export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
 
 // Function For Reply On The Comment
 export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, icon:HTMLElement, id:string):Promise<void> {
-    // console.log(write_comment_form)
-    // console.log(reply_container)
-
     if(!reply_container.querySelector(".write_comment_form")) {
         const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
     
@@ -734,24 +723,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     if(post_data.visible_comments.length > 0) {
         console.log(post_data.visible_comments)
 
-        post_data.visible_comments.forEach(function(one_visible_comment:{
-            id:number,
-
-            user:{
-                id:number,
-                first_name:string,
-                last_name:string,
-                username:string,
-                profile_picture_name:string|null
-            },
-
-            comment:string,
-            likes:number,
-            likes_from_users:string[],
-            creation_time:string,
-            parent_id:number|null,
-            reports_from_users:string[]
-        }):void {
+        post_data.visible_comments.forEach(function(one_visible_comment:comment):void {
             const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
             const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
             const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
@@ -794,6 +766,16 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
             // Interactions
             const interactions:HTMLDivElement = one_comment_container.querySelector(".interactions") as HTMLDivElement // Gets The Comment Interactions Container
+
+            // Reply
+            // Displays The Reply Option Only If The Nested Level Of The Comment Is Less Than 5
+            if(one_visible_comment.level < 5) {
+                const reply:HTMLDivElement = document.createElement("div") // Creates The Reply Container
+                reply.classList.add("reply") // Adds The Reply Class
+                reply.title = gettext("Odpovedať...")
+                reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
+                interactions.prepend(reply) // Prepends The Reply Container To The Interactions
+            }
 
             // Likes
             const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
