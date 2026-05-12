@@ -1,9 +1,11 @@
 from allauth.socialaccount.signals import social_account_added, pre_social_login
 from allauth.socialaccount.models import SocialAccount
 from django.dispatch import receiver
-from .models import Users, Activity, Reviews, Articles, ArticleForum, TrainingPlan, Exercises
-from django.db.models.signals import post_save, post_delete
+from .models import Users, Activity, Reviews, Articles, ArticleForum, TrainingPlan, Exercises, Post, PostForum
+from django.db.models.signals import post_save, post_delete, m2m_changed
 from .tasks import modelsWarmUp
+from django.utils import timezone
+from datetime import timedelta
 
 # Google OAuth 2.0
 @receiver(social_account_added)
@@ -39,3 +41,25 @@ models_for_warm_up = [Users, Activity, Reviews, Articles, ArticleForum, Training
 for one_model in models_for_warm_up:
     post_save.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Save
     post_delete.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Delete
+
+# Update Latest Interaction Time In Posts
+
+def update_post_activity(post):
+    limit_date = timezone.now() - timedelta(days=30)
+    
+    if post.created_at > limit_date:
+        post.__class__.objects.filter(id=post.id).update(
+            latest_interaction=timezone.now()
+        )
+
+# Checks For New Comment In The Post
+@receiver(post_save, sender=PostForum)
+def on_comment_added(sender, instance, created, **kwargs):
+    if created:
+        update_post_activity(instance.post)
+
+# Checks For New Like On The Post
+@receiver(m2m_changed, sender=Post.likes_from_users.through)
+def update_interaction_on_like(sender, instance, action, **kwargs):
+    if action == "post_add":
+        update_post_activity(instance)

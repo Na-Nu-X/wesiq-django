@@ -41,7 +41,7 @@ import {
     sharePost,
     togglePostSave,
     addComment,
-    toggleCommentLike,
+    togglePostCommentLike,
     reportComment,
     checkSearchedPostsHistory,
     hideHistoryContainer,
@@ -111,57 +111,64 @@ export function focusAtEnd(description:HTMLDivElement):void {
     }
 }
 
-// Function For Add Follow
-async function follow(event:PointerEvent, user_to_follow_id:number|null):Promise<void> {
-    event.preventDefault() // Prevents Redirect To The User's Profile
-
-    if(user_to_follow_id) {
-        try {
-            const follow_response:response = await sendPOST(window.location.pathname, user_to_follow_id, "follow"); // Sends Clicked User ID As A POST Data
+// Function For Toggle Follow
+async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLDivElement|null, user_to_follow_id:number|null):Promise<void> {
+    try {
+        if(user_to_follow_id) {
+            const toggle_follow_response:response = await sendPOST(window.location.pathname, user_to_follow_id, "toggle-follow"); // Sends Clicked User ID As A POST Data
 
             // If The Response Isn't Success
-            if(!follow_response.success) {
-                console.error(follow_response.message)
+            if(!toggle_follow_response.success) {
+                console.error(toggle_follow_response.message)
                 return
             }
 
-            (event.target as HTMLElement).classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
+            if(icon) {
+                // Follow
+                if(icon.classList.contains("fa-user-plus")) {
+                    icon.classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
+        
+                    const followers_counter:HTMLParagraphElement = (icon.parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+        
+                    followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+                }
     
-            const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+                // Unfollow
+                else if(icon.classList.contains("fa-user-minus")) {
+                    icon.classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
     
-            followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
-        }
+                    const followers_counter:HTMLParagraphElement = (icon.parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+    
+                    followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+                }
+            }
 
-        catch {
-            console.error(gettext("Pri pridávaní sledovania došlo k chybe."))
+            if(follow_button) {
+                // Follow
+                if(follow_button.dataset["action"]?.trim() === "follow") {
+                    follow_button.textContent = "Prestať sledovať"
+                    follow_button.dataset["action"] = "unfollow"
+
+                    const followers_counter:HTMLParagraphElement = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Followers Counter
+        
+                    followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+                }
+    
+                // Unfollow
+                else if(follow_button.dataset["action"]?.trim() === "unfollow") {
+                    follow_button.textContent = "Začať sledovať"
+                    follow_button.dataset["action"] = "follow"
+
+                    const followers_counter:HTMLParagraphElement = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Followers Counter
+    
+                    followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+                }
+            }
         }
     }
-}
 
-// Function For Remove Follow
-async function unfollow(event:PointerEvent, user_to_unfollow_id:number|null):Promise<void> {
-    event.preventDefault() // Prevents Redirect To The User's Profile
-
-    if(user_to_unfollow_id) {
-        try {
-            const unfollow_response:response = await sendPOST(window.location.pathname, user_to_unfollow_id, "unfollow"); // Sends Clicked User ID As A POST Data
-
-            // If The Response Isn't Success
-            if(!unfollow_response.success) {
-                console.error(unfollow_response.message)
-                return
-            }
-            
-            (event.target as HTMLElement).classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
-
-            const followers_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
-
-            followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
-        }
-
-        catch {
-            console.error(gettext("Pri rušení sledovania došlo k chybe."))
-        }
+    catch {
+        console.error(gettext("Pri pridávaní sledovania došlo k chybe."))
     }
 }
 
@@ -191,14 +198,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Global Event Delegations
 
         all_users_container.addEventListener("click", function(event:PointerEvent):void {
-            if((event.target as HTMLElement).classList.contains("fa-user-plus")) {
-                const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
-                follow(event, clicked_user_id) // Follow
-            }
+            if(
+                (event.target as HTMLElement).classList.contains("fa-user-plus") ||
+                (event.target as HTMLElement).classList.contains("fa-user-minus")
+            ) {
+                event.preventDefault() // Prevents Redirect To The User's Profile
 
-            else if((event.target as HTMLElement).classList.contains("fa-user-minus")) {
+                const icon:HTMLElement = event.target as HTMLElement // Gets The Follow / Unfollow Icon
                 const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
-                unfollow(event, clicked_user_id) // Unfollow
+                toggleFollow(icon, null, clicked_user_id)
             }
         })
 
@@ -938,20 +946,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLElement).closest(".post_container") as HTMLDivElement) {
                 // Follow Button Click Functionalities
                 if((event.target as HTMLDivElement).classList.contains("follow_button")) {
+                    event.preventDefault() // Prevents Redirect To The User's Profile
+
                     const follow_button:HTMLDivElement = event.target as HTMLDivElement // Gets The Follow Button
                     const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
-    
-                    if(follow_button.dataset["action"]?.trim() === "follow") {
-                        follow(event, clicked_user_id); // Follow
-                        follow_button.textContent = "Prestať sledovať"
-                        follow_button.dataset["action"] = "unfollow"
-                    }
-        
-                    else if(follow_button.dataset["action"]?.trim() === "unfollow") {
-                        unfollow(event, clicked_user_id); // Unfollow
-                        follow_button.textContent = "Začať sledovať"
-                        follow_button.dataset["action"] = "follow"
-                    }
+                    toggleFollow(null, follow_button, clicked_user_id)
                 }
 
                 // Toggle Post Like Click Functionality
@@ -1012,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
 
-                    if(one_comment.dataset["comment_id"]) toggleCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+                    if(one_comment.dataset["comment_id"]) togglePostCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
                 }
 
                 // Report Comment

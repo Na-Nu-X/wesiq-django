@@ -28,8 +28,8 @@ interface searchedPost {
         last_name:string,
         username:string,
         profile_picture_name:string|null,
-        following:string[],
-        followers:string[]
+        following:number[],
+        followers:number[]
     },
 
     id:number,
@@ -54,7 +54,7 @@ interface searchedPost {
     allow_comments:boolean,
     hide_likes:boolean,
     likes:number,
-    likes_from_users:string[],
+    likes_from_users:number[],
     created_at:string,
 
     media:{
@@ -79,10 +79,10 @@ interface comment {
 
     comment:string,
     likes:number,
-    likes_from_users:string[],
+    likes_from_users:number[],
     creation_time:string,
     parent_id:number|null,
-    reports_from_users:string[],
+    reports_from_users:number[],
     level:number
 }
 
@@ -209,45 +209,31 @@ function generateHeartParticles(particles:HTMLDivElement):void {
 
 // Function For Toggle Post Like
 export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement):Promise<void> {
-    // If The Heart Is Empty
-    if(icon.classList.contains("fa-regular")) {
-        try {
-            const like_post_response:response = await sendPOST(window.location.pathname, id, "like-post") // Sends Liked Post ID As A POST Data
+    try {
+        const toggle_post_like_response:response = await sendPOST(window.location.pathname, id, "toggle-post-like") // Sends Liked Post ID As A POST Data
 
-            // If The Response Isn't Success
-            if(!like_post_response.success) {
-                console.error(like_post_response.message)
-                return
-            }
+        // If The Response Isn't Success
+        if(!toggle_post_like_response.success) {
+            console.error(toggle_post_like_response.message)
+            return
+        }
 
+        // If The Heart Is Empty
+        if(icon.classList.contains("fa-regular")) {
             generateHeartParticles(particles) // Generates The Heart Particles
             icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
             if(counter) counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
         }
 
-        catch {
-            console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
-        }
-    }
-
-    // If The Heart Is Already Clicked
-    else if(icon.classList.contains("fa-solid")) {
-        try {
-            const cancel_like_post_response:response = await sendPOST(window.location.pathname, id, "cancel-like-post") // Sends Liked Post ID As A POST Data
-
-            // If The Response Isn't Success
-            if(!cancel_like_post_response.success) {
-                console.error(cancel_like_post_response.message)
-                return
-            }
-
+        // If The Heart Is Already Clicked
+        else if(icon.classList.contains("fa-solid")) {
             icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
             if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
         }
+    }
 
-        catch {
-            console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
-        }
+    catch {
+        console.error(gettext("Pri zmene označenia páči sa mi to došlo k chybe."))
     }
 }
 
@@ -442,59 +428,44 @@ export async function addComment(post_id:string, write_comment_form:HTMLDivEleme
         }
     }
 
-    catch(error) {
-        console.log(error)
+    catch {
         console.error(gettext("Pri odosielaní komentáru došlo k chybe."))
     }
 }
 
-// Function For Toggle Comment Like
-export async function toggleCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):Promise<void> {
-    // If The Heart Is Empty
-    if(icon.classList.contains("fa-regular")) {
-        try {
-            const like_comment_response:response = await sendPOST(window.location.pathname, id, "like-comment") // Sends Liked Comment ID As A POST Data
+// Function For Toggle Post Comment Like
+export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):Promise<void> {
+    try {
+        const toggle_post_comment_like_response:response = await sendPOST(window.location.pathname, id, "toggle-post-comment-like") // Sends Liked Post ID As A POST Data
 
-            // If The Response Isn't Success
-            if(!like_comment_response.success) {
-                console.error(like_comment_response.message)
-                return
-            }
+        // If The Response Isn't Success
+        if(!toggle_post_comment_like_response.success) {
+            console.error(toggle_post_comment_like_response.message)
+            return
+        }
 
+        // If The Heart Is Empty
+        if(icon.classList.contains("fa-regular")) {
             icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Heart Image
             counter.textContent = String(parseInt(counter.textContent) + 1) // Adds 1 Like To The Counter By Clicking On The Empty Heart
         }
 
-        catch {
-            console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
-        }
-    }
-
-    // If The Heart Is Already Clicked
-    else if(icon.classList.contains("fa-solid")) {
-        try {
-            const cancel_like_comment_response:response = await sendPOST(window.location.pathname, id, "cancel-like-comment") // Sends Liked Comment ID As A POST Data
-
-            // If The Response Isn't Success
-            if(!cancel_like_comment_response.success) {
-                console.error(cancel_like_comment_response.message)
-                return
-            }
-
+        // If The Heart Is Already Clicked
+        else if(icon.classList.contains("fa-solid")) {
             icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Heart Image
             if(counter) counter.textContent = String(parseInt(counter.textContent) - 1) // Subtracts 1 Like To The Counter By Clicking On The Already Clicked Heart
         }
+    }
 
-        catch {
-            console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
-        }
+    catch {
+        console.error(gettext("Pri zmene označenia páči sa mi to došlo k chybe."))
     }
 }
 
 // Function For Report The Comment
 export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
     try {
-        const report_comment_response:response = await sendPOST(window.location.pathname, id, "report-comment") // Sends Liked Comment ID As A POST Data
+        const report_comment_response:response = await sendPOST(window.location.pathname, id, "report-post-comment") // Sends Liked Comment ID As A POST Data
 
         // If The Response Isn't Success
         if(!report_comment_response.success) {
@@ -556,8 +527,8 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
         follow_button.classList.add("follow_button") // Adds The Follow Button Class
         follow_button.dataset["id"] = String(post_data.user.id) // Stores The User ID
-        follow_button.dataset["action"] = !post_data.user.followers.includes(String(logged_in_user_id)) ? "follow" : "unfollow"
-        follow_button.textContent = !post_data.user.followers.includes(String(logged_in_user_id)) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
+        follow_button.dataset["action"] = !post_data.user.followers.includes(logged_in_user_id) ? "follow" : "unfollow"
+        follow_button.textContent = !post_data.user.followers.includes(logged_in_user_id) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
 
         top.appendChild(follow_button) // Appends The Follow Button To The Top Container
     }
@@ -659,7 +630,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     const likes:HTMLDivElement = society.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
     const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
 
-    logged_in_user_id && post_data.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+    logged_in_user_id && post_data.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
     // Hidden Likes Counter
     if(post_data.hide_likes && post_data.user.id !== logged_in_user_id) {
@@ -796,7 +767,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
 
             const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-            logged_in_user_id && one_visible_comment.likes_from_users.includes(String(logged_in_user_id)) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+            logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
             // Likes Counter
             const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
@@ -804,7 +775,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
             // Report
-            if(logged_in_user_id && one_visible_comment.reports_from_users.includes(String(logged_in_user_id))) {
+            if(logged_in_user_id && one_visible_comment.reports_from_users.includes(logged_in_user_id)) {
                 const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
 
                 const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon

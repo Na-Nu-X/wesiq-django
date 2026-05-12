@@ -44,6 +44,7 @@ from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
+from django.db.models import Exists, OuterRef
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -238,49 +239,38 @@ def stripeWebhook(request):
 
     return HttpResponse(status=200)
 
-def likePost(request):
+def togglePostLike(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-            post_id = json.loads(request.body)
-            post = Post.objects.get(id=post_id)
+            post_id = json.loads(request.body) # Gets The Post ID
+            post = Post.objects.get(id=int(post_id)) # Gets The Post
 
-            if(str(logged_in_user_id) not in post.likes_from_users):
-                post.likes_from_users.append(logged_in_user_id)
-                post.likes += 1
+            has_like = post.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
+
+            # Like
+            if not has_like:
+                post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
+                post.likes = F("likes") + 1 # Increases The Likes Counter
+                post.save() # Updates The Post
+
+                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+            # Cancel Like
+            else:
+                post.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Post
+                post.likes = F("likes") - 1 # Decreases The Likes Counter
+                post.save() # Updates The Post
                 
-                post.save()
+                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
 
-            return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
-
-        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné pridať bez prihlásenia.")}, status=401)
+        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
 
     except:
-        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=500)
-
-def cancelLikePost(request):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            post_id = json.loads(request.body)
-            post = Post.objects.get(id=post_id)
-
-            if(str(logged_in_user_id) in post.likes_from_users):
-                post.likes_from_users.remove(str(logged_in_user_id))
-                post.likes -= 1
-                
-                post.save()
-
-            return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
-
-        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
-
-    except:
-        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=500)
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def savePost(request):
     try:
@@ -322,19 +312,21 @@ def unsavePost(request):
         captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
         return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=500)
 
-def reportComment(request):
+def reportPostComment(request):
     try:
-        comment_id = json.loads(request.body) # Gets The Comment Data
-
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-            comment = PostForum.objects.get(id=comment_id)
+            comment_id = json.loads(request.body) # Gets The Comment ID
+            comment = PostForum.objects.get(id=comment_id) # Gets The Comment
 
-            if(str(logged_in_user_id) not in comment.reports_from_users):
-                comment.reports_from_users.append(logged_in_user_id)
-                comment.reports += 1
+            has_report = comment.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
 
+            # Report
+            if not has_report:
+                comment.reports_from_users.add(logged_in_user) # Adds The User To Reports From Users In Comment
+                comment.reports += 1 # Increases The Reports Counter
 
                 if comment.reports >= 5:
                     post = Post.objects.get(id=comment.post_id) # Gets The Post
@@ -343,9 +335,9 @@ def reportComment(request):
                     if report_percentage > 10:
                         comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
                 
-                comment.save()
+                comment.save() # Updates The Comment
 
-            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+                return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
 
         return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
 
@@ -389,47 +381,38 @@ def addComment(request, logged_in_user_id):
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
         return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
 
-def likeComment(request):
+def togglePostCommentLike(request):
     try:
-        comment_id = json.loads(request.body) # Gets The Comment Data
-
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-            comment = PostForum.objects.get(id=int(comment_id))
+            comment_id = json.loads(request.body) # Gets The Comment ID
+            comment = PostForum.objects.get(id=int(comment_id)) # Gets The Comment
 
-            if(str(logged_in_user_id) not in comment.likes_from_users):
-                comment.likes_from_users.append(logged_in_user_id)
-                comment.likes += 1
+            has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+
+            # Like
+            if not has_like:
+                comment.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Comment
+                comment.likes = F("likes") + 1 # Increases The Likes Counter
+                comment.save() # Updates The Comment
+
+                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+            # Cancel Like
+            else:
+                comment.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Comment
+                comment.likes = F("likes") - 1 # Decreases The Likes Counter
+                comment.save() # Updates The Comment
                 
-                comment.save()
+                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
 
-        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
 
     except:
-        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=500)
-
-def cancelLikeComment(request):
-    try:
-        comment_id = json.loads(request.body) # Gets The Comment Data
-
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            comment = PostForum.objects.get(id=int(comment_id))
-
-            if(str(logged_in_user_id) in comment.likes_from_users):
-                comment.likes_from_users.remove(str(logged_in_user_id))
-                comment.likes -= 1
-                
-                comment.save()
-
-        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
-
-    except:
-        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=500)
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def homepageView(request):
     # Login Form
@@ -1664,7 +1647,6 @@ def trainingSessionView(request):
     # Gets Logged In User
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
@@ -1893,11 +1875,24 @@ def communityView(request):
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
             media__is_processed=False
-        ).select_related(
-            "user"
         ).prefetch_related(
             "tagged_users",
-            "media"
+            "media",
+
+            Prefetch(
+                "user",
+                queryset=Users.objects.filter(
+                    account_status="OK"
+                ).annotate(
+                    # Creates The Has Follow Column (True If The User Has Already Following The User Of The Post)
+                    has_follow=Exists(
+                        Users.following.through.objects.filter(
+                            id=OuterRef("pk"),
+                            to_users_id=logged_in_user_id
+                        )
+                    )
+                )
+            ),
         ).order_by(
             "-created_at"
         ).distinct()
@@ -2078,8 +2073,8 @@ def communityView(request):
                             "username": one_user.username,
                             "profile_picture_name": one_user.profile_picture_name, 
                             "friend_code": one_user.friend_code,
-                            "following": list(one_user.following),
-                            "followers": list(one_user.followers),
+                            "following": list(one_user.following.values_list("id", flat=True)),
+                            "followers": list(one_user.followers.values_list("id", flat=True))
                         }
 
                         for one_user in users
@@ -2091,8 +2086,8 @@ def communityView(request):
                     captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
                     return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
 
-            # Follow
-            if request.headers.get("X-Requested-Action") == "follow":
+            # Toggle Follow
+            if request.headers.get("X-Requested-Action") == "toggle-follow":
                 try:
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
@@ -2101,55 +2096,31 @@ def communityView(request):
                         user_to_follow_id = json.loads(request.body)
                         user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
 
-                        if(str(user_to_follow_id) not in logged_in_user.following):
-                            logged_in_user.following.append(user_to_follow_id)
-                            logged_in_user.save()
+                        has_follow = logged_in_user.following.filter(id=user_to_follow_id).exists() # Checks If The Logged In User Is Already Following The User
 
-                        if(str(logged_in_user_id) not in user_to_follow.followers):
-                            user_to_follow.followers.append(logged_in_user_id)
-                            user_to_follow.save()
+                        # Follow
+                        if not has_follow:
+                            logged_in_user.following.add(user_to_follow) # Adds The User To Following Users Of Logged In User
+                            logged_in_user.save() # Updates The Logged In User
 
-                        return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
+                            return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
 
-                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné pridať bez prihlásenia.")}, status=401)
+                        # Unfollow
+                        else:
+                            logged_in_user.following.remove(user_to_follow) # Removes The User From Following Users Of Logged In User
+                            logged_in_user.save() # Updates The Logged In User
 
-                except:
-                    captureError(f"An error occurred while adding follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pridávaní sledovania došlo k chybe.")}, status=404)
+                            return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
 
-            # Unfollow
-            if request.headers.get("X-Requested-Action") == "unfollow":
-                try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
-
-                        user_to_unfollow_id = json.loads(request.body)
-                        user_to_unfollow = Users.objects.get(id=user_to_unfollow_id) # Gets User To Unfollow From The DB
-
-                        if(str(user_to_unfollow_id) in logged_in_user.following):
-                            logged_in_user.following.remove(str(user_to_unfollow_id))
-                            logged_in_user.save()
-
-                        if(str(logged_in_user_id) in user_to_unfollow.followers):
-                            user_to_unfollow.followers.remove(str(logged_in_user_id))
-                            user_to_unfollow.save()
-
-                        return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné odstrániť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")}, status=401)
 
                 except:
-                    captureError(f"An error occurred while unfollowing.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-                    return JsonResponse({"success": False, "message": _("Pri rušení sledovania došlo k chybe.")}, status=404)
+                    captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                    return JsonResponse({"success": False, "message": _("Pri zmene sledovania došlo k chybe.")}, status=404)
 
-            # Like Post
-            if request.headers.get("X-Requested-Action") == "like-post":
-                return likePost(request)
-
-            # Cancel Like Post
-            if request.headers.get("X-Requested-Action") == "cancel-like-post":
-                return cancelLikePost(request)
+            # Toggle Post Like
+            if request.headers.get("X-Requested-Action") == "toggle-post-like":
+                return togglePostLike(request)
 
             # Save Post
             if request.headers.get("X-Requested-Action") == "save-post":
@@ -2160,8 +2131,8 @@ def communityView(request):
                 return unsavePost(request)
 
             # Report Comment
-            if request.headers.get("X-Requested-Action") == "report-comment":
-                return reportComment(request)
+            if request.headers.get("X-Requested-Action") == "report-post-comment":
+                return reportPostComment(request)
 
             # Tag User
             if request.headers.get("X-Requested-Action") == "tag-user":
@@ -2197,13 +2168,9 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "add-comment":
                 return addComment(request, logged_in_user_id)
 
-            # Like Comment
-            if request.headers.get("X-Requested-Action") == "like-comment":
-                return likeComment(request)
-
-            # Cancel Like Comment
-            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
-                return cancelLikeComment(request)
+            # Toggle Post Comment Like
+            if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
+                return togglePostCommentLike(request)
 
         return render(request, "app/community.html", {
             "first_name": logged_in_user.first_name,
@@ -2294,8 +2261,8 @@ def loadPostsView(request):
                     "last_name": one_post.user.last_name,
                     "username": one_post.user.username,
                     "profile_picture_name": one_post.user.profile_picture_name,
-                    "following": one_post.user.following,
-                    "followers": one_post.user.followers
+                    "following": list(one_post.user.following.values_list("id", flat=True)),
+                    "followers": list(one_post.user.followers.values_list("id", flat=True))
                 },
 
                 "id": one_post.id,
@@ -2329,7 +2296,7 @@ def loadPostsView(request):
                 "allow_comments": one_post.allow_comments,
                 "hide_likes": one_post.hide_likes,
                 "likes": one_post.likes,
-                "likes_from_users": list(one_post.likes_from_users),
+                "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
                 "created_at": one_post.created_at.isoformat(),
                 "media": list(one_post.media.values("file", "thumbnail", "is_video")),
 
@@ -2347,10 +2314,10 @@ def loadPostsView(request):
 
                         "comment": one_comment.comment,
                         "likes": one_comment.likes,
-                        "likes_from_users": list(one_comment.likes_from_users),
+                        "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
                         "creation_time": one_comment.creation_time.isoformat(),
                         "parent_id": one_comment.parent_id,
-                        "reports_from_users": list(one_comment.reports_from_users),
+                        "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
                         "level": one_comment.level
                     }
 
@@ -2409,13 +2376,9 @@ def postView(request, post_id):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
-            # Like Post
-            if request.headers.get("X-Requested-Action") == "like-post":
-                return likePost(request)
-
-            # Cancel Like Post
-            if request.headers.get("X-Requested-Action") == "cancel-like-post":
-                return cancelLikePost(request)
+            # Toggle Post Like
+            if request.headers.get("X-Requested-Action") == "toggle-post-like":
+                return togglePostLike(request)
 
             # Save Post
             if request.headers.get("X-Requested-Action") == "save-post":
@@ -2426,32 +2389,68 @@ def postView(request, post_id):
                 return unsavePost(request)
 
             # Report Comment
-            if request.headers.get("X-Requested-Action") == "report-comment":
-                return reportComment(request)
+            if request.headers.get("X-Requested-Action") == "report-post-comment":
+                return reportPostComment(request)
 
             # Add Comment
             if request.headers.get("X-Requested-Action") == "add-comment":
                 return addComment(request, logged_in_user_id)
 
-            # Like Comment
-            if request.headers.get("X-Requested-Action") == "like-comment":
-                return likeComment(request)
-
-            # Cancel Like Comment
-            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
-                return cancelLikeComment(request)
+            # Toggle Post Comment Like
+            if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
+                return togglePostCommentLike(request)
 
         # Gets The Post With All Related Data
-        post = Post.objects.filter(id=post_id).select_related(
-            "user"
+        post = Post.objects.filter(
+            id=post_id
+        ).annotate(
+            # Creates The Has Like Column (True If The User Has Already Liked The Post)
+            has_like=Exists(
+                Post.likes_from_users.through.objects.filter(
+                    post_id=OuterRef("pk"),
+                    users_id=logged_in_user_id
+                )
+            )
         ).prefetch_related(
             "tagged_users", 
             "media",
- 
+            "likes_from_users",
+
+            Prefetch(
+                "user",
+                queryset=Users.objects.filter(
+                    account_status="OK"
+                ).annotate(
+                    # Creates The Has Follow Column (True If The User Has Already Following The User Of The Post)
+                    has_follow=Exists(
+                        Users.following.through.objects.filter(
+                            id=OuterRef("pk"),
+                            to_users_id=logged_in_user_id
+                        )
+                    )
+                )
+            ),
+
             Prefetch(
                 "comments",
                 queryset=PostForum.objects.exclude(
                     status="hidden"
+                ).annotate(
+                    # Creates The Has Like Column (True If The User Has Already Liked The Comment)
+                    has_like=Exists(
+                        PostForum.likes_from_users.through.objects.filter(
+                            postforum_id=OuterRef("pk"),
+                            users_id=logged_in_user_id
+                        )
+                    )
+                ).annotate(
+                    # Creates The Has Report Column (True If The User Has Already Reported The Comment)
+                    has_report=Exists(
+                        PostForum.reports_from_users.through.objects.filter(
+                            postforum_id=OuterRef("pk"),
+                            users_id=logged_in_user_id
+                        )
+                    )
                 ).select_related(
                     "user"
                 ).order_by(

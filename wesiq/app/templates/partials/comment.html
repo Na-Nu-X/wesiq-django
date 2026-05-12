@@ -40,7 +40,7 @@
         <div class="likes" title="{% translate 'Páči sa mi...' %}">
 			<i 
 				class="
-					{% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
+					{% if one_comment.has_like %}
 						fa-solid
 
 					{% else %}
@@ -61,7 +61,7 @@
 				class="
 					fa-regular fa-flag
 
-					{% if request.session.logged_in_user_id|stringformat:"i" in one_comment.reports_from_users %}
+					{% if one_comment.has_report %}
 						active
 
 					{% endif %}
