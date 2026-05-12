@@ -34,8 +34,10 @@ class Users(models.Model):
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
     friend_code = models.CharField(verbose_name="Friend Code", max_length=6, null=False)
-    following = ArrayField(models.CharField(verbose_name="Following", max_length=20), default=list, null=False)
-    followers = ArrayField(models.CharField(verbose_name="Followers", max_length=20), default=list, null=False)
+    # following = ArrayField(models.CharField(verbose_name="Following", max_length=20), default=list, null=False)
+    # followers = ArrayField(models.CharField(verbose_name="Followers", max_length=20), default=list, null=False)
+    following = models.ManyToManyField('self', verbose_name="Following", related_name="followers", symmetrical=False, blank=True)
+    # followers = models.ManyToManyField('self', verbose_name="Followers", related_name="following", symmetrical=False, blank=True)
     saved_posts = ArrayField(models.CharField(verbose_name="Saved Posts", max_length=20), default=list, null=False)
     bio = models.TextField(verbose_name="Bio", max_length=100, null=True, blank=True)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
@@ -48,7 +50,7 @@ class Users(models.Model):
 class Activity(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name="User ID", 
+        verbose_name="User", 
         on_delete=models.DO_NOTHING, 
         related_name="activities", 
         null=True,
@@ -65,7 +67,7 @@ class Activity(models.Model):
 class Reviews(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name="User ID", 
+        verbose_name="User", 
         on_delete=models.SET_NULL, 
         related_name="review", 
         null=True,
@@ -79,7 +81,7 @@ class Reviews(models.Model):
 class Articles(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name="User ID",
+        verbose_name="User",
         on_delete=models.DO_NOTHING, 
         related_name="article", 
         null=True,
@@ -102,7 +104,7 @@ class ArticleForum(models.Model):
 
     article = models.ForeignKey(
         Articles, 
-        verbose_name="Article ID", 
+        verbose_name="Article", 
         on_delete=models.DO_NOTHING, 
         related_name="comments", 
         null=False,
@@ -110,7 +112,7 @@ class ArticleForum(models.Model):
 
     user = models.ForeignKey(
         Users, 
-        verbose_name="User ID", 
+        verbose_name="User", 
         on_delete=models.DO_NOTHING, 
         related_name="comments", 
         null=True,
@@ -142,7 +144,7 @@ class TrainingPlan(models.Model):
 
     user = models.ForeignKey(
         Users,
-        verbose_name="User ID",
+        verbose_name="User",
         on_delete=models.DO_NOTHING,
         related_name="training_plans",
         null=True,
@@ -177,7 +179,7 @@ class Transactions(models.Model):
 
     user = models.ForeignKey(
         Users,
-        verbose_name="User ID",
+        verbose_name="User",
         on_delete=models.DO_NOTHING,
         related_name="transactions",
         null=True,
@@ -220,11 +222,17 @@ def getPostUploadPath(instance, filename):
 
 class Post(models.Model):
     user = models.ForeignKey(
-        "Users",
-        verbose_name="User ID",
+        Users,
+        verbose_name="User",
         on_delete=models.CASCADE,
         related_name="posts",
         null=False,
+    )
+
+    seen_by = models.ManyToManyField(
+        Users, 
+        through="SeenPost",
+        related_name="viewed_posts"
     )
 
     description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
@@ -236,7 +244,8 @@ class Post(models.Model):
     allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
     hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
-    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
+    likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_posts", blank=True)
+    latest_interaction = models.DateTimeField(verbose_name="Latest Interaction", auto_now_add=True, db_index=True)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class PostMedia(models.Model):
@@ -257,6 +266,28 @@ class PostMedia(models.Model):
     def filename(self):
         return os.path.basename(self.file.name)
 
+class SeenPost(models.Model):
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="seen_instances",
+        null=False,
+    )
+
+    post = models.ForeignKey(
+        Post,
+        verbose_name="Post",
+        on_delete=models.CASCADE,
+        related_name="seen_by_instances",
+        null=False,
+    )
+
+    viewed_at = models.DateTimeField(verbose_name="Viewed At", auto_now_add=True, null=False, db_index=True)
+
+    class Meta:
+        unique_together = ("user", "post")
+
 class PostForum(models.Model):
     status_choices = [
         ("OK", "OK"),
@@ -273,7 +304,7 @@ class PostForum(models.Model):
 
     user = models.ForeignKey(
         Users, 
-        verbose_name="User ID", 
+        verbose_name="User", 
         on_delete=models.CASCADE, 
         related_name="post_comments",
         null=True,
@@ -283,7 +314,7 @@ class PostForum(models.Model):
     # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
-    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
+    likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_post_forum_comments", blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
     parent = models.ForeignKey(
@@ -296,7 +327,7 @@ class PostForum(models.Model):
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
-    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
+    reports_from_users = models.ManyToManyField(Users, verbose_name="Reports From Users", related_name="reported_post_forum_comments", blank=True)
 
     level = models.PositiveIntegerField(default=1)
 

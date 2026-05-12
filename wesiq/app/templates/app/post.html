@@ -81,7 +81,7 @@
                                     class="follow_button"
                                     data-id="{{ post.user_id }}"
                                     data-action="
-                                        {% if not request.session.logged_in_user_id|stringformat:"i" in post.user.followers %}
+                                        {% if not post.user.has_follow %}
                                             {% translate 'follow' %}
 
                                         {% else %}
@@ -90,7 +90,7 @@
                                         {% endif %}
                                     "
                                 >
-                                    {% if not request.session.logged_in_user_id|stringformat:"i" in post.user.followers %}
+                                    {% if not post.user.has_follow %}
                                         {% translate "Začať sledovať" %}
 
                                     {% else %}
@@ -208,7 +208,7 @@
                     <div class="likes" title="{% translate 'Páči sa mi...' %}">
                         <i 
                             class="
-                                {% if request.session.logged_in_user_id|stringformat:"i" in post.likes_from_users %}
+                                {% if post.has_like %}
                                     fa-solid
 
                                 {% else %}
