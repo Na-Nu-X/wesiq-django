@@ -270,6 +270,13 @@
 
                 {% if post.allow_comments %}
                     <div class="comment_forum hidden">
+                        <div class="all_comments">
+                            {% for one_comment in post.root_comments %}
+                                {% include "partials/comment.html" with one_comment=one_comment level=1 %}
+
+                            {% endfor %}
+                        </div>
+
                         <div class="write_comment_form">
                             <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
             
@@ -290,13 +297,6 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                             </svg>
-                        </div>
-
-                        <div class="all_comments">
-                            {% for one_comment in post.root_comments %}
-                                {% include "partials/comment.html" with one_comment=one_comment level=1 %}
-
-                            {% endfor %}
                         </div>
                     </div>
                 {% endif %}

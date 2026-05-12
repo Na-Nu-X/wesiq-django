@@ -43,7 +43,6 @@ import {
     addComment,
     toggleCommentLike,
     reportComment,
-    replyOnComment,
     checkSearchedPostsHistory,
     hideHistoryContainer,
     changeFocusedSearchedPost,
@@ -60,7 +59,8 @@ import {
     updateBufferingBar,
     showVideoLoader,
     hideVideoLoader,
-    toggleShowReplies
+    toggleShowReplies,
+    toggleReplyOnComment
 } from "./functions/feed.js"
 
 import type { 
@@ -983,11 +983,25 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if((event.target as HTMLImageElement).classList.contains("send")) {
                     const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
                     const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
-                    const comment:HTMLDivElement = (send_comment.closest(".write_comment_form") as HTMLDivElement).querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+                    const write_comment_form:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+                    const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
                     const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
-                    const parent_comment:HTMLDivElement|null = send_comment.closest(".one_comment") as HTMLDivElement || null // Gets The Parent Comment If It Is A Reply
+                    const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
 
-                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(post_container.dataset["post_id"], comment, all_comments, feed, parent_comment) // Adds Comment To The Post
+                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(post_container.dataset["post_id"], write_comment_form, all_comments, feed, parent_id) // Adds Comment To The Post
+                }
+
+                // Toggle Reply On Comment
+                if(
+                    (event.target as HTMLElement).closest(".interactions") &&
+                    ((event.target as HTMLElement).classList.contains("fa-comment") ||
+                    (event.target as HTMLElement).classList.contains("fa-comment-slash"))
+                ) {
+                    const icon:HTMLElement = event.target as HTMLElement // Gets The Reply Icon
+                    const write_comment_form:HTMLDivElement = (icon.closest(".comment_forum") as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+                    const one_comment:HTMLDivElement = icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment
+
+                    toggleReplyOnComment(icon, write_comment_form, one_comment)
                 }
 
                 // Toggle Comment Like Click Functionality
@@ -1008,33 +1022,13 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
                 }
 
-                // Reply On Comment
-                if( 
-                    (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions") &&
-                    ((event.target as HTMLElement).classList.contains("fa-comment") || 
-                    (event.target as HTMLElement).classList.contains("fa-xmark"))
-                ) {
-                    const reply_icon:HTMLElement = event.target as HTMLElement // Gets The Reply Icon
-                    const one_comment:HTMLDivElement = reply_icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-                    const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
-                    const write_comment_form:HTMLDivElement = (one_comment.closest(".comment_forum") as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
-
-                    if(one_comment.dataset["comment_id"]) {
-                        const show_replies_icon:HTMLElement|null = one_comment.querySelector(".interactions .show_replies i") as HTMLElement || null
-
-                        replyOnComment(write_comment_form, reply_container, event.target as HTMLElement, one_comment.dataset["comment_id"]) // Replies On The Comment
-                        toggleShowReplies(show_replies_icon, reply_container, reply_icon) // Toggles Visibility Of The Comment Replies
-                    }
-                }
-
                 // Show Replies
                 if(((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("show_replies")) {
                     const show_replies_icon:HTMLElement = event.target as HTMLElement // Gets The Show Replies Icon
                     const one_comment:HTMLDivElement = show_replies_icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
-                    const reply_icon:HTMLElement = one_comment.querySelector(".interactions .reply i") as HTMLElement // Gets The Reply Icon
                     
-                    toggleShowReplies(show_replies_icon, reply_container, reply_icon) // Toggles Visibility Of The Comment Replies
+                    toggleShowReplies(show_replies_icon, reply_container) // Toggles Visibility Of The Comment Replies
                 }
 
                 // Share Post

@@ -324,8 +324,10 @@ export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> 
 }
 
 // Function For Add Comment
-export async function addComment(post_id:string, comment_input:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_comment:HTMLDivElement|null):Promise<void> {
+export async function addComment(post_id:string, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null):Promise<void> {
     try {
+        const comment_input:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+
         const comment_data:{
             post_id:number,
             comment:string,
@@ -333,7 +335,7 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
         } = {
             post_id: Number(post_id),
             comment: comment_input.textContent,
-            parent_id: Number(parent_comment?.dataset["comment_id"]) || null
+            parent_id: parent_id
         }
 
         const add_comment_response:addCommentResponse = await sendPOST(window.location.pathname, comment_data, "add-comment") // Sends The Data With POST
@@ -371,17 +373,22 @@ export async function addComment(post_id:string, comment_input:HTMLDivElement, a
 
         comment_input.innerHTML = "" // Deletes The Comment Input
 
-        if(parent_comment) {
-            const reply_container:HTMLDivElement = parent_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+        if(parent_id) {
+            const parent_comment:HTMLDivElement|null = all_comments.querySelector(`[data-comment_id="${parent_id}"]`) as HTMLDivElement || null
 
-            if(reply_container.querySelector(".write_comment_form") as HTMLDivElement) (reply_container.querySelector(".write_comment_form") as HTMLDivElement).remove() // Removes The Write Comment Form From The DOM
+            write_comment_form.dataset["parent_id"] = "";
+            (write_comment_form.querySelector(".comment") as HTMLDivElement).dataset["placeholder"] = gettext("Napísať komentár")
 
-            const icon:HTMLElement = parent_comment.querySelector(".interactions .reply i") as HTMLElement
-
-            icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
-            icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
-
-            reply_container.prepend(one_comment_container)
+            if(parent_comment) {
+                const reply_container:HTMLDivElement = parent_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+                const icon:HTMLElement = parent_comment.querySelector(".interactions .reply i") as HTMLElement
+    
+                icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
+                icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+    
+                reply_container.prepend(one_comment_container) // Prepends The One Comment Container To The Reply Container
+                reply_container.classList.remove("hidden") // Shows The Reply Container
+            }
         }
 
         else {
@@ -500,23 +507,6 @@ export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
 
     catch {
         console.error(gettext("Pri odosielaní nahlásenia došlo k chybe."))
-    }
-}
-
-// Function For Reply On The Comment
-export async function replyOnComment(write_comment_form:HTMLDivElement, reply_container:HTMLDivElement, icon:HTMLElement, id:string):Promise<void> {
-    if(!reply_container.querySelector(".write_comment_form")) {
-        const write_comment_form_clone:DocumentFragment = write_comment_form.cloneNode(true) as DocumentFragment // Clones The Write Comment Form
-    
-        reply_container.prepend(write_comment_form_clone) // Appends The Write Comment Form To The Reply Container
-        icon.classList.remove("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
-        icon.classList.add("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
-    }
-    
-    else {
-        (reply_container.querySelector(".write_comment_form") as HTMLDivElement).remove() // Deletes The Write Comment Form
-        icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
-        icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
     }
 }
 
@@ -1379,24 +1369,41 @@ export function hideVideoLoader(loading:HTMLDivElement):void {
 }
 
 // Function For Toggle Visibility Of The Comment Replies
-export function toggleShowReplies(icon:HTMLElement|null, reply_container:HTMLDivElement, reply_icon:HTMLElement):void {
+export function toggleShowReplies(icon:HTMLElement, reply_container:HTMLDivElement):void {
     // Shows The Replies
     if(reply_container.classList.contains("hidden")) {
-        if(icon) icon.classList.replace("fa-angle-down", "fa-angle-up") // Shows The Up Icon
+        icon.classList.replace("fa-angle-down", "fa-angle-up") // Shows The Up Icon
         reply_container.classList.remove("hidden") // Shows The Replies
-
-        // Shows The X Mark Icon
-        reply_icon.classList.remove("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
-        reply_icon.classList.add("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
     }
 
     // Hides The Replies
     else {
-        if(icon) icon.classList.replace("fa-angle-up", "fa-angle-down") // Shows The Down Icon
+        icon.classList.replace("fa-angle-up", "fa-angle-down") // Shows The Down Icon
         reply_container.classList.add("hidden") // Hides The Replies
+    }
+}
 
-        // Shows The Comment Icon
-        reply_icon.classList.remove("fa-solid", "fa-xmark") // https://fontawesome.com/icons/xmark
-        reply_icon.classList.add("fa-regular", "fa-comment") // https://fontawesome.com/icons/comment
+// Function For Toggle Reply On Comment
+export function toggleReplyOnComment(icon:HTMLElement, write_comment_form:HTMLDivElement, one_comment:HTMLDivElement):void {
+    // Reply
+    if(icon.classList.contains("fa-comment")) {
+        if(!write_comment_form.dataset["parent_id"] || write_comment_form.dataset["parent_id"].trim() === "") {
+            // https://fontawesome.com/icons/comment-slash
+            icon.classList.replace("fa-regular", "fa-solid")
+            icon.classList.replace("fa-comment", "fa-comment-slash")
+
+            write_comment_form.dataset["parent_id"] = one_comment.dataset["comment_id"]; // Stores The Parent ID
+            (write_comment_form.querySelector(".comment") as HTMLDivElement).dataset["placeholder"] = interpolate(gettext("Odpoveď užívateľovi %s"), [(one_comment.querySelector(".comment_container .user .username") as HTMLParagraphElement).textContent]) // Sets The Placeholder
+        }
+    }
+    
+    // Cancel Reply
+    else {
+        // https://fontawesome.com/icons/comment
+        icon.classList.replace("fa-solid", "fa-regular")
+        icon.classList.replace("fa-comment-slash", "fa-comment")
+
+        write_comment_form.dataset["parent_id"] = "";
+        (write_comment_form.querySelector(".comment") as HTMLDivElement).dataset["placeholder"] = gettext("Napísať komentár")
     }
 }
