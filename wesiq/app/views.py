@@ -239,6 +239,37 @@ def stripeWebhook(request):
 
     return HttpResponse(status=200)
 
+def toggleFollow(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+
+            user_to_follow_id = json.loads(request.body)
+            user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
+
+            has_follow = logged_in_user.following.filter(id=user_to_follow_id).exists() # Checks If The Logged In User Is Already Following The User
+
+            # Follow
+            if not has_follow:
+                logged_in_user.following.add(user_to_follow) # Adds The User To Following Users Of Logged In User
+                logged_in_user.save() # Updates The Logged In User
+
+                return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
+
+            # Unfollow
+            else:
+                logged_in_user.following.remove(user_to_follow) # Removes The User From Following Users Of Logged In User
+                logged_in_user.save() # Updates The Logged In User
+
+                return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
+
+        return JsonResponse({"success": False, "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")}, status=401)
+
+    except:
+        captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        return JsonResponse({"success": False, "message": _("Pri zmene sledovania došlo k chybe.")}, status=404)
+
 def togglePostLike(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -1878,21 +1909,6 @@ def communityView(request):
         ).prefetch_related(
             "tagged_users",
             "media",
-
-            Prefetch(
-                "user",
-                queryset=Users.objects.filter(
-                    account_status="OK"
-                ).annotate(
-                    # Creates The Has Follow Column (True If The User Has Already Following The User Of The Post)
-                    has_follow=Exists(
-                        Users.following.through.objects.filter(
-                            id=OuterRef("pk"),
-                            to_users_id=logged_in_user_id
-                        )
-                    )
-                )
-            ),
         ).order_by(
             "-created_at"
         ).distinct()
@@ -2088,35 +2104,7 @@ def communityView(request):
 
             # Toggle Follow
             if request.headers.get("X-Requested-Action") == "toggle-follow":
-                try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
-
-                        user_to_follow_id = json.loads(request.body)
-                        user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
-
-                        has_follow = logged_in_user.following.filter(id=user_to_follow_id).exists() # Checks If The Logged In User Is Already Following The User
-
-                        # Follow
-                        if not has_follow:
-                            logged_in_user.following.add(user_to_follow) # Adds The User To Following Users Of Logged In User
-                            logged_in_user.save() # Updates The Logged In User
-
-                            return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
-
-                        # Unfollow
-                        else:
-                            logged_in_user.following.remove(user_to_follow) # Removes The User From Following Users Of Logged In User
-                            logged_in_user.save() # Updates The Logged In User
-
-                            return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")}, status=401)
-
-                except:
-                    captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-                    return JsonResponse({"success": False, "message": _("Pri zmene sledovania došlo k chybe.")}, status=404)
+                return toggleFollow(request)
 
             # Toggle Post Like
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
@@ -2376,6 +2364,10 @@ def postView(request, post_id):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
+            # Toggle Follow
+            if request.headers.get("X-Requested-Action") == "toggle-follow":
+                return toggleFollow(request)
+
             # Toggle Post Like
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
                 return togglePostLike(request)
@@ -2411,25 +2403,13 @@ def postView(request, post_id):
                     users_id=logged_in_user_id
                 )
             )
+        ).select_related(
+            "user"
         ).prefetch_related(
+            "user__followers",
             "tagged_users", 
             "media",
             "likes_from_users",
-
-            Prefetch(
-                "user",
-                queryset=Users.objects.filter(
-                    account_status="OK"
-                ).annotate(
-                    # Creates The Has Follow Column (True If The User Has Already Following The User Of The Post)
-                    has_follow=Exists(
-                        Users.following.through.objects.filter(
-                            id=OuterRef("pk"),
-                            to_users_id=logged_in_user_id
-                        )
-                    )
-                )
-            ),
 
             Prefetch(
                 "comments",
@@ -2480,6 +2460,7 @@ def postView(request, post_id):
                 post.longitude = str(post.coordinates.x).replace(",", ".")
 
             return render(request, "app/post.html", {
+                "logged_in_user": logged_in_user,
                 "first_name": logged_in_user.first_name,
                 "last_name": logged_in_user.last_name,
                 "username": logged_in_user.username,
@@ -2489,6 +2470,7 @@ def postView(request, post_id):
             })
 
         return render(request, "app/post.html", {
+            "logged_in_user": logged_in_user,
             "first_name": logged_in_user.first_name,
             "last_name": logged_in_user.last_name,
             "username": logged_in_user.username,
