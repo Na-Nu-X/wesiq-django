@@ -46,6 +46,7 @@ import {
     checkSearchedPostsHistory,
     hideHistoryContainer,
     changeFocusedSearchedPost,
+    seenPostObserver,
     loadPosts,
     getUploadProgress,
     setCompletedUploadProgress,
@@ -865,18 +866,18 @@ document.addEventListener("DOMContentLoaded", function():void {
     
             const feed_report:HTMLParagraphElement = feed.querySelector(".feed_report") as HTMLParagraphElement // Gets The Feed Report
             
-            const observer:IntersectionObserver = new IntersectionObserver((entries:IntersectionObserverEntry[]) => {
+            const infinite_feed_scroll_observer:IntersectionObserver = new IntersectionObserver(function(entries:IntersectionObserverEntry[]):void {
                 if(entries[0] && entries[0].isIntersecting) {
                     loadPosts(feed, feed_report) // Loads The Posts
                 }
             }, {
                 root: null,
-                rootMargin: "250px",
+                rootMargin: "250px", // 250PX Before The End Of The Feed
                 threshold: 0.1
             })
             
             loadPosts(feed, feed_report) // Loads The Posts
-            observer.observe(feed_report) // Starts The Observation
+            infinite_feed_scroll_observer.observe(feed_report) // Starts The Observation
         }
 
         // Feed Click Functionalities
@@ -902,7 +903,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
                     const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
 
-                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
+                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
                 }
 
                 // Comment Forum
@@ -926,7 +927,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
                     const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
 
-                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(post_container.dataset["post_id"], write_comment_form, all_comments, feed, parent_id) // Adds Comment To The Post
+                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id) // Adds Comment To The Post
                 }
 
                 // Toggle Reply On Comment
@@ -950,14 +951,14 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
 
-                    if(one_comment.dataset["comment_id"]) togglePostCommentLike(event.target as HTMLElement, comment_likes_counter, one_comment.dataset["comment_id"]) // Adds Or Removes Like From The Comment
+                    if(one_comment.dataset["comment_id"]) togglePostCommentLike(event.target as HTMLElement, comment_likes_counter, Number(one_comment.dataset["comment_id"])) // Adds Or Removes Like From The Comment
                 }
 
                 // Report Comment
                 if((event.target as HTMLElement).classList.contains("fa-flag")) {
                     const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
 
-                    if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, one_comment.dataset["comment_id"]) // Reports The Comment
+                    if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, Number(one_comment.dataset["comment_id"])) // Reports The Comment
                 }
 
                 // Show Replies
@@ -975,7 +976,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
                     const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(post_container.dataset["post_id"], share.dataset["author"]) // Shares The Post
+                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
                 }
 
                 // Save Post
@@ -983,7 +984,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
                     const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Saves Or Unsaves The Post
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
                 }
             }
             
@@ -1129,6 +1130,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const all_processing_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".processing_post_container") // Gets All Processing Post Containers
         let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
         const processing_posts_media_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_media_id) // Gets All Current Media IDs From The Local Storage
+
+        seenPostObserver(feed) // Initializes The Post Observation
         
         all_processing_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
             // Description
