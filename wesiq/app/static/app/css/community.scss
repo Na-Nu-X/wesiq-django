@@ -1116,8 +1116,8 @@ header {
                                     margin-right: auto;
                                     padding: 5px 10px;
                                     font-family: $article-heading-font;
-                                    font-size: 0.8em;
                                     font-variant-numeric: tabular-nums;
+                                    font-size: 0.8em;
                                     background-color: transparentize($main-color, 0.8);
                                     border-radius: calc(28px / 2);
                                 
@@ -1135,13 +1135,14 @@ header {
                                     padding: 5px 10px;
                                     background-color: transparentize($main-color, 0.8);
                                     border-radius: calc(28px / 2);
-                                }
-        
-                                .volume_container {
+
                                     .volume {
+                                        --volume: "0%";
+
                                         appearance: none !important;
                                         -webkit-appearance: none !important;
                                         direction: rtl;
+                                        position: relative;
                                         height: 5px;
                                         background-color: lighten($blue-color, 2%);
                                         border-radius: calc(5px / 2);
@@ -1161,6 +1162,19 @@ header {
                                             background-color: lighten($blue-color, 2%);
                                             border-radius: 50%;
                                             transition: background-color 0.3s ease, scale 0.3s ease;
+                                        }
+
+                                        &::after {
+                                            content: var(--volume, "0%");
+                                            position: absolute;
+                                            bottom: 50%;
+                                            left: -45px;
+                                            transform: translateY(50%);
+                                            width: 4ch;
+                                            text-align: right;
+                                            color: $secondary-color;
+                                            font-variant-numeric: tabular-nums;
+                                            font-size: 0.8em;
                                         }
                                     }
         
