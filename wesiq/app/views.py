@@ -284,16 +284,14 @@ def togglePostLike(request):
             # Like
             if not has_like:
                 post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
-                post.likes = F("likes") + 1 # Increases The Likes Counter
-                post.save() # Updates The Post
+                Post.objects.filter(id=int(post_id)).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
 
                 return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
 
             # Cancel Like
             else:
                 post.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Post
-                post.likes = F("likes") - 1 # Decreases The Likes Counter
-                post.save() # Updates The Post
+                Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
                 
                 return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
 
@@ -1906,12 +1904,20 @@ def communityView(request):
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
             media__is_processed=False
+        ).select_related(
+            "user"
         ).prefetch_related(
             "tagged_users",
             "media",
         ).order_by(
             "-created_at"
         ).distinct()
+
+        # Gets The Tagged Users From Each Processing Post In JSON Format
+        for one_post in processing_posts:
+            one_post.tagged_users_json = json.dumps(
+                list(one_post.tagged_users.values_list("username", flat=True))
+            )
 
         if request.method == "POST":
             # Upload Post Form
@@ -2450,6 +2456,7 @@ def postView(request, post_id):
             post.nested_comments = dict(comments_by_parent)
             post.root_comments = comments_by_parent[None]
 
+            # Gets The Tagged Users From The Post In JSON Format
             post.tagged_users_json = json.dumps(
                 list(post.tagged_users.values_list("username", flat=True))
             )
