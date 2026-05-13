@@ -1297,6 +1297,7 @@ export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputE
         volume_icon.classList.replace("fa-volume-xmark", "fa-volume-high") // Shows The High Volume Icon
         video.muted = false // Unmutes The Video
         volume_input.value = "0.5" // Sets The Volume Input To 0.5
+        volume_input.style.setProperty("--volume", '"50%"') // Shows The Volume Percentage
     }
 
     // Mute
@@ -1305,12 +1306,15 @@ export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputE
         volume_icon.classList.replace("fa-volume-low", "fa-volume-xmark") // Shows The Muted Icon
         video.muted = true // Mutes The Video
         volume_input.value = "0" // Sets The Volume Input To 0
+        volume_input.style.setProperty("--volume", '"0%"') // Shows The Volume Percentage
     }
 }
 
 // Function For Change The Video Volume
 export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement):void {
     const volume:number = Number(volume_input.value) // Gets The Volume Value
+
+    volume_input.style.setProperty("--volume", `"${Math.round(volume * 100)}%"`) // Shows The Volume Percentage
 
     // Mute
     if(volume === 0) {
