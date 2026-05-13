@@ -14,7 +14,7 @@ interface searchedPostsResponse {
     logged_in_user?:{
         logged_in_user_id:number,
         profile_picture_name:string,
-        saved_posts:string[]
+        saved_posts:number[]
     },
 
     posts:searchedPost[],
@@ -268,44 +268,30 @@ export async function sharePost(id:number, author:string):Promise<void> {
 
 // Function For Save Or Unsave The Post
 export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> {
-    // If The Save Icon Is Inactive
-    if(!icon.classList.contains("active")) {
-        try {
-            const save_post_response:response = await sendPOST(window.location.pathname, id, "save-post") // Sends Saved Post ID As A POST Data
+    try {
+        const save_post_response:response = await sendPOST(window.location.pathname, id, "toggle-post-save") // Sends Saved Post ID As A POST Data
 
-            // If The Response Isn't Success
-            if(!save_post_response.success) {
-                console.error(save_post_response.message)
-                return
-            }
+        // If The Response Isn't Success
+        if(!save_post_response.success) {
+            console.error(save_post_response.message)
+            return
+        }
 
+        // Save (If The Save Icon Is Inactive)
+        if(!icon.classList.contains("active")) {
             icon.classList.add("active") // Adds The Active Class
             icon.classList.replace("fa-regular", "fa-solid") // Adds Filled Bookmark Image
         }
 
-        catch {
-            console.error(gettext("Pri ukladaní príspevku došlo k chybe."))
-        }
-    }
-
-    // If The Save Icon Is Active
-    else if(icon.classList.contains("active")) {
-        try {
-            const unsave_post_response:response = await sendPOST(window.location.pathname, id, "unsave-post") // Sends Saved Post ID As A POST Data
-
-            // If The Response Isn't Success
-            if(!unsave_post_response.success) {
-                console.error(unsave_post_response.message)
-                return
-            }
-
+        // Unsave (If The Save Icon Is Active)
+        else if(icon.classList.contains("active")) {
             icon.classList.remove("active") // Removes The Active Class
             icon.classList.replace("fa-solid", "fa-regular") // Adds Empty Bookmark Image
         }
+    }
 
-        catch {
-            console.error(gettext("Pri rušení uloženia príspevku došlo k chybe."))
-        }
+    catch {
+        console.error(gettext("Pri zmene uloženia príspevku došlo k chybe."))
     }
 }
 
@@ -493,7 +479,7 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
 }
 
 // Function For Create Post HTML Structure
-function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined, saved_posts:string[]|undefined):DocumentFragment {
+function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined, saved_posts:number[]|undefined):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
     const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
 
@@ -676,7 +662,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     const save_icon:HTMLElement = save.querySelector(".fa-bookmark") as HTMLElement // Gets The Save Icon
 
     // https://fontawesome.com/icons/bookmark
-    if(saved_posts && saved_posts.includes(String(post_data.id))) {
+    if(saved_posts && saved_posts.includes(post_data.id)) {
         save_icon.classList.add("fa-solid") // Shows The Filled Bookmark Icon
         save_icon.classList.add("active") // Adds The Active Class
     }
