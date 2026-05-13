@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -239,6 +239,28 @@ def stripeWebhook(request):
 
     return HttpResponse(status=200)
 
+@require_POST
+def markPostAsSeen(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            post_id = json.loads(request.body) # Gets The Post ID
+
+            # Marks The Post As Seen If Exists And Isn't Already Seen By The User
+            SeenPost.objects.get_or_create(
+                user_id=logged_in_user_id,
+                post_id=post_id
+            )
+
+            return JsonResponse({"success": True, "message": _('Príspevok bol úspešne označený za "už videný".')}, status=200)
+
+        return JsonResponse({"success": False, "message": _('Príspevok nie je možné označiť za "už videný" bez prihlásenia.')}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _('Pri označovaní príspevku za "už videný" došlo k chybe.')}, status=500)
+
+@require_POST
 def toggleFollow(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -266,10 +288,11 @@ def toggleFollow(request):
 
         return JsonResponse({"success": False, "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri zmene sledovania došlo k chybe.")}, status=404)
 
+@require_POST
 def togglePostLike(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -297,10 +320,11 @@ def togglePostLike(request):
 
         return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
 
+@require_POST
 def savePost(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -317,10 +341,11 @@ def savePost(request):
 
         return JsonResponse({"success": False, "message": _("Príspevok nie je možné uložiť bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri ukladaní príspevku došlo k chybe.")}, status=500)
 
+@require_POST
 def unsavePost(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -337,10 +362,11 @@ def unsavePost(request):
 
         return JsonResponse({"success": False, "message": _("Príspevok nie je možné odstrániť zo zoznamu uložených bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=500)
 
+@require_POST
 def reportPostComment(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -370,10 +396,11 @@ def reportPostComment(request):
 
         return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
 
+@require_POST
 def addComment(request, logged_in_user_id):
     try:
         comment_data = json.loads(request.body) # Gets The Comment Data
@@ -406,10 +433,11 @@ def addComment(request, logged_in_user_id):
     except ValidationError as e:
         return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
 
-    except:
-        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
 
+@require_POST
 def togglePostCommentLike(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -439,8 +467,8 @@ def togglePostCommentLike(request):
 
         return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
 
-    except:
-        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+    except Exception as e:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
 
 def homepageView(request):
@@ -486,9 +514,9 @@ def homepageView(request):
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                     captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
             
-            except Users.DoesNotExist: # Wrong E-mail Address
+            except Users.DoesNotExist as e: # Wrong E-mail Address
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
         if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
@@ -965,9 +993,9 @@ def loginView(request):
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
         
-        except Users.DoesNotExist: # Wrong E-mail Address
+        except Users.DoesNotExist as e: # Wrong E-mail Address
             messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-            captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -1561,8 +1589,8 @@ def blogThemeView(request, theme):
 
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nedá pridať bez prihlásenia.")}, status=401)
 
-                except:
-                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                except Exception as e:
+                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Cancel Like Comment
@@ -1585,8 +1613,8 @@ def blogThemeView(request, theme):
 
                     return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
 
-                except:
-                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                except Exception as e:
+                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
 
             # Report Comment
@@ -1612,8 +1640,8 @@ def blogThemeView(request, theme):
 
                     return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
 
-                except:
-                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                except Exception as e:
+                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
 
         response = render(request, "app/articles.html", {
@@ -1767,8 +1795,8 @@ def trainingSessionView(request):
 
                 return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
 
-            except:
-                captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+            except Exception as e:
+                captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                 return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
 
         return render(request, "app/training_session.html", {
@@ -1876,8 +1904,8 @@ def manageTrainingPlansView(request):
 
                     return JsonResponse({"success": False, "message": _("Nepodarilo sa vykonať zmeny v tréningovom pláne.")}, status=404)
 
-            except:
-                captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+            except Exception as e:
+                captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                 return JsonResponse({"success": False, "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")}, status=404)
         
         return render(request, "app/manage_training_plans.html", {
@@ -2104,9 +2132,13 @@ def communityView(request):
 
                     return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
 
-                except:
-                    captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                except Exception as e:
+                    captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
+
+            # Mark Post As Seen
+            if request.headers.get("X-Requested-Action") == "mark-post-as-seen":
+                return markPostAsSeen(request)
 
             # Toggle Follow
             if request.headers.get("X-Requested-Action") == "toggle-follow":
@@ -2154,8 +2186,8 @@ def communityView(request):
 
                     return JsonResponse({"success": True, "users": users_for_tag, "message": "Užívatelia pre označenie boli úspešne nájdený."}, status=200)
 
-                except:
-                    captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                except Exception as e:
+                    captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov pre označenie došlo k chybe.")}, status=404)
 
             # Add Comment
@@ -2242,8 +2274,8 @@ def loadPostsView(request):
         try:
             page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
 
-        except:
-            captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+        except Exception as e:
+            captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
             return JsonResponse({"success": False, "has_next": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
 
         # Creates Valid Format Of Posts For JSON Response
@@ -2370,6 +2402,10 @@ def postView(request, post_id):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
+            # Mark Post As Seen
+            if request.headers.get("X-Requested-Action") == "mark-post-as-seen":
+                return markPostAsSeen(request)
+
             # Toggle Follow
             if request.headers.get("X-Requested-Action") == "toggle-follow":
                 return toggleFollow(request)
@@ -2540,7 +2576,7 @@ def profileView(request, username):
                             logged_in_user.save()
 
                             messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                            captureError(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                            captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                             del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 

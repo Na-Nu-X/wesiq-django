@@ -208,7 +208,7 @@ function generateHeartParticles(particles:HTMLDivElement):void {
 }
 
 // Function For Toggle Post Like
-export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement):Promise<void> {
+export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:number, particles:HTMLDivElement):Promise<void> {
     try {
         const toggle_post_like_response:response = await sendPOST(window.location.pathname, id, "toggle-post-like") // Sends Liked Post ID As A POST Data
 
@@ -238,7 +238,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
 }
 
 // Function For Share The Post
-export async function sharePost(id:string, author:string):Promise<void> {
+export async function sharePost(id:number, author:string):Promise<void> {
     const link:string = interpolate(gettext("/sk/prispevok/%s"), [id]) // Sets The Link To The Post
 
     // Creates And Fill Object With Data Values
@@ -267,7 +267,7 @@ export async function sharePost(id:string, author:string):Promise<void> {
 }
 
 // Function For Save Or Unsave The Post
-export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> {
+export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> {
     // If The Save Icon Is Inactive
     if(!icon.classList.contains("active")) {
         try {
@@ -310,7 +310,7 @@ export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> 
 }
 
 // Function For Add Comment
-export async function addComment(post_id:string, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null):Promise<void> {
+export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null):Promise<void> {
     try {
         const comment_input:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
 
@@ -434,7 +434,7 @@ export async function addComment(post_id:string, write_comment_form:HTMLDivEleme
 }
 
 // Function For Toggle Post Comment Like
-export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):Promise<void> {
+export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:number):Promise<void> {
     try {
         const toggle_post_comment_like_response:response = await sendPOST(window.location.pathname, id, "toggle-post-comment-like") // Sends Liked Post ID As A POST Data
 
@@ -463,7 +463,7 @@ export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagr
 }
 
 // Function For Report The Comment
-export async function reportComment(icon:HTMLElement, id:string):Promise<void> {
+export async function reportComment(icon:HTMLElement, id:number):Promise<void> {
     try {
         const report_comment_response:response = await sendPOST(window.location.pathname, id, "report-post-comment") // Sends Liked Comment ID As A POST Data
 
@@ -1088,6 +1088,8 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
     }
     
     finally {
+        seenPostObserver(feed) // Initializes The Post Observation
+
         feed_state.is_loading = false // Sets The Is Loading To False
         const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
 
@@ -1101,6 +1103,65 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
                 renderSearchedPostsHistory(history_container, search_bar) // Renders The Searched Posts History
             }
         }
+    }
+}
+
+// Function For Initialize The Seen Post Observer
+export function seenPostObserver(feed:HTMLDivElement):void {
+    const SEEN_TIME:number = 1000 // Sets The Maximum Time A Post Can Be Viewed Before It Is Marked As Seen (1 Second)
+    const SEEN_VISIBILITY:number = 0.8 // Sets The Minimum Percentage Of Visibility Of The Post To Be Marked As Seen (80%) 
+    const seen_posts_timeouts:Record<string, number> = {}
+
+    const seen_post_observer:IntersectionObserver = new IntersectionObserver(function(entries:IntersectionObserverEntry[]):void {
+        entries.forEach(function(one_entry:IntersectionObserverEntry):void {
+            const post_id:number|null = Number(one_entry.target.getAttribute("data-post_id")) || null // Gets The Post ID If Is Available
+            
+            if(!post_id) return
+
+            // If The User Is Viewing The Post
+            if(one_entry.isIntersecting) {
+                // Marks The Post As Seen When The Timeout Elapses
+                seen_posts_timeouts[post_id] = window.setTimeout(function():void {
+                    markPostAsSeen(post_id) // Marks The Post As Seen
+                    seen_post_observer.unobserve(one_entry.target) // Stops The Observation Of The Post When It Has Been Marked As Seen
+                }, SEEN_TIME)
+            }
+            
+            // Resets The Timeout If The User Has Left The Post
+            else {
+                if(seen_posts_timeouts[post_id]) {
+                    clearTimeout(seen_posts_timeouts[post_id]) // Clears The Timeout
+                    delete seen_posts_timeouts[post_id] // Deletes The Post Record From The Seen Posts Timeouts
+                }
+            }
+        })
+    }, {
+        root: null,
+        threshold: SEEN_VISIBILITY
+    })
+
+    const all_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".post_container") // Gets All Post Containers
+
+    // Starts The Seen Post Observer On Every Post Container In The Feed
+    all_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
+        seen_post_observer.observe(one_post_container)
+    })
+}
+
+// Function For Mark The Post As Already Seen
+async function markPostAsSeen(id:number):Promise<void> {
+    try {
+        const mark_post_as_seen_response:response = await sendPOST(window.location.pathname, id, "mark-post-as-seen") // Sends Post ID As A POST Data
+
+        // If The Response Isn't Success
+        if(!mark_post_as_seen_response.success) {
+            console.error(mark_post_as_seen_response.message)
+            return
+        }
+    }
+
+    catch {
+        console.error(gettext('Pri označovaní príspevku za "už videný" došlo k chybe.'))
     }
 }
 
