@@ -314,7 +314,7 @@ def togglePostLike(request):
 
             # Cancel Like
             else:
-                post.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Post
+                post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
                 Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
                 
                 return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
@@ -326,46 +326,36 @@ def togglePostLike(request):
         return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
 
 @require_POST
-def savePost(request):
+def togglePostSave(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-            post_id = json.loads(request.body)
-            user = Users.objects.get(id=logged_in_user_id)
+            post_id = json.loads(request.body) # Gets The Post ID
+            post = Post.objects.get(id=int(post_id)) # Gets The Post
 
-            if(str(post_id) not in user.saved_posts):
-                user.saved_posts.append(post_id)
-                user.save()
+            has_save = logged_in_user.saved_posts.filter(id=post_id).exists() # Checks If The User Has Already Saved The Post
 
-            return JsonResponse({"success": True, "message": _("Príspevok bol úspešne uložený.")}, status=200)
+            # Save
+            if not has_save:
+                logged_in_user.saved_posts.add(post) # Adds The Post To The User's Saved Posts
+                logged_in_user.save() # Saves The Logged In User
+
+                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne uložený.")}, status=200)
+
+            # Unsave
+            else:
+                logged_in_user.saved_posts.remove(post) # Removes The Post From The User's Saved Posts
+                logged_in_user.save() # Saves The Logged In User
+                
+                return JsonResponse({"success": True, "message": _("Príspevok bol odstránený zo zoznamu uložených.")}, status=200)
 
         return JsonResponse({"success": False, "message": _("Príspevok nie je možné uložiť bez prihlásenia.")}, status=401)
 
     except Exception as e:
-        captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri ukladaní príspevku došlo k chybe.")}, status=500)
-
-@require_POST
-def unsavePost(request):
-    try:
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-            post_id = json.loads(request.body)
-            user = Users.objects.get(id=logged_in_user_id)
-
-            if(str(post_id) in user.saved_posts):
-                user.saved_posts.remove(str(post_id))
-                user.save()
-
-            return JsonResponse({"success": True, "message": _("Príspevok bol odstránený zo zoznamu uložených.")}, status=200)
-
-        return JsonResponse({"success": False, "message": _("Príspevok nie je možné odstrániť zo zoznamu uložených bez prihlásenia.")}, status=401)
-
-    except Exception as e:
-        captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri rušení uloženia príspevku došlo k chybe.")}, status=500)
+        captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri zmene uloženia príspevku došlo k chybe.")}, status=500)
 
 @require_POST
 def reportPostComment(request):
@@ -1927,7 +1917,22 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-        users = Users.objects.filter(account_status="OK").exclude(id=logged_in_user_id).order_by("-creation_time")[:3] # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+        # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+        users = Users.objects.filter(
+            account_status="OK"
+        ).annotate(
+            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+            has_follow=Exists(
+                Users.objects.filter(
+                    id=OuterRef("pk"),
+                    followers=logged_in_user_id
+                )
+            )
+        ).exclude(
+            id=logged_in_user_id
+        ).order_by(
+            "-creation_time"
+        )[:3]
 
         # Gets The User's Currently Processed Post With All Related Data
         processing_posts = Post.objects.filter(
@@ -2149,13 +2154,9 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
                 return togglePostLike(request)
 
-            # Save Post
-            if request.headers.get("X-Requested-Action") == "save-post":
-                return savePost(request)
-
-            # Unsave Post
-            if request.headers.get("X-Requested-Action") == "unsave-post":
-                return unsavePost(request)
+            # Toggle Post Save
+            if request.headers.get("X-Requested-Action") == "toggle-post-save":
+                return togglePostSave(request)
 
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-post-comment":
@@ -2358,7 +2359,7 @@ def loadPostsView(request):
         logged_in_user = {
             "logged_in_user_id": logged_in_user_id, 
             "profile_picture_name": logged_in_user.profile_picture_name,
-            "saved_posts": logged_in_user.saved_posts
+            "saved_posts": list(logged_in_user.saved_posts.values_list("id", flat=True))
         }
 
         return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user": logged_in_user, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
@@ -2418,13 +2419,9 @@ def postView(request, post_id):
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
                 return togglePostLike(request)
 
-            # Save Post
-            if request.headers.get("X-Requested-Action") == "save-post":
-                return savePost(request)
-
-            # Unsave Post
-            if request.headers.get("X-Requested-Action") == "unsave-post":
-                return unsavePost(request)
+            # Toggle Post Save
+            if request.headers.get("X-Requested-Action") == "toggle-post-save":
+                return togglePostSave(request)
 
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-post-comment":
@@ -2447,6 +2444,14 @@ def postView(request, post_id):
                 Post.likes_from_users.through.objects.filter(
                     post_id=OuterRef("pk"),
                     users_id=logged_in_user_id
+                )
+            ),
+
+            # Creates The Has Save Column (True If The User Has Already Saved The Post)
+            has_save=Exists(
+                Users.objects.filter(
+                    id=logged_in_user_id, 
+                    saved_posts=OuterRef("pk")
                 )
             )
         ).select_related(
@@ -2512,7 +2517,6 @@ def postView(request, post_id):
                 "last_name": logged_in_user.last_name,
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
-                "saved_posts": logged_in_user.saved_posts,
                 "post": post
             })
 
@@ -2551,13 +2555,10 @@ def profileView(request, username):
 
             # If Searched Profile Belongs To The Logged In User
             if logged_in_user == user:
-                saved_posts = Post.objects.filter(
-                    user_id=logged_in_user.id,
-                    id__in=logged_in_user.saved_posts
-                ).select_related(
+                saved_posts = logged_in_user.saved_posts.all().select_related(
                     "user"
                 ).prefetch_related(
-                    "media",
+                    "media"
                 ).order_by(
                     "-created_at"
                 ).distinct()

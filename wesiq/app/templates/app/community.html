@@ -125,13 +125,13 @@
 
                         <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
-                        <p class="followers">{{ one_user.followers|length }}</p>
+                        <p class="followers">{{ one_user.followers.all|length }}</p>
 
                         <i 
                             class="
                                 fa-solid
 
-                                {% if not request.session.logged_in_user_id|stringformat:"i" in one_user.followers %}
+                                {% if not one_user.has_follow %}
                                     fa-user-plus
 
                                 {% else %}
@@ -343,7 +343,7 @@
                                 <p class="username">{{ one_post.user.username }}</p>
 
                                 <div class="followers_container">
-                                    <p class="followers">{{ one_post.user.followers|length }}</p>
+                                    <p class="followers">{{ one_post.user.followers.all|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
 
