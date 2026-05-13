@@ -54,14 +54,18 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     }
 
-    const scroll_contact:HTMLAnchorElement = document.querySelector(".scroll_contact") as HTMLAnchorElement
-    const contact:HTMLFormElement = document.querySelector(".contact_form") as HTMLFormElement
+    const scroll_contact:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_contact") as HTMLAnchorElement || null // Gets The Scroll Contact Button
+    const contact:HTMLFormElement|null = document.querySelector(".contact_form") as HTMLFormElement || null // Gets The Contact Form
 
-    const scroll_reviews:HTMLDivElement = document.querySelector(".reviews_info") as HTMLDivElement
-    const reviews:HTMLDivElement = document.querySelector(".reviews") as HTMLDivElement
+    const scroll_reviews:HTMLDivElement|null = document.querySelector(".reviews_info") as HTMLDivElement || null // Gets The Scroll Reviews Button
+    const reviews:HTMLDivElement|null = document.querySelector(".reviews") as HTMLDivElement || null // Gets The Reviews Container
+
+    const scroll_feed:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_feed") as HTMLAnchorElement || null // Gets The Scroll Feed Button
+    const feed:HTMLDivElement|null = document.querySelector(".feed") as HTMLDivElement || null // Gets The Feed Container
 
     if(scroll_contact && contact) autoScrollButtons(scroll_contact, contact)
     if(scroll_reviews && reviews) autoScrollButtons(scroll_reviews, reviews)
+    if(scroll_feed && feed) autoScrollButtons(scroll_feed, feed)
 
     // Skip Link
 

@@ -45,6 +45,7 @@ from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
 from django.db.models import Exists, OuterRef
+from django.http import FileResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -2365,14 +2366,17 @@ def loadPostsView(request):
     return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
 
 def streamVideo(request, user_id, filename):
-    path = os.path.join(settings.MEDIA_ROOT, f"posts/{str(user_id)}/{filename}")
+    # Gets The Save Video File Path (Path Traversal Protection)
+    safe_filename = os.path.basename(filename)
+    path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), safe_filename)
     
     if not os.path.exists(path):
-        raise Http404(f"Video {filename} was not found.")
+        raise Http404(f"Video {safe_filename} was not found.")
         
-    video_file = open(path, "rb")
-    
-    return RangedFileResponse(request, video_file, content_type="video/mp4")
+    video_response = FileResponse(open(path, "rb"), content_type="video/mp4")
+    video_response["Accept-Ranges"] = "bytes"
+
+    return video_response
 
 def getCompressionStatus(request, task_id):
     result = AsyncResult(task_id)

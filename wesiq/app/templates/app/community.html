@@ -13,6 +13,12 @@
     <script src="https://www.google.com/recaptcha/api.js?render=6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1"></script>
 {% endblock recaptcha %}
 
+{% block navigation_bar_items %}
+    <li>
+        <a class="scroll_feed" href="#" target="_self">{% translate "PRÍSPEVKY" %}</a>
+    </li>
+{% endblock navigation_bar_items %}
+
 {% block banner %}
     <div class="upload_post">
         <i class="fa-solid fa-photo-film" title="{% translate 'Uverejniť príspevok' %}"></i> <!-- https://fontawesome.com/icons/photo-film -->
