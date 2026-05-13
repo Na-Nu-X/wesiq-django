@@ -44,22 +44,20 @@ for one_model in models_for_warm_up:
 
 # Update Latest Interaction Time In Posts
 
-def update_post_activity(post):
+def updatePostLatestInteraction(post):
     limit_date = timezone.now() - timedelta(days=30)
     
     if post.created_at > limit_date:
-        post.__class__.objects.filter(id=post.id).update(
-            latest_interaction=timezone.now()
-        )
-
-# Checks For New Comment In The Post
-@receiver(post_save, sender=PostForum)
-def on_comment_added(sender, instance, created, **kwargs):
-    if created:
-        update_post_activity(instance.post)
+        post.__class__.objects.filter(id=post.id).update(latest_interaction=timezone.now()) # Updates The Latest Interaction
 
 # Checks For New Like On The Post
 @receiver(m2m_changed, sender=Post.likes_from_users.through)
-def update_interaction_on_like(sender, instance, action, **kwargs):
-    if action == "post_add":
-        update_post_activity(instance)
+def onAddedLike(sender, instance, action, **kwargs):
+    if action in ["post_add", "pre_add"]:
+        updatePostLatestInteraction(instance)
+
+# Checks For New Comment In The Post
+@receiver(post_save, sender=PostForum)
+def onAddedComment(sender, instance, created, **kwargs):
+    if created:
+        updatePostLatestInteraction(instance.post)
