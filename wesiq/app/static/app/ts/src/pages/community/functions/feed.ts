@@ -1244,7 +1244,7 @@ export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator
 
         video_play_pause_indicator_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
 
-        // Play / Pause Indicator Icon
+        // Play / Pause Indicator
         play_pause_indicator.classList.add("hidden")
         void play_pause_indicator.offsetWidth
         play_pause_indicator.classList.remove("hidden")
@@ -1264,7 +1264,7 @@ export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator
 
         video_play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 
-        // Play / Pause Indicator Icon
+        // Play / Pause Indicator
         play_pause_indicator.classList.add("hidden")
         void play_pause_indicator.offsetWidth
         play_pause_indicator.classList.remove("hidden")
@@ -1275,6 +1275,42 @@ export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator
 
         video.pause() // Pauses The Video
     }
+}
+
+// Function For Rewind The Video 5 Seconds
+export function stepBack(step_back_indicator:HTMLDivElement, video:HTMLVideoElement, step:number = 5):void {
+    let new_time:number = video.currentTime - step // Gets The New Video Time
+
+    if(new_time < 0) new_time = 0 // Caps The Minimum Time To 0
+
+    // Step Back Indicator
+    step_back_indicator.classList.add("hidden")
+    void step_back_indicator.offsetWidth
+    step_back_indicator.classList.remove("hidden")
+
+    setTimeout(() => {
+        step_back_indicator.classList.add("hidden")
+    }, 300)
+
+    video.currentTime = new_time // Sets The New Current Video Time Position
+}
+
+// Function For Fast Forward The Video 5 Seconds
+export function stepFurther(step_further_indicator:HTMLDivElement, video:HTMLVideoElement, step:number = 5):void {
+    let new_time:number = video.currentTime + step // Gets The New Video Time
+
+    if(new_time > video.duration) new_time = video.duration // Caps The Maximum Time To The Duration Of The Video
+
+    // Step Further Indicator
+    step_further_indicator.classList.add("hidden")
+    void step_further_indicator.offsetWidth
+    step_further_indicator.classList.remove("hidden")
+
+    setTimeout(() => {
+        step_further_indicator.classList.add("hidden")
+    }, 300)
+
+    video.currentTime = new_time // Sets The New Current Video Time Position
 }
 
 // Function For Mute Or Unmute The Video

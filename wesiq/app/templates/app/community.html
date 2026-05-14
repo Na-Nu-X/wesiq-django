@@ -218,6 +218,14 @@
                     {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
                 </div>
 
+                <div class="step_back_indicator hidden">
+                    <i class="fa-solid fa-angle-left"></i><span>-5</span> <!-- https://fontawesome.com/icons/angle-left -->
+                </div>
+
+                <div class="step_further_indicator hidden">
+                    <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                </div>
+
                 <video class="video" poster="" preload="metadata" autoplay loop muted>
                     <source src="">
                 </video>
@@ -227,6 +235,14 @@
                         <button class="play_pause">
                             <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
                             {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                        </button>
+
+                        <button class="step_back">
+                            <i class="fa-solid fa-arrow-rotate-left"></i> <!-- https://fontawesome.com/icons/arrow-rotate-left -->
+                        </button>
+
+                        <button class="step_further">
+                            <i class="fa-solid fa-rotate-right"></i> <!-- https://fontawesome.com/icons/rotate-right -->
                         </button>
 
                         <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>

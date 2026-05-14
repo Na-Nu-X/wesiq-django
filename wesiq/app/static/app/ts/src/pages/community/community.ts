@@ -57,6 +57,8 @@ import {
     setCompletedUploadProgress,
     checkProcessingPosts,
     playPauseVideo,
+    stepBack,
+    stepFurther,
     muteUnmuteVideo,
     changeVideoVolume,
     toogleVideoFullscreen,
@@ -999,10 +1001,26 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Play / Pause Video
             if((event.target as HTMLButtonElement).classList.contains("play_pause")) {
                 const play_pause_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Play / Pause Icon
-                const play_pause_indicator:HTMLDivElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".play_pause_indicator") as HTMLDivElement // Gets The Play / Pause Indicator
-                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+                const play_pause_indicator:HTMLDivElement = (play_pause_icon.closest(".video_container") as HTMLDivElement).querySelector(".play_pause_indicator") as HTMLDivElement // Gets The Play / Pause Indicator
+                const video:HTMLVideoElement = (play_pause_icon.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
                 playPauseVideo(play_pause_icon, play_pause_indicator, video) // Plays Or Pauses The Video
+            }
+
+            // Step Back
+            if((event.target as HTMLButtonElement).classList.contains("step_back")) {
+                const step_back_indicator:HTMLDivElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".step_back_indicator") as HTMLDivElement // Gets The Step Back Indicator
+                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                stepBack(step_back_indicator, video) // Rewinds The Video 5 Seconds
+            }
+
+            // Step Further
+            if((event.target as HTMLButtonElement).classList.contains("step_further")) {
+                const step_further_indicator:HTMLDivElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".step_further_indicator") as HTMLDivElement // Gets The Step Further Indicator
+                const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                stepFurther(step_further_indicator, video) // Fast Forwards The Video 5 Seconds
             }
 
             // Mute / Unmute Video
