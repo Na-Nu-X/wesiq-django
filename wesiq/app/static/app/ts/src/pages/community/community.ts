@@ -999,10 +999,10 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Play / Pause Video
             if((event.target as HTMLButtonElement).classList.contains("play_pause")) {
                 const play_pause_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Play / Pause Icon
-                const video_icon:HTMLDivElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video_icon") as HTMLDivElement // Gets The Video
+                const play_pause_indicator:HTMLDivElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".play_pause_indicator") as HTMLDivElement // Gets The Play / Pause Indicator
                 const video:HTMLVideoElement = ((event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
-                playPauseVideo(play_pause_icon, video_icon, video) // Plays Or Pauses The Video
+                playPauseVideo(play_pause_icon, play_pause_indicator, video) // Plays Or Pauses The Video
             }
 
             // Mute / Unmute Video
@@ -1217,10 +1217,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             one_video.addEventListener("click", function():void {
                 const play_pause_icon:HTMLElement = video_container.querySelector(".controls .buttons .play_pause i") as HTMLElement // Gets The Play / Pause Icon
-                const video_icon:HTMLDivElement = video_container.querySelector(".video_icon") as HTMLDivElement // Gets The Video
+                const play_pause_indicator:HTMLDivElement = video_container.querySelector(".play_pause_indicator") as HTMLDivElement // Gets The Play / Pause Indicator
                 const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
 
-                playPauseVideo(play_pause_icon, video_icon, video) // Plays Or Pauses The Video
+                playPauseVideo(play_pause_icon, play_pause_indicator, video) // Plays Or Pauses The Video
             })
 
             // Scrubber Hitbox Mouse Move Functionalities

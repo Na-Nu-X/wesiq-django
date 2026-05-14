@@ -213,8 +213,8 @@
 
         <template class="video_container_template">
             <div class="video_container">
-                <div class="video_icon hidden">
-                    <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                <div class="play_pause_indicator hidden">
+                    <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
                     {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
                 </div>
 
@@ -319,6 +319,19 @@
             {% for one_post in processing_posts %}
                 <div class="processing_post_container" tabindex="-1" data-post_id="{{ one_post.id }}">
                     <p class="processing_post_report">{% translate "Čakajte! Príspevok sa spracováva." %}</p>
+
+                    <div class="processing_media_info_container">
+                        <p class="processing_media_info">
+                            {% translate "Súbory: " %} 
+
+                            {% for one_post_media in one_post.media.all %}
+                                {% if one_post.id == one_post_media.post.id %}
+                                    <span class="original_filename">{{ one_post_media.original_filename }}</span> (<span class="original_size">{{ one_post_media.original_size|filesizeformat }}</span>){% if forloop.counter < one_post.media.all|length %}, {% endif %}
+                                    
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
 
                     <div class="header">
                         <div class="left">
