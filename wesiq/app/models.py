@@ -258,6 +258,9 @@ class PostMedia(models.Model):
     thumbnail = models.ImageField(upload_to=getPostUploadPath, null=True, blank=True)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
     is_processed = models.BooleanField(verbose_name="Is Processed", default=False, null=False)
+    original_filename = models.CharField(verbose_name="Original Filename", max_length=255, null=True, blank=True)
+    original_size = models.BigIntegerField(verbose_name="Original Size", null=True, blank=True)
+    compressed_size = models.BigIntegerField(verbose_name="Compressed Size", null=True, blank=True)
 
     @property
     def filename(self):

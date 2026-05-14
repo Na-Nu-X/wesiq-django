@@ -1967,7 +1967,7 @@ def communityView(request):
                 recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
                 # Checks Validity Of reCaptcha Response
-                if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+                if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
                     messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
                     captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
@@ -2069,7 +2069,9 @@ def communityView(request):
                                 new_post_media = PostMedia.objects.create(
                                     post=new_post,
                                     file=one_file,
-                                    is_video=is_video
+                                    is_video=is_video,
+                                    original_filename=one_file.name,
+                                    original_size=one_file.size
                                 )
 
                                 # Video
@@ -2240,8 +2242,8 @@ def loadPostsView(request):
                 ),
                 to_attr="visible_comments"
             )
-        ).filter(
-            media__is_processed=True
+        ).exclude(
+            media__is_processed=False
         ).order_by(
             "-created_at"
         ).distinct()

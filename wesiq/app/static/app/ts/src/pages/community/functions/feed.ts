@@ -867,10 +867,10 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
             one_video.addEventListener("click", function():void {
                 const play_pause_icon:HTMLElement = video_container.querySelector(".controls .buttons .play_pause i") as HTMLElement // Gets The Play / Pause Icon
-                const video_icon:HTMLDivElement = video_container.querySelector(".video_icon") as HTMLDivElement // Gets The Video
+                const play_pause_indicator:HTMLDivElement = video_container.querySelector(".play_pause_indicator") as HTMLDivElement // Gets The Play / Pause Indicator
                 const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
 
-                playPauseVideo(play_pause_icon, video_icon, video) // Plays Or Pauses The Video
+                playPauseVideo(play_pause_icon, play_pause_indicator, video) // Plays Or Pauses The Video
             })
 
             // Scrubber Hitbox Mouse Move Functionalities
@@ -1233,24 +1233,24 @@ function removeProcessingPost(task_id:number):void {
 }
 
 // Function For Play Or Pause The Video
-export function playPauseVideo(play_pause_icon:HTMLElement, video_icon:HTMLDivElement, video:HTMLVideoElement):void {
+export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator:HTMLDivElement, video:HTMLVideoElement):void {
     const is_playing:boolean = !video.paused && !video.ended && video.readyState > 2
 
     // Play
     if(!is_playing) {
         play_pause_icon.classList.replace("fa-play", "fa-pause"); // Shows The Pause Icon
 
-        const video_play_pause_icon:HTMLElement = video_icon.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
+        const video_play_pause_indicator_icon:HTMLElement = play_pause_indicator.querySelector("i") as HTMLElement // Gets The Video Play / Pause Indicator Icon
 
-        video_play_pause_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
+        video_play_pause_indicator_icon.classList.replace("fa-pause", "fa-play") // Shows The Play Icon
 
-        // Video Icon
-        video_icon.classList.add("hidden")
-        void video_icon.offsetWidth
-        video_icon.classList.remove("hidden")
+        // Play / Pause Indicator Icon
+        play_pause_indicator.classList.add("hidden")
+        void play_pause_indicator.offsetWidth
+        play_pause_indicator.classList.remove("hidden")
 
         setTimeout(() => {
-            video_icon.classList.add("hidden")
+            play_pause_indicator.classList.add("hidden")
         }, 300)
 
         video.play() // Plays The Video
@@ -1260,17 +1260,17 @@ export function playPauseVideo(play_pause_icon:HTMLElement, video_icon:HTMLDivEl
     else {
         play_pause_icon.classList.replace("fa-pause", "fa-play"); // Shows The Play Icon
 
-        const video_play_pause_icon:HTMLElement = video_icon.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
+        const video_play_pause_icon:HTMLElement = play_pause_indicator.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
 
         video_play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 
-        // Video Icon
-        video_icon.classList.add("hidden")
-        void video_icon.offsetWidth
-        video_icon.classList.remove("hidden")
+        // Play / Pause Indicator Icon
+        play_pause_indicator.classList.add("hidden")
+        void play_pause_indicator.offsetWidth
+        play_pause_indicator.classList.remove("hidden")
 
         setTimeout(() => {
-            video_icon.classList.add("hidden")
+            play_pause_indicator.classList.add("hidden")
         }, 300)
 
         video.pause() // Pauses The Video

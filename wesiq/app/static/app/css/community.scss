@@ -751,6 +751,32 @@ header {
                 font-family: $article-heading-font;
             }
 
+            .processing_media_info {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 0.8em;
+                min-width: 0;
+            
+                .original_filename,
+                .original_size {
+                    font-size: inherit;
+                }
+            
+                .original_filename {
+                    min-width: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-decoration: none;
+                }
+            
+                .original_size {
+                    flex-shrink: 0;
+                    font-weight: bold;
+                }
+            }
+
             .media {
                 .one_post {
                     border-radius: $big-border-radius;
@@ -1044,7 +1070,7 @@ header {
                             }
                         }
 
-                        .video_icon {
+                        .play_pause_indicator {
                             @include position_center;
                             pointer-events: none;
                             opacity: 1;

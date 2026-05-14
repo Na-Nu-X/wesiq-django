@@ -629,6 +629,7 @@ def compressImage(self, post_media_id):
             raise Exception(message)
 
         old_file_path = media_object.file.path # Stores The File Path Of The Original File
+        original_size = media_object.file.size # Gets The Original Size
 
         self.update_state(state="PROGRESS", meta={"percentage": 50}) # 50%
 
@@ -648,12 +649,16 @@ def compressImage(self, post_media_id):
             # Stores To Memory
             buffer = io.BytesIO()
             image.save(buffer, format="JPEG", quality=70, optimize=True, progressive=True) # Compresses The Image
+
+            compressed_size = buffer.tell() # Gets The Compressed Size
             
             new_file_name = f"IMG-{post_media_id}.jpg"
 
             # Saves The Data To The Database
             media_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
             media_object.is_processed = True
+            media_object.original_size = original_size # Saves The Original Size
+            media_object.compressed_size = compressed_size # Saves The Compressed Size
             media_object.save()
 
         media_object.file.close()
@@ -752,13 +757,14 @@ def compressVideo(self, post_media_id):
 
         process.wait()
 
-        original_size = os.path.getsize(input_path)
-        compressed_size = os.path.getsize(output_path)
+        original_size = os.path.getsize(input_path) # Gets The Original Size
+        compressed_size = os.path.getsize(output_path) # Gets The Compressed Size
 
         # Stores The Original File (If The Compressed Is Larger)
         if compressed_size >= original_size:
             # Saves The Data To The Database
             media_object.is_processed = True
+            media_object.original_size = original_size # Saves The Original Size
             media_object.save()
 
         # Stores The Compressed Video File
@@ -768,6 +774,8 @@ def compressVideo(self, post_media_id):
                 new_file_name = f"VID_{post_media_id}.mp4" 
                 media_object.file.save(new_file_name, File(f), save=False)
                 media_object.is_processed = True
+                media_object.original_size = original_size # Saves The Original Size
+                media_object.compressed_size = compressed_size # Saves The Compressed Size
                 media_object.save()
 
             media_object.file.close()
