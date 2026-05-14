@@ -16,6 +16,7 @@ import {
 import { getFormattedTime } from "../../../utils/timer.js"
 import { resetTrainingPlan } from "./trainingPlan.js"
 import { sendPOST } from "../../../services/sendPOST.js"
+import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
@@ -141,13 +142,13 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                         // If The Response Isn't Success
                         if(!new_activity_response.success) {
-                            console.error(new_activity_response.message)
+                            displayMessage(new_activity_response.message, "error") // Displays The Error Message
                             return
                         }
                     }
 
                     catch {
-                        console.error(gettext("Pri zaznamenávaní aktivity došlo k chybe."))
+                        displayMessage(gettext("Pri zaznamenávaní aktivity došlo k chybe."), "error") // Displays The Error Message
                     }
 
                     finally {

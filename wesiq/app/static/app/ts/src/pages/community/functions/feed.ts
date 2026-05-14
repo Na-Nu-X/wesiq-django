@@ -214,7 +214,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
 
         // If The Response Isn't Success
         if(!toggle_post_like_response.success) {
-            console.error(toggle_post_like_response.message)
+            displayMessage(toggle_post_like_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -233,7 +233,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
     }
 
     catch {
-        console.error(gettext("Pri zmene označenia páči sa mi to došlo k chybe."))
+        displayMessage(gettext("Pri zmene označenia páči sa mi to došlo k chybe."), "error") // Displays The Error Message
     }
 }
 
@@ -269,11 +269,11 @@ export async function sharePost(id:number, author:string):Promise<void> {
 // Function For Save Or Unsave The Post
 export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> {
     try {
-        const save_post_response:response = await sendPOST(window.location.pathname, id, "toggle-post-save") // Sends Saved Post ID As A POST Data
+        const toggle_post_save_response:response = await sendPOST(window.location.pathname, id, "toggle-post-save") // Sends Saved Post ID As A POST Data
 
         // If The Response Isn't Success
-        if(!save_post_response.success) {
-            console.error(save_post_response.message)
+        if(!toggle_post_save_response.success) {
+            displayMessage(toggle_post_save_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -291,12 +291,12 @@ export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> 
     }
 
     catch {
-        console.error(gettext("Pri zmene uloženia príspevku došlo k chybe."))
+        displayMessage(gettext("Pri zmene uloženia príspevku došlo k chybe."), "error") // Displays The Error Message
     }
 }
 
 // Function For Add Comment
-export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null):Promise<void> {
+export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
     try {
         const comment_input:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
 
@@ -314,7 +314,6 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
 
         // If The Response Isn't Success
         if(!add_comment_response.success) {
-            console.error(add_comment_response.message)
             displayMessage(add_comment_response.message, "error") // Displays The Error Message
             return
         }
@@ -412,10 +411,12 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
                 new_parent_comment_interactions.appendChild(show_replies) // Appends The Show Replies To The New Parent Comment
             }
         }
+
+        comments_counter.textContent = String(Number(comments_counter.textContent) + 1) // Increases The Comments Counter
     }
 
     catch {
-        console.error(gettext("Pri odosielaní komentáru došlo k chybe."))
+        displayMessage(gettext("Pri odosielaní komentáru došlo k chybe."), "error") // Displays The Error Message
     }
 }
 
@@ -426,7 +427,7 @@ export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagr
 
         // If The Response Isn't Success
         if(!toggle_post_comment_like_response.success) {
-            console.error(toggle_post_comment_like_response.message)
+            displayMessage(toggle_post_comment_like_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -444,7 +445,7 @@ export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagr
     }
 
     catch {
-        console.error(gettext("Pri zmene označenia páči sa mi to došlo k chybe."))
+        displayMessage(gettext("Pri zmene označenia páči sa mi to došlo k chybe."), "error") // Displays The Error Message
     }
 }
 
@@ -455,7 +456,7 @@ export async function reportComment(icon:HTMLElement, id:number):Promise<void> {
 
         // If The Response Isn't Success
         if(!report_comment_response.success) {
-            console.error(report_comment_response.message)
+            displayMessage(report_comment_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -463,7 +464,7 @@ export async function reportComment(icon:HTMLElement, id:number):Promise<void> {
     }
 
     catch {
-        console.error(gettext("Pri odosielaní nahlásenia došlo k chybe."))
+        displayMessage(gettext("Pri odosielaní nahlásenia došlo k chybe."), "error") // Displays The Error Message
     }
 }
 
@@ -1141,13 +1142,13 @@ async function markPostAsSeen(id:number):Promise<void> {
 
         // If The Response Isn't Success
         if(!mark_post_as_seen_response.success) {
-            console.error(mark_post_as_seen_response.message)
+            displayMessage(mark_post_as_seen_response.message, "error") // Displays The Error Message
             return
         }
     }
 
     catch {
-        console.error(gettext('Pri označovaní príspevku za "už videný" došlo k chybe.'))
+        displayMessage(gettext('Pri označovaní príspevku za "už videný" došlo k chybe.'), "error") // Displays The Error Message
     }
 }
 

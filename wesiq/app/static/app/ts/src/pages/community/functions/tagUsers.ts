@@ -1,11 +1,12 @@
 import { 
     getCursorPosition, 
     focusAtEnd 
-} from "../community.js"
+} from "../functions/customTextarea.js"
 
 import { tag_user_state } from "../state.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 import { highlightHashtagsInText } from "./addHashtags.js"
+import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { tag } from "../state.js"
 
@@ -47,7 +48,7 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
 
             // If The Response Isn't Success
             if(!searched_tags_response.success) {
-                console.error(searched_tags_response.message)
+                displayMessage(searched_tags_response.message, "error") // Displays The Error Message
                 return
             }
 
@@ -84,7 +85,7 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
         }
 
         catch {
-            console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
+            displayMessage(gettext("Pri hľadaní užívateľov došlo k chybe."), "error") // Displays The Error Message
         }
     }
 }

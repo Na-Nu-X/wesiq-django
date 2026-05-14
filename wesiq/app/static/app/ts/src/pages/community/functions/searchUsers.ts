@@ -1,4 +1,5 @@
 import { sendPOST } from "../../../services/sendPOST.js"
+import { displayMessage } from "../../../utils/displayMessage.js"
 
 interface searchedUser {
     id:number,
@@ -25,7 +26,7 @@ export async function getSearchedUsers(searched_text:string, all_users_container
 
         // If The Response Isn't Success
         if(!search_bar_response.success) {
-            console.error(search_bar_response.message)
+            displayMessage(search_bar_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -40,7 +41,7 @@ export async function getSearchedUsers(searched_text:string, all_users_container
     }
 
     catch {
-        console.error(gettext("Pri hľadaní užívateľov došlo k chybe."))
+        displayMessage(gettext("Pri hľadaní užívateľov došlo k chybe."), "error") // Displays The Error Message
     }
     
     finally {

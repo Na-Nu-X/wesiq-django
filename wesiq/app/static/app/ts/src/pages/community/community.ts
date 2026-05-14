@@ -12,6 +12,11 @@ import {
     resetSearchedUsers
 } from "./functions/searchUsers.js"
 
+import { 
+    getCursorPosition,
+    focusAtEnd 
+} from "./functions/customTextarea.js"
+
 import {
     getUsersForTag,
     checkTagsPositions,
@@ -75,42 +80,6 @@ import { syncFiles } from "./functions/postPreview.js"
 import { toggleFollow } from "./functions/toggleFollow.js"
 
 import type { tag } from "./state.js"
-
-// Function For Get Cursor Position Of The Description
-export function getCursorPosition(description:HTMLDivElement):number {
-    const selection:Selection|null = window.getSelection() // Gets The Selection
-
-    if(selection!.rangeCount !== 0) {
-        const range:Range = selection!.getRangeAt(0)
-        const pre_caret_range:Range = range.cloneRange()
-
-        pre_caret_range.selectNodeContents(description)
-        pre_caret_range.setEnd(range.endContainer, range.endOffset);
-
-        return pre_caret_range.toString().length
-    }
-
-    return 0
-}
-
-// Function For Add Focus At End Of The Description
-export function focusAtEnd(description:HTMLDivElement):void {
-    description.focus()
-
-    if(typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
-        const range:Range = document.createRange()
-
-        range.selectNodeContents(description) // Selects All Content
-        range.collapse(false) // End Of The Content
-        
-        const selection:Selection|null = window.getSelection() || null // Gets The Selection
-
-        if(selection) {
-            selection.removeAllRanges() // Removes All Selections
-            selection.addRange(range) // Applies Selection At The End
-        }
-    }
-}
 
 "use strict"
 
@@ -922,12 +891,13 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if((event.target as HTMLImageElement).classList.contains("send")) {
                     const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
                     const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const comments_counter:HTMLParagraphElement = post_container.querySelector(".society .comments .comments_counter") as HTMLParagraphElement // Gets The Comments Counter
                     const write_comment_form:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form") as HTMLDivElement // Gets The Write Comment Form
                     const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
                     const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
                     const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
 
-                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id) // Adds Comment To The Post
+                    if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id, comments_counter) // Adds Comment To The Post
                 }
 
                 // Toggle Reply On Comment

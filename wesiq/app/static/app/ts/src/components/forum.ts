@@ -1,4 +1,5 @@
 import { sendPOST } from "../services/sendPOST.js"
+import { displayMessage } from "../utils/displayMessage.js"
 
 import type { response } from "../services/sendPOST.js"
 
@@ -12,7 +13,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
     
                 // If The Response Isn't Success
                 if(!like_comment_response.success) {
-                    console.error(like_comment_response.message)
+                    displayMessage(like_comment_response.message, "error") // Displays The Error Message
                     return
                 }
 
@@ -22,7 +23,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
             }
 
             catch {
-                console.error(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."))
+                displayMessage(gettext("Pri pridávaní označenia páči sa mi to došlo k chybe."), "error") // Displays The Error Message
             }
         }
 
@@ -33,7 +34,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
     
                 // If The Response Isn't Success
                 if(!cancel_like_comment_response.success) {
-                    console.error(cancel_like_comment_response.message)
+                    displayMessage(cancel_like_comment_response.message, "error") // Displays The Error Message
                     return
                 }
 
@@ -43,7 +44,7 @@ function toggleLike(icon:HTMLElement, counter:HTMLParagraphElement, id:string):v
             }
 
             catch {
-                console.error(gettext("Pri rušení označenia páči sa mi to došlo k chybe."))
+                displayMessage(gettext("Pri rušení označenia páči sa mi to došlo k chybe."), "error") // Displays The Error Message
             }
         }
     })
@@ -89,13 +90,13 @@ export function commentFunctionality(one_comment:HTMLDivElement):void {
 
             // If The Response Isn't Success
             if(!report_comment_response.success) {
-                console.error(report_comment_response.message)
+                displayMessage(report_comment_response.message, "error") // Displays The Error Message
                 return
             }
         }
 
         catch {
-            console.error(gettext("Pri odosielaní nahlásenia došlo k chybe."))
+            displayMessage(gettext("Pri odosielaní nahlásenia došlo k chybe."), "error") // Displays The Error Message
         }
     })
 }

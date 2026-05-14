@@ -1,7 +1,7 @@
 import { 
     getCursorPosition, 
     focusAtEnd 
-} from "../community.js"
+} from "../functions/customTextarea.js"
 
 import { add_hashtag_state } from "../state.js"
 import { highlightTagsInText } from "./tagUsers.js"

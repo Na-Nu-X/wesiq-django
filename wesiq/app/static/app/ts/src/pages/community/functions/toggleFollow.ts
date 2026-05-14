@@ -1,4 +1,5 @@
 import { sendPOST } from "../../../services/sendPOST.js"
+import { displayMessage } from "../../../utils/displayMessage.js";
 
 import type { response } from "../../../services/sendPOST.js"
 
@@ -9,7 +10,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLDivE
 
         // If The Response Isn't Success
         if(!toggle_follow_response.success) {
-            console.error(toggle_follow_response.message)
+            displayMessage(toggle_follow_response.message, "error") // Displays The Error Message
             return
         }
 
@@ -58,9 +59,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLDivE
         }
     }
 
-    catch(error) {
-        console.log(error)
-
-        console.error(gettext("Pri pridávaní sledovania došlo k chybe."))
+    catch {
+        displayMessage(gettext("Pri pridávaní sledovania došlo k chybe."), "error") // Displays The Error Message
     }
 }

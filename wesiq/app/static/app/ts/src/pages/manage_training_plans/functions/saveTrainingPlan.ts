@@ -4,6 +4,7 @@ import { getSelectedDay } from "./getSelectedDay.js"
 import { getPeriods } from "./periods.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 import { sendNotification } from "../../../utils/sendNotification.js"
+import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
@@ -90,7 +91,7 @@ export async function saveTrainingPlan(container:HTMLDivElement, state:{active_e
 
             // If The Response Isn't Success
             if(!save_training_plan_response.success) {
-                console.error(save_training_plan_response.message)
+                displayMessage(save_training_plan_response.message, "error") // Displays The Error Message
                 return
             }
     
@@ -102,7 +103,7 @@ export async function saveTrainingPlan(container:HTMLDivElement, state:{active_e
         }
 
         catch {
-            console.error(gettext("Pri ukladaní tréningového plánu došlo k chybe."))
+            displayMessage(gettext("Pri ukladaní tréningového plánu došlo k chybe."), "error") // Displays The Error Message
         }
     }
 }
