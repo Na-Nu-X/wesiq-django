@@ -5,6 +5,7 @@ interface NominatimPlace {
     [key:string]:any
 }
 
+import { displayMessage } from "../../../utils/displayMessage.js"
 import { location_state } from "../state.js"
 
 // Function For Get Unique Places From Fetched Data
@@ -64,8 +65,8 @@ export async function getLocation(searched_location:string, location_results:HTM
         renderLocationResults(unique_data, location_results, location, latitude, longitude) // Renders Location Results
     }
     
-    catch(error) {
-        console.error("Chyba pri načítaní polohy:", error)
+    catch {
+        displayMessage(gettext("Pri načítaní polohy došlo k chybe."), "error") // Displays The Error Message
     }
 
     finally {

@@ -34,6 +34,7 @@ import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
 import { getFormattedTime, getMinimalistFormattedTime } from "../../utils/timer.js"
 import { sendPOST } from "../../services/sendPOST.js"
 import { sendNotification } from "../../utils/sendNotification.js"
+import { displayMessage } from "../../utils/displayMessage.js"
 
 import type { response } from "../../services/sendPOST.js"
 
@@ -285,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // If The Response Isn't Success
             if(!delete_training_plan_response.success) {
-                console.error(delete_training_plan_response.message)
+                displayMessage(delete_training_plan_response.message, "error") // Displays The Error Message
                 return
             }
 
@@ -294,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         catch {
-            console.error(gettext("Pri odstraňovaní tréningového plánu došlo k chybe."))
+            displayMessage(gettext("Pri odstraňovaní tréningového plánu došlo k chybe."), "error") // Displays The Error Message
         }
     }
 
