@@ -10,7 +10,8 @@
 
 {% block content %}
     <div class="profile_container">
-        <h2><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h2>
+        {% comment %} <h2><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.username }}</a></h2> {% endcomment %}
+        {% comment %} <h3><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h3> {% endcomment %}
 
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
@@ -172,7 +173,7 @@
                                             src="{{ one_post.media.first.thumbnail.url }}" 
                                             alt="
                                                 {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                         >
@@ -183,7 +184,7 @@
                                             src="/../media/{{ one_post.media.first.file }}" 
                                             alt="
                                                 {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                             data-post_id="{{ one_post.id }}"
@@ -217,7 +218,7 @@
                                             src="{{ one_post.media.first.thumbnail.url }}" 
                                             alt="
                                                 {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                         >
@@ -228,7 +229,7 @@
                                             src="/../media/{{ one_post.media.first.file }}" 
                                             alt="
                                                 {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ first_name }} {{ last_name }}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                             data-post_id="{{ one_post.id }}"

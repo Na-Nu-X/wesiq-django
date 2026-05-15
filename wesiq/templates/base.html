@@ -84,7 +84,7 @@
             <div class="left">{% block banner %}{% endblock banner %}</div>
             
             <div class="right">
-                {% if request.session.logged_in_user_id and first_name and last_name %}
+                {% if request.session.logged_in_user_id and username %}
                     {% comment %} <div class="notifications">
                         <p class="label">9+</p>
                         <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
@@ -106,9 +106,9 @@
                             >
                         </a>
 
-                        <a class="user_name" href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">{{ first_name }} {{ last_name }}</a>
+                        <a class="username" href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">{{ username }}</a>
 
-                        <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ first_name }} {{ last_name }}" target="_self">{% translate "Odhlásiť" %}</a>
+                        <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ username }}" target="_self">{% translate "Odhlásiť" %}</a>
                     </div>
 
                 {% else %}

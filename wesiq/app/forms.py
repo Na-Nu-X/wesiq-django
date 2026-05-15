@@ -104,14 +104,14 @@ class reviewForm(forms.Form):
     )
 
 class loginForm(forms.Form):
-    email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"class": "email_address", "placeholder": _("Zadajte váš e-mail")}),
+    identifier = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "identifier", "placeholder": _("Používateľské meno alebo e-mail")}),
         label=False,
         max_length=50,
         required=True,
         error_messages={
-            "max_length": _("Zadaný e-mail je príliš dlhý"),
-            "required": _("Zadajte váš e-mail"),
+            "max_length": _("Zadané používateľské meno alebo e-mail je príliš dlhý"),
+            "required": _("Zadajte používateľské meno alebo e-mail"),
         },
     )
 

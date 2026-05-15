@@ -81,9 +81,9 @@
 
             <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-            <div class="email_address_container">
+            <div class="identifier_container">
                 <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
-                {{ login_form.email_address }}
+                {{ login_form.identifier }}
             </div>
             
             <div class="password_container">
@@ -399,14 +399,15 @@
 
                         {% endif %}
 
-                        <p class="full_name">
+                        <p class="username">
                             {% if one_review.user == None %}
                                 {% translate "Neexistujúci účet" %}
 
                             {% else %}
-                                {{ one_review.user.first_name }} {{ one_review.user.last_name }}
+                                {{ one_review.user.username }}
 
                             {% endif %}
+                            
                             <span class="date">
                                 - {{ one_review.creation_time|date:"d.m. Y" }}
                                  

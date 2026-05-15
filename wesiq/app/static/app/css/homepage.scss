@@ -395,7 +395,7 @@ header {
 
     .login_form_dialog {
         .login_form {
-            .email_address_container {
+            .identifier_container {
                 position: relative;
 
                 i {
@@ -408,11 +408,11 @@ header {
                 }
             }
 
-            .email_address_container:has(.email_address:hover) .fa-envelope, .email_address_container:has(.email_address:focus) .fa-envelope {
+            .identifier_container:has(.identifier:hover) .fa-envelope, .identifier_container:has(.identifier:focus) .fa-envelope {
                 left: -16px;
             }
 
-            input[type="text"], input[type="email"] {
+            input[type="text"] {
                 @include form_input($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
             }
 
@@ -1045,7 +1045,7 @@ header {
                     @include profile_picture($width: 38px, $height: 38px);
                 }
 
-                .full_name {
+                .username {
                     display: inline-block;
                     position: absolute;
                     top: 50%;
