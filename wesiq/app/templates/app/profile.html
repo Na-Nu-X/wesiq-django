@@ -99,6 +99,11 @@
                         >
             
                         <p class="username">{{ user.username }}</p>
+
+                        {% if user.first_name and user.last_name %}
+                            <p class="full_name">{{ user.first_name }} {{ user.last_name }}</p>
+                        
+                        {% endif %}
                     </div>
     
                     <p class="streak"><i class="fa-solid fa-fire"></i><span>100</span></p> <!-- https://fontawesome.com/icons/fire -->
@@ -154,7 +159,7 @@
                         <div class="all_posts_icon">
                             <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
                         </div>
-
+                        
                         <div class="saved_posts_icon">
                             <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
                         </div>
@@ -162,8 +167,8 @@
 
                 {% endif %}
 
-                {% if posts|length > 0 %}
-                    <div class="posts_container">
+                <div class="posts_container">
+                    {% if posts|length > 0 %}
                         <div class="posts">
                             {% for one_post in posts %}
                                 <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
@@ -200,15 +205,15 @@
 
                             {% endfor %}
                         </div>
-                    </div>
 
-                {% else %}
-                    <p>{% translate "Zatial žiadne príspevky." %}</p>
+                    {% else %}
+                        <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
+    
+                    {% endif %}
+                </div>
 
-                {% endif %}
-
-                {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
-                    <div class="saved_posts_container hidden">
+                <div class="saved_posts_container hidden">
+                    {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
                         <div class="saved_posts">
                             {% for one_post in saved_posts %}
                                 <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
@@ -245,12 +250,13 @@
 
                             {% endfor %}
                         </div>
-                    </div>
+                   
 
-                {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
-                    <p>{% translate "Žiadne uložené príspevky." %}</p>
+                    {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                        <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
 
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

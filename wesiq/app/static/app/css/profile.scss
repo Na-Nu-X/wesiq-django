@@ -369,6 +369,18 @@
                     }
                 }
             }
+
+            .posts_container.hidden {
+                .no_posts {
+                    display: none;
+                }
+            }
+
+            .saved_posts_container.hidden {
+                .no_saved_posts {
+                    display: none;
+                }
+            }
         }
     }
 }

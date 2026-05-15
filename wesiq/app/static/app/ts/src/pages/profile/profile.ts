@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const grid_select:HTMLDivElement|null = profile.querySelector(".bottom .grid_select") as HTMLDivElement || null // Gets The Grid Select Menu
 
     if(grid_select) {
-        const all_posts_icon:HTMLElement = grid_select.querySelector(".all_posts_icon") as HTMLElement // Gets The All Posts Icon
-        const saved_posts_icon:HTMLElement = grid_select.querySelector(".saved_posts_icon") as HTMLElement // Gets The Saved Posts Icon
+        const all_posts_icon:HTMLElement|null = grid_select.querySelector(".all_posts_icon") as HTMLElement || null // Gets The All Posts Icon If Is Available
+        const saved_posts_icon:HTMLElement|null = grid_select.querySelector(".saved_posts_icon") as HTMLElement || null // Gets The Saved Posts Icon If Is Available
         const posts_container:HTMLDivElement = profile.querySelector(".bottom .posts_container") as HTMLDivElement // Gets The Posts Container
         const saved_posts_container:HTMLDivElement = profile.querySelector(".bottom .saved_posts_container") as HTMLDivElement // Gets The Saved Posts Container
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             posts_container.classList.remove("hidden")
             saved_posts_container.classList.add("hidden")
         })
-    
+        
         // Saved Posts Icon Click Functionality
         saved_posts_icon.addEventListener("click", function():void {
             // Adds Active Class On The Saved Posts Icon
