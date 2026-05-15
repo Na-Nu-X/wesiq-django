@@ -53,6 +53,7 @@ export async function getSearchedUsers(searched_text:string, all_users_container
 function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
+    const username:HTMLParagraphElement = document.createElement("p") // Creates The Username Paragraph
     const full_name:HTMLParagraphElement = document.createElement("p") // Creates Full Name Paragraph
     const followers:HTMLParagraphElement = document.createElement("p") // Creates Followers Paragraph
     const follow_unfollow_icon:HTMLElement = document.createElement("i") // Creates Follow / Unfollow Icon
@@ -72,7 +73,11 @@ function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users
     user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container
 
-    full_name.classList.add("full_name") // Adds Full Name Class
+    username.classList.add("username") // Adds The Username Class
+    username.textContent = user_data.username // Sets The Username
+    one_user.appendChild(username) // Appends The Username To The One User Container
+
+    full_name.classList.add("full_name") // Adds The Full Name Class
     full_name.textContent = `${user_data.first_name} ${user_data.last_name}` // Sets First Name And Last Name
     one_user.appendChild(full_name) // Appends The Full Name To The One User Container
 

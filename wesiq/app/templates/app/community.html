@@ -123,6 +123,7 @@
                             "
                         >
 
+                        <p class="username">{{ one_user.username }}</p>
                         <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
 
                         <p class="followers">{{ one_user.followers.all|length }}</p>
@@ -410,8 +411,8 @@
                                             class="thumbnail"
                                             src="{{ one_post_media.thumbnail.url }}" 
                                             alt="
-                                                {% blocktranslate with user=one_post_media.post.user %}
-                                                    Príspevok užívateľa {{ user }}
+                                                {% blocktranslate with username=one_post_media.post.user.username %}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                         >
@@ -421,8 +422,8 @@
                                             class="image"
                                             src="{{ one_post_media.file.url }}" 
                                             alt="
-                                                {% blocktranslate with user=one_post_media.post.user %}
-                                                    Príspevok užívateľa {{ user }}
+                                                {% blocktranslate with username=one_post_media.post.user.username %}
+                                                    Príspevok užívateľa {{ username }}
                                                 {% endblocktranslate %}
                                             "
                                         >

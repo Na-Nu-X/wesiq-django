@@ -475,11 +475,15 @@ def homepageView(request):
         login_form = loginForm(request.POST)
 
         if login_form.is_valid():
-            email_address = login_form.cleaned_data["email_address"]
-            password = login_form.cleaned_data["password"]
+            identifier = login_form.cleaned_data["identifier"] # Gets The Identifier Value
+            password = login_form.cleaned_data["password"] # Gets The Password Value
 
             try:
-                user = Users.objects.get(email_address=email_address)
+                user = Users.objects.get(
+                    Q(username__iexact=identifier) |
+                    Q(email_address__iexact=identifier)
+                )
+
                 if check_password(password, user.password):
                     request.session["logged_in_user_id"] = user.id
 
@@ -496,18 +500,18 @@ def homepageView(request):
                         _("Zariadenie: %(os)s<br>Miesto: %(location)s<br>IP Adresa: %(client_ip)s" % {"os": request.user_agent.os.family, "location": getClientLocation(getClientIp(request)), "client_ip": getClientIp(request)})
                     )
 
-                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
-                    captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako %(username)s") % {"username": user.username})
+                    captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
                 
                 else: # Wrong Password
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                    captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                    captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
             
-            except Users.DoesNotExist as e: # Wrong E-mail Address
+            except Users.DoesNotExist as e: # Wrong Identifier
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
         if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
@@ -577,7 +581,7 @@ def homepageView(request):
         recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
         # Checks Validity Of reCaptcha Response
-        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
@@ -595,15 +599,15 @@ def homepageView(request):
                     messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
                 else:
+                    username = "@" + registration_form.cleaned_data["username"].lstrip("@") # Formats The Username (Adds The At Sign At The Beginning)
+                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
                     verification_code = generateCode() # Generates Random 6-Digit Code
                     friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
-
-                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
                     new_user = Users(
                         first_name = registration_form.cleaned_data["first_name"],
                         last_name = registration_form.cleaned_data["last_name"],
-                        username = registration_form.cleaned_data["username"],
+                        username = username,
                         email_address = registration_form.cleaned_data["email_address"],
                         phone_number = phone_number,
                         password = make_password(registration_form.cleaned_data["password"]),
@@ -954,39 +958,43 @@ def loginView(request):
         login_form = loginForm(request.POST)
 
         if login_form.is_valid():
-            email_address = login_form.cleaned_data["email_address"]
-            password = login_form.cleaned_data["password"]
+            identifier = login_form.cleaned_data["identifier"] # Gets The Identifier Value
+            password = login_form.cleaned_data["password"] # Gets The Password Value
 
-        try:
-            user = Users.objects.get(email_address=email_address)
-            if check_password(password, user.password):
-                request.session["logged_in_user_id"] = user.id
-
-                user.last_login = timezone.now() # Stores Last Login Time
-                user.account_status = "OK"
-                user.save()
-
-                sendMail(
-                    user,
-                    _("Prihlásenie do účtu"), # Subject
-                    _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\n%(domain)s%(language)s/profil/%(username)s?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "username": user.username}, # Text Content
-                    _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="%(domain)s%(language)s/profil/%(username)s?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"domain": settings.DOMAIN_URL, "language": user.language, "username": user.username}, # HTML Content
-                    _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                    _("Zariadenie: %(os)s<br>Miesto: %(location)s<br>IP Adresa: %(client_ip)s" % {"os": request.user_agent.os.family, "location": getClientLocation(getClientIp(request)), "client_ip": getClientIp(request)})
+            try:
+                user = Users.objects.get(
+                    Q(username__iexact=identifier) |
+                    Q(email_address__iexact=identifier)
                 )
 
-                messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
-                captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+                if check_password(password, user.password):
+                    request.session["logged_in_user_id"] = user.id
 
-                return HttpResponseRedirect(reverse("homepage_url"))
+                    user.last_login = timezone.now() # Stores Last Login Time
+                    user.account_status = "OK"
+                    user.save()
+
+                    sendMail(
+                        user,
+                        _("Prihlásenie do účtu"), # Subject
+                        _("bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n\n%(domain)s%(language)s/profil/%(username)s?password-reset=true\n\nAk ste sa prihlásili Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "username": user.username}, # Text Content
+                        _('bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a href="%(domain)s%(language)s/profil/%(username)s?password-reset=true" title="Obnoviť heslo" target="_blank">tento</a> odkaz alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.') % {"domain": settings.DOMAIN_URL, "language": user.language, "username": user.username}, # HTML Content
+                        _('Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                        _("Zariadenie: %(os)s<br>Miesto: %(location)s<br>IP Adresa: %(client_ip)s" % {"os": request.user_agent.os.family, "location": getClientLocation(getClientIp(request)), "client_ip": getClientIp(request)})
+                    )
+
+                    messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako %(username)s") % {"username": user.username})
+                    captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else: # Wrong Password
+                    messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
+                    captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
             
-            else: # Wrong Password
+            except Users.DoesNotExist as e: # Wrong Identifier
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-                captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
-        
-        except Users.DoesNotExist as e: # Wrong E-mail Address
-            messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
-            captureError(f"Incorrect login credentials (unregistered e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")

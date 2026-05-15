@@ -577,7 +577,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
             image.classList.add("image") // Adds The Image Class
             image.src = `/../media/${one_post_media.file}` // Sets The File Path
-            image.alt = interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`]) // Sets The Alternative Text For The Image
+            image.alt = interpolate(gettext('Príspevok užívateľa %s'), [post_data.user.username]) // Sets The Alternative Text For The Image
 
             one_post_container.appendChild(image) // Appends The Image To The One Post Container
             media.appendChild(one_post_container)
@@ -593,7 +593,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 
             video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
             source.src = interpolate(gettext("/sk/stream-video/%s/%s"), [post_data.user.id, one_post_media.file.substring(one_post_media.file.lastIndexOf('/') + 1)], false) // Sets The File Path
-            video.append(interpolate(gettext('Príspevok užívateľa %s'), [`${post_data.user.first_name} ${post_data.user.last_name}`])) // Sets The Alternative Text For The Video
+            video.append(interpolate(gettext('Príspevok užívateľa %s'), [post_data.user.username])) // Sets The Alternative Text For The Video
 
             one_post_container.appendChild(video_container) // Appends The Video Container To The One Post Container
             media.appendChild(one_post_container) // Appends The One Post Container To The Media Container

@@ -45,7 +45,7 @@
                         {% endfor %}
                     </div>
                     
-                    <a href="#" title="{{ article.user.first_name }} {{ article.user.last_name }}" target="_self">
+                    <a href="#" title="{{ article.user.username }}" target="_self">
                         <img 
                             class="profile_picture" 
                             src="
@@ -115,7 +115,7 @@
                                     
                                     {% endif %}
                                 "
-                                title="{% translate 'Zobraziť profil' %} {{ one_comment.user.first_name }} {{ one_comment.user.last_name }}"
+                                title="{% translate 'Zobraziť profil' %} {{ one_comment.user.username }}"
                             >
 
                             <p>{{ one_comment.comment }}</p>
@@ -196,7 +196,7 @@
                                                     
                                                     {% endif %}
                                                 "
-                                                title="{% translate 'Zobraziť profil' %} {{ one_reply.user.first_name }} {{ one_reply.user.last_name }}"
+                                                title="{% translate 'Zobraziť profil' %} {{ one_reply.user.username }}"
                                             >
 
                                             <p>{{ one_reply.comment }}</p>
