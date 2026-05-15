@@ -1067,18 +1067,42 @@ document.addEventListener("DOMContentLoaded", function():void {
         feed.addEventListener("keydown", function(event:KeyboardEvent):void {
             const post_container:HTMLDivElement = (event.target as HTMLElement).closest(".post_container") as HTMLDivElement // Gets The Post Container
             const media_container:HTMLDivElement = post_container.querySelector(".media") as HTMLDivElement // Gets The Media Container
-            const post_bars:HTMLDivElement = media_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
 
             if(event.key === "ArrowLeft" || event.key === "ArrowRight") event.preventDefault() // Prevents Default Behaviour
 
-            if(event.key === "ArrowLeft") {
-                const post_index:number = Number(media_container.dataset["active_index"]) - 1 // Gets The Previous Post Index
-                changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
+            // Change Video Time
+            if(media_container.querySelector(".video_container:hover")) {
+                const video_container:HTMLDivElement = media_container.querySelector(".video_container:hover") as HTMLDivElement // Gets The Video Container
+                const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                // Step Back
+                if(event.key === "ArrowLeft") {
+                    const step_back_indicator:HTMLDivElement = video_container.querySelector(".step_back_indicator") as HTMLDivElement // Gets The Step Back Indicator
+                    stepBack(step_back_indicator, video) // Rewinds The Video 5 Seconds
+                }
+    
+                // Step Further
+                else if(event.key === "ArrowRight") {
+                    const step_further_indicator:HTMLDivElement = video_container.querySelector(".step_further_indicator") as HTMLDivElement // Gets The Step Further Indicator
+                    stepFurther(step_further_indicator, video) // Fast Forwards The Video 5 Seconds
+                }
             }
 
-            else if(event.key === "ArrowRight") {
-                const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
-                changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
+            // Change Post
+            else {
+                const post_bars:HTMLDivElement = media_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
+
+                // Previous Post
+                if(event.key === "ArrowLeft") {
+                    const post_index:number = Number(media_container.dataset["active_index"]) - 1 // Gets The Previous Post Index
+                    changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
+                }
+    
+                // Next Post
+                else if(event.key === "ArrowRight") {
+                    const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
+                    changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
+                }
             }
         })
 
