@@ -2252,7 +2252,19 @@ def communityView(request):
                             Q(username__icontains=searched_text) | 
                             Q(friend_code__contains=searched_text)
                         )
-                    ).exclude(id=logged_in_user_id).order_by("-creation_time")
+                    ).exclude(
+                        id=logged_in_user_id
+                    ).annotate(
+                        # Creates Is Followed Column (True If The User Is Following The User)
+                        is_followed=Case(
+                            When(id__in=logged_in_user.following.values_list("id", flat=True), then=True),
+                            default=False,
+                            output_field=BooleanField()
+                        )
+                    ).order_by(
+                        "-is_followed",
+                        "-creation_time"
+                    )
                     
                     # Creates Valid Format Of Users For JSON Response
                     users = [
@@ -2263,7 +2275,6 @@ def communityView(request):
                             "username": one_user.username,
                             "profile_picture_name": one_user.profile_picture_name, 
                             "friend_code": one_user.friend_code,
-                            "following": list(one_user.following.values_list("id", flat=True)),
                             "followers": list(one_user.followers.values_list("id", flat=True))
                         }
 
