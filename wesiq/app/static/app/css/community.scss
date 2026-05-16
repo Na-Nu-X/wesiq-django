@@ -1614,7 +1614,18 @@ header {
                     }
 
                     .one_comment {
+                        position: relative;
                         margin-bottom: 10px;
+                        
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 38px;
+                            left: calc(6px + 38px / 2);
+                            width: 1px;
+                            height: calc(100% - 38px);
+                            background-color: lighten($main-color, 20%);
+                        }
 
                         &:last-child {
                             margin-bottom: 20px;
@@ -1653,19 +1664,55 @@ header {
                                 }
                             }
 
-                            .comment {
+                            .right {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
                                 margin-bottom: 7.5px;
                                 margin-left: 38px + 10px;
                                 padding-right: 10px;
-                                text-align: justify;
+
+                                .comment {
+                                    text-align: justify;
+                                    padding-right: 10px;
+                                    line-break: anywhere;
+                                }
+    
+                                .likes {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 5px;
+                                    height: 20px;
+                
+                                    .fa-heart {
+                                        display: block;
+                                        color: darken($secondary-color, 40%);
+                
+                                        &:hover {
+                                            color: $error-color !important;
+                                            cursor: pointer;
+                                            transition: color 0.3s ease;
+                                        }
+                                    }
+                
+                                    .fa-solid {
+                                        color: $error-color;
+                                    }
+                
+                                    .likes_counter {
+                                        display: inline-block;
+                                        color: darken($secondary-color, 40%);
+                                    }
+                                }
                             }
                         }
 
                         .interactions {
-                            margin-left: 6px + 10px + 38px;
                             display: flex;
                             align-items: center;
                             gap: 10px;
+                            margin-left: 6px + 10px + 38px;
+                            padding-right: 10px;
         
                             .reply {
                                 .fa-comment,
@@ -1708,6 +1755,8 @@ header {
                             }
         
                             .report {
+                                margin-left: auto;
+
                                 .fa-flag {
                                     color: darken($secondary-color, 40%);
         
@@ -1724,8 +1773,6 @@ header {
                             }
         
                             .date {
-                                margin-left: 10px;
-        
                                 p {
                                     font-size: 0.8em;
                                     font-style: italic;
@@ -1742,12 +1789,78 @@ header {
                         }
 
                         .reply_container {
+                            position: relative;
                             margin-top: 10px;
                             margin-left: 6px + 10px + 32px;
                             margin-right: 10px;
 
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                top: 0px;
+                                bottom: 82px;
+                                left: calc(6px + 32px / 2);
+                                width: 1px;
+                                background-color: lighten($main-color, 20%);
+                            }
+
                             &.hidden {
                                 display: none;
+                            }
+
+                            .one_comment {
+                                &::before {
+                                    display: none;
+                                }
+
+                                &::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 103px;
+                                    left: calc(6px + 32px / 2);
+                                    width: 1px;
+                                    height: 196px;
+                                    background-color: transparent;
+                                }
+
+                                &.first_level_reply {
+                                    > .comment_container {
+                                        &::before {
+                                            left: -15px;
+                                            width: 15px;
+                                        }
+
+                                        &::after {
+                                            left: -29px;
+                                        }
+                                    }
+                                }
+
+                                .comment_container {
+                                    position: relative;
+
+                                    &::before {
+                                        content: "";
+                                        position: absolute;
+                                        top: calc(32px / 2);
+                                        left: -18px;
+                                        width: 18px;
+                                        height: 1px;
+                                        background-color: lighten($main-color, 20%);
+                                    }
+    
+                                    &::after {
+                                        content: "";
+                                        position: absolute;
+                                        top: 3px;
+                                        left: -32px;
+                                        width: calc(28px / 2);
+                                        height: calc(28px / 2);
+                                        border-bottom: 1px solid lighten($main-color, 20%);
+                                        border-left: 1px solid lighten($main-color, 20%);
+                                        border-bottom-left-radius: $medium-border-radius;
+                                    }
+                                }
                             }
 
                             .one_comment .comment_container .user a .profile_picture {

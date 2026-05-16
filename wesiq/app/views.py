@@ -385,6 +385,8 @@ def reportPostComment(request):
 
                 return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
 
+            return JsonResponse({"success": True, "message": _("Nahlásenie už bolo odoslané.")}, status=200)
+
         return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
 
     except Exception as e:

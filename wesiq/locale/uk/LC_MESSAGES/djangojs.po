@@ -9,17 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-05 19:46+0000\n"
-"PO-Revision-Date: 2026-03-23 19:36+0000\n"
+"PO-Revision-Date: 2026-05-15 18:30+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
-"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
-"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
-"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
@@ -27,13 +24,11 @@ msgid "Hlavná stránka"
 msgstr "Головна сторінка"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Domovská stránka"
 msgstr "Головна сторінка"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Úvodná stránka"
 msgstr "Головна сторінка"
@@ -47,14 +42,13 @@ msgid "Prihlásenie"
 msgstr "Логін"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
-#, fuzzy
 #| msgid "Prihlásenie"
 msgid "Prihlásiť sa"
 msgstr "Логін"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "Autorizovať sa"
-msgstr ""
+msgstr "Авторизуйтеся"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
 msgid "/obnova-hesla"
@@ -65,16 +59,14 @@ msgid "Obnova hesla"
 msgstr "Відновлення пароля"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Obnova hesla"
 msgid "Obnoviť heslo"
-msgstr "Відновлення пароля"
+msgstr "Скинути пароль"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zmeniť heslo"
-msgstr "Показати пароль"
+msgstr "Змінити пароль"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/registracia"
@@ -85,14 +77,13 @@ msgid "Registrácia"
 msgstr "Реєстрація"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
-#, fuzzy
 #| msgid "/registracia"
 msgid "Zaregistrovať sa"
-msgstr "/reyestratsiya"
+msgstr "Зареєструватися"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Vytvoriť účet"
-msgstr ""
+msgstr "Створити обліковий запис"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/moj-ucet"
@@ -104,13 +95,12 @@ msgstr "Мій рахунок"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Upraviť účet"
-msgstr ""
+msgstr "Редагувати обліковий запис"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť účet"
-msgstr "Показати пароль"
+msgstr "Переглянути обліковий запис"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/moje-hodnotenie"
@@ -122,13 +112,12 @@ msgstr "Моя оцінка"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Moja recenzia"
-msgstr ""
+msgstr "Мій відгук"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
-#, fuzzy
 #| msgid "Moje hodnotenie"
 msgid "Upraviť hodnotenie"
-msgstr "Моя оцінка"
+msgstr "Редагувати оцінку"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/blog"
@@ -140,7 +129,7 @@ msgstr "Блог"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Články"
-msgstr ""
+msgstr "Статті"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/trening"
@@ -152,11 +141,11 @@ msgstr "Тренінг"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Aktivita"
-msgstr ""
+msgstr "Активність"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Spustiť aktivitu"
-msgstr ""
+msgstr "Початок активності"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/moje-treningove-plany"
@@ -167,32 +156,28 @@ msgid "Moje tréningové plány"
 msgstr "Мої плани тренувань"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Vytvoriť tréningový plán"
-msgstr "Мої плани тренувань"
+msgstr "Створіть план тренувань"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Upraviť tréningový plán"
-msgstr "Мої плани тренувань"
+msgstr "Редагувати план тренувань"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Odstrániť tréningový plán"
-msgstr "Мої плани тренувань"
+msgstr "Видалити план тренувань"
 
 #: app/static/app/ts/src/pages/community.ts:77
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť užívateľa"
-msgstr "Показати пароль"
+msgstr "Показати користувача"
 
 #: app/static/app/ts/src/pages/community.ts:137
 msgid "An Error Occurred While Searching for Users."
-msgstr ""
+msgstr "Під час пошуку користувачів сталася помилка."
 
 #: app/static/app/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
@@ -267,7 +252,8 @@ msgstr "<br>Поточна діяльність тривала:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Час поточної діяльності був на 100% довшим, ніж у середньому за останні 7 "
 "днів"
@@ -276,10 +262,12 @@ msgstr ""
 #, javascript-format
 msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
 msgstr ""
-"Час поточної діяльності був на %s% довшим, ніж у середньому за останні 7 днів"
+"Час поточної діяльності був на %s% довшим, ніж у середньому за останні 7 "
+"днів"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
 "Час поточної діяльності був на %s% коротшим, ніж у середньому за останні 7 "
 "днів"
