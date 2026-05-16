@@ -2777,7 +2777,8 @@ def profileView(request, username):
 
                                     logged_in_user.last_edit = timezone.now()
 
-                                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
+                                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"] # Gets The Delete Profile Picture Hidden Checkbox Value
+
                                 if delete_profile_picture:
                                     current_profile_picture_name = logged_in_user.profile_picture_name
                                     path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
@@ -2785,6 +2786,10 @@ def profileView(request, username):
 
                                     logged_in_user.profile_picture_name = ""
 
+                                    logged_in_user.last_edit = timezone.now()
+
+                                if logged_in_user.bio != edit_account_form.cleaned_data["bio"] and edit_account_form.cleaned_data["bio"] != "":
+                                    logged_in_user.bio = edit_account_form.cleaned_data["bio"]
                                     logged_in_user.last_edit = timezone.now()
 
                                 if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
@@ -2848,6 +2853,7 @@ def profileView(request, username):
                     return response
 
                 filled_edit_account_form = editAccountForm(initial={
+                    "bio": logged_in_user.bio,
                     "first_name": logged_in_user.first_name,
                     "last_name": logged_in_user.last_name,
                     "email_address": logged_in_user.email_address,

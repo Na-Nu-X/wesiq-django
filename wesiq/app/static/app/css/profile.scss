@@ -67,25 +67,31 @@
 
     .edit_account_form {
         .profile_picture_container {
-            position: relative;
-            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-            .profile_picture, .delete_profile_picture {
-                margin: 0px 2.5px;
-            }
+            .info {
+                display: flex;
+                align-items: center;
+                gap: 10px;
 
-            .profile_picture {
-                @include profile_picture;
-                transition: transform 0.3s ease;
+                .profile_picture {
+                    @include profile_picture($width: 50px, $height: 50px);
+                    transition: transform 0.3s ease;
+            
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
 
-                &:hover {
-                    transform: scale(1.05);
+                .username {
+                    font-size: 1.2em;
                 }
             }
 
             .delete_profile_picture {
                 position: relative;
-                bottom: 3px;
                 opacity: 0.6;
                 transition: transform 0.3s ease, opacity 0.3s ease;
 
@@ -99,6 +105,10 @@
             #select_profile_picture, #delete_profile_picture {
                 display: none;
             }
+        }
+
+        .bio {
+            @include form_textarea;
         }
 
         .first_name_container, .last_name_container, .email_address_container, .phone_number_container {
