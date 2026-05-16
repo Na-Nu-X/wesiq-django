@@ -474,7 +474,7 @@ def homepageView(request):
             captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
             return HttpResponseRedirect(reverse("homepage_url"))
 
-        login_form = loginForm(request.POST)
+        login_form = loginForm(request.POST) # Gets The Login Form
 
         if login_form.is_valid():
             identifier = login_form.cleaned_data["identifier"] # Gets The Identifier Value
@@ -506,14 +506,26 @@ def homepageView(request):
                     captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
 
                     return HttpResponseRedirect(reverse("homepage_url"))
-                
-                else: # Wrong Password
+
+                # Wrong Password
+                else: 
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                     captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
-            
-            except Users.DoesNotExist as e: # Wrong Identifier
+
+            # Wrong Identifier
+            except Users.DoesNotExist as e: 
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+            # Error
+            except Exception as e:
+                messages.add_message(request, messages.ERROR, _("Pri prihlasovaní došlo k chybe"))
+                captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        # Wrong Form
+        else:
+            messages.add_message(request, messages.ERROR, _("Nepodarilo sa spracovať požiadavku o prihlásenie"))
+            captureError(f"Failed to process login request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
         if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
@@ -588,57 +600,65 @@ def homepageView(request):
             captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
-            registration_form = registrationForm(request.POST)
+            registration_form = registrationForm(request.POST) # Gets The Registration Form
+
             if registration_form.is_valid():
-                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
-                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                try:
+                    if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                        messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
+                        captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
-                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
-                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
+                    elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                        messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
 
-                elif len(registration_form.cleaned_data["password"]) < 8:
-                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+                    elif len(registration_form.cleaned_data["password"]) < 8:
+                        messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
-                else:
-                    username = "@" + registration_form.cleaned_data["username"].lstrip("@") # Formats The Username (Adds The At Sign At The Beginning)
-                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
-                    verification_code = generateCode() # Generates Random 6-Digit Code
-                    friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
+                    else:
+                        username = "@" + registration_form.cleaned_data["username"].lstrip("@") # Formats The Username (Adds The At Sign At The Beginning)
+                        phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+                        verification_code = generateCode() # Generates Random 6-Digit Code
+                        friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
-                    new_user = Users(
-                        first_name = registration_form.cleaned_data["first_name"],
-                        last_name = registration_form.cleaned_data["last_name"],
-                        username = username,
-                        email_address = registration_form.cleaned_data["email_address"],
-                        phone_number = phone_number,
-                        password = make_password(registration_form.cleaned_data["password"]),
-                        language = request.POST.get("language"),
-                        verification_code = verification_code,
-                        friend_code = friend_code
-                    )
+                        new_user = Users(
+                            first_name = registration_form.cleaned_data["first_name"],
+                            last_name = registration_form.cleaned_data["last_name"],
+                            username = username,
+                            email_address = registration_form.cleaned_data["email_address"],
+                            phone_number = phone_number,
+                            password = make_password(registration_form.cleaned_data["password"]),
+                            language = request.POST.get("language"),
+                            verification_code = verification_code,
+                            friend_code = friend_code
+                        )
 
-                    new_user.save()
+                        new_user.save()
 
-                    # Deletes Previous User ID Session If Was Logged In
-                    if "logged_in_user_id" in request.session:
-                        del request.session["logged_in_user_id"]
+                        # Deletes Previous User ID Session If Was Logged In
+                        if "logged_in_user_id" in request.session:
+                            del request.session["logged_in_user_id"]
 
-                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
+                        messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    sendMail(
-                        new_user,
-                        _("Overenie účtu"), # Subject
-                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\n%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
-                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
-                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
-                    )
+                        sendMail(
+                            new_user,
+                            _("Overenie účtu"), # Subject
+                            _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\n%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                            _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                            _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                        )
 
-                    return HttpResponseRedirect(reverse("registration_url"))
-            
+                        return HttpResponseRedirect(reverse("registration_url"))
+
+                # Error
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR, _("Pri registrácii došlo k chybe"))
+                    captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+            # Wrong Form
             else:
-                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError(f"Registration failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                messages.add_message(request, messages.ERROR, _("Nepodarilo sa spracovať požiadavku o registráciu"))
+                captureError(f"Failed to process registration request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     # Contact Form
     if request.method == "POST" and request.POST.get("contact_form_submit"):
@@ -658,44 +678,52 @@ def homepageView(request):
             captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         else:
-            contact_form = contactForm(request.POST, request.FILES)
+            contact_form = contactForm(request.POST, request.FILES) # Gets The Contact Form
+
             if contact_form.is_valid():
-                # Send Mail
-                subject = f"Wesiq - {contact_form.cleaned_data["subject"]}"
-                text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
-                sender = contact_form.cleaned_data["email_address"]
-                receiver = [settings.EMAIL_HOST_USER]
-                html_content = f"""
-                    <p>
-                        <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
-                        {contact_form.cleaned_data["message"]}
-                    </p>
-                """
+                try:
+                    # Send Mail
+                    subject = f"Wesiq - {contact_form.cleaned_data["subject"]}"
+                    text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
+                    sender = contact_form.cleaned_data["email_address"]
+                    receiver = [settings.EMAIL_HOST_USER]
+                    html_content = f"""
+                        <p>
+                            <b>{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}</b><br><br>
+                            {contact_form.cleaned_data["message"]}
+                        </p>
+                    """
 
-                mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
-                mail_message.attach_alternative(html_content, "text/html")
+                    mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+                    mail_message.attach_alternative(html_content, "text/html")
 
-                attachment_file = request.FILES.get("select_attachment")
-                if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
-                    if attachment_file.size < 25000000:
-                        mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
+                    attachment_file = request.FILES.get("select_attachment")
+                    if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
+                        if attachment_file.size < 25000000:
+                            mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
 
+                            mail_message.send()
+
+                            messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
+
+                        else:
+                            messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
+                            captureError(f"The attachment is too large.\n\t- URL: {request.build_absolute_uri()}\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                    else: # Sends Mail Without An Attachment
                         mail_message.send()
 
                         messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
 
-                    else:
-                        messages.add_message(request, messages.ERROR, _("Príloha je príliš veľká"))
-                        captureError(f"The attachment is too large.\n\t- URL: {request.build_absolute_uri()}\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
-
-                else: # Sends Mail Without An Attachment
-                    mail_message.send()
-
-                    messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
+                # Error
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR, _("Pri odosielaní správy došlo k chybe"))
+                    captureError(f"An error occurred while sending the message.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
             
+            # Wrong Form
             else:
                 messages.add_message(request, messages.ERROR, _("Správu sa nepodarilo odoslať"))
-                captureError(f"The message could not be sent.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"The message could not be sent.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         return HttpResponseRedirect(reverse("homepage_url"))
             
@@ -862,30 +890,38 @@ def homepageView(request):
                 return HttpResponseRedirect(reverse("homepage_url"))
             
             else:
-                review_form = reviewForm(request.POST)
+                review_form = reviewForm(request.POST) # Gets The Review Form
+
                 if review_form.is_valid():
-                    # Checks If User Has Already Written A Review
-                    if Reviews.objects.filter(user_id=logged_in_user_id).exists():
-                        messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
+                    try:
+                        # Checks If User Has Already Written A Review
+                        if Reviews.objects.filter(user_id=logged_in_user_id).exists():
+                            messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
 
-                        return HttpResponseRedirect(reverse("edit_review_url"))
+                            return HttpResponseRedirect(reverse("edit_review_url"))
 
-                    # Saves New Review To DB
-                    else:
-                        if int(review_form.cleaned_data["rating"]) == 0:
-                            messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
-
+                        # Saves New Review To DB
                         else:
-                            new_review = Reviews(
-                                user_id = logged_in_user_id,
-                                rating = int(review_form.cleaned_data["rating"]),
-                                review = review_form.cleaned_data["review"],
-                            )
+                            if int(review_form.cleaned_data["rating"]) == 0:
+                                messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
 
-                            new_review.save()
+                            else:
+                                new_review = Reviews(
+                                    user_id = logged_in_user_id,
+                                    rating = int(review_form.cleaned_data["rating"]),
+                                    review = review_form.cleaned_data["review"],
+                                )
 
-                            messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
-                        
+                                new_review.save()
+
+                                messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
+
+                    # Error
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR, _("Pri spracovaní hodnotenia došlo k chybe"))
+                        captureError(f"An error occurred while processing the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                
+                # Wrong Form
                 else:
                     messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
                     captureError(f"Review could not be published.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
@@ -957,7 +993,7 @@ def loginView(request):
             captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
             return HttpResponseRedirect(reverse("login_url"))
 
-        login_form = loginForm(request.POST)
+        login_form = loginForm(request.POST) # Gets The Login Form
 
         if login_form.is_valid():
             identifier = login_form.cleaned_data["identifier"] # Gets The Identifier Value
@@ -994,9 +1030,20 @@ def loginView(request):
                     messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                     captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
             
-            except Users.DoesNotExist as e: # Wrong Identifier
+            # Wrong Identifier
+            except Users.DoesNotExist as e:
                 messages.add_message(request, messages.ERROR, _("Nesprávne prihlasovacie údaje"))
                 captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+            # Error
+            except Exception as e:
+                messages.add_message(request, messages.ERROR, _("Pri prihlasovaní došlo k chybe"))
+                captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        # Wrong Form
+        else:
+            messages.add_message(request, messages.ERROR, _("Nepodarilo sa spracovať požiadavku o prihlásenie"))
+            captureError(f"Failed to process login request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
@@ -1048,37 +1095,45 @@ def loginView(request):
 def passwordResetView(request):
     if request.COOKIES.get("email_address"):
         if request.method == "POST":
-            password_reset_form = passwordResetForm(request.POST)
+            password_reset_form = passwordResetForm(request.POST) # Gets The Password Reset Form
+
             if password_reset_form.is_valid():
                 password_reset_code = password_reset_form.cleaned_data["password_reset_code"]
                 new_password = password_reset_form.cleaned_data["new_password"]
-
-                user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
-
-                if password_reset_code == user.password_reset_code:
-                    if len(new_password) < 8:
-                        messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
-
-                    else:
-                        # Saves New Password To Database And Deletes Password Reset Code From Database
-                        user.password = make_password(new_password)
-                        user.password_reset_code = None
-                        user.save()
-
-                        messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
-
-                        # Redirect After Changing Password
-                        response = HttpResponseRedirect(reverse("login_url"))
-                        response.delete_cookie("email_address") # Deletes Cookie With Email Address
-                        return response
                 
-                else:
-                    messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
-                    captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+                try:
+                    user = Users.objects.get(email_address=request.COOKIES.get("email_address"))
 
+                    if password_reset_code == user.password_reset_code:
+                        if len(new_password) < 8:
+                            messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+
+                        else:
+                            # Saves New Password To Database And Deletes Password Reset Code From Database
+                            user.password = make_password(new_password)
+                            user.password_reset_code = None
+                            user.save()
+
+                            messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
+
+                            # Redirect After Changing Password
+                            response = HttpResponseRedirect(reverse("login_url"))
+                            response.delete_cookie("email_address") # Deletes Cookie With Email Address
+                            return response
+                    
+                    else:
+                        messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
+                        captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                # Error
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR, _("Pri spracovaní žiadosti o zmenu hesla došlo k chybe"))
+                    captureError(f"An error occurred while processing the password reset request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+            
+            # Wrong Form
             else:
                 messages.add_message(request, messages.ERROR, _("Overenie zlyhalo"))
-                captureError(f"Verification failed.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"Verification failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         if request.GET.get("password-reset"):
             email_address = request.COOKIES.get("email_address")
@@ -1178,57 +1233,65 @@ def registrationView(request):
             return HttpResponseRedirect(reverse("registration_url"))
 
         else:
-            registration_form = registrationForm(request.POST)
+            registration_form = registrationForm(request.POST) # Gets The Registration Form
+
             if registration_form.is_valid():
-                if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
-                    messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
-                    captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                try:
+                    if Users.objects.filter(email_address=registration_form.cleaned_data["email_address"]).exists():
+                        messages.add_message(request, messages.ERROR, _("Tento e-mail už je zaregistrovaný"))
+                        captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
-                elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
-                    messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
+                    elif registration_form.cleaned_data["password"] != registration_form.cleaned_data["password_check"]:
+                        messages.add_message(request, messages.ERROR, _("Heslá sa nezhodujú"))
 
-                elif len(registration_form.cleaned_data["password"]) < 8:
-                    messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+                    elif len(registration_form.cleaned_data["password"]) < 8:
+                        messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
-                else:
-                    verification_code = generateCode() # Generates Random 6-Digit Code
-                    friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
+                    else:
+                        verification_code = generateCode() # Generates Random 6-Digit Code
+                        friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
-                    phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
+                        phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
-                    new_user = Users(
-                        first_name = registration_form.cleaned_data["first_name"],
-                        last_name = registration_form.cleaned_data["last_name"],
-                        username = registration_form.cleaned_data["username"],
-                        email_address = registration_form.cleaned_data["email_address"],
-                        phone_number = phone_number,
-                        password = make_password(registration_form.cleaned_data["password"]),
-                        language = request.POST.get("language"),
-                        verification_code = verification_code,
-                        friend_code = friend_code
-                    )
+                        new_user = Users(
+                            first_name = registration_form.cleaned_data["first_name"],
+                            last_name = registration_form.cleaned_data["last_name"],
+                            username = registration_form.cleaned_data["username"],
+                            email_address = registration_form.cleaned_data["email_address"],
+                            phone_number = phone_number,
+                            password = make_password(registration_form.cleaned_data["password"]),
+                            language = request.POST.get("language"),
+                            verification_code = verification_code,
+                            friend_code = friend_code
+                        )
 
-                    new_user.save()
+                        new_user.save()
 
-                    # Deletes Previous User ID Session If Was Logged In
-                    if "logged_in_user_id" in request.session:
-                        del request.session["logged_in_user_id"]
+                        # Deletes Previous User ID Session If Was Logged In
+                        if "logged_in_user_id" in request.session:
+                            del request.session["logged_in_user_id"]
 
-                    messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
+                        messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
 
-                    sendMail(
-                        new_user,
-                        _("Overenie účtu"), # Subject
-                        _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\n%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
-                        _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
-                        _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
-                    )
+                        sendMail(
+                            new_user,
+                            _("Overenie účtu"), # Subject
+                            _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\n%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # Text Content
+                            _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"domain": settings.DOMAIN_URL, "language": request.POST.get("language"), "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                            _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+                        )
 
-                    return HttpResponseRedirect(reverse("registration_url"))
-                
+                        return HttpResponseRedirect(reverse("registration_url"))
+
+                # Error
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR, _("Pri registrácii došlo k chybe"))
+                    captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+            # Wrong Form
             else:
-                messages.add_message(request, messages.ERROR, _("Registrácia zlyhala"))
-                captureError(f"Registration failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                messages.add_message(request, messages.ERROR, _("Nepodarilo sa spracovať požiadavku o registráciu"))
+                captureError(f"Failed to process registration request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             return HttpResponseRedirect(reverse("registration_url"))
 
@@ -1256,30 +1319,38 @@ def editReviewView(request):
 
         if request.method == "POST":
             if review.last_edit == None or timezone.now() - review.last_edit >= timedelta(days=30):
-                review_form = reviewForm(request.POST)
+                review_form = reviewForm(request.POST) # Gets The Review Form
+
                 if review_form.is_valid():
-                    if review.rating != int(review_form.cleaned_data["rating"]):
-                        review.rating = int(review_form.cleaned_data["rating"])
-                        review.last_edit = timezone.now()
+                    try:
+                        if review.rating != int(review_form.cleaned_data["rating"]):
+                            review.rating = int(review_form.cleaned_data["rating"])
+                            review.last_edit = timezone.now()
 
-                    if review.review != review_form.cleaned_data["review"]:
-                        review.review = review_form.cleaned_data["review"]
-                        review.last_edit = timezone.now()
+                        if review.review != review_form.cleaned_data["review"]:
+                            review.review = review_form.cleaned_data["review"]
+                            review.last_edit = timezone.now()
 
-                    review.save()
+                        review.save()
 
-                    delete_review = review_form.cleaned_data["delete_review"]
-                    if delete_review:
-                        review.delete()
+                        delete_review = review_form.cleaned_data["delete_review"]
+                        if delete_review:
+                            review.delete()
 
-                        messages.add_message(request, messages.ERROR, _("Vaše hodnotenie bolo odstránené"))
+                            messages.add_message(request, messages.ERROR, _("Vaše hodnotenie bolo odstránené"))
+
+                            return HttpResponseRedirect(reverse("homepage_url"))
+                        
+                        messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
                         return HttpResponseRedirect(reverse("homepage_url"))
-                    
-                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
-                    return HttpResponseRedirect(reverse("homepage_url"))
+                    # Error
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR, _("Pri úprave hodnotenia došlo k chybe"))
+                        captureError(f"An error occurred while editing the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                 
+                # Wrong Form
                 else:
                     messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
                     captureError(f"Changes could not be made while editing review.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
@@ -1472,7 +1543,8 @@ def blogView(request):
 
     # Blog Subscribe Form
     if request.method == "POST":
-        blog_subscribe_form = blogSubscribeForm(request.POST)
+        blog_subscribe_form = blogSubscribeForm(request.POST) # Gets The Blog Subscribe Form
+
         if blog_subscribe_form.is_valid():
             email_address = blog_subscribe_form.cleaned_data["email_address"]
             
@@ -1483,9 +1555,15 @@ def blogView(request):
 
                 messages.add_message(request, messages.SUCCESS, f"Budete dostávať upozornenia na adresu\n%(email_address)s" % {"email_address": email_address})
 
-            # Account With The Entered E-mail Address Does Not Exist
-            except:
-                pass
+            # Error
+            except Exception as e:
+                messages.add_message(request, messages.ERROR, _("Pri prihlásení na odber k blogu došlo k chybe"))
+                captureError(f"An error occurred while subscribing to the blog.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        
+        # Wrong Form
+        else:
+            messages.add_message(request, messages.ERROR, _("Prihlásení na odber k blogu zlyhalo"))
+            captureError(f"Blog subscription failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
@@ -1547,28 +1625,52 @@ def blogThemeView(request, theme):
         if request.method == "POST":
             # Write Comment Form
             if request.POST.get("write_comment_form"):
-                write_comment_form = writeCommentForm(request.POST)
-                if write_comment_form.is_valid():
-                    new_comment = ArticleForum(
-                        article_id = article.id,
-                        user_id = logged_in_user_id,
-                        comment = write_comment_form.cleaned_data["comment"],
-                    )
+                write_comment_form = writeCommentForm(request.POST) # Gets The Write Comment Form
 
-                    new_comment.save()
+                if write_comment_form.is_valid():
+                    try:
+                        new_comment = ArticleForum(
+                            article_id = article.id,
+                            user_id = logged_in_user_id,
+                            comment = write_comment_form.cleaned_data["comment"],
+                        )
+
+                        new_comment.save()
+
+                    # Error
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR, _("Pri pridávaní komentáru došlo k chybe"))
+                        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                
+                # Wrong Form
+                else:
+                    messages.add_message(request, messages.ERROR, _("Pridávanie komentáru zlyhalo"))
+                    captureError(f"Adding comment failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             # Reply Comment Form
             if request.POST.get("reply_comment_form"):
-                write_comment_form = writeCommentForm(request.POST)
-                if write_comment_form.is_valid():
-                    new_comment_reply = ArticleForum(
-                        article_id = article.id,
-                        user_id = logged_in_user_id,
-                        comment = write_comment_form.cleaned_data["comment"],
-                        parent_id = request.POST.get("parent_id")
-                    )
+                write_comment_form = writeCommentForm(request.POST) # Write Comment Form
 
-                    new_comment_reply.save()
+                if write_comment_form.is_valid():
+                    try:
+                        new_comment_reply = ArticleForum(
+                            article_id = article.id,
+                            user_id = logged_in_user_id,
+                            comment = write_comment_form.cleaned_data["comment"],
+                            parent_id = request.POST.get("parent_id")
+                        )
+
+                        new_comment_reply.save()
+
+                    # Error
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR, _("Pri pridávaní komentáru došlo k chybe"))
+                        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                
+                # Wrong Form
+                else:
+                    messages.add_message(request, messages.ERROR, _("Pridávanie komentáru zlyhalo"))
+                    captureError(f"Adding comment failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             # Like Comment
             if request.headers.get("X-Requested-Action") == "like-comment":
@@ -1671,31 +1773,43 @@ def writeArticleView(request):
     logged_in_user_id = request.session.get("logged_in_user_id")
 
     if request.method == "POST":
-        write_article_form = writeArticleForm(request.POST, request.FILES)
+        write_article_form = writeArticleForm(request.POST, request.FILES) # Gets The Write Article Form
+        
         if write_article_form.is_valid():
-            categories = []
-            categories.append(write_article_form.cleaned_data["category_style"])
-            categories.append(write_article_form.cleaned_data["category_movement"])
-            categories.append(write_article_form.cleaned_data["category_difficulty"])
+            try:
+                categories = []
+                categories.append(write_article_form.cleaned_data["category_style"])
+                categories.append(write_article_form.cleaned_data["category_movement"])
+                categories.append(write_article_form.cleaned_data["category_difficulty"])
 
-            new_image_name = None # Default Image Name Is Saved To Database As null
+                new_image_name = None # Default Image Name Is Saved To Database As null
 
-            article_image_file = request.FILES.get("select_article_image")
-            if article_image_file:
-                new_image_name = write_article_form.cleaned_data["link"] + Path(article_image_file.name).suffix
-                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                image_save_location.save(new_image_name, article_image_file)
+                article_image_file = request.FILES.get("select_article_image")
+                if article_image_file:
+                    new_image_name = write_article_form.cleaned_data["link"] + Path(article_image_file.name).suffix
+                    image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                    image_save_location.save(new_image_name, article_image_file)
 
-            new_article = Articles(
-                user_id = logged_in_user_id,
-                title = write_article_form.cleaned_data["title"],
-                content = write_article_form.cleaned_data["content"],
-                categories = categories,
-                link = write_article_form.cleaned_data["link"],
-                image_name = new_image_name,
-            )
-            
-            new_article.save()
+                new_article = Articles(
+                    user_id = logged_in_user_id,
+                    title = write_article_form.cleaned_data["title"],
+                    content = write_article_form.cleaned_data["content"],
+                    categories = categories,
+                    link = write_article_form.cleaned_data["link"],
+                    image_name = new_image_name,
+                )
+                
+                new_article.save()
+
+            # Error
+            except Exception as e:
+                messages.add_message(request, messages.ERROR, _("Pri pridávaní článku došlo k chybe"))
+                captureError(f"An error occurred while adding the article.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        
+        # Wrong Form
+        else:
+            messages.add_message(request, messages.ERROR, _("Pridávanie článku zlyhalo"))
+            captureError(f"Adding article failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     return render(request, "app/write_article.html", {
         "write_article_form": writeArticleForm
@@ -1982,140 +2096,148 @@ def communityView(request):
                     captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
                 else:
-                    upload_post_form = uploadPostForm(request.POST)
+                    upload_post_form = uploadPostForm(request.POST) # Gets The Upload Post Form
                     files = request.FILES.getlist("select_posts") # Gets Files From the POST
 
                     # Saves Only if The Form is Valid And Includes at Least One File
                     if upload_post_form.is_valid() and files:
-                        # Gets The Coordinates Data
-                        coordinates_data = {
-                            "latitude": request.POST.get("latitude") or None,
-                            "longitude": request.POST.get("longitude") or None
-                        }
-                        
-                        # Gets The Coordinates If They Are Available
-                        if coordinates_data["latitude"] and coordinates_data["longitude"]:
-                            coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
+                        try:
+                            # Gets The Coordinates Data
+                            coordinates_data = {
+                                "latitude": request.POST.get("latitude") or None,
+                                "longitude": request.POST.get("longitude") or None
+                            }
+                            
+                            # Gets The Coordinates If They Are Available
+                            if coordinates_data["latitude"] and coordinates_data["longitude"]:
+                                coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
 
-                        else:
-                            coordinates = None
+                            else:
+                                coordinates = None
 
-                        new_post = upload_post_form.save(commit=False)
-                        new_post.user_id = logged_in_user_id
-                        new_post.description = request.POST.get("description")
+                            new_post = upload_post_form.save(commit=False)
+                            new_post.user_id = logged_in_user_id
+                            new_post.description = request.POST.get("description")
 
-                        # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
-                        new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
+                            # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
+                            new_post.added_hashtags = json.loads(request.POST.get("added_hashtags"))
 
-                        if coordinates:
-                            new_post.coordinates = coordinates
+                            if coordinates:
+                                new_post.coordinates = coordinates
 
-                        new_post.save()
+                            new_post.save()
 
-                        tagged_users_data = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
+                            tagged_users_data = json.loads(request.POST.get("tagged_users")) # For Example: ["@user1","@user2","@user3"]
 
-                        # Gets List Of IDs Of Tagged Users
-                        tagged_users_ids = list(
-                            Users.objects.filter(username__in=tagged_users_data)
-                            .values_list("id", flat=True)
-                        )
+                            # Gets List Of IDs Of Tagged Users
+                            tagged_users_ids = list(
+                                Users.objects.filter(username__in=tagged_users_data)
+                                .values_list("id", flat=True)
+                            )
 
-                        tagged_users = Users.objects.filter(id__in=tagged_users_ids)
+                            tagged_users = Users.objects.filter(id__in=tagged_users_ids)
 
-                        new_post.tagged_users.set(tagged_users)
+                            new_post.tagged_users.set(tagged_users)
 
-                        MAX_IMAGE_SIZE = 10 * 1000 * 1000 # 10MB
-                        MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
-                        MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
-                        MIN_VIDEO_DURATION = 1 # 1 Second
+                            MAX_IMAGE_SIZE = 10 * 1000 * 1000 # 10MB
+                            MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
+                            MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
+                            MIN_VIDEO_DURATION = 1 # 1 Second
 
-                        compress_tasks = [] # Stores All Compress Tasks
+                            compress_tasks = [] # Stores All Compress Tasks
 
-                        for one_file in files:
-                            try:
-                                file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
-                                one_file.seek(0)
-                                mime_type = magic.from_buffer(file_head, mime=True)
-                                is_video = mime_type.startswith("video/")
-                                
-                                # Catches An Unsupported File
-                                if not (mime_type.startswith("image/") or is_video):
-                                    return JsonResponse({"success": False, "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}}, status=400)
-
-                                max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE
-
-                                # Catches Too Large File
-                                if one_file.size > max_file_size:
-                                    return JsonResponse({"success": False, "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}}, status=400)
-
-                                # Catches A Too Long Video
-                                if is_video:
-                                    # Creates A Temporary File For The moviepy Library
-                                    temporary_path = f"temp_{one_file.name}"
-
-                                    with open(temporary_path, 'wb+') as destination:
-                                        for one_chunk in one_file.chunks():
-                                            destination.write(one_chunk)
+                            for one_file in files:
+                                try:
+                                    file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
+                                    one_file.seek(0)
+                                    mime_type = magic.from_buffer(file_head, mime=True)
+                                    is_video = mime_type.startswith("video/")
                                     
-                                    try:
-                                        video = VideoFileClip(temporary_path)
-                                        duration = video.duration
-                                        video.close()
-                                        os.remove(temporary_path) # Deletes The Temporary File
+                                    # Catches An Unsupported File
+                                    if not (mime_type.startswith("image/") or is_video):
+                                        return JsonResponse({"success": False, "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}}, status=400)
 
-                                        if duration > MAX_VIDEO_DURATION:
-                                            return JsonResponse({"success": False, "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                    max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE
 
-                                        elif duration < MIN_VIDEO_DURATION:
-                                            return JsonResponse({"success": False, "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                    # Catches Too Large File
+                                    if one_file.size > max_file_size:
+                                        return JsonResponse({"success": False, "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}}, status=400)
 
-                                    except Exception:
-                                        if os.path.exists(temporary_path): 
-                                            os.remove(temporary_path)
+                                    # Catches A Too Long Video
+                                    if is_video:
+                                        # Creates A Temporary File For The moviepy Library
+                                        temporary_path = f"temp_{one_file.name}"
 
-                                        return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
-                                
-                                # Saves The New Post Media
-                                new_post_media = PostMedia.objects.create(
-                                    post=new_post,
-                                    file=one_file,
-                                    is_video=is_video,
-                                    original_filename=one_file.name,
-                                    original_size=one_file.size
-                                )
+                                        with open(temporary_path, 'wb+') as destination:
+                                            for one_chunk in one_file.chunks():
+                                                destination.write(one_chunk)
+                                        
+                                        try:
+                                            video = VideoFileClip(temporary_path)
+                                            duration = video.duration
+                                            video.close()
+                                            os.remove(temporary_path) # Deletes The Temporary File
 
-                                # Video
-                                if is_video:
-                                    compress_video_task = compressVideo.delay(new_post_media.id)
+                                            if duration > MAX_VIDEO_DURATION:
+                                                return JsonResponse({"success": False, "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}}, status=400)
 
-                                    compress_tasks.append({
-                                        "task_id": compress_video_task.id,
-                                        "post_media_id": new_post_media.id,
-                                        "post_id": new_post_media.post.id
-                                    })
-                                
-                                # Image
-                                elif not is_video:
-                                    compress_image_task = compressImage.delay(new_post_media.id)
+                                            elif duration < MIN_VIDEO_DURATION:
+                                                return JsonResponse({"success": False, "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}}, status=400)
 
-                                    compress_tasks.append({
-                                        "task_id": compress_image_task.id,
-                                        "post_media_id": new_post_media.id,
-                                        "post_id": new_post_media.post.id
-                                    })
+                                        except Exception:
+                                            if os.path.exists(temporary_path): 
+                                                os.remove(temporary_path)
 
-                            except Exception:
-                                # new_post.delete()
-                                messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
-                                return redirect("community_url")
+                                            return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                    
+                                    # Saves The New Post Media
+                                    new_post_media = PostMedia.objects.create(
+                                        post=new_post,
+                                        file=one_file,
+                                        is_video=is_video,
+                                        original_filename=one_file.name,
+                                        original_size=one_file.size
+                                    )
 
-                        return JsonResponse({
-                            "success": True,
-                            "compress_tasks": compress_tasks
-                        })
+                                    # Video
+                                    if is_video:
+                                        compress_video_task = compressVideo.delay(new_post_media.id)
 
-                        # messages.add_message(request, messages.SUCCESS, _("Príspevok bol pridaný"))
-                        # return redirect("community_url")
+                                        compress_tasks.append({
+                                            "task_id": compress_video_task.id,
+                                            "post_media_id": new_post_media.id,
+                                            "post_id": new_post_media.post.id
+                                        })
+                                    
+                                    # Image
+                                    elif not is_video:
+                                        compress_image_task = compressImage.delay(new_post_media.id)
+
+                                        compress_tasks.append({
+                                            "task_id": compress_image_task.id,
+                                            "post_media_id": new_post_media.id,
+                                            "post_id": new_post_media.post.id
+                                        })
+
+                                except Exception:
+                                    # new_post.delete()
+                                    messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
+                                    return redirect("community_url")
+
+                            return JsonResponse({
+                                "success": True,
+                                "compress_tasks": compress_tasks
+                            })
+
+                        # Error
+                        except Exception as e:
+                            messages.add_message(request, messages.ERROR, _("Pri pridávaní príspevku došlo k chybe"))
+                            captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    
+                    # Wrong Form
+                    else:
+                        messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo"))
+                        captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
             # Search Users
             if request.headers.get("X-Requested-Action") == "search-users":
@@ -2601,82 +2723,90 @@ def profileView(request, username):
                 ).distinct()
 
                 if request.method == "POST":
-                    edit_account_form = editAccountForm(request.POST, request.FILES)
+                    edit_account_form = editAccountForm(request.POST, request.FILES) # Gets The Edit Account Form
 
                     if edit_account_form.is_valid():
                         delete_account = edit_account_form.cleaned_data["delete_account"]
-                        if delete_account:
-                            sendMail(
-                                logged_in_user,
-                                _("Odstránenie účtu"), # Subject
-                                _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\n%(domain)s%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # Text Content
-                                _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="%(domain)s%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # HTML Content
-                                _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
-                            )
 
-                            logged_in_user.account_status = "suspended" # Changes Account Status
-                            logged_in_user.save()
+                        try:
+                            if delete_account:
+                                sendMail(
+                                    logged_in_user,
+                                    _("Odstránenie účtu"), # Subject
+                                    _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\n%(domain)s%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # Text Content
+                                    _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="%(domain)s%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # HTML Content
+                                    _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                                )
 
-                            messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                            captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                                logged_in_user.account_status = "suspended" # Changes Account Status
+                                logged_in_user.save()
 
-                            del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
+                                messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
+                                captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-                            return HttpResponseRedirect(reverse("homepage_url"))
+                                del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
-                        if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
-                            profile_picture_file = request.FILES.get("select_profile_picture")
-                            if profile_picture_file:
-                                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                                return HttpResponseRedirect(reverse("homepage_url"))
 
-                                current_profile_picture_name = logged_in_user.profile_picture_name
-                                if current_profile_picture_name != "" and current_profile_picture_name != None:
+                            if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
+                                profile_picture_file = request.FILES.get("select_profile_picture")
+                                if profile_picture_file:
+                                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+
+                                    current_profile_picture_name = logged_in_user.profile_picture_name
+                                    if current_profile_picture_name != "" and current_profile_picture_name != None:
+                                        os.remove(f"{path}/{current_profile_picture_name}")
+
+                                    new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+
+                                    image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                                    image_save_location.save(new_image_name, profile_picture_file)
+
+                                    logged_in_user.profile_picture_name = new_image_name
+
+                                    logged_in_user.last_edit = timezone.now()
+
+                                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
+                                if delete_profile_picture:
+                                    current_profile_picture_name = logged_in_user.profile_picture_name
+                                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
                                     os.remove(f"{path}/{current_profile_picture_name}")
 
-                                new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+                                    logged_in_user.profile_picture_name = ""
 
-                                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                                image_save_location.save(new_image_name, profile_picture_file)
+                                    logged_in_user.last_edit = timezone.now()
 
-                                logged_in_user.profile_picture_name = new_image_name
+                                if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
+                                    logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+                                    logged_in_user.last_edit = timezone.now()
 
-                                logged_in_user.last_edit = timezone.now()
+                                if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
+                                    logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+                                    logged_in_user.last_edit = timezone.now()
 
-                            delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"]
-                            if delete_profile_picture:
-                                current_profile_picture_name = logged_in_user.profile_picture_name
-                                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                                os.remove(f"{path}/{current_profile_picture_name}")
+                                if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
+                                    logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+                                    logged_in_user.last_edit = timezone.now()
 
-                                logged_in_user.profile_picture_name = ""
+                                if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
+                                    logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+                                    logged_in_user.last_edit = timezone.now()
 
-                                logged_in_user.last_edit = timezone.now()
+                                logged_in_user.save()
 
-                            if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
-                                logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
-                                logged_in_user.last_edit = timezone.now()
+                                messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
-                            if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
-                                logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
-                                logged_in_user.last_edit = timezone.now()
+                                return HttpResponseRedirect(reverse("homepage_url"))
 
-                            if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
-                                logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
-                                logged_in_user.last_edit = timezone.now()
+                            else:
+                                messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
 
-                            if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
-                                logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
-                                logged_in_user.last_edit = timezone.now()
-
-                            logged_in_user.save()
-
-                            messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
-
-                            return HttpResponseRedirect(reverse("homepage_url"))
-
-                        else:
-                            messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
+                        # Error
+                        except Exception as e:
+                            messages.add_message(request, messages.ERROR, _("Pri vykonávaní zmien v účte došlo k chybe"))
+                            captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     
+                    # Wrong Form
                     else:
                         messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
                         captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
