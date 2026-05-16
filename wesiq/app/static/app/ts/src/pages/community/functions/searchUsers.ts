@@ -8,8 +8,7 @@ interface searchedUser {
     username:string,
     profile_picture_name:string,
     friend_code:string,
-    following:string[],
-    followers:string[]
+    followers:number[]
 }
 
 interface searchedUsersResponse {
@@ -86,7 +85,7 @@ function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users
     one_user.appendChild(followers) // Appends The Followers To The One User Container
 
     follow_unfollow_icon.classList.add("fa-solid") // Adds fa-solid Class From https://fontawesome.com/
-    !user_data.followers.includes(String(logged_in_user_id)) ? follow_unfollow_icon.classList.add("fa-user-plus") : follow_unfollow_icon.classList.add("fa-user-minus")
+    !user_data.followers.includes(logged_in_user_id) ? follow_unfollow_icon.classList.add("fa-user-plus") : follow_unfollow_icon.classList.add("fa-user-minus")
     one_user.appendChild(follow_unfollow_icon) // Appends The Follow / Unfollow Icon To The One User Container
 }
 
