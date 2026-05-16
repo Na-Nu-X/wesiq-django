@@ -47,6 +47,7 @@ class contactForm(forms.Form):
         label=False,
         max_length=50,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný e-mail je príliš dlhý"),
             "required": _("Zadajte váš e-mail"),
@@ -68,6 +69,7 @@ class contactForm(forms.Form):
         label=False,
         max_length=200,
         required=True,
+
         error_messages={
             "max_length": _("Vaša správa je príliš dlhá"),
             "required": _("Napíšte správu"),
@@ -93,6 +95,7 @@ class reviewForm(forms.Form):
         label=False,
         max_length=200,
         required=False,
+
         error_messages={
             "max_length": _("Vaša recenzia je príliš dlhá"),
         },
@@ -109,6 +112,7 @@ class loginForm(forms.Form):
         label=False,
         max_length=50,
         required=True,
+
         error_messages={
             "max_length": _("Zadané používateľské meno alebo e-mail je príliš dlhý"),
             "required": _("Zadajte používateľské meno alebo e-mail"),
@@ -119,6 +123,7 @@ class loginForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "password", "placeholder": _("Zadajte vaše heslo"), "autocomplete": "off"}),
         label=False,
         required=True,
+
         error_messages={
             "required": _("Zadajte vaše heslo"),
         },
@@ -131,6 +136,7 @@ class passwordResetForm(forms.Form):
         min_length=8,
         max_length=50,
         required=True,
+
         error_messages={
             "min_length": _("Zadané heslo je príliš krátke"),
             "max_length": _("Zadané heslo je príliš dlhé"),
@@ -199,6 +205,7 @@ class registrationForm(forms.Form):
         label=False,
         max_length=50,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný e-mail je príliš dlhý"),
             "required": _("Zadajte váš e-mail"),
@@ -210,6 +217,7 @@ class registrationForm(forms.Form):
         label=False,
         max_length=25,
         required=False,
+
         error_messages={
             "max_length": _("Zadané telefónne číslo je príliš dlhé"),
         },
@@ -221,6 +229,7 @@ class registrationForm(forms.Form):
         min_length=8,
         max_length=50,
         required=True,
+
         error_messages={
             "min_length": _("Zadané heslo je príliš krátke"),
             "max_length": _("Zadané heslo je príliš dlhé"),
@@ -234,6 +243,7 @@ class registrationForm(forms.Form):
         min_length=8,
         max_length=50,
         required=True,
+
         error_messages={
             "min_length": _("Zadané heslo je príliš krátke"),
             "max_length": _("Zadané heslo je príliš dlhé"),
@@ -242,6 +252,17 @@ class registrationForm(forms.Form):
     )
 
 class editAccountForm(forms.Form):
+    bio = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "bio", "placeholder": _("Niečo o Vás"), "autocomplete": "off"}),
+        label=False,
+        max_length=100,
+        required=False,
+
+        error_messages={
+            "max_length": _("Zadané bio je príliš dlhé"),
+        },
+    )
+
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={"class": "first_name", "placeholder": _("Zmeniť meno"), "pattern": "[A-Za-zÀ-ž]+"}),
         label=False,
@@ -283,6 +304,7 @@ class editAccountForm(forms.Form):
         label=False,
         max_length=50,
         required=False,
+
         error_messages={
             "max_length": _("Zadaný e-mail je príliš dlhý"),
         },
@@ -293,6 +315,7 @@ class editAccountForm(forms.Form):
         label=False,
         max_length=20,
         required=False,
+
         error_messages={
             "max_length": _("Zadané telefónne číslo je príliš dlhé"),
         },
@@ -320,6 +343,7 @@ class writeArticleForm(forms.Form):
         label=False,
         max_length=20,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný názov je príliš dlhý"),
             "required": _("Zadajte názov"),
@@ -330,6 +354,7 @@ class writeArticleForm(forms.Form):
         widget=forms.Textarea(attrs={"placeholder": _("Článok")}),
         label=False,
         required=True,
+
         error_messages={
             "required": _("Obsah článku nesmie byť prázdny"),
         },
@@ -347,6 +372,7 @@ class writeArticleForm(forms.Form):
         },
         label=False,
         required=True,
+
         error_messages={
             "required": _("Vyberte kategóriu podľa určenia"),
         },
@@ -362,6 +388,7 @@ class writeArticleForm(forms.Form):
         },
         label=False,
         required=True,
+
         error_messages={
             "required": _("Vyberte kategóriu podľa pohybu"),
         },
@@ -378,6 +405,7 @@ class writeArticleForm(forms.Form):
         },
         label=False,
         required=True,
+
         error_messages={
             "required": _("Vyberte kategóriu podľa obtiažnosti"),
         },
@@ -388,6 +416,7 @@ class writeArticleForm(forms.Form):
         label=False,
         max_length=20,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný link je príliš dlhý"),
             "required": _("Zadajte link"),
@@ -406,6 +435,7 @@ class blogSubscribeForm(forms.Form):
         label=False,
         max_length=50,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný e-mail je príliš dlhý"),
             "required": _("Zadajte váš e-mail"),
@@ -418,6 +448,7 @@ class writeCommentForm(forms.Form):
         label=False,
         max_length=200,
         required=True,
+
         error_messages={
             "max_length": _("Zadaný komentár je príliš dlhý"),
             "required": _("Zanechajte komentár"),
@@ -430,6 +461,7 @@ class uploadPostForm(forms.ModelForm):
         label=False,
         max_length=255,
         required=False,
+
         error_messages={
             "max_length": _("Zadané miesto je príliš dlhé"),
         },

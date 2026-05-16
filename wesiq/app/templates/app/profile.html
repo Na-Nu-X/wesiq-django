@@ -24,21 +24,25 @@
                 {% csrf_token %}
 
                 <div class="profile_picture_container">
-                    <label for="select_profile_picture">
-                        <img 
-                            class="profile_picture" 
-                            src="
-                                {% if logged_in_user.profile_picture_name %}
-                                    /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
-
-                                {% else %}
-                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                
-                                {% endif %}
-                            "
-                            title="{% translate 'Nahrať obrázok' %}"
-                        >
-                    </label>
+                    <div class="info">
+                        <label for="select_profile_picture">
+                            <img 
+                                class="profile_picture" 
+                                src="
+                                    {% if logged_in_user.profile_picture_name %}
+                                        /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
+    
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                                title="{% translate 'Nahrať obrázok' %}"
+                            >
+                        </label>
+    
+                        <p class="username">{{ username }}</p>
+                    </div>
 
                     {{ edit_account_form.select_profile_picture }}
                     
@@ -46,6 +50,8 @@
                     
                     {{ edit_account_form.delete_profile_picture }}
                 </div>
+
+                {{ edit_account_form.bio }}
 
                 <div class="first_name_container">
                     <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->

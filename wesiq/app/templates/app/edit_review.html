@@ -18,18 +18,37 @@
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             <div class="reviewer">
-                <img 
-                    class="profile_picture" 
-                    src="
-                        {% if review.user.profile_picture_name %}
-                            /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+                {% if review.user.username %}
+                    <a href="{% url 'profile_url' review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                        <img 
+                            class="profile_picture skeleton_loading" 
+                            src="
+                                {% if review.user.profile_picture_name %}
+                                    /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
 
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                >
+                                {% else %}
+                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                
+                                {% endif %}
+                            "
+                        >
+                    </a>
+
+                {% else %}
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if review.user.profile_picture_name %}
+                                /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
+
+                {% endif %}
 
                 <p class="username">
                     {{ review.user.username }}
