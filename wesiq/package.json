@@ -2,6 +2,7 @@
   "dependencies": {
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "emoji-picker-element": "^1.29.1",
     "libphonenumber-js": "^1.12.40"
   },
   "name": "wesiq",

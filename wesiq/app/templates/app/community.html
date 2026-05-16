@@ -61,9 +61,14 @@
                     </div>
 
                     <div class="tags">
+                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                         <i class="tag_user fa-solid fa-at" title="{% translate 'Označiť ľudí' %}"></i> <!-- https://fontawesome.com/icons/at -->
                         <i class="add_hashtag fa-solid fa-hashtag" title="{% translate 'Pridať Hashtag' %}"></i> <!-- https://fontawesome.com/icons/hashtag -->
                     </div>
+                </div>
+
+                <div class="emoji_picker_container hidden">
+                    <emoji-picker></emoji-picker>
                 </div>
 
                 <div class="users_for_tag_container"></div>
@@ -473,4 +478,5 @@
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
     <script src="{% static 'app/ts/dist/pages/community/community.js' %}" type="module"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 {% endblock script %}

@@ -81,6 +81,7 @@ import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 import { toggleFollow } from "./functions/toggleFollow.js"
 
+import type { Emoji } from 'emoji-picker-element/shared'
 import type { tag } from "./state.js"
 
 "use strict"
@@ -349,12 +350,78 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
+        // Add Emoji
+
+        // Variables
+
+        const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
+        const add_emoji:HTMLElement = post_info_container.querySelector(".icons .tags .add_emoji") as HTMLElement // Gets The Add Emoji Icon
+        const emoji_picker_container:HTMLDivElement = post_info_container.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
+        const picker:Element = document.querySelector("emoji-picker") as Element // Gets The Emoji Picker
+
+        // Events
+
+        add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+        emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+
+        // Add Emoji Icon Click Functionality
+        add_emoji.addEventListener("click", function(event:PointerEvent):void {
+            event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+            emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+        })
+
+        // Picker Emoji Click Functionality
+        picker.addEventListener("emoji-click", function(event:Event):void {
+            const custom_event:CustomEvent<{
+                unicode:string
+            }> = event as CustomEvent<{ unicode: string }>
+        
+            const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
+            const selection:Selection|null = window.getSelection()
+            const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && description.contains(selection.anchorNode)
+
+            if(!isInsideEditable) focusAtEnd(description)
+
+            const active_selection:Selection|null = window.getSelection()
+
+            if(active_selection && active_selection.rangeCount > 0) {
+                const range:Range = active_selection.getRangeAt(0)
+            
+                range.deleteContents() // Deletes The Selected Text
+
+                // Inserts The Emoji To The Text
+                const text_node:Text = document.createTextNode(emoji)
+                range.insertNode(text_node)
+
+                // Sets The Cursor Position Behind The Inserted Emoji
+                range.setStartAfter(text_node)
+                range.setEndAfter(text_node)
+                
+                // Updates The Cursor
+                active_selection.removeAllRanges()
+                active_selection.addRange(range)
+            }
+        })
+
+        // Global Event Delegations
+
+        // Document Click Functionality
+        document.addEventListener("click", function(event:PointerEvent):void {
+            // When The User Clicks Outside The Emoji Picker Container
+            if(
+                !(event.target as HTMLDivElement).classList.contains("emoji_picker_container") &&
+                !(event.target as HTMLDivElement).closest(".emoji_picker_container")
+            ) {
+                emoji_picker_container.classList.add("hidden") // Hides The Emoji Picker Container
+                return
+            }
+        })
+
         // Tag Users
 
         // Variables
 
         const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
-        const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
         const description_input:HTMLInputElement = upload_post_form.querySelector(".description_input") as HTMLInputElement // Gets The Description Hidden Input
         const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
         const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
@@ -708,7 +775,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Document Click Functionality
             document.addEventListener("click", function(event:PointerEvent):void {
                 // When The User Clicks Outside The Search Bar, History Container Or Delete From History Icon
-                if(!(event.target as HTMLInputElement).classList.contains("search_bar") && !(event.target as HTMLDivElement).classList.contains("history_container") && !(event.target as HTMLElement).classList.contains("delete_from_history")) {
+                if(
+                    !(event.target as HTMLInputElement).classList.contains("search_bar") && 
+                    !(event.target as HTMLDivElement).classList.contains("history_container") && 
+                    !(event.target as HTMLElement).classList.contains("delete_from_history")
+                ) {
                     hideHistoryContainer(search_posts_input, history_container) // Hides The History Container
                     return
                 }

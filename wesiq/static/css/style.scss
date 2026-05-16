@@ -24,7 +24,7 @@
 
 body {
     background: {
-        image: radial-gradient(circle, transparentize($main-color, 0.2) 50%, transparentize($main-color, 0.8) 100%), url("../images/background.jpeg");
+        image: radial-gradient(circle, transparentize($main-color, 0.2) 50%, transparentize($main-color, 0.4) 100%), url("../images/background.jpeg");
         position: center center;
         size: cover;
         attachment: fixed;
