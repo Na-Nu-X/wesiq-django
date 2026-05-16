@@ -151,6 +151,44 @@
                         {% endif %}
                     </button>
                 </div>
+                
+                <div class="badges_container">
+                    <div class="previous">
+                        <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                    </div>
+
+                    <div class="badges">
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                        <div class="badge empty"></div>
+                    </div>
+
+                    <div class="next">
+                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                    </div>
+                </div>
             </div>
 
             <div class="bottom">
@@ -264,5 +302,6 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/profile/profile.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/profile/grid_select.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/profile/badges.js' %}" type="module"></script>
 {% endblock script %}

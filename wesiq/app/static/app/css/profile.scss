@@ -233,7 +233,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 25px;
+                margin-bottom: 20px;
 
                 div {
                     .label {
@@ -260,6 +260,87 @@
                     &:focus {
                         border-color: $blue-color;
                         cursor: pointer;
+                    }
+                }
+            }
+
+            .badges_container {
+                @include flex_center;
+                margin-bottom: 25px;
+
+                .previous {
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.1);
+                        cursor: pointer;
+                    }
+
+                    .fa-angle-left {
+                        font-size: 2em;
+                    }
+                }
+
+                .badges {
+                    display: grid;
+                    grid-auto-flow: column;
+                    grid-template-rows: repeat(2, 50px);
+                    grid-auto-columns: 50px;
+                    gap: 10px;
+                    flex: 1;
+                    max-width: 100%;
+                    padding: 10px 10px 5px;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    scroll-behavior: smooth;
+
+                    &::-webkit-scrollbar {
+                        height: 5px;
+                    }
+    
+                    &::-webkit-scrollbar-thumb {
+                        background-color: darken($secondary-color, 40%);
+                        border-radius: 2.5px;
+    
+                        &:hover {
+                            background-color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                        }
+                    }
+    
+                    &::-webkit-scrollbar-track {
+                        background-color: lighten($main-color, 20%);
+                        border-radius: 2.5px;
+                    }
+    
+                    .badge {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                        border: 1px solid $secondary-color;
+                        transition: transform 0.3s ease;
+
+                        &:hover {
+                            transform: scale(1.1);
+                            cursor: pointer;
+                        }
+
+                        &.empty {
+                            
+                        }
+                    }
+                }
+
+                .next {
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.1);
+                        cursor: pointer;
+                    }
+
+                    .fa-angle-right {
+                        font-size: 2em;
                     }
                 }
             }

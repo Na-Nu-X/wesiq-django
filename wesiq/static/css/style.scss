@@ -23,7 +23,14 @@
 }
 
 body {
-    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
+    background: {
+        image: radial-gradient(circle, transparentize($main-color, 0.2) 50%, transparentize($main-color, 0.8) 100%), url("../images/background.jpeg");
+        position: center center;
+        size: cover;
+        attachment: fixed;
+        repeat: no-repeat;
+    }
+
     overflow-x: hidden;
 }
 
