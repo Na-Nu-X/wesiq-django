@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-05 19:46+0000\n"
-"PO-Revision-Date: 2026-03-20 13:29+0000\n"
+"PO-Revision-Date: 2026-05-15 18:13+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -24,13 +24,11 @@ msgid "Hlavná stránka"
 msgstr "Homepage"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Domovská stránka"
 msgstr "Homepage"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Úvodná stránka"
 msgstr "Homepage"
@@ -44,14 +42,13 @@ msgid "Prihlásenie"
 msgstr "Login"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
-#, fuzzy
 #| msgid "Prihlásenie"
 msgid "Prihlásiť sa"
-msgstr "Login"
+msgstr "Log In"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "Autorizovať sa"
-msgstr ""
+msgstr "Authorize Yourself"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
 msgid "/obnova-hesla"
@@ -62,16 +59,14 @@ msgid "Obnova hesla"
 msgstr "Password Reset"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Obnova hesla"
 msgid "Obnoviť heslo"
-msgstr "Password Reset"
+msgstr "Reset Password"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zmeniť heslo"
-msgstr "Show Password"
+msgstr "Change Password"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/registracia"
@@ -82,14 +77,13 @@ msgid "Registrácia"
 msgstr "Registration"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
-#, fuzzy
 #| msgid "/registracia"
 msgid "Zaregistrovať sa"
-msgstr "/registration"
+msgstr "Sign Up"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Vytvoriť účet"
-msgstr ""
+msgstr "Create an Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/moj-ucet"
@@ -101,13 +95,12 @@ msgstr "My Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Upraviť účet"
-msgstr ""
+msgstr "Edit Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť účet"
-msgstr "Show Password"
+msgstr "View Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/moje-hodnotenie"
@@ -119,13 +112,12 @@ msgstr "My Review"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Moja recenzia"
-msgstr ""
+msgstr "My Review"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
-#, fuzzy
 #| msgid "Moje hodnotenie"
 msgid "Upraviť hodnotenie"
-msgstr "My Review"
+msgstr "Edit Review"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/blog"
@@ -137,7 +129,7 @@ msgstr "Blog"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Články"
-msgstr ""
+msgstr "Articles"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/trening"
@@ -149,11 +141,11 @@ msgstr "Training Session"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Aktivita"
-msgstr ""
+msgstr "Activity"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Spustiť aktivitu"
-msgstr ""
+msgstr "Start Activity"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/moje-treningove-plany"
@@ -164,32 +156,28 @@ msgid "Moje tréningové plány"
 msgstr "My Training Plans"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Vytvoriť tréningový plán"
-msgstr "My Training Plans"
+msgstr "Create a Training Plan"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Upraviť tréningový plán"
-msgstr "My Training Plans"
+msgstr "Edit Training Plan"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Odstrániť tréningový plán"
-msgstr "My Training Plans"
+msgstr "Delete Training Plan"
 
 #: app/static/app/ts/src/pages/community.ts:77
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť užívateľa"
-msgstr "Show Password"
+msgstr "Show an User"
 
 #: app/static/app/ts/src/pages/community.ts:137
 msgid "An Error Occurred While Searching for Users."
-msgstr ""
+msgstr "An Error Occurred While Searching for Users."
 
 #: app/static/app/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
@@ -264,7 +252,8 @@ msgstr "<br>The Current Activity Lasted:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "The Current Activity Time was 100% Longer Than The Average for The Last 7 "
 "Days"
@@ -276,9 +265,11 @@ msgstr ""
 "The Current Activity Time was %s Longer Than The Average for The Last 7 Days"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
-"The Current Activity Time was %s Shorter Than The Average for The Last 7 Days"
+"The Current Activity Time was %s Shorter Than The Average for The Last 7 "
+"Days"
 
 #: app/static/app/ts/src/pages/training_session/state.ts:90
 msgid "<span>Žiadne aktívne navýšenie XP</span>"

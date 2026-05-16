@@ -339,8 +339,19 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         comment_author_username.textContent = add_comment_response.comment.user.username // Sets The Comment Author Username Text
 
         // Comment
-        const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
+        const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
         comment.textContent = comment_input.textContent // Sets The Comment Text
+
+        // Likes
+        const likes:HTMLDivElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLDivElement // Gets The Likes Container
+
+        const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+        like_icon.classList.add("fa-regular") // Shows The Empty Heart Icon - https://fontawesome.com/icons/heart
+
+        // Likes Counter
+        const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+        likes_counter.textContent = "0" // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
         comment_input.innerHTML = "" // Deletes The Comment Input
 
@@ -359,6 +370,10 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
     
                 reply_container.prepend(one_comment_container) // Prepends The One Comment Container To The Reply Container
                 reply_container.classList.remove("hidden") // Shows The Reply Container
+
+                if(add_comment_response.comment.level === 2) {
+                    one_comment_container.classList.add("first_level_reply")
+                }
             }
         }
 
@@ -379,17 +394,6 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
             interactions.prepend(reply) // Prepends The Reply Container To The Interactions
         }
 
-        // Likes
-        const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
-
-        const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-        like_icon.classList.add("fa-regular") // Shows The Empty Heart Icon - https://fontawesome.com/icons/heart
-
-        // Likes Counter
-        const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
-        likes_counter.textContent = "0" // Sets The Likes Counter
-        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
-
         // Date
         const date:HTMLDivElement = interactions.querySelector(".date") as HTMLDivElement // Gets The Date Container
 
@@ -408,7 +412,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
                 show_replies.classList.add("show_replies") // Adds The Show Replies Class
                 show_replies.title = gettext("Zobraziť odpovede...")
                 show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
-                new_parent_comment_interactions.appendChild(show_replies) // Appends The Show Replies To The New Parent Comment
+                new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".report") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
             }
         }
 
@@ -718,8 +722,19 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
             // Comment
-            const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .comment") as HTMLParagraphElement // Gets The Comment Paragraph
+            const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
             comment.textContent = one_visible_comment.comment // Sets The Comment Text
+
+            // Likes
+            const likes:HTMLDivElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLDivElement // Gets The Likes Container
+
+            const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
+            logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+
+            // Likes Counter
+            const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+            likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
+            likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
             // Appends The Comment
             if(!one_visible_comment.parent_id) {
@@ -734,6 +749,10 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                     const reply_container:HTMLDivElement = parent_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
         
                     reply_container.prepend(one_comment_container)
+
+                    if(one_visible_comment.level === 2) {
+                        one_comment_container.classList.add("first_level_reply")
+                    }
                 }
             }
 
@@ -749,17 +768,6 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                 reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
                 interactions.prepend(reply) // Prepends The Reply Container To The Interactions
             }
-
-            // Likes
-            const likes:HTMLDivElement = interactions.querySelector(".likes") as HTMLDivElement // Gets The Likes Container
-
-            const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-            logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
-
-            // Likes Counter
-            const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
-            likes_counter.textContent = String(one_visible_comment.likes) // Sets The Likes Counter
-            likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
             // Report
             if(logged_in_user_id && one_visible_comment.reports_from_users.includes(logged_in_user_id)) {
@@ -786,7 +794,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                     show_replies.classList.add("show_replies") // Adds The Show Replies Class
                     show_replies.title = gettext("Zobraziť odpovede...")
                     show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
-                    new_parent_comment_interactions.appendChild(show_replies) // Appends The Show Replies To The New Parent Comment
+                    new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".report") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
                 }
             }
         })

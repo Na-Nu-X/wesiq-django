@@ -9,15 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-05 19:46+0000\n"
-"PO-Revision-Date: 2026-03-27 19:42+0000\n"
+"PO-Revision-Date: 2026-05-15 18:03+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
-">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
@@ -25,16 +24,14 @@ msgid "Hlavná stránka"
 msgstr "Hlavná stránka"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Domovská stránka"
-msgstr "Hlavná stránka"
+msgstr "Domovská stránka"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#, fuzzy
 #| msgid "Hlavná stránka"
 msgid "Úvodná stránka"
-msgstr "Hlavná stránka"
+msgstr "Úvodná stránka"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "/prihlasenie"
@@ -45,14 +42,13 @@ msgid "Prihlásenie"
 msgstr "Prihlásenie"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
-#, fuzzy
 #| msgid "Prihlásenie"
 msgid "Prihlásiť sa"
-msgstr "Prihlásenie"
+msgstr "Prihlásiť sa"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
 msgid "Autorizovať sa"
-msgstr ""
+msgstr "Autorizovať sa"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
 msgid "/obnova-hesla"
@@ -63,16 +59,14 @@ msgid "Obnova hesla"
 msgstr "Obnova hesla"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Obnova hesla"
 msgid "Obnoviť heslo"
-msgstr "Obnova hesla"
+msgstr "Obnoviť heslo"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zmeniť heslo"
-msgstr "Zobraziť heslo"
+msgstr "Zmeniť heslo"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/registracia"
@@ -83,14 +77,13 @@ msgid "Registrácia"
 msgstr "Registrácia"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
-#, fuzzy
 #| msgid "/registracia"
 msgid "Zaregistrovať sa"
-msgstr "/registracia"
+msgstr "Zaregistrovať sa"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Vytvoriť účet"
-msgstr ""
+msgstr "Vytvoriť účet"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/moj-ucet"
@@ -102,13 +95,12 @@ msgstr "Môj účet"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Upraviť účet"
-msgstr ""
+msgstr "Upraviť účet"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť účet"
-msgstr "Zobraziť heslo"
+msgstr "Zobraziť účet"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/moje-hodnotenie"
@@ -120,13 +112,12 @@ msgstr "Moje hodnotenie"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Moja recenzia"
-msgstr ""
+msgstr "Moja recenzia"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
-#, fuzzy
 #| msgid "Moje hodnotenie"
 msgid "Upraviť hodnotenie"
-msgstr "Moje hodnotenie"
+msgstr "Upraviť hodnotenie"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/blog"
@@ -138,7 +129,7 @@ msgstr "Blog"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Články"
-msgstr ""
+msgstr "Články"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/trening"
@@ -150,11 +141,11 @@ msgstr "Tréning"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Aktivita"
-msgstr ""
+msgstr "Aktivita"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Spustiť aktivitu"
-msgstr ""
+msgstr "Spustiť aktivitu"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/moje-treningove-plany"
@@ -165,32 +156,28 @@ msgid "Moje tréningové plány"
 msgstr "Moje tréningové plány"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Vytvoriť tréningový plán"
-msgstr "Moje tréningové plány"
+msgstr "Vytvoriť tréningový plán"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Upraviť tréningový plán"
-msgstr "Moje tréningové plány"
+msgstr "Upraviť tréningový plán"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#, fuzzy
 #| msgid "Moje tréningové plány"
 msgid "Odstrániť tréningový plán"
-msgstr "Moje tréningové plány"
+msgstr "Odstrániť tréningový plán"
 
 #: app/static/app/ts/src/pages/community.ts:77
-#, fuzzy
 #| msgid "Zobraziť heslo"
 msgid "Zobraziť užívateľa"
-msgstr "Zobraziť heslo"
+msgstr "Zobraziť užívateľa"
 
 #: app/static/app/ts/src/pages/community.ts:137
 msgid "An Error Occurred While Searching for Users."
-msgstr ""
+msgstr "Pri hľadaní užívateľov došlo k chybe."
 
 #: app/static/app/ts/src/pages/edit_account.ts:13
 msgid "Profilový obrázok bude odstránený"
@@ -265,17 +252,20 @@ msgstr "<br>Aktuálna aktivita trvala:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
 msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
-msgstr "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+"Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
 "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 

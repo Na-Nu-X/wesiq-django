@@ -918,7 +918,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 // Toggle Comment Like Click Functionality
                 if(
                     (event.target as HTMLElement).classList.contains("fa-heart") &&
-                    (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("interactions")
+                    (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement
                 ) {
                     const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
                     const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter

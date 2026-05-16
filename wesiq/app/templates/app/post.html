@@ -24,15 +24,17 @@
                             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </div>
     
-                        <p class="comment"></p>
+                        <div class="right">
+                            <p class="comment"></p>
+        
+                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                                <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                <p class="likes_counter">{{ one_comment.likes }}</p>
+                            </div>
+                        </div>
                     </div>
     
                     <div class="interactions">
-                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                            <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                            <p class="likes_counter">{{ one_comment.likes }}</p>
-                        </div>
-    
                         <div class="report" title="{% translate 'Nahlásiť...' %}">
                             <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
                         </div>

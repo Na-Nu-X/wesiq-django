@@ -2,7 +2,18 @@
 {% load static %}
 {% load i18n %}
 
-<div class="one_comment" data-comment_id="{{ one_comment.id }}">
+<div 
+	class="
+		one_comment
+
+		{% if level == 2 %}
+			first_level_reply
+			
+		{% endif %}
+	"
+	
+	data-comment_id="{{ one_comment.id }}"
+>
     <div class="comment_container">
         <div class="user">
             <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
@@ -25,7 +36,27 @@
             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
         </div>
 
-        <p class="comment">{{ one_comment.comment }}</p>
+		<div class="right">
+			<p class="comment">{{ one_comment.comment }}</p>
+
+			<div class="likes" title="{% translate 'Páči sa mi...' %}">
+				<i 
+					class="
+						{% if one_comment.has_like %}
+							fa-solid
+	
+						{% else %}
+							fa-regular
+						
+						{% endif %}
+	
+						fa-heart
+					"
+				></i> <!-- https://fontawesome.com/icons/heart -->
+	
+				<p class="likes_counter">{{ one_comment.likes }}</p>
+			</div>
+		</div>
     </div>
 
     <div class="interactions">
@@ -37,23 +68,15 @@
 
         {% endif %}
 
-        <div class="likes" title="{% translate 'Páči sa mi...' %}">
-			<i 
-				class="
-					{% if one_comment.has_like %}
-						fa-solid
-
-					{% else %}
-						fa-regular
-					
-					{% endif %}
-
-					fa-heart
-				"
-			></i> <!-- https://fontawesome.com/icons/heart -->
-
-			<p class="likes_counter">{{ one_comment.likes }}</p>
-		</div>
+		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
+			{% if nested_comments|length > 0 %}
+				<div class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
+					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
+					{% comment %} <i class="fa-solid fa-angle-up"></i> <!-- https://fontawesome.com/icons/angle-up --> {% endcomment %}
+				</div>
+			
+			{% endif %}
+		{% endwith %}
 
         <div class="report" title="{% translate 'Nahlásiť...' %}">
 			<!-- https://fontawesome.com/icons/flag -->
@@ -72,16 +95,6 @@
         <div class="date" title="{% translate 'Dátum zverejnenia' %}">
 			<p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
 		</div>
-
-		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
-			{% if nested_comments|length > 0 %}
-				<div class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
-					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
-					{% comment %} <i class="fa-solid fa-angle-up"></i> <!-- https://fontawesome.com/icons/angle-up --> {% endcomment %}
-				</div>
-			
-			{% endif %}
-		{% endwith %}
     </div>
 
     <div class="reply_container hidden">
