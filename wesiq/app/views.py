@@ -44,7 +44,7 @@ from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Case, When, BooleanField
 from django.http import FileResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -2235,7 +2235,9 @@ def loadPostsView(request):
         searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
 
         # Gets The Posts With All Related Data
-        posts_query = Post.objects.all().select_related(
+        thirty_days_ago = timezone.now() - timedelta(days=30)
+
+        posts_query = Post.objects.select_related(
             "user"
         ).prefetch_related(
             "tagged_users", 
@@ -2254,8 +2256,31 @@ def loadPostsView(request):
             )
         ).exclude(
             media__is_processed=False
+        ).annotate(
+            # Creates Is Seen Column (True If The User Has Already Viewed The Post)
+            is_seen=Exists(
+                SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
+            ),
+            
+            # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
+            is_followed=Case(
+                When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
+                default=False,
+                output_field=BooleanField()
+            )
+        ).exclude(
+            # Excludes Already Viewed Posts Which Were Viewed 30 Days Ago
+            Exists(
+                SeenPost.objects.filter(
+                    post=OuterRef("pk"), 
+                    user=logged_in_user, 
+                    viewed_at__lt=thirty_days_ago
+                )
+            )
         ).order_by(
-            "-created_at"
+            "is_seen",
+            "-is_followed",
+            "-latest_interaction"
         ).distinct()
 
         # Filters Posts By Searched Text

@@ -954,6 +954,7 @@ header {
                 display: flex;
                 justify-content: center;
                 width: 100%;
+                border-radius: $big-border-radius;
                 overflow: hidden;
 
                 &:has(.one_post .video_container:hover) .post_bars {
@@ -988,7 +989,6 @@ header {
                         width: 100%;
                         height: 100%;
                         backdrop-filter: blur(5px);
-                        border-radius: $small-border-radius;
                         opacity: 1;
                         transition: opacity 0.3s ease, display 0.3s ease allow-discrete;
                         z-index: 50;
@@ -1005,7 +1005,6 @@ header {
                         display: block;
                         width: 100%;
                         outline: none;
-                        border-radius: $big-border-radius
                     }
 
                     .previous, 
