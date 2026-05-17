@@ -48,6 +48,7 @@ import {
     addComment,
     togglePostCommentLike,
     reportComment,
+    deleteComment,
     checkSearchedPostsHistory,
     hideHistoryContainer,
     changeFocusedSearchedPost,
@@ -1030,6 +1031,17 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
 
                     if(one_comment.dataset["comment_id"] && report_reason) reportComment(Number(one_comment.dataset["comment_id"]), report_reason) // Reports The Comment
+                }
+
+                // Delete Comment
+                if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_comment")) {
+                    const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
+                    const one_comment:HTMLDivElement = option.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
+                    const post_container:HTMLDivElement = option.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const comments_counter:HTMLParagraphElement = post_container.querySelector(".society .comments .comments_counter") as HTMLParagraphElement // Gets The Comments Counter
+
+                    if(one_comment.dataset["comment_id"] && action && action === "delete") deleteComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
                 }
             }
             

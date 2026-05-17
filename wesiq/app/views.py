@@ -397,6 +397,29 @@ def reportPostComment(request):
         return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
 
 @require_POST
+def deletePostComment(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            comment_id = json.loads(request.body) # Gets The Comment ID
+
+            # Gets The Comment
+            comment = PostForum.objects.get(id=comment_id, user_id=logged_in_user_id)
+
+            if comment:
+                comment.delete() # Deletes The Comment
+
+                return JsonResponse({"success": True, "message": _("Komentár bol úspešne odstránený.")}, status=200)
+
+            return JsonResponse({"success": False, "message": _("Komentár sa nepodarilo odstrániť.")}, status=400)
+
+        return JsonResponse({"success": False, "message": _("Komentár nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri odstraňovaní komentáru došlo k chybe.")}, status=500)
+
+@require_POST
 def addComment(request, logged_in_user_id):
     try:
         comment_data = json.loads(request.body) # Gets The Comment Data
@@ -2310,6 +2333,10 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "report-post-comment":
                 return reportPostComment(request)
 
+            # Delete Comment
+            if request.headers.get("X-Requested-Action") == "delete-post-comment":
+                return deletePostComment(request)
+
             # Tag User
             if request.headers.get("X-Requested-Action") == "tag-user":
                 try:
@@ -2599,6 +2626,10 @@ def postView(request, post_id):
             # Report Comment
             if request.headers.get("X-Requested-Action") == "report-post-comment":
                 return reportPostComment(request)
+
+            # Delete Comment
+            if request.headers.get("X-Requested-Action") == "delete-post-comment":
+                return deletePostComment(request)
 
             # Add Comment
             if request.headers.get("X-Requested-Action") == "add-comment":

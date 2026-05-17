@@ -21,7 +21,58 @@
                             
                             <p class="username"></p>
     
-                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            <button 
+                                class="show_comment_properties_button" 
+                                popovertarget=""
+                                style=""
+                            >
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </button>
+
+                            <div 
+                                class="comment_properties" 
+                                id=""
+                                popover
+                                style=""
+                            >
+                                <button 
+                                    class="show_report_comment_button" 
+                                    popovertarget=""
+                                    style=""
+                                >
+                                    {% translate "Nahlásiť" %}
+                                </button>
+
+                                <button 
+                                    class="hide_comment_properties_button" 
+                                    popovertarget=""
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Zavrieť" %}
+                                </button>
+                            </div>
+
+                            <div 
+                                class="report_comment" 
+                                id=""
+                                popover
+                                style=""
+                            >
+                                <button data-reason="spam">{% translate "Spam" %}</button>
+                                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+                                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+                                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+                                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+                                <button data-reason="other">{% translate "Iné" %}</button>
+
+                                <button 
+                                    class="back_report_comment_button"
+                                    popovertarget="" 
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Späť" %}
+                                </button>
+                            </div>
                         </div>
     
                         <div class="right">
@@ -172,7 +223,7 @@
                                 >
                                     <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
 
-                                    <button>{% translate "Vymazať" %}</button>
+                                    <button data-action="delete">{% translate "Vymazať" %}</button>
 
                                     <button 
                                         popovertarget="delete_post_{{ post.id }}"
