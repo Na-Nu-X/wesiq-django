@@ -454,9 +454,17 @@ export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagr
 }
 
 // Function For Report The Comment
-export async function reportComment(icon:HTMLElement, id:number):Promise<void> {
+export async function reportComment(id:number, reason:string):Promise<void> {
     try {
-        const report_comment_response:response = await sendPOST(window.location.pathname, id, "report-post-comment") // Sends Liked Comment ID As A POST Data
+        const report_comment_data:{
+            postforum_id:number,
+            reason:string
+        } = {
+            postforum_id: id,
+            reason
+        }
+
+        const report_comment_response:response = await sendPOST(window.location.pathname, report_comment_data, "report-post-comment") // Sends Liked Comment ID As A POST Data
 
         // If The Response Isn't Success
         if(!report_comment_response.success) {
@@ -464,7 +472,9 @@ export async function reportComment(icon:HTMLElement, id:number):Promise<void> {
             return
         }
 
-        icon.classList.add("active") // Adds The Active Class
+        else {
+            displayMessage(report_comment_response.message, "success") // Displays The Success Message
+        }
     }
 
     catch {
@@ -866,14 +876,6 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                 reply.title = gettext("Odpovedať...")
                 reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
                 interactions.prepend(reply) // Prepends The Reply Container To The Interactions
-            }
-
-            // Report
-            if(logged_in_user_id && one_visible_comment.reports_from_users.includes(logged_in_user_id)) {
-                const report:HTMLDivElement = interactions.querySelector(".report") as HTMLDivElement // Gets The Report Container
-
-                const report_icon:HTMLElement = report.querySelector(".fa-flag") as HTMLElement // Gets The Report Icon
-                report_icon.classList.add("active") // Adds The Active Class
             }
 
             // Date

@@ -81,9 +81,12 @@
 				popover
 				style="position-anchor: --show_report_comment_button_{{ one_comment.id }};"
 			>
-				<button>{% translate "Spam" %}</button>
-				<button>{% translate "Nevhodný obsah" %}</button>
-				<button>{% translate "Nenávistný prejav" %}</button>
+				<button data-reason="spam">{% translate "Spam" %}</button>
+				<button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+				<button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+				<button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+				<button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+				<button data-reason="other">{% translate "Iné" %}</button>
 
 				<button 
 					class="back_report_comment_button"
@@ -157,20 +160,6 @@
 			
 			{% endif %}
 		{% endwith %}
-
-        <div class="report" title="{% translate 'Nahlásiť...' %}">
-			<!-- https://fontawesome.com/icons/flag -->
-			<i 
-				class="
-					fa-regular fa-flag
-
-					{% if one_comment.has_report %}
-						active
-
-					{% endif %}
-				"
-			></i>
-		</div>
 
         <div class="date" title="{% translate 'Dátum zverejnenia' %}">
 			<p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>

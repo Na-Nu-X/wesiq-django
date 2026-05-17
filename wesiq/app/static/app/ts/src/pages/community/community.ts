@@ -948,6 +948,23 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
                 }
 
+                // Share Post
+                if((event.target as HTMLElement).classList.contains("fa-share-nodes")) {
+                    const share_icon:HTMLElement = event.target as HTMLElement // Gets The Share Icon
+                    const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
+                    const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+                }
+
+                // Save Post
+                if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
+                    const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
+                    const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                }
+
                 // Comment Forum
 
                 // Toggle Show / Hide Comment Forum
@@ -997,13 +1014,6 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(one_comment.dataset["comment_id"]) togglePostCommentLike(event.target as HTMLElement, comment_likes_counter, Number(one_comment.dataset["comment_id"])) // Adds Or Removes Like From The Comment
                 }
 
-                // Report Comment
-                if((event.target as HTMLElement).classList.contains("fa-flag")) {
-                    const one_comment:HTMLDivElement = (event.target as HTMLElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-
-                    if(one_comment.dataset["comment_id"]) reportComment(event.target as HTMLElement, Number(one_comment.dataset["comment_id"])) // Reports The Comment
-                }
-
                 // Show Replies
                 if(((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("show_replies")) {
                     const show_replies_icon:HTMLElement = event.target as HTMLElement // Gets The Show Replies Icon
@@ -1013,21 +1023,13 @@ document.addEventListener("DOMContentLoaded", function():void {
                     toggleShowReplies(show_replies_icon, reply_container) // Toggles Visibility Of The Comment Replies
                 }
 
-                // Share Post
-                if((event.target as HTMLElement).classList.contains("fa-share-nodes")) {
-                    const share_icon:HTMLElement = event.target as HTMLElement // Gets The Share Icon
-                    const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
-                    const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                // Report Comment
+                if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("report_comment")) {
+                    const report_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Report Button
+                    const one_comment:HTMLDivElement = report_button.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
 
-                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
-                }
-
-                // Save Post
-                if((event.target as HTMLElement).classList.contains("fa-bookmark")) {
-                    const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
-                    const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
-
-                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                    if(one_comment.dataset["comment_id"] && report_reason) reportComment(Number(one_comment.dataset["comment_id"]), report_reason) // Reports The Comment
                 }
             }
             

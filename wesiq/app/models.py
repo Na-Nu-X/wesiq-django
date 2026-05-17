@@ -232,6 +232,14 @@ class Post(models.Model):
         related_name="viewed_posts"
     )
 
+    reports_from_users = models.ManyToManyField(
+        Users, 
+        through="PostReport", 
+        verbose_name="Reports From Users", 
+        related_name="reported_posts", 
+        blank=True
+    )
+
     description = models.TextField(verbose_name="Description", max_length=500, null=True, blank=True)
     tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
@@ -244,6 +252,37 @@ class Post(models.Model):
     likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_posts", blank=True)
     latest_interaction = models.DateTimeField(verbose_name="Latest Interaction", auto_now_add=True, db_index=True)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+
+class PostReport(models.Model):
+    report_reason_choices = [
+        ("spam", "spam"),
+        ("harassment", "harassment"),
+        ("hate_speech", "hate speech"),
+        ("misinformation", "misinformation"),
+        ("explicit_content", "explicit content"),
+        ("other", "other")
+    ]
+
+    post = models.ForeignKey(
+        Post,
+        verbose_name="Post",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("post", "user")
 
 class PostMedia(models.Model):
     post = models.ForeignKey(
@@ -310,6 +349,14 @@ class PostForum(models.Model):
         null=True,
     )
 
+    reports_from_users = models.ManyToManyField(
+        Users, 
+        through="PostForumReport", 
+        verbose_name="Reports From Users", 
+        related_name="reported_post_forum_comments", 
+        blank=True
+    )
+
     comment = models.TextField(verbose_name="Comment", null=False)
     # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
@@ -327,8 +374,6 @@ class PostForum(models.Model):
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
-    reports_from_users = models.ManyToManyField(Users, verbose_name="Reports From Users", related_name="reported_post_forum_comments", blank=True)
-
     level = models.PositiveIntegerField(default=1)
 
     def save(self, *args, **kwargs):
@@ -344,3 +389,33 @@ class PostForum(models.Model):
             self.level = 1
             
         super().save(*args, **kwargs)
+
+class PostForumReport(models.Model):
+    report_reason_choices = [
+        ("spam", "spam"),
+        ("harassment", "harassment"),
+        ("hate_speech", "hate speech"),
+        ("misinformation", "misinformation"),
+        ("explicit_content", "explicit content"),
+        ("other", "other")
+    ]
+
+    postforum = models.ForeignKey(
+        PostForum,
+        verbose_name="Post Forum Comment",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("postforum", "user")
