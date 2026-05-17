@@ -717,9 +717,63 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
 
             // Comment Author Username
-            const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
+            const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .user .username") as HTMLParagraphElement // Gets The Comment Author Username
             comment_author_username.classList.add("username") // Adds The Username Class
             comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
+
+            // Comment Properties
+            const show_comment_properties_button:HTMLButtonElement = one_comment_container.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
+            const comment_properties:HTMLDivElement = one_comment_container.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
+            const show_report_comment_button:HTMLButtonElement = comment_properties.querySelector(".show_report_comment_button") as HTMLButtonElement // Gets The Show Report Comment Button
+            const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
+            const report_comment:HTMLDivElement = one_comment_container.querySelector(".comment_container .user .report_comment") as HTMLDivElement // Gets The Report Comment Menu
+            const back_report_comment_button:HTMLButtonElement = report_comment.querySelector(".back_report_comment_button") as HTMLButtonElement // Gets The Back Report Comment Button
+
+            show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${one_visible_comment.id}`) // Links The Pop Over
+            show_comment_properties_button.style = `anchor-name: --show_comment_properties_button_${one_visible_comment.id}` // Creates The Anchor
+            comment_properties.id = `comment_properties_${one_visible_comment.id}` // Sets The ID
+            comment_properties.style = `position-anchor: --show_comment_properties_button_${one_visible_comment.id}` // Links The Anchor
+            show_report_comment_button.setAttribute("popovertarget", `report_comment_${one_visible_comment.id}`) // Links The Pop Over
+            show_report_comment_button.style = `anchor-name: --show_report_comment_button_${one_visible_comment.id}` // Creates The Anchor
+            hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${one_visible_comment.id}`) // Links The Pop Over
+            report_comment.id = `report_comment_${one_visible_comment.id}` // Sets The ID
+            report_comment.style = `position-anchor: --show_report_comment_button_${one_visible_comment.id}` // Links The Anchor
+            back_report_comment_button.setAttribute("popovertarget", `report_comment_${one_visible_comment.id}`) // Links The Pop Over
+
+            if(one_visible_comment.user.id === logged_in_user_id) {
+                // Delete Comment Button
+                const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
+                delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
+                delete_comment_button.setAttribute("popovertarget", `delete_comment_${one_visible_comment.id}`) // Links The Pop Over
+                delete_comment_button.style = `anchor-name: --delete_comment_button_${one_visible_comment.id}` // Creates The Anchor
+                delete_comment_button.textContent = gettext("Vymazať")
+                comment_properties.insertBefore(delete_comment_button, hide_comment_properties_button) // Appends The Delete Comment Button To The Comment Properties Menu
+
+                // Delete Comment Menu
+                const delete_comment:HTMLDivElement = document.createElement("div") // Creates The Delete Comment Menu
+                delete_comment.classList.add("delete_comment") // Adds The Delete Comment Class
+                delete_comment.id = `delete_comment_${one_visible_comment.id}` // Sets The ID
+                delete_comment.popover = "auto" // Sets The Popover Attribute
+                delete_comment.style = `position-anchor: --delete_comment_button_${one_visible_comment.id}`; // Links The Anchor
+                (one_comment_container.querySelector(".comment_container .user") as HTMLDivElement).appendChild(delete_comment) // Appends The Delete Comment To The Comment Container
+
+                // Question
+                const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
+                question.textContent = gettext("Naozaj chcete vymazať Váš komentár?")
+                delete_comment.appendChild(question) // Appends The Question To The Delete Comment Menu
+
+                // Yes
+                const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
+                yes.textContent = gettext("Vymazať")
+                delete_comment.appendChild(yes) // Appends The Yes Button To The Delete Comment Menu
+                
+                // No
+                const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
+                no.setAttribute("popovertarget", `delete_comment_${one_visible_comment.id}`) // Links The Pop Over
+                no.popoverTargetAction = "hide" // Sets The Hide Action
+                no.textContent = gettext("Zrušiť")
+                delete_comment.appendChild(no) // Appends The No Button To The Delete Comment Menu
+            }
 
             // Comment
             const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph

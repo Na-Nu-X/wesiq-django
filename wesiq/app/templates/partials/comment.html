@@ -33,7 +33,87 @@
             
             <p class="username">{{ one_comment.user.username }}</p>
 
-            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+            <button 
+				class="show_comment_properties_button" 
+				popovertarget="comment_properties_{{ one_comment.id }}"
+				style="anchor-name: --show_comment_properties_button_{{ one_comment.id }};"
+			>
+				<i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+			</button>
+
+			<div 
+				class="comment_properties" 
+				id="comment_properties_{{ one_comment.id }}"
+				popover
+				style="position-anchor: --show_comment_properties_button_{{ one_comment.id }};"
+			>
+				<button 
+					class="show_report_comment_button" 
+					popovertarget="report_comment_{{ one_comment.id }}"
+					style="anchor-name: --show_report_comment_button_{{ one_comment.id }};"
+				>
+					{% translate "Nahlásiť" %}
+				</button>
+
+				{% if request.session.logged_in_user_id == one_comment.user.id %}
+					<button 
+						class="delete_comment_button"
+						popovertarget="delete_comment_{{ one_comment.id }}"
+						style="anchor-name: --delete_comment_button_{{ one_comment.id }};"
+					>
+						{% translate "Vymazať" %}
+					</button>
+
+				{% endif %}
+
+				<button 
+					class="hide_comment_properties_button" 
+					popovertarget="comment_properties_{{ one_comment.id }}" 
+					popovertargetaction="hide"
+				>
+					{% translate "Zavrieť" %}
+				</button>
+			</div>
+
+			<div 
+				class="report_comment" 
+				id="report_comment_{{ one_comment.id }}"
+				popover
+				style="position-anchor: --show_report_comment_button_{{ one_comment.id }};"
+			>
+				<button>{% translate "Spam" %}</button>
+				<button>{% translate "Nevhodný obsah" %}</button>
+				<button>{% translate "Nenávistný prejav" %}</button>
+
+				<button 
+					class="back_report_comment_button"
+					popovertarget="report_comment_{{ one_comment.id }}"
+					popovertargetaction="hide"
+				>
+					{% translate "Späť" %}
+				</button>
+			</div>
+
+			{% if request.session.logged_in_user_id == one_comment.user.id %}
+				<div 
+					class="delete_comment" 
+					id="delete_comment_{{ one_comment.id }}"
+					popover
+					style="position-anchor: --delete_comment_button_{{ one_comment.id }};"
+				>
+					<p>{% translate "Naozaj chcete vymazať Váš komentár?" %}</p>
+
+					<button>{% translate "Vymazať" %}</button>
+
+					<button 
+						popovertarget="delete_comment_{{ one_comment.id }}"
+						popovertargetaction="hide"
+					>
+						{% translate "Zrušiť" %}
+					</button>
+				</div>
+
+			{% endif %}
         </div>
 
 		<div class="right">

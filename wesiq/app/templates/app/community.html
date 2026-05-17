@@ -302,7 +302,55 @@
                         
                         <p class="username"></p>
 
-                        <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        <button 
+                            class="show_comment_properties_button" 
+                            popovertarget=""
+                            style=""
+                        >
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </button>
+
+                        <div 
+                            class="comment_properties" 
+                            id=""
+                            popover
+                            style=""
+                        >
+                            <button 
+                                class="show_report_comment_button" 
+                                popovertarget=""
+                                style=""
+                            >
+                                {% translate "Nahlásiť" %}
+                            </button>
+
+                            <button 
+                                class="hide_comment_properties_button" 
+                                popovertarget=""
+                                popovertargetaction="hide"
+                            >
+                                {% translate "Zavrieť" %}
+                            </button>
+                        </div>
+
+                        <div 
+                            class="report_comment" 
+                            id=""
+                            popover
+                            style=""
+                        >
+                            <button>{% translate "Spam" %}</button>
+                            <button>{% translate "Nevhodný obsah" %}</button>
+                            <button>{% translate "Nenávistný prejav" %}</button>
+
+                            <button 
+                                class="back_report_comment_button"
+                                popovertarget="" 
+                                popovertargetaction="hide"
+                            >
+                                {% translate "Späť" %}
+                            </button>
+                        </div>
                     </div>
 
                     <div class="right">
