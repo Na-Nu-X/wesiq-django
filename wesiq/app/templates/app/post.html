@@ -100,10 +100,89 @@
                                     
                                     {% endif %}
                                 </button>
-
-                            {% else %}
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                             
+                            {% endif %}
+
+                            <button 
+                                class="show_post_properties_button" 
+                                popovertarget="post_properties_{{ post.id }}"
+                                style="anchor-name: --show_post_properties_button_{{ post.id }};"
+                            >
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </button>
+
+                            <div 
+                                class="post_properties" 
+                                id="post_properties_{{ post.id }}"
+                                popover
+                                style="position-anchor: --show_post_properties_button_{{ post.id }};"
+                            >
+                                <button 
+                                    class="show_report_post_button" 
+                                    popovertarget="report_post_{{ post.id }}"
+                                    style="anchor-name: --show_report_post_button_{{ post.id }};"
+                                >
+                                    {% translate "Nahlásiť" %}
+                                </button>
+
+                                {% if request.session.logged_in_user_id == post.user.id %}
+                                    <button 
+                                        class="delete_post_button"
+                                        popovertarget="delete_post_{{ post.id }}"
+                                        style="anchor-name: --delete_post_button_{{ post.id }};"
+                                    >
+                                        {% translate "Vymazať" %}
+                                    </button>
+
+                                {% endif %}
+
+                                <button 
+                                    class="hide_post_properties_button" 
+                                    popovertarget="post_properties_{{ post.id }}" 
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Zavrieť" %}
+                                </button>
+                            </div>
+
+                            <div 
+                                class="report_post" 
+                                id="report_post_{{ post.id }}"
+                                popover
+                                style="position-anchor: --show_report_post_button_{{ post.id }};"
+                            >
+                                <button>{% translate "Spam" %}</button>
+                                <button>{% translate "Nevhodný obsah" %}</button>
+                                <button>{% translate "Nenávistný prejav" %}</button>
+
+                                <button 
+                                    class="back_report_post_button"
+                                    popovertarget="report_post_{{ post.id }}"
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Späť" %}
+                                </button>
+                            </div>
+
+                            {% if request.session.logged_in_user_id == post.user.id %}
+                                <div 
+                                    class="delete_post" 
+                                    id="delete_post_{{ post.id }}"
+                                    popover
+                                    style="position-anchor: --delete_post_button_{{ post.id }};"
+                                >
+                                    <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
+
+                                    <button>{% translate "Vymazať" %}</button>
+
+                                    <button 
+                                        popovertarget="delete_post_{{ post.id }}"
+                                        popovertargetaction="hide"
+                                    >
+                                        {% translate "Zrušiť" %}
+                                    </button>
+                                </div>
+
                             {% endif %}
                         </div>
 

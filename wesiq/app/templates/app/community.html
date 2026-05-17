@@ -171,6 +171,56 @@
                                 <p class="followers"></p>
                                 <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                             </div>
+
+                            <button 
+                                class="show_post_properties_button" 
+                                popovertarget=""
+                                style=""
+                            >
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </button>
+
+                            <div 
+                                class="post_properties" 
+                                id=""
+                                popover
+                                style=""
+                            >
+                                <button 
+                                    class="show_report_post_button" 
+                                    popovertarget=""
+                                    style=""
+                                >
+                                    {% translate "Nahlásiť" %}
+                                </button>
+
+                                <button 
+                                    class="hide_post_properties_button" 
+                                    popovertarget=""
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Zavrieť" %}
+                                </button>
+                            </div>
+
+                            <div 
+                                class="report_post" 
+                                id=""
+                                popover
+                                style=""
+                            >
+                                <button>{% translate "Spam" %}</button>
+                                <button>{% translate "Nevhodný obsah" %}</button>
+                                <button>{% translate "Nenávistný prejav" %}</button>
+
+                                <button 
+                                    class="back_report_post_button"
+                                    popovertarget="" 
+                                    popovertargetaction="hide"
+                                >
+                                    {% translate "Späť" %}
+                                </button>
+                            </div>
                         </div>
 
                         <div class="bottom">
