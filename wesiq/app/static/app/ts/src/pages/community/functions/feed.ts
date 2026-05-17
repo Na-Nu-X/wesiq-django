@@ -71,37 +71,22 @@ interface comment {
 
     user:{
         id:number,
-        first_name:string,
-        last_name:string,
         username:string,
         profile_picture_name:string|null
     },
 
-    comment:string,
-    likes:number,
-    likes_from_users:number[],
+    comment?:string,
+    likes?:number,
+    likes_from_users?:number[],
     creation_time:string,
-    parent_id:number|null,
-    reports_from_users:number[],
+    parent_id?:number|null,
+    reports_from_users?:number[],
     level:number
 }
 
 interface addCommentResponse {
     success: boolean,
-
-    comment: {
-        id:number,
-
-        user: {
-            id:number,
-            username:string,
-            profile_picture_name:string
-        },
-
-        creation_time:string,
-        level:number
-    },
-
+    comment:comment,
     message: string
 }
 
@@ -334,9 +319,12 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         comment_author_profile_picture.src = add_comment_response.comment.user.profile_picture_name ? `/../media/images/${add_comment_response.comment.user.id}/${add_comment_response.comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
 
         // Comment Author Username
-        const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .username") as HTMLParagraphElement // Gets The Comment Author Username
+        const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .user .username") as HTMLParagraphElement // Gets The Comment Author Username
         comment_author_username.classList.add("username") // Adds The Username Class
         comment_author_username.textContent = add_comment_response.comment.user.username // Sets The Comment Author Username Text
+
+        // Comment Properties
+        createCommentPropertiesHTML(one_comment_container, add_comment_response.comment) // Creates The Comment Properties HTML
 
         // Comment
         const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
@@ -424,6 +412,63 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
     }
 }
 
+// Function For Create The Comment Properties HTML
+function createCommentPropertiesHTML(one_comment:HTMLDivElement, comment:comment, logged_in_user_id?:number):void {
+    const show_comment_properties_button:HTMLButtonElement = one_comment.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
+    const comment_properties:HTMLDivElement = one_comment.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
+    const show_report_comment_button:HTMLButtonElement = comment_properties.querySelector(".show_report_comment_button") as HTMLButtonElement // Gets The Show Report Comment Button
+    const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
+    const report_comment:HTMLDivElement = one_comment.querySelector(".comment_container .user .report_comment") as HTMLDivElement // Gets The Report Comment Menu
+    const back_report_comment_button:HTMLButtonElement = report_comment.querySelector(".back_report_comment_button") as HTMLButtonElement // Gets The Back Report Comment Button
+
+    show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
+    show_comment_properties_button.style = `anchor-name: --show_comment_properties_button_${comment.id}` // Creates The Anchor
+    comment_properties.id = `comment_properties_${comment.id}` // Sets The ID
+    comment_properties.style = `position-anchor: --show_comment_properties_button_${comment.id}` // Links The Anchor
+    show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+    show_report_comment_button.style = `anchor-name: --show_report_comment_button_${comment.id}` // Creates The Anchor
+    hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
+    report_comment.id = `report_comment_${comment.id}` // Sets The ID
+    report_comment.style = `position-anchor: --show_report_comment_button_${comment.id}` // Links The Anchor
+    back_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+
+    if(comment.user.id === logged_in_user_id || !logged_in_user_id) {
+        // Delete Comment Button
+        const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
+        delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
+        delete_comment_button.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
+        delete_comment_button.style = `anchor-name: --delete_comment_button_${comment.id}` // Creates The Anchor
+        delete_comment_button.textContent = gettext("Vymazať")
+        comment_properties.insertBefore(delete_comment_button, hide_comment_properties_button) // Appends The Delete Comment Button To The Comment Properties Menu
+
+        // Delete Comment Menu
+        const delete_comment:HTMLDivElement = document.createElement("div") // Creates The Delete Comment Menu
+        delete_comment.classList.add("delete_comment") // Adds The Delete Comment Class
+        delete_comment.id = `delete_comment_${comment.id}` // Sets The ID
+        delete_comment.popover = "auto" // Sets The Popover Attribute
+        delete_comment.style = `position-anchor: --delete_comment_button_${comment.id}`; // Links The Anchor
+        (one_comment.querySelector(".comment_container .user") as HTMLDivElement).appendChild(delete_comment) // Appends The Delete Comment To The Comment Container
+
+        // Question
+        const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
+        question.textContent = gettext("Naozaj chcete vymazať Váš komentár?")
+        delete_comment.appendChild(question) // Appends The Question To The Delete Comment Menu
+
+        // Yes
+        const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
+        yes.dataset["action"] = "delete" // Stores The Delete Action
+        yes.textContent = gettext("Vymazať")
+        delete_comment.appendChild(yes) // Appends The Yes Button To The Delete Comment Menu
+        
+        // No
+        const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
+        no.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
+        no.popoverTargetAction = "hide" // Sets The Hide Action
+        no.textContent = gettext("Zrušiť")
+        delete_comment.appendChild(no) // Appends The No Button To The Delete Comment Menu
+    }
+}
+
 // Function For Toggle Post Comment Like
 export async function togglePostCommentLike(icon:HTMLElement, counter:HTMLParagraphElement, id:number):Promise<void> {
     try {
@@ -464,7 +509,7 @@ export async function reportComment(id:number, reason:string):Promise<void> {
             reason
         }
 
-        const report_comment_response:response = await sendPOST(window.location.pathname, report_comment_data, "report-post-comment") // Sends Liked Comment ID As A POST Data
+        const report_comment_response:response = await sendPOST(window.location.pathname, report_comment_data, "report-post-comment") // Sends Reported Comment Data As A POST Data
 
         // If The Response Isn't Success
         if(!report_comment_response.success) {
@@ -472,9 +517,28 @@ export async function reportComment(id:number, reason:string):Promise<void> {
             return
         }
 
-        else {
-            displayMessage(report_comment_response.message, "success") // Displays The Success Message
+        displayMessage(report_comment_response.message, "success") // Displays The Success Message
+    }
+
+    catch {
+        displayMessage(gettext("Pri odosielaní nahlásenia došlo k chybe."), "error") // Displays The Error Message
+    }
+}
+
+// Function For Delete The Comment
+export async function deleteComment(id:number, one_comment:HTMLDivElement, comments_counter:HTMLParagraphElement):Promise<void> {
+    try {
+        const delete_comment_response:response = await sendPOST(window.location.pathname, id, "delete-post-comment") // Sends Comment ID As A POST Data
+
+        // If The Response Isn't Success
+        if(!delete_comment_response.success) {
+            displayMessage(delete_comment_response.message, "error") // Displays The Error Message
+            return
         }
+
+        one_comment.remove() // Deletes The One Comment Container From DOM
+        comments_counter.textContent = String(Number(comments_counter.textContent) - 1) // Decreases The Comments Counter
+        displayMessage(delete_comment_response.message, "success") // Displays The Success Message
     }
 
     catch {
@@ -494,7 +558,7 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
 }
 
 // Function For Create Post HTML Structure
-function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id:number|undefined, profile_picture_name:string|undefined, saved_posts:number[]|undefined):DocumentFragment {
+function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id?:number, profile_picture_name?:string, saved_posts?:number[]):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
     const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
 
@@ -535,58 +599,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     }
 
     // Post Properties
-    const show_post_properties_button:HTMLButtonElement = top.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
-    const post_properties:HTMLDivElement = top.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
-    const show_report_post_button:HTMLButtonElement = post_properties.querySelector(".show_report_post_button") as HTMLButtonElement // Gets The Show Report Post Button
-    const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
-    const report_post:HTMLDivElement = top.querySelector(".report_post") as HTMLDivElement // Gets The Report Post Menu
-    const back_report_post_button:HTMLButtonElement = report_post.querySelector(".back_report_post_button") as HTMLButtonElement // Gets The Back Report Post Button
-
-    show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
-    show_post_properties_button.style = `anchor-name: --show_post_properties_button_${post_data.id}` // Creates The Anchor
-    post_properties.id = `post_properties_${post_data.id}` // Sets The ID
-    post_properties.style = `position-anchor: --show_post_properties_button_${post_data.id}` // Links The Anchor
-    show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
-    show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
-    hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
-    report_post.id = `report_post_${post_data.id}` // Sets The ID
-    report_post.style = `position-anchor: --show_report_post_button_${post_data.id}` // Links The Anchor
-    back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
-
-    if(logged_in_user_id && logged_in_user_id === post_data.user.id) {
-        // Delete Post Button
-        const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
-        delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
-        delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
-        delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
-        delete_post_button.textContent = gettext("Vymazať")
-        post_properties.insertBefore(delete_post_button, hide_post_properties_button) // Appends The Delete Post Button To The Post Properties Menu
-
-        // Delete Post Menu
-        const delete_post:HTMLDivElement = document.createElement("div") // Creates The Delete Post Menu
-        delete_post.classList.add("delete_post") // Adds The Delete Post Class
-        delete_post.id = `delete_post_${post_data.id}` // Sets The ID
-        delete_post.popover = "auto" // Sets The Popover Attribute
-        delete_post.style = `position-anchor: --delete_post_button_${post_data.id}` // Links The Anchor
-        top.appendChild(delete_post) // Appends The Delete Post To The Post Container
-
-        // Question
-        const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
-        question.textContent = gettext("Naozaj chcete vymazať Váš príspevok?")
-        delete_post.appendChild(question) // Appends The Question To The Delete Post Menu
-
-        // Yes
-        const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
-        yes.textContent = gettext("Vymazať")
-        delete_post.appendChild(yes) // Appends The Yes Button To The Delete Post Menu
-        
-        // No
-        const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
-        no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
-        no.popoverTargetAction = "hide" // Sets The Hide Action
-        no.textContent = gettext("Zrušiť")
-        delete_post.appendChild(no) // Appends The No Button To The Delete Post Menu
-    }
+    createPostPropertiesHTML(top, post_data, logged_in_user_id) // Creates The Post Properties HTML
 
     const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
 
@@ -777,68 +790,17 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
             // Comment Properties
-            const show_comment_properties_button:HTMLButtonElement = one_comment_container.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
-            const comment_properties:HTMLDivElement = one_comment_container.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
-            const show_report_comment_button:HTMLButtonElement = comment_properties.querySelector(".show_report_comment_button") as HTMLButtonElement // Gets The Show Report Comment Button
-            const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
-            const report_comment:HTMLDivElement = one_comment_container.querySelector(".comment_container .user .report_comment") as HTMLDivElement // Gets The Report Comment Menu
-            const back_report_comment_button:HTMLButtonElement = report_comment.querySelector(".back_report_comment_button") as HTMLButtonElement // Gets The Back Report Comment Button
-
-            show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${one_visible_comment.id}`) // Links The Pop Over
-            show_comment_properties_button.style = `anchor-name: --show_comment_properties_button_${one_visible_comment.id}` // Creates The Anchor
-            comment_properties.id = `comment_properties_${one_visible_comment.id}` // Sets The ID
-            comment_properties.style = `position-anchor: --show_comment_properties_button_${one_visible_comment.id}` // Links The Anchor
-            show_report_comment_button.setAttribute("popovertarget", `report_comment_${one_visible_comment.id}`) // Links The Pop Over
-            show_report_comment_button.style = `anchor-name: --show_report_comment_button_${one_visible_comment.id}` // Creates The Anchor
-            hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${one_visible_comment.id}`) // Links The Pop Over
-            report_comment.id = `report_comment_${one_visible_comment.id}` // Sets The ID
-            report_comment.style = `position-anchor: --show_report_comment_button_${one_visible_comment.id}` // Links The Anchor
-            back_report_comment_button.setAttribute("popovertarget", `report_comment_${one_visible_comment.id}`) // Links The Pop Over
-
-            if(one_visible_comment.user.id === logged_in_user_id) {
-                // Delete Comment Button
-                const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
-                delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
-                delete_comment_button.setAttribute("popovertarget", `delete_comment_${one_visible_comment.id}`) // Links The Pop Over
-                delete_comment_button.style = `anchor-name: --delete_comment_button_${one_visible_comment.id}` // Creates The Anchor
-                delete_comment_button.textContent = gettext("Vymazať")
-                comment_properties.insertBefore(delete_comment_button, hide_comment_properties_button) // Appends The Delete Comment Button To The Comment Properties Menu
-
-                // Delete Comment Menu
-                const delete_comment:HTMLDivElement = document.createElement("div") // Creates The Delete Comment Menu
-                delete_comment.classList.add("delete_comment") // Adds The Delete Comment Class
-                delete_comment.id = `delete_comment_${one_visible_comment.id}` // Sets The ID
-                delete_comment.popover = "auto" // Sets The Popover Attribute
-                delete_comment.style = `position-anchor: --delete_comment_button_${one_visible_comment.id}`; // Links The Anchor
-                (one_comment_container.querySelector(".comment_container .user") as HTMLDivElement).appendChild(delete_comment) // Appends The Delete Comment To The Comment Container
-
-                // Question
-                const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
-                question.textContent = gettext("Naozaj chcete vymazať Váš komentár?")
-                delete_comment.appendChild(question) // Appends The Question To The Delete Comment Menu
-
-                // Yes
-                const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
-                yes.textContent = gettext("Vymazať")
-                delete_comment.appendChild(yes) // Appends The Yes Button To The Delete Comment Menu
-                
-                // No
-                const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
-                no.setAttribute("popovertarget", `delete_comment_${one_visible_comment.id}`) // Links The Pop Over
-                no.popoverTargetAction = "hide" // Sets The Hide Action
-                no.textContent = gettext("Zrušiť")
-                delete_comment.appendChild(no) // Appends The No Button To The Delete Comment Menu
-            }
+            createCommentPropertiesHTML(one_comment_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
 
             // Comment
             const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
-            comment.textContent = one_visible_comment.comment // Sets The Comment Text
+            comment.textContent = one_visible_comment.comment as string // Sets The Comment Text
 
             // Likes
             const likes:HTMLDivElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLDivElement // Gets The Likes Container
 
             const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-            logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+            logged_in_user_id && (one_visible_comment.likes_from_users as number[]).includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
             // Likes Counter
             const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
@@ -1023,6 +985,63 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     })
 
     return post_container_template_clone // Returns The Post Container Template Clone
+}
+
+// Function For Create The Post Properties HTML
+function createPostPropertiesHTML(container:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
+    const show_post_properties_button:HTMLButtonElement = container.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
+    const post_properties:HTMLDivElement = container.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
+    const show_report_post_button:HTMLButtonElement = post_properties.querySelector(".show_report_post_button") as HTMLButtonElement // Gets The Show Report Post Button
+    const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
+    const report_post:HTMLDivElement = container.querySelector(".report_post") as HTMLDivElement // Gets The Report Post Menu
+    const back_report_post_button:HTMLButtonElement = report_post.querySelector(".back_report_post_button") as HTMLButtonElement // Gets The Back Report Post Button
+
+    show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    show_post_properties_button.style = `anchor-name: --show_post_properties_button_${post_data.id}` // Creates The Anchor
+    post_properties.id = `post_properties_${post_data.id}` // Sets The ID
+    post_properties.style = `position-anchor: --show_post_properties_button_${post_data.id}` // Links The Anchor
+    show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+    show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
+    hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    report_post.id = `report_post_${post_data.id}` // Sets The ID
+    report_post.style = `position-anchor: --show_report_post_button_${post_data.id}` // Links The Anchor
+    back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+
+    if(logged_in_user_id && logged_in_user_id === post_data.user.id) {
+        // Delete Post Button
+        const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
+        delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
+        delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
+        delete_post_button.textContent = gettext("Vymazať")
+        post_properties.insertBefore(delete_post_button, hide_post_properties_button) // Appends The Delete Post Button To The Post Properties Menu
+
+        // Delete Post Menu
+        const delete_post:HTMLDivElement = document.createElement("div") // Creates The Delete Post Menu
+        delete_post.classList.add("delete_post") // Adds The Delete Post Class
+        delete_post.id = `delete_post_${post_data.id}` // Sets The ID
+        delete_post.popover = "auto" // Sets The Popover Attribute
+        delete_post.style = `position-anchor: --delete_post_button_${post_data.id}` // Links The Anchor
+        container.appendChild(delete_post) // Appends The Delete Post To The Post Container
+
+        // Question
+        const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
+        question.textContent = gettext("Naozaj chcete vymazať Váš príspevok?")
+        delete_post.appendChild(question) // Appends The Question To The Delete Post Menu
+
+        // Yes
+        const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
+        yes.dataset["action"] = "delete" // Stores The Delete Action
+        yes.textContent = gettext("Vymazať")
+        delete_post.appendChild(yes) // Appends The Yes Button To The Delete Post Menu
+        
+        // No
+        const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
+        no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        no.popoverTargetAction = "hide" // Sets The Hide Action
+        no.textContent = gettext("Zrušiť")
+        delete_post.appendChild(no) // Appends The No Button To The Delete Post Menu
+    }
 }
 
 // Function For Check The Searched Posts History
