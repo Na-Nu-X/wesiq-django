@@ -73,11 +73,6 @@ h2 {
                     }
                 }
 
-                .fa-ellipsis-vertical {
-                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                    font-size: 1.2em;
-                }
-
                 .follow_button {
                     padding: 5px 10px;
                     text-align: center;
@@ -93,6 +88,60 @@ h2 {
                         border-color: $blue-color;
                         cursor: pointer;
                     }
+                }
+
+                // Post Properties
+
+                .show_post_properties_button {
+                    all: unset;
+
+                    .fa-ellipsis-vertical {
+                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                        display: block;
+                        font-size: 1.2em;
+                    }
+                }
+
+                .post_properties,
+                .report_post,
+                .delete_post {
+                    position: fixed;
+                    inset: auto;
+                    flex-direction: column;
+                    gap: 5px;
+                    min-width: 150px;
+                    margin: 0px;
+                    padding: 10px;
+                    background-color: $secondary-color;
+                    border-radius: $small-border-radius;
+                    top: anchor(bottom);
+                    right: anchor(right);
+                    margin-top: 10px;
+
+                    &:popover-open {
+                        display: flex;
+                    }
+
+                    &::backdrop {
+                        background: transparent;
+                    }
+
+                    button {
+                        all: unset;
+                        cursor: pointer;
+                    }
+                }
+
+                .post_properties {
+                    
+                }
+
+                .report_post {
+                    
+                }
+
+                .delete_post {
+                    
                 }
             }
 
@@ -835,6 +884,8 @@ h2 {
                         .username {
                             font-weight: bold;
                         }
+
+                        // Comment Properties
 
                         .show_comment_properties_button {
                             all: unset;

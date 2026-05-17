@@ -524,13 +524,58 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
         top.appendChild(follow_button) // Appends The Follow Button To The Top Container
     }
 
-    // Triple Dots Icon
-    else {
-        const icon:HTMLElement = document.createElement("i") // Creates The Icon
+    // Post Properties
+    const show_post_properties_button:HTMLButtonElement = top.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
+    const post_properties:HTMLDivElement = top.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
+    const show_report_post_button:HTMLButtonElement = post_properties.querySelector(".show_report_post_button") as HTMLButtonElement // Gets The Show Report Post Button
+    const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
+    const report_post:HTMLDivElement = top.querySelector(".report_post") as HTMLDivElement // Gets The Report Post Menu
+    const back_report_post_button:HTMLButtonElement = report_post.querySelector(".back_report_post_button") as HTMLButtonElement // Gets The Back Report Post Button
 
-        icon.classList.add("fa-solid", "fa-ellipsis-vertical") // https://fontawesome.com/icons/ellipsis-vertical
+    show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    show_post_properties_button.style = `anchor-name: --show_post_properties_button_${post_data.id}` // Creates The Anchor
+    post_properties.id = `post_properties_${post_data.id}` // Sets The ID
+    post_properties.style = `position-anchor: --show_post_properties_button_${post_data.id}` // Links The Anchor
+    show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+    show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
+    hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    report_post.id = `report_post_${post_data.id}` // Sets The ID
+    report_post.style = `position-anchor: --show_report_post_button_${post_data.id}` // Links The Anchor
+    back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
 
-        top.appendChild(icon) // Appends The Icon To The Top Container
+    if(logged_in_user_id && logged_in_user_id === post_data.user.id) {
+        // Delete Post Button
+        const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
+        delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
+        delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
+        delete_post_button.textContent = gettext("Vymazať")
+        post_properties.insertBefore(delete_post_button, hide_post_properties_button) // Appends The Delete Post Button To The Post Properties Menu
+
+        // Delete Post Menu
+        const delete_post:HTMLDivElement = document.createElement("div") // Creates The Delete Post Menu
+        delete_post.classList.add("delete_post") // Adds The Delete Post Class
+        delete_post.id = `delete_post_${post_data.id}` // Sets The ID
+        delete_post.popover = "auto" // Sets The Popover Attribute
+        delete_post.style = `position-anchor: --delete_post_button_${post_data.id}` // Links The Anchor
+        top.appendChild(delete_post) // Appends The Delete Post To The Post Container
+
+        // Question
+        const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
+        question.textContent = gettext("Naozaj chcete vymazať Váš príspevok?")
+        delete_post.appendChild(question) // Appends The Question To The Delete Post Menu
+
+        // Yes
+        const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
+        yes.textContent = gettext("Vymazať")
+        delete_post.appendChild(yes) // Appends The Yes Button To The Delete Post Menu
+        
+        // No
+        const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
+        no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        no.popoverTargetAction = "hide" // Sets The Hide Action
+        no.textContent = gettext("Zrušiť")
+        delete_post.appendChild(no) // Appends The No Button To The Delete Post Menu
     }
 
     const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
