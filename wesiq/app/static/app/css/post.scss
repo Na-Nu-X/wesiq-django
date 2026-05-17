@@ -836,12 +836,58 @@ h2 {
                             font-weight: bold;
                         }
 
-                        .fa-ellipsis-vertical {
-                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                            display: block;
+                        .show_comment_properties_button {
+                            all: unset;
                             margin-left: auto;
                             margin-right: 10px;
-                            font-size: 1.2em;
+
+                            .fa-ellipsis-vertical {
+                                @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                                display: block;
+                                font-size: 1.2em;
+                            }
+                        }
+
+                        .comment_properties,
+                        .report_comment,
+                        .delete_comment {
+                            position: fixed;
+                            inset: auto;
+                            flex-direction: column;
+                            gap: 5px;
+                            min-width: 150px;
+                            margin: 0px;
+                            padding: 10px;
+                            background-color: $secondary-color;
+                            border-radius: $small-border-radius;
+                            top: anchor(bottom);
+                            right: anchor(right);
+                            margin-top: 10px;
+
+                            &:popover-open {
+                                display: flex;
+                            }
+
+                            &::backdrop {
+                                background: transparent;
+                            }
+
+                            button {
+                                all: unset;
+                                cursor: pointer;
+                            }
+                        }
+
+                        .comment_properties {
+                            
+                        }
+
+                        .report_comment {
+                            
+                        }
+
+                        .delete_comment {
+                            
                         }
                     }
 
