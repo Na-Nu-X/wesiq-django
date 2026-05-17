@@ -1032,25 +1032,9 @@ h2 {
                         }
                     }
 
-                    .report {
+                    .date {
                         margin-left: auto;
 
-                        .fa-flag {
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: $error-color;
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
-
-                            &.active {
-                                color: $error-color;
-                            }
-                        }
-                    }
-
-                    .date {
                         p {
                             font-size: 0.8em;
                             font-style: italic;
