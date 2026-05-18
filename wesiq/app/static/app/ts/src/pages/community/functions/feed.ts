@@ -63,6 +63,8 @@ interface searchedPost {
         is_video:boolean
     }[],
 
+    views:number,
+
     visible_comments:comment[]
 }
 
@@ -487,7 +489,8 @@ function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_containe
         show_report_comment_button.classList.add("show_report_comment_button") // Adds The Show Report Comment Button
         show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
         show_report_comment_button.style = `anchor-name: --show_report_comment_button_${comment.id}` // Creates The Anchor
-        show_report_comment_button.textContent = gettext("Nahlásiť")
+        show_report_comment_button.innerHTML = "<i class='fa-regular fa-flag'></i>" // https://fontawesome.com/icons/flag
+        show_report_comment_button.innerHTML += `<span>${gettext("Nahlásiť")}</span>`
         comment_properties.insertBefore(show_report_comment_button, hide_comment_properties_button) // Appends The Show Report Comment Button To The Comment Properties Menu
 
         // Report Comment Menu
@@ -508,7 +511,8 @@ function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_containe
         delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
         delete_comment_button.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
         delete_comment_button.style = `anchor-name: --delete_comment_button_${comment.id}` // Creates The Anchor
-        delete_comment_button.textContent = gettext("Vymazať")
+        delete_comment_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
+        delete_comment_button.innerHTML += `<span>${gettext("Vymazať")}</span>`
         comment_properties.insertBefore(delete_comment_button, hide_comment_properties_button) // Appends The Delete Comment Button To The Comment Properties Menu
 
         // Delete Comment Menu
@@ -527,14 +531,16 @@ function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_containe
         // Yes
         const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
         yes.dataset["action"] = "delete" // Stores The Delete Action
-        yes.textContent = gettext("Vymazať")
+        yes.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
+        yes.innerHTML += `<span>${gettext("Vymazať")}</span>`
         delete_comment.appendChild(yes) // Appends The Yes Button To The Delete Comment Menu
         
         // No
         const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
         no.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
         no.popoverTargetAction = "hide" // Sets The Hide Action
-        no.textContent = gettext("Zrušiť")
+        no.innerHTML = "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
+        no.innerHTML += `<span>${gettext("Zrušiť")}</span>`
         delete_comment.appendChild(no) // Appends The No Button To The Delete Comment Menu
     }
 }
@@ -612,8 +618,6 @@ export async function deleteComment(id:number, one_comment:HTMLDivElement, comme
         comments_counter.textContent = String(Number(comments_counter.textContent) - deleted_comments_amount) // Decreases The Comments Counter
 
         if(reply_container && reply_container.children.length === 0) deleteShowRepliesIcon(reply_container) // Deletes The Show Replies Icon From The Comment If There Aren't Any Replies Left
-
-        displayMessage(delete_comment_response.message, "success") // Displays The Success Message
     }
 
     catch {
@@ -815,6 +819,17 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     // Share
     const share:HTMLDivElement = society.querySelector(".share") as HTMLDivElement // Gets The Share Container
     share.dataset["author"] = post_data.user.username // Stores The Author's Username
+    share.title = gettext("Zdielať...")
+
+    // Views
+    const views:HTMLDivElement = society.querySelector(".views") as HTMLDivElement // Gets The Views Container
+    views.title = gettext("Počet videní...")
+
+    // Views Counter
+    const views_counter:HTMLParagraphElement = document.createElement("p") // Creates The Views Counter
+    views_counter.classList.add("views_counter") // Adds The Views Counter
+    views_counter.textContent = String(post_data.views) // Sets The Views Counter
+    views.appendChild(views_counter) // Appends The Views Counter To The Views
 
     // Save
     const save:HTMLDivElement = society.querySelector(".save") as HTMLDivElement // Gets The Save Container
@@ -829,17 +844,19 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     else save_icon.classList.add("fa-regular") // Shows The Empty Bookmark Icon
 
     // Description
-    const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
-    description.classList.add("description") // Adds The Description Class
-
-    const tagged_users:string[] = post_data.tagged_users.map(one_tagged_user => one_tagged_user.username)
-    const added_hashtags:string[] = post_data.added_hashtags
-    description.dataset["tagged_users"] = JSON.stringify(tagged_users) // Stores The Tagged Users
-    description.dataset["added_hashtags"] = JSON.stringify(added_hashtags) // Stores The Added Hashtags
-    description.textContent = post_data.description // Sets The Description Text
-    post_container.appendChild(description) // Appends The Description To The Post Container
-
-    if(tagged_users.length > 0 || added_hashtags.length > 0) description.innerHTML = generateStyledDescription(description.textContent, JSON.stringify(tagged_users), JSON.stringify(added_hashtags)) // Generates The Styled Description
+    if(post_data.description) {
+        const description:HTMLParagraphElement = document.createElement("p") // Creates The Description Paragraph
+        description.classList.add("description") // Adds The Description Class
+    
+        const tagged_users:string[] = post_data.tagged_users.map(one_tagged_user => one_tagged_user.username)
+        const added_hashtags:string[] = post_data.added_hashtags
+        description.dataset["tagged_users"] = JSON.stringify(tagged_users) // Stores The Tagged Users
+        description.dataset["added_hashtags"] = JSON.stringify(added_hashtags) // Stores The Added Hashtags
+        description.textContent = post_data.description // Sets The Description Text
+        post_container.appendChild(description) // Appends The Description To The Post Container
+    
+        if(tagged_users.length > 0 || added_hashtags.length > 0) description.innerHTML = generateStyledDescription(description.textContent, JSON.stringify(tagged_users), JSON.stringify(added_hashtags)) // Generates The Styled Description
+    }
 
     const comment_forum_template:HTMLTemplateElement = feed.querySelector(".comment_forum_template") as HTMLTemplateElement // Gets The Comment Forum Template
     const comment_forum_template_clone:DocumentFragment = comment_forum_template.content.cloneNode(true) as DocumentFragment // Clones The Comment Forum Template Content
@@ -1096,7 +1113,8 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         show_report_post_button.classList.add("show_report_post_button") // Adds The Show Report Post Button
         show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
         show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
-        show_report_post_button.textContent = gettext("Nahlásiť")
+        show_report_post_button.innerHTML = "<i class='fa-regular fa-flag'></i>" // https://fontawesome.com/icons/flag
+        show_report_post_button.innerHTML += `<span>${gettext("Nahlásiť")}</span>`
         post_properties.insertBefore(show_report_post_button, hide_post_properties_button) // Appends The Show Report Post Button To The Post Properties Menu
 
         // Report Post Menu
@@ -1117,7 +1135,8 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
         delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
         delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
-        delete_post_button.textContent = gettext("Vymazať")
+        delete_post_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
+        delete_post_button.innerHTML += `<span>${gettext("Vymazať")}</span>`
         post_properties.insertBefore(delete_post_button, hide_post_properties_button) // Appends The Delete Post Button To The Post Properties Menu
 
         // Delete Post Menu
@@ -1136,14 +1155,16 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         // Yes
         const yes:HTMLButtonElement = document.createElement("button") // Creates The Yes Button
         yes.dataset["action"] = "delete" // Stores The Delete Action
-        yes.textContent = gettext("Vymazať")
+        yes.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
+        yes.innerHTML += `<span>${gettext("Vymazať")}</span>`
         delete_post.appendChild(yes) // Appends The Yes Button To The Delete Post Menu
         
         // No
         const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
         no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
         no.popoverTargetAction = "hide" // Sets The Hide Action
-        no.textContent = gettext("Zrušiť")
+        no.innerHTML = "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
+        no.innerHTML += `<span>${gettext("Zrušiť")}</span>`
         delete_post.appendChild(no) // Appends The No Button To The Delete Post Menu
     }
 }
@@ -1374,13 +1395,12 @@ async function markPostAsSeen(id:number):Promise<void> {
 
         // If The Response Isn't Success
         if(!mark_post_as_seen_response.success) {
-            displayMessage(mark_post_as_seen_response.message, "error") // Displays The Error Message
             return
         }
     }
 
     catch {
-        displayMessage(gettext('Pri označovaní príspevku za "už videný" došlo k chybe.'), "error") // Displays The Error Message
+        return
     }
 }
 

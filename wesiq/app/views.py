@@ -44,7 +44,7 @@ from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
-from django.db.models import Exists, OuterRef, Case, When, BooleanField
+from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count
 from django.http import FileResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -2494,6 +2494,8 @@ def loadPostsView(request):
         ).exclude(
             media__is_processed=False
         ).annotate(
+            views=Count("seen_by_instances", distinct=True),
+
             # Creates Is Seen Column (True If The User Has Already Viewed The Post)
             is_seen=Exists(
                 SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
@@ -2601,6 +2603,7 @@ def loadPostsView(request):
                 "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
                 "created_at": one_post.created_at.isoformat(),
                 "media": list(one_post.media.values("file", "thumbnail", "is_video")),
+                "views": one_post.views, # TEST
 
                 "visible_comments": [
                     {
@@ -2725,6 +2728,8 @@ def postView(request, post_id):
         post = Post.objects.filter(
             id=post_id
         ).annotate(
+            views=Count("seen_by_instances", distinct=True),
+
             # Creates The Has Like Column (True If The User Has Already Liked The Post)
             has_like=Exists(
                 Post.likes_from_users.through.objects.filter(
