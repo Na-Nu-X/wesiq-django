@@ -25,6 +25,7 @@
                                 class="show_comment_properties_button" 
                                 popovertarget=""
                                 style=""
+                                title="{% translate 'Viac...' %}"
                             >
                                 <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                             </button>
@@ -40,7 +41,8 @@
                                     popovertarget=""
                                     popovertargetaction="hide"
                                 >
-                                    {% translate "Zavrieť" %}
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zavrieť" %}</span>
                                 </button>
                             </div>
                         </div>
@@ -72,19 +74,20 @@
                     popover
                     style=""
                 >
-                    <button data-reason="spam">{% translate "Spam" %}</button>
-                    <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                    <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                    <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                    <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                    <button data-reason="other">{% translate "Iné" %}</button>
+                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
     
                     <button 
                         class="back_report_button"
                         popovertarget="" 
                         popovertargetaction="hide"
                     >
-                        {% translate "Späť" %}
+                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                        <span>{% translate "Späť" %}</span>
                     </button>
                 </div>
             </template>
@@ -148,6 +151,7 @@
                                 class="show_post_properties_button" 
                                 popovertarget="post_properties_{{ post.id }}"
                                 style="anchor-name: --show_post_properties_button_{{ post.id }};"
+                                title="{% translate 'Viac...' %}"
                             >
                                 <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                             </button>
@@ -164,7 +168,8 @@
                                         popovertarget="report_post_{{ post.id }}"
                                         style="anchor-name: --show_report_post_button_{{ post.id }};"
                                     >
-                                        {% translate "Nahlásiť" %}
+                                        <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                                        <span>{% translate "Nahlásiť" %}</span>
                                     </button>
 
                                 {% else %}
@@ -173,7 +178,8 @@
                                         popovertarget="delete_post_{{ post.id }}"
                                         style="anchor-name: --delete_post_button_{{ post.id }};"
                                     >
-                                        {% translate "Vymazať" %}
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span>{% translate "Vymazať" %}</span>
                                     </button>
 
                                 {% endif %}
@@ -183,7 +189,8 @@
                                     popovertarget="post_properties_{{ post.id }}" 
                                     popovertargetaction="hide"
                                 >
-                                    {% translate "Zavrieť" %}
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zavrieť" %}</span>
                                 </button>
                             </div>
 
@@ -194,19 +201,20 @@
                                     popover
                                     style="position-anchor: --show_report_post_button_{{ post.id }};"
                                 >
-                                    <button data-reason="spam">{% translate "Spam" %}</button>
-                                    <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                                    <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                                    <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                                    <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                                    <button data-reason="other">{% translate "Iné" %}</button>
+                                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
 
                                     <button 
                                         class="back_report_post_button"
                                         popovertarget="report_post_{{ post.id }}"
                                         popovertargetaction="hide"
                                     >
-                                        {% translate "Späť" %}
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Späť" %}</span>
                                     </button>
                                 </div>
 
@@ -219,13 +227,17 @@
                                 >
                                     <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
 
-                                    <button data-action="delete">{% translate "Vymazať" %}</button>
+                                    <button data-action="delete">
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span>{% translate "Vymazať" %}</span>
+                                    </button>
 
                                     <button 
                                         popovertarget="delete_post_{{ post.id }}"
                                         popovertargetaction="hide"
                                     >
-                                        {% translate "Zrušiť" %}
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Zrušiť" %}</span>
                                     </button>
                                 </div>
 
@@ -372,7 +384,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="comments">
+                    <div class="comments" title="{% translate 'Komentáre...' %}">
                         <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
 
                         {% if post.allow_comments %}
@@ -384,11 +396,17 @@
                         {% endif %}
                     </div>
 
-                    <div class="share" data-author="{{ post.user.username }}">
+                    <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
                         <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                     </div>
 
-                    <div class="save">
+                    <div class="views" title="{% translate 'Počet videní...' %}">
+                        <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+
+                        <p class="views_counter">{{ post.views }}</p>
+                    </div>
+
+                    <div class="save" title="{% translate 'Uložiť...' %}">
                         <i 
                             class="
                                 {% if post.has_save %}

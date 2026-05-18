@@ -976,18 +976,46 @@ header {
 
                             button {
                                 all: unset;
+                                position: relative;
                                 padding: 5px 10px;
-                                transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+                                transition: background-color 0.3s ease;
 
                                 &:hover,
                                 &:focus {
                                     background-color: transparentize($blue-color, 0.9);
-                                    letter-spacing: 0.5px;
                                     cursor: pointer;
+
+                                    i {
+                                        visibility: visible;
+                                        opacity: 1;
+                                    }
+
+                                    span {
+                                        letter-spacing: 0.5px;
+                                    }
                                 }
 
                                 &[popovertargetaction="hide"] {
                                     background-color: transparentize($blue-color, 0.9);
+                                }
+
+                                i {
+                                    visibility: hidden;
+                                    opacity: 0;
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 0px;
+                                    transform: translateY(-50%);
+                                    height: 100%;
+                                    line-height: 33px;
+                                    padding-left: 10px;
+                                    pointer-events: none;
+                                    cursor: pointer;
+                                    transition: visibility 0.3s ease, opacity 0.3s ease;
+                                }
+
+                                span {
+                                    transition: letter-spacing 0.3s ease;
                                 }
                             }
                         }
@@ -1612,9 +1640,33 @@ header {
                     }
                 }
 
-                .save {
+                .views {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    height: 20px;
                     margin-left: auto;
 
+                    .fa-eye {
+                        font-size: 1.5em;
+                        display: block;
+                        color: darken($secondary-color, 40%);
+
+                        &:hover {
+                            color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+                    }
+
+                    .views_counter {
+                        display: inline-block;
+                        color: darken($secondary-color, 40%);
+                        font-size: 1.2em;
+                    }
+                }
+
+                .save {
                     .fa-bookmark {
                         font-size: 1.5em;
                         display: block;
@@ -1784,18 +1836,46 @@ header {
 
                                     button {
                                         all: unset;
+                                        position: relative;
                                         padding: 5px 10px;
-                                        transition: background-color 0.3s ease, letter-spacing 0.3s ease;
-
+                                        transition: background-color 0.3s ease;
+        
                                         &:hover,
                                         &:focus {
                                             background-color: transparentize($blue-color, 0.9);
-                                            letter-spacing: 0.5px;
                                             cursor: pointer;
+        
+                                            i {
+                                                visibility: visible;
+                                                opacity: 1;
+                                            }
+        
+                                            span {
+                                                letter-spacing: 0.5px;
+                                            }
                                         }
-
+        
                                         &[popovertargetaction="hide"] {
                                             background-color: transparentize($blue-color, 0.9);
+                                        }
+        
+                                        i {
+                                            visibility: hidden;
+                                            opacity: 0;
+                                            position: absolute;
+                                            top: 50%;
+                                            left: 0px;
+                                            transform: translateY(-50%);
+                                            height: 100%;
+                                            line-height: 33px;
+                                            padding-left: 10px;
+                                            pointer-events: none;
+                                            cursor: pointer;
+                                            transition: visibility 0.3s ease, opacity 0.3s ease;
+                                        }
+        
+                                        span {
+                                            transition: letter-spacing 0.3s ease;
                                         }
                                     }
                                 }

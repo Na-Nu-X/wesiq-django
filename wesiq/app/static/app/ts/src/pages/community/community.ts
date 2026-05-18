@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 // Error
                 else {
                     upload_post_form_submit.disabled = false // Enables The Upload Post Form Submit Button
-                    upload_post_form_submit.value = gettext("Uverejniť príspevok")
+                    upload_post_form_submit.value = gettext("Skúste znovu")
                 }
             } 
             

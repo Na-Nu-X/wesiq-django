@@ -176,6 +176,7 @@
                                 class="show_post_properties_button" 
                                 popovertarget=""
                                 style=""
+                                title="{% translate 'Viac...' %}"
                             >
                                 <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                             </button>
@@ -191,7 +192,8 @@
                                     popovertarget=""
                                     popovertargetaction="hide"
                                 >
-                                    {% translate "Zavrieť" %}
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zavrieť" %}</span>
                                 </button>
                             </div>
                         </div>
@@ -209,15 +211,19 @@
                         <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
                     </div>
 
-                    <div class="comments">
+                    <div class="comments" title="{% translate 'Komentáre...' %}">
                         <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                     </div>
 
-                    <div class="share">
+                    <div class="share" title="{% translate 'Zdielať...' %}">
                         <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                     </div>
 
-                    <div class="save">
+                    <div class="views" title="{% translate 'Počet videní...' %}">
+                        <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                    </div>
+
+                    <div class="save" title="{% translate 'Uložiť...' %}">
                         <i class="fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
                     </div>
                 </div>
@@ -329,6 +335,7 @@
                             class="show_comment_properties_button" 
                             popovertarget=""
                             style=""
+                            title="{% translate 'Viac...' %}"
                         >
                             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </button>
@@ -344,7 +351,8 @@
                                 popovertarget=""
                                 popovertargetaction="hide"
                             >
-                                {% translate "Zavrieť" %}
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
                             </button>
                         </div>
                     </div>
@@ -376,19 +384,20 @@
                 popover
                 style=""
             >
-                <button data-reason="spam">{% translate "Spam" %}</button>
-                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                <button data-reason="other">{% translate "Iné" %}</button>
+                <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                <button data-reason="other"><span>{% translate "Iné" %}</span></button>
 
                 <button 
                     class="back_report_button"
                     popovertarget="" 
                     popovertargetaction="hide"
                 >
-                    {% translate "Späť" %}
+                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                    <span>{% translate "Späť" %}</span>
                 </button>
             </div>
         </template>
@@ -517,12 +526,12 @@
                             <p class="likes_counter">0</p>
                         </div>
 
-                        <div class="comments">
+                        <div class="comments" title="{% translate 'Komentáre...' %}">
                             <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                             <p class="comments_counter">0</p>
                         </div>
 
-                        <div class="save">
+                        <div class="save" title="{% translate 'Uložiť...' %}">
                             <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
                         </div>
                     </div>
