@@ -944,7 +944,7 @@ header {
                         }
 
                         .post_properties,
-                        .report_post,
+                        .report,
                         .delete_post {
                             position: fixed;
                             inset: auto;
@@ -971,18 +971,6 @@ header {
                                 all: unset;
                                 cursor: pointer;
                             }
-                        }
-
-                        .post_properties {
-                            
-                        }
-
-                        .report_post {
-                            
-                        }
-
-                        .delete_post {
-                            
                         }
                     }
 
@@ -1741,7 +1729,7 @@ header {
                                 }
 
                                 .comment_properties,
-                                .report_comment,
+                                .report,
                                 .delete_comment {
                                     position: fixed;
                                     inset: auto;
@@ -1768,18 +1756,6 @@ header {
                                         all: unset;
                                         cursor: pointer;
                                     }
-                                }
-
-                                .comment_properties {
-                                    
-                                }
-
-                                .report_comment {
-                                    
-                                }
-
-                                .delete_comment {
-                                    
                                 }
                             }
 

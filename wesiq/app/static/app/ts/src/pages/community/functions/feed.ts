@@ -86,6 +86,11 @@ interface comment {
 
 interface addCommentResponse {
     success: boolean,
+
+    logged_in_user:{
+        logged_in_user_id:number,
+    },
+
     comment:comment,
     message: string
 }
@@ -353,6 +358,10 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
         const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
         const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
+
+        const report_template:HTMLTemplateElement = feed.querySelector(".report_template") as HTMLTemplateElement // Gets The Report Template
+        const report_template_clone:DocumentFragment = report_template.content.cloneNode(true) as DocumentFragment // Clones The Report Template Content
+        const report_container:HTMLDivElement = report_template_clone.querySelector(".report") as HTMLDivElement // Gets The Report Container
         
         one_comment_container.dataset["comment_id"] = String(add_comment_response.comment.id) // Stores The Comment ID
 
@@ -371,7 +380,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         comment_author_username.textContent = add_comment_response.comment.user.username // Sets The Comment Author Username Text
 
         // Comment Properties
-        createCommentPropertiesHTML(one_comment_container, add_comment_response.comment) // Creates The Comment Properties HTML
+        createCommentPropertiesHTML(one_comment_container, report_container, add_comment_response.comment, add_comment_response.logged_in_user.logged_in_user_id) // Creates The Comment Properties HTML
 
         // Comment
         const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
@@ -460,26 +469,40 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
 }
 
 // Function For Create The Comment Properties HTML
-function createCommentPropertiesHTML(one_comment:HTMLDivElement, comment:comment, logged_in_user_id?:number):void {
+function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_container:HTMLDivElement, comment:comment, logged_in_user_id:number):void {
     const show_comment_properties_button:HTMLButtonElement = one_comment.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
     const comment_properties:HTMLDivElement = one_comment.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
-    const show_report_comment_button:HTMLButtonElement = comment_properties.querySelector(".show_report_comment_button") as HTMLButtonElement // Gets The Show Report Comment Button
     const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
-    const report_comment:HTMLDivElement = one_comment.querySelector(".comment_container .user .report_comment") as HTMLDivElement // Gets The Report Comment Menu
-    const back_report_comment_button:HTMLButtonElement = report_comment.querySelector(".back_report_comment_button") as HTMLButtonElement // Gets The Back Report Comment Button
 
     show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
     show_comment_properties_button.style = `anchor-name: --show_comment_properties_button_${comment.id}` // Creates The Anchor
     comment_properties.id = `comment_properties_${comment.id}` // Sets The ID
     comment_properties.style = `position-anchor: --show_comment_properties_button_${comment.id}` // Links The Anchor
-    show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
-    show_report_comment_button.style = `anchor-name: --show_report_comment_button_${comment.id}` // Creates The Anchor
     hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
-    report_comment.id = `report_comment_${comment.id}` // Sets The ID
-    report_comment.style = `position-anchor: --show_report_comment_button_${comment.id}` // Links The Anchor
-    back_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
 
-    if(comment.user.id === logged_in_user_id || !logged_in_user_id) {
+    // If The Comment Doesn't Belong To The Logged In User The Report Option Will Be Shown
+    if(comment.user.id !== logged_in_user_id) {
+        // Show Report Comment Button
+        const show_report_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Show Report Comment Button
+        show_report_comment_button.classList.add("show_report_comment_button") // Adds The Show Report Comment Button
+        show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+        show_report_comment_button.style = `anchor-name: --show_report_comment_button_${comment.id}` // Creates The Anchor
+        show_report_comment_button.textContent = gettext("Nahlásiť")
+        comment_properties.insertBefore(show_report_comment_button, hide_comment_properties_button) // Appends The Show Report Comment Button To The Comment Properties Menu
+
+        // Report Comment Menu
+        report_container.classList.add("report_comment") // Adds The Report Comment Class
+        report_container.id = `report_comment_${comment.id}` // Sets The ID
+        report_container.style = `position-anchor: --show_report_comment_button_${comment.id}`; // Links The Anchor
+        (one_comment.querySelector(".comment_container .user") as HTMLDivElement).appendChild(report_container) // Appends The Report Comment Menu To The Comment Container
+
+        // Back Report Comment Button
+        const back_report_comment_button:HTMLButtonElement = report_container.querySelector(".back_report_button") as HTMLButtonElement // Gets The Back Report Comment Button
+        back_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+    }
+
+    // If The Comment Belongs To The Logged In User The Delete Option Will Be Shown
+    else {
         // Delete Comment Button
         const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
         delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
@@ -608,9 +631,13 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
 function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id?:number, profile_picture_name?:string, saved_posts?:number[]):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
     const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
+    const post_container:HTMLDivElement = post_container_template_clone.querySelector(".post_container") as HTMLDivElement // Creates The Post Container
+
+    const report_template:HTMLTemplateElement = feed.querySelector(".report_template") as HTMLTemplateElement // Gets The Report Template
+    const report_template_clone:DocumentFragment = report_template.content.cloneNode(true) as DocumentFragment // Clones The Report Template Content
+    const report_container:HTMLDivElement = report_template_clone.querySelector(".report") as HTMLDivElement // Gets The Report Container
 
     // Post Container
-    const post_container:HTMLDivElement = post_container_template_clone.querySelector(".post_container") as HTMLDivElement // Creates The Post Container
     post_container.dataset["post_id"] = String(post_data.id) // Stores The Post ID
 
     // Post Author Profile Picture Link
@@ -641,12 +668,11 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
         follow_button.dataset["id"] = String(post_data.user.id) // Stores The User ID
         follow_button.dataset["action"] = !post_data.user.followers.includes(logged_in_user_id) ? "follow" : "unfollow"
         follow_button.textContent = !post_data.user.followers.includes(logged_in_user_id) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
-
-        top.appendChild(follow_button) // Appends The Follow Button To The Top Container
+        top.insertBefore(follow_button, top.querySelector(".show_post_properties_button") as HTMLButtonElement) // Appends The Follow Button To The Top Container
     }
 
     // Post Properties
-    createPostPropertiesHTML(top, post_data, logged_in_user_id) // Creates The Post Properties HTML
+    createPostPropertiesHTML(top, report_container, post_data, logged_in_user_id) // Creates The Post Properties HTML
 
     const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
 
@@ -820,6 +846,10 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
             const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
 
+            const report_template:HTMLTemplateElement = feed.querySelector(".report_template") as HTMLTemplateElement // Gets The Report Template
+            const report_template_clone:DocumentFragment = report_template.content.cloneNode(true) as DocumentFragment // Clones The Report Template Content
+            const report_container:HTMLDivElement = report_template_clone.querySelector(".report") as HTMLDivElement // Gets The Report Container
+
             one_comment_container.dataset["comment_id"] = String(one_visible_comment.id) // Stores The Comment ID
 
             // Comment Author Profile Picture Link
@@ -837,7 +867,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
             comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
             // Comment Properties
-            createCommentPropertiesHTML(one_comment_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
+            if(logged_in_user_id) createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
 
             // Comment
             const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
@@ -1035,26 +1065,40 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 }
 
 // Function For Create The Post Properties HTML
-function createPostPropertiesHTML(container:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
+function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
     const show_post_properties_button:HTMLButtonElement = container.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
     const post_properties:HTMLDivElement = container.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
-    const show_report_post_button:HTMLButtonElement = post_properties.querySelector(".show_report_post_button") as HTMLButtonElement // Gets The Show Report Post Button
     const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
-    const report_post:HTMLDivElement = container.querySelector(".report_post") as HTMLDivElement // Gets The Report Post Menu
-    const back_report_post_button:HTMLButtonElement = report_post.querySelector(".back_report_post_button") as HTMLButtonElement // Gets The Back Report Post Button
 
     show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
     show_post_properties_button.style = `anchor-name: --show_post_properties_button_${post_data.id}` // Creates The Anchor
     post_properties.id = `post_properties_${post_data.id}` // Sets The ID
     post_properties.style = `position-anchor: --show_post_properties_button_${post_data.id}` // Links The Anchor
-    show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
-    show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
     hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
-    report_post.id = `report_post_${post_data.id}` // Sets The ID
-    report_post.style = `position-anchor: --show_report_post_button_${post_data.id}` // Links The Anchor
-    back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
 
-    if(logged_in_user_id && logged_in_user_id === post_data.user.id) {
+    // If The Post Doesn't Belong To The Logged In User The Report Option Will Be Shown
+    if(post_data.user.id !== logged_in_user_id) {
+        // Show Report Post Button
+        const show_report_post_button:HTMLButtonElement = document.createElement("button") // Creates The Show Report Post Button
+        show_report_post_button.classList.add("show_report_post_button") // Adds The Show Report Post Button
+        show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+        show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
+        show_report_post_button.textContent = gettext("Nahlásiť")
+        post_properties.insertBefore(show_report_post_button, hide_post_properties_button) // Appends The Show Report Post Button To The Post Properties Menu
+
+        // Report Post Menu
+        report_container.classList.add("report_post") // Adds The Report Comment Class
+        report_container.id = `report_post_${post_data.id}` // Sets The ID
+        report_container.style = `position-anchor: --show_report_post_button_${post_data.id}` // Links The Anchor
+        container.appendChild(report_container) // Appends The Report Post Menu To The Post Container
+
+        // Back Report Post Button
+        const back_report_post_button:HTMLButtonElement = report_container.querySelector(".back_report_button") as HTMLButtonElement // Gets The Back Report Post Button
+        back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+    }
+
+    // If The Post Belongs To The Logged In User The Delete Option Will Be Shown
+    else {
         // Delete Post Button
         const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
         delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
@@ -1073,7 +1117,7 @@ function createPostPropertiesHTML(container:HTMLDivElement, post_data:searchedPo
 
         // Question
         const question:HTMLParagraphElement = document.createElement("p") // Creates The Question Paragraph
-        question.textContent = gettext("Naozaj chcete vymazať Váš príspevok?")
+        question.textContent = gettext("Naozaj chcete vymazať Váš komentár?")
         delete_post.appendChild(question) // Appends The Question To The Delete Post Menu
 
         // Yes

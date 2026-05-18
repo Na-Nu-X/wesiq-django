@@ -47,15 +47,16 @@
 				popover
 				style="position-anchor: --show_comment_properties_button_{{ one_comment.id }};"
 			>
-				<button 
-					class="show_report_comment_button" 
-					popovertarget="report_comment_{{ one_comment.id }}"
-					style="anchor-name: --show_report_comment_button_{{ one_comment.id }};"
-				>
-					{% translate "Nahlásiť" %}
-				</button>
+				{% if not request.session.logged_in_user_id == one_comment.user.id %}
+					<button 
+						class="show_report_comment_button" 
+						popovertarget="report_comment_{{ one_comment.id }}"
+						style="anchor-name: --show_report_comment_button_{{ one_comment.id }};"
+					>
+						{% translate "Nahlásiť" %}
+					</button>
 
-				{% if request.session.logged_in_user_id == one_comment.user.id %}
+				{% else %}
 					<button 
 						class="delete_comment_button"
 						popovertarget="delete_comment_{{ one_comment.id }}"
@@ -75,29 +76,30 @@
 				</button>
 			</div>
 
-			<div 
-				class="report_comment" 
-				id="report_comment_{{ one_comment.id }}"
-				popover
-				style="position-anchor: --show_report_comment_button_{{ one_comment.id }};"
-			>
-				<button data-reason="spam">{% translate "Spam" %}</button>
-				<button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-				<button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-				<button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-				<button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-				<button data-reason="other">{% translate "Iné" %}</button>
-
-				<button 
-					class="back_report_comment_button"
-					popovertarget="report_comment_{{ one_comment.id }}"
-					popovertargetaction="hide"
+			{% if not request.session.logged_in_user_id == one_comment.user.id %}
+				<div 
+					class="report_comment" 
+					id="report_comment_{{ one_comment.id }}"
+					popover
+					style="position-anchor: --show_report_comment_button_{{ one_comment.id }};"
 				>
-					{% translate "Späť" %}
-				</button>
-			</div>
+					<button data-reason="spam">{% translate "Spam" %}</button>
+					<button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+					<button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+					<button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+					<button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+					<button data-reason="other">{% translate "Iné" %}</button>
 
-			{% if request.session.logged_in_user_id == one_comment.user.id %}
+					<button 
+						class="back_report_comment_button"
+						popovertarget="report_comment_{{ one_comment.id }}"
+						popovertargetaction="hide"
+					>
+						{% translate "Späť" %}
+					</button>
+				</div>
+
+			{% else %}
 				<div 
 					class="delete_comment" 
 					id="delete_comment_{{ one_comment.id }}"

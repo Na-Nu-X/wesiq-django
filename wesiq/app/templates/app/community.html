@@ -187,41 +187,11 @@
                                 style=""
                             >
                                 <button 
-                                    class="show_report_post_button" 
-                                    popovertarget=""
-                                    style=""
-                                >
-                                    {% translate "Nahlásiť" %}
-                                </button>
-
-                                <button 
                                     class="hide_post_properties_button" 
                                     popovertarget=""
                                     popovertargetaction="hide"
                                 >
                                     {% translate "Zavrieť" %}
-                                </button>
-                            </div>
-
-                            <div 
-                                class="report_post" 
-                                id=""
-                                popover
-                                style=""
-                            >
-                                <button data-reason="spam">{% translate "Spam" %}</button>
-                                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                                <button data-reason="other">{% translate "Iné" %}</button>
-
-                                <button 
-                                    class="back_report_post_button"
-                                    popovertarget="" 
-                                    popovertargetaction="hide"
-                                >
-                                    {% translate "Späť" %}
                                 </button>
                             </div>
                         </div>
@@ -370,41 +340,11 @@
                             style=""
                         >
                             <button 
-                                class="show_report_comment_button" 
-                                popovertarget=""
-                                style=""
-                            >
-                                {% translate "Nahlásiť" %}
-                            </button>
-
-                            <button 
                                 class="hide_comment_properties_button" 
                                 popovertarget=""
                                 popovertargetaction="hide"
                             >
                                 {% translate "Zavrieť" %}
-                            </button>
-                        </div>
-
-                        <div 
-                            class="report_comment" 
-                            id=""
-                            popover
-                            style=""
-                        >
-                            <button data-reason="spam">{% translate "Spam" %}</button>
-                            <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                            <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                            <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                            <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                            <button data-reason="other">{% translate "Iné" %}</button>
-
-                            <button 
-                                class="back_report_comment_button"
-                                popovertarget="" 
-                                popovertargetaction="hide"
-                            >
-                                {% translate "Späť" %}
                             </button>
                         </div>
                     </div>
@@ -426,6 +366,30 @@
                 </div>
 
                 <div class="reply_container hidden"></div>
+            </div>
+        </template>
+
+        <template class="report_template">
+            <div 
+                class="report" 
+                id=""
+                popover
+                style=""
+            >
+                <button data-reason="spam">{% translate "Spam" %}</button>
+                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+                <button data-reason="other">{% translate "Iné" %}</button>
+
+                <button 
+                    class="back_report_button"
+                    popovertarget="" 
+                    popovertargetaction="hide"
+                >
+                    {% translate "Späť" %}
+                </button>
             </div>
         </template>
 
