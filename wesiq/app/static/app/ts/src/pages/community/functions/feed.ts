@@ -280,6 +280,53 @@ export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> 
     }
 }
 
+// Function For Report The Post
+export async function reportPost(id:number, reason:string):Promise<void> {
+    try {
+        const report_post_data:{
+            post_id:number,
+            reason:string
+        } = {
+            post_id: id,
+            reason
+        }
+
+        const report_post_response:response = await sendPOST(window.location.pathname, report_post_data, "report-post") // Sends Reported Post Data As A POST Data
+
+        // If The Response Isn't Success
+        if(!report_post_response.success) {
+            displayMessage(report_post_response.message, "error") // Displays The Error Message
+            return
+        }
+
+        displayMessage(report_post_response.message, "success") // Displays The Success Message
+    }
+
+    catch {
+        displayMessage(gettext("Pri odosielaní nahlásenia došlo k chybe."), "error") // Displays The Error Message
+    }
+}
+
+// Function For Delete The Post
+export async function deletePost(id:number, post_container:HTMLDivElement) {
+    try {
+        const delete_post_response:response = await sendPOST(window.location.pathname, id, "delete-post") // Sends Post ID As A POST Data
+
+        // If The Response Isn't Success
+        if(!delete_post_response.success) {
+            displayMessage(delete_post_response.message, "error") // Displays The Error Message
+            return
+        }
+
+        post_container.remove() // Deletes The Post Container From DOM
+        displayMessage(delete_post_response.message, "success") // Displays The Success Message
+    }
+
+    catch {
+        displayMessage(gettext("Pri odstraňovaní príspevku došlo k chybe."), "error") // Displays The Error Message
+    }
+}
+
 // Function For Add Comment
 export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
     try {

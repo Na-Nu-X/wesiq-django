@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost, PostForumReport
+from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -324,6 +324,68 @@ def togglePostLike(request):
     except Exception as e:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
         return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
+
+@require_POST
+def reportPost(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            report_post_data = json.loads(request.body) # Gets The Report Post Data
+            post_id = report_post_data["post_id"] # Gets The Post ID
+            reason = report_post_data["reason"] # Gets The Reason
+            post = Post.objects.get(id=post_id) # Gets The Post
+            has_report = post.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
+
+            # Stores The Reported Comment
+            PostReport.objects.update_or_create(
+                post_id=post_id,
+                user_id=logged_in_user_id,
+                defaults={"reason": reason} # Reason Can Be Updated
+            )
+
+            # Report
+            if not has_report:
+                post.reports += 1 # Increases The Reports Counter
+
+                if post.reports >= 5:
+                    post = Post.objects.get(id=post.post_id) # Gets The Post
+                    report_percentage = (post.reports / post.likes) * 100 # Gets The Percentage Of The Post Reports Amount By Likes On The Post
+
+                    if report_percentage > 10:
+                        post.status = "hidden" # Hides The Post If Has More Than 10% Of Reports
+
+                post.save() # Saves The Comment
+
+            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+        return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+@require_POST
+def deletePost(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            post_id = json.loads(request.body) # Gets The Post ID
+
+            # Gets The Post
+            post = Post.objects.get(id=post_id, user_id=logged_in_user_id)
+
+            if post:
+                post.delete() # Deletes The Post
+
+                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne odstránený.")}, status=200)
+
+            return JsonResponse({"success": False, "message": _("Príspevok sa nepodarilo odstrániť.")}, status=400)
+
+        return JsonResponse({"success": False, "message": _("Príspevok nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri odstraňovaní príspevku došlo k chybe.")}, status=500)
 
 @require_POST
 def togglePostSave(request):
@@ -2325,6 +2387,14 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
                 return togglePostLike(request)
 
+            # Report Post
+            if request.headers.get("X-Requested-Action") == "report-post":
+                return reportPost(request)
+
+            # Delete Post
+            if request.headers.get("X-Requested-Action") == "delete-post":
+                return deletePost(request)
+
             # Toggle Post Save
             if request.headers.get("X-Requested-Action") == "toggle-post-save":
                 return togglePostSave(request)
@@ -2618,6 +2688,14 @@ def postView(request, post_id):
             # Toggle Post Like
             if request.headers.get("X-Requested-Action") == "toggle-post-like":
                 return togglePostLike(request)
+
+            # Report Post
+            if request.headers.get("X-Requested-Action") == "report-post":
+                return reportPost(request)
+
+            # Delete Post
+            if request.headers.get("X-Requested-Action") == "delete-post":
+                return deletePost(request)
 
             # Toggle Post Save
             if request.headers.get("X-Requested-Action") == "toggle-post-save":
