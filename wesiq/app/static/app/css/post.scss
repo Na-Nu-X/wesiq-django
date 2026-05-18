@@ -1182,6 +1182,10 @@ h2 {
                     color: darken($secondary-color, 20%);
                     cursor: pointer;
                 }
+
+                path {
+                    pointer-events: none;
+                }
             }
         }
     }
