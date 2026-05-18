@@ -456,7 +456,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
                 show_replies.classList.add("show_replies") // Adds The Show Replies Class
                 show_replies.title = gettext("Zobraziť odpovede...")
                 show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
-                new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".report") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
+                new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".date") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
             }
         }
 
@@ -598,6 +598,8 @@ export async function reportComment(id:number, reason:string):Promise<void> {
 // Function For Delete The Comment
 export async function deleteComment(id:number, one_comment:HTMLDivElement, comments_counter:HTMLParagraphElement):Promise<void> {
     try {
+        const reply_container:HTMLDivElement|null = (one_comment.parentElement as HTMLDivElement).classList.contains("reply_container") ? one_comment.parentElement as HTMLDivElement : null // Gets The Reply Container
+        const deleted_comments_amount:number = one_comment.querySelectorAll<HTMLDivElement>(".one_comment").length + 1 // Gets The Total Amount Of Deleted Comments (All Nested Replies + 1 Root Comment)
         const delete_comment_response:response = await sendPOST(window.location.pathname, id, "delete-post-comment") // Sends Comment ID As A POST Data
 
         // If The Response Isn't Success
@@ -607,13 +609,24 @@ export async function deleteComment(id:number, one_comment:HTMLDivElement, comme
         }
 
         one_comment.remove() // Deletes The One Comment Container From DOM
-        comments_counter.textContent = String(Number(comments_counter.textContent) - 1) // Decreases The Comments Counter
+        comments_counter.textContent = String(Number(comments_counter.textContent) - deleted_comments_amount) // Decreases The Comments Counter
+
+        if(reply_container && reply_container.children.length === 0) deleteShowRepliesIcon(reply_container) // Deletes The Show Replies Icon From The Comment If There Aren't Any Replies Left
+
         displayMessage(delete_comment_response.message, "success") // Displays The Success Message
     }
 
     catch {
         displayMessage(gettext("Pri odosielaní nahlásenia došlo k chybe."), "error") // Displays The Error Message
     }
+}
+
+// Function For Delete The Show Replies Icon From The Comment
+function deleteShowRepliesIcon(reply_container:HTMLDivElement):void {
+    const one_comment:HTMLDivElement = reply_container.parentElement as HTMLDivElement // Gets The One Comment Container
+    const show_replies:HTMLDivElement = one_comment.querySelector(".interactions .show_replies") as HTMLDivElement // Gets The Show Replies Container
+
+    show_replies.remove() // Removes The Show Replies Container From DOM
 }
 
 // Function For Generate Change Buttons (Previous / Next)
@@ -934,7 +947,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
                     show_replies.classList.add("show_replies") // Adds The Show Replies Class
                     show_replies.title = gettext("Zobraziť odpovede...")
                     show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
-                    new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".report") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
+                    new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".date") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
                 }
             }
         })
