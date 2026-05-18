@@ -45,6 +45,8 @@ import {
     togglePostLike,
     sharePost,
     togglePostSave,
+    reportPost,
+    deletePost,
     addComment,
     togglePostCommentLike,
     reportComment,
@@ -82,7 +84,6 @@ import { sendPOST } from "../../services/sendPOST.js"
 import { syncFiles } from "./functions/postPreview.js"
 import { toggleFollow } from "./functions/toggleFollow.js"
 
-import type { Emoji } from 'emoji-picker-element/shared'
 import type { tag } from "./state.js"
 
 "use strict"
@@ -964,6 +965,24 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
                     if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                }
+
+                // Report Post
+                if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("report_post")) {
+                    const report_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Report Button
+                    const post_container:HTMLDivElement = report_button.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
+
+                    if(post_container.dataset["post_id"] && report_reason) reportPost(Number(post_container.dataset["post_id"]), report_reason) // Reports The Post
+                }
+
+                // Delete Post
+                if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_post")) {
+                    const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
+                    const post_container:HTMLDivElement = option.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
+
+                    if(post_container.dataset["post_id"] && action && action === "delete") deletePost(Number(post_container.dataset["post_id"]), post_container) // Deletes The Post
                 }
 
                 // Comment Forum
