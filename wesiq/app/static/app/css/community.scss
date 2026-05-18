@@ -948,16 +948,19 @@ header {
                         .delete_post {
                             position: fixed;
                             inset: auto;
+                            margin: 0;
                             flex-direction: column;
-                            gap: 5px;
-                            min-width: 150px;
-                            margin: 0px;
-                            padding: 10px;
-                            background-color: $secondary-color;
-                            border-radius: $small-border-radius;
                             top: anchor(bottom);
                             right: anchor(right);
+                            min-width: 150px;
                             margin-top: 10px;
+                            margin-right: 10px;
+                            text-align: center;
+                            color: $secondary-color;
+                            background-color: transparentize($main-color, 0.8);
+                            backdrop-filter: blur(5px);
+                            border: 1px solid transparentize($blue-color, 0.5);
+                            border-radius: $small-border-radius;
 
                             &:popover-open {
                                 display: flex;
@@ -967,10 +970,30 @@ header {
                                 background: transparent;
                             }
 
+                            p {
+                                padding: 5px 10px 0px;
+                            }
+
                             button {
                                 all: unset;
-                                cursor: pointer;
+                                padding: 5px 10px;
+                                transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+
+                                &:hover,
+                                &:focus {
+                                    background-color: transparentize($blue-color, 0.9);
+                                    letter-spacing: 0.5px;
+                                    cursor: pointer;
+                                }
+
+                                &[popovertargetaction="hide"] {
+                                    background-color: transparentize($blue-color, 0.9);
+                                }
                             }
+                        }
+
+                        .report {
+                            min-width: 200px;
                         }
                     }
 
@@ -1733,16 +1756,19 @@ header {
                                 .delete_comment {
                                     position: fixed;
                                     inset: auto;
+                                    margin: 0;
                                     flex-direction: column;
-                                    gap: 5px;
-                                    min-width: 150px;
-                                    margin: 0px;
-                                    padding: 10px;
-                                    background-color: $secondary-color;
-                                    border-radius: $small-border-radius;
                                     top: anchor(bottom);
                                     right: anchor(right);
+                                    min-width: 150px;
                                     margin-top: 10px;
+                                    margin-right: 10px;
+                                    text-align: center;
+                                    color: $secondary-color;
+                                    background-color: transparentize($main-color, 0.8);
+                                    backdrop-filter: blur(5px);
+                                    border: 1px solid transparentize($blue-color, 0.5);
+                                    border-radius: $small-border-radius;
 
                                     &:popover-open {
                                         display: flex;
@@ -1752,10 +1778,30 @@ header {
                                         background: transparent;
                                     }
 
+                                    p {
+                                        padding: 5px 10px 0px;
+                                    }
+
                                     button {
                                         all: unset;
-                                        cursor: pointer;
+                                        padding: 5px 10px;
+                                        transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+
+                                        &:hover,
+                                        &:focus {
+                                            background-color: transparentize($blue-color, 0.9);
+                                            letter-spacing: 0.5px;
+                                            cursor: pointer;
+                                        }
+
+                                        &[popovertargetaction="hide"] {
+                                            background-color: transparentize($blue-color, 0.9);
+                                        }
                                     }
+                                }
+
+                                .report {
+                                    min-width: 200px;
                                 }
                             }
 

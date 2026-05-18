@@ -78,7 +78,7 @@
 
 			{% if not request.session.logged_in_user_id == one_comment.user.id %}
 				<div 
-					class="report_comment" 
+					class="report report_comment" 
 					id="report_comment_{{ one_comment.id }}"
 					popover
 					style="position-anchor: --show_report_comment_button_{{ one_comment.id }};"
