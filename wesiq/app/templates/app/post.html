@@ -36,41 +36,11 @@
                                 style=""
                             >
                                 <button 
-                                    class="show_report_comment_button" 
-                                    popovertarget=""
-                                    style=""
-                                >
-                                    {% translate "Nahlásiť" %}
-                                </button>
-
-                                <button 
                                     class="hide_comment_properties_button" 
                                     popovertarget=""
                                     popovertargetaction="hide"
                                 >
                                     {% translate "Zavrieť" %}
-                                </button>
-                            </div>
-
-                            <div 
-                                class="report_comment" 
-                                id=""
-                                popover
-                                style=""
-                            >
-                                <button data-reason="spam">{% translate "Spam" %}</button>
-                                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                                <button data-reason="other">{% translate "Iné" %}</button>
-
-                                <button 
-                                    class="back_report_comment_button"
-                                    popovertarget="" 
-                                    popovertargetaction="hide"
-                                >
-                                    {% translate "Späť" %}
                                 </button>
                             </div>
                         </div>
@@ -92,6 +62,30 @@
                     </div>
     
                     <div class="reply_container hidden"></div>
+                </div>
+            </template>
+
+            <template class="report_template">
+                <div 
+                    class="report" 
+                    id=""
+                    popover
+                    style=""
+                >
+                    <button data-reason="spam">{% translate "Spam" %}</button>
+                    <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+                    <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+                    <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+                    <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+                    <button data-reason="other">{% translate "Iné" %}</button>
+    
+                    <button 
+                        class="back_report_button"
+                        popovertarget="" 
+                        popovertargetaction="hide"
+                    >
+                        {% translate "Späť" %}
+                    </button>
                 </div>
             </template>
 
@@ -164,15 +158,16 @@
                                 popover
                                 style="position-anchor: --show_post_properties_button_{{ post.id }};"
                             >
-                                <button 
-                                    class="show_report_post_button" 
-                                    popovertarget="report_post_{{ post.id }}"
-                                    style="anchor-name: --show_report_post_button_{{ post.id }};"
-                                >
-                                    {% translate "Nahlásiť" %}
-                                </button>
+                                {% if not request.session.logged_in_user_id == post.user.id %}
+                                    <button 
+                                        class="show_report_post_button" 
+                                        popovertarget="report_post_{{ post.id }}"
+                                        style="anchor-name: --show_report_post_button_{{ post.id }};"
+                                    >
+                                        {% translate "Nahlásiť" %}
+                                    </button>
 
-                                {% if request.session.logged_in_user_id == post.user.id %}
+                                {% else %}
                                     <button 
                                         class="delete_post_button"
                                         popovertarget="delete_post_{{ post.id }}"
@@ -192,29 +187,30 @@
                                 </button>
                             </div>
 
-                            <div 
-                                class="report_post" 
-                                id="report_post_{{ post.id }}"
-                                popover
-                                style="position-anchor: --show_report_post_button_{{ post.id }};"
-                            >
-                                <button data-reason="spam">{% translate "Spam" %}</button>
-                                <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
-                                <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
-                                <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
-                                <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
-                                <button data-reason="other">{% translate "Iné" %}</button>
-
-                                <button 
-                                    class="back_report_post_button"
-                                    popovertarget="report_post_{{ post.id }}"
-                                    popovertargetaction="hide"
+                            {% if not request.session.logged_in_user_id == post.user.id %}
+                                <div 
+                                    class="report_post" 
+                                    id="report_post_{{ post.id }}"
+                                    popover
+                                    style="position-anchor: --show_report_post_button_{{ post.id }};"
                                 >
-                                    {% translate "Späť" %}
-                                </button>
-                            </div>
+                                    <button data-reason="spam">{% translate "Spam" %}</button>
+                                    <button data-reason="harassment">{% translate "Obťažovanie" %}</button>
+                                    <button data-reason="hate_speech">{% translate "Nenávistné prejavy" %}</button>
+                                    <button data-reason="misinformation">{% translate "Dezinformácie" %}</button>
+                                    <button data-reason="explicit_content">{% translate "Explicitný obsah" %}</button>
+                                    <button data-reason="other">{% translate "Iné" %}</button>
 
-                            {% if request.session.logged_in_user_id == post.user.id %}
+                                    <button 
+                                        class="back_report_post_button"
+                                        popovertarget="report_post_{{ post.id }}"
+                                        popovertargetaction="hide"
+                                    >
+                                        {% translate "Späť" %}
+                                    </button>
+                                </div>
+
+                            {% else %}
                                 <div 
                                     class="delete_post" 
                                     id="delete_post_{{ post.id }}"

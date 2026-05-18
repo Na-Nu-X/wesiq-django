@@ -495,6 +495,10 @@ def addComment(request, logged_in_user_id):
 
         new_comment.save()
 
+        logged_in_user = {
+            "logged_in_user_id": logged_in_user_id
+        }
+
         # Creates Valid Format Of Comment For JSON Response
         comment = {
             "id": new_comment.id,
@@ -509,7 +513,7 @@ def addComment(request, logged_in_user_id):
             "level": new_comment.level
         }
 
-        return JsonResponse({"success": True, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+        return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
 
     except ValidationError as e:
         return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models

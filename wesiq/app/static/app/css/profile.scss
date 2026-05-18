@@ -429,11 +429,11 @@
 
                     a {
                         position: relative;
+                        color: $secondary-color;
                         border-radius: $small-border-radius;
                         overflow: hidden;
 
                         .image,
-                        .video,
                         .thumbnail {
                             display: block;
                             width: 100%;
