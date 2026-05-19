@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% for one_review in reviews %}
-    <div class="one_review">
+    <div class="one_review" data-review_id="{{ one_review.id }}">
         <div class="reviewer">
             {% if one_review.user.username %}
                 <a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
