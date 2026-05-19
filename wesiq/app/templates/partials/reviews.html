@@ -1,0 +1,81 @@
+{% load static %}
+{% load i18n %}
+
+{% for one_review in reviews %}
+    <div class="one_review">
+        <div class="reviewer">
+            {% if one_review.user.username %}
+                <a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if one_review.user.profile_picture_name %}
+                                /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                    >
+                </a>
+
+            {% else %}
+                <img 
+                    class="profile_picture skeleton_loading" 
+                    src="
+                        {% if one_review.user.profile_picture_name %}
+                            /media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+
+            {% endif %}
+
+            <p class="username">
+                {% if one_review.user == None %}
+                    {% translate "Neexistujúci účet" %}
+
+                {% else %}
+                    {{ one_review.user.username }}
+
+                {% endif %}
+                
+                <span class="date">
+                    - {{ one_review.creation_time|date:"d.m. Y" }}
+                        
+                    {% if one_review.last_edit != None %}
+                        ({% translate "upravené" %})
+
+                    {% endif %}
+                </span>
+            </p>
+        </div>
+
+        <div class="review">
+            <div class="rating">
+                {% for _ in "12345" %}
+                    {% if forloop.counter <= one_review.rating %}
+                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+
+                    {% else %}
+                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                    
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <p>{{ one_review.review }}</p>
+            
+            {% if one_review.user.id == request.session.logged_in_user_id %}
+                <a class="edit_review" href="{% url 'edit_review_url' %}" title="Upraviť recenziu">{% translate "Upraviť" %}</a>
+            
+            {% endif %}
+        </div>
+    </div>
+
+{% endfor %}

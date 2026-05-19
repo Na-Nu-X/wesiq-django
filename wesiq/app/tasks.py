@@ -339,7 +339,7 @@ def randomColor(from_=0, to=255):
 
 @shared_task
 def modelsWarmUp():
-    reviews = list(Reviews.objects.all()) # Gets All Reviews
+    reviews = list(Reviews.objects.filter(status="approved").order_by("-creation_time")) # Gets All Approved Reviews
     articles = list(Articles.objects.all()) # Gets All Articles
     exercises = list(Exercises.objects.all().order_by("exercise")) # Gets All Exercises
     
