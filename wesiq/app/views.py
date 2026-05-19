@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
+from app.models import Users, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -242,6 +242,63 @@ def stripeWebhook(request):
     return HttpResponse(status=200)
 
 @require_POST
+def reportReview(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            report_review_data = json.loads(request.body) # Gets The Report Review Data
+            review_id = report_review_data["review_id"] # Gets The Review ID
+            reason = report_review_data["reason"] # Gets The Reason
+            review = Reviews.objects.get(id=review_id) # Gets The Review
+            has_report = review.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Review
+
+            # Stores The Reported Review
+            ReviewReport.objects.update_or_create(
+                review_id=review_id,
+                user_id=logged_in_user_id,
+                defaults={"reason": reason} # Reason Can Be Updated
+            )
+
+            # Report
+            if not has_report:
+                review.reports += 1 # Increases The Reports Counter
+
+                if review.reports >= 5:
+                    review = Reviews.objects.get(id=review.review_id) # Gets The Review
+                    review.status = "hidden" # Hides The Review If Has More Than 10% Of Reports
+
+                review.save() # Saves The Review
+
+            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+        return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+@require_POST
+def deleteReview(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            review_id = json.loads(request.body) # Gets The Review ID
+            review = Reviews.objects.get(id=review_id, user_id=logged_in_user_id) # Gets The Review
+
+            if review:
+                review.delete() # Deletes The Review
+
+                return JsonResponse({"success": True, "message": _("Recenzia bola úspešne odstránená.")}, status=200)
+
+            return JsonResponse({"success": False, "message": _("Recenziu sa nepodarilo odstrániť.")}, status=400)
+
+        return JsonResponse({"success": False, "message": _("Recenziu nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri odstraňovaní recenzie došlo k chybe.")}, status=500)
+
+@require_POST
 def markPostAsSeen(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -371,9 +428,7 @@ def deletePost(request):
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
             post_id = json.loads(request.body) # Gets The Post ID
-
-            # Gets The Post
-            post = Post.objects.get(id=post_id, user_id=logged_in_user_id)
+            post = Post.objects.get(id=post_id, user_id=logged_in_user_id) # Gets The Post
 
             if post:
                 post.delete() # Deletes The Post
@@ -465,9 +520,7 @@ def deletePostComment(request):
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
             comment_id = json.loads(request.body) # Gets The Comment ID
-
-            # Gets The Comment
-            comment = PostForum.objects.get(id=comment_id, user_id=logged_in_user_id)
+            comment = PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
 
             if comment:
                 comment.delete() # Deletes The Comment
@@ -853,6 +906,14 @@ def homepageView(request):
             "reviews_html": reviews_html,
             "message": _("Recenzie boli úspešné nájdené.")
         }, status=200)
+
+    # Report Review
+    if request.headers.get("X-Requested-Action") == "report-review":
+        return reportReview(request)
+
+    # Delete Review
+    if request.headers.get("X-Requested-Action") == "delete-review":
+        return deleteReview(request)
 
     # Info About Reviews
     num_reviews = len(reviews) # Redis List

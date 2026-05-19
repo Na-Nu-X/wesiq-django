@@ -65,7 +65,8 @@ class Reviews(models.Model):
     status_choices = [
         ("pending", "pending"),
         ("approved", "approved"),
-        ("denied", "denied")
+        ("denied", "denied"),
+        ("hidden", "hidden")
     ]
 
     user = models.ForeignKey(

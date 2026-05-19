@@ -1031,6 +1031,7 @@ header {
                                 }
 
                                 span {
+                                    pointer-events: none;
                                     transition: letter-spacing 0.3s ease;
                                 }
                             }
@@ -1891,6 +1892,7 @@ header {
                                         }
         
                                         span {
+                                            pointer-events: none;
                                             transition: letter-spacing 0.3s ease;
                                         }
                                     }

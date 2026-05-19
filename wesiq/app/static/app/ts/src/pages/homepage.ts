@@ -1,3 +1,8 @@
+import { 
+    reportReview,
+    deleteReview
+} from "./homepage/functions/reviews.js"
+
 import { setObserverAnimation } from "../utils/setObserverAnimation.js"
 import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
 import { customSelectMenu } from "../components/customSelectMenu.js"
@@ -19,7 +24,6 @@ import type {
     ChartType,
     Point
 } from "chart.js"
-import { hideVideoLoader } from "./community/functions/feed.js"
 
 type CustomCanvasBackgroundColorOptions = {
     color?:string
@@ -107,27 +111,23 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Review Properties Menu
     all_reviews_container.addEventListener("click", function(event:PointerEvent):void {
-        console.log(event.target)
+        // Report Review
+        if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("report_review")) {
+            const report_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Report Button
+            const one_review:HTMLDivElement = report_button.closest(".one_review") as HTMLDivElement // Gets The One Review Container
+            const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
 
-        // // Report Comment
-        // if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("report_comment")) {
-        //     const report_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Report Button
-        //     const one_comment:HTMLDivElement = report_button.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-        //     const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
+            if(one_review.dataset["review_id"] && report_reason) reportReview(Number(one_review.dataset["review_id"]), report_reason) // Reports The Review
+        }
 
-        //     if(one_comment.dataset["comment_id"] && report_reason) reportComment(Number(one_comment.dataset["comment_id"]), report_reason) // Reports The Comment
-        // }
+        // Delete Review
+        if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_review")) {
+            const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
+            const one_review:HTMLDivElement = option.closest(".one_review") as HTMLDivElement // Gets The One Review Container
+            const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
 
-        // // Delete Comment
-        // if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_comment")) {
-        //     const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
-        //     const one_comment:HTMLDivElement = option.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
-        //     const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
-        //     const post_container:HTMLDivElement = option.closest(".post_container") as HTMLDivElement // Gets The Post Container
-        //     const comments_counter:HTMLParagraphElement = post_container.querySelector(".society .comments .comments_counter") as HTMLParagraphElement // Gets The Comments Counter
-
-        //     if(one_comment.dataset["comment_id"] && action && action === "delete") deleteComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
-        // }
+            if(one_review.dataset["review_id"] && action && action === "delete") deleteReview(Number(one_review.dataset["review_id"]), one_review) // Deletes The Review
+        }
     })
     
     // Load Reviews
