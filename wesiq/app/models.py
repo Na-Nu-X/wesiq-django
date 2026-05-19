@@ -75,12 +75,51 @@ class Reviews(models.Model):
         related_name="review", 
         null=True,
     )
+
+    reports_from_users = models.ManyToManyField(
+        Users, 
+        through="ReviewReport", 
+        verbose_name="Reports From Users", 
+        related_name="reported_reviews", 
+        blank=True
+    )
     
     rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="pending")
+    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+class ReviewReport(models.Model):
+    report_reason_choices = [
+        ("spam", "spam"),
+        ("harassment", "harassment"),
+        ("hate_speech", "hate speech"),
+        ("misinformation", "misinformation"),
+        ("explicit_content", "explicit content"),
+        ("other", "other")
+    ]
+
+    review = models.ForeignKey(
+        Reviews,
+        verbose_name="Review",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("review", "user")
 
 class Articles(models.Model):
     user = models.ForeignKey(

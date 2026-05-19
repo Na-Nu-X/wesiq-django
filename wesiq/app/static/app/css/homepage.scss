@@ -1023,32 +1023,124 @@ header {
 
         .all_reviews {
             .reviewer {
-                position: relative;
-                height: 38px;
-                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                
+                .profile_picture {
+                    @include profile_picture($width: 38px, $height: 38px);
+                    display: block;
+                    transition: transform 0.3s ease;
 
-                a {
-                    .profile_picture {
-                        @include profile_picture($width: 38px, $height: 38px);
-                        display: block;
-                        transition: transform 0.3s ease;
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
 
-                        &:hover {
-                            transform: scale(1.05);
+                .username {
+                    a {
+                        text-decoration: none;
+                        color: $secondary-color;
+
+                        &:hover,
+                        &:active {
+                            text-decoration: underline;
                         }
                     }
                 }
 
-                .profile_picture {
-                    @include profile_picture($width: 38px, $height: 38px);
+                // Review Properties
+
+                .show_review_properties_button {
+                    all: unset;
+                    margin-left: auto;
+
+                    .fa-ellipsis-vertical {
+                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                        display: block;
+                        font-size: 1.2em;
+                    }
                 }
 
-                .username {
-                    display: inline-block;
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    left: 48px;
+                .review_properties,
+                .report_review,
+                .delete_review {
+                    position: fixed;
+                    inset: auto;
+                    margin: 0;
+                    flex-direction: column;
+                    top: anchor(bottom);
+                    right: anchor(right);
+                    min-width: 150px;
+                    margin-top: 10px;
+                    margin-right: 10px;
+                    text-align: center;
+                    color: $secondary-color;
+                    background-color: transparentize($main-color, 0.8);
+                    backdrop-filter: blur(5px);
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $small-border-radius;
+
+                    &:popover-open {
+                        display: flex;
+                    }
+
+                    &::backdrop {
+                        background: transparent;
+                    }
+
+                    p {
+                        padding: 5px 10px 0px;
+                    }
+
+                    button {
+                        all: unset;
+                        position: relative;
+                        padding: 5px 10px;
+                        transition: background-color 0.3s ease;
+
+                        &:hover,
+                        &:focus {
+                            background-color: transparentize($blue-color, 0.9);
+                            cursor: pointer;
+
+                            i {
+                                visibility: visible;
+                                opacity: 1;
+                            }
+
+                            span {
+                                letter-spacing: 0.5px;
+                            }
+                        }
+
+                        &[popovertargetaction="hide"] {
+                            background-color: transparentize($blue-color, 0.9);
+                        }
+
+                        i {
+                            visibility: hidden;
+                            opacity: 0;
+                            position: absolute;
+                            top: 50%;
+                            left: 0px;
+                            transform: translateY(-50%);
+                            height: 100%;
+                            line-height: 33px;
+                            padding-left: 10px;
+                            pointer-events: none;
+                            cursor: pointer;
+                            transition: visibility 0.3s ease, opacity 0.3s ease;
+                        }
+
+                        span {
+                            transition: letter-spacing 0.3s ease;
+                        }
+                    }
+                }
+
+                .report_review {
+                    min-width: 200px;
                 }
             }
 
