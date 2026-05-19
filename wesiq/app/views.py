@@ -46,6 +46,7 @@ from django.core.exceptions import ValidationError
 from collections import defaultdict
 from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count
 from django.http import FileResponse
+from django.template.loader import render_to_string
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -825,9 +826,9 @@ def homepageView(request):
 
     # Reviews Fallback (If Cache Is Clear)
     if reviews is None:
-        # Gets All Reviews
+        # Gets All Approved Reviews
         reviews = list(
-            Reviews.objects.all()
+            Reviews.objects.filter(status="approved").order_by("-creation_time")
             # .values("user", "rating", "review", "last_edit", "creation_time")
         )
 
@@ -837,6 +838,21 @@ def homepageView(request):
 
     else:
         print("Getting Reviews Data From The Redis Cache.") # Test Print
+
+    page_number = request.GET.get("reviews-page", 1) # Gets Current Page Number
+    paginator = Paginator(reviews, 2) # Divides The Reviews By Maximum 5 Per Page
+    page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
+
+    # Load Reviews
+    if request.headers.get("X-Requested-Action") == "load-reviews":
+        reviews_html = render_to_string("partials/reviews.html", {"reviews": page_reviews.object_list}, request=request) # Generates HTML For Reviews
+        
+        return JsonResponse({
+            "success": True,
+            "has_next": page_reviews.has_next(),
+            "reviews_html": reviews_html,
+            "message": _("Recenzie boli úspešné nájdené.")
+        }, status=200)
 
     # Info About Reviews
     num_reviews = len(reviews) # Redis List
@@ -1043,7 +1059,7 @@ def homepageView(request):
             "username": user.username,
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
-            "reviews": reviews,
+            "page_reviews": page_reviews,
             "num_reviews": num_reviews,
             "avg_rating": avg_rating,
             "avg_rating_integer": avg_rating_integer,
@@ -1066,7 +1082,7 @@ def homepageView(request):
         "registration_form": registrationForm,
         "contact_form": contactForm,
         "review_form": reviewForm,
-        "reviews": reviews,
+        "page_reviews": page_reviews,
         "num_reviews": num_reviews,
         "avg_rating": avg_rating,
         "avg_rating_integer": avg_rating_integer,

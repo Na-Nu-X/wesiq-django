@@ -1,6 +1,15 @@
 import { setObserverAnimation } from "../utils/setObserverAnimation.js"
 import { reviewsInfoAnimation } from "../components/reviewsInfoAnimation.js"
 import { customSelectMenu } from "../components/customSelectMenu.js"
+import { sendPOST } from "../services/sendPOST.js"
+import { displayMessage } from "../utils/displayMessage.js"
+
+interface loadReviewsResponse {
+    success:boolean,
+    has_next:boolean,
+    reviews_html:string,
+    message:string
+}
 
 // Chart
 declare const Chart: typeof import("chart.js").Chart
@@ -9,6 +18,7 @@ import type {
     Plugin,
     ChartType
 } from "chart.js"
+import { hideVideoLoader } from "./community/functions/feed.js"
 
 type CustomCanvasBackgroundColorOptions = {
     color?:string
@@ -92,11 +102,99 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Reviews
 
+    const all_reviews_container:HTMLDivElement = document.querySelector(".reviews .all_reviews") as HTMLDivElement // Gets The All Reviews Container
+    
+    const load_reviews_buttons:HTMLDivElement|null = document.querySelector(".reviews .load_reviews_buttons") as HTMLDivElement // Gets The Load Reviews Buttons Container
+
+    // If There Are Some More Reviews
+    if(load_reviews_buttons) {
+        const first_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
+
+        // Load More Reviews Button Click Functionality
+        load_reviews_buttons.addEventListener("click", async function(event:PointerEvent):Promise<void> {
+            // Load More Reviews
+            if((event.target as HTMLButtonElement).classList.contains("load_more_reviews")) {
+                const load_more_reviews:HTMLButtonElement = load_reviews_buttons.querySelector(".load_more_reviews") as HTMLButtonElement // Gets The Load More Reviews Button
+                const next_page:number = Number(load_more_reviews.dataset["page"]) // Gets The Number Of The Next Page
+    
+                load_more_reviews.textContent = gettext("Načítavam...")
+                load_more_reviews.disabled = true // Disables The Button
+    
+                try {
+                    const load_reviews_response:loadReviewsResponse = await sendPOST(`${window.location.pathname}?reviews-page=${next_page}`, null, "load-reviews")
+
+                    console.log(load_reviews_response)
+            
+                    // If The Response Isn't Success
+                    if(!load_reviews_response.success) {
+                        displayMessage(load_reviews_response.message, "error") // Displays The Error Message
+                        load_more_reviews.textContent = gettext("Zobraziť viac")
+                        load_more_reviews.disabled = false // Enables The Button
+                        return
+                    }
+    
+                    all_reviews_container.insertAdjacentHTML("beforeend", load_reviews_response.reviews_html) // Appends The HTML With Loaded Reviews To The All Reviews Container
+    
+                    // Creates The Hide Loaded Reviews Button If Isn't Already In The DOM
+                    if(!load_reviews_buttons.querySelector(".hide_loaded_reviews")) {
+                        const hide_loaded_reviews = document.createElement("button") // Creates The Hide Loaded Reviews Button
+                        hide_loaded_reviews.classList.add("hide_loaded_reviews") // Adds The Hide Loaded Reviews Class
+                        hide_loaded_reviews.textContent = gettext("Skryť recenzie")
+                        load_reviews_buttons.appendChild(hide_loaded_reviews) // Appends The Hide Loaded Reviews Button To The Load Reviews Buttons Container
+                    }
+    
+                    const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
+                    all_reviews.forEach(one_review => one_review.classList.add("animate")) // Shows New Loaded Reviews
+    
+                    if(load_reviews_response.has_next) {
+                        load_more_reviews.dataset["page"] = String(next_page + 1) // Updates The Number Of The Next Page
+                        load_more_reviews.textContent = gettext("Zobraziť viac")
+                        load_more_reviews.disabled = false // Enables The Button
+                    }
+                    
+                    else load_more_reviews.remove() // Removes The Load More Reviews Button From The DOM If There Is No More Reviews To Load
+                }
+            
+                catch {
+                    displayMessage("Pri hľadaní recenzií došlo k chybe.", "error") // Displays The Error Message
+                    load_more_reviews.textContent = gettext("Zobraziť viac")
+                    load_more_reviews.disabled = false // Enables The Button
+                }
+            }
+
+            // Hide Loaded Reviews
+            else if((event.target as HTMLButtonElement).classList.contains("hide_loaded_reviews")) {
+                const hide_loaded_reviews:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Hide Loaded Reviews Button
+                const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
+
+                // Gets All Loaded Reviews
+                const all_loaded_reviews:HTMLDivElement[] = [...all_reviews].filter(function(one_review:HTMLDivElement):HTMLDivElement|undefined {
+                    if(![...first_reviews].includes(one_review)) {
+                        return one_review
+                    }
+                })
+
+                all_loaded_reviews.forEach(one_review => one_review.remove()) // Removes All Loaded Reviews From The DOM
+                hide_loaded_reviews.remove() // Removes The Hide Loaded Reviews Button From The DOM
+
+                // Creates The Load More Reviews Button If Isn't Already In The DOM
+                if(!load_reviews_buttons.querySelector(".load_more_reviews")) {
+                    const load_more_reviews = document.createElement("button") // Creates The Load More Reviews Button
+                    load_more_reviews.classList.add("load_more_reviews") // Adds The Load More Reviews Class
+                    load_more_reviews.textContent = gettext("Zobraziť viac")
+                    load_reviews_buttons.appendChild(load_more_reviews) // Appends The Load More Reviews Button To The Load Reviews Buttons Container
+                }
+
+                (load_reviews_buttons.querySelector(".load_more_reviews") as HTMLButtonElement).dataset["page"] = "2" // Stores And Sets The Number Of The Next Page Back To Default
+            }
+        })
+    }
+
     // Animate Reviews
     const reviews_info_container:HTMLDivElement = document.querySelector(".reviews .reviews_info_container") as HTMLDivElement // Gets Reviews Info
     setObserverAnimation(reviews_info_container, 1, reviewsInfoAnimation) // Animates Reviews Info
 
-    const all_reviews:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".reviews .all_reviews .one_review") // Gets All Reviews
+    const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
     setObserverAnimation(all_reviews) // Animates Each Review From All Reviews
 
     // Custom Select Menu - Contact Form

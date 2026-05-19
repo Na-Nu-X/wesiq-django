@@ -15,7 +15,7 @@ class Users(models.Model):
         ("unverified", "unverified"),
         ("OK", "OK"),
         ("suspended", "suspended"),
-        ("deleted", "deleted"),
+        ("deleted", "deleted")
     ]
 
     first_name = models.CharField(verbose_name="First Name", max_length=20, null=True, blank=True)
@@ -62,6 +62,12 @@ class Activity(models.Model):
     training_plan_summary = models.JSONField(verbose_name="Training Plan Summary", default=list, null=True, blank=True)
 
 class Reviews(models.Model):
+    status_choices = [
+        ("pending", "pending"),
+        ("approved", "approved"),
+        ("denied", "denied")
+    ]
+
     user = models.ForeignKey(
         Users, 
         verbose_name="User", 
@@ -72,6 +78,7 @@ class Reviews(models.Model):
     
     rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
+    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="pending")
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
@@ -96,7 +103,7 @@ class Articles(models.Model):
 class ArticleForum(models.Model):
     status_choices = [
         ("OK", "OK"),
-        ("hidden", "hidden"),
+        ("hidden", "hidden")
     ]
 
     article = models.ForeignKey(
@@ -171,7 +178,7 @@ class Transactions(models.Model):
     status_choices = [
         ("pending", "pending"),
         ("succeeded", "succeeded"),
-        ("failed", "failed"),
+        ("failed", "failed")
     ]
 
     user = models.ForeignKey(
@@ -330,7 +337,7 @@ class SeenPost(models.Model):
 class PostForum(models.Model):
     status_choices = [
         ("OK", "OK"),
-        ("hidden", "hidden"),
+        ("hidden", "hidden")
     ]
 
     post = models.ForeignKey(
