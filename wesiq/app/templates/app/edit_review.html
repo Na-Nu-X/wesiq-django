@@ -84,13 +84,6 @@
 
             <p class="form_report" style="bottom: 162px;"></p>
             <input type="submit" value="{% translate 'Uložiť zmeny' %}">
-
-            <div>
-                <label for="delete_review">
-                    <img class="delete_review" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť recenziu' %}"> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
-                </label>
-                {{ review_form.delete_review }}
-            </div>
         </form>
 
     {% else %}
@@ -103,6 +96,5 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/edit_review.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
 {% endblock script %}

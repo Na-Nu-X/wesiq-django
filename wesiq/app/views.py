@@ -1500,15 +1500,7 @@ def editReviewView(request):
                             review.review = review_form.cleaned_data["review"]
                             review.last_edit = timezone.now()
 
-                        review.save()
-
-                        delete_review = review_form.cleaned_data["delete_review"]
-                        if delete_review:
-                            review.delete()
-
-                            messages.add_message(request, messages.ERROR, _("Vaše hodnotenie bolo odstránené"))
-
-                            return HttpResponseRedirect(reverse("homepage_url"))
+                        review.save() # Saves The Review
                         
                         messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 

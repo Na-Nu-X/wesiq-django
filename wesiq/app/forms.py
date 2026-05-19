@@ -101,11 +101,6 @@ class reviewForm(forms.Form):
         },
     )
 
-    delete_review = forms.BooleanField(
-        widget=forms.CheckboxInput(attrs={"id": "delete_review"}),
-        required=False,
-    )
-
 class loginForm(forms.Form):
     identifier = forms.CharField(
         widget=forms.TextInput(attrs={"class": "identifier", "placeholder": _("Používateľské meno alebo e-mail")}),
