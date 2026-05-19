@@ -5,11 +5,19 @@ document.addEventListener("DOMContentLoaded", function():void {
     const navigation_bar_items:NodeListOf<HTMLLIElement> = document.querySelectorAll<HTMLLIElement>(".navigation_bar ul li")
     const hamburger:HTMLElement = navigation_bar.querySelector(".hamburger") as HTMLElement // Gets The Hamburger Icon
 
-    const screen_height:number = window.innerHeight - navigation_bar.offsetHeight // Gets The Screen Height (Without Navigation Bar)
+    const SCREEN_HEIGHT:number = window.innerHeight - navigation_bar.offsetHeight // Gets The Screen Height (Without Navigation Bar)
 
     // Window Scroll Functionality (Disappearing Navigation Bar)
     window.addEventListener("scroll", function():void {
-        this.scrollY >= screen_height ? navigation_bar.style.opacity = "0" : navigation_bar.style.opacity = "1" // Hides Or Shows The Navigation Bar
+        this.scrollY >= SCREEN_HEIGHT ? navigation_bar.style.opacity = "0" : navigation_bar.style.opacity = "1" // Hides Or Shows The Navigation Bar
+    })
+
+    // Navigation Bar Mouse Over Functionality
+    navigation_bar.addEventListener("mouseover", () => navigation_bar.style.opacity = "1")
+
+    // Navigation Bar Mouse Out Functionality
+    navigation_bar.addEventListener("mouseout", function():void {
+        if(window.scrollY >= SCREEN_HEIGHT) this.style.opacity = "0" // Hides The Navigation Bar
     })
 
     // Change Appearance Of The Navigation Bar
