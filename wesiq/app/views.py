@@ -840,7 +840,7 @@ def homepageView(request):
         print("Getting Reviews Data From The Redis Cache.") # Test Print
 
     page_number = request.GET.get("reviews-page", 1) # Gets Current Page Number
-    paginator = Paginator(reviews, 2) # Divides The Reviews By Maximum 5 Per Page
+    paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
     page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
 
     # Load Reviews
