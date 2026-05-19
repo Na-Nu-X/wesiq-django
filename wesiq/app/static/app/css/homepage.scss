@@ -1093,7 +1093,8 @@ header {
                         padding: 5px 10px 0px;
                     }
 
-                    button {
+                    button,
+                    .edit_review {
                         all: unset;
                         position: relative;
                         padding: 5px 10px;
@@ -1192,7 +1193,7 @@ header {
 
         .write_review_form_container {
             max-width: $main-width;
-            margin-top: 10px;
+            margin-top: 20px;
             margin-bottom: 40px;
             padding: 10px 0px;
             background: radial-gradient(circle, transparentize($blue-color, 0.9) 0%, transparent 100%);

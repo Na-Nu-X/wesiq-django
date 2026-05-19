@@ -81,10 +81,10 @@
 					</button>
 
 				{% else %}
-                    <button>
+                    <a class="edit_review" href="{% url 'edit_review_url' %}">
                         <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
                         <span>{% translate "Upraviť" %}</span>
-                    </button>
+                    </a>
 
 					<button 
 						class="delete_review_button"
@@ -172,11 +172,6 @@
 
             {% if one_review.review %}
                 <p>{{ one_review.review }}</p>
-            
-            {% endif %}
-            
-            {% if one_review.user.id == request.session.logged_in_user_id %}
-                <a class="edit_review" href="{% url 'edit_review_url' %}" title="Upraviť recenziu">{% translate "Upraviť" %}</a>
             
             {% endif %}
         </div>

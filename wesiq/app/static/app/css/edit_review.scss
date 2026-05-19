@@ -95,22 +95,6 @@
         @include blue_button;
         margin-top: 40px;
     }
-
-    .delete_review {
-        margin-top: 10px;
-        opacity: 0.6;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-
-        &:hover {
-            transform: scale(1.1);
-            opacity: 1;
-            cursor: pointer;
-        }
-    }
-
-    #delete_review {
-        display: none;
-    }
 }
 
 .no_logged_in p {
