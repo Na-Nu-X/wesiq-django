@@ -167,7 +167,7 @@
                         <div class="top">
                             <p class="username"></p>
 
-                            <div class="followers_container">
+                            <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
                                 <p class="followers"></p>
                                 <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                             </div>
@@ -423,7 +423,8 @@
 
                             {% for one_post_media in one_post.media.all %}
                                 {% if one_post.id == one_post_media.post.id %}
-                                    <span class="original_filename">{{ one_post_media.original_filename }}</span> (<span class="original_size">{{ one_post_media.original_size|filesizeformat }}</span>){% if forloop.counter < one_post.media.all|length %}, {% endif %}
+                                    <span class="original_filename">{{ one_post_media.original_filename }}</span>
+                                    (<span class="original_size">{{ one_post_media.original_size|filesizeformat }}</span>){% if forloop.counter < one_post.media.all|length %}, {% endif %}
                                     
                                 {% endif %}
                             {% endfor %}
@@ -452,12 +453,17 @@
                             <div class="top">
                                 <p class="username">{{ one_post.user.username }}</p>
 
-                                <div class="followers_container">
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
                                     <p class="followers">{{ one_post.user.followers.all|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
 
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                <button 
+                                    class="show_post_properties_button" 
+                                    title="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
                             </div>
 
                             <div class="bottom">
@@ -529,6 +535,15 @@
                         <div class="comments" title="{% translate 'Komentáre...' %}">
                             <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                             <p class="comments_counter">0</p>
+                        </div>
+
+                        <div class="share" title="{% translate 'Zdielať...' %}">
+                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                        </div>
+
+                        <div class="views" title="{% translate 'Počet videní...' %}">
+                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            <p class="views_counter">0</p>
                         </div>
 
                         <div class="save" title="{% translate 'Uložiť...' %}">

@@ -765,7 +765,7 @@ def homepageView(request):
         recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
         # Checks Validity Of reCaptcha Response
-        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
@@ -975,7 +975,7 @@ def homepageView(request):
             recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
             # Checks Validity Of reCaptcha Response
-            if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+            if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
                 messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
                 captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
@@ -1318,7 +1318,7 @@ def registrationView(request):
         recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
         # Checks Validity Of reCaptcha Response
-        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.5:
+        if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
             messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
             captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 

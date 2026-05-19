@@ -151,6 +151,22 @@ header {
                         @include position_center;
                     }
 
+                    .loading_progress {
+                        position: absolute;
+                        bottom: 0px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 0.8em;
+                        color: darken($secondary-color, 20%);
+                        transition: opacity 1s ease, visibility 1s ease;
+                        z-index: 50;
+                        
+                        &.hidden {
+                            opacity: 0;
+                            visibility: hidden;
+                        }
+                    }
+
                     .fa-xmark {
                         @include icon;
                         position: absolute;

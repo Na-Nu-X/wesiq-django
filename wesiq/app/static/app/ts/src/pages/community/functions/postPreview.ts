@@ -61,8 +61,13 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             const post_loading:HTMLDivElement = document.createElement("div") // Creates The Loading
             post_loading.classList.add("loading") // Adds Loading Class
 
+            const post_loading_progress:HTMLParagraphElement = document.createElement("p") // Creates The Loading Progress
+            post_loading_progress.classList.add("loading_progress") // Adds The Loading Progress Class
+            post_loading_progress.textContent = "0%"
+
             post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
             post.appendChild(post_loading) // Appends Loading To The Post
+            post.appendChild(post_loading_progress) // Appends The Loading Progress To The Post
             posts_preview.appendChild(post) // Appends The Post To The Post Preview
 
             const file_reader:FileReader = new FileReader() // Reads The Content of The File
@@ -122,6 +127,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         element.addEventListener("load", function() {
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
+                            post_loading_progress.classList.add("hidden") // Hides The Loading Progress
                         })
                     }
 
@@ -130,6 +136,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         element.addEventListener("loadeddata", function() {
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
+                            post_loading_progress.classList.add("hidden") // Hides The Loading Progress
                         })
 
                         element.addEventListener("loadedmetadata", function() {
@@ -165,13 +172,12 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                 }
             })
 
-            // file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
-            //     if(event.lengthComputable) {
-            //         const progress_percentage:number = (event.loaded / event.total) * 100
-
-            //         console.log(progress_percentage)
-            //     }
-            // }
+            file_reader.onprogress = function(event:ProgressEvent<FileReader>):void {
+                if(event.lengthComputable) {
+                    const progress_percentage:number = (event.loaded / event.total) * 100 // Calculates The Loading Progress Percentage
+                    post_loading_progress.textContent = `${Math.round(progress_percentage)}%` // Displays The Loading Progress Percentage
+                }
+            }
 
             file_reader.readAsDataURL(one_file) // Renders The Preview
         }

@@ -115,7 +115,7 @@
                         <div class="top">
                             <p class="username">{{ post.user.username }}</p>
 
-                            <div class="followers_container">
+                            <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
                                 <p class="followers">{{ post.user.followers.all|length }}</p>
 
                                 <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
@@ -402,7 +402,6 @@
 
                     <div class="views" title="{% translate 'Počet videní...' %}">
                         <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
-
                         <p class="views_counter">{{ post.views }}</p>
                     </div>
 
