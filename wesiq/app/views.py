@@ -879,14 +879,8 @@ def homepageView(request):
 
     # Reviews Fallback (If Cache Is Clear)
     if reviews is None:
-        # Gets All Approved Reviews
-        reviews = list(
-            Reviews.objects.filter(status="approved").order_by("-creation_time")
-            # .values("user", "rating", "review", "last_edit", "creation_time")
-        )
-
+        reviews = list(Reviews.objects.filter(status="approved").order_by("-creation_time")) # Gets All Approved Reviews
         cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
-
         print("Getting Reviews Data From The DB.") # Test Print
 
     else:
@@ -896,28 +890,10 @@ def homepageView(request):
     paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
     page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
 
-    # Load Reviews
-    if request.headers.get("X-Requested-Action") == "load-reviews":
-        reviews_html = render_to_string("partials/reviews.html", {"reviews": page_reviews.object_list}, request=request) # Generates HTML For Reviews
-        
-        return JsonResponse({
-            "success": True,
-            "has_next": page_reviews.has_next(),
-            "reviews_html": reviews_html,
-            "message": _("Recenzie boli úspešné nájdené.")
-        }, status=200)
-
-    # Report Review
-    if request.headers.get("X-Requested-Action") == "report-review":
-        return reportReview(request)
-
-    # Delete Review
-    if request.headers.get("X-Requested-Action") == "delete-review":
-        return deleteReview(request)
-
     # Info About Reviews
-    num_reviews = len(reviews) # Redis List
-    # num_reviews = reviews.count() # Queryset
+    total_reviews = len(reviews) # Redis List
+    # total_reviews = reviews.count() # Queryset
+    found_reviews = total_reviews
 
     ratings = [one_review.rating for one_review in reviews]
 
@@ -934,11 +910,11 @@ def homepageView(request):
 
     # Redis List
     reviews_amount_by_stars = {
-        "5": len([one_review for one_review in reviews if one_review.rating == 5]),
-        "4": len([one_review for one_review in reviews if one_review.rating == 4]),
-        "3": len([one_review for one_review in reviews if one_review.rating == 3]),
-        "2": len([one_review for one_review in reviews if one_review.rating == 2]),
-        "1": len([one_review for one_review in reviews if one_review.rating == 1]),
+        "5": len([one_review for one_review in reviews if one_review.rating == 5]), # Number Of Reviews With 5 Star Rating
+        "4": len([one_review for one_review in reviews if one_review.rating == 4]), # Number Of Reviews With 4 Star Rating
+        "3": len([one_review for one_review in reviews if one_review.rating == 3]), # Number Of Reviews With 3 Star Rating
+        "2": len([one_review for one_review in reviews if one_review.rating == 2]), # Number Of Reviews With 2 Star Rating
+        "1": len([one_review for one_review in reviews if one_review.rating == 1]), # Number Of Reviews With 1 Star Rating
     }
 
     # Queryset
@@ -973,6 +949,8 @@ def homepageView(request):
                 reverse=True
             )
 
+            found_reviews = len(reviews) # Updates The Amount Of Found Reviews
+
             # reviews = reviews.filter(rating=int(rating)).order_by("-creation_time") # Queryset
 
     if sort == "oldest":
@@ -991,6 +969,8 @@ def homepageView(request):
                 [one_review for one_review in reviews if one_review.rating == int(rating)], 
                 key=lambda one_review: one_review.creation_time, 
             )
+
+            found_reviews = len(reviews) # Updates The Amount Of Found Reviews
 
             # reviews = reviews.filter(rating=int(rating)).order_by("creation_time") # Queryset
 
@@ -1013,6 +993,8 @@ def homepageView(request):
                 reverse=True
             )
 
+            found_reviews = len(reviews) # Updates The Amount Of Found Reviews
+
             # reviews = reviews.filter(rating=int(rating)).order_by("-rating") # Queryset
 
     if sort == "worst":
@@ -1032,7 +1014,32 @@ def homepageView(request):
                 key=lambda one_review: one_review.rating
             )
 
+            found_reviews = len(reviews) # Updates The Amount Of Found Reviews
+
             # reviews = reviews.filter(rating=int(rating)).order_by("rating") # Queryset
+
+    # Resets The Reviews Paginator
+    paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
+    page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
+
+    # Load Reviews
+    if request.headers.get("X-Requested-Action") == "load-reviews":
+        reviews_html = render_to_string("partials/reviews.html", {"reviews": page_reviews.object_list}, request=request) # Generates HTML For Reviews
+        
+        return JsonResponse({
+            "success": True,
+            "has_next": page_reviews.has_next(),
+            "reviews_html": reviews_html,
+            "message": _("Recenzie boli úspešné nájdené.")
+        }, status=200)
+
+    # Report Review
+    if request.headers.get("X-Requested-Action") == "report-review":
+        return reportReview(request)
+
+    # Delete Review
+    if request.headers.get("X-Requested-Action") == "delete-review":
+        return deleteReview(request)
 
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
@@ -1121,7 +1128,8 @@ def homepageView(request):
             "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
             "page_reviews": page_reviews,
-            "num_reviews": num_reviews,
+            "total_reviews": total_reviews,
+            "found_reviews": found_reviews,
             "avg_rating": avg_rating,
             "avg_rating_integer": avg_rating_integer,
             "avg_rating_rest": avg_rating_rest,
@@ -1144,7 +1152,8 @@ def homepageView(request):
         "contact_form": contactForm,
         "review_form": reviewForm,
         "page_reviews": page_reviews,
-        "num_reviews": num_reviews,
+        "total_reviews": total_reviews,
+        "found_reviews": found_reviews,
         "avg_rating": avg_rating,
         "avg_rating_integer": avg_rating_integer,
         "avg_rating_rest": avg_rating_rest,

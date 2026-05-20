@@ -913,7 +913,7 @@ header {
             }
         }
 
-        .num_reviews {
+        .found_reviews {
             width: 500px;
             margin: 0px auto 5px;
 
@@ -973,7 +973,6 @@ header {
             gap: 20px;
 
             .no_reviews {
-                width: 100%;
                 text-align: center;
                 font-family: $article-heading-font;
                 color: $secondary-color;
@@ -982,7 +981,7 @@ header {
             .one_review {
                 position: relative;
                 opacity: 0;
-                width: 100%;
+                max-width: 100%;
                 padding: 10px;
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $small-border-radius;

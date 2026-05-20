@@ -23,11 +23,11 @@
     <div 
         class="reviews_info" 
         title="
-            {% if num_reviews == 0 %}
+            {% if total_reviews == 0 %}
                 {% translate "Zatiaľ žiadne recenzie" %}
 
             {% else %}
-                {% blocktranslate count amount=num_reviews %}
+                {% blocktranslate count amount=total_reviews %}
                     Na základe {{ amount }} recenzie
 
                 {% plural %}
@@ -237,11 +237,11 @@
                 <div 
                     class="tooltip" 
                     data-tooltip="
-                        {% if num_reviews == 0 %}
+                        {% if total_reviews == 0 %}
                             {% translate "Zatiaľ žiadne recenzie" %}
 
                         {% else %}
-                            {% blocktranslate count amount=num_reviews %}
+                            {% blocktranslate count amount=total_reviews %}
                                 Na základe {{ amount }} recenzie
 
                             {% plural %}
@@ -259,11 +259,11 @@
                         <div 
                             class="tooltip" 
                             data-tooltip="
-                                {% if num_reviews == 0 %}
+                                {% if total_reviews == 0 %}
                                     {% translate "Zatiaľ žiadne recenzie" %}
 
                                 {% else %}
-                                    {% blocktranslate count amount=num_reviews %}
+                                    {% blocktranslate count amount=total_reviews %}
                                         Na základe {{ amount }} recenzie
                                         
                                     {% plural %}
@@ -288,13 +288,10 @@
                         
                     {% endfor %}
                 </div>
-
-                <!-- <p>/ 5</p> -->
-                <!-- <p class="reviews_amount">{{ num_reviews }}</p> -->
             </div>
         </div>
 
-        <div class="num_reviews">
+        <div class="found_reviews">
             {% if reviews|length == 1 %}
                 {% translate "Našla sa 1 recenzia." %}
 
@@ -307,7 +304,7 @@
 
             {% else %}
                 <p>
-                    {% blocktranslate with amount=num_reviews %}
+                    {% blocktranslate with amount=found_reviews %}
                         Našlo sa <span>{{ amount }}</span> recenzií.
                     {% endblocktranslate %}
                 </p>
@@ -360,7 +357,7 @@
             {% include "partials/reviews.html" with reviews=page_reviews.object_list %}
 
             {% if page_reviews|length == 0 %}
-                <p>{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>
+                <p class="no_reviews">{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>
             
             {% endif %}
         </div>
