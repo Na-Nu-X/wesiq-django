@@ -314,8 +314,60 @@ export async function reportPost(id:number, reason:string):Promise<void> {
     }
 }
 
+// Function For Edit The Post Settings
+export async function editPostSettings(id:number, toggle_button:HTMLInputElement, icon:HTMLElement):Promise<void> {
+    if(
+        toggle_button.classList.contains("public_visibility") ||
+        toggle_button.classList.contains("allow_comments") ||
+        toggle_button.classList.contains("hide_likes")
+    ) {
+        try {
+            const edit_post_settings_data:{
+                post_id:number,
+                setting:string,
+                action:boolean
+            } = {
+                post_id: id,
+                setting: toggle_button.classList[0] as string,
+                action: toggle_button.classList.contains("hide_likes") ? !toggle_button.checked : toggle_button.checked
+            }
+    
+            const edit_post_settings_response:response = await sendPOST(window.location.pathname, edit_post_settings_data, "edit-post-settings") // Sends Edited Post Data As A POST Data
+    
+            // If The Response Isn't Success
+            if(!edit_post_settings_response.success) {
+                displayMessage(edit_post_settings_response.message, "error") // Displays The Error Message
+                return
+            }
+    
+            displayMessage(edit_post_settings_response.message, "success") // Displays The Success Message
+        }
+    
+        catch {
+            displayMessage(gettext("Pri úprave príspevku došlo k chybe."), "error") // Displays The Error Message
+        }
+
+        finally {
+            // Toggle Public Visibility
+            if(toggle_button.classList.contains("public_visibility")) {
+                !toggle_button.checked ? icon.classList.replace("fa-eye", "fa-eye-low-vision") : icon.classList.replace("fa-eye-low-vision", "fa-eye") // https://fontawesome.com/icons/eye-low-vision / https://fontawesome.com/icons/eye
+            }
+
+            // Toggle Comments
+            else if(toggle_button.classList.contains("allow_comments")) {
+                !toggle_button.checked ? icon.classList.replace("fa-comment", "fa-comment-slash") : icon.classList.replace("fa-comment-slash", "fa-comment") // https://fontawesome.com/icons/comment-slash / https://fontawesome.com/icons/comment
+            }
+
+            // Toggle Likes Visibility
+            else if(toggle_button.classList.contains("hide_likes")) {
+                !toggle_button.checked ? icon.classList.replace("fa-solid", "fa-regular") : icon.classList.replace("fa-regular", "fa-solid") // https://fontawesome.com/icons/heart / https://fontawesome.com/icons/heart
+            }
+        }
+    }
+}
+
 // Function For Delete The Post
-export async function deletePost(id:number, post_container:HTMLDivElement) {
+export async function deletePost(id:number, post_container:HTMLDivElement):Promise<void> {
     try {
         const delete_post_response:response = await sendPOST(window.location.pathname, id, "delete-post") // Sends Post ID As A POST Data
 
