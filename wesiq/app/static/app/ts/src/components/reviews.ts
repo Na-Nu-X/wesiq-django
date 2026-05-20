@@ -3,8 +3,8 @@
 document.addEventListener("DOMContentLoaded", function():void {
     // Write Review Form
 
-    const stars:NodeListOf<HTMLImageElement> = document.querySelectorAll<HTMLImageElement>(".write_review_form .rating .fa-star, .edit_review_form .review .rating .fa-star")
-    const rating:HTMLInputElement = document.querySelector(".write_review_form .rating input, .edit_review_form .review .rating input") as HTMLInputElement
+    const stars:NodeListOf<HTMLImageElement> = document.querySelectorAll<HTMLImageElement>(".write_review_form .rating .fa-star, .edit_review_form .rating .fa-star")
+    const rating:HTMLInputElement = document.querySelector(".write_review_form .rating input, .edit_review_form .rating input") as HTMLInputElement
     let selected_rating:number = parseInt(rating.value) || 0
 
     function updateStars(hover_value:number = 0):void {
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const write_review_form:HTMLFormElement = document.querySelector(".reviews .write_review_form_container .write_review_form") as HTMLFormElement // Gets The Write Review Form
+    const write_review_form:HTMLFormElement = document.querySelector(".reviews .write_review_form_container .write_review_form, .edit_review_form") as HTMLFormElement // Gets The Write Review Form
     const review_container:HTMLDivElement = write_review_form.querySelector(".review_container") as HTMLDivElement // Gets The Review Container
     const review:HTMLTextAreaElement = review_container.querySelector(".review_content") as HTMLTextAreaElement // Gets The Review Textarea
     const add_emoji:HTMLElement = review_container.querySelector(".icons .add_emoji") as HTMLElement // Gets The Add Emoji Icon
