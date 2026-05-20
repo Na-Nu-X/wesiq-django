@@ -460,8 +460,8 @@
 
                                 <button 
                                     class="show_processing_post_properties_button" 
-                                    popovertarget="processing_post_properties_{{ post.id }}"
-                                    style="anchor-name: --show_processing_post_properties_button_{{ post.id }};"
+                                    popovertarget="processing_post_properties_{{ one_post.id }}"
+                                    style="anchor-name: --show_processing_post_properties_button_{{ one_post.id }};"
                                     title="{% translate 'Viac...' %}"
                                 >
                                     <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
@@ -469,22 +469,115 @@
 
                                 <div 
                                     class="processing_post_properties" 
-                                    id="processing_post_properties_{{ post.id }}"
+                                    id="processing_post_properties_{{ one_post.id }}"
                                     popover
-                                    style="position-anchor: --show_processing_post_properties_button_{{ post.id }};"
+                                    style="position-anchor: --show_processing_post_properties_button_{{ one_post.id }};"
                                 >
                                     <button 
                                         class="delete_processing_post_button"
-                                        popovertarget="delete_processing_post_{{ post.id }}"
-                                        style="anchor-name: --delete_processing_post_button_{{ post.id }};"
+                                        popovertarget="delete_processing_post_{{ one_post.id }}"
+                                        style="anchor-name: --delete_processing_post_button_{{ one_post.id }};"
                                     >
                                         <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
                                         <span>{% translate "Vymazať" %}</span>
                                     </button>
 
                                     <button 
+                                        class="processing_post_settings_button"
+                                        popovertarget="processing_post_settings_{{ one_post.id }}"
+                                        style="anchor-name: --processing_post_settings_button_{{ one_post.id }};"
+                                    >
+                                        <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+                                        <span>{% translate "Upraviť" %}</span>
+                                    </button>
+
+                                    <button 
                                         class="hide_processing_post_properties_button" 
-                                        popovertarget="processing_post_properties_{{ post.id }}" 
+                                        popovertarget="processing_post_properties_{{ one_post.id }}" 
+                                        popovertargetaction="hide"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Zavrieť" %}</span>
+                                    </button>
+                                </div>
+
+                                <div 
+                                    class="processing_post_settings" 
+                                    id="processing_post_settings_{{ one_post.id }}"
+                                    popover
+                                    style="position-anchor: --processing_post_settings_button_{{ one_post.id }};"
+                                >
+                                    <div>
+                                        {% if one_post.public_visibility %}
+                                            <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+
+                                        {% else %}
+                                            <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="public_visibility"
+                                            id="public_visibility_{{ one_post.id }}"
+                                            type="checkbox"
+
+                                            {% if one_post.public_visibility %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="public_visibility_{{ one_post.id }}"></label>
+                                    </div>
+
+                                    <div>
+                                        {% if one_post.allow_comments %}
+                                            <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+
+                                        {% else %}
+                                            <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="allow_comments"
+                                            id="allow_comments_{{ one_post.id }}"
+                                            type="checkbox"
+
+                                            {% if one_post.allow_comments %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="allow_comments_{{ one_post.id }}"></label>
+                                    </div>
+
+                                    <div>
+                                        {% if not one_post.hide_likes %}
+                                            <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                                        {% else %}
+                                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="hide_likes"
+                                            id="hide_likes_{{ one_post.id }}"
+                                            type="checkbox"
+
+                                            {% if not one_post.hide_likes %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="hide_likes_{{ one_post.id }}"></label>
+                                    </div>
+
+                                    <button 
+                                        popovertarget="processing_post_settings_{{ one_post.id }}"
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
@@ -494,9 +587,9 @@
 
                                 <div 
                                     class="delete_processing_post" 
-                                    id="delete_processing_post_{{ post.id }}"
+                                    id="delete_processing_post_{{ one_post.id }}"
                                     popover
-                                    style="position-anchor: --delete_processing_post_button_{{ post.id }};"
+                                    style="position-anchor: --delete_processing_post_button_{{ one_post.id }};"
                                 >
                                     <p>{% translate "Naozaj chcete prerušiť nahrávanie?" %}</p>
 
@@ -506,7 +599,7 @@
                                     </button>
 
                                     <button 
-                                        popovertarget="delete_processing_post_{{ post.id }}"
+                                        popovertarget="delete_processing_post_{{ one_post.id }}"
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->

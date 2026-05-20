@@ -46,6 +46,7 @@ import {
     sharePost,
     togglePostSave,
     reportPost,
+    editPostSettings,
     deletePost,
     addComment,
     togglePostCommentLike,
@@ -1066,6 +1067,18 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Processing Post Container
             if((event.target as HTMLElement).closest(".processing_post_container") as HTMLDivElement) {
+                // Edit Processing Post Settings
+                if(
+                    (event.target as HTMLButtonElement).closest(".processing_post_settings") &&
+                    event.target instanceof HTMLInputElement
+                ) {
+                    const toggle_button:HTMLInputElement = event.target as HTMLInputElement // Gets The Toggle Button
+                    const processing_post_container:HTMLDivElement = toggle_button.closest(".processing_post_container") as HTMLDivElement // Gets The Processing Post Container
+                    const icon:HTMLElement = (toggle_button.parentElement as HTMLDivElement).querySelector("i") as HTMLElement // Gets The Icon
+
+                    if(processing_post_container.dataset["post_id"]) editPostSettings(Number(processing_post_container.dataset["post_id"]), toggle_button, icon) // Edits The Processing Post Settings
+                }
+
                 // Delete Processing Post
                 if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_processing_post")) {
                     const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)

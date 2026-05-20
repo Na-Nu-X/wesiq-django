@@ -963,6 +963,7 @@ header {
                         .post_properties,
                         .report,
                         .delete_post,
+                        .processing_post_settings,
                         .processing_post_properties,
                         .delete_processing_post {
                             position: fixed;
@@ -1036,6 +1037,58 @@ header {
                                 span {
                                     pointer-events: none;
                                     transition: letter-spacing 0.3s ease;
+                                }
+                            }
+                        }
+
+                        .processing_post_settings {
+                            div {
+                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                padding: 5px 10px;
+                                transition: background-color 0.3s ease;
+
+                                &:hover,
+                                &:focus {
+                                    background-color: transparentize($blue-color, 0.9);
+                                }
+
+                                input[type="checkbox"] {
+                                    display: none;
+
+                                    &:checked + label {
+                                        background-color: transparentize($success-color, 0.8);
+
+                                        &::before {
+                                            left: 22px;
+                                            background-color: $success-color;
+                                        }
+                                    }
+                                }
+                                
+                                label {
+                                    position: relative;
+                                    width: 40px;
+                                    height: 20px;
+                                    margin-left: auto;
+                                    padding: 2px;
+                                    background-color: transparentize($error-color, 0.8);
+                                    border-radius: 10px;
+                                    cursor: pointer;
+
+                                    &::before {
+                                        content: "";
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 2px;
+                                        transform: translateY(-50%);
+                                        width: 16px;
+                                        height: 16px;
+                                        background-color: $error-color;
+                                        border-radius: 50%;
+                                        transition: left 0.3s ease, background-color 0.3s ease;
+                                    }
                                 }
                             }
                         }

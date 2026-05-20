@@ -423,6 +423,31 @@ def reportPost(request):
         return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
 
 @require_POST
+def editPostSettings(request):
+    try:
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            edit_post_settings_data = json.loads(request.body) # Gets The Edit Post Settings Data
+            post_id = edit_post_settings_data["post_id"] # Gets The Post ID From The Edit Post Settings Data
+            setting = edit_post_settings_data["setting"] # Gets The Setting From The Edit Post Settings Data
+            action = edit_post_settings_data["action"] # Gets The Action From The Edit Post Settings Data
+            post = Post.objects.filter(id=post_id, user_id=logged_in_user_id).first() # Gets The Post
+
+            if post:
+                setattr(post, setting, action) # Updates The Given Column's Value
+                post.save() # Saves The Edited Post
+
+                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne upravený.")}, status=200)
+
+            return JsonResponse({"success": False, "message": _("Príspevok sa nepodarilo upraviť.")}, status=400)
+
+        return JsonResponse({"success": False, "message": _("Príspevok nie je možné upraviť bez prihlásenia.")}, status=401)
+
+    except Exception as e:
+        captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "message": _("Pri úprave príspevku došlo k chybe.")}, status=500)
+
+@require_POST
 def deletePost(request):
     try:
         if "logged_in_user_id" in request.session:
@@ -2473,6 +2498,10 @@ def communityView(request):
             # Report Post
             if request.headers.get("X-Requested-Action") == "report-post":
                 return reportPost(request)
+
+            # Edit Post Settings
+            if request.headers.get("X-Requested-Action") == "edit-post-settings":
+                return editPostSettings(request)
 
             # Delete Post
             if request.headers.get("X-Requested-Action") == "delete-post":
