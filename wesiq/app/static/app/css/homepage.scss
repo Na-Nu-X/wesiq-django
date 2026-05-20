@@ -967,7 +967,8 @@ header {
 
         // All Reviews
 
-        .all_reviews {
+        .all_reviews,
+        .my_review {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 20px;
@@ -996,179 +997,177 @@ header {
                     animation: fadeIn 1s ease-out forwards;
                 }
 
-                .reviewer .date {
-                    font-style: italic;
-                    color: darken($secondary-color, 40%);
-                }
-
-                .review {
-                    p {
-                        margin-top: 10px;
+                .reviewer {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    
+                    .profile_picture {
+                        @include profile_picture($width: 38px, $height: 38px);
+                        display: block;
+                        transition: transform 0.3s ease;
+    
+                        &:hover {
+                            transform: scale(1.05);
+                        }
                     }
+    
+                    .username {
+                        a {
+                            text-decoration: none;
+                            color: $secondary-color;
+    
+                            &:hover,
+                            &:active {
+                                text-decoration: underline;
+                            }
+                        }
 
-                    .edit_review {
-                        text-decoration: none;
-                        font-size: 0.9em;
-                        color: darken($secondary-color, 40%);
+                        .date {
+                            font-style: italic;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+    
+                    // Review Properties
+    
+                    .show_review_properties_button {
+                        all: unset;
+                        margin-left: auto;
+    
+                        .fa-ellipsis-vertical {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            display: block;
+                            font-size: 1.2em;
+                        }
+                    }
+    
+                    .review_properties,
+                    .report_review,
+                    .delete_review {
+                        position: fixed;
+                        inset: auto;
+                        margin: 0;
+                        flex-direction: column;
+                        top: anchor(bottom);
+                        right: anchor(right);
+                        min-width: 150px;
+                        margin-top: 10px;
+                        margin-right: 10px;
+                        text-align: center;
+                        color: $secondary-color;
+                        background-color: transparentize($main-color, 0.8);
+                        backdrop-filter: blur(5px);
+                        border: 1px solid transparentize($blue-color, 0.5);
+                        border-radius: $small-border-radius;
+    
+                        &:popover-open {
+                            display: flex;
+                        }
+    
+                        &::backdrop {
+                            background: transparent;
+                        }
+    
+                        p {
+                            padding: 5px 10px 0px;
+                        }
+    
+                        button,
+                        .edit_review {
+                            all: unset;
+                            position: relative;
+                            padding: 5px 10px;
+                            transition: background-color 0.3s ease;
+    
+                            &:hover,
+                            &:focus {
+                                background-color: transparentize($blue-color, 0.9);
+                                cursor: pointer;
+    
+                                i {
+                                    visibility: visible;
+                                    opacity: 1;
+                                }
+    
+                                span {
+                                    letter-spacing: 0.5px;
+                                }
+                            }
+    
+                            &[popovertargetaction="hide"] {
+                                background-color: transparentize($blue-color, 0.9);
+                            }
+    
+                            i {
+                                visibility: hidden;
+                                opacity: 0;
+                                position: absolute;
+                                top: 50%;
+                                left: 0px;
+                                transform: translateY(-50%);
+                                height: 100%;
+                                line-height: 33px;
+                                padding-left: 10px;
+                                pointer-events: none;
+                                cursor: pointer;
+                                transition: visibility 0.3s ease, opacity 0.3s ease;
+                            }
+    
+                            span {
+                                pointer-events: none;
+                                transition: letter-spacing 0.3s ease;
+                            }
+                        }
+                    }
+    
+                    .report_review {
+                        min-width: 200px;
+                    }
+                }
+    
+                .review {
+                    .rating {
+                        margin-top: 10px;
+    
+                        .fa-star {
+                            font-size: 1.5em;
+                            cursor: pointer;
+    
+                            &.full {
+                                color: $article-color;
+                                opacity: 1;
+                            }
+    
+                            &.empty {
+                                color: darken($secondary-color, 40%);
+                                opacity: 0.5;
+                            }
+                        }
+                    }
+    
+                    .review_content {
+                        width: 500px;
+                        border-radius: $small-border-radius;
 
-                        &:hover,
-                        &:active {
-                            text-decoration: underline;
+                        p {
+                            margin-top: 10px;
                         }
                     }
                 }
             }
         }
 
-        .all_reviews {
-            .reviewer {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                
-                .profile_picture {
-                    @include profile_picture($width: 38px, $height: 38px);
-                    display: block;
-                    transition: transform 0.3s ease;
+        .my_review {
+            @include flex_center($direction: column);
+            gap: 10px;
+            margin-top: 30px;
+            margin-bottom: 50px;
 
-                    &:hover {
-                        transform: scale(1.05);
-                    }
-                }
-
-                .username {
-                    a {
-                        text-decoration: none;
-                        color: $secondary-color;
-
-                        &:hover,
-                        &:active {
-                            text-decoration: underline;
-                        }
-                    }
-                }
-
-                // Review Properties
-
-                .show_review_properties_button {
-                    all: unset;
-                    margin-left: auto;
-
-                    .fa-ellipsis-vertical {
-                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                        display: block;
-                        font-size: 1.2em;
-                    }
-                }
-
-                .review_properties,
-                .report_review,
-                .delete_review {
-                    position: fixed;
-                    inset: auto;
-                    margin: 0;
-                    flex-direction: column;
-                    top: anchor(bottom);
-                    right: anchor(right);
-                    min-width: 150px;
-                    margin-top: 10px;
-                    margin-right: 10px;
-                    text-align: center;
-                    color: $secondary-color;
-                    background-color: transparentize($main-color, 0.8);
-                    backdrop-filter: blur(5px);
-                    border: 1px solid transparentize($blue-color, 0.5);
-                    border-radius: $small-border-radius;
-
-                    &:popover-open {
-                        display: flex;
-                    }
-
-                    &::backdrop {
-                        background: transparent;
-                    }
-
-                    p {
-                        padding: 5px 10px 0px;
-                    }
-
-                    button,
-                    .edit_review {
-                        all: unset;
-                        position: relative;
-                        padding: 5px 10px;
-                        transition: background-color 0.3s ease;
-
-                        &:hover,
-                        &:focus {
-                            background-color: transparentize($blue-color, 0.9);
-                            cursor: pointer;
-
-                            i {
-                                visibility: visible;
-                                opacity: 1;
-                            }
-
-                            span {
-                                letter-spacing: 0.5px;
-                            }
-                        }
-
-                        &[popovertargetaction="hide"] {
-                            background-color: transparentize($blue-color, 0.9);
-                        }
-
-                        i {
-                            visibility: hidden;
-                            opacity: 0;
-                            position: absolute;
-                            top: 50%;
-                            left: 0px;
-                            transform: translateY(-50%);
-                            height: 100%;
-                            line-height: 33px;
-                            padding-left: 10px;
-                            pointer-events: none;
-                            cursor: pointer;
-                            transition: visibility 0.3s ease, opacity 0.3s ease;
-                        }
-
-                        span {
-                            pointer-events: none;
-                            transition: letter-spacing 0.3s ease;
-                        }
-                    }
-                }
-
-                .report_review {
-                    min-width: 200px;
-                }
-            }
-
-            .review {
-                .rating {
-                    margin-top: 10px;
-
-                    .fa-star {
-                        font-size: 1.5em;
-                        cursor: pointer;
-
-                        &.full {
-                            color: $article-color;
-                            opacity: 1;
-                        }
-
-                        &.empty {
-                            color: darken($secondary-color, 40%);
-                            opacity: 0.5;
-                        }
-                    }
-                }
-
-                .review_content {
-                    width: 500px;
-                    border-radius: $small-border-radius;
-                }
+            .one_review {
+                max-width: 500px;
+                width: 100%;
+                animation: fadeIn 1s ease-out forwards;
             }
         }
 
