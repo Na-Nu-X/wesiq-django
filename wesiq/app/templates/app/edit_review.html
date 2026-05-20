@@ -64,22 +64,30 @@
                 </p>
             </div>
 
-            <div class="review">
-                <div class="rating">
-                    {% for _ in "12345" %}
-                        {% if forloop.counter <= review.rating %}
-                            <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+            <div class="rating">
+                {% for _ in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
-                        {% else %}
-                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                        
-                        {% endif %}
-                    {% endfor %}
+                    {% else %}
+                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                    
+                    {% endif %}
+                {% endfor %}
 
-                    {{ review_form.rating }}
+                {{ review_form.rating }}
+            </div>
+
+            <div class="review_container">
+                {{ review_form.review }}
+
+                <div class="icons">
+                    <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                 </div>
 
-                {{ review_form.review }}
+                <div class="emoji_picker_container hidden">
+                    <emoji-picker></emoji-picker>
+                </div>
             </div>
 
             <p class="form_report" style="bottom: 162px;"></p>
@@ -97,4 +105,5 @@
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
     <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 {% endblock script %}
