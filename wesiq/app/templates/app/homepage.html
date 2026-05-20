@@ -354,7 +354,10 @@
         </div>
 
         <div class="all_reviews">
-            {% include "partials/reviews.html" with reviews=page_reviews.object_list %}
+            {% for one_review in page_reviews.object_list %}
+                {% include "partials/reviews.html" with one_review=one_review %}
+
+            {% endfor %}
 
             {% if page_reviews|length == 0 %}
                 <p class="no_reviews">{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>
@@ -368,57 +371,66 @@
             </div>
 
         {% endif %}
+        
+        {% if my_review %}
+            <div class="my_review">
+                <h3>{% translate "Moje&nbsp;hodnotenie" %}</h3>
+                {% include "partials/reviews.html" with one_review=my_review %}
+            </div>
 
-        <div class="write_review_form_container">
-            <!-- Google reCAPTCHA V3 -->
-            <script>
-                grecaptcha.ready(function() {
-                    // Write Review Form
-
-                    const write_review_form = document.querySelector(".write_review_form")
-                    if(write_review_form) {
-                        write_review_form.addEventListener("submit", function(event) {
-                            event.preventDefault()
-                            grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "write_review_form"}).then(function(token) {
-                                document.getElementById("write_review_form_recaptcha").value = token
-                                write_review_form.submit()
-                            })
-                        })
-                    }
-                })
-            </script>
-
-            <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
-                {% csrf_token %}
-
-                <div class="rating">
-                    {% for _ in "12345" %}
-                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                        
-                    {% endfor %}
-
-                    {{ review_form.rating }}
-                </div>
-
-                <div class="review_container">
-                    {{ review_form.review }}
-
-                    <div class="icons">
-                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                    </div>
-
-                    <div class="emoji_picker_container hidden">
-                        <emoji-picker></emoji-picker>
-                    </div>
-                </div>
-
-                <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
-                <input type="submit" value="{% translate 'Uverejniť' %}">
-
+        {% else %}
+            <div class="write_review_form_container">
                 <!-- Google reCAPTCHA V3 -->
-                <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
-            </form>
-        </div>
+                <script>
+                    grecaptcha.ready(function() {
+                        // Write Review Form
+
+                        const write_review_form = document.querySelector(".write_review_form")
+                        if(write_review_form) {
+                            write_review_form.addEventListener("submit", function(event) {
+                                event.preventDefault()
+                                grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "write_review_form"}).then(function(token) {
+                                    document.getElementById("write_review_form_recaptcha").value = token
+                                    write_review_form.submit()
+                                })
+                            })
+                        }
+                    })
+                </script>
+
+                <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="rating">
+                        {% for _ in "12345" %}
+                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            
+                        {% endfor %}
+
+                        {{ review_form.rating }}
+                    </div>
+
+                    <div class="review_container">
+                        {{ review_form.review }}
+
+                        <div class="icons">
+                            <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                        </div>
+
+                        <div class="emoji_picker_container hidden">
+                            <emoji-picker></emoji-picker>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
+                    <input type="submit" value="{% translate 'Uverejniť' %}">
+
+                    <!-- Google reCAPTCHA V3 -->
+                    <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
+                </form>
+            </div>
+
+        {% endif %}
     </div>
 
     <!-- Google reCAPTCHA V3 -->
