@@ -1204,35 +1204,99 @@ header {
                 text-align: center;
                 margin: 0px auto;
                 
-                .review {
-                    .rating {
-                        .fa-star {
-                            font-size: 1.5em;
-                            cursor: pointer;
-                            transition: color 0.1s ease, transform 0.1s ease;
+                .rating {
+                    .fa-star {
+                        font-size: 1.5em;
+                        cursor: pointer;
+                        transition: color 0.1s ease, transform 0.1s ease;
 
-                            &.full {
-                                color: $article-color;
-                                opacity: 1;
-                            }
-                            
-                            &.empty {
-                                color: darken($secondary-color, 40%);
-                                opacity: 0.5;
-                            }
-
-                            &:hover {
-                                transform: scale(1.1);
-                            }
+                        &.full {
+                            color: $article-color;
+                            opacity: 1;
+                        }
+                        
+                        &.empty {
+                            color: darken($secondary-color, 40%);
+                            opacity: 0.5;
                         }
 
-                        input {
-                            display: none;
+                        &:hover {
+                            transform: scale(1.1);
                         }
                     }
 
+                    input {
+                        display: none;
+                    }
+                }
+
+                .review_container {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    margin: 10px auto 0px;
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $small-border-radius;
+                    transition: border-color 0.3s ease;
+
+                    &:has(textarea:focus) {
+                        border-color: $blue-color;
+                    }
+
+                    &:hover {
+                        border-color: $blue-color;
+                    }
+
                     textarea {
-                        @include form_textarea($width: 100%);
+                        width: 100%;
+                        min-height: 100px;
+                        field-sizing: content;
+                        padding: 5px 10px;
+                        background: transparent;
+                        color: $secondary-color;
+                        border: none;
+                        outline: none;
+                        resize: none;
+
+                        &::placeholder {
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
+                    .icons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: right;
+                        height: 25px;
+                        padding: 0px 10px;
+                        background-color: transparentize($main-color, 0.5);
+                        border-radius: 0px 0px $small-border-radius $small-border-radius;
+    
+                        .add_emoji {
+                            @include icon;
+                        }
+                    }
+    
+                    .emoji_picker_container {
+                        display: block;
+                        opacity: 1;
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        height: 300px;
+                        box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
+                        z-index: 100;
+                        transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+    
+                        emoji-picker {
+                            height: inherit;
+                        }
+    
+                        &.hidden {
+                            display: none;
+                            opacity: 0;
+                        }
                     }
                 }
 

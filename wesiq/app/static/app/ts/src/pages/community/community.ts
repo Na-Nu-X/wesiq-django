@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
         const add_emoji:HTMLElement = post_info_container.querySelector(".icons .tags .add_emoji") as HTMLElement // Gets The Add Emoji Icon
         const emoji_picker_container:HTMLDivElement = post_info_container.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
-        const picker:Element = document.querySelector("emoji-picker") as Element // Gets The Emoji Picker
+        const picker:Element = emoji_picker_container.querySelector("emoji-picker") as Element // Gets The Emoji Picker
 
         // Events
 
