@@ -949,7 +949,8 @@ header {
 
                         // Post Properties
 
-                        .show_post_properties_button {
+                        .show_post_properties_button,
+                        .show_processing_post_properties_button {
                             all: unset;
 
                             .fa-ellipsis-vertical {
@@ -961,7 +962,9 @@ header {
 
                         .post_properties,
                         .report,
-                        .delete_post {
+                        .delete_post,
+                        .processing_post_properties,
+                        .delete_processing_post {
                             position: fixed;
                             inset: auto;
                             margin: 0;

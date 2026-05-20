@@ -1063,6 +1063,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(one_comment.dataset["comment_id"] && action && action === "delete") deleteComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
                 }
             }
+
+            // Processing Post Container
+            if((event.target as HTMLElement).closest(".processing_post_container") as HTMLDivElement) {
+                // Delete Processing Post
+                if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_processing_post")) {
+                    const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
+                    const processing_post_container:HTMLDivElement = option.closest(".processing_post_container") as HTMLDivElement // Gets The Processing Post Container
+                    const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
+
+                    if(processing_post_container.dataset["post_id"] && action && action === "delete") deletePost(Number(processing_post_container.dataset["post_id"]), processing_post_container) // Deletes The Processing Post
+                }
+            }
             
             // Post Bars Click Functionalities
             if((event.target as HTMLDivElement).classList.contains("bar")) {
