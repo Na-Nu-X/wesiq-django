@@ -391,17 +391,25 @@
             <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
                 {% csrf_token %}
 
-                <div class="review">
-                    <div class="rating">
-                        {% for _ in "12345" %}
-                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                            
-                        {% endfor %}
+                <div class="rating">
+                    {% for _ in "12345" %}
+                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                        
+                    {% endfor %}
 
-                        {{ review_form.rating }}
+                    {{ review_form.rating }}
+                </div>
+
+                <div class="review_container">
+                    {{ review_form.review }}
+
+                    <div class="icons">
+                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                     </div>
 
-                    {{ review_form.review }}
+                    <div class="emoji_picker_container hidden">
+                        <emoji-picker></emoji-picker>
+                    </div>
                 </div>
 
                 <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
@@ -535,6 +543,7 @@
     <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 
     <!-- Stripe -->
     <script src="https://js.stripe.com/v3/"></script>
