@@ -528,21 +528,21 @@
                                     style="position-anchor: --show_processing_post_properties_button_{{ one_post.id }};"
                                 >
                                     <button 
-                                        class="delete_processing_post_button"
-                                        popovertarget="delete_processing_post_{{ one_post.id }}"
-                                        style="anchor-name: --delete_processing_post_button_{{ one_post.id }};"
-                                    >
-                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                        <span>{% translate "Vymazať" %}</span>
-                                    </button>
-
-                                    <button 
                                         class="show_processing_post_settings_button"
                                         popovertarget="processing_post_settings_{{ one_post.id }}"
                                         style="anchor-name: --show_processing_post_settings_button_{{ one_post.id }};"
                                     >
                                         <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
                                         <span>{% translate "Upraviť" %}</span>
+                                    </button>
+
+                                    <button 
+                                        class="delete_processing_post_button"
+                                        popovertarget="delete_processing_post_{{ one_post.id }}"
+                                        style="anchor-name: --delete_processing_post_button_{{ one_post.id }};"
+                                    >
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span>{% translate "Vymazať" %}</span>
                                     </button>
 
                                     <button 
