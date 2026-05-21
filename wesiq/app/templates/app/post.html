@@ -149,8 +149,8 @@
 
                             <button 
                                 class="show_post_properties_button" 
-                                popovertarget="post_properties_{{ post.id }}"
-                                style="anchor-name: --show_post_properties_button_{{ post.id }};"
+                                popovertarget="post_properties"
+                                style="anchor-name: --show_post_properties_button;"
                                 title="{% translate 'Viac...' %}"
                             >
                                 <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
@@ -158,15 +158,15 @@
 
                             <div 
                                 class="post_properties" 
-                                id="post_properties_{{ post.id }}"
+                                id="post_properties"
                                 popover
-                                style="position-anchor: --show_post_properties_button_{{ post.id }};"
+                                style="position-anchor: --show_post_properties_button;"
                             >
                                 {% if not request.session.logged_in_user_id == post.user.id %}
                                     <button 
                                         class="show_report_post_button" 
-                                        popovertarget="report_post_{{ post.id }}"
-                                        style="anchor-name: --show_report_post_button_{{ post.id }};"
+                                        popovertarget="report_post"
+                                        style="anchor-name: --show_report_post_button;"
                                     >
                                         <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
                                         <span>{% translate "Nahlásiť" %}</span>
@@ -174,9 +174,18 @@
 
                                 {% else %}
                                     <button 
+                                        class="show_post_settings_button"
+                                        popovertarget="post_settings"
+                                        style="anchor-name: --show_post_settings_button;"
+                                    >
+                                        <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+                                        <span>{% translate "Upraviť" %}</span>
+                                    </button>
+                                    
+                                    <button 
                                         class="delete_post_button"
-                                        popovertarget="delete_post_{{ post.id }}"
-                                        style="anchor-name: --delete_post_button_{{ post.id }};"
+                                        popovertarget="delete_post"
+                                        style="anchor-name: --delete_post_button;"
                                     >
                                         <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
                                         <span>{% translate "Vymazať" %}</span>
@@ -186,7 +195,7 @@
 
                                 <button 
                                     class="hide_post_properties_button" 
-                                    popovertarget="post_properties_{{ post.id }}" 
+                                    popovertarget="post_properties" 
                                     popovertargetaction="hide"
                                 >
                                     <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
@@ -197,9 +206,9 @@
                             {% if not request.session.logged_in_user_id == post.user.id %}
                                 <div 
                                     class="report report_post" 
-                                    id="report_post_{{ post.id }}"
+                                    id="report_post"
                                     popover
-                                    style="position-anchor: --show_report_post_button_{{ post.id }};"
+                                    style="position-anchor: --show_report_post_button;"
                                 >
                                     <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
                                     <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
@@ -210,7 +219,7 @@
 
                                     <button 
                                         class="back_report_post_button"
-                                        popovertarget="report_post_{{ post.id }}"
+                                        popovertarget="report_post"
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
@@ -220,10 +229,95 @@
 
                             {% else %}
                                 <div 
-                                    class="delete_post" 
-                                    id="delete_post_{{ post.id }}"
+                                    class="post_settings" 
+                                    id="post_settings"
                                     popover
-                                    style="position-anchor: --delete_post_button_{{ post.id }};"
+                                    style="position-anchor: --show_post_settings_button;"
+                                >
+                                    <div class="public_visibility_container">
+                                        {% if post.public_visibility %}
+                                            <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+
+                                        {% else %}
+                                            <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="public_visibility"
+                                            id="public_visibility"
+                                            type="checkbox"
+
+                                            {% if post.public_visibility %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="public_visibility"></label>
+                                    </div>
+
+                                    <div class="allow_comments_container">
+                                        {% if post.allow_comments %}
+                                            <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+
+                                        {% else %}
+                                            <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="allow_comments"
+                                            id="allow_comments"
+                                            type="checkbox"
+
+                                            {% if post.allow_comments %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="allow_comments"></label>
+                                    </div>
+
+                                    <div class="hide_likes_container">
+                                        {% if not post.hide_likes %}
+                                            <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                                        {% else %}
+                                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                        
+                                        {% endif %}
+
+                                        <input 
+                                            class="hide_likes"
+                                            id="hide_likes"
+                                            type="checkbox"
+
+                                            {% if not post.hide_likes %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        >
+
+                                        <label for="hide_likes"></label>
+                                    </div>
+
+                                    <button 
+                                        class="back_post_settings_button"
+                                        popovertarget="post_settings"
+                                        popovertargetaction="hide"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Zavrieť" %}</span>
+                                    </button>
+                                </div>
+
+                                <div 
+                                    class="delete_post" 
+                                    id="delete_post"
+                                    popover
+                                    style="position-anchor: --delete_post_button;"
                                 >
                                     <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
 
@@ -233,7 +327,7 @@
                                     </button>
 
                                     <button 
-                                        popovertarget="delete_post_{{ post.id }}"
+                                        popovertarget="delete_post"
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->

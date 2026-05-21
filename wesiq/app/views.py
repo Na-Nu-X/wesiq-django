@@ -2808,6 +2808,10 @@ def postView(request, post_id):
             if request.headers.get("X-Requested-Action") == "report-post":
                 return reportPost(request)
 
+            # Edit Post Settings
+            if request.headers.get("X-Requested-Action") == "edit-post-settings":
+                return editPostSettings(request)
+
             # Delete Post
             if request.headers.get("X-Requested-Action") == "delete-post":
                 return deletePost(request)
