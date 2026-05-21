@@ -426,6 +426,8 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <script src="{% static 'app/ts/dist/pages/community/components/customVideoPlayback.js' %}" type="module"></script>
                             
                                 {% elif one_post_media.is_video == False %}
                                     <img 
@@ -561,6 +563,8 @@
                     </div>
                 {% endif %}
             </div>
+
+            <script src="{% static 'app/ts/dist/pages/community/components/postFeed.js' %}" type="module"></script>
         </div>
 
     {% else %}
@@ -571,6 +575,5 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/community/community.js' %}" type="module"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
+    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
 {% endblock script %}
