@@ -963,6 +963,7 @@ header {
                         .post_properties,
                         .report,
                         .delete_post,
+                        .post_settings,
                         .processing_post_settings,
                         .processing_post_properties,
                         .delete_processing_post {
@@ -1041,8 +1042,11 @@ header {
                             }
                         }
 
+                        .post_settings,
                         .processing_post_settings {
-                            div {
+                            .public_visibility_container,
+                            .allow_comments_container,
+                            .hide_likes_container {
                                 position: relative;
                                 display: flex;
                                 align-items: center;

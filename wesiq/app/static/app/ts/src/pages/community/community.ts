@@ -977,6 +977,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(post_container.dataset["post_id"] && report_reason) reportPost(Number(post_container.dataset["post_id"]), report_reason) // Reports The Post
                 }
 
+                // Edit Post Settings
+                if(
+                    (event.target as HTMLButtonElement).closest(".post_settings") &&
+                    event.target instanceof HTMLInputElement
+                ) {
+                    const toggle_button:HTMLInputElement = event.target as HTMLInputElement // Gets The Toggle Button
+                    const post_container:HTMLDivElement = toggle_button.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const icon:HTMLElement = (toggle_button.parentElement as HTMLDivElement).querySelector("i") as HTMLElement // Gets The Icon
+
+                    if(post_container.dataset["post_id"]) editPostSettings(Number(post_container.dataset["post_id"]), toggle_button, icon) // Edits The Processing Post Settings
+                }
+
                 // Delete Post
                 if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("delete_post")) {
                     const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
