@@ -402,6 +402,60 @@
             </div>
         </template>
 
+        <template class="post_settings_template">
+            <div 
+                class="post_settings"
+                id=""
+                popover
+                style=""
+            >
+                <div class="public_visibility_container">
+                    <i class=""></i>
+                    
+                    <input 
+                        class="public_visibility"
+                        id=""
+                        type="checkbox"
+                    >
+
+                    <label for=""></label>
+                </div>
+
+                <div class="allow_comments_container">
+                    <i class=""></i>
+    
+                    <input 
+                        class="allow_comments"
+                        id=""
+                        type="checkbox"
+                    >
+
+                    <label for=""></label>
+                </div>
+
+                <div class="hide_likes_container">
+                    <i class=""></i>
+
+                    <input 
+                        class="hide_likes"
+                        id=""
+                        type="checkbox"
+                    >
+
+                    <label for=""></label>
+                </div>
+
+                <button
+                    class="back_post_settings_button"
+                    popovertarget=""
+                    popovertargetaction="hide"
+                >
+                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                    <span>{% translate "Zavrieť" %}</span>
+                </button>
+            </div>
+        </template>
+
         <div class="search_posts_container">
             <div class="search_bar_container">
                 <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
@@ -483,9 +537,9 @@
                                     </button>
 
                                     <button 
-                                        class="processing_post_settings_button"
+                                        class="show_processing_post_settings_button"
                                         popovertarget="processing_post_settings_{{ one_post.id }}"
-                                        style="anchor-name: --processing_post_settings_button_{{ one_post.id }};"
+                                        style="anchor-name: --show_processing_post_settings_button_{{ one_post.id }};"
                                     >
                                         <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
                                         <span>{% translate "Upraviť" %}</span>
@@ -505,9 +559,9 @@
                                     class="processing_post_settings" 
                                     id="processing_post_settings_{{ one_post.id }}"
                                     popover
-                                    style="position-anchor: --processing_post_settings_button_{{ one_post.id }};"
+                                    style="position-anchor: --show_processing_post_settings_button_{{ one_post.id }};"
                                 >
-                                    <div>
+                                    <div class="public_visibility_container">
                                         {% if one_post.public_visibility %}
                                             <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
 
@@ -530,7 +584,7 @@
                                         <label for="public_visibility_{{ one_post.id }}"></label>
                                     </div>
 
-                                    <div>
+                                    <div class="allow_comments_container">
                                         {% if one_post.allow_comments %}
                                             <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
 
@@ -553,7 +607,7 @@
                                         <label for="allow_comments_{{ one_post.id }}"></label>
                                     </div>
 
-                                    <div>
+                                    <div class="hide_likes_container">
                                         {% if not one_post.hide_likes %}
                                             <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
 
@@ -577,6 +631,7 @@
                                     </div>
 
                                     <button 
+                                        class="back_processing_post_settings_button"
                                         popovertarget="processing_post_settings_{{ one_post.id }}"
                                         popovertargetaction="hide"
                                     >

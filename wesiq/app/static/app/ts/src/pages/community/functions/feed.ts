@@ -706,6 +706,10 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     const report_template_clone:DocumentFragment = report_template.content.cloneNode(true) as DocumentFragment // Clones The Report Template Content
     const report_container:HTMLDivElement = report_template_clone.querySelector(".report") as HTMLDivElement // Gets The Report Container
 
+    const post_settings_template:HTMLTemplateElement = feed.querySelector(".post_settings_template") as HTMLTemplateElement // Gets The Post Settings Template
+    const post_settings_template_clone:DocumentFragment = post_settings_template.content.cloneNode(true) as DocumentFragment // Clones The Post Settings Template Content
+    const post_settings:HTMLDivElement = post_settings_template_clone.querySelector(".post_settings") as HTMLDivElement // Gets The Post Settings Container
+
     // Post Container
     post_container.dataset["post_id"] = String(post_data.id) // Stores The Post ID
 
@@ -741,7 +745,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
     }
 
     // Post Properties
-    createPostPropertiesHTML(top, report_container, post_data, logged_in_user_id) // Creates The Post Properties HTML
+    createPostPropertiesHTML(top, report_container, post_settings, post_data, logged_in_user_id) // Creates The Post Properties HTML
 
     const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
 
@@ -1147,7 +1151,7 @@ function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_u
 }
 
 // Function For Create The Post Properties HTML
-function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
+function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTMLDivElement, post_settings:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
     const show_post_properties_button:HTMLButtonElement = container.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
     const post_properties:HTMLDivElement = container.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
     const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
@@ -1180,8 +1184,75 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
     }
 
-    // If The Post Belongs To The Logged In User The Delete Option Will Be Shown
+    // If The Post Belongs To The Logged In User The Settings And The Delete Option Will Be Shown
     else {
+        // Show Post Settings Button
+        const show_post_settings_button:HTMLButtonElement = document.createElement("button") // Creates The Show Post Settings Button
+        show_post_settings_button.classList.add("show_post_settings_button") // Adds The Show Post Settings Button Class
+        show_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Pop Over
+        show_post_settings_button.style = `anchor-name: --show_post_settings_button_${post_data.id}` // Creates The Anchor
+        show_post_settings_button.innerHTML = "<i class='fa-solid fa-pen'></i>" // https://fontawesome.com/icons/pen
+        show_post_settings_button.innerHTML += `<span>${gettext("Upraviť")}</span>`
+        post_properties.insertBefore(show_post_settings_button, hide_post_properties_button) // Appends The Show Post Settings Button To The Post Properties Menu
+
+        // Post Settings Menu
+        post_settings.id = `post_settings_${post_data.id}` // Sets The ID
+        post_settings.style = `position-anchor: --show_post_settings_button_${post_data.id}` // Links The Anchor
+        
+        // Visibility Container
+        const public_visibility_container:HTMLDivElement = post_settings.querySelector(".public_visibility_container") as HTMLDivElement // Gets The Public Visibility Container
+        const public_visibility_icon:HTMLElement = public_visibility_container.querySelector("i") as HTMLElement // Gets The Public Visibility Icon
+        const public_visibility_checkbox:HTMLInputElement = public_visibility_container.querySelector(".public_visibility") as HTMLInputElement // Gets The Public Visibility Checkbox
+        const public_visibility_label:HTMLLabelElement = public_visibility_container.querySelector("label") as HTMLLabelElement // Gets The Public Visibility Label
+        
+        if(post_data.public_visibility) {
+            public_visibility_icon.classList.add("fa-solid", "fa-eye") // https://fontawesome.com/icons/eye
+            public_visibility_checkbox.checked = true // Checks The Public Visibility Checkbox
+        }
+        
+        else public_visibility_icon.classList.add("fa-solid", "fa-eye-low-vision") // https://fontawesome.com/icons/eye-low-vision
+
+        public_visibility_checkbox.id = `public_visibility_${post_data.id}`
+        public_visibility_label.htmlFor = `public_visibility_${post_data.id}`
+        
+        // Allow Comments Container
+        const allow_comments_container:HTMLDivElement = post_settings.querySelector(".allow_comments_container") as HTMLDivElement // Gets The Allow Comments Container
+        const allow_comments_icon:HTMLElement = allow_comments_container.querySelector("i") as HTMLElement // Gets The Allow Comments Icon
+        const allow_comments_checkbox:HTMLInputElement = allow_comments_container.querySelector(".allow_comments") as HTMLInputElement // Gets The Allow Comments Checkbox
+        const allow_comments_label:HTMLLabelElement = allow_comments_container.querySelector("label") as HTMLLabelElement // Gets The Allow Comments Label
+        
+        if(post_data.allow_comments) {
+            allow_comments_icon.classList.add("fa-solid", "fa-comment") // https://fontawesome.com/icons/eye
+            allow_comments_checkbox.checked = true // Checks The Allow Comments Checkbox
+        }
+        
+        else allow_comments_icon.classList.add("fa-solid", "fa-comment-slash") // https://fontawesome.com/icons/eye-low-vision
+
+        allow_comments_checkbox.id = `allow_comments_${post_data.id}`
+        allow_comments_label.htmlFor = `allow_comments_${post_data.id}`
+
+        // Hide Likes Container
+        const hide_likes_container:HTMLDivElement = post_settings.querySelector(".hide_likes_container") as HTMLDivElement // Gets The Hide Likes Container
+        const hide_likes_icon:HTMLElement = hide_likes_container.querySelector("i") as HTMLElement // Gets The Hide Likes Icon
+        const hide_likes_checkbox:HTMLInputElement = hide_likes_container.querySelector(".hide_likes") as HTMLInputElement // Gets The Hide Likes Checkbox
+        const hide_likes_label:HTMLLabelElement = hide_likes_container.querySelector("label") as HTMLLabelElement // Gets The Hide Likes Label
+        
+        if(!post_data.hide_likes) {
+            hide_likes_icon.classList.add("fa-solid", "fa-heart") // https://fontawesome.com/icons/eye
+            hide_likes_checkbox.checked = true // Checks The Hide Likes Checkbox
+        }
+        
+        else hide_likes_icon.classList.add("fa-regular", "fa-heart") // https://fontawesome.com/icons/eye-low-vision
+
+        hide_likes_checkbox.id = `hide_likes_${post_data.id}`
+        hide_likes_label.htmlFor = `hide_likes_${post_data.id}`
+
+        container.appendChild(post_settings) // Appends The Post Settings Menu To The Post Container
+
+        // Back Post Settings Button
+        const back_post_settings_button:HTMLButtonElement = post_settings.querySelector(".back_post_settings_button") as HTMLButtonElement // Gets The Back Post Settings Button
+        back_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Pop Over
+
         // Delete Post Button
         const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
         delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
