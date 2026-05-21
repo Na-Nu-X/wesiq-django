@@ -398,6 +398,8 @@
                     })
                 </script>
 
+                <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
+
                 <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
                     {% csrf_token %}
 
@@ -548,14 +550,16 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/homepage.js' %}" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
+
+    <script src="{% static 'app/ts/dist/pages/homepage/components/loginForm.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/homepage/components/registrationForm.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/homepage/components/contactForm.js' %}" type="module"></script>
+    <script src="{% static 'app/ts/dist/pages/homepage/components/reviews.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/login.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/registration.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/components/searchBar.js' %}" type="module"></script>
-    <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart JS -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 
     <!-- Stripe -->
     <script src="https://js.stripe.com/v3/"></script>

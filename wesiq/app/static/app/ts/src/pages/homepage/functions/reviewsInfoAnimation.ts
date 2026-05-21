@@ -1,18 +1,15 @@
-import { easeOutEffect } from "../utils/easeOutEffect.js"
+import { easeOutEffect } from "../../../utils/easeOutEffect.js"
 
 // Function For Animate Reviews Info
 export function reviewsInfoAnimation():void {
     // Review Graph Animation
     const reviews_graph_columns:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".reviews .reviews_info_container .graph .one_column") // Gets All Columns From Reviews Graph
-    
     let total_reviews_amount:number = [...reviews_graph_columns].reduce((sum:number, one_column:HTMLDivElement) => sum + Number((one_column.querySelector(".counter") as HTMLParagraphElement).dataset["amount"]), 0) // Gets Total Amount Of Reviews
-
-    const max_green:number = 185 // Color With Maximum Of Green Is rgb(235, 185, 20)
+    const MAX_GREEN:number = 185 // Color With Maximum Of Green Is rgb(235, 185, 20)
 
     reviews_graph_columns.forEach(function(one_column:HTMLDivElement):void {
         const bar:HTMLDivElement = one_column.querySelector(".review_bar") as HTMLDivElement // Gets Bar
         const counter:HTMLParagraphElement = one_column.querySelector(".counter") as HTMLParagraphElement // Gets Counter
-
         const progress_percentage:string = ((Number(counter.dataset["amount"]) / total_reviews_amount) * 100).toFixed(2) // Gets Progress Percentage For Each Column
 
         // Animation's Settings
@@ -29,7 +26,7 @@ export function reviewsInfoAnimation():void {
             const eased:number = easeOutEffect(progress) // Slows Down Animation At The End (Slows Down Progress Variable)
             
             // Makes Color Transition For Progress Bars From rgb(235, 0, 20) To rgb(235, 185, 20)
-            let bars_color:number = max_green * eased
+            let bars_color:number = MAX_GREEN * eased
             bar.style.setProperty("--color", `rgb(235, ${bars_color}, 20)`)
 
             // Each Progress Bar Rendering
@@ -91,7 +88,7 @@ export function reviewsInfoAnimation():void {
                 star_color_1.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
                 star_color_2.setAttribute("stop-color", `rgb(235, ${green}, 20)`)
 
-                green = (max_green / 5) * average_rating_number // Changes Color Of Stars By Average Rating (Lower Average Rating - Stars Are More To Red, Higher Average Rating - Stars Are More To Yellow)
+                green = (MAX_GREEN / 5) * average_rating_number // Changes Color Of Stars By Average Rating (Lower Average Rating - Stars Are More To Red, Higher Average Rating - Stars Are More To Yellow)
 
                 // Filling Stars
                 

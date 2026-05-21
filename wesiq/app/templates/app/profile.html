@@ -13,8 +13,8 @@
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
         {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+            <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/edit_account.js' %}" type="module"></script>
-            <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 
             <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
 
