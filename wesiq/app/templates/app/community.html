@@ -312,6 +312,12 @@
                     <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
     
                     <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+
+                    <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+
+                    <div class="emoji_picker_container hidden">
+                        <emoji-picker></emoji-picker>
+                    </div>
                     
                     <!-- https://heroicons.com/ -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">

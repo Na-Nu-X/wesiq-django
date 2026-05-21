@@ -546,6 +546,12 @@
                                     {% endif %}
                                 "
                             >
+
+                            <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+
+                            <div class="emoji_picker_container hidden">
+                                <emoji-picker></emoji-picker>
+                            </div>
                             
                             <!-- https://heroicons.com/ -->
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
@@ -566,4 +572,5 @@
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
     <script src="{% static 'app/ts/dist/pages/community/community.js' %}" type="module"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 {% endblock script %}

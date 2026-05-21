@@ -406,20 +406,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
 
-        // Global Event Delegations
-
-        // Document Click Functionality
-        document.addEventListener("click", function(event:PointerEvent):void {
-            // When The User Clicks Outside The Emoji Picker Container
-            if(
-                !(event.target as HTMLDivElement).classList.contains("emoji_picker_container") &&
-                !(event.target as HTMLDivElement).closest(".emoji_picker_container")
-            ) {
-                emoji_picker_container.classList.add("hidden") // Hides The Emoji Picker Container
-                return
-            }
-        })
-
         // Tag Users
 
         // Variables
@@ -1010,6 +996,18 @@ document.addEventListener("DOMContentLoaded", function():void {
                     !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
                 }
 
+                // Add Emoji To The Write Comment Input
+                if(
+                    (event.target as HTMLElement).classList.contains("add_emoji") &&
+                    (event.target as HTMLElement).closest(".write_comment_form")
+                ) {
+                    const add_emoji:HTMLElement = event.target as HTMLElement // Gets The Add Emoji Icon
+                    const emoji_picker_container:HTMLDivElement = (add_emoji.parentElement as HTMLDivElement).querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
+
+                    event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+                    emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+                }
+
                 // Send Comment
                 if((event.target as HTMLImageElement).classList.contains("send")) {
                     const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
@@ -1182,6 +1180,58 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
 
             return
+        })
+
+        feed.addEventListener("mousedown", function(event:MouseEvent):void {
+            // Add Emoji To The Write Comment Input
+            if(
+                ((event.target as HTMLElement).classList.contains("add_emoji") ||
+                (event.target as HTMLElement).classList.contains("emoji_picker_container")) &&
+                (event.target as HTMLElement).closest(".write_comment_form")
+            ) {
+                event.preventDefault() // Prevents Default Behaviour
+            }
+        })
+
+        feed.addEventListener("emoji-click", function(event:Event):void {
+            // Add Emoji To The Write Comment Input
+            if(
+                (event.target as HTMLElement).tagName.toLowerCase() === "emoji-picker" &&
+                (event.target as HTMLElement).closest(".write_comment_form")
+            ) {
+                const picker:Element = event.target as Element // Gets The Emoji Picker
+                const comment:HTMLDivElement = (picker.closest(".write_comment_form") as HTMLDivElement).querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+
+                const custom_event:CustomEvent<{
+                    unicode:string
+                }> = event as CustomEvent<{ unicode: string }>
+            
+                const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
+                const selection:Selection|null = window.getSelection()
+                const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && comment.contains(selection.anchorNode)
+    
+                if(!isInsideEditable) focusAtEnd(comment)
+    
+                const active_selection:Selection|null = window.getSelection()
+    
+                if(active_selection && active_selection.rangeCount > 0) {
+                    const range:Range = active_selection.getRangeAt(0)
+                
+                    range.deleteContents() // Deletes The Selected Text
+    
+                    // Inserts The Emoji To The Text
+                    const text_node:Text = document.createTextNode(emoji)
+                    range.insertNode(text_node)
+    
+                    // Sets The Cursor Position Behind The Inserted Emoji
+                    range.setStartAfter(text_node)
+                    range.setEndAfter(text_node)
+                    
+                    // Updates The Cursor
+                    active_selection.removeAllRanges()
+                    active_selection.addRange(range)
+                }
+            }
         })
 
         // Feed Mouse Over Functionality
@@ -1445,4 +1495,19 @@ document.addEventListener("DOMContentLoaded", function():void {
             })
         })
     }
+
+    // Global Event Delegations
+
+    // Document Click Functionality
+    document.addEventListener("click", function(event:PointerEvent):void {
+        // When The User Clicks Outside The Emoji Picker Container
+        if(
+            !(event.target as HTMLDivElement).classList.contains("emoji_picker_container") &&
+            !(event.target as HTMLDivElement).closest(".emoji_picker_container")
+        ) {
+            const all_emoji_picker_containers:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".emoji_picker_container") // Gets All Emoji Picker Containers
+            all_emoji_picker_containers.forEach((one_emoji_picker_container) => one_emoji_picker_container.classList.add("hidden")) // Hides Every Emoji Picker Container
+            return
+        }
+    })
 })

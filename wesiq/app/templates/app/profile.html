@@ -10,13 +10,11 @@
 
 {% block content %}
     <div class="profile_container">
-        {% comment %} <h2><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.username }}</a></h2> {% endcomment %}
-        {% comment %} <h3><a href="{% url 'profile_url' user.username %}" target="_self">{{ user.first_name }}&nbsp;{{ user.last_name }}</a></h3> {% endcomment %}
-
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
         {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
             <script src="{% static 'app/ts/dist/pages/profile/edit_account.js' %}" type="module"></script>
+            <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script> <!-- Emoji Picker Element Library -->
 
             <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
 
@@ -51,7 +49,17 @@
                     {{ edit_account_form.delete_profile_picture }}
                 </div>
 
-                {{ edit_account_form.bio }}
+                <div class="bio_container">
+                    {{ edit_account_form.bio }}
+    
+                    <div class="icons">
+                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                    </div>
+    
+                    <div class="emoji_picker_container hidden">
+                        <emoji-picker></emoji-picker>
+                    </div>
+                </div>
 
                 <div class="first_name_container">
                     <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
