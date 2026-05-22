@@ -382,7 +382,7 @@
                                         </div>
 
                                         <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="metadata" autoplay loop muted>
-                                            <source src="{% url 'stream_video_url' user_id=post.user.id filename=one_post_media.filename %}">
+                                            <source src="{% url 'stream_video_url' user_id=post.user_id media_id=one_post_media.id filename='index.m3u8' %}">
                                             
                                             {% blocktranslate with username=post.user.username %}
                                                 Príspevok užívateľa {{ username }}
@@ -427,6 +427,7 @@
                                         </div>
                                     </div>
 
+                                    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script> <!-- HLS Video Support -->
                                     <script src="{% static 'app/ts/dist/pages/community/components/customVideoPlayback.js' %}" type="module"></script>
                             
                                 {% elif one_post_media.is_video == False %}

@@ -12,7 +12,7 @@ from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db.models import Avg
 from django.core.mail import EmailMultiAlternatives
-import random, requests, os, secrets
+import random, requests, os, secrets, mimetypes
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 import math
@@ -2745,7 +2745,7 @@ def loadPostsView(request):
                 "likes": one_post.likes,
                 "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
                 "created_at": one_post.created_at.isoformat(),
-                "media": list(one_post.media.values("file", "thumbnail", "is_video")),
+                "media": list(one_post.media.values("id", "file", "thumbnail", "is_video")),
                 "views": one_post.views, # TEST
 
                 "visible_comments": [
@@ -2786,15 +2786,25 @@ def loadPostsView(request):
 
     return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
 
-def streamVideo(request, user_id, filename):
-    # Gets The Save Video File Path (Path Traversal Protection)
+def streamVideo(request, user_id, media_id, filename):
+    # Manual Addition For HLS Types If The OS Doesn't Know Them
+    mimetypes.add_type("application/x-mpegURL", ".m3u8")
+    mimetypes.add_type("video/MP2T", ".ts")
+
+    # Gets The Save Video File Path (Path Traversal Protection) From Traveling Between Paths
     safe_filename = os.path.basename(filename)
-    path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), safe_filename)
-    
+    path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename)
+
     if not os.path.exists(path):
-        raise Http404(f"Video {safe_filename} was not found.")
-        
-    video_response = FileResponse(open(path, "rb"), content_type="video/mp4")
+        raise Http404(f"File {safe_filename} was not found.")
+
+    # Checks If The File Is index.m3u8 Or .ts Video File Segment
+    content_type, _ = mimetypes.guess_type(path)
+
+    if not content_type:
+        content_type = "application/octet-stream"
+
+    video_response = FileResponse(open(path, "rb"), content_type=content_type)
     video_response["Accept-Ranges"] = "bytes"
 
     return video_response
