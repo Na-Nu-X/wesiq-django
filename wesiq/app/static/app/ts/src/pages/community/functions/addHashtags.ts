@@ -4,7 +4,7 @@ import {
 } from "../functions/customTextarea.js"
 
 import { add_hashtag_state } from "../state.js"
-import { highlightTagsInText } from "./tagUsers.js"
+import { highlightTaggedUsersInPlainText } from "./tagUsers.js"
 
 import type { hashtag } from "../state.js"
 
@@ -66,9 +66,7 @@ function updateCollidedHashtag(collided_hashtag:string, added_hashtags_input:HTM
                 styled_hashtags_in_text.forEach(function(one_hashtag:HTMLSpanElement) {
                     if(one_hashtag.textContent === new_hashtag) {
                         const text:string = description.innerText // Gets The Text
-                        const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
-
-                        description.innerHTML = highlightTagsInText(highlightHashtagsInText(text), styled_tags_in_text) // Sets The New Value
+                        description.innerHTML = highlightTaggedUsersInPlainText(highlightHashtagsInText(text)) // Sets The New Value
 
                         focusAtEnd(description) // Adds Focus Into The Input
                     }
@@ -219,9 +217,7 @@ function placeHashtagToText(description:HTMLDivElement, added_hashtag:string):vo
 
     if(hashtag_start_index === -1) return
 
-    const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
-    
-    description.innerHTML = highlightTagsInText(highlightHashtagsInText(text), styled_tags_in_text) // Sets The New Value
+    description.innerHTML = highlightTaggedUsersInPlainText(highlightHashtagsInText(text)) // Sets The New Value
 
     const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 

@@ -1,5 +1,5 @@
 export interface compressTask {
-    task_id:number,
+    task_id:string,
     post_media_id:number,
     post_id:number
 }
@@ -10,13 +10,13 @@ export interface uploadPostResponse {
 }
 
 interface uploadProgressResponse {
-    task_id:number,
+    task_id:string,
     state:"PENDING"|"PROGRESS"|"SUCCESS"|"FAILURE",
     progress:number
 }
 
 // Function For Get The Upload Progress
-export function getUploadProgress(task_id:number, post_id:number, upload_progress:HTMLDivElement, processing_post_report:HTMLParagraphElement):void {
+export function getUploadProgress(task_id:string, post_id:number, upload_progress:HTMLDivElement, processing_post_report:HTMLParagraphElement):void {
     const MAX_RED:number = 255
     const MIN_RED:number = 82
 
@@ -78,12 +78,12 @@ export function setCompletedUploadProgress(upload_progress:HTMLDivElement):void 
 }
 
 // Function For Remove The Current Processing Post Data From The Local Storage
-function removeProcessingPost(task_id:number):void {
+function removeProcessingPost(task_id:string):void {
     // Gets All Processing Posts From The Local Storage
     let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
 
     // Gets The Current Processing Post From The Local Storage
-    const processing_post:compressTask|undefined = processing_posts.find(function(one_task:compressTask) {
+    const processing_post:compressTask|undefined = processing_posts.find(function(one_task:compressTask):boolean {
         return one_task.task_id === task_id
     })
 

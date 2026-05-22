@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", function():void {
     const all_processing_post_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll<HTMLDivElement>(".processing_post_container") // Gets All Processing Post Containers
 
     let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+
+    console.log(processing_posts)
+
     const processing_posts_media_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_media_id) // Gets All Current Media IDs From The Local Storage
 
     all_processing_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
@@ -34,10 +37,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Variables
 
-        const processing_post_container:HTMLDivElement = one_post_container.querySelector(".processing_post_container") as HTMLDivElement // Gets The Processing Post Container
-
-        const processing_post_settings:HTMLDivElement = processing_post_container.querySelector(".header .right .top .processing_post_settings") as HTMLDivElement // Gets The Processing Post Settings Popover Menu
-        const delete_processing_post:HTMLDivElement = processing_post_container.querySelector(".header .right .top .delete_processing_post") as HTMLDivElement // Gets The Delete Processing Post Popover Menu
+        const processing_post_settings:HTMLDivElement = one_post_container.querySelector(".header .right .top .processing_post_settings") as HTMLDivElement // Gets The Processing Post Settings Popover Menu
+        const delete_processing_post:HTMLDivElement = one_post_container.querySelector(".header .right .top .delete_processing_post") as HTMLDivElement // Gets The Delete Processing Post Popover Menu
 
         const description:HTMLParagraphElement|null = one_post_container.querySelector(".description") as HTMLParagraphElement || null // Gets The Description
 
@@ -63,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             const option:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Option (Yes / No)
             const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
 
-            if(post_id && action && action === "delete") deletePost(post_id, processing_post_container) // Deletes The Processing Post
+            if(post_id && action && action === "delete") deletePost(post_id, one_post_container) // Deletes The Processing Post
         })
 
         // Initialization

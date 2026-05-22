@@ -5,7 +5,7 @@ import { sendPOST } from "../../../services/sendPOST.js"
 import type { 
     compressTask,
     uploadPostResponse
-} from "../functions/feed.js"
+} from "../functions/processingPosts.js"
 
 // Function For Upload The Post
 export async function uploadPost(submit_button:HTMLInputElement, form_data:FormData):Promise<void> {

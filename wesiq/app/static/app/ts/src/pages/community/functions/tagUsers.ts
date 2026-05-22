@@ -1,6 +1,6 @@
 import { 
-    getCursorPosition, 
-    focusAtEnd 
+    getCursorPosition,
+    setCursorPosition
 } from "../functions/customTextarea.js"
 
 import { tag_user_state } from "../state.js"
@@ -43,49 +43,43 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
 
     // Sends The POST Only If The User Is Currently Tagging Someone
     if(tag_user_state.tagged_user) {
-        try {
-            const searched_tags_response:searchedTagsResponse = await sendPOST(window.location.pathname, tag_user_state.tagged_user.toLowerCase(), "tag-user") // Sends The Data With POST
+        const searched_users:taggedUser[]|null = await searchUsersForTag(tag_user_state.tagged_user.toLowerCase())
 
-            // If The Response Isn't Success
-            if(!searched_tags_response.success) {
-                displayMessage(searched_tags_response.message, "error") // Displays The Error Message
-                return
-            }
-
-            // Checks If Searched Tag Exists
-            if(isExistingTag(users_for_tag_container, tag_user_state.tagged_user)) {
-                tagUser(users_for_tag_container, tag_user_state.tagged_user, description) // Tags The User
-            }
-
-            users_for_tag_container.innerHTML = "" // Deletes All Previous Data From The Container
-            
-            if(searched_tags_response.users) {
-                // Checks If There Were Any Tags Found And User Didn't Ended Typing The Tag
-                if(searched_tags_response.users.length > 0 && !tag_user_state.tagged_user.includes(" ")) {
-                    searched_tags_response.users.forEach(one_user_data => renderUsersForTag(one_user_data, users_for_tag_container)) // Renders Each User For Tag
-                }
-
-                else {
-                    hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
-
-                    if(tag_user_state.tagged_user.includes(" ")) {
-                        const nearest_space_index:number = text.indexOf(" ", tag_start_index + 1) // Gets The Index Of The Nearest Space
-
-                        const at:tag = {
-                            position: {
-                                tag_start_index,
-                                tag_end_index: nearest_space_index - 1
-                            }
-                        }
-
-                        storeAtSignPosition(at) // Stores The At Sign Position
-                    }
-                }
-            }
+        if(searched_users === null) {
+            displayMessage(gettext("Pri hľadaní užívateľov došlo k chybe."), "error") // Displays The Error Message
+            return
         }
 
-        catch {
-            displayMessage(gettext("Pri hľadaní užívateľov došlo k chybe."), "error") // Displays The Error Message
+        // Checks If Searched Tag Exists (Same Rules As isExistingTag, Using Current API Results)
+        if(
+            matchTaggedUserFromResults(searched_users, tag_user_state.tagged_user) ||
+            isExistingTag(users_for_tag_container, tag_user_state.tagged_user)
+        ) {
+            tagUser(users_for_tag_container, tag_user_state.tagged_user, description) // Tags The User
+        }
+
+        users_for_tag_container.innerHTML = "" // Deletes All Previous Data From The Container
+
+        // Checks If There Were Any Tags Found And User Didn't Ended Typing The Tag
+        if(searched_users.length > 0 && !tag_user_state.tagged_user.includes(" ")) {
+            searched_users.forEach(one_user_data => renderUsersForTag(one_user_data, users_for_tag_container)) // Renders Each User For Tag
+        }
+
+        else {
+            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+
+            if(tag_user_state.tagged_user.includes(" ")) {
+                const nearest_space_index:number = text.indexOf(" ", tag_start_index + 1) // Gets The Index Of The Nearest Space
+
+                const at:tag = {
+                    position: {
+                        tag_start_index,
+                        tag_end_index: nearest_space_index - 1
+                    }
+                }
+
+                storeAtSignPosition(at) // Stores The At Sign Position
+            }
         }
     }
 }
@@ -163,16 +157,18 @@ export function tagUser(users_for_tag_container:HTMLDivElement, tagged_user:stri
         }
 
         else {
-            const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag"); // Gets All Styled Tags From Text
+            const normalized_tagged_user:string = tagged_user.includes("@") ? tagged_user : `@${tagged_user.trim()}`
 
-            const tag_in_text:HTMLSpanElement|undefined = [...styled_tags_in_text].find(one_tag => one_tag.textContent === tagged_user) // Gets The Tag From Text
+            // Completes And Highlights Every Mention Of The Same User In The Text
+            placeTagToText(description, normalized_tagged_user, users_for_tag_container)
 
-            if(tag_in_text) {
-                // Shows Animated Tag
-                tag_in_text.classList.remove("animate")
-                void tag_in_text.offsetWidth
-                tag_in_text.classList.add("animate")
-            }
+            description.querySelectorAll<HTMLSpanElement>(".tag").forEach(function(one_tag:HTMLSpanElement):void {
+                if(one_tag.textContent !== normalized_tagged_user) return
+
+                one_tag.classList.remove("animate")
+                void one_tag.offsetWidth
+                one_tag.classList.add("animate")
+            })
         }
     }
 }
@@ -201,9 +197,7 @@ export function removeTag(tag:HTMLDivElement, description:HTMLDivElement, tagged
     if(matching_tag) {
         const text_with_deleted_tag:string = text.slice(0, matching_tag.position.tag_start_index) + text.slice(matching_tag.position.tag_end_index + 2) // Deletes The Tag From The Text, Also Removes The Space After It
 
-        const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
-
-        description.innerHTML = highlightTagsInText(highlightHashtagsInText(text_with_deleted_tag), styled_tags_in_text) // Sets The New Value
+        description.innerHTML = highlightTaggedUsersInPlainText(highlightHashtagsInText(text_with_deleted_tag)) // Sets The New Value
 
         const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
@@ -288,6 +282,59 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     if(!tag_user_state.tagged_users.includes(`@${tag_user_state.tagged_user}`)) showUsersForTag(users_for_tag_container) // Shows Users For Tag Container
 }
 
+// Function For Search Users For Tag (API)
+export async function searchUsersForTag(searched_text:string):Promise<taggedUser[]|null> {
+    try {
+        const searched_tags_response:searchedTagsResponse = await sendPOST(window.location.pathname, searched_text, "tag-user")
+
+        if(!searched_tags_response.success || !searched_tags_response.users) return null
+
+        return searched_tags_response.users
+    }
+
+    catch {
+        return null
+    }
+}
+
+// Function For Match Username From Search Results (Same Rules As isExistingTag)
+export function matchTaggedUserFromResults(users:taggedUser[], username:string):string|null {
+    const trimmed_username:string = username.replace(/^@/, "").trim()
+
+    const matching_user:taggedUser|undefined = users.find(function(one_user:taggedUser):boolean {
+        return (
+            one_user.username === trimmed_username ||
+            one_user.username === `@${trimmed_username}` ||
+            one_user.username.toLowerCase() === trimmed_username.toLowerCase()
+        )
+    })
+
+    if(!matching_user) return null
+
+    return matching_user.username.startsWith("@") ? matching_user.username : `@${matching_user.username}`
+}
+
+// Function For Resolve Tagged User From Community Page DOM
+export function resolveTaggedUserFromDom(username:string):string|null {
+    const trimmed_username:string = username.replace(/^@/, "").trim().toLowerCase()
+    const page_users:NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>(
+        ".search_users .all_users .one_user[data-username]"
+    )
+
+    for(const one_user of page_users) {
+        const data_username:string = one_user.dataset["username"] || ""
+
+        if(
+            data_username.toLowerCase() === trimmed_username ||
+            data_username.toLowerCase() === `@${trimmed_username}`
+        ) {
+            return data_username.startsWith("@") ? data_username : `@${data_username}`
+        }
+    }
+
+    return null
+}
+
 // Function For Check If The Tag Exists
 function isExistingTag(users_for_tag_container:HTMLDivElement, tagged_user:string):boolean {
     const current_users_for_tag:NodeListOf<HTMLDivElement> = users_for_tag_container.querySelectorAll<HTMLDivElement>(".one_user"); // Gets All Current Users For Tag From The Container
@@ -303,13 +350,55 @@ function isExistingTag(users_for_tag_container:HTMLDivElement, tagged_user:strin
 
 // Function For Highlight Tags In Text (Format Them With Styled Span Elements)
 export function highlightTagsInText(text:string, styled_tags_in_text:NodeListOf<HTMLSpanElement>):string {
-    let tags_in_text:string[] = [] // Stores Tags In Text
-    let text_with_formatted_tags = text // Stores Text With Formatted Tags
+    let text_with_formatted_tags:string = text
 
-    styled_tags_in_text.forEach(one_span => tags_in_text.push(one_span.textContent)) // Gets Only Text From Span Elements
-    tags_in_text.forEach(one_tag => text_with_formatted_tags = text_with_formatted_tags.replace(one_tag, `<span class="tag" contenteditable="false">${one_tag}</span>`)) // Puts Every Tag To The Styled Span Element
+    styled_tags_in_text.forEach(function(one_span:HTMLSpanElement):void {
+        const one_tag:string|null = one_span.textContent
 
-    return text_with_formatted_tags // Returns Text With Formatted Tags
+        if(one_tag) {
+            text_with_formatted_tags = text_with_formatted_tags.replaceAll(
+                one_tag,
+                `<span class="tag" contenteditable="false">${one_tag}</span>`
+            )
+        }
+    })
+
+    return text_with_formatted_tags
+}
+
+// Function For Highlight All Tagged Users In Plain Text (No Existing HTML)
+export function highlightTaggedUsersInPlainText(text:string):string {
+    const sorted_tags:string[] = [...tag_user_state.tagged_users].sort(
+        (first_tag, second_tag) => second_tag.length - first_tag.length
+    )
+
+    let text_with_formatted_tags:string = text
+
+    sorted_tags.forEach(function(one_tag:string):void {
+        text_with_formatted_tags = text_with_formatted_tags.replaceAll(
+            one_tag,
+            `<span class="tag" contenteditable="false">${one_tag}</span>`
+        )
+    })
+
+    return text_with_formatted_tags
+}
+
+// Function For Render All Tagged Users On The Page
+export function renderAllTaggedUsers(tagged_users_container:HTMLDivElement):void {
+    tagged_users_container.innerHTML = ""
+
+    tag_user_state.tagged_users.forEach(one_tag => {
+        const tag:HTMLDivElement = document.createElement("div")
+        const paragraph:HTMLParagraphElement = document.createElement("p")
+
+        tag.classList.add("tag")
+        paragraph.textContent = one_tag
+        tag.appendChild(paragraph)
+        tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>`
+
+        tagged_users_container.appendChild(tag)
+    })
 }
 
 // Function For Place The Tag To The Text
@@ -326,17 +415,15 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     const tagged_user_length:number = tagged_user.length // Gets The Length Of The Tagged User
 
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
-    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `<span class="tag" contenteditable="false">${tagged_user}</span>&nbsp;` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user)
-    
-    const styled_tags_in_text:NodeListOf<HTMLSpanElement> = description.querySelectorAll<HTMLSpanElement>(".tag") // Gets All Styled Tags From Text
-    
-    description.innerHTML = highlightTagsInText(highlightHashtagsInText(text_with_finished_tag), styled_tags_in_text) // Sets The New Value
+    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `${tagged_user}\u00a0` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user )
+
+    description.innerHTML = highlightTaggedUsersInPlainText(highlightHashtagsInText(text_with_finished_tag)) // Sets The New Value
 
     const description_input:HTMLInputElement = description.nextElementSibling as HTMLInputElement // Gets The Description Hidden Input
 
     description_input.value = description.textContent.trim() // Sets The Description Input Value
 
-    focusAtEnd(description) // Adds Focus Into The Input
+    setCursorPosition(description, tag_start_index + tagged_user_length + 1) // Places Cursor After The Tag
     hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
     storeTaggedUserToHistory(tagged_user) // Stores The Tagged User To The History
 
@@ -357,21 +444,7 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
 
 // Function For Render Tagged User On The Page
 function renderTag(tagged_users_container:HTMLDivElement):void {
-    const latest_tag:string|null = tag_user_state.tagged_users[tag_user_state.tagged_users.length - 1] || null // Gets The Latest Tag
-
-    if(latest_tag) {
-        const tag:HTMLDivElement = document.createElement("div") // Creates The Tag
-        const paragraph:HTMLParagraphElement = document.createElement("p") // Creates The Paragraph
-        
-        tag.classList.add("tag") // Adds The Tag Class
-
-        paragraph.textContent = latest_tag // Sets The Text In The Paragraph
-        tag.appendChild(paragraph) // Appends The Paragrapg To The Tag
-
-        tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>` // https://fontawesome.com/icons/xmark
-
-        tagged_users_container.appendChild(tag) // Appends The Tag To The Container
-    }
+    renderAllTaggedUsers(tagged_users_container)
 }
 
 // Function For Get The Start Index Of The Last Tag
