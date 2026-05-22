@@ -6,7 +6,8 @@ import {
     updateVideoTimer,
     updateBufferingBar,
     showVideoLoader,
-    hideVideoLoader
+    hideVideoLoader,
+    changeVideoQuality
 } from "./customVideoPlayback.js"
 
 import { 
@@ -191,8 +192,18 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 hls.loadSource(video_src)
                 hls.attachMedia(video)
                 
+                // If The Video Is Ready
                 hls.on(Hls.Events.MANIFEST_PARSED, function():void {
-                    // The Video Is Ready
+                    const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
+                    const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_settings.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
+
+                    // All Quality Buttons Functionalities
+                    all_quality_buttons.forEach(function(one_button:HTMLButtonElement):void {
+                        one_button.addEventListener("click", function():void {
+                            const selected_quality:number|null = Number(one_button.dataset["quality"]) || null // Gets The Selected Quality
+                            if(selected_quality) changeVideoQuality(selected_quality, hls, one_button, all_quality_buttons) // Changes The Video Quality
+                        })
+                    })
                 })
             }
 
