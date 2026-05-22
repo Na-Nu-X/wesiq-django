@@ -47,6 +47,7 @@ from collections import defaultdict
 from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count
 from django.http import FileResponse
 from django.template.loader import render_to_string
+from celery import current_app
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -453,9 +454,43 @@ def deletePost(request):
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.get(id=post_id, user_id=logged_in_user_id) # Gets The Post
+
+            post = Post.objects.prefetch_related(
+                "media"
+            ).get(
+                id=post_id, user_id=logged_in_user_id
+            )
 
             if post:
+                unfinished_media = post.media.filter(is_processed=False)
+
+                for one_media in unfinished_media:
+                    # Stops The Celery Task For Compression Of Media Of The Post
+                    if hasattr(one_media, "celery_task_id") and one_media.celery_task_id:
+                        current_app.control.revoke(one_media.celery_task_id, terminate=True)
+
+                    # Video
+                    if one_media.is_video:
+                        video_temp_name = f"compressed_{one_media.id}.mp4"
+                        video_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", video_temp_name)
+
+                        # Removes Temporary Video File From Disk
+                        if os.path.exists(video_temp_path):
+                            try:
+                                os.remove(video_temp_path)
+                            except OSError:
+                                pass
+
+                        thumb_temp_name = f"thumb_{one_media.id}.jpg"
+                        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", thumb_temp_name)
+
+                        # Removes Temporary Thumbnail Image File From Disk
+                        if os.path.exists(thumb_temp_path):
+                            try:
+                                os.remove(thumb_temp_path)
+                            except OSError:
+                                pass
+
                 post.delete() # Deletes The Post
 
                 return JsonResponse({"success": True, "message": _("Príspevok bol úspešne odstránený.")}, status=200)
@@ -2765,6 +2800,8 @@ def streamVideo(request, user_id, filename):
     return video_response
 
 def getCompressionStatus(request, task_id):
+    print(task_id)
+
     result = AsyncResult(task_id)
     
     upload_progress_response = {

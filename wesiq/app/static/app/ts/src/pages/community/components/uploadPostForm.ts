@@ -32,6 +32,10 @@ import {
 
 import { syncFiles } from "../functions/postPreview.js"
 import { uploadPost } from "../functions/uploadPost.js"
+import {
+    handleDescriptionPaste,
+    pruneDescriptionMetadata
+} from "../functions/syncDescription.js"
 
 import type { tag } from "../state.js"
 
@@ -69,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const MAX_DESCRIPTION_LENGTH:number = 500 // Sets The Max Description Length
 
     let previous_description_length:number = description.innerText.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
+    let is_syncing_description_paste:boolean = false // Prevents Input Handler From Running During Paste Sync
 
     const added_hashtags_input:HTMLInputElement = upload_post_form.querySelector(".added_hashtags") as HTMLInputElement // Gets The Hidden Input Of Added Hashtags
 
@@ -272,28 +277,67 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Paste Functionality (Syncs Tagged Users And Hashtags From Pasted Plain Text)
+    description.addEventListener("paste", async function(event:ClipboardEvent):Promise<void> {
+        is_syncing_description_paste = true
+
+        await handleDescriptionPaste(
+            event,
+            description,
+            description_input,
+            tagged_users_container,
+            tagged_users,
+            added_hashtags_input,
+            MAX_DESCRIPTION_LENGTH
+        )
+
+        previous_description_length = description.innerText.length
+
+        requestAnimationFrame(function():void {
+            is_syncing_description_paste = false
+        })
+    })
+
     // Searches For Users For Tag If There Is At Sign In The Description
     description.addEventListener("input", function():void {
+        if(is_syncing_description_paste) return
+
         description_input.value = this.textContent.trim() // Sets The Description Input Value
 
-        // Tag Users
-
         const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
-        const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
-        const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
-        const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
-        
-        // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
-        if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
-        else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+        const is_text_deletion:boolean = previous_description_length > this.innerText.length // Checks If The Text Was Deleted
 
-        checkTagsPositions(this, getCursorPosition(this), previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
+        // Text Deletion (Selection, Cut, Backspace, Etc.) — Syncs State With Actual Text Content
+        if(is_text_deletion) {
+            pruneDescriptionMetadata(
+                this,
+                description_input,
+                tagged_users_container,
+                tagged_users,
+                added_hashtags_input,
+                cursor_position
+            )
+        }
 
-        // Add Hashtags
+        else {
+            // Tag Users
 
-        checkHashtags(this, added_hashtags_input)
+            const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
+            const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
+            const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
+            
+            // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
+            if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
+            else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
 
-        checkHashtagsPositions(this, getCursorPosition(this), previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
+            checkTagsPositions(this, cursor_position, previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
+
+            // Add Hashtags
+
+            checkHashtags(this, added_hashtags_input)
+
+            checkHashtagsPositions(this, cursor_position, previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
+        }
 
         previous_description_length = this.innerText.length // Updates The Previous Description Length
     })

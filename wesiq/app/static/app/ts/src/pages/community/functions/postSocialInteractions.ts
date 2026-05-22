@@ -3,6 +3,7 @@ import { generateNumberRange } from "../../../utils/generateNumberRange.js"
 import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { response } from "../../../services/sendPOST.js"
+import type { compressTask } from "./processingPosts.js"
 
 // Function For Toggle Post Like
 export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:number, particles:HTMLDivElement):Promise<void> {
@@ -202,6 +203,16 @@ export async function deletePost(id:number, post_container:HTMLDivElement):Promi
             displayMessage(delete_post_response.message, "error") // Displays The Error Message
             return
         }
+
+        // Gets All Processing Posts From The Local Storage
+        const processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
+
+        // Removes All Tasks For The Current Processing Post From The Local Storage
+        const remaining_processing_posts:compressTask[]|[] = processing_posts.filter(function(one_task:compressTask):boolean {
+            return one_task.post_id !== id
+        })
+
+        localStorage.setItem("processing_posts", JSON.stringify(remaining_processing_posts)) // Saves Updated Processing Posts To The Local Storage
 
         post_container.remove() // Deletes The Post Container From DOM
         displayMessage(delete_post_response.message, "success") // Displays The Success Message
