@@ -289,6 +289,10 @@
                             {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
                         </div>
 
+                        <button class="settings">
+                            <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
+                        </button>
+
                         <button class="fullscreen">
                             <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
                             {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
@@ -772,6 +776,8 @@
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script> <!-- HLS Video Support -->
+    
     <script src="{% static 'app/ts/dist/pages/community/components/uploadPostForm.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/community/components/searchUsers.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/community/components/searchPosts.js' %}" type="module"></script>

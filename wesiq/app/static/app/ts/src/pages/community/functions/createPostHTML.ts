@@ -1,3 +1,5 @@
+declare const Hls: any
+
 import {
     playPauseVideo,
     setVideoDuration,
@@ -55,6 +57,7 @@ interface searchedPost {
     created_at:string,
 
     media:{
+        id:number,
         file:string,
         thumbnail:string,
         is_video:boolean
@@ -150,6 +153,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     const media:HTMLDivElement = post_container_template_clone.querySelector(".media") as HTMLDivElement // Gets The Media Container
 
     post_data.media.forEach(function(one_post_media:{
+        id:number,
         file:string,
         thumbnail:string,
         is_video:boolean
@@ -176,10 +180,24 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             const video_container_template_clone:DocumentFragment = video_container_template.content.cloneNode(true) as DocumentFragment // Clones The Video Container Template Content
             const video_container:HTMLDivElement = video_container_template_clone.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
-            const source:HTMLSourceElement = video.querySelector("source") as HTMLSourceElement // Gets The Video Source
+            const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
 
             video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
-            source.src = interpolate(gettext("/sk/stream-video/%s/%s"), [post_data.user.id, one_post_media.file.substring(one_post_media.file.lastIndexOf('/') + 1)], false) // Sets The File Path
+        
+            // HLS Format
+            if(Hls.isSupported()) {
+                const hls = new Hls()
+
+                hls.loadSource(video_src)
+                hls.attachMedia(video)
+                
+                hls.on(Hls.Events.MANIFEST_PARSED, function():void {
+                    // The Video Is Ready
+                })
+            }
+
+            else if(video.canPlayType("application/x-mpegURL")) video.src = video_src // Fallback For Safari (Mac / iOS), Which Support HLS Format Without An Additional Library
+
             video.append(interpolate(gettext('Príspevok užívateľa %s'), [post_data.user.username])) // Sets The Alternative Text For The Video
 
             one_post_container.appendChild(video_container) // Appends The Video Container To The One Post Container

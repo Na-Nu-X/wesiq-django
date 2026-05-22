@@ -239,9 +239,12 @@ class Transactions(models.Model):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
 
 def getPostUploadPath(instance, filename):
-    # Checks If The Name Is Already Generated
+    # HLS Vide Files
+    if filename == "index.m3u8":
+        return f"posts/{instance.post.user_id}/videos/{instance.id}/index.m3u8" # For Example: posts/5/videos/12/index.m3u8
+
     if not hasattr(instance, '_random_uuid'):
-        instance._random_uuid = secrets.token_hex(nbytes=10) # Generates Random 20 Characters Long Filename (Numbers and Small Letters)
+        instance._random_uuid = secrets.token_hex(nbytes=10)
 
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
     VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions

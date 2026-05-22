@@ -723,23 +723,27 @@ def compressVideo(self, post_media_id):
         duration_result = subprocess.run(duration_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         total_duration = float(duration_result.stdout.decode().strip())
 
-        # Video Compression
+        # Video Compression And HLS Video Format Conversion
 
-        output_filename = f"compressed_{post_media_id}.mp4"
-        output_path = os.path.join(settings.MEDIA_ROOT, "temp", output_filename)
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        temp_hls_path = os.path.join(settings.MEDIA_ROOT, "temp", f"hls_{post_media_id}")
+        os.makedirs(temp_hls_path, exist_ok=True)
+        playlist_path = os.path.join(temp_hls_path, "index.m3u8")
+        segment_pattern = os.path.join(temp_hls_path, "segment_%03d.ts")
 
-        # FFmpeg Compression
+        # FFmpeg Compression And HLS Command
         command = [
             "ffmpeg", "-y", "-i", input_path,
-            "-movflags", "+faststart",
             "-progress", "pipe:1",
             "-vcodec", "libx264", 
             "-crf", "32",
             "-preset", "fast",
             "-acodec", "aac",
             "-b:a", "128k",
-            output_path
+            "-f", "hls",
+            "-hls_time", "4", # Length Of One Segment In HLS (4 Seconds)
+            "-hls_playlist_type", "vod",
+            "-hls_segment_filename", segment_pattern,
+            playlist_path
         ]
 
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
@@ -758,47 +762,54 @@ def compressVideo(self, post_media_id):
         process.wait()
 
         original_size = os.path.getsize(input_path) # Gets The Original Size
-        compressed_size = os.path.getsize(output_path) # Gets The Compressed Size
 
-        # Stores The Original File (If The Compressed Is Larger)
-        if compressed_size >= original_size:
-            # Saves The Data To The Database
-            media_object.is_processed = True
-            media_object.original_size = original_size # Saves The Original Size
-            media_object.save()
+        # Sums All Of The .ts File Video Segments In The Temp Directory
+        compressed_size = sum(
+            os.path.getsize(os.path.join(temp_hls_path, f)) 
+            for f in os.listdir(temp_hls_path) 
+            if os.path.isfile(os.path.join(temp_hls_path, f))
+        )
 
-        # Stores The Compressed Video File
-        else:
-            with open(output_path, "rb") as f:
-                # Saves The Data To The Database
-                new_file_name = f"VID_{post_media_id}.mp4" 
-                media_object.file.save(new_file_name, File(f), save=False)
-                media_object.is_processed = True
-                media_object.original_size = original_size # Saves The Original Size
-                media_object.compressed_size = compressed_size # Saves The Compressed Size
-                media_object.save()
+        # Saves The New Video Files
+        with open(playlist_path, "rb") as f:
+            media_object.file.save("index.m3u8", File(f), save=False)
+        
+        final_hls_path = os.path.dirname(media_object.file.path)
+        os.makedirs(final_hls_path, exist_ok=True)
 
-            media_object.file.close()
+        # Moves All Of The .ts File Video Segments Into The Final Video Playlist Directory
+        for filename in os.listdir(temp_hls_path):
+            if filename.endswith(".ts"):
+                shutil.copy(
+                    os.path.join(temp_hls_path, filename), 
+                    os.path.join(final_hls_path, filename)
+                )
 
-            # Removes Original Video File From Disk
-            if os.path.exists(old_file_path):
-                os.remove(old_file_path)
+        # Saves The Data To The Database
+        media_object.is_processed = True
+        media_object.original_size = original_size # Saves The Original Size
+        media_object.compressed_size = compressed_size # Saves The Compressed Size
+        media_object.save()
 
-        # Removes Temporary Video File From Disk
-        if os.path.exists(output_path):
-            os.remove(output_path)
+        # Removes Original Video File From Disk
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
 
-        message = "Video Was Successfully Compressed."
+        # Removes Temporary Video Files From Disk
+        if os.path.exists(temp_hls_path):
+            shutil.rmtree(temp_hls_path, ignore_errors=True)
+
+        message = "Video Was Successfully Compressed To HLS."
         return message
 
-    except PostMedia.DoesNotExist:
+    except PostMedia.DoesNotExist as e:
         message = "Video Does Not Exist."
-        raise Exception(message)
+        raise Exception(message) from e
 
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         message = "FFmpeg Error Occurred During Video Compression."
-        raise Exception(message)
+        raise Exception(message) from e
 
-    except Exception:
+    except Exception as e:
         message = "An Error Occurred During Video Compression."
-        raise Exception(message)
+        raise Exception(message) from e

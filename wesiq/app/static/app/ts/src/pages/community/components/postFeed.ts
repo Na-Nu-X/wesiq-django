@@ -288,6 +288,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             muteUnmuteVideo(volume_icon, volume_input, video) // Mutes Or Unmutes The Video
         }
 
+        // Video Settings
+        if((event.target as HTMLButtonElement).classList.contains("settings")) {
+            console.log("settings")
+        }
+
         // Toogle Video Fullscreen
         if((event.target as HTMLButtonElement).classList.contains("fullscreen")) {
             const toggle_fullscreen_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Toggle Fullscreen Icon
