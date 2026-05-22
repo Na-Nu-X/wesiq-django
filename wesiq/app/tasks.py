@@ -728,22 +728,41 @@ def compressVideo(self, post_media_id):
         temp_hls_path = os.path.join(settings.MEDIA_ROOT, "temp", f"hls_{post_media_id}")
         os.makedirs(temp_hls_path, exist_ok=True)
         playlist_path = os.path.join(temp_hls_path, "index.m3u8")
-        segment_pattern = os.path.join(temp_hls_path, "segment_%03d.ts")
+        segment_pattern = os.path.join(temp_hls_path, "v%v_segment_%03d.ts")
+        variant_playlist_pattern = os.path.join(temp_hls_path, "v%v_index.m3u8")
 
         # FFmpeg Compression And HLS Command
         command = [
             "ffmpeg", "-y", "-i", input_path,
             "-progress", "pipe:1",
-            "-vcodec", "libx264", 
-            "-crf", "32",
-            "-preset", "fast",
-            "-acodec", "aac",
-            "-b:a", "128k",
+    
+            # Mapping The Video For Each Quality
+            "-map", "0:v:0", "-map", "0:v:0", "-map", "0:v:0", 
+            "-map", "0:a?", "-map", "0:a?", "-map", "0:a?", 
+            
+            # 480p (Stream v:0 a a:0)
+            "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
+            "-c:a:0", "aac", "-b:a:0", "128k",
+            
+            # 720p (Stream v:1 a a:1)
+            "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
+            "-c:a:1", "aac", "-b:a:1", "128k",
+            
+            # 1080p (Stream v:2 a a:2)
+            "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
+            "-c:a:2", "aac", "-b:a:2", "128k",
+            
+            # HLS Multi-Variant Settings
             "-f", "hls",
-            "-hls_time", "4", # Length Of One Segment In HLS (4 Seconds)
+            "-hls_time", "4",
             "-hls_playlist_type", "vod",
+            
+            "-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
+            "-master_pl_name", "index.m3u8", # Main Map File For Segments
+            
+            # Output For Segments And Playlists
             "-hls_segment_filename", segment_pattern,
-            playlist_path
+            variant_playlist_pattern
         ]
 
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
@@ -770,16 +789,16 @@ def compressVideo(self, post_media_id):
             if os.path.isfile(os.path.join(temp_hls_path, f))
         )
 
-        # Saves The New Video Files
+        # Copies The Master Playlist File
         with open(playlist_path, "rb") as f:
             media_object.file.save("index.m3u8", File(f), save=False)
         
         final_hls_path = os.path.dirname(media_object.file.path)
         os.makedirs(final_hls_path, exist_ok=True)
 
-        # Moves All Of The .ts File Video Segments Into The Final Video Playlist Directory
+        # Copies All Temp HLS Files (Exept The Master Playlist File)
         for filename in os.listdir(temp_hls_path):
-            if filename.endswith(".ts"):
+            if filename != "index.m3u8":
                 shutil.copy(
                     os.path.join(temp_hls_path, filename), 
                     os.path.join(final_hls_path, filename)
@@ -787,8 +806,8 @@ def compressVideo(self, post_media_id):
 
         # Saves The Data To The Database
         media_object.is_processed = True
-        media_object.original_size = original_size # Saves The Original Size
-        media_object.compressed_size = compressed_size # Saves The Compressed Size
+        media_object.original_size = original_size
+        media_object.compressed_size = compressed_size
         media_object.save()
 
         # Removes Original Video File From Disk

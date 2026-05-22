@@ -1,3 +1,5 @@
+declare const Hls: any
+
 import { getFormattedTime } from "../../../utils/timer.js"
 
 // Function For Play Or Pause The Video
@@ -127,6 +129,30 @@ export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTM
         video.muted = false // Unmutes The Video
         video.volume = volume // Sets The Volume
     }
+}
+
+// Function For Change The Video Quality
+export function changeVideoQuality(quality:number, hls:any, button:HTMLButtonElement, all_buttons:NodeListOf<HTMLButtonElement>):void {
+    // Auto Video Quality
+    if(quality === -1) {
+        hls.currentLevel = -1
+    }
+
+    // 1080p, 720p, 480p Video Quality
+    else {
+        const level_index: number = hls.levels.findIndex((level: any) => Math.abs(level.height - quality) <= 4) // Finds The Index Of The Selected Video Quality With Some Toleration From FFmpeg Compression (For Example: 720p Can Be Between 718p And 722p)
+        
+        if(level_index !== -1) {
+            hls.currentLevel = level_index
+        }
+        
+        else {
+            // Unsupported Video Quality
+        }
+    }
+
+    all_buttons.forEach(one_button => one_button.classList.remove("active")) // Removes The Active Class From Every Quality Button
+    button.classList.add("active") // Adds The Active Class To The Clicked Quality Button
 }
 
 // Function For Play Or Pause The Video
