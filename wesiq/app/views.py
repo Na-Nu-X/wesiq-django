@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
+from app.models import Users, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -2116,7 +2116,39 @@ def trainingSessionView(request):
             .order_by("sorted_days")
         )
 
-        official_tasks = OfficialTasks.objects.order_by("?")[:3] # Gets Random 3 Official Tasks
+        todays_date = timezone.localdate() # Gets The Today's Date
+
+        # Deletes The Older User's Official Tasks Than Today's Date
+        UserDailyOfficialTasks.objects.filter(
+            user=logged_in_user,
+            created_at__date__lt=todays_date
+        ).delete()
+
+        # Gets The All Assigned User's Official Tasks For Today
+        official_tasks = logged_in_user.daily_official_tasks.all()
+        official_tasks_amount = official_tasks.count() # Gets The Amount Of All Assigned User's Official Tasks For Today
+
+        # Gets Assigned User's Official Tasks For Today If The User Has Less Than 3 Of Them Already Assigned
+        if official_tasks_amount < 3:
+            needed_tasks = 3 - official_tasks_amount # Gets The Amount Of Still Needed Tasks
+            existing_tasks_ids = official_tasks.values_list("id", flat=True) # Gets The Already Assigned User's Official Tasks For Today IDs
+        
+            # Gets The Random New User's Official Tasks For Today Which Aren't Already Assigned For The User
+            random_new_tasks = OfficialTasks.objects.exclude(
+                id__in=existing_tasks_ids
+            ).order_by(
+                "?"
+            )[:needed_tasks]
+            
+            # Bulk Creation Of Multiple New User's Official Tasks For Today
+            new_official_tasks = [
+                UserDailyOfficialTasks(user=logged_in_user, task=one_task)
+                for one_task in random_new_tasks
+            ]
+
+            UserDailyOfficialTasks.objects.bulk_create(new_official_tasks)
+            
+            official_tasks = logged_in_user.daily_official_tasks.all() # Updates The Official Tasks
         
         if request.method == "POST":
             # Complete Official Task
