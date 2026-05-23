@@ -1,18 +1,16 @@
-declare const Hls: any
-
 import {
     playPauseVideo,
     setVideoDuration,
     updateVideoTimer,
     updateBufferingBar,
     showVideoLoader,
-    hideVideoLoader,
-    changeVideoQuality
+    hideVideoLoader
 } from "./customVideoPlayback.js"
 
 import { 
     generatePostBars, 
-    generateStyledDescription 
+    generateStyledDescription, 
+    initializeChangeVideoQuality
 } from "./posts.js"
 
 import { getFormattedDate } from "../../../utils/getFormattedDate.js"
@@ -21,7 +19,7 @@ import { createCommentPropertiesHTML } from "./createCommentPropertiesHTML.js"
 
 import type { comment } from "./createCommentPropertiesHTML.js"
 
-interface searchedPost {
+export interface searchedPost {
     user:{
         id:number,
         first_name:string,
@@ -184,31 +182,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
 
             video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
-        
-            // HLS Format
-            if(Hls.isSupported()) {
-                const hls = new Hls()
-
-                hls.loadSource(video_src)
-                hls.attachMedia(video)
-                
-                // If The Video Is Ready
-                hls.on(Hls.Events.MANIFEST_PARSED, function():void {
-                    const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
-                    const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_settings.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
-
-                    // All Quality Buttons Functionalities
-                    all_quality_buttons.forEach(function(one_button:HTMLButtonElement):void {
-                        one_button.addEventListener("click", function():void {
-                            const selected_quality:number|null = Number(one_button.dataset["quality"]) || null // Gets The Selected Quality
-                            if(selected_quality) changeVideoQuality(selected_quality, hls, one_button, all_quality_buttons) // Changes The Video Quality
-                        })
-                    })
-                })
-            }
-
-            else if(video.canPlayType("application/x-mpegURL")) video.src = video_src // Fallback For Safari (Mac / iOS), Which Support HLS Format Without An Additional Library
-
+            initializeChangeVideoQuality(video, video_src, video_container) // Initializes The Change Video Quality Buttons
             video.append(interpolate(gettext('Príspevok užívateľa %s'), [post_data.user.username])) // Sets The Alternative Text For The Video
 
             one_post_container.appendChild(video_container) // Appends The Video Container To The One Post Container
