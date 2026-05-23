@@ -261,9 +261,7 @@
                     <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                 </div>
 
-                <video class="video" poster="" preload="metadata" autoplay loop muted>
-                    <source src="">
-                </video>
+                <video class="video" src="" poster="" preload="metadata" autoplay loop muted></video>
 
                 <div class="controls">
                     <div class="buttons">
@@ -290,9 +288,9 @@
                         </div>
 
                         <button 
-                            class="show_settings_button"
-                            popovertarget="video_settings"
-                            style="anchor-name: --show_settings_button;"
+                            class="show_video_settings_button"
+                            popovertarget=""
+                            style=""
                         >
                             <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
                         </button>
@@ -301,7 +299,7 @@
                             class="video_settings" 
                             id="video_settings"
                             popover
-                            style="position-anchor: --show_settings_button;"
+                            style="position-anchor: --show_video_settings_button;"
                         >
                             <button class="quality_button quality_auto" data-quality="-1">auto</button>
                             <button class="quality_button quality_1080p" data-quality="1080">1080p</button>
@@ -309,7 +307,7 @@
                             <button class="quality_button quality_480p" data-quality="480">480p</button>
 
                             <button 
-                                class="hide_settings_popover" 
+                                class="back_video_settings_button" 
                                 popovertarget="video_settings" 
                                 popovertargetaction="hide"
                             >

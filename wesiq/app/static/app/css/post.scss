@@ -499,7 +499,7 @@ h2 {
                         .play_pause,
                         .step_back,
                         .step_further,
-                        .show_settings_button,
+                        .show_video_settings_button,
                         .fullscreen {
                             all: unset;
                             cursor: pointer;
@@ -597,7 +597,7 @@ h2 {
                             }
                         }
 
-                        .show_settings_button,
+                        .show_video_settings_button,
                         .fullscreen {
                             margin-left: 10px;
                         }

@@ -178,6 +178,22 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             const video_container_template:HTMLTemplateElement = feed.querySelector(".video_container_template") as HTMLTemplateElement // Gets The Video Container Template
             const video_container_template_clone:DocumentFragment = video_container_template.content.cloneNode(true) as DocumentFragment // Clones The Video Container Template Content
             const video_container:HTMLDivElement = video_container_template_clone.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
+
+            // Show Video Settings Button
+            const show_video_settings_button:HTMLButtonElement = video_container.querySelector(".controls .buttons .show_video_settings_button") as HTMLButtonElement // Gets The Show Settings Button
+            show_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Pop Over
+            show_video_settings_button.style = `anchor-name: --show_video_settings_button_${post_data.id}` // Creates The Anchor
+
+            // Video Settings Menu
+            const video_settings:HTMLButtonElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLButtonElement // Gets The Video Settings Menu
+            video_settings.id = `video_settings_${post_data.id}` // Sets The ID
+            video_settings.style = `position-anchor: --show_video_settings_button_${post_data.id}` // Links The Anchor
+
+            // Back Video Settings Button
+            const back_video_settings_button:HTMLButtonElement = video_settings.querySelector(".back_video_settings_button") as HTMLButtonElement // Gets The Hide Settings Button
+            back_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Pop Over 
+
+            // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
             const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
 
