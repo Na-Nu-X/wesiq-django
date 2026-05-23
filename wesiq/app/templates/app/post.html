@@ -381,9 +381,17 @@
                                             <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                                         </div>
 
-                                        <video class="video" poster="{{ one_post_media.thumbnail.url }}" preload="metadata" autoplay loop muted>
-                                            <source src="{% url 'stream_video_url' user_id=post.user_id media_id=one_post_media.id filename='index.m3u8' %}">
-                                            
+                                        <video 
+                                            class="video" 
+                                            src=""
+                                            poster="{{ one_post_media.thumbnail.url }}" 
+                                            preload="metadata" 
+                                            autoplay 
+                                            loop 
+                                            muted
+                                            data-user_id="{{ post.user.id }}"
+                                            data-media_id="{{ one_post_media.id }}"
+                                        >
                                             {% blocktranslate with username=post.user.username %}
                                                 Príspevok užívateľa {{ username }}
                                             {% endblocktranslate %}
@@ -413,6 +421,35 @@
                                                     {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
                                                 </div>
 
+                                                <button 
+                                                    class="show_settings_button"
+                                                    popovertarget="video_settings"
+                                                    style="anchor-name: --show_settings_button;"
+                                                >
+                                                    <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
+                                                </button>
+
+                                                <div 
+                                                    class="video_settings" 
+                                                    id="video_settings"
+                                                    popover
+                                                    style="position-anchor: --show_settings_button;"
+                                                >
+                                                    <button class="quality_button quality_auto" data-quality="-1">auto</button>
+                                                    <button class="quality_button quality_1080p" data-quality="1080">1080p</button>
+                                                    <button class="quality_button quality_720p" data-quality="720">720p</button>
+                                                    <button class="quality_button quality_480p" data-quality="480">480p</button>
+
+                                                    <button 
+                                                        class="hide_settings_popover" 
+                                                        popovertarget="video_settings" 
+                                                        popovertargetaction="hide"
+                                                    >
+                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                        <span>{% translate "Zavrieť" %}</span>
+                                                    </button>
+                                                </div>
+
                                                 <button class="fullscreen">
                                                     <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
                                                     {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
@@ -428,6 +465,7 @@
                                     </div>
 
                                     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script> <!-- HLS Video Support -->
+                                    <script src="{% static 'app/ts/dist/pages/post/components/initializeHLSVideoFormat.js' %}" type="module"></script>
                                     <script src="{% static 'app/ts/dist/pages/community/components/customVideoPlayback.js' %}" type="module"></script>
                             
                                 {% elif one_post_media.is_video == False %}

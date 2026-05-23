@@ -1,3 +1,5 @@
+declare const Hls:any
+
 import { 
     storeSearchedPostToHistory,
     renderSearchedPostsHistory
@@ -6,9 +8,10 @@ import {
 import { sendPOST } from "../../../services/sendPOST.js"
 import { feed_state } from "../state.js"
 import { createPostHTML } from "./createPostHTML.js"
+import { changeVideoQuality } from "./customVideoPlayback.js"
 
 import type { response } from "../../../services/sendPOST.js"
-import type { comment } from "./createCommentPropertiesHTML.js"
+import type { searchedPost } from "./createPostHTML.js"
 
 interface searchedPostsResponse {
     success:boolean,
@@ -22,53 +25,6 @@ interface searchedPostsResponse {
 
     posts:searchedPost[],
     message:string
-}
-
-interface searchedPost {
-    user:{
-        id:number,
-        first_name:string,
-        last_name:string,
-        username:string,
-        profile_picture_name:string|null,
-        following:number[],
-        followers:number[]
-    },
-
-    id:number,
-    description:string|null,
-
-    tagged_users:{
-        id:number,
-        first_name:string,
-        last_name:string,
-        username:string
-    }[]|[],
-
-    added_hashtags:string[]|[],
-    location:string|null,
-
-    coordinates:{
-        latitude:string
-        longitude:string
-    }|null,
-
-    public_visibility:boolean,
-    allow_comments:boolean,
-    hide_likes:boolean,
-    likes:number,
-    likes_from_users:number[],
-    created_at:string,
-
-    media:{
-        file:string,
-        thumbnail:string,
-        is_video:boolean
-    }[],
-
-    views:number,
-
-    visible_comments:comment[]
 }
 
 // Function For Load Posts
@@ -253,4 +209,31 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
         ((all_media[index] as HTMLDivElement).querySelector(".previous") as HTMLDivElement).classList.remove("hidden"); // Shows The Previous Button In The Last Post
         ((all_media[index] as HTMLDivElement).querySelector(".next") as HTMLDivElement).classList.remove("hidden") // Shows The Next Button In The First Post
     }
+}
+
+// Function For Initialize The Change Video Quality Buttons
+export function initializeChangeVideoQuality(video:HTMLVideoElement, video_src:string, video_container:HTMLDivElement):void {
+    // HLS Format
+    if(Hls.isSupported()) {
+        const hls = new Hls()
+
+        hls.loadSource(video_src)
+        hls.attachMedia(video)
+        
+        // If The Video Is Ready
+        hls.on(Hls.Events.MANIFEST_PARSED, function():void {
+            const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
+            const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_settings.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
+
+            // All Quality Buttons Functionalities
+            all_quality_buttons.forEach(function(one_button:HTMLButtonElement):void {
+                one_button.addEventListener("click", function():void {
+                    const selected_quality:number|null = Number(one_button.dataset["quality"]) || null // Gets The Selected Quality
+                    if(selected_quality) changeVideoQuality(selected_quality, hls, one_button, all_quality_buttons) // Changes The Video Quality
+                })
+            })
+        })
+    }
+
+    else if(video.canPlayType("application/x-mpegURL")) video.src = video_src // Fallback For Safari (Mac / iOS), Which Support HLS Format Without An Additional Library
 }
