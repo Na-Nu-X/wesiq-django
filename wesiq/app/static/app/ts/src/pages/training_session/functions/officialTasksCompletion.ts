@@ -4,6 +4,7 @@ import { activity_summary } from "../state.js"
 
 interface completedOfficialTaskResponse {
     success: boolean,
+    first_completion:boolean,
     gained_xp: number,
     message: string
 }
@@ -16,40 +17,45 @@ export function checkOfficialTasksCompletion():void {
     const all_tasks = tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
 
     all_tasks.forEach(function(one_task:HTMLDivElement):void {
-        const task_data:string|null = one_task.dataset["task"] || null // Gets The Task Data
+        const checkbox:HTMLDivElement = one_task.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+        
+        // If The User's Daily Official Task Wasn't Previously Completed
+        if(!checkbox.classList.contains("checked")) {
+            const task_data:string|null = one_task.dataset["task"] || null // Gets The Task Data
 
-        // 30 Minutes Activity
-        if(activity_summary.elapsed_time === 3600 / 2) {
-            if(task_data === "30_minutes_activity") {
-                completeOfficialTask(task_data) // Completes The "30 Minutes Activity" Official Task
+            // 30 Minutes Activity
+            if(activity_summary.elapsed_time === 3600 / 2) {
+                if(task_data === "30_minutes_activity") {
+                    completeOfficialTask(task_data, checkbox) // Completes The "30 Minutes Activity" Official Task
+                }
             }
-        }
-
-        // 1 Hour Activity
-        if(activity_summary.elapsed_time === 3600) {
-            if(task_data === "1_hour_activity") {
-                completeOfficialTask(task_data) // Completes The "1 Hour Activity" Official Task
+    
+            // 1 Hour Activity
+            if(activity_summary.elapsed_time === 3600) {
+                if(task_data === "1_hour_activity") {
+                    completeOfficialTask(task_data, checkbox) // Completes The "1 Hour Activity" Official Task
+                }
             }
-        }
-
-        // 2 Hours Activity
-        else if(activity_summary.elapsed_time === 3600 * 2) {
-            if(task_data === "2_hours_activity") {
-                completeOfficialTask(task_data) // Completes The "2 Hours Activity" Official Task
+    
+            // 2 Hours Activity
+            else if(activity_summary.elapsed_time === 3600 * 2) {
+                if(task_data === "2_hours_activity") {
+                    completeOfficialTask(task_data, checkbox) // Completes The "2 Hours Activity" Official Task
+                }
             }
-        }
-
-        // 3 Hours Activity
-        else if(activity_summary.elapsed_time === 3600 * 3) {
-            if(task_data === "3_hours_activity") {
-                completeOfficialTask(task_data) // Completes The "3 Hours Activity" Official Task
+    
+            // 3 Hours Activity
+            else if(activity_summary.elapsed_time === 3600 * 3) {
+                if(task_data === "3_hours_activity") {
+                    completeOfficialTask(task_data, checkbox) // Completes The "3 Hours Activity" Official Task
+                }
             }
         }
     })
 }
 
 // Function For Complete Official Task
-export async function completeOfficialTask(task:string):Promise<void> {
+export async function completeOfficialTask(task:string, checkbox:HTMLDivElement):Promise<void> {
     try {
         const completed_official_task_response:completedOfficialTaskResponse = await sendPOST(window.location.pathname, task, "complete-official-task") // Sends The Completed Task As A POST Data
 
@@ -59,8 +65,12 @@ export async function completeOfficialTask(task:string):Promise<void> {
             return
         }
 
-        activity_summary.gained_xp += completed_official_task_response.gained_xp // Increases The Gained XP For The Activity
-        displayMessage(`+${completed_official_task_response.gained_xp} XP`, "success") // Displays The Amount Of Gained XP For The Completed Task
+        // If The User's Daily Official Task Wasn't Previously Completed
+        if(completed_official_task_response.first_completion) {
+            activity_summary.gained_xp += completed_official_task_response.gained_xp // Increases The Gained XP For The Activity
+            displayMessage(`+${completed_official_task_response.gained_xp} XP`, "success") // Displays The Amount Of Gained XP For The Completed Task
+            checkbox.classList.add("checked") // Marks The Checkbox As Checked
+        }
     }
 
     catch {
