@@ -2125,7 +2125,10 @@ def trainingSessionView(request):
         ).delete()
 
         # Gets The All Assigned User's Official Tasks For Today
-        official_tasks = logged_in_user.daily_official_tasks.all()
+        official_tasks = logged_in_user.daily_official_tasks.annotate(
+            is_completed=F("userdailyofficialtasks__is_completed")
+        )
+
         official_tasks_amount = official_tasks.count() # Gets The Amount Of All Assigned User's Official Tasks For Today
 
         # Gets Assigned User's Official Tasks For Today If The User Has Less Than 3 Of Them Already Assigned
@@ -2147,8 +2150,11 @@ def trainingSessionView(request):
             ]
 
             UserDailyOfficialTasks.objects.bulk_create(new_official_tasks)
-            
-            official_tasks = logged_in_user.daily_official_tasks.all() # Updates The Official Tasks
+
+            # Updates The Official Tasks
+            official_tasks = logged_in_user.daily_official_tasks.annotate(
+                is_completed=F("userdailyofficialtasks__is_completed")
+            )
         
         if request.method == "POST":
             # Complete Official Task
@@ -2160,8 +2166,22 @@ def trainingSessionView(request):
 
                         task_data = json.loads(request.body) # Gets The Completed Task Data
                         task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
-                        
-                        return JsonResponse({"success": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+
+                        # Gets The Task From User's Daily Official Tasks
+                        users_daily_official_tasks = UserDailyOfficialTasks.objects.get(
+                            user=logged_in_user, 
+                            task=task
+                        )
+
+                        # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
+                        if not users_daily_official_tasks.is_completed:
+                            users_daily_official_tasks.is_completed=True
+                            users_daily_official_tasks.save()
+
+                            return JsonResponse({"success": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+
+                        else:
+                            return JsonResponse({"success": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha bola úspešne dokončená.")}, status=200)
 
                     return JsonResponse({"success": False, "message": _("Úlohu nie je možné označiť za dokončenú bez prihlásenia.")}, status=401)
 

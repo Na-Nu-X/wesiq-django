@@ -277,10 +277,21 @@
             <h3>{% translate "Dokážeš splniť dnešné výzvy?" %}</h3>
 
             <div class="tasks">
-                {% for one_task in official_tasks %}
+                {% for one_task in official_tasks %}               
                     <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}">
-                        <label for="{{ one_task.data }}">{{ one_task.title }}</label>
-                        <input type="checkbox" name="{{ one_task.data }}" id="{{ one_task.data }}">
+                        <p>{{ one_task.title }}</p>
+
+                        <div 
+                            class="
+                                checkbox 
+
+                                {% if one_task.is_completed %}
+                                    checked
+                                 
+                                {% endif %}
+                            "
+                        >
+                        </div>
                     </div>
                 
                 {% endfor %}

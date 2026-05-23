@@ -66,6 +66,7 @@ class UserDailyOfficialTasks(models.Model):
         null=False,
     )
 
+    is_completed = models.BooleanField(verbose_name="Is Completed", default=False, null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:
