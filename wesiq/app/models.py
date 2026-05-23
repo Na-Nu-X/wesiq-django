@@ -18,6 +18,13 @@ class Users(models.Model):
         ("deleted", "deleted")
     ]
 
+    daily_official_tasks = models.ManyToManyField(
+        "OfficialTasks", 
+        through="UserDailyOfficialTasks", 
+        verbose_name="Daily Official Tasks", 
+        blank=True
+    )
+
     first_name = models.CharField(verbose_name="First Name", max_length=20, null=True, blank=True)
     last_name = models.CharField(verbose_name="Last Name", max_length=50, null=True, blank=True)
     username = models.CharField(verbose_name="Username", max_length=20, null=False)
@@ -43,6 +50,26 @@ class Users(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
+
+class UserDailyOfficialTasks(models.Model):
+    task = models.ForeignKey(
+        "OfficialTasks",
+        verbose_name="Official Task",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("task", "user")
     
 class Activity(models.Model):
     user = models.ForeignKey(
