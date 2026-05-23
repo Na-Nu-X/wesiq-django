@@ -188,6 +188,7 @@
             </div>
 
             <script src="{% static 'app/ts/dist/pages/training_session/training_session.js' %}" type="module"></script>
+            <script src="{% static 'app/ts/dist/pages/training_session/components/todo.js' %}" type="module"></script>
 
         {% endif %}
 
@@ -269,6 +270,28 @@
 
         <p class="training_plan_summary"></p>
         <div class="training_plan_summary_chart"><canvas>{% translate "Graf sa nepodarilo načítať." %}</canvas></div>
+    </div>
+
+    <div class="todo">
+        <div class="official_tasks">
+            <h3>{% translate "Dokážeš splniť dnešné výzvy?" %}</h3>
+
+            <div class="tasks">
+                {% for one_task in official_tasks %}
+                    <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}">
+                        <label for="{{ one_task.data }}">{{ one_task.title }}</label>
+                        <input type="checkbox" name="{{ one_task.data }}" id="{{ one_task.data }}">
+                    </div>
+                
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="official_tasks">
+            <h3>{% translate "Dokážeš splniť tvoje výzvy?" %}</h3>
+
+            <div class="tasks"></div>
+        </div>
     </div>
 {% endblock content %}
 

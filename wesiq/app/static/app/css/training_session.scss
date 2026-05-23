@@ -538,6 +538,31 @@
     }
 }
 
+.todo {
+    max-width: 500px;
+    width: 100%;
+    margin: 20px auto 0px;
+    
+    .official_tasks {
+        h3 {
+            text-align: center;
+            font-family: $article-heading-font;
+            font-size: 1.5em;
+        }
+
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+    
+            .task {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    }
+}
+
 /***********
  Key Frames
 ***********/

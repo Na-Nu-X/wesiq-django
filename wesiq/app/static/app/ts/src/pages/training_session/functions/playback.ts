@@ -13,6 +13,11 @@ import {
     deleteActivitySummary 
 } from "./activitySummary.js"
 
+import { 
+    checkOfficialTasksCompletion,
+    completeOfficialTask
+ } from "./officialTasksCompletion.js"
+
 import { getFormattedTime } from "../../../utils/timer.js"
 import { resetTrainingPlan } from "./trainingPlan.js"
 import { sendPOST } from "../../../services/sendPOST.js"
@@ -67,6 +72,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
             else updateActivitySummary(null)
 
             updateTimer(timer) // Shows Elapsed Time On The Playback Timer
+            checkOfficialTasksCompletion() // Ckecks The Completion Of The Official Tasks
         }, activity_interval.SPEED)
     }
 
@@ -138,7 +144,7 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
             if(gained_xp > 0) {
                 if(!container.querySelector(".no_logged_in")) {
                     try {
-                        const new_activity_response:response = await sendPOST(window.location.pathname, new_activity_data) // Sends POST Data
+                        const new_activity_response:response = await sendPOST(window.location.pathname, new_activity_data, "new-activity") // Sends POST Data
 
                         // If The Response Isn't Success
                         if(!new_activity_response.success) {
@@ -155,13 +161,16 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
                         renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
 
                         if(training_plan_summary.length > 0) {
-                            const training_plan_title:string = (container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["title"] || "" // Gets Training Plan Title
-                            const training_plan_day:number|null = Number((container.querySelector(".training_plan_container .training_plan") as HTMLParagraphElement).dataset["day"]) || null // Gets Training Plan Day
+                            const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
+                            const training_plan_title:string = training_plan.dataset["title"] || "" // Gets Training Plan Title
+                            const training_plan_day:number|null = Number(training_plan.dataset["day"]) || null // Gets Training Plan Day
+                            const exercises_amount:number = training_plan.querySelectorAll(".exercise").length // Gets The Amount Of Exercises In The Training Plan
 
                             new_activity_data.type = training_plan_title // Stores Training Plan Title
                             new_activity_data.day = training_plan_day // Stores Training Plan Day
                             new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
 
+                            if(training_plan_state.active_exercise_index === exercises_amount - 1) completeOfficialTask("complete_training_plan_activity") // Completes The "Complete Training Plan Activity" Official Task
                             renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
                         }
                     }

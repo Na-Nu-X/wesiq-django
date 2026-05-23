@@ -214,6 +214,15 @@ class Exercises(models.Model):
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
 
+class OfficialTasks(models.Model):
+    title = models.CharField(verbose_name="Title", max_length=100, null=False)
+    data = models.CharField(verbose_name="Data", max_length=100, null=False)
+    xp = models.IntegerField(verbose_name="XP", default=0, null=False)
+
+class CustomTasks(models.Model):
+    title = models.CharField(verbose_name="Title", max_length=100, null=False)
+    data = models.CharField(verbose_name="Data", max_length=100, null=False)
+
 class Transactions(models.Model):
     status_choices = [
         ("pending", "pending"),
