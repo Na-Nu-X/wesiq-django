@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
+from app.models import Users, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -2115,35 +2115,57 @@ def trainingSessionView(request):
             )
             .order_by("sorted_days")
         )
+
+        official_tasks = OfficialTasks.objects.order_by("?")[:3] # Gets Random 3 Official Tasks
         
         if request.method == "POST":
-            try:
-                new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+            # Complete Official Task
+            if request.headers.get("X-Requested-Action") == "complete-official-task":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-                gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
+                        task_data = json.loads(request.body) # Gets The Completed Task Data
+                        task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
+                        
+                        return JsonResponse({"success": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
 
-                # Increments Gained XP For The User In The Database
-                logged_in_user.xp += int(gained_xp)
-                logged_in_user.save()
+                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné označiť za dokončenú bez prihlásenia.")}, status=401)
 
-                # Saves New Activity To Database
-                new_activity = Activity(
-                    user_id = logged_in_user_id,
-                    formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
-                    elapsed_time = int(new_activity_data["elapsed_time"]),
-                    gained_xp = int(gained_xp),
-                    type = new_activity_data["type"],
-                    training_plan_day = new_activity_data["day"],
-                    training_plan_summary = new_activity_data["training_plan_summary"]
-                )
+                except Exception as e:
+                    captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")}, status=500)
 
-                new_activity.save()
+            # New Activity
+            if request.headers.get("X-Requested-Action") == "new-activity":
+                try:
+                    new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
 
-                return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
+                    gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
-            except Exception as e:
-                captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
+                    # Increments Gained XP For The User In The Database
+                    logged_in_user.xp += int(gained_xp)
+                    logged_in_user.save()
+
+                    # Saves New Activity To Database
+                    new_activity = Activity(
+                        user_id = logged_in_user_id,
+                        formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
+                        elapsed_time = int(new_activity_data["elapsed_time"]),
+                        gained_xp = int(gained_xp),
+                        type = new_activity_data["type"],
+                        training_plan_day = new_activity_data["day"],
+                        training_plan_summary = new_activity_data["training_plan_summary"]
+                    )
+
+                    new_activity.save()
+
+                    return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
+
+                except Exception as e:
+                    captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
 
         return render(request, "app/training_session.html", {
             "first_name": logged_in_user.first_name,
@@ -2157,6 +2179,7 @@ def trainingSessionView(request):
             "activities_amount": activities_amount,
             "training_plan": training_plan,
             "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
+            "official_tasks": official_tasks
         })
 
     return render(request, "app/training_session.html")

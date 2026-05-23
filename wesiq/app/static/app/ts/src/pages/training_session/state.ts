@@ -1,7 +1,7 @@
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
 const training_plan:HTMLDivElement = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
-const GLOBAL_SPEED:number = 0.1 // 1 Default (Lower = Faster)
+const GLOBAL_SPEED:number = 0.001 // 1 Default (Lower = Faster)
 
 // GLOBAL STATES
 
