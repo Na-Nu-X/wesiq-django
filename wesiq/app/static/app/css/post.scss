@@ -602,7 +602,9 @@ h2 {
                             margin-left: 10px;
                         }
 
-                        .video_settings {
+                        .video_settings,
+                        .video_quality,
+                        .video_speed {
                             position: fixed;
                             inset: auto;
                             margin: 0;
@@ -677,6 +679,11 @@ h2 {
                                     transition: letter-spacing 0.3s ease;
                                 }
                             }
+                        }
+
+                        .video_quality,
+                        .video_speed {
+                            top: anchor(bottom);
                         }
                     }
 

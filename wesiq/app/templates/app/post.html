@@ -435,14 +435,69 @@
                                                     popover
                                                     style="position-anchor: --show_video_settings_button;"
                                                 >
+                                                    <button 
+                                                        class="show_video_quality_button"
+                                                        popovertarget="video_quality"
+                                                        style="anchor-name: --show_video_quality_button;"
+                                                    >
+                                                        <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
+                                                        <span>{% translate "Kvalita" %}</span>
+                                                    </button>
+
+                                                    <button 
+                                                        class="show_video_speed_button"
+                                                        popovertarget="video_speed"
+                                                        style="anchor-name: --show_video_speed_button;"
+                                                    >
+                                                        <i class="fa-solid fa-stopwatch"></i> <!-- https://fontawesome.com/icons/stopwatch -->
+                                                        <span>{% translate "Rýchlosť" %}</span>
+                                                    </button>
+
+                                                    <button 
+                                                        class="back_video_settings_button"
+                                                        popovertarget="video_settings"
+                                                        popovertargetaction="hide"
+                                                    >
+                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                        <span>{% translate "Zavrieť" %}</span>
+                                                    </button>
+                                                </div>
+
+                                                <div 
+                                                    class="video_quality" 
+                                                    id="video_quality"
+                                                    popover
+                                                    style="position-anchor: --show_video_quality_button;"
+                                                >
                                                     <button class="quality_button quality_auto" data-quality="-1">auto</button>
                                                     <button class="quality_button quality_1080p" data-quality="1080">1080p</button>
                                                     <button class="quality_button quality_720p" data-quality="720">720p</button>
                                                     <button class="quality_button quality_480p" data-quality="480">480p</button>
 
                                                     <button 
-                                                        class="back_video_settings_button" 
-                                                        popovertarget="video_settings" 
+                                                        class="back_video_quality_button" 
+                                                        popovertarget="video_quality" 
+                                                        popovertargetaction="hide"
+                                                    >
+                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                        <span>{% translate "Zavrieť" %}</span>
+                                                    </button>
+                                                </div>
+
+                                                <div 
+                                                    class="video_speed" 
+                                                    id="video_speed"
+                                                    popover
+                                                    style="position-anchor: --show_video_speed_button;"
+                                                >
+                                                    <button class="speed_button" data-speed="2">2×</button>
+                                                    <button class="speed_button" data-speed="1.5">1,5×</button>
+                                                    <button class="speed_button" data-speed="1">{% translate "Normálna" %}</button>
+                                                    <button class="speed_button" data-speed="0.5">0,5×</button>
+
+                                                    <button 
+                                                        class="back_video_speed_button" 
+                                                        popovertarget="video_speed" 
                                                         popovertargetaction="hide"
                                                     >
                                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->

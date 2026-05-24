@@ -222,8 +222,8 @@ export function initializeChangeVideoQuality(video:HTMLVideoElement, video_src:s
         
         // If The Video Is Ready
         hls.on(Hls.Events.MANIFEST_PARSED, function():void {
-            const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
-            const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_settings.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
+            const video_quality:HTMLDivElement = video_container.querySelector(".controls .buttons .video_quality") as HTMLDivElement // Gets The Video Quality Menu
+            const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_quality.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
 
             // All Quality Buttons Functionalities
             all_quality_buttons.forEach(function(one_button:HTMLButtonElement):void {
