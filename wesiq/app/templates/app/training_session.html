@@ -274,12 +274,13 @@
 
     <div class="todo">
         <div class="official_tasks">
-            <h3>{% translate "Dokážeš splniť dnešné výzvy?" %}</h3>
+            <h3>{% translate "Dokážeš&nbsp;splniť dnešné&nbsp;výzvy?" %}</h3>
 
             <div class="tasks">
                 {% for one_task in official_tasks %}               
                     <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}">
-                        <p>{{ one_task.title }}</p>
+                        <p class="title">{{ one_task.title }}</p>
+                        <p class="xp">+{{ one_task.xp }}XP</p>
 
                         <div 
                             class="
@@ -298,11 +299,11 @@
             </div>
         </div>
 
-        <div class="official_tasks">
-            <h3>{% translate "Dokážeš splniť tvoje výzvy?" %}</h3>
+        {% comment %} <div class="custom_tasks">
+            <h3>{% translate "Dokážeš&nbsp;splniť tvoje&nbsp;výzvy?" %}</h3>
 
             <div class="tasks"></div>
-        </div>
+        </div> {% endcomment %}
     </div>
 {% endblock content %}
 

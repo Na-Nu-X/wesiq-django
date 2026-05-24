@@ -155,6 +155,16 @@ export function changeVideoQuality(quality:number, hls:any, button:HTMLButtonEle
     button.classList.add("active") // Adds The Active Class To The Clicked Quality Button
 }
 
+// Function For Change The Video Speed
+export function changeVideoSpeed(speed:number, video:HTMLVideoElement, button:HTMLButtonElement, all_buttons:NodeListOf<HTMLButtonElement>):void {
+    // Checks The Validity Of The Video Speed Range
+    if(speed >= 0.25 && speed <= 16) {
+        video.playbackRate = speed
+        all_buttons.forEach(one_button => one_button.classList.remove("active")) // Removes The Active Class From Every Speed Button
+        button.classList.add("active") // Adds The Active Class To The Clicked Speed Button
+    }
+}
+
 // Function For Play Or Pause The Video
 export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video_container:HTMLDivElement):void {
     // Fullscreen Mode

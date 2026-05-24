@@ -1464,7 +1464,9 @@ header {
                                     margin-left: 10px;
                                 }
 
-                                .video_settings {
+                                .video_settings,
+                                .video_quality,
+                                .video_speed {
                                     position: fixed;
                                     inset: auto;
                                     margin: 0;
@@ -1500,8 +1502,7 @@ header {
                                         transition: background-color 0.3s ease;
         
                                         &:hover,
-                                        &:focus,
-                                        &.active {
+                                        &:focus {
                                             background-color: transparentize($blue-color, 0.9);
                                             cursor: pointer;
         
@@ -1537,6 +1538,27 @@ header {
                                         span {
                                             pointer-events: none;
                                             transition: letter-spacing 0.3s ease;
+                                        }
+                                    }
+                                }
+
+                                .video_quality,
+                                .video_speed {
+                                    top: anchor(bottom);
+
+                                    button {
+                                        &.active {
+                                            background-color: transparentize($blue-color, 0.9);
+                                            cursor: pointer;
+        
+                                            i {
+                                                visibility: visible;
+                                                opacity: 1;
+                                            }
+        
+                                            span {
+                                                letter-spacing: 0.5px;
+                                            }
                                         }
                                     }
                                 }

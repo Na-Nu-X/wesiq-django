@@ -42,7 +42,7 @@
                     <div class="period_selection">
                         <div class="reps_container">
                             <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                            <input type="number" class="reps" value="0" min="0">
+                            <input class="reps" type="number" inputmode="numeric" value="0" min="0" pattern="[0-9]+">
                             <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
 
                             <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
@@ -51,7 +51,7 @@
 
                         <div class="sets_container">
                             <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                            <input type="number" class="sets" value="1" min="1" max="100">
+                            <input class="sets" type="number" inputmode="numeric" value="1" min="1" max="100" pattern="[0-9]+">
                             <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
                         </div>
                     </div>
@@ -92,7 +92,7 @@
             <div class="period_selection">
                 <div class="reps_container">
                     <button class="decrease_reps"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                    <input type="number" class="reps" value="0" min="0">
+                    <input class="reps" type="number" inputmode="numeric" value="0" min="0" pattern="[0-9]+">
                     <button class="increase_reps"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
 
                     <p class="to_failure">{% translate "Do&nbsp;zlyhania" %}</p>
@@ -101,7 +101,7 @@
 
                 <div class="sets_container">
                     <button class="decrease_sets"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
-                    <input type="number" class="sets" value="1" min="1" max="100">
+                    <input class="sets" type="number" inputmode="numeric" value="1" min="1" max="100" pattern="[0-9]+">
                     <button class="increase_sets"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
                 </div>
             </div>
@@ -263,7 +263,7 @@
 
                         <div class="weight_selection">
                             <button class="increase_weight"><i class='fa-solid fa-plus'></i></button> <!-- https://fontawesome.com/icons/plus -->
-                            {% comment %} <input type="number" class="weight" value="0" min="-100" max="1000"> {% endcomment %}
+                            {% comment %} <input class="weight" type="number" inputmode="numeric" value="0" min="-100" max="1000" pattern="[0-9]+"> {% endcomment %}
                             <p class="weight"><span>0</span><span>kg</span></p>
                             <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
                         </div>

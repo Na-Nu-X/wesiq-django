@@ -31,6 +31,7 @@ import {
     stepBack,
     stepFurther,
     muteUnmuteVideo,
+    changeVideoSpeed,
     toogleVideoFullscreen,
     changeVideoVolume,
     changePost
@@ -286,6 +287,16 @@ document.addEventListener("DOMContentLoaded", function():void {
             const video:HTMLVideoElement = (volume_icon.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
             muteUnmuteVideo(volume_icon, volume_input, video) // Mutes Or Unmutes The Video
+        }
+
+        // Change Video Speed
+        if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("video_speed")) {
+            const speed_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Video Speed Button
+            const all_speed_buttons:NodeListOf<HTMLButtonElement> = (speed_button.parentElement as HTMLDivElement).querySelectorAll<HTMLButtonElement>(".speed_button") // Gets All Speed Buttons
+            const speed:number|null = Number(speed_button.dataset["speed"]) || null // Gets The Speed Value
+            const video:HTMLVideoElement = (speed_button.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+            if(speed) changeVideoSpeed(speed, video, speed_button, all_speed_buttons) // Changes The Video Speed
         }
 
         // Toogle Video Fullscreen

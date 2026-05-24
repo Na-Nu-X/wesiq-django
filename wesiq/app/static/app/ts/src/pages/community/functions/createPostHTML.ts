@@ -185,13 +185,41 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             show_video_settings_button.style = `anchor-name: --show_video_settings_button_${post_data.id}` // Creates The Anchor
 
             // Video Settings Menu
-            const video_settings:HTMLButtonElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLButtonElement // Gets The Video Settings Menu
+            const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
             video_settings.id = `video_settings_${post_data.id}` // Sets The ID
             video_settings.style = `position-anchor: --show_video_settings_button_${post_data.id}` // Links The Anchor
 
+            // Show Video Quality Button
+            const show_video_quality_button:HTMLButtonElement = video_settings.querySelector(".show_video_quality_button") as HTMLButtonElement // Gets The Show Video Quality Button
+            show_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Pop Over
+            show_video_quality_button.style = `anchor-name: --show_video_quality_button_${post_data.id}` // Creates The Anchor
+
+            // Show Video Speed Button
+            const show_video_speed_button:HTMLButtonElement = video_settings.querySelector(".show_video_speed_button") as HTMLButtonElement // Gets The Show Video Speed Button
+            show_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Pop Over
+            show_video_speed_button.style = `anchor-name: --show_video_speed_button_${post_data.id}` // Creates The Anchor
+
             // Back Video Settings Button
-            const back_video_settings_button:HTMLButtonElement = video_settings.querySelector(".back_video_settings_button") as HTMLButtonElement // Gets The Hide Settings Button
+            const back_video_settings_button:HTMLButtonElement = video_settings.querySelector(".back_video_settings_button") as HTMLButtonElement // Gets The Back Video Settings Button
             back_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Pop Over 
+
+            // Video Quality Menu
+            const video_quality:HTMLDivElement = video_container.querySelector(".controls .buttons .video_quality") as HTMLDivElement // Gets The Video Quality Menu
+            video_quality.id = `video_quality_${post_data.id}` // Sets The ID
+            video_quality.style = `position-anchor: --show_video_quality_button_${post_data.id}` // Links The Anchor
+
+            // Back Video Quality Button
+            const back_video_quality_button:HTMLButtonElement = video_quality.querySelector(".back_video_quality_button") as HTMLButtonElement // Gets The Back Video Quality Button
+            back_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Pop Over 
+
+            // Video Speed Menu
+            const video_speed:HTMLDivElement = video_container.querySelector(".controls .buttons .video_speed") as HTMLDivElement // Gets The Video Speed Menu
+            video_speed.id = `video_speed_${post_data.id}` // Sets The ID
+            video_speed.style = `position-anchor: --show_video_speed_button_${post_data.id}` // Links The Anchor
+
+            // Back Video Speed Button
+            const back_video_speed_button:HTMLButtonElement = video_speed.querySelector(".back_video_speed_button") as HTMLButtonElement // Gets The Back Video Speed Button
+            back_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Pop Over 
 
             // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
