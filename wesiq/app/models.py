@@ -248,8 +248,16 @@ class OfficialTasks(models.Model):
     xp = models.IntegerField(verbose_name="XP", default=0, null=False)
 
 class CustomTasks(models.Model):
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
     title = models.CharField(verbose_name="Title", max_length=100, null=False)
-    data = models.CharField(verbose_name="Data", max_length=100, null=False)
+    is_completed = models.BooleanField(verbose_name="Is Completed", default=False, null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class Transactions(models.Model):
     status_choices = [
