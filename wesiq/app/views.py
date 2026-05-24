@@ -2155,6 +2155,8 @@ def trainingSessionView(request):
             official_tasks = logged_in_user.daily_official_tasks.annotate(
                 is_completed=F("userdailyofficialtasks__is_completed")
             )
+
+        custom_tasks = CustomTasks.objects.filter(user_id=logged_in_user_id)
         
         if request.method == "POST":
             # Complete Official Task
@@ -2188,6 +2190,45 @@ def trainingSessionView(request):
                 except Exception as e:
                     captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")}, status=500)
+
+            # Toggle Complete Custom Task
+            if request.headers.get("X-Requested-Action") == "toggle-complete-custom-task":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+                        task_id = json.loads(request.body) # Gets The Custom Task Data
+                        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+                        task.is_completed = not task.is_completed # Inverts The Completion Status
+                        task.save(update_fields=["is_completed"]) # Saves The Updated Task
+
+                        return JsonResponse({"success": True, "message": _("Stav úlohy bol úspešne zmenený.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Stav úlohy nie je možné zmeniť bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri zmene stavu úlohy došlo k chybe.")}, status=500)
+
+            # Delete Custom Task
+            if request.headers.get("X-Requested-Action") == "delete-custom-task":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+                        task_id = json.loads(request.body) # Gets The Custom Task Data
+                        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+                        task.delete() # Deletes The User's Custom Task
+
+                        return JsonResponse({"success": True, "message": _("Úloha bola úspešne odstránená.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní úlohy došlo k chybe.")}, status=500)
 
             # New Activity
             if request.headers.get("X-Requested-Action") == "new-activity":
@@ -2231,7 +2272,8 @@ def trainingSessionView(request):
             "activities_amount": activities_amount,
             "training_plan": training_plan,
             "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
-            "official_tasks": official_tasks
+            "official_tasks": official_tasks,
+            "custom_tasks": custom_tasks
         })
 
     return render(request, "app/training_session.html")

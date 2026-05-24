@@ -299,11 +299,59 @@
             </div>
         </div>
 
-        {% comment %} <div class="custom_tasks">
-            <h3>{% translate "Dokážeš&nbsp;splniť tvoje&nbsp;výzvy?" %}</h3>
+        <div class="custom_tasks">
+            <h3>{% translate "Moje&nbsp;úlohy" %}</h3>
 
-            <div class="tasks"></div>
-        </div> {% endcomment %}
+            <div class="tasks">
+                {% for one_task in custom_tasks %}
+                    <div class="task" data-task_id={{ one_task.id }}>
+                        <label class="title" for="custom_task_{{ one_task.id }}">{{ one_task.title }}</label>
+
+                        <input 
+                            class="checkbox"
+                            type="checkbox" 
+                            id="custom_task_{{ one_task.id }}"
+
+                            {% if one_task.is_completed %}
+                                checked
+                            
+                            {% endif %}
+                        >
+
+                        <button 
+                            class="show_custom_task_properties_button" 
+                            popovertarget="custom_task_properties_{{ one_task.id }}"
+                            style="anchor-name: --show_custom_task_properties_button_{{ one_task.id }};"
+                            title="{% translate 'Viac...' %}"
+                        >
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </button>
+
+                        <div 
+                            class="custom_task_properties" 
+                            id="custom_task_properties_{{ one_task.id }}"
+                            popover
+                            style="position-anchor: --show_custom_task_properties_button_{{ one_task.id }};"
+                        >
+                            <button data-action="delete">
+                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                <span>{% translate "Vymazať" %}</span>
+                            </button>
+
+                            <button 
+                                class="hide_custom_task_properties_button" 
+                                popovertarget="custom_task_properties_{{ one_task.id }}"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock content %}
 
