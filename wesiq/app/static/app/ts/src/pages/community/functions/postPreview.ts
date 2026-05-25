@@ -120,11 +120,14 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                 }
 
                 if(element) {
-                    post.appendChild(element); // Appends The Element To The Post
+                    post.appendChild(element) // Appends The Element To The Post
 
                     // If Image is Fully Loaded
                     if(element instanceof HTMLImageElement) {
                         element.addEventListener("load", function() {
+                            const post:HTMLDivElement = element.closest(".post") as HTMLDivElement // Gets The Post Container
+                            post.dataset["filename"] = one_file.name // Stores The Filename
+
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
                             post_loading_progress.classList.add("hidden") // Hides The Loading Progress
@@ -134,6 +137,9 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     // If Video is Fully Loaded
                     else if(element instanceof HTMLVideoElement) {
                         element.addEventListener("loadeddata", function() {
+                            const post:HTMLDivElement = element.closest(".post") as HTMLDivElement // Gets The Post Container
+                            post.dataset["filename"] = one_file.name // Stores The Filename
+
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
                             post_loading_progress.classList.add("hidden") // Hides The Loading Progress
@@ -180,6 +186,11 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             }
 
             file_reader.readAsDataURL(one_file) // Renders The Preview
+
+            const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
+            const post_index:number = [...all_posts].indexOf(post) // Gets The Post Index
+
+            if(all_posts[post_index]) all_posts[post_index].dataset["order"] = String(post_index) // Stores The Order Of The Post
         }
     })
 }

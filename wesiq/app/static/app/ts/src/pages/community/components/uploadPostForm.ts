@@ -30,12 +30,13 @@ import {
     changeFocusedPlace
 } from "../functions/location.js"
 
-import { syncFiles } from "../functions/postPreview.js"
-import { uploadPost } from "../functions/uploadPost.js"
 import {
     handleDescriptionPaste,
     pruneDescriptionMetadata
 } from "../functions/syncDescription.js"
+
+import { syncFiles } from "../functions/postPreview.js"
+import { uploadPost } from "../functions/uploadPost.js"
 
 import type { tag } from "../state.js"
 
@@ -116,7 +117,26 @@ document.addEventListener("DOMContentLoaded", function():void {
         const upload_post_form_submit:HTMLInputElement = upload_post_form.querySelector(".upload_post_form_submit") as HTMLInputElement // Gets The Upload Post Form Submit Button
         const form_data:FormData = new FormData(event.target as HTMLFormElement) // Gets The Form Data
 
-        uploadPost(upload_post_form_submit, form_data)
+        const posts_preview:HTMLDivElement = this.querySelector(".posts_preview") as HTMLDivElement // Gets The Post Preview Container
+        const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
+
+        // Stores The Order Of Every Media
+        const media_order:{
+            filename:string,
+            order:string
+        }[] = []
+
+        // Maps The Posts And Saves Their Order
+        all_posts.forEach(function(one_post:HTMLDivElement):void {
+            media_order.push({
+                filename: one_post.dataset["filename"] || "",
+                order: one_post.dataset["order"] || ""
+            })
+        })
+
+        form_data.append("media_order", JSON.stringify(media_order)) // Appends The Media Order To The Form Data
+
+        uploadPost(upload_post_form_submit, form_data) // Uploads The Post
     })
 
     // Public Visibility Click Functionality

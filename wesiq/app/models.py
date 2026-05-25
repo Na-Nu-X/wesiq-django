@@ -395,6 +395,7 @@ class PostMedia(models.Model):
     original_filename = models.CharField(verbose_name="Original Filename", max_length=255, null=True, blank=True)
     original_size = models.BigIntegerField(verbose_name="Original Size", null=True, blank=True)
     compressed_size = models.BigIntegerField(verbose_name="Compressed Size", null=True, blank=True)
+    order = models.IntegerField(verbose_name="Order", default=0, null=False)
 
     @property
     def filename(self):
