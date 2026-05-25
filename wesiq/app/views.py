@@ -2414,7 +2414,11 @@ def communityView(request):
             "user"
         ).prefetch_related(
             "tagged_users",
-            "media",
+
+            Prefetch(
+                "media",
+                queryset=PostMedia.objects.order_by("order")
+            )
         ).order_by(
             "-created_at"
         ).distinct()
@@ -2449,6 +2453,9 @@ def communityView(request):
 
                     # Saves Only if The Form is Valid And Includes at Least One File
                     if upload_post_form.is_valid() and files:
+                        media_order = json.loads(request.POST.get("media_order", "[]")) # Gets The Media Order
+                        media_order_dict = {item["filename"]: item["order"] for item in media_order} # Converts The Media Order To The Dictionary Format (For Example: {"photo1.jpg": 0, "photo2.jpg": 1})
+
                         try:
                             # Gets The Coordinates Data
                             coordinates_data = {
@@ -2537,6 +2544,8 @@ def communityView(request):
                                                 os.remove(temporary_path)
 
                                             return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
+
+                                    order = media_order_dict.get(one_file.name, 0) # Gets The Order Of The Current File
                                     
                                     # Saves The New Post Media
                                     new_post_media = PostMedia.objects.create(
@@ -2544,7 +2553,8 @@ def communityView(request):
                                         file=one_file,
                                         is_video=is_video,
                                         original_filename=one_file.name,
-                                        original_size=one_file.size
+                                        original_size=one_file.size,
+                                        order=order
                                     )
 
                                     # Video
@@ -2738,7 +2748,11 @@ def loadPostsView(request):
             "user"
         ).prefetch_related(
             "tagged_users", 
-            "media",
+            
+            Prefetch(
+                "media",
+                queryset=PostMedia.objects.order_by("order")
+            ),
 
             Prefetch(
                 "comments",
@@ -3026,8 +3040,12 @@ def postView(request, post_id):
         ).prefetch_related(
             "user__followers",
             "tagged_users", 
-            "media",
             "likes_from_users",
+            
+            Prefetch(
+                "media",
+                queryset=PostMedia.objects.order_by("order")
+            ),
 
             Prefetch(
                 "comments",
@@ -3109,7 +3127,10 @@ def profileView(request, username):
         ).select_related(
             "user"
         ).prefetch_related(
-            "media",
+            Prefetch(
+                "media",
+                queryset=PostMedia.objects.order_by("order")
+            )
         ).exclude(
             media__is_processed=False
         ).order_by(
