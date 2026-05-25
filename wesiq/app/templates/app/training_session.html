@@ -279,9 +279,6 @@
             <div class="tasks">
                 {% for one_task in official_tasks %}               
                     <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}">
-                        <p class="title">{{ one_task.title }}</p>
-                        <p class="xp">+{{ one_task.xp }}XP</p>
-
                         <div 
                             class="
                                 checkbox 
@@ -293,6 +290,9 @@
                             "
                         >
                         </div>
+
+                        <p class="title">{{ one_task.title }}</p>
+                        <p class="xp">+{{ one_task.xp }}XP</p>
                     </div>
                 
                 {% endfor %}
@@ -303,12 +303,15 @@
             <h3>{% translate "Moje&nbsp;úlohy" %}</h3>
 
             <div class="tasks">
+                <button class="add_task"><i class="fa-solid fa-plus"></i></button>
+
                 {% for one_task in custom_tasks %}
                     <div class="task" data-task_id={{ one_task.id }}>
+                        <div class="checkbox"></div>
                         <label class="title" for="custom_task_{{ one_task.id }}">{{ one_task.title }}</label>
+                        <p class="date">{{ one_task.created_at|date:"d.m." }}</p>
 
                         <input 
-                            class="checkbox"
                             type="checkbox" 
                             id="custom_task_{{ one_task.id }}"
 

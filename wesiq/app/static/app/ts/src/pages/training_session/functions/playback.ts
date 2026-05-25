@@ -170,7 +170,18 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
                             new_activity_data.day = training_plan_day // Stores Training Plan Day
                             new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
 
-                            if(training_plan_state.active_exercise_index === exercises_amount - 1) completeOfficialTask("complete_training_plan_activity") // Completes The "Complete Training Plan Activity" Official Task
+                            if(training_plan_state.active_exercise_index === exercises_amount - 1) {
+                                const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
+                                const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
+                                const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+                                const complete_training_plan_activity:HTMLDivElement|null = tasks.querySelector("[data-task='complete_training_plan_activity']") || null // Gets The "Complete Training Plan Activity" Official Task If Is Available
+
+                                if(complete_training_plan_activity) {
+                                    const checkbox:HTMLDivElement = complete_training_plan_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+                                    completeOfficialTask("complete_training_plan_activity", checkbox) // Completes The "Complete Training Plan Activity" Official Task
+                                }
+                            }
+
                             renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
                         }
                     }
