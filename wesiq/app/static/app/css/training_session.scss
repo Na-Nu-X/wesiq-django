@@ -539,50 +539,70 @@
 }
 
 .todo {
-    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     width: 100%;
     margin: 20px auto 0px;
     
     .official_tasks,
     .custom_tasks {
+        max-width: 500px;
+        width: 100%;
+
         h3 {
             text-align: center;
             font-family: $article-heading-font;
             font-size: 1.5em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .tasks {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
     
             .task {
+                --progress: 0;
+                --progress-color: rgba(255, 207, 32, 0.1);
+
+                position: relative;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 gap: 10px;
+                background-color: transparentize($secondary-color, 0.95);
+                padding: 0px 15px;
+                border-radius: $small-border-radius;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: 0px;
+                    transform: scaleX(min(calc(var(--progress) / 100), 1));
+                    transform-origin: left;
+                    width: 100%;
+                    height: 100%;
+                    background-color: var(--progress-color);
+                    border-radius: inherit;
+                    pointer-events: none;
+                }
 
                 .title {
                     flex-grow: 1;
+                    height: 50px;
+                    line-height: 50px;
                 }
             }
         }
     }
 
     .official_tasks {
-        margin-bottom: 10px;
-
         .tasks {
             .task {
                 &:has(.checkbox.checked) {
-                    .title {
-                        text-decoration: line-through;
-                    }
-                }
-
-                .xp {
-                    color: $success-color;
+                    --progress: 100;
+                    --progress-color: rgba(82, 207, 32, 0.1);
                 }
 
                 .checkbox {
@@ -616,66 +636,107 @@
                         }
                     }
                 }
+
+                .xp {
+                    user-select: none;
+                    width: 7ch;
+                    padding-left: 10px;
+                    text-align: center;
+                    color: $success-color;
+                    border-left: 1px solid darken($secondary-color, 40%);
+                    font-size: 0.8em;
+                    font-variant-numeric: tabular-nums;
+                    white-space: nowrap;
+                }
             }
         }
     }
 
     .custom_tasks {
         .tasks {
+            .add_task {
+                all: unset;
+                height: 50px;
+                text-align: center;
+                background-color: transparentize($secondary-color, 0.95);
+                border-radius: $small-border-radius;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.02);
+                    cursor: pointer;
+                }
+
+                .fa-plus {
+                    font-size: 2em;
+                }
+            }
+
             .task {
-                &:has(.checkbox:checked) {
-                    .title {
-                        text-decoration: line-through;
+                transition: transform 0.3s ease;
+
+                &::before {
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+                }
+
+                &:hover {
+                    transform: scale(1.02);
+                }
+
+                &:has(input[type="checkbox"]:checked) {
+                    --progress: 100;
+                    --progress-color: rgba(82, 207, 32, 0.1);
+
+                    .checkbox {
+                        outline: 1px solid darken($success-color, 10%);
 
                         &::before {
-                            outline: 1px solid darken($success-color, 10%);
-                        }
-
-                        &::after {
-                            transform: translateY(-50%) scale(1.5);
+                            transform: scale(1.5);
                             opacity: 1;
                             transition: transform 0.3s ease, opacity 0.3s ease;
                         }
                     }
                 }
 
-                .title {
+                .checkbox {
                     position: relative;
-                    transition: letter-spacing 0.3s ease;
+                    display: block;
+                    flex-shrink: 0;
+                    width: 14px;
+                    height: 14px;
+                    outline: 1px solid darken($secondary-color, 40%);
+                    background: lighten($main-color, 20%);
 
-                    &:hover {
-                        cursor: pointer;
-                        letter-spacing: 0.5px;
-                    }
-                    
                     &::before {
                         content: "";
                         position: absolute;
-                        top: 50%;
-                        right: 0px;
-                        transform: translateY(-50%);
-                        width: 14px;
-                        height: 14px;
-                        outline: 1px solid darken($secondary-color, 40%);
-                        background: lighten($main-color, 20%);
-                    }
-
-                    &::after {
-                        content: "";
-                        position: absolute;
-                        top: 50%;
-                        right: 0px;
-                        transform: translateY(-50%) scale(0);
-                        width: 14px;
-                        height: 14px;
+                        width: inherit;
+                        height: inherit;
                         background-image: url("../../../../static/images/check.png"); // https://www.flaticon.com/free-icon/check_16750043
                         background-size: contain;
+                        transform: scale(0);
                         opacity: 0;
                         transition: transform 0.2s ease, opacity 0.2s ease;
                     }
                 }
 
-                .checkbox {
+                .title {
+                    cursor: pointer;
+                }
+
+                .date {
+                    user-select: none;
+                    width: 7ch;
+                    padding-left: 10px;
+                    text-align: center;
+                    color: darken($secondary-color, 40%);
+                    border-left: 1px solid darken($secondary-color, 40%);
+                    font-size: 0.8em;
+                    font-variant-numeric: tabular-nums;
+                    white-space: nowrap;
+                }
+
+                input[type="checkbox"] {
                     display: none;
                 }
 
@@ -807,6 +868,14 @@
 /**************
  Media Queries
 **************/
+
+@media (width <= 1060px) {
+    .todo {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+}
 
 @media (width <= 500px) {
     .activity {

@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Tasks Change Functionalities
     tasks.addEventListener("change", function(event:Event):void {
         // Toggle Custom Task Completion
-        if((event.target as HTMLInputElement).classList.contains("checkbox")) {
+        if(event.target instanceof HTMLInputElement && (event.target as HTMLInputElement).type === "checkbox") {
             const checkbox:HTMLInputElement = event.target as HTMLInputElement // Gets The Clicked Checkbox
             const task:HTMLDivElement = checkbox.closest(".task") as HTMLDivElement // Gets The Custom Task
             const task_id:number|null = Number(task.dataset["task_id"]) || null // Gets The Task ID

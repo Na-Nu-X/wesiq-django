@@ -14,44 +14,102 @@ export function checkOfficialTasksCompletion():void {
     const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
     const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
     const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
-    const all_tasks = tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
 
-    all_tasks.forEach(function(one_task:HTMLDivElement):void {
-        const checkbox:HTMLDivElement = one_task.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
-        
-        // If The User's Daily Official Task Wasn't Previously Completed
+    const MAX_RED:number = 255
+    const MIN_RED:number = 82
+
+    const _30_minutes_activity:HTMLDivElement|null = tasks.querySelector("[data-task='30_minutes_activity']") || null // Gets The "30 Minutes Activity" Official Task If Is Available
+    const _1_hour_activity:HTMLDivElement|null = tasks.querySelector("[data-task='1_hour_activity']") || null // Gets The "1 Hour Activity" Official Task If Is Available
+    const _2_hours_activity:HTMLDivElement|null = tasks.querySelector("[data-task='2_hours_activity']") || null // Gets The "2 Hours Activity" Official Task If Is Available
+    const _3_hours_activity:HTMLDivElement|null = tasks.querySelector("[data-task='3_hours_activity']") || null // Gets The "3 Hours Activity" Official Task If Is Available
+
+    // 30 Minutes Activity
+    if(_30_minutes_activity) {
+        const checkbox:HTMLDivElement = _30_minutes_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+        // If The Task Isn't Already Completed
         if(!checkbox.classList.contains("checked")) {
-            const task_data:string|null = one_task.dataset["task"] || null // Gets The Task Data
-
-            // 30 Minutes Activity
-            if(activity_summary.elapsed_time === 3600 / 2) {
-                if(task_data === "30_minutes_activity") {
-                    completeOfficialTask(task_data, checkbox) // Completes The "30 Minutes Activity" Official Task
-                }
-            }
+            const progress:number = (activity_summary.elapsed_time / (3600 / 2)) * 100 // Calculates The Progress
     
-            // 1 Hour Activity
-            if(activity_summary.elapsed_time === 3600) {
-                if(task_data === "1_hour_activity") {
-                    completeOfficialTask(task_data, checkbox) // Completes The "1 Hour Activity" Official Task
-                }
-            }
+            if(progress <= 100) {
+                let red:number = MAX_RED - (progress / 100) * (MAX_RED - MIN_RED) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+        
+                _30_minutes_activity.style.setProperty("--progress", String(progress)) // Sets The Progress
+                _30_minutes_activity.style.setProperty("--progress-color", `rgba(${red}, 207, 32, 0.1)`) // Sets The Progress Color
     
-            // 2 Hours Activity
-            else if(activity_summary.elapsed_time === 3600 * 2) {
-                if(task_data === "2_hours_activity") {
-                    completeOfficialTask(task_data, checkbox) // Completes The "2 Hours Activity" Official Task
-                }
-            }
-    
-            // 3 Hours Activity
-            else if(activity_summary.elapsed_time === 3600 * 3) {
-                if(task_data === "3_hours_activity") {
-                    completeOfficialTask(task_data, checkbox) // Completes The "3 Hours Activity" Official Task
+                // 100% Completed
+                if(progress === 100) {
+                    completeOfficialTask("30_minutes_activity", checkbox) // Completes The "30 Minutes Activity" Official Task
                 }
             }
         }
-    })
+    }
+
+    // 1 Hour Activity
+    if(_1_hour_activity) {
+        const checkbox:HTMLDivElement = _1_hour_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+        // If The Task Isn't Already Completed
+        if(!checkbox.classList.contains("checked")) {
+            const progress:number = (activity_summary.elapsed_time / 3600) * 100 // Calculates The Progress
+
+            if(progress <= 100) {
+                let red:number = MAX_RED - (progress / 100) * (MAX_RED - MIN_RED) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+
+                _1_hour_activity.style.setProperty("--progress", String(progress)) // Sets The Progress
+                _1_hour_activity.style.setProperty("--progress-color", `rgba(${red}, 207, 32, 0.1)`) // Sets The Progress Color
+
+                // 100% Completed
+                if(progress === 100) {
+                    completeOfficialTask("1_hour_activity", checkbox) // Completes The "1 Hour Activity" Official Task
+                }
+            }
+        }
+    }
+
+    // 2 Hours Activity
+    if(_2_hours_activity) {
+        const checkbox:HTMLDivElement = _2_hours_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+        // If The Task Isn't Already Completed
+        if(!checkbox.classList.contains("checked")) {
+            const progress:number = (activity_summary.elapsed_time / (3600 * 2)) * 100 // Calculates The Progress
+
+            if(progress <= 100) {
+                let red:number = MAX_RED - (progress / 100) * (MAX_RED - MIN_RED) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+
+                _2_hours_activity.style.setProperty("--progress", String(progress)) // Sets The Progress
+                _2_hours_activity.style.setProperty("--progress-color", `rgba(${red}, 207, 32, 0.1)`) // Sets The Progress Color
+
+                // 100% Completed
+                if(progress === 100) {
+                    completeOfficialTask("2_hours_activity", checkbox) // Completes The "2 Hours Activity" Official Task
+                }
+            }
+        }
+    }
+
+    // 3 Hours Activity
+    if(_3_hours_activity) {
+        const checkbox:HTMLDivElement = _3_hours_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+        // If The Task Isn't Already Completed
+        if(!checkbox.classList.contains("checked")) {
+            const progress:number = (activity_summary.elapsed_time / (3600 * 3)) * 100 // Calculates The Progress
+
+            if(progress <= 100) {
+                let red:number = MAX_RED - (progress / 100) * (MAX_RED - MIN_RED) // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
+
+                _3_hours_activity.style.setProperty("--progress", String(progress)) // Sets The Progress
+                _3_hours_activity.style.setProperty("--progress-color", `rgba(${red}, 207, 32, 0.1)`) // Sets The Progress Color
+
+                // 100% Completed
+                if(progress === 100) {
+                    completeOfficialTask("3_hours_activity", checkbox) // Completes The "3 Hours Activity" Official Task
+                }
+            }
+        }
+    }
 }
 
 // Function For Complete Official Task
