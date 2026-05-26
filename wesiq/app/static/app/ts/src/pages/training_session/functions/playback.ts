@@ -158,6 +158,21 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
                     }
 
                     finally {
+                        const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
+                        const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
+                        const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+
+                        const _2_activities:HTMLDivElement|null = tasks.querySelector("[data-task='2_activities']") || null // Gets The "Complete 2 Activities" Official Task If Is Available
+
+                        if(_2_activities) {
+                            const checkbox:HTMLDivElement = _2_activities.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+                            // If The Task Isn't Already Completed
+                            if(!checkbox.classList.contains("checked")) {
+                                completeOfficialTask("2_activities", _2_activities) // Completes The "Complete 2 Activities" Official Task
+                            }
+                        }
+
                         renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
 
                         if(training_plan_summary.length > 0) {
@@ -171,14 +186,15 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
                             new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
 
                             if(training_plan_state.active_exercise_index === exercises_amount - 1) {
-                                const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
-                                const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
-                                const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
                                 const complete_training_plan_activity:HTMLDivElement|null = tasks.querySelector("[data-task='complete_training_plan_activity']") || null // Gets The "Complete Training Plan Activity" Official Task If Is Available
 
                                 if(complete_training_plan_activity) {
                                     const checkbox:HTMLDivElement = complete_training_plan_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
-                                    completeOfficialTask("complete_training_plan_activity", checkbox) // Completes The "Complete Training Plan Activity" Official Task
+
+                                    // If The Task Isn't Already Completed
+                                    if(!checkbox.classList.contains("checked")) {
+                                        completeOfficialTask("complete_training_plan_activity", complete_training_plan_activity) // Completes The "Complete Training Plan Activity" Official Task
+                                    }
                                 }
                             }
 

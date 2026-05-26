@@ -1,11 +1,19 @@
+import { initializeOfficialTasksProgression } from "../functions/officialTasksCompletion.js"
+
 import { 
     toggleCompleteCustomTask,
     deleteCustomTask
- } from "../functions/customTasksCompletion.js"
+} from "../functions/customTasksCompletion.js"
 
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Official Tasks
+
+    // Initialization
+
+    initializeOfficialTasksProgression() // Initializes The Completion Progress Of The Official Tasks
+
     // Custom Tasks
 
     // Variables

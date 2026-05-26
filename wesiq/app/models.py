@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 from pathlib import Path
 import secrets, os
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext as _
 
 class Users(models.Model):
@@ -56,16 +57,17 @@ class UserDailyOfficialTasks(models.Model):
         "OfficialTasks",
         verbose_name="Official Task",
         on_delete=models.CASCADE,
-        null=False,
+        null=False
     )
 
     user = models.ForeignKey(
         Users,
         verbose_name="User",
         on_delete=models.CASCADE,
-        null=False,
+        null=False
     )
 
+    progress_percentage = models.DecimalField(verbose_name="Progress Percentage", max_digits=5, decimal_places=2, default=0.00, null=False, validators=[MinValueValidator(0.00), MaxValueValidator(100.00)])
     is_completed = models.BooleanField(verbose_name="Is Completed", default=False, null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
