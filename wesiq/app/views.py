@@ -2207,12 +2207,42 @@ def trainingSessionView(request):
                     return JsonResponse({"success": False, "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")}, status=500)
 
             # Toggle Complete Custom Task
+            if request.headers.get("X-Requested-Action") == "add-custom-task":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+                        custom_task_title = json.loads(request.body) # Gets The Custom Task Title
+
+                        # Creates The New Custom Task
+                        new_custom_task = CustomTasks(
+                            user_id = logged_in_user_id,
+                            title = custom_task_title
+                        )
+
+                        new_custom_task.save() # Saves The New Custom Task
+
+                        custom_task = {
+                            "id": new_custom_task.id,
+                            "title": new_custom_task.title,
+                            "created_at": new_custom_task.created_at
+                        }
+
+                        return JsonResponse({"success": True, "custom_task": custom_task, "message": _("Úloha bola úspešne pridaná.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné pridať bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní úlohy došlo k chybe.")}, status=500)
+
+            # Toggle Complete Custom Task
             if request.headers.get("X-Requested-Action") == "toggle-complete-custom-task":
                 try:
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
                         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
-                        task_id = json.loads(request.body) # Gets The Custom Task Data
+                        task_id = json.loads(request.body) # Gets The Custom Task ID
                         task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
 
                         task.is_completed = not task.is_completed # Inverts The Completion Status
