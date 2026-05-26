@@ -275,7 +275,7 @@
 
     <div class="todo">
         <div class="official_tasks">
-            <h3>{% translate "Dokážeš&nbsp;splniť dnešné&nbsp;výzvy?" %}</h3>
+            <h3>{% translate "Dnešné&nbsp;výzvy" %}</h3>
 
             <div class="tasks">
                 {% for one_task in official_tasks %}               
@@ -293,7 +293,7 @@
                         </div>
 
                         <p class="title">{{ one_task.title }}</p>
-                        <p class="xp">+{{ one_task.xp }}XP</p>
+                        <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
                     </div>
                 
                 {% endfor %}
@@ -304,7 +304,53 @@
             <h3>{% translate "Moje&nbsp;úlohy" %}</h3>
 
             <div class="tasks">
-                <button class="add_task"><i class="fa-solid fa-plus"></i></button>
+                <template class="custom_task_template">
+                    <div class="task" data-task_id="">
+                        <div class="checkbox"></div>
+                        <label class="title" for=""></label>
+                        <p class="date"></p>
+
+                        <input 
+                            type="checkbox" 
+                            id=""
+                        >
+
+                        <button 
+                            class="show_custom_task_properties_button" 
+                            popovertarget=""
+                            style=""
+                            title="{% translate 'Viac...' %}"
+                        >
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </button>
+
+                        <div 
+                            class="custom_task_properties" 
+                            id=""
+                            popover
+                            style=""
+                        >
+                            <button data-action="delete">
+                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                <span>{% translate "Vymazať" %}</span>
+                            </button>
+
+                            <button 
+                                class="hide_custom_task_properties_button" 
+                                popovertarget=""
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="add_task_container">
+                    <input class="new_task" type="text" placeholder="{% translate 'Pridať úlohu' %}">
+                    <button class="add_task"><i class="fa-solid fa-plus"></i></button>
+                </div>
 
                 {% for one_task in custom_tasks %}
                     <div class="task" data-task_id={{ one_task.id }}>
