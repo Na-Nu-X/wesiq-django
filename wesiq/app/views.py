@@ -2064,7 +2064,7 @@ def trainingSessionView(request):
 
         average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0
 
-        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m {average_activity_time % 60}s" if activities else "" # Formats Average Activity Time
+        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m" if activities else "" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
         today = timezone.now().date() # Determines Today's Date
@@ -2126,6 +2126,7 @@ def trainingSessionView(request):
 
         # Gets The All Assigned User's Official Tasks For Today
         official_tasks = logged_in_user.daily_official_tasks.annotate(
+            progress_percentage=F("userdailyofficialtasks__progress_percentage"),
             is_completed=F("userdailyofficialtasks__is_completed")
         )
 
@@ -2153,6 +2154,7 @@ def trainingSessionView(request):
 
             # Updates The Official Tasks
             official_tasks = logged_in_user.daily_official_tasks.annotate(
+                progress_percentage=F("userdailyofficialtasks__progress_percentage"),
                 is_completed=F("userdailyofficialtasks__is_completed")
             )
 
@@ -2170,20 +2172,33 @@ def trainingSessionView(request):
                         task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
 
                         # Gets The Task From User's Daily Official Tasks
-                        users_daily_official_tasks = UserDailyOfficialTasks.objects.get(
+                        users_daily_official_task = UserDailyOfficialTasks.objects.filter(
                             user=logged_in_user, 
                             task=task
-                        )
+                        ).first()
 
                         # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
-                        if not users_daily_official_tasks.is_completed:
-                            users_daily_official_tasks.is_completed=True
-                            users_daily_official_tasks.save()
+                        if users_daily_official_task and not users_daily_official_task.is_completed:
+                            print(users_daily_official_task.task.data)
+ 
+                            if users_daily_official_task.task.data == "2_activities":
+                                users_daily_official_task.progress_percentage += 50
+                                users_daily_official_task.save()
 
-                            return JsonResponse({"success": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+                            else:
+                                users_daily_official_task.progress_percentage = 100.00
+                                users_daily_official_task.save()
+
+                            if users_daily_official_task.progress_percentage == 100.00:
+                                users_daily_official_task.is_completed=True
+                                users_daily_official_task.save()
+
+                                return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+
+                            return JsonResponse({"success": True, "progress_percentage": users_daily_official_task.progress_percentage, "is_completed": False, "first_completion": True, "gained_xp": task.xp, "message": _("Pokrok úlohy bol úspešne zaznamenaný.")}, status=200)
 
                         else:
-                            return JsonResponse({"success": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+                            return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha už bola dokončená.")}, status=200)
 
                     return JsonResponse({"success": False, "message": _("Úlohu nie je možné označiť za dokončenú bez prihlásenia.")}, status=401)
 
