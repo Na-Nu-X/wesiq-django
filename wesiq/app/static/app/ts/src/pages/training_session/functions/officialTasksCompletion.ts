@@ -175,11 +175,11 @@ export async function completeOfficialTask(task:string, task_container:HTMLDivEl
             if(completed_official_task_response.is_completed) {
                 const checkbox:HTMLDivElement = task_container.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
 
-                activity_summary.gained_xp += completed_official_task_response.gained_xp // Increases The Gained XP For The Activity
+                // activity_summary.gained_xp += completed_official_task_response.gained_xp // Increases The Gained XP For The Activity
 
                 window.setTimeout(function() {
                     displayMessage(`+${completed_official_task_response.gained_xp} XP`, "success") // Displays The Amount Of Gained XP For The Completed Task
-                }, 500)
+                }, 100)
 
                 checkbox.classList.add("checked") // Marks The Checkbox As Checked
             }

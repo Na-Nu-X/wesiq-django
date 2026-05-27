@@ -2184,8 +2184,6 @@ def trainingSessionView(request):
 
                         # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
                         if users_daily_official_task and not users_daily_official_task.is_completed:
-                            print(users_daily_official_task.task.data)
- 
                             if users_daily_official_task.task.data == "2_activities":
                                 users_daily_official_task.progress_percentage += 50
                                 users_daily_official_task.save()
@@ -2195,8 +2193,15 @@ def trainingSessionView(request):
                                 users_daily_official_task.save()
 
                             if users_daily_official_task.progress_percentage == 100.00:
-                                users_daily_official_task.is_completed=True
-                                users_daily_official_task.save()
+                                users_daily_official_task.is_completed=True # Marks The Task As Completed
+                                users_daily_official_task.save() # Saves The Updated Task
+
+                                # Increases And Updates The Amount Of User's Obtained XP
+                                Users.objects.filter(
+                                    id=logged_in_user_id
+                                ).update(
+                                    xp = F("xp") + task.xp
+                                )
 
                                 return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
 
