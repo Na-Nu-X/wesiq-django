@@ -1,4 +1,7 @@
-import { initializeOfficialTasksProgression } from "../functions/officialTasksCompletion.js"
+import { 
+    initializeOfficialTasksProgression,
+    completeOfficialTask
+} from "../functions/officialTasksCompletion.js"
 
 import { 
     addCustomTask,
@@ -13,6 +16,14 @@ import {
 document.addEventListener("DOMContentLoaded", function():void {
     // Official Tasks
 
+    // Variables
+
+    const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
+    const official_tasks_container:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
+    const taskofficial_taskss:HTMLDivElement = official_tasks_container.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+
+    const add_custom_task:HTMLDivElement|null = taskofficial_taskss.querySelector("[data-task='add_custom_task']") || null // Gets The "Add Custom Task" Official Task If Is Available
+
     // Initialization
 
     initializeOfficialTasksProgression() // Initializes The Completion Progress Of The Official Tasks
@@ -21,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
     const custom_tasks:HTMLDivElement = todo.querySelector(".custom_tasks") as HTMLDivElement // Gets The Custom Tasks Container
     const tasks:HTMLDivElement = custom_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
 
@@ -41,6 +51,16 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(new_task.value !== "") {
             await addCustomTask(new_task, custom_task_template, tasks) // Adds The Custom Task
             initializeCustomTasksAmount(tasks_amount, tasks) // Updates The Total Custom Tasks Amount
+
+            // "Add Custom Task" Official Task
+            if(add_custom_task) {
+                const checkbox:HTMLDivElement = add_custom_task.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+
+                // If The Task Isn't Already Completed
+                if(!checkbox.classList.contains("checked")) {
+                    completeOfficialTask("add_custom_task", add_custom_task) // Completes The "Add Custom Task" Official Task
+                }
+            }
         }
     })
 
