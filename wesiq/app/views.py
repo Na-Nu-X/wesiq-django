@@ -2163,7 +2163,11 @@ def trainingSessionView(request):
         official_tasks_remaining_time = next_midnight - current_time
         official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600
 
-        custom_tasks = CustomTasks.objects.filter(user_id=logged_in_user_id)
+        custom_tasks = CustomTasks.objects.filter(
+            user_id=logged_in_user_id
+        ).order_by(
+            "order"
+        )
         
         if request.method == "POST":
             # Complete Official Task
@@ -2304,6 +2308,28 @@ def trainingSessionView(request):
                 except Exception as e:
                     captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri odstraňovaní úloh došlo k chybe.")}, status=500)
+
+            # Change Custom Tasks Order
+            if request.headers.get("X-Requested-Action") == "change-custom-tasks-order":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+
+                        # Updates The Order Of All The Logged In User's Custom Tasks
+                        for index, task_id in enumerate(tasks_ids):
+                            CustomTasks.objects.filter(
+                                id=task_id, 
+                                user_id=logged_in_user_id
+                            ).update(order=index)
+
+                        return JsonResponse({"success": True, "message": _("Poradie úloh bolo úspešne zmenené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Poradie úloh nie je možné zmeniť bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pokuse o zmenu poradia úloh došlo k chybe.")}, status=500)
 
             # New Activity
             if request.headers.get("X-Requested-Action") == "new-activity":

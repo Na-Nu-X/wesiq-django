@@ -8,8 +8,11 @@ import {
     toggleCompleteCustomTask,
     deleteCustomTask,
     initializeCustomTasksAmount,
-    deleteAllCompletedCustomTasks
+    deleteAllCompletedCustomTasks,
+    changeCustomTasksOrder
 } from "../functions/customTasksCompletion.js"
+
+import { custom_tasks_state } from "../state.js"
 
 "use strict"
 
@@ -20,9 +23,9 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
     const official_tasks_container:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
-    const taskofficial_taskss:HTMLDivElement = official_tasks_container.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+    const official_tasks:HTMLDivElement = official_tasks_container.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
 
-    const add_custom_task:HTMLDivElement|null = taskofficial_taskss.querySelector("[data-task='add_custom_task']") || null // Gets The "Add Custom Task" Official Task If Is Available
+    const add_custom_task:HTMLDivElement|null = official_tasks.querySelector("[data-task='add_custom_task']") || null // Gets The "Add Custom Task" Official Task If Is Available
 
     // Initialization
 
@@ -32,25 +35,25 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const custom_tasks:HTMLDivElement = todo.querySelector(".custom_tasks") as HTMLDivElement // Gets The Custom Tasks Container
-    const tasks:HTMLDivElement = custom_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+    const custom_tasks_container:HTMLDivElement = todo.querySelector(".custom_tasks") as HTMLDivElement // Gets The Custom Tasks Container
+    const custom_tasks:HTMLDivElement = custom_tasks_container.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
 
-    const add_task_container:HTMLDivElement = tasks.querySelector(".add_task_container") as HTMLDivElement // Gets The Add Task Container
+    const add_task_container:HTMLDivElement = custom_tasks.querySelector(".add_task_container") as HTMLDivElement // Gets The Add Task Container
     const new_task:HTMLInputElement = add_task_container.querySelector(".new_task") as HTMLInputElement // Gets The New Task Input
     const add_task:HTMLButtonElement = add_task_container.querySelector(".add_task") as HTMLButtonElement // Gets The Add Task Button
 
-    const custom_task_template:HTMLTemplateElement = tasks.querySelector(".custom_task_template") as HTMLTemplateElement // Gets The Custom Task Template
+    const custom_task_template:HTMLTemplateElement = custom_tasks.querySelector(".custom_task_template") as HTMLTemplateElement // Gets The Custom Task Template
 
-    const delete_completed:HTMLButtonElement = custom_tasks.querySelector(".info .delete_completed") as HTMLButtonElement // Gets The Delete All Completed Custom Tasks Button
-    const tasks_amount:HTMLParagraphElement = custom_tasks.querySelector(".info .tasks_amount") as HTMLParagraphElement // Gets The Tasks Amount Paragraph
+    const delete_completed:HTMLButtonElement = custom_tasks_container.querySelector(".info .delete_completed") as HTMLButtonElement // Gets The Delete All Completed Custom Tasks Button
+    const tasks_amount:HTMLParagraphElement = custom_tasks_container.querySelector(".info .tasks_amount") as HTMLParagraphElement // Gets The Tasks Amount Paragraph
 
     // Events
 
     // Add Task Click Functionality
     add_task.addEventListener("click", async function():Promise<void> {
         if(new_task.value !== "") {
-            await addCustomTask(new_task, custom_task_template, tasks) // Adds The Custom Task
-            initializeCustomTasksAmount(tasks_amount, tasks) // Updates The Total Custom Tasks Amount
+            await addCustomTask(new_task, custom_task_template, custom_tasks) // Adds The Custom Task
+            initializeCustomTasksAmount(tasks_amount, custom_tasks) // Updates The Total Custom Tasks Amount
 
             // "Add Custom Task" Official Task
             if(add_custom_task) {
@@ -66,14 +69,14 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Delete All Completed Custom Tasks Click Functionality
     delete_completed.addEventListener("click", async function():Promise<void> {
-        await deleteAllCompletedCustomTasks(tasks) // Deletes All Completed Custom Tasks
-        initializeCustomTasksAmount(tasks_amount, tasks) // Updates The Remaining And Total Custom Tasks Amount
+        await deleteAllCompletedCustomTasks(custom_tasks) // Deletes All Completed Custom Tasks
+        initializeCustomTasksAmount(tasks_amount, custom_tasks) // Updates The Remaining And Total Custom Tasks Amount
     })
 
     // Global Event Delegations
 
-    // Tasks Change Functionalities
-    tasks.addEventListener("change", function(event:Event):void {
+    // Custom Tasks Change Functionalities
+    custom_tasks.addEventListener("change", function(event:Event):void {
         // Toggle Custom Task Completion
         if(event.target instanceof HTMLInputElement && (event.target as HTMLInputElement).type === "checkbox") {
             const checkbox:HTMLInputElement = event.target as HTMLInputElement // Gets The Clicked Checkbox
@@ -82,13 +85,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if(task_id) {
                 toggleCompleteCustomTask(task_id) // Toggles Completion Of The User's Custom Task
-                initializeCustomTasksAmount(tasks_amount, tasks) // Updates The Remaining Custom Tasks Amount
+                initializeCustomTasksAmount(tasks_amount, custom_tasks) // Updates The Remaining Custom Tasks Amount
             }
         }
     })
 
-    // Tasks Click Functionalities
-    tasks.addEventListener("click", async function(event:PointerEvent):Promise<void> {
+    // Custom Tasks Click Functionalities
+    custom_tasks.addEventListener("click", async function(event:PointerEvent):Promise<void> {
         // Delete Custom Task
         if((event.target as HTMLButtonElement).closest(".custom_task_properties")) {
             const delete_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Delete Button
@@ -98,12 +101,33 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if(action && action == "delete" && task_id) {
                 await deleteCustomTask(task_id, task) // Deletes The User's Custom Task
-                initializeCustomTasksAmount(tasks_amount, tasks) // Updates The Remaining And Total Custom Tasks Amount
+                initializeCustomTasksAmount(tasks_amount, custom_tasks) // Updates The Remaining And Total Custom Tasks Amount
             }
         }
     })
 
+    // Custom Tasks Drag Start Functionalities
+    custom_tasks.addEventListener("dragstart", function(event:DragEvent):void {
+        custom_tasks_state.dragged_task = event.target as HTMLDivElement
+    })
+
+    // Custom Tasks Drag End Functionalities
+    custom_tasks.addEventListener("dragend", function():void {
+        custom_tasks_state.dragged_task = null
+    })
+
+    // Custom Tasks Drag Over Functionalities
+    custom_tasks.addEventListener("dragover", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+    })
+
+    // Custom Tasks Drop Functionalities
+    custom_tasks.addEventListener("drop", function(event:DragEvent):void {
+        const task:HTMLDivElement = (event.target as HTMLElement).closest(".task") as HTMLDivElement // Gets The Task
+        if(custom_tasks_state.dragged_task) changeCustomTasksOrder(custom_tasks_state.dragged_task, task, this) // Changes The Order Of The Custom Tasks
+    })
+
     // Initialization
 
-    initializeCustomTasksAmount(tasks_amount, tasks) // Initializes The Remaining Custom Tasks Amount
+    initializeCustomTasksAmount(tasks_amount, custom_tasks) // Initializes The Remaining Custom Tasks Amount
 })

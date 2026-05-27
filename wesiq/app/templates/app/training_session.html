@@ -311,7 +311,7 @@
 
             <div class="tasks">
                 <template class="custom_task_template">
-                    <div class="task" data-task_id="">
+                    <div class="task" data-task_id="" draggable="true">
                         <div class="checkbox"></div>
                         <label class="title" for=""></label>
                         <p class="date"></p>
@@ -359,7 +359,7 @@
                 </div>
 
                 {% for one_task in custom_tasks %}
-                    <div class="task" data-task_id={{ one_task.id }}>
+                    <div class="task" data-task_id={{ one_task.id }} draggable="true">
                         <div class="checkbox"></div>
                         <label class="title" for="custom_task_{{ one_task.id }}">{{ one_task.title }}</label>
                         <p class="date">{{ one_task.created_at|date:"d.m." }}</p>

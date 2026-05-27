@@ -121,7 +121,7 @@ export async function deleteCustomTask(id:number, task:HTMLDivElement):Promise<v
 export function initializeCustomTasksAmount(tasks_amount:HTMLSpanElement, tasks:HTMLDivElement):void {
     const remaining:HTMLSpanElement = tasks_amount.querySelector(".remaining") as HTMLSpanElement // Gets The Remaining Part From The Tasks Amount Paragraph
     const total:HTMLSpanElement = tasks_amount.querySelector(".total") as HTMLSpanElement // Gets The Total Part From The Tasks Amount Paragraph
-    const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task"); // Gets All Tasks
+    const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
     const all_completed_tasks:HTMLDivElement[] = [...all_tasks].filter(one_task => (one_task.querySelector("input[type='checkbox']") as HTMLInputElement).checked) // Gets All Completed Tasks
 
     remaining.textContent = String(all_completed_tasks.length) // Sets The Remaining Amount
@@ -159,5 +159,47 @@ export async function deleteAllCompletedCustomTasks(tasks:HTMLDivElement):Promis
         finally {
             all_completed_tasks.forEach(one_task => one_task.remove()) // Removes The Completed Tasks From The DOM
         }
+    }
+}
+
+// Function For Change The Order Of The Custom Tasks
+export async function changeCustomTasksOrder(dragged_task:HTMLDivElement, dropped_on_task:HTMLDivElement, tasks:HTMLDivElement):Promise<void> {
+    const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
+    const dragged_task_index:number = [...all_tasks].indexOf(dragged_task) // Gets The Task Index
+    const dropped_on_task_index:number = [...all_tasks].indexOf(dropped_on_task) // Gets The Dropped On Task Index
+
+    if(dragged_task_index === dropped_on_task_index) return // Do Nothing If The Task Postition Is The Same
+
+    // Drag To Higher Position
+    else if(dragged_task_index > dropped_on_task_index) {
+        tasks.insertBefore(dragged_task, dropped_on_task)
+    }
+    
+    // Drag To Lower Position
+    else if(dragged_task_index < dropped_on_task_index) {
+        tasks.insertBefore(dragged_task, dropped_on_task.nextSibling)
+    }
+
+    const new_all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks With New Orders
+
+    const tasks_ids:number[] = [] // Stores The IDs Of All Custom Tasks
+
+    new_all_tasks.forEach(function(one_task:HTMLDivElement):void {
+        const task_id:number|null = Number(one_task.dataset["task_id"]) || null // Gets The Task ID
+        if(task_id) tasks_ids.push(task_id) // Adds The Task ID To The Array Of The All Tasks IDs
+    })
+
+    try {
+        const change_custom_tasks_order_response:response = await sendPOST(window.location.pathname, tasks_ids, "change-custom-tasks-order") // Sends The All Custom Task IDs For Deletion As A POST Data
+
+        // If The Response Isn't Success
+        if(!change_custom_tasks_order_response.success) {
+            displayMessage(change_custom_tasks_order_response.message, "error") // Displays The Error Message
+            return
+        }
+    }
+
+    catch {
+        displayMessage(gettext("Pri pokuse o zmenu poradia úloh došlo k chybe."), "error") // Displays The Error Message
     }
 }
