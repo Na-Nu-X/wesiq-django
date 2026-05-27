@@ -108,3 +108,9 @@ export const charts:{
     bar_chart: null, // Sets Bar Chart (Weekly Activity Chart)
     doughnut_chart: null // Sets Bar Chart (Training Plan Summary Chart)
 }
+
+export const custom_tasks_state:{
+    dragged_task:HTMLDivElement|null
+} = {
+    dragged_task: null // Stores The Dragged Task
+}

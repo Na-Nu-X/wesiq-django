@@ -259,6 +259,7 @@ class CustomTasks(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=100, null=False)
     is_completed = models.BooleanField(verbose_name="Is Completed", default=False, null=False)
+    order = models.IntegerField(verbose_name="Order", default=0, null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class Transactions(models.Model):
