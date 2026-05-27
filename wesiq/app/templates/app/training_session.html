@@ -197,7 +197,7 @@
             <div class="top">
                 <div class="average_activity_time_container">
                     <p>
-                        <span class="title"><i class="fa-regular fa-clock"></i> {% translate "priemer&nbsp;/ 7&nbsp;dní" %}</span>
+                        <span class="title"><i class="fa-regular fa-clock"></i> {% translate "priemer&nbsp;/ 7&nbsp;dní" %}</span> <!-- https://fontawesome.com/icons/clock -->
 
                         {% if average_activity_time %}
                             <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
@@ -276,6 +276,7 @@
     <div class="todo">
         <div class="official_tasks">
             <h3>{% translate "Dnešné&nbsp;výzvy" %}</h3>
+            <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
 
             <div class="tasks">
                 {% for one_task in official_tasks %}               
@@ -302,6 +303,11 @@
 
         <div class="custom_tasks">
             <h3>{% translate "Moje&nbsp;úlohy" %}</h3>
+
+            <div class="info">
+                <button class="delete_completed">{% translate "Vymazať dokončené" %}</button>
+                <p class="tasks_amount"><span class="remaining">0</span> / <span class="total">0</span></p>
+            </div>
 
             <div class="tasks">
                 <template class="custom_task_template">

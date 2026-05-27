@@ -17,7 +17,10 @@ interface customTask {
 }
 
 // Function For Add The Custom Task
-export async function addCustomTask(new_task:HTMLInputElement, task_container:HTMLDivElement, tasks:HTMLDivElement):Promise<void> {
+export async function addCustomTask(new_task:HTMLInputElement, custom_task_template:HTMLTemplateElement, tasks:HTMLDivElement):Promise<void> {
+    const custom_task_template_clone:DocumentFragment = custom_task_template.content.cloneNode(true) as DocumentFragment // Clones The Custom Task Template Content
+    const custom_task_container:HTMLDivElement = custom_task_template_clone.querySelector(".task") as HTMLDivElement // Gets The Custom Task Container
+
     try {
         const add_custom_task_response:addCustomTaskResponse = await sendPOST(window.location.pathname, new_task.value, "add-custom-task") // Sends The Custom Task Title As A POST Data
 
@@ -27,7 +30,10 @@ export async function addCustomTask(new_task:HTMLInputElement, task_container:HT
             return
         }
 
-        tasks.appendChild(createCustomTaskHTML(task_container, add_custom_task_response.custom_task)) // Appends The New Custom Task To The Tasks Container
+        const latest_task:HTMLDivElement|null = tasks.querySelector(".task") as HTMLDivElement || null // Gets The Latest Task If There Is Any
+
+        if(latest_task) tasks.insertBefore(createCustomTaskHTML(custom_task_container, add_custom_task_response.custom_task), latest_task) // Prepends The New Custom Task To The Tasks Container
+        else tasks.appendChild(createCustomTaskHTML(custom_task_container, add_custom_task_response.custom_task)) // Appends The New Custom Task To The Tasks Container
     }
 
     catch {
@@ -90,6 +96,7 @@ export async function toggleCompleteCustomTask(id:number):Promise<void> {
     }
 }
 
+// Function For Delete Custom Task
 export async function deleteCustomTask(id:number, task:HTMLDivElement):Promise<void> {
     try {
         const delete_custom_task_response:response = await sendPOST(window.location.pathname, id, "delete-custom-task") // Sends The Custom Task ID As A POST Data
@@ -107,5 +114,50 @@ export async function deleteCustomTask(id:number, task:HTMLDivElement):Promise<v
 
     finally {
         task.remove() // Removes The Task From The DOM
+    }
+}
+
+// Function For Initialize The Custom Tasks Amount
+export function initializeCustomTasksAmount(tasks_amount:HTMLSpanElement, tasks:HTMLDivElement):void {
+    const remaining:HTMLSpanElement = tasks_amount.querySelector(".remaining") as HTMLSpanElement // Gets The Remaining Part From The Tasks Amount Paragraph
+    const total:HTMLSpanElement = tasks_amount.querySelector(".total") as HTMLSpanElement // Gets The Total Part From The Tasks Amount Paragraph
+    const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task"); // Gets All Tasks
+    const all_completed_tasks:HTMLDivElement[] = [...all_tasks].filter(one_task => (one_task.querySelector("input[type='checkbox']") as HTMLInputElement).checked) // Gets All Completed Tasks
+
+    remaining.textContent = String(all_completed_tasks.length) // Sets The Remaining Amount
+    total.textContent = String(all_tasks.length) // Sets The Total Amount
+}
+
+// Function For Delete All Completed Custom Tasks
+export async function deleteAllCompletedCustomTasks(tasks:HTMLDivElement):Promise<void> {
+    const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll<HTMLDivElement>(".task"); // Gets All Tasks
+    const all_completed_tasks:HTMLDivElement[] = [...all_tasks].filter(one_task => (one_task.querySelector("input[type='checkbox']") as HTMLInputElement).checked) // Gets All Completed Tasks
+
+    // If There Is Any Already Completed Custom Task
+    if(all_completed_tasks.length > 0) {
+        const completed_custom_tasks_ids:number[] = [] // Stores The Completed Custom Tasks IDs
+        
+        all_completed_tasks.forEach(function(one_task:HTMLDivElement):void {
+            const task_id:number|null = Number(one_task.dataset["task_id"]) || null // Gets The Task ID
+            if(task_id) completed_custom_tasks_ids.push(task_id) // Adds The Task ID To The Array Of The Completed Tasks IDs
+        })
+    
+        try {
+            const delete_completed_custom_tasks_response:response = await sendPOST(window.location.pathname, completed_custom_tasks_ids, "delete-completed-custom-tasks") // Sends The All Custom Task IDs For Deletion As A POST Data
+    
+            // If The Response Isn't Success
+            if(!delete_completed_custom_tasks_response.success) {
+                displayMessage(delete_completed_custom_tasks_response.message, "error") // Displays The Error Message
+                return
+            }
+        }
+    
+        catch {
+            displayMessage(gettext("Pri odstraňovaní úloh došlo k chybe."), "error") // Displays The Error Message
+        }
+    
+        finally {
+            all_completed_tasks.forEach(one_task => one_task.remove()) // Removes The Completed Tasks From The DOM
+        }
     }
 }

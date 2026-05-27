@@ -2158,6 +2158,11 @@ def trainingSessionView(request):
                 is_completed=F("userdailyofficialtasks__is_completed")
             )
 
+        current_time = timezone.localtime(timezone.now())
+        next_midnight = (current_time + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        official_tasks_remaining_time = next_midnight - current_time
+        official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600
+
         custom_tasks = CustomTasks.objects.filter(user_id=logged_in_user_id)
         
         if request.method == "POST":
@@ -2275,6 +2280,26 @@ def trainingSessionView(request):
                     captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri odstraňovaní úlohy došlo k chybe.")}, status=500)
 
+            # Delete Completed Custom Tasks
+            if request.headers.get("X-Requested-Action") == "delete-completed-custom-tasks":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        completed_custom_tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+
+                        CustomTasks.objects.filter(
+                            id__in=completed_custom_tasks_ids,
+                            user_id=logged_in_user_id
+                        ).delete()
+
+                        return JsonResponse({"success": True, "message": _("Úlohy boli úspešne odstránené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Úlohy nie je možné odstrániť bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní úloh došlo k chybe.")}, status=500)
+
             # New Activity
             if request.headers.get("X-Requested-Action") == "new-activity":
                 try:
@@ -2318,6 +2343,7 @@ def trainingSessionView(request):
             "training_plan": training_plan,
             "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
             "official_tasks": official_tasks,
+            "official_tasks_remaining_hours": official_tasks_remaining_hours,
             "custom_tasks": custom_tasks
         })
 
