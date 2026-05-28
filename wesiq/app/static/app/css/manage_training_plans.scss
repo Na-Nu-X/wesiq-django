@@ -413,31 +413,11 @@
                     }
 
                     .periods_container {
+                        @include scrollbar;
                         display: flex;
                         flex-direction: column;
                         max-width: 400px;
                         width: 100%;
-                        overflow-x: hidden;
-                        overflow-y: auto;
-
-                        &::-webkit-scrollbar {
-                            width: 5px;
-                        }
-
-                        &::-webkit-scrollbar-thumb {
-                            background-color: darken($secondary-color, 40%);
-                            border-radius: 2.5px;
-
-                            &:hover {
-                                background-color: darken($secondary-color, 20%);
-                                cursor: pointer;
-                            }
-                        }
-
-                        &::-webkit-scrollbar-track {
-                            background-color: lighten($main-color, 20%);
-                            border-radius: 2.5px;
-                        }
 
                         .period_selection {
                             width: 100%;
@@ -700,6 +680,7 @@
         }
     
         .exercises {
+            @include scrollbar;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
@@ -708,27 +689,6 @@
             margin: 0px auto;
             padding-right: 5px;
             text-align: center;
-            overflow-x: hidden;
-            overflow-y: auto;
-    
-            &::-webkit-scrollbar {
-                width: 5px;
-            }
-    
-            &::-webkit-scrollbar-thumb {
-                background-color: darken($secondary-color, 40%);
-                border-radius: 2.5px;
-    
-                &:hover {
-                    background-color: darken($secondary-color, 20%);
-                    cursor: pointer;
-                }
-            }
-    
-            &::-webkit-scrollbar-track {
-                background-color: lighten($main-color, 20%);
-                border-radius: 2.5px;
-            }
     
             .custom_exercise,
             .warm_up {
@@ -748,6 +708,7 @@
     
             .exercise {
                 @include flex_center;
+                @include scrollbar;
                 position: relative;
                 aspect-ratio: 1 / 1;
                 padding: 10px;
@@ -756,28 +717,7 @@
                 border: 1px solid $blue-color;
                 border-radius: $small-border-radius;
                 cursor: move;
-                overflow-x: hidden;
-                overflow-y: auto;
                 transition: border 0.3s ease;
-    
-                &::-webkit-scrollbar {
-                    width: 5px;
-                }
-    
-                &::-webkit-scrollbar-thumb {
-                    background-color: darken($secondary-color, 40%);
-                    border-radius: 2.5px;
-    
-                    &:hover {
-                        background-color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                    }
-                }
-    
-                &::-webkit-scrollbar-track {
-                    background-color: lighten($main-color, 20%);
-                    border-radius: 2.5px;
-                }
     
                 &.hidden {
                     display: none !important;

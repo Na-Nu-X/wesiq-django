@@ -304,28 +304,11 @@ header {
                 }
 
                 .emoji_picker_container {
-                    display: block;
-                    opacity: 1;
-                    position: absolute;
-                    top: 100%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    height: 200px;
-                    box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
-                    z-index: 100;
-                    transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
-
-                    emoji-picker {
-                        height: inherit;
-                    }
-
-                    &.hidden {
-                        display: none;
-                        opacity: 0;
-                    }
+                    @include emoji_picker_container($height: 200px);
                 }
 
                 .users_for_tag_container {
+                    @include scrollbar;
                     display: none;
                     top: 0%;
                     opacity: 0;
@@ -340,7 +323,6 @@ header {
                     border-left: 1px solid transparentize($blue-color, 0.5);
                     border-bottom: 1px solid transparentize($blue-color, 0.5);
                     border-radius: 0px 0px $small-border-radius $small-border-radius;
-                    overflow-y: auto;
                     transition: border-color 0.3s ease, display 0.5s ease allow-discrete, top 0.3s ease, opacity 0.5s ease;
                     z-index: 50;
 
@@ -353,25 +335,6 @@ header {
                             top: 0%;
                             opacity: 0;
                         }
-                    }
-
-                    &::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-                    &::-webkit-scrollbar-thumb {
-                        background-color: darken($secondary-color, 40%);
-                        border-radius: 2.5px;
-
-                        &:hover {
-                            background-color: darken($secondary-color, 20%);
-                            cursor: pointer;
-                        }
-                    }
-
-                    &::-webkit-scrollbar-track {
-                        background-color: lighten($main-color, 20%);
-                        border-radius: 2.5px;
                     }
 
                     .one_user {
@@ -435,28 +398,9 @@ header {
             }
 
             .tagged_users_container {
+                @include scrollbar($direction: "horizontal");
                 display: flex;
                 gap: 10px;
-                overflow-x: auto;
-
-                &::-webkit-scrollbar {
-                    height: 5px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: darken($secondary-color, 40%);
-                    border-radius: 2.5px;
-
-                    &:hover {
-                        background-color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                    }
-                }
-
-                &::-webkit-scrollbar-track {
-                    background-color: lighten($main-color, 20%);
-                    border-radius: 2.5px;
-                }
                 
                 .tag {
                     display: flex;
@@ -517,6 +461,7 @@ header {
                     }
 
                     .location_results {
+                        @include scrollbar;
                         display: flex;
                         flex-direction: column;
                         gap: 5px;
@@ -525,7 +470,6 @@ header {
                         border-bottom-right-radius: $small-border-radius;
                         border-bottom-left-radius: $small-border-radius;
                         opacity: 1;
-                        overflow-y: auto;
                         transition: visibility 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
 
                         &.hidden {
@@ -537,25 +481,6 @@ header {
                             .place {
                                 pointer-events: none;
                             }
-                        }
-
-                        &::-webkit-scrollbar {
-                            width: 5px;
-                        }
-
-                        &::-webkit-scrollbar-thumb {
-                            background-color: darken($secondary-color, 40%);
-                            border-radius: 2.5px;
-
-                            &:hover {
-                                background-color: darken($secondary-color, 20%);
-                                cursor: pointer;
-                            }
-                        }
-
-                        &::-webkit-scrollbar-track {
-                            background-color: lighten($main-color, 20%);
-                            border-radius: 2.5px;
                         }
 
                         .place {
@@ -625,31 +550,12 @@ header {
             // All Users
 
             .all_users {
+                @include scrollbar;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
                 width: 100%;
                 height: 100%;
-                overflow-y: auto;
-
-                &::-webkit-scrollbar {
-                    width: 5px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: darken($secondary-color, 40%);
-                    border-radius: 2.5px;
-
-                    &:hover {
-                        background-color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                    }
-                }
-
-                &::-webkit-scrollbar-track {
-                    background-color: lighten($main-color, 20%);
-                    border-radius: 2.5px;
-                }
 
                 .one_user {
                     text-decoration: none;
@@ -951,13 +857,7 @@ header {
 
                         .show_post_properties_button,
                         .show_processing_post_properties_button {
-                            all: unset;
-
-                            .fa-ellipsis-vertical {
-                                @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                                display: block;
-                                font-size: 1.2em;
-                            }
+                            @include show_properties_button;
                         }
 
                         .post_properties,
@@ -967,79 +867,7 @@ header {
                         .processing_post_settings,
                         .processing_post_properties,
                         .delete_processing_post {
-                            position: fixed;
-                            inset: auto;
-                            margin: 0;
-                            flex-direction: column;
-                            top: anchor(bottom);
-                            right: anchor(right);
-                            min-width: 150px;
-                            margin-top: 10px;
-                            margin-right: 10px;
-                            text-align: center;
-                            color: $secondary-color;
-                            background-color: transparentize($main-color, 0.8);
-                            backdrop-filter: blur(5px);
-                            border: 1px solid transparentize($blue-color, 0.5);
-                            border-radius: $small-border-radius;
-
-                            &:popover-open {
-                                display: flex;
-                            }
-
-                            &::backdrop {
-                                background: transparent;
-                            }
-
-                            p {
-                                padding: 5px 10px 0px;
-                            }
-
-                            button {
-                                all: unset;
-                                position: relative;
-                                padding: 5px 10px;
-                                transition: background-color 0.3s ease;
-
-                                &:hover,
-                                &:focus {
-                                    background-color: transparentize($blue-color, 0.9);
-                                    cursor: pointer;
-
-                                    i {
-                                        visibility: visible;
-                                        opacity: 1;
-                                    }
-
-                                    span {
-                                        letter-spacing: 0.5px;
-                                    }
-                                }
-
-                                &[popovertargetaction="hide"] {
-                                    background-color: transparentize($blue-color, 0.9);
-                                }
-
-                                i {
-                                    visibility: hidden;
-                                    opacity: 0;
-                                    position: absolute;
-                                    top: 50%;
-                                    left: 0px;
-                                    transform: translateY(-50%);
-                                    height: 100%;
-                                    line-height: 33px;
-                                    padding-left: 10px;
-                                    pointer-events: none;
-                                    cursor: pointer;
-                                    transition: visibility 0.3s ease, opacity 0.3s ease;
-                                }
-
-                                span {
-                                    pointer-events: none;
-                                    transition: letter-spacing 0.3s ease;
-                                }
-                            }
+                            @include properties_menu;
                         }
 
                         .post_settings,
@@ -1047,6 +875,7 @@ header {
                             .public_visibility_container,
                             .allow_comments_container,
                             .hide_likes_container {
+                                @include custom_checkbox;
                                 position: relative;
                                 display: flex;
                                 align-items: center;
@@ -1056,43 +885,6 @@ header {
                                 &:hover,
                                 &:focus {
                                     background-color: transparentize($blue-color, 0.9);
-                                }
-
-                                input[type="checkbox"] {
-                                    display: none;
-
-                                    &:checked + label {
-                                        background-color: transparentize($success-color, 0.8);
-
-                                        &::before {
-                                            left: 22px;
-                                            background-color: $success-color;
-                                        }
-                                    }
-                                }
-                                
-                                label {
-                                    position: relative;
-                                    width: 40px;
-                                    height: 20px;
-                                    margin-left: auto;
-                                    padding: 2px;
-                                    background-color: transparentize($error-color, 0.8);
-                                    border-radius: 10px;
-                                    cursor: pointer;
-
-                                    &::before {
-                                        content: "";
-                                        position: absolute;
-                                        top: 50%;
-                                        left: 2px;
-                                        transform: translateY(-50%);
-                                        width: 16px;
-                                        height: 16px;
-                                        background-color: $error-color;
-                                        border-radius: 50%;
-                                        transition: left 0.3s ease, background-color 0.3s ease;
-                                    }
                                 }
                             }
                         }
@@ -1467,85 +1259,11 @@ header {
                                 .video_settings,
                                 .video_quality,
                                 .video_speed {
-                                    position: fixed;
-                                    inset: auto;
-                                    margin: 0;
-                                    flex-direction: column;
-                                    bottom: anchor(top);
-                                    right: anchor(right);
-                                    min-width: 150px;
-                                    margin-bottom: 10px;
-                                    margin-right: 10px;
-                                    text-align: center;
-                                    color: $secondary-color;
-                                    background-color: transparentize($main-color, 0.8);
-                                    backdrop-filter: blur(5px);
-                                    border: 1px solid transparentize($blue-color, 0.5);
-                                    border-radius: $small-border-radius;
-        
-                                    &:popover-open {
-                                        display: flex;
-                                    }
-        
-                                    &::backdrop {
-                                        background: transparent;
-                                    }
-        
-                                    p {
-                                        padding: 5px 10px 0px;
-                                    }
-        
-                                    button {
-                                        all: unset;
-                                        position: relative;
-                                        padding: 5px 10px;
-                                        transition: background-color 0.3s ease;
-        
-                                        &:hover,
-                                        &:focus {
-                                            background-color: transparentize($blue-color, 0.9);
-                                            cursor: pointer;
-        
-                                            i {
-                                                visibility: visible;
-                                                opacity: 1;
-                                            }
-        
-                                            span {
-                                                letter-spacing: 0.5px;
-                                            }
-                                        }
-        
-                                        &[popovertargetaction="hide"] {
-                                            background-color: transparentize($blue-color, 0.9);
-                                        }
-        
-                                        i {
-                                            visibility: hidden;
-                                            opacity: 0;
-                                            position: absolute;
-                                            top: 50%;
-                                            left: 0px;
-                                            transform: translateY(-50%);
-                                            height: 100%;
-                                            line-height: 33px;
-                                            padding-left: 10px;
-                                            pointer-events: none;
-                                            cursor: pointer;
-                                            transition: visibility 0.3s ease, opacity 0.3s ease;
-                                        }
-        
-                                        span {
-                                            pointer-events: none;
-                                            transition: letter-spacing 0.3s ease;
-                                        }
-                                    }
+                                    @include properties_menu;
                                 }
 
                                 .video_quality,
                                 .video_speed {
-                                    top: anchor(bottom);
-
                                     button {
                                         &.active {
                                             background-color: transparentize($blue-color, 0.9);
@@ -1872,27 +1590,8 @@ header {
                 }
 
                 .all_comments {
+                    @include scrollbar;
                     max-height: 300px;
-                    overflow-y: auto;
-
-                    &::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-                    &::-webkit-scrollbar-thumb {
-                        background-color: darken($secondary-color, 40%);
-                        border-radius: 2.5px;
-
-                        &:hover {
-                            background-color: darken($secondary-color, 20%);
-                            cursor: pointer;
-                        }
-                    }
-
-                    &::-webkit-scrollbar-track {
-                        background-color: lighten($main-color, 20%);
-                        border-radius: 2.5px;
-                    }
 
                     .one_comment {
                         position: relative;
@@ -1939,93 +1638,15 @@ header {
                                 // Comment Properties
 
                                 .show_comment_properties_button {
-                                    all: unset;
+                                    @include show_properties_button;
                                     margin-left: auto;
                                     margin-right: 10px;
-
-                                    .fa-ellipsis-vertical {
-                                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                                        display: block;
-                                        font-size: 1.2em;
-                                    }
                                 }
 
                                 .comment_properties,
                                 .report,
                                 .delete_comment {
-                                    position: fixed;
-                                    inset: auto;
-                                    margin: 0;
-                                    flex-direction: column;
-                                    top: anchor(bottom);
-                                    right: anchor(right);
-                                    min-width: 150px;
-                                    margin-top: 10px;
-                                    margin-right: 10px;
-                                    text-align: center;
-                                    color: $secondary-color;
-                                    background-color: transparentize($main-color, 0.8);
-                                    backdrop-filter: blur(5px);
-                                    border: 1px solid transparentize($blue-color, 0.5);
-                                    border-radius: $small-border-radius;
-
-                                    &:popover-open {
-                                        display: flex;
-                                    }
-
-                                    &::backdrop {
-                                        background: transparent;
-                                    }
-
-                                    p {
-                                        padding: 5px 10px 0px;
-                                    }
-
-                                    button {
-                                        all: unset;
-                                        position: relative;
-                                        padding: 5px 10px;
-                                        transition: background-color 0.3s ease;
-        
-                                        &:hover,
-                                        &:focus {
-                                            background-color: transparentize($blue-color, 0.9);
-                                            cursor: pointer;
-        
-                                            i {
-                                                visibility: visible;
-                                                opacity: 1;
-                                            }
-        
-                                            span {
-                                                letter-spacing: 0.5px;
-                                            }
-                                        }
-        
-                                        &[popovertargetaction="hide"] {
-                                            background-color: transparentize($blue-color, 0.9);
-                                        }
-        
-                                        i {
-                                            visibility: hidden;
-                                            opacity: 0;
-                                            position: absolute;
-                                            top: 50%;
-                                            left: 0px;
-                                            transform: translateY(-50%);
-                                            height: 100%;
-                                            line-height: 33px;
-                                            padding-left: 10px;
-                                            pointer-events: none;
-                                            cursor: pointer;
-                                            transition: visibility 0.3s ease, opacity 0.3s ease;
-                                        }
-        
-                                        span {
-                                            pointer-events: none;
-                                            transition: letter-spacing 0.3s ease;
-                                        }
-                                    }
+                                    @include properties_menu;
                                 }
 
                                 .report {
@@ -2291,25 +1912,7 @@ header {
                     }
 
                     .emoji_picker_container {
-                        display: block;
-                        opacity: 1;
-                        position: absolute;
-                        top: 100%;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        height: 300px;
-                        box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
-                        z-index: 2000;
-                        transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
-            
-                        emoji-picker {
-                            height: inherit;
-                        }
-            
-                        &.hidden {
-                            display: none;
-                            opacity: 0;
-                        }
+                        @include emoji_picker_container;
                     }
         
                     .send {

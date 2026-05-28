@@ -64,7 +64,7 @@ function createCustomTaskHTML(task_container:HTMLDivElement, data:customTask):HT
 
     // Show Custom Task Properties Button
     const show_custom_task_properties_button:HTMLButtonElement = task_container.querySelector(".show_custom_task_properties_button") as HTMLButtonElement // Gets The Show Custom Task Properties Button
-    show_custom_task_properties_button.setAttribute("popovertarget", `custom_task_properties_${data.id}`) // Links The Pop Over
+    show_custom_task_properties_button.setAttribute("popovertarget", `custom_task_properties_${data.id}`) // Links The Popover
     show_custom_task_properties_button.style = `anchor-name: --show_custom_task_properties_button_${data.id}` // Creates The Anchor
 
     // Custom Task Properties Menu
@@ -74,7 +74,7 @@ function createCustomTaskHTML(task_container:HTMLDivElement, data:customTask):HT
 
     // Hide Custom Task Properties Button
     const hide_custom_task_properties_button:HTMLButtonElement = custom_task_properties.querySelector(".hide_custom_task_properties_button") as HTMLButtonElement // Gets The Hide Custom Task Properties Button
-    hide_custom_task_properties_button.setAttribute("popovertarget", `custom_task_properties_${data.id}`) // Links The Pop Over
+    hide_custom_task_properties_button.setAttribute("popovertarget", `custom_task_properties_${data.id}`) // Links The Popover
 
     return task_container // Returns The Task Container
 }
