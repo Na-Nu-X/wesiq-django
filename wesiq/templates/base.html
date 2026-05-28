@@ -40,6 +40,7 @@
 </head>
 
 <body>
+    <canvas class="background_canvas"></canvas>
     <span class="preloader"></span> <!-- https://cssloaders.github.io/ -->
 
     <div class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
@@ -262,6 +263,7 @@
         })
     </script>
 
+    <script src="{% static 'ts/dist/components/background_canvas.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/preloader.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/navigation.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/move_down.js' %}" type="module"></script>
