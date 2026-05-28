@@ -22,18 +22,18 @@ export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_c
     const comment_properties:HTMLDivElement = one_comment.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
     const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
 
-    show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
+    show_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Popover
     show_comment_properties_button.style = `anchor-name: --show_comment_properties_button_${comment.id}` // Creates The Anchor
     comment_properties.id = `comment_properties_${comment.id}` // Sets The ID
     comment_properties.style = `position-anchor: --show_comment_properties_button_${comment.id}` // Links The Anchor
-    hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Pop Over
+    hide_comment_properties_button.setAttribute("popovertarget", `comment_properties_${comment.id}`) // Links The Popover
 
     // If The Comment Doesn't Belong To The Logged In User The Report Option Will Be Shown
     if(comment.user.id !== logged_in_user_id) {
         // Show Report Comment Button
         const show_report_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Show Report Comment Button
         show_report_comment_button.classList.add("show_report_comment_button") // Adds The Show Report Comment Button
-        show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+        show_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Popover
         show_report_comment_button.style = `anchor-name: --show_report_comment_button_${comment.id}` // Creates The Anchor
         show_report_comment_button.innerHTML = "<i class='fa-regular fa-flag'></i>" // https://fontawesome.com/icons/flag
         show_report_comment_button.innerHTML += `<span>${gettext("Nahlásiť")}</span>`
@@ -47,7 +47,7 @@ export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_c
 
         // Back Report Comment Button
         const back_report_comment_button:HTMLButtonElement = report_container.querySelector(".back_report_button") as HTMLButtonElement // Gets The Back Report Comment Button
-        back_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Pop Over
+        back_report_comment_button.setAttribute("popovertarget", `report_comment_${comment.id}`) // Links The Popover
     }
 
     // If The Comment Belongs To The Logged In User The Delete Option Will Be Shown
@@ -55,7 +55,7 @@ export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_c
         // Delete Comment Button
         const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
         delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
-        delete_comment_button.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
+        delete_comment_button.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Popover
         delete_comment_button.style = `anchor-name: --delete_comment_button_${comment.id}` // Creates The Anchor
         delete_comment_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
         delete_comment_button.innerHTML += `<span>${gettext("Vymazať")}</span>`
@@ -83,7 +83,7 @@ export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_c
         
         // No
         const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
-        no.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Pop Over
+        no.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Popover
         no.popoverTargetAction = "hide" // Sets The Hide Action
         no.innerHTML = "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
         no.innerHTML += `<span>${gettext("Zrušiť")}</span>`

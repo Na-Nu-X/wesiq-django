@@ -576,3 +576,196 @@
         color: $blue-color;
     }
 }
+
+// Popover Menu
+
+@mixin show_properties_button {
+    all: unset;
+
+    .fa-ellipsis-vertical {
+        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+        display: block;
+        font-size: 1.2em;
+    }
+}
+
+@mixin properties_menu {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    flex-direction: column;
+    top: anchor(bottom);
+    right: anchor(right);
+    min-width: 150px;
+    margin-top: 10px;
+    margin-right: 10px;
+    text-align: center;
+    color: $secondary-color;
+    background-color: transparentize($main-color, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid transparentize($blue-color, 0.5);
+    border-radius: $small-border-radius;
+
+    &:popover-open {
+        display: flex;
+    }
+
+    &::backdrop {
+        background: transparent;
+    }
+
+    p {
+        padding: 5px 10px 0px;
+    }
+
+    button,
+    a {
+        all: unset;
+        position: relative;
+        padding: 5px 10px;
+        transition: background-color 0.3s ease;
+
+        &:hover,
+        &:focus {
+            background-color: transparentize($blue-color, 0.9);
+            cursor: pointer;
+
+            i {
+                visibility: visible;
+                opacity: 1;
+            }
+
+            span {
+                letter-spacing: 0.5px;
+            }
+        }
+
+        &[popovertargetaction="hide"] {
+            background-color: transparentize($blue-color, 0.9);
+        }
+
+        i {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            transform: translateY(-50%);
+            height: 100%;
+            line-height: 33px;
+            padding-left: 10px;
+            pointer-events: none;
+            cursor: pointer;
+            transition: visibility 0.3s ease, opacity 0.3s ease;
+        }
+
+        span {
+            pointer-events: none;
+            transition: letter-spacing 0.3s ease;
+        }
+    }
+}
+
+// Scrollbar
+
+@mixin scrollbar($direction: "vertical") {
+    // Vertical Scrollbar
+    @if $direction == "vertical" {
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+    }
+
+    // Horizontal Scrollbar
+    @else if $direction == "horizontal" {
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        &::-webkit-scrollbar {
+            height: 5px;
+        }
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: darken($secondary-color, 40%);
+        border-radius: 2.5px;
+
+        &:hover {
+            background-color: darken($secondary-color, 20%);
+            cursor: pointer;
+        }
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: lighten($main-color, 20%);
+        border-radius: 2.5px;
+    }
+}
+
+// Custom Checkbox
+
+@mixin custom_checkbox {
+    input[type="checkbox"] {
+        display: none;
+    
+        &:checked + label {
+            background-color: transparentize($success-color, 0.8);
+    
+            &::before {
+                left: 22px;
+                background-color: $success-color;
+            }
+        }
+    }
+    
+    label {
+        position: relative;
+        width: 40px;
+        height: 20px;
+        margin-left: auto;
+        padding: 2px;
+        background-color: transparentize($error-color, 0.8);
+        border-radius: 10px;
+        cursor: pointer;
+    
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 2px;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background-color: $error-color;
+            border-radius: 50%;
+            transition: left 0.3s ease, background-color 0.3s ease;
+        }
+    }
+}
+
+// Emoji Picker Container
+
+@mixin emoji_picker_container($height: 300px) {
+    display: block;
+    opacity: 1;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: $height;
+    box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
+    z-index: 100;
+    transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+
+    emoji-picker {
+        height: inherit;
+    }
+
+    &.hidden {
+        display: none;
+        opacity: 0;
+    }
+}

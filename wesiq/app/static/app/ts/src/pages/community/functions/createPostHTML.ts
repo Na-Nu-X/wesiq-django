@@ -181,7 +181,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Show Video Settings Button
             const show_video_settings_button:HTMLButtonElement = video_container.querySelector(".controls .buttons .show_video_settings_button") as HTMLButtonElement // Gets The Show Settings Button
-            show_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Pop Over
+            show_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Popover
             show_video_settings_button.style = `anchor-name: --show_video_settings_button_${post_data.id}` // Creates The Anchor
 
             // Video Settings Menu
@@ -191,17 +191,17 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Show Video Quality Button
             const show_video_quality_button:HTMLButtonElement = video_settings.querySelector(".show_video_quality_button") as HTMLButtonElement // Gets The Show Video Quality Button
-            show_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Pop Over
+            show_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Popover
             show_video_quality_button.style = `anchor-name: --show_video_quality_button_${post_data.id}` // Creates The Anchor
 
             // Show Video Speed Button
             const show_video_speed_button:HTMLButtonElement = video_settings.querySelector(".show_video_speed_button") as HTMLButtonElement // Gets The Show Video Speed Button
-            show_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Pop Over
+            show_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Popover
             show_video_speed_button.style = `anchor-name: --show_video_speed_button_${post_data.id}` // Creates The Anchor
 
             // Back Video Settings Button
             const back_video_settings_button:HTMLButtonElement = video_settings.querySelector(".back_video_settings_button") as HTMLButtonElement // Gets The Back Video Settings Button
-            back_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Pop Over 
+            back_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Popover 
 
             // Video Quality Menu
             const video_quality:HTMLDivElement = video_container.querySelector(".controls .buttons .video_quality") as HTMLDivElement // Gets The Video Quality Menu
@@ -210,7 +210,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Back Video Quality Button
             const back_video_quality_button:HTMLButtonElement = video_quality.querySelector(".back_video_quality_button") as HTMLButtonElement // Gets The Back Video Quality Button
-            back_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Pop Over 
+            back_video_quality_button.setAttribute("popovertarget", `video_quality_${post_data.id}`) // Links The Popover 
 
             // Video Speed Menu
             const video_speed:HTMLDivElement = video_container.querySelector(".controls .buttons .video_speed") as HTMLDivElement // Gets The Video Speed Menu
@@ -219,7 +219,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Back Video Speed Button
             const back_video_speed_button:HTMLButtonElement = video_speed.querySelector(".back_video_speed_button") as HTMLButtonElement // Gets The Back Video Speed Button
-            back_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Pop Over 
+            back_video_speed_button.setAttribute("popovertarget", `video_speed_${post_data.id}`) // Links The Popover 
 
             // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
@@ -572,18 +572,18 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
     const post_properties:HTMLDivElement = container.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
     const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
 
-    show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    show_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Popover
     show_post_properties_button.style = `anchor-name: --show_post_properties_button_${post_data.id}` // Creates The Anchor
     post_properties.id = `post_properties_${post_data.id}` // Sets The ID
     post_properties.style = `position-anchor: --show_post_properties_button_${post_data.id}` // Links The Anchor
-    hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Pop Over
+    hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Popover
 
     // If The Post Doesn't Belong To The Logged In User The Report Option Will Be Shown
     if(post_data.user.id !== logged_in_user_id) {
         // Show Report Post Button
         const show_report_post_button:HTMLButtonElement = document.createElement("button") // Creates The Show Report Post Button
         show_report_post_button.classList.add("show_report_post_button") // Adds The Show Report Post Button
-        show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+        show_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Popover
         show_report_post_button.style = `anchor-name: --show_report_post_button_${post_data.id}` // Creates The Anchor
         show_report_post_button.innerHTML = "<i class='fa-regular fa-flag'></i>" // https://fontawesome.com/icons/flag
         show_report_post_button.innerHTML += `<span>${gettext("Nahlásiť")}</span>`
@@ -597,7 +597,7 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
 
         // Back Report Post Button
         const back_report_post_button:HTMLButtonElement = report_container.querySelector(".back_report_button") as HTMLButtonElement // Gets The Back Report Post Button
-        back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Pop Over
+        back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Popover
     }
 
     // If The Post Belongs To The Logged In User The Settings And The Delete Option Will Be Shown
@@ -605,7 +605,7 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         // Show Post Settings Button
         const show_post_settings_button:HTMLButtonElement = document.createElement("button") // Creates The Show Post Settings Button
         show_post_settings_button.classList.add("show_post_settings_button") // Adds The Show Post Settings Button Class
-        show_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Pop Over
+        show_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Popover
         show_post_settings_button.style = `anchor-name: --show_post_settings_button_${post_data.id}` // Creates The Anchor
         show_post_settings_button.innerHTML = "<i class='fa-solid fa-pen'></i>" // https://fontawesome.com/icons/pen
         show_post_settings_button.innerHTML += `<span>${gettext("Upraviť")}</span>`
@@ -667,12 +667,12 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
 
         // Back Post Settings Button
         const back_post_settings_button:HTMLButtonElement = post_settings.querySelector(".back_post_settings_button") as HTMLButtonElement // Gets The Back Post Settings Button
-        back_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Pop Over
+        back_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Popover
 
         // Delete Post Button
         const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
         delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
-        delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Popover
         delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
         delete_post_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
         delete_post_button.innerHTML += `<span>${gettext("Vymazať")}</span>`
@@ -700,7 +700,7 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         
         // No
         const no:HTMLButtonElement = document.createElement("button") // Creates The No Button
-        no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Pop Over
+        no.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Popover
         no.popoverTargetAction = "hide" // Sets The Hide Action
         no.innerHTML = "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
         no.innerHTML += `<span>${gettext("Zrušiť")}</span>`

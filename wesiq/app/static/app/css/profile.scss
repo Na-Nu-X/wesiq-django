@@ -154,25 +154,7 @@
             }
     
             .emoji_picker_container {
-                display: block;
-                opacity: 1;
-                position: absolute;
-                top: 100%;
-                left: 50%;
-                transform: translateX(-50%);
-                height: 300px;
-                box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
-                z-index: 100;
-                transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
-    
-                emoji-picker {
-                    height: inherit;
-                }
-    
-                &.hidden {
-                    display: none;
-                    opacity: 0;
-                }
+                @include emoji_picker_container;
             }
         }
 
@@ -357,6 +339,7 @@
                 }
 
                 .badges {
+                    @include scrollbar($direction: "vertical");
                     display: grid;
                     grid-auto-flow: column;
                     grid-template-rows: repeat(2, 50px);
@@ -365,28 +348,7 @@
                     flex: 1;
                     max-width: 100%;
                     padding: 10px 10px 5px;
-                    overflow-x: auto;
-                    overflow-y: hidden;
                     scroll-behavior: smooth;
-
-                    &::-webkit-scrollbar {
-                        height: 5px;
-                    }
-    
-                    &::-webkit-scrollbar-thumb {
-                        background-color: darken($secondary-color, 40%);
-                        border-radius: 2.5px;
-    
-                        &:hover {
-                            background-color: darken($secondary-color, 20%);
-                            cursor: pointer;
-                        }
-                    }
-    
-                    &::-webkit-scrollbar-track {
-                        background-color: lighten($main-color, 20%);
-                        border-radius: 2.5px;
-                    }
     
                     .badge {
                         width: 50px;
@@ -455,29 +417,9 @@
 
             .posts_container,
             .saved_posts_container {
+                @include scrollbar;
                 max-height: calc(130px * 3);
-                overflow-x: hidden;
-                overflow-y: auto;
                 transition: transform 0.3s ease;
-
-                &::-webkit-scrollbar {
-                    width: 5px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: darken($secondary-color, 40%);
-                    border-radius: 2.5px;
-
-                    &:hover {
-                        background-color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                    }
-                }
-
-                &::-webkit-scrollbar-track {
-                    background-color: lighten($main-color, 20%);
-                    border-radius: 2.5px;
-                }
 
                 &.hidden {
                     position: absolute;
