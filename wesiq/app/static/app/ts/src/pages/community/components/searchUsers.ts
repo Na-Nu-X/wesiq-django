@@ -1,13 +1,15 @@
 import { 
+    loadFirstUsers,
     getSearchedUsers,
     resetSearchedUsers
 } from "../functions/searchUsers.js"
 
+import { storeSearchedUserToHistory } from "../functions/searchUsersHistory.js"
 import { toggleFollow } from "../functions/toggleFollow.js"
 
 "use strict"
 
-document.addEventListener("DOMContentLoaded", function():void {
+document.addEventListener("DOMContentLoaded", async function():Promise<void> {
     // Search Users
 
     // Variables
@@ -16,12 +18,15 @@ document.addEventListener("DOMContentLoaded", function():void {
     const search_bar:HTMLInputElement = search_bar_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Bar Input
     const delete_search_bar:HTMLElement = search_bar_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Bar Icon
 
-    const all_users_container:HTMLDivElement = document.querySelector(".all_users") as HTMLDivElement // Gets The All Users Container
+    const search_result_container:HTMLDivElement = document.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
+    const one_user_template:HTMLTemplateElement = search_result_container.querySelector(".one_user_template") as HTMLTemplateElement // Gets The One User Template
+    const all_users_container:HTMLDivElement = search_result_container.querySelector(".all_users") as HTMLDivElement // Gets The All Users Container
 
+    await loadFirstUsers(all_users_container, one_user_template) // Loads The First Users For The Search Users Container
     let all_users:NodeListOf<HTMLAnchorElement> = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
     const first_users:NodeListOf<HTMLAnchorElement> = all_users // Stores First Loaded Users
 
-    const users_loading:HTMLDivElement = document.querySelector(".search_result_container .loading") as HTMLDivElement // Gets The Loading
+    const users_loading:HTMLDivElement = search_result_container.querySelector(".search_result_container .loading") as HTMLDivElement // Gets The Loading
 
     let previous_search_bar_length:number = 0 // Stores The Previous Search Bar Input Length
     let search_users_timeout:number // Debounce Timeout Between Requests
@@ -90,6 +95,17 @@ document.addEventListener("DOMContentLoaded", function():void {
             const icon:HTMLElement = event.target as HTMLElement // Gets The Follow / Unfollow Icon
             const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
             toggleFollow(icon, null, clicked_user_id)
+        }
+
+        // Store User To The Searched Users History 
+        if(
+            event.target instanceof HTMLAnchorElement ||
+            (event.target as HTMLElement).parentElement instanceof HTMLAnchorElement
+        ) {
+            const one_user:HTMLAnchorElement = (event.target as HTMLElement).closest(".one_user") as HTMLAnchorElement // Gets The One User
+            const username:HTMLParagraphElement = one_user.querySelector(".username") as HTMLParagraphElement // Gets The Username Paragraph
+
+            storeSearchedUserToHistory(username.textContent) // Stores The Searched User To The Searched Users History 
         }
     })
 })

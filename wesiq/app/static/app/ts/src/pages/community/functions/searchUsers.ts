@@ -1,6 +1,23 @@
 import { sendPOST } from "../../../services/sendPOST.js"
 import { displayMessage } from "../../../utils/displayMessage.js"
 
+interface loadedUser {
+    id:number,
+    first_name:string,
+    last_name:string,
+    username:string,
+    profile_picture_name:string,
+    friend_code:string,
+    followers:number,
+    has_follow:boolean
+}
+
+interface firstLoadedUsersResponse {
+    success: boolean,
+    users:loadedUser[],
+    message: string
+}
+
 interface searchedUser {
     id:number,
     first_name:string,
@@ -16,6 +33,62 @@ interface searchedUsersResponse {
     logged_in_user_id?:number,
     users?:searchedUser[],
     message:string
+}
+
+// Function For Load The First Users For The Search Users Container
+export async function loadFirstUsers(all_users_container:HTMLDivElement, one_user_template:HTMLTemplateElement):Promise<void> {
+    let searched_users_history:string[] = JSON.parse(localStorage.getItem("searched_users_history") || "[]") as string[] // Gets The Searched Users History From The Local Storage
+
+    try {
+        const first_loaded_users_response:firstLoadedUsersResponse = await sendPOST(window.location.pathname, searched_users_history, "load-first-users") // Sends Searched Users History As A POST Data
+
+        // If The Response Isn't Success
+        if(!first_loaded_users_response.success) {
+            displayMessage(first_loaded_users_response.message, "error") // Displays The Error Message
+            return
+        }
+
+        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data))) // Creates The HTML For Every Loaded User
+    }
+
+    catch {
+        displayMessage(gettext("Pri načítavaní užívateľov došlo k chybe."), "error") // Displays The Error Message
+    }
+}
+
+// Function For Create Loaded User HTML
+function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser):HTMLAnchorElement {
+    const one_user_template_clone:DocumentFragment = one_user_template.content.cloneNode(true) as DocumentFragment // Clones The One User Template Content
+    
+    // One User Link
+    const one_user:HTMLAnchorElement = one_user_template_clone.querySelector(".one_user") as HTMLAnchorElement // Gets The One User Link
+    one_user.href = interpolate(gettext("/sk/profil/%s"), [user_data.username]) // Sets The Link To The User's Profile
+    one_user.dataset["id"] = String(user_data.id)
+    one_user.dataset["full_name"] = `${user_data.first_name} ${user_data.last_name}`
+    one_user.dataset["username"] = user_data.username
+    one_user.dataset["friend_code"] = user_data.friend_code
+
+    // Profile Picture
+    const profile_picture:HTMLImageElement = one_user.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture 
+    profile_picture.src = user_data.profile_picture_name ? `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+
+    // Username
+    const username:HTMLParagraphElement = one_user.querySelector(".username") as HTMLParagraphElement // Gets The Username Paragraph
+    username.textContent = user_data.username
+
+    // Full Name
+    const full_name:HTMLParagraphElement = one_user.querySelector(".full_name") as HTMLParagraphElement // Gets The Full Name Paragraph
+    full_name.textContent = `${user_data.first_name} ${user_data.last_name}`
+
+    // Followers
+    const followers:HTMLParagraphElement = one_user.querySelector(".followers") as HTMLParagraphElement // Gets The Followers Paragraph
+    followers.textContent = String(user_data.followers)
+
+    // Follow Button
+    const follow_button:HTMLElement = one_user.querySelector(".fa-solid") as HTMLElement // Gets The Follow Button
+    user_data.has_follow ? follow_button.classList.add("fa-user-minus") : follow_button.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+
+    return one_user // Returns The One User Link
 }
 
 // Function For Get Searched Users

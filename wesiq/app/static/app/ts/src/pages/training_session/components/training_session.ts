@@ -3,7 +3,7 @@ import {
     activity_interval, 
     break_interval, 
     activity_summary 
-} from "./state.js"
+} from "../state.js"
 
 import { 
     generateTrainingPlan,
@@ -13,13 +13,13 @@ import {
     nextExercise,
     skipWarmUp,
     skipBreak
-} from "./functions/trainingPlan.js"
+} from "../functions/trainingPlan.js"
 
 import { 
     startActivity,
     pauseActivity,
     stopActivity
-} from "./functions/playback.js"
+} from "../functions/playback.js"
 
 "use strict"
 
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         skipBreak(activity)
     })
 
-    // MAIN
+    // Initialization
 
     generateTrainingPlan(activity) // Renders User's Training Plan If Has Any
 })
