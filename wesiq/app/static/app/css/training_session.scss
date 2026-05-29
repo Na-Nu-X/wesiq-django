@@ -813,6 +813,41 @@
     }
 }
 
+// Activity History
+
+.activity_history {
+    @include scrollbar;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    width: 100%;
+    max-height: calc(50px * 5 + 10px);
+    margin: 20px auto 0px;
+    padding: 5px;
+    background-color: transparentize($secondary-color, 0.95);
+    border-radius: $small-border-radius;
+
+    .one_activity {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-shrink: 0;
+        height: 50px;
+        padding: 0px 10px;
+        border-radius: $small-border-radius;
+
+        &:hover {
+            background-color: transparentize($secondary-color, 0.9);
+        }
+
+        .training_plan_title {
+            color: $blue-color;
+            text-shadow: 0px 0px 10px $blue-color;
+        }
+    }
+}
+
 /***********
  Key Frames
 ***********/

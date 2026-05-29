@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load l10n %}
+{% load filters %}
 
 {% block title %}{% translate "Tréning" %}{% endblock title %}
 
@@ -230,7 +231,7 @@
                         <i class="fa-solid fa-list"></i>
 
                         {% if latest_activity %}
-                            <span>{{ latest_activity.formatted_elapsed_time }}</span>
+                            <span>{{ latest_activity.elapsed_time|format_time }}</span>
                             <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
                             <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
 
@@ -246,7 +247,7 @@
                         <i class="fa-solid fa-medal"></i>
 
                         {% if longest_activity %}
-                            <span>{{ longest_activity.formatted_elapsed_time }}</span>
+                            <span>{{ longest_activity.elapsed_time|format_time }}</span>
                             <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
                             <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
 
@@ -274,6 +275,8 @@
     </div>
 
     <div class="todo">
+        <audio class="success_sound" src="{% static 'audio/success.mp3' %}" type="audio/mpeg"></audio> <!-- https://pixabay.com/ -->
+
         <div class="official_tasks">
             <h3>{% translate "Dnešné&nbsp;výzvy" %}</h3>
             <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
@@ -408,6 +411,27 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+
+    <div class="activity_history">
+        {% for one_activity in activity_history %}
+            <div class="one_activity">
+                <p class="training_plan_title"><i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
+                    {% if one_activity.type %}
+                        {{ one_activity.type }}
+
+                    {% else %}
+                        {% translate "bez tréningového plánu" %}
+
+                    {% endif %}
+                </p>
+
+                <p>{{ one_activity.elapsed_time|format_time }}</p>
+                <p>{{ one_activity.gained_xp }}XP</p>
+                <p>{{ one_activity.end_time|date:"d.m." }}</p>
+            </div>
+        
+        {% endfor %}
     </div>
 {% endblock content %}
 

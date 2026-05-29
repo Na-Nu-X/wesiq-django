@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const add_custom_task:HTMLDivElement|null = official_tasks.querySelector("[data-task='add_custom_task']") || null // Gets The "Add Custom Task" Official Task If Is Available
 
+    const success_sound:HTMLAudioElement = todo.querySelector(".success_sound") as HTMLAudioElement // Gets The Success Sound
+
     // Initialization
 
     initializeOfficialTasksProgression() // Initializes The Completion Progress Of The Official Tasks
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 // If The Task Isn't Already Completed
                 if(!checkbox.classList.contains("checked")) {
-                    completeOfficialTask("add_custom_task", add_custom_task) // Completes The "Add Custom Task" Official Task
+                    completeOfficialTask("add_custom_task", add_custom_task, success_sound) // Completes The "Add Custom Task" Official Task
                 }
             }
         }

@@ -417,7 +417,7 @@ export function nextExercise(container:HTMLDivElement):void {
     else if(current_set === sets_amount && training_plan_state.active_exercise_index < exercises.length - 1) {
         (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
         exercises_break.classList.add("active") // Shows Exercises Break Slide
-        exercisesBreak(training_plan)
+        exercisesBreak(container) // Must pass activity container so skipBreak/nextExercise resolve DOM correctly
     }
 
     // Finish Training Slide

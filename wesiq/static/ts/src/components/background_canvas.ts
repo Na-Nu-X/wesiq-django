@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const background_canvas:HTMLCanvasElement = document.querySelector(".background_canvas") as HTMLCanvasElement // Gets The Background Canvas
     const ctx:CanvasRenderingContext2D = background_canvas.getContext("2d") as CanvasRenderingContext2D // Gets The Canvas Context
 
-    const COLORS:string[] = ["#011C6B1A", "#0111421A", "#01258F1A", "#023BE61A", "#0231BD1A"] // Stores The Colors
+    const CIRCLES_AMOUNT:number = 20 // Sets The Amount Of Circles
+    const COLORS:string[] = ["#011C6B33", "#01114233", "#01258F33", "#023BE633", "#0231BD33"] // Stores The Colors
     let circles:circle[] = [] // Stores All Circles
 
     background_canvas.width = window.innerWidth // Sets The Width Of The Background Canvas
@@ -112,11 +113,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         background_canvas.height = window.innerHeight // Sets The Height Of The Background Canvas
         ctx.clearRect(0, 0, background_canvas.width, background_canvas.height) // Clears The Canvas
         circles = [] // Deletes The Previous Circles
-        generateCircles(20) // Regenerates 20 Circles
+        generateCircles(CIRCLES_AMOUNT) // Regenerates Circles
     })
 
     // Initialization
 
-    generateCircles(20) // Generates 20 Circles
+    generateCircles(CIRCLES_AMOUNT) // Generates Circles
     initializeMainLoop() // Initializes The Main Loop
 })
