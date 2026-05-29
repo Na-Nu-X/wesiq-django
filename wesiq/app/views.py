@@ -2168,6 +2168,9 @@ def trainingSessionView(request):
         ).order_by(
             "order"
         )
+
+        two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
+        activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago) # Gets The Activity History Items
         
         if request.method == "POST":
             # Complete Official Task
@@ -2345,7 +2348,6 @@ def trainingSessionView(request):
                     # Saves New Activity To Database
                     new_activity = Activity(
                         user_id = logged_in_user_id,
-                        formatted_elapsed_time = new_activity_data["formatted_elapsed_time"],
                         elapsed_time = int(new_activity_data["elapsed_time"]),
                         gained_xp = int(gained_xp),
                         type = new_activity_data["type"],
@@ -2375,7 +2377,8 @@ def trainingSessionView(request):
             "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
             "official_tasks": official_tasks,
             "official_tasks_remaining_hours": official_tasks_remaining_hours,
-            "custom_tasks": custom_tasks
+            "custom_tasks": custom_tasks,
+            "activity_history": activity_history
         })
 
     return render(request, "app/training_session.html")

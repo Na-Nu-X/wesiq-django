@@ -87,6 +87,16 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Key Down Events
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
+        const target = event.target as HTMLElement // Gets The Target Element
+
+        if (
+            target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA" ||
+            target.isContentEditable
+        ) {
+            return
+        }
+
         // Playback
         if(event.code === "Space") {
             event.preventDefault() // Stop Scrolling

@@ -84,7 +84,6 @@ class Activity(models.Model):
     )
 
     end_time = models.DateTimeField(verbose_name="End Time", auto_now_add=True, null=False)
-    formatted_elapsed_time = models.CharField(verbose_name="Formatted Elapsed Time", max_length=11, default="00h 00m 01s", null=False)
     elapsed_time = models.IntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
     gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)

@@ -47,6 +47,8 @@ export function checkOfficialTasksCompletion():void {
 
     const average_activity_time:number = Number((document.querySelector(".activity .previous_activity .top .average_activity_time_container p .average_activity_time") as HTMLSpanElement).dataset["average_activity_time"]) || 0 // Gets The Weekly Average Activity Time
 
+    const success_sound:HTMLAudioElement = todo.querySelector(".success_sound") as HTMLAudioElement // Gets The Success Sound
+
     // 30 Minutes Activity
     if(_30_minutes_activity) {
         const checkbox:HTMLDivElement = _30_minutes_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
@@ -63,7 +65,7 @@ export function checkOfficialTasksCompletion():void {
     
                 // 100% Completed
                 if(progress === 100) {
-                    completeOfficialTask("30_minutes_activity", _30_minutes_activity) // Completes The "30 Minutes Activity" Official Task
+                    completeOfficialTask("30_minutes_activity", _30_minutes_activity, success_sound) // Completes The "30 Minutes Activity" Official Task
                 }
             }
         }
@@ -85,7 +87,7 @@ export function checkOfficialTasksCompletion():void {
 
                 // 100% Completed
                 if(progress === 100) {
-                    completeOfficialTask("1_hour_activity", _1_hour_activity) // Completes The "1 Hour Activity" Official Task
+                    completeOfficialTask("1_hour_activity", _1_hour_activity, success_sound) // Completes The "1 Hour Activity" Official Task
                 }
             }
         }
@@ -107,7 +109,7 @@ export function checkOfficialTasksCompletion():void {
 
                 // 100% Completed
                 if(progress === 100) {
-                    completeOfficialTask("2_hours_activity", _2_hours_activity) // Completes The "2 Hours Activity" Official Task
+                    completeOfficialTask("2_hours_activity", _2_hours_activity, success_sound) // Completes The "2 Hours Activity" Official Task
                 }
             }
         }
@@ -129,7 +131,7 @@ export function checkOfficialTasksCompletion():void {
 
                 // 100% Completed
                 if(progress === 100) {
-                    completeOfficialTask("3_hours_activity", _3_hours_activity) // Completes The "3 Hours Activity" Official Task
+                    completeOfficialTask("3_hours_activity", _3_hours_activity, success_sound) // Completes The "3 Hours Activity" Official Task
                 }
             }
         }
@@ -151,7 +153,7 @@ export function checkOfficialTasksCompletion():void {
 
                 // 100% Completed
                 if(progress === 100) {
-                    completeOfficialTask("beat_average_activity_time", beat_average_activity_time) // Completes The "Beat Average Activity Time" Official Task
+                    completeOfficialTask("beat_average_activity_time", beat_average_activity_time, success_sound) // Completes The "Beat Average Activity Time" Official Task
                 }
             }
         }
@@ -159,7 +161,7 @@ export function checkOfficialTasksCompletion():void {
 }
 
 // Function For Complete Official Task
-export async function completeOfficialTask(task:string, task_container:HTMLDivElement):Promise<void> {
+export async function completeOfficialTask(task:string, task_container:HTMLDivElement, success_sound:HTMLAudioElement):Promise<void> {
     try {
         const completed_official_task_response:completedOfficialTaskResponse = await sendPOST(window.location.pathname, task, "complete-official-task") // Sends The Completed Task As A POST Data
 
@@ -179,6 +181,7 @@ export async function completeOfficialTask(task:string, task_container:HTMLDivEl
 
                 window.setTimeout(function() {
                     displayMessage(`+${completed_official_task_response.gained_xp} XP`, "success") // Displays The Amount Of Gained XP For The Completed Task
+                    success_sound.play() // Plays The Success Sound
                 }, 100)
 
                 checkbox.classList.add("checked") // Marks The Checkbox As Checked
@@ -208,7 +211,7 @@ export async function completeOfficialTask(task:string, task_container:HTMLDivEl
                         }
                     })
         
-                    if(has_completed_all_official_tasks) completeOfficialTask("complete_all_official_tasks", complete_all_official_tasks)
+                    if(has_completed_all_official_tasks) completeOfficialTask("complete_all_official_tasks", complete_all_official_tasks, success_sound)
                 }
             }
         }

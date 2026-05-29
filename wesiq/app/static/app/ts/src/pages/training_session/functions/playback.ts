@@ -125,14 +125,12 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
             const training_plan_summary:exercise[] = activity_summary.training_plan.map((one_exercise:exercise):exercise => ({ ...one_exercise, gained_xp: Math.round(one_exercise.gained_xp) })).filter((one_exercise:exercise):boolean => one_exercise.gained_xp > 0) // Gets Training Plan Summary With Rounded Gained XP Values (Only Exercises With Gained XP)
 
             const new_activity_data:{
-                formatted_elapsed_time:string,
                 elapsed_time:number,
                 gained_xp:number,
                 type:string|null,
                 day:number|null,
                 training_plan_summary:exercise[]|null
             } = {
-                formatted_elapsed_time: `${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time, true)}m ${getFormattedTime("seconds", elapsed_time, true)}s`, // Stores Formatted Elapsed Time
                 elapsed_time, // Stores Formatted Elapsed Time
                 gained_xp, // Stores Gained XP
                 type: null, // Stores Training Plan Title
@@ -143,6 +141,16 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
             // Commits Activity
             if(gained_xp > 0) {
                 if(!container.querySelector(".no_logged_in")) {
+                    if(training_plan_summary.length > 0) {
+                        const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
+                        const training_plan_title:string = training_plan.dataset["title"] || "" // Gets Training Plan Title
+                        const training_plan_day:number|null = Number(training_plan.dataset["day"]) || null // Gets Training Plan Day
+
+                        new_activity_data.type = training_plan_title // Stores Training Plan Title
+                        new_activity_data.day = training_plan_day // Stores Training Plan Day
+                        new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
+                    }
+
                     try {
                         const new_activity_response:response = await sendPOST(window.location.pathname, new_activity_data, "new-activity") // Sends POST Data
 
@@ -164,12 +172,14 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                         const _2_activities:HTMLDivElement|null = tasks.querySelector("[data-task='2_activities']") || null // Gets The "Complete 2 Activities" Official Task If Is Available
 
+                        const success_sound:HTMLAudioElement = todo.querySelector(".success_sound") as HTMLAudioElement // Gets The Success Sound
+
                         if(_2_activities) {
                             const checkbox:HTMLDivElement = _2_activities.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
 
                             // If The Task Isn't Already Completed
                             if(!checkbox.classList.contains("checked")) {
-                                completeOfficialTask("2_activities", _2_activities) // Completes The "Complete 2 Activities" Official Task
+                                completeOfficialTask("2_activities", _2_activities, success_sound) // Completes The "Complete 2 Activities" Official Task
                             }
                         }
 
@@ -193,7 +203,7 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                                     // If The Task Isn't Already Completed
                                     if(!checkbox.classList.contains("checked")) {
-                                        completeOfficialTask("complete_training_plan_activity", complete_training_plan_activity) // Completes The "Complete Training Plan Activity" Official Task
+                                        completeOfficialTask("complete_training_plan_activity", complete_training_plan_activity, success_sound) // Completes The "Complete Training Plan Activity" Official Task
                                     }
                                 }
                             }
