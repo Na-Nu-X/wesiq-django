@@ -108,48 +108,21 @@
         </div>
 
         <div class="search_result_container">
+            <template class="one_user_template">
+                <a class="one_user" href="" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="" data-full_name="" data-username="" data-friend_code="">
+                    <img class="profile_picture skeleton_loading" src="">
+                    <p class="username"></p>
+                    <p class="full_name"></p>
+                    <p class="followers"></p>
+                    <i class="fa-solid"></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
+                </a>
+            </template>
+
             <div class="loading hidden">
                 <p>{% translate "Načítavam..." %}</p>
             </div>
 
-            <div class="all_users">
-                {% for one_user in users %}
-                    <a class="one_user" href="{% url 'profile_url' one_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" target="_self" data-id="{{ one_user.id }}" data-full_name="{{ one_user.first_name }} {{ one_user.last_name }}" data-username="{{ one_user.username }}" data-friend_code="{{ one_user.friend_code }}">
-                        <img 
-                            class="profile_picture skeleton_loading" 
-                            src="
-                                {% if one_user.profile_picture_name %}
-                                    /../media/images/{{ one_user.id }}/{{ one_user.profile_picture_name }}
-
-                                {% else %}
-                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                
-                                {% endif %}
-                            "
-                        >
-
-                        <p class="username">{{ one_user.username }}</p>
-                        <p class="full_name">{{ one_user.first_name }} {{ one_user.last_name }}</p>
-
-                        <p class="followers">{{ one_user.followers.all|length }}</p>
-
-                        <i 
-                            class="
-                                fa-solid
-
-                                {% if not one_user.has_follow %}
-                                    fa-user-plus
-
-                                {% else %}
-                                    fa-user-minus
-                                
-                                {% endif %}
-                            "
-                        ></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
-                    </a>
-                
-                {% endfor %}
-            </div>
+            <div class="all_users"></div>
         </div>
     </div>
     

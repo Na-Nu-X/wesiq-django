@@ -2,9 +2,9 @@ import {
     startActivity, 
     pauseActivity, 
     stopActivity 
-} from "./functions/playback.js"
+} from "../functions/playback.js"
 
-import { activity_interval } from "./state.js"
+import { activity_interval } from "../state.js"
 
 "use strict"
 
@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Playback
         if(event.code === "Space") {
             event.preventDefault() // Stop Scrolling
-
             activity_interval.interval ? pauseActivity(playback) : startActivity(activity, playback) // Pauses Or Starts Activity
         }
 

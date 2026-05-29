@@ -458,6 +458,8 @@ footer {
     .navigation {
         @include flex_center;
         gap: 10px;
+        flex-wrap: wrap;
+        max-width: 500px;
 
         a {
             text-decoration: none;
@@ -472,29 +474,26 @@ footer {
     }
 
     .languages {
-        p {
-            color: $secondary-color
-        }
-
         form {
             @include flex_center;
             gap: 10px;
+            flex-wrap: wrap;
 
             button {
                 all: unset;
                 height: 32px;
+                opacity: 0.8;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+
+                &:hover,
+                &:focus-visible {
+                    transform: scale(1.1);
+                    opacity: 1;
+                    cursor: pointer;
+                }
 
                 img {
                     display: inline-block;
-                    opacity: 0.8;
-                    transition: transform 0.3s ease, opacity 0.3s ease;
-
-                    &:hover,
-                    &:focus {
-                        transform: scale(1.1);
-                        opacity: 1;
-                        cursor: pointer;
-                    }
                 }
             }
         }
@@ -504,6 +503,7 @@ footer {
         .icons {
             @include flex_center;
             gap: 10px;
+            flex-wrap: wrap;
             height: 32px;
             
             img {

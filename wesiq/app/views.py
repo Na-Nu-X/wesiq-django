@@ -2494,23 +2494,6 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
-        # Gets 3 Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
-        users = Users.objects.filter(
-            account_status="OK"
-        ).annotate(
-            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-            has_follow=Exists(
-                Users.objects.filter(
-                    id=OuterRef("pk"),
-                    followers=logged_in_user_id
-                )
-            )
-        ).exclude(
-            id=logged_in_user_id
-        ).order_by(
-            "-creation_time"
-        )[:3]
-
         # Gets The User's Currently Processed Post With All Related Data
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
@@ -2702,6 +2685,76 @@ def communityView(request):
                         messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo"))
                         captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
+            # Load First Users
+            if request.headers.get("X-Requested-Action") == "load-first-users":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        searched_users_history = json.loads(request.body) # Gets The Searched Users History
+
+                        loaded_users_from_history = Users.objects.filter(
+                            username__in=searched_users_history,
+                            account_status="OK"
+                        ).annotate(
+                            has_follow=Exists(
+                                Users.objects.filter(id=OuterRef("pk"), followers=logged_in_user_id)
+                            )
+                        )
+
+                        loaded_users_from_history_list = list(loaded_users_from_history) # Converts The Loaded Users From History To List
+                        loaded_users_from_history_list.sort(key=lambda user:searched_users_history.index(user.username)) # Sorts The Loaded Users From History List By The Original Order In The History
+
+                        missing_users_amount = 3 - len(loaded_users_from_history_list) # Gets The Amount Of Missing Users To The Maximum Of 3
+                        missing_users_list = []
+
+                        if missing_users_amount > 0:
+                            sloaded_users_from_history_ids = [u.id for u in loaded_users_from_history_list] # Gets The IDs Of Users In History
+
+                            # Gets The Missing Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+                            missing_users = Users.objects.filter(
+                                account_status="OK"
+                            ).annotate(
+                                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                                has_follow=Exists(
+                                    Users.objects.filter(
+                                        id=OuterRef("pk"),
+                                        followers=logged_in_user_id
+                                    )
+                                )
+                            ).exclude(
+                                id=logged_in_user_id
+                            ).exclude(
+                                id__in=sloaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
+                            ).order_by(
+                                "-creation_time"
+                            )[:missing_users_amount]
+                            
+                            missing_users_list = list(missing_users) # Converts The Missing Users To List
+
+                        users = loaded_users_from_history_list + missing_users_list # Connects Loaded Users From History And Missing Users Into The One List
+
+                        loaded_users = []
+
+                        for one_user in users:
+                            loaded_users.append({
+                                "id": one_user.id,
+                                "first_name": one_user.first_name,
+                                "last_name": one_user.last_name,
+                                "username": one_user.username,
+                                "profile_picture_name": one_user.profile_picture_name,
+                                "friend_code": one_user.friend_code,
+                                "followers": one_user.followers.count(),
+                                "has_follow": one_user.has_follow
+                            })
+
+                        return JsonResponse({"success": True, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Užívateľov nie je možné načítať bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri načítavaní užívateľov došlo k chybe.")}, status=500)
+
             # Search Users
             if request.headers.get("X-Requested-Action") == "search-users":
                 try:
@@ -2829,7 +2882,6 @@ def communityView(request):
             "last_name": logged_in_user.last_name,
             "username": logged_in_user.username,
             "profile_picture_name": logged_in_user.profile_picture_name,
-            "users": users,
             "upload_post_form": uploadPostForm,
             "processing_posts": processing_posts
         })

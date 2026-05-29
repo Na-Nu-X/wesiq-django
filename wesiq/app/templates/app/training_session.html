@@ -67,7 +67,7 @@
 
             {% endif %}
 
-            <script src="{% static 'app/ts/dist/pages/training_session/basic_training_session.js' %}" type="module"></script>
+            <script src="{% static 'app/ts/dist/pages/training_session/components/basic_training_session.js' %}" type="module"></script>
 
         {% elif training_plan|length > 0 %}
             <template class="exercise_template">
@@ -189,7 +189,7 @@
                 </div>
             </div>
 
-            <script src="{% static 'app/ts/dist/pages/training_session/training_session.js' %}" type="module"></script>
+            <script src="{% static 'app/ts/dist/pages/training_session/components/training_session.js' %}" type="module"></script>
             <script src="{% static 'app/ts/dist/pages/training_session/components/todo.js' %}" type="module"></script>
 
         {% endif %}
@@ -421,7 +421,7 @@
                         {{ one_activity.type }}
 
                     {% else %}
-                        {% translate "bez tréningového plánu" %}
+                        {% translate "Aktivita" %}
 
                     {% endif %}
                 </p>

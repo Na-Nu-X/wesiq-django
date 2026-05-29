@@ -68,6 +68,12 @@ export const location_state:{
     focused_place_index: 0
 }
 
+export const search_users_state:{
+    MAX_HISTORY_LENGTH:number
+} = {
+    MAX_HISTORY_LENGTH: 3
+}
+
 export const feed_state:{
     MAX_HISTORY_LENGTH:number,
     focused_searched_post_index:number,
