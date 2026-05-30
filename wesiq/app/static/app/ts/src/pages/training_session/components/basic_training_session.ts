@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Global Event Delegations
 
-    // Key Down Events
+    // Document Key Down Events
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
         // Playback
         if(event.code === "Space") {
@@ -37,8 +37,5 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if((this.querySelector("i") as HTMLElement).classList.contains("fa-pause")) pauseActivity(playback) // Pauses Activity
     })
 
-    // Stop
-    stop.addEventListener("click", function():void {
-        stopActivity(activity, playback) // Stops Activity
-    })
+    stop.addEventListener("click", () => stopActivity(activity, playback)) // Stops Activity
 })

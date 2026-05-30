@@ -3,14 +3,15 @@ import { showAttachmentReport } from "../functions/showAttachmentReport.js"
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Custom Select Menu - Contact Form
+    // Custom Select Menu
 
     // Variables
 
-    const subject_select_menu:HTMLDivElement = document.querySelector(".subject_select_menu") as HTMLDivElement
-    const subject_select:HTMLDivElement = subject_select_menu.querySelector(".select") as HTMLDivElement
-    const subject_options_list:HTMLDivElement = subject_select_menu.querySelector(".options_list") as HTMLDivElement
-    const subject_options:NodeListOf<HTMLDivElement> = subject_select_menu.querySelectorAll<HTMLDivElement>(".option")
+    const contact_form:HTMLFormElement = document.querySelector(".contact_form") as HTMLFormElement // Gets The Contact Form
+    const subject_select_menu:HTMLDivElement = contact_form.querySelector(".subject_select_menu") as HTMLDivElement // Gets The Subject Select Menu
+    const subject_select:HTMLDivElement = subject_select_menu.querySelector(".select") as HTMLDivElement // Gets The Selected Subject Container
+    const subject_options_list:HTMLDivElement = subject_select_menu.querySelector(".options_list") as HTMLDivElement // Gets The Subject Options List
+    const subject_options:NodeListOf<HTMLDivElement> = subject_select_menu.querySelectorAll<HTMLDivElement>(".option") // Gets All The Subject Options
 
     // Events
 
@@ -46,9 +47,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Selected Attachment
 
     // Variables
-        
-    const attachment:HTMLInputElement = document.querySelector("#select_attachment") as HTMLInputElement
-    const attachment_report:HTMLParagraphElement = document.querySelector(".attachment_report") as HTMLParagraphElement
+    
+    const message_container:HTMLDivElement = document.querySelector(".message_container") as HTMLDivElement // Gets The Message Container
+    const attachment:HTMLInputElement = message_container.querySelector("#select_attachment") as HTMLInputElement // Gets The Attachment Input
+    const attachment_report:HTMLParagraphElement = attachment.querySelector(".attachment_report") as HTMLParagraphElement // Gets The Attachment Report
 
     // Events
 
@@ -64,20 +66,17 @@ document.addEventListener("DOMContentLoaded", function():void {
         showAttachmentReport(file, attachment_report) // Shows The Attachment Report
     })
 
-    // Message Container Drag & Drop Functionalities
-
-    const message_container:HTMLDivElement = document.querySelector(".message_container") as HTMLDivElement // Gets The Message Container
-
+    // Message Container Drag Over Functionality
     message_container.addEventListener("dragover", function(event:DragEvent):void {
         event.preventDefault() // Prevents Default Behaviour
         
         this.classList.add("drag_active") // Adds Drag Animation
     })
 
-    message_container.addEventListener("dragleave", function():void {
-        this.classList.remove("drag_active") // Removes Drag Animation
-    })
+    // Message Container Drag Leave Functionality
+    message_container.addEventListener("dragleave", () => message_container.classList.remove("drag_active")) // Removes Drag Animation
 
+    // Message Container Drop Functionality
     message_container.addEventListener("drop", function(event:DragEvent):void {
         event.preventDefault() // Prevents Default Behaviour
 

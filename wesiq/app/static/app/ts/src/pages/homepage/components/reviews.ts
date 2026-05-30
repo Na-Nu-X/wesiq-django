@@ -12,10 +12,16 @@ import {
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Custom Select Menus - Reviews
+    // Custom Select Menus
 
-    const sort_select_menu:HTMLDivElement = document.querySelector(".reviews .select_menus .sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
-    const rating_select_menu:HTMLDivElement = document.querySelector(".reviews .select_menus .rating_select_menu") as HTMLDivElement // Gets Rating Select Menu
+    // Variables
+
+    const reviews:HTMLDivElement = document.querySelector(".reviews") as HTMLDivElement // Gets The Reviews Container
+    const select_menus:HTMLDivElement = reviews.querySelector(".select_menus") as HTMLDivElement // Gets The Reviews Select Menus Container
+    const sort_select_menu:HTMLDivElement = select_menus.querySelector(".sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
+    const rating_select_menu:HTMLDivElement = select_menus.querySelector(".rating_select_menu") as HTMLDivElement // Gets Rating Select Menu
+
+    // Initialization
 
     customSelectMenu(sort_select_menu, "sort") // Adds Functionality For Sort Select Menu That Sets The Sort URL Parameter
     customSelectMenu(rating_select_menu, "rating", true) // Adds Functionality For Rating Select Menu That Sets The Rating URL Parameter
@@ -24,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const all_reviews_container:HTMLDivElement = document.querySelector(".reviews .all_reviews") as HTMLDivElement // Gets The All Reviews Container
+    const all_reviews_container:HTMLDivElement = reviews.querySelector(".all_reviews") as HTMLDivElement // Gets The All Reviews Container
 
     // Global Event Delegations
 
@@ -53,13 +59,14 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
     
-    const load_reviews_buttons:HTMLDivElement|null = document.querySelector(".reviews .load_reviews_buttons") as HTMLDivElement // Gets The Load Reviews Buttons Container
+    const load_reviews_buttons:HTMLDivElement|null = reviews.querySelector(".load_reviews_buttons") as HTMLDivElement // Gets The Load Reviews Buttons Container
+    const reviews_info_container:HTMLDivElement = reviews.querySelector(".reviews_info_container") as HTMLDivElement // Gets Reviews Info
+
+    // Global Event Delegations
 
     // If There Are Some More Reviews
     if(load_reviews_buttons) {
         const first_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Stores All First Showed Reviews
-
-        // Global Event Delegations
 
         // Load More Reviews Button Click Functionality
         load_reviews_buttons.addEventListener("click", async function(event:PointerEvent):Promise<void> {
@@ -76,9 +83,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     }
 
-    // Animate Reviews
+    // Initialization
 
-    const reviews_info_container:HTMLDivElement = document.querySelector(".reviews .reviews_info_container") as HTMLDivElement // Gets Reviews Info
     setObserverAnimation(reviews_info_container, 1, reviewsInfoAnimation) // Animates Reviews Info
 
     const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews

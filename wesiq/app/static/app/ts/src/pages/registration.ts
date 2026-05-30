@@ -14,6 +14,10 @@ import { generateKey } from "../utils/generateKey.js"
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Registration Form
+
+    // Variables
+
     const registration_form:HTMLFormElement = document.querySelector(".registration_form") as HTMLFormElement // Gets Registration Form
 
     const registration_form_submit:HTMLInputElement = registration_form.querySelector(".registration_form_submit") as HTMLInputElement // Gets Registration Form Submit Button
@@ -28,12 +32,14 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     let copied_password:string|null = null // Default Value For Copied Password
 
-    // Phone Number
     const phone_number_container:HTMLDivElement = registration_form.querySelector(".phone_number_container") as HTMLDivElement // Gets Phone Number Container
     const phone_number:HTMLInputElement = phone_number_container.querySelector(".phone_number") as HTMLInputElement // Gets Phone Number Input
     const language:HTMLInputElement = phone_number_container.querySelector(".language") as HTMLInputElement // Gets Language Input
     const flag:HTMLImageElement = phone_number_container.querySelector(".flag") as HTMLImageElement // Gets Flag Image
 
+    // Events
+
+    // Phone Number Input Functionality
     phone_number.addEventListener("input", function():void {
         // Phone Number Formatting
         const phone_number_formatter = new AsYouType()
@@ -112,20 +118,23 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Phone Number Validation
+    // Phone Number Blur Functionality
     phone_number.addEventListener("blur", function():void {
         if(!this.value) return
-        
-        isValidPhoneNumber(this.value) ? this.style.borderBottomColor = "#52cf20" : this.style.borderBottomColor = "#df3535"
+        isValidPhoneNumber(this.value) ? this.style.borderBottomColor = "#52cf20" : this.style.borderBottomColor = "#df3535" // Validates The Phone Number
     })
 
-    registration_form_submit.addEventListener("click", function(event) {
-        if(!isValidPhoneNumber(phone_number.value)) {
-            event.preventDefault()
-        }
+    // Registration Form Submit Button Click Functionality
+    registration_form_submit.addEventListener("click", function(event:PointerEvent):void {
+        if(!isValidPhoneNumber(phone_number.value)) event.preventDefault() // Prevents Default Behaviour
     })
+
+    password_input.addEventListener("input", () => passwordVerification(password_input, password_check_input, form_report)) // Verifies The Password)
+    password_check_input.addEventListener("input", () => passwordVerification(password_input, password_check_input, form_report)) // Verifies The Password
+
+    // Global Event Delegations
     
-    // Password Container Event Listener
+    // Password Container Click Functionalities
     password_container.addEventListener("click", function(event:PointerEvent):void {
         switch(true) {
             // Toggle Show / Hide Password
@@ -140,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Random Password Generator
             case (event.target as HTMLElement).matches(".fa-key"):
                 password_input.value = generateKey(15) // Sets Generated Password To The Password Input
-                passwordVerification(password_input, password_check_input, form_report) // Password Verification
+                passwordVerification(password_input, password_check_input, form_report) // Verifies The Password
                 break
 
             // Copy Password
@@ -153,21 +162,12 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Password Check Container Event Listener
+    // Password Check Container Click Functionalities
     password_check_container.addEventListener("click", function(event:PointerEvent):void {
         // Paste Password
         if((event.target as HTMLElement).matches(".paste_password")) {
             paste(password_check_input, copied_password) // Paste Password To The Password Check Input
-            passwordVerification(password_input, password_check_input, form_report) // Password Verification
+            passwordVerification(password_input, password_check_input, form_report) // Verifies The Password
         }
-    })
-
-    // Password Verification
-    password_input.addEventListener("input", function():void {
-        passwordVerification(this, password_check_input, form_report)
-    })
-
-    password_check_input.addEventListener("input", function():void {
-        passwordVerification(password_input, this, form_report)
     })
 })

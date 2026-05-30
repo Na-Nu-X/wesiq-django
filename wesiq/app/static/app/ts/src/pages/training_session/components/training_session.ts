@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Global Event Delegations
 
-    // Training Plan Container Click Events
+    // Training Plan Container Click Functionalities
     training_plan_container.addEventListener("click", function(event:PointerEvent):void {
         // Training Plan Bars
         if(event.target instanceof Node && (event.target as HTMLDivElement).classList.contains("bar") && (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLDivElement).classList.contains("skip_warm_up_button") || ((event.target as HTMLDivElement).parentNode as HTMLDivElement).classList.contains("skip_warm_up_button")) skipWarmUp(activity)
     })
 
-    // Training Plan Container Wheel Events
+    // Training Plan Container Wheel Functionalities
     training_plan_container.addEventListener("wheel", function(event:WheelEvent):void {
         // Change Training Plans With Scroll Wheel Functionality
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
@@ -75,17 +75,17 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Training Plan Container Mouse Over Events
+    // Training Plan Container Mouse Over Functionality
     training_plan_container.addEventListener("mouseover", function(event:MouseEvent):void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) training_plan_state.hovered_element = "training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
     })
 
-    // Training Plan Container Mouse Out Events
-    training_plan_container.addEventListener("mouseout", ():void => {
+    // Training Plan Container Mouse Out Functionality
+    training_plan_container.addEventListener("mouseout", function():void {
         if(training_plan_state.hovered_element) training_plan_state.hovered_element = null // Removes Value Of Hovered Element
     })
 
-    // Key Down Events
+    // Document Key Down Functionalities
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
         const target = event.target as HTMLElement // Gets The Target Element
 
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
-    // Play Pause
+    // Play Pause Click Functionalities
     play_pause.addEventListener("click", function():void {
         if((this.querySelector("i") as HTMLElement).classList.contains("fa-play")) {
             if(activity_summary.elapsed_time === 0) training_plan_container.style.display = "none" // Hides Training Plan
@@ -128,21 +128,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if((this.querySelector("i") as HTMLElement).classList.contains("fa-pause")) pauseActivity(playback) // Pauses Activity
     })
 
-    // Stop
-    stop.addEventListener("click", function():void {
-        stopActivity(activity, playback) // Stops Activity
-    })
+    stop.addEventListener("click", () => stopActivity(activity, playback)) // Stops The Activity
+    start_training_button.addEventListener("click", () => startTraining(activity)) // Starts The Training
+    finish_training_button.addEventListener("click", () => finishTraining(activity)) // Finishes The Training
 
-    // Start Training
-    start_training_button.addEventListener("click", function():void {
-        startTraining(activity)
-    })
-
-    finish_training_button.addEventListener("click", function():void {
-        finishTraining(activity)
-    })
-
-    // Add Time To Break Countdown
+    // Add Time Click Functionality
     add_time.addEventListener("click", function():void {
         break_interval.remaining_time += 30 // Adds 30 Seconds On Countdown
 
@@ -156,10 +146,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Skip Break
-    skip_break_button.addEventListener("click", function():void {
-        skipBreak(activity)
-    })
+    skip_break_button.addEventListener("click", () => skipBreak(activity)) // Skips The Break
 
     // Initialization
 

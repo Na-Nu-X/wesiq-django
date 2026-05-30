@@ -1,29 +1,29 @@
 import { 
     global_state, 
     new_training_plan_state 
-} from "./state.js"
+} from "../state.js"
 
 import { 
     addExercise, 
     changeExercises, 
     changeExercisePosition, 
     removeExercise
-} from "./functions/exercises.js"
+} from "../functions/exercises.js"
 
 import { 
     addPeriod, 
     changeReps, 
     changeSets, 
     updateUnitTypes 
-} from "./functions/periods.js"
+} from "../functions/periods.js"
 
 import { 
     startHold, 
     stopHold 
-} from "./functions/holdButton.js"
+} from "../functions/holdButton.js"
 
-import { changeWarmUpTime } from "./functions/changeWarmUpTime.js"
-import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
+import { changeWarmUpTime } from "../functions/changeWarmUpTime.js"
+import { saveTrainingPlan } from "../functions/saveTrainingPlan.js"
 
 "use strict"
 
@@ -49,16 +49,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Global Event Delegations
 
-    // Document Drop Events (Remove The Exercise From The Training Plan Functionality)
+    // Document Drag Over Functionality
     document.addEventListener("dragover", function(event:DragEvent):void {
         if(event.target instanceof Node && dragged_exercise && !training_plan.contains(event.target)) event.preventDefault() // If There Is Dragged Exercise And Dragover Element Isn't Inside The Training Plan (Makes The Drop Zone Functional)
     })
 
+    // Document Drop Functionality
     document.addEventListener("drop", function(event:DragEvent):void {
         if(event.target instanceof Node && dragged_exercise && !training_plan.contains(event.target)) removeExercise(dragged_exercise, training_plan, new_training_plan_state) // Removes Dragged Exercise From The Training Plan (If There Is Dragged Exercise And Drop Element Isn't Inside The Training Plan)
     })
 
-    // Training Plan Drag & Drop Events
+    // Training Plan Drag Start Functionalities
     training_plan.addEventListener("dragstart", function(event:DragEvent):void {
         // Training Plan Exercises Drag Functionality
         if((event.target as HTMLDivElement).classList.contains("exercise")) dragged_exercise = event.target as HTMLDivElement // Sets Training Plan Dragged Exercise
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Training Plan Drag End Functionality
     training_plan.addEventListener("dragend", function():void {
         dragged_exercise = null // Deletes Training Plan Dragged Exercise
         dragged_bar = null // Deletes Training Plan Dragged Bar
@@ -89,6 +91,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     })
 
+    // Training Plan Drag Over Functionality
     training_plan.addEventListener("dragover", function(event:DragEvent):void {
         if(event.target === drop_zone) event.preventDefault() // Drop Zone For The First Exercise (Makes The Drop Zone Functional)
         if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) event.preventDefault() // Drop Zone On Active Exercise In The Training Plan (Makes The Drop Zone Functional)
@@ -96,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLDivElement).classList.contains("bar")) event.preventDefault() // Drop Zone On Bars In The Bar Container (Makes The Drop Zone Functional)
     })
 
+    // Training Plan Drop Functionality
     training_plan.addEventListener("drop", function(event:DragEvent):void {
         if(event.target === drop_zone) addExercise(this, new_training_plan_state) // Drop Zone For The First Exercise (Adds Dragged Exercise From Exercise Selection To The Training Plan)
         if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[new_training_plan_state.active_exercise_index]) addExercise(this, new_training_plan_state) // Drop Zone On Active Exercise In The Training Plan (Adds Dragged Exercise From Exercise Selection To The Training Plan) 
@@ -117,11 +121,12 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Training Plan Drag Leave Functionality
     training_plan.addEventListener("dragleave", function():void {
         if(global_state.selection_dragged_exercise) this.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
     })
 
-    // Training Plan Click Events
+    // Training Plan Click Functionalities
     training_plan.addEventListener("click", function(event:PointerEvent):void {
         // Change Exercise In Training Plan With Bars Functionality
         if((event.target as HTMLDivElement).classList.contains("bar")) {
@@ -178,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Training Plan Double Click Events
+    // Training Plan Double Click Functionality
     training_plan.addEventListener("dblclick", function(event:MouseEvent):void {
         // Removes Exercise From The Training Plan On Double Click
         if((event.target as HTMLDivElement).classList.contains("exercise")) {
@@ -188,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Training Plan Hold Events
+    // Training Plan Pointer Down Functionalities
     training_plan.addEventListener("pointerdown", function(event:PointerEvent):void {
         // Add Decrease Exercise Reps Functionality
         if((event.target as HTMLButtonElement).classList.contains("decrease_reps")) {
@@ -215,13 +220,13 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    training_plan.addEventListener("pointerup", stopHold)
-    training_plan.addEventListener("pointercancel", stopHold)
-    training_plan.addEventListener("pointerleave", stopHold)
+    training_plan.addEventListener("pointerup", stopHold) // Stops The Hold Loop
+    training_plan.addEventListener("pointercancel", stopHold) // Stops The Hold Loop
+    training_plan.addEventListener("pointerleave", stopHold) // Stops The Hold Loop
 
     // Events
 
-    // Change Training Plan Exercises With Scroll Wheel Functionality
+    // Training Plan Wheel Functionality
     training_plan.addEventListener("wheel", function(event:WheelEvent):void {
         event.preventDefault() // Stop Scrolling
 
@@ -231,26 +236,26 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Change Training Plan Exercises With Arrow Keys Functionality
+    // New Training Plan Mouse Over Functionality
     new_training_plan.addEventListener("mouseover", function(event:MouseEvent):void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("bar_container")) global_state.hovered_element = "new_training_plan_exercises_bars" // Sets Hovered Element For Bar Container
     })
 
-    new_training_plan.addEventListener("mouseout", function():void {
-        global_state.hovered_element = null
-    })
+    new_training_plan.addEventListener("mouseout", () => global_state.hovered_element = null) // Removes The Stored Hovered Element
 
+    // Document Key Down Functionalities
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "ArrowLeft" && global_state.hovered_element === "new_training_plan_exercises_bars") changeExercises(new_training_plan_state.active_exercise_index - 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
         else if(event.key === "ArrowRight" && global_state.hovered_element === "new_training_plan_exercises_bars") changeExercises(new_training_plan_state.active_exercise_index + 1, training_plan, new_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
     })
 
-    // Day Select Menu
+    // Day Select Click Functionality
     day_select.addEventListener("click", function():void {
         day_options_list.classList.toggle("active"); // Shows / Hides Options List
         (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
     })
 
+    // Day Options Click Functionalities
     day_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
             if(!this.dataset["day"]) return
@@ -273,8 +278,5 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     })
 
-    // Save New Training Plan
-    save.addEventListener("click", function():void {
-        saveTrainingPlan(new_training_plan, new_training_plan_state)
-    })
+    save.addEventListener("click", () => saveTrainingPlan(new_training_plan, new_training_plan_state)) // Saves The New Training Plan
 })

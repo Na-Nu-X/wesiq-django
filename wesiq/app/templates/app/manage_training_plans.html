@@ -182,7 +182,7 @@
 
             {% if training_plan|length > 0 %}
                 <div class="edit_training_plan hidden" tabindex="0">
-                    <script src="{% static 'app/ts/dist/pages/manage_training_plans/edit_training_plan.js' %}" type="module"></script>
+                    <script src="{% static 'app/ts/dist/pages/manage_training_plans/components/edit_training_plan.js' %}" type="module"></script>
 
                     {% for one_exercise in training_plan %}
                         <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
@@ -273,55 +273,15 @@
             </div>
         </div>
     </div>
-
-    <div class="second_section" style="display: none;">
-        {% comment %} <div class="training_plan_selection">
-            <div class="training_plan">
-                <p>Pull</p>
-            </div>
-
-            <div class="training_plan">
-                <p>Push</p>
-            </div>
-
-            <div class="training_plan">
-                <p>Legs</p>
-            </div>
-
-            <div class="training_plan">
-                <p>Upper</p>
-            </div>
-
-            <div class="training_plan">
-                <p>Lower</p>
-            </div>
-        </div> {% endcomment %}
-
-        <div class="training_plan_selection">
-            {% for one_exercise in training_plan %}
-                <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
-            
-            {% endfor %}
-
-            <template class="exercise_template">
-                <div class="exercise">
-                    <h3 class="title"></h3>
-                </div>
-            </template>
-
-            <div class="training_plan"></div>
-        </div>
-    </div>
 {% endblock content %}
 
 {% block script %}
     {% if request.session.logged_in_user_id %}
         <script src="{% url 'javascript_catalog_url' %}"></script>
-        <script src="{% static 'app/ts/dist/pages/manage_training_plans/sidebar.js' %}" type="module"></script>
-        <script src="{% static 'app/ts/dist/pages/manage_training_plans/action.js' %}" type="module"></script>
-        <script src="{% static 'app/ts/dist/pages/manage_training_plans/new_training_plan.js' %}" type="module"></script>
-        <script src="{% static 'app/ts/dist/pages/manage_training_plans/exercise_selection.js' %}" type="module"></script>
-        <script src="{% static 'app/ts/dist/pages/manage_training_plans/training_plan_selection.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/components/sidebar.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/components/action.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/components/new_training_plan.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/manage_training_plans/components/exercise_selection.js' %}" type="module"></script>
         
     {% endif %}
 {% endblock script %}

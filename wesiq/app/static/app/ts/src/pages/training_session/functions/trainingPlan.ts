@@ -54,8 +54,6 @@ function updateProgress(container:HTMLDivElement):void {
 
     const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + (one_exercise.classList.contains("warm_up") ? 1 : parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent)), 0)
     all_sets ? training_plan_state.progress_bar.red -= (255 - training_plan_state.progress_bar.MIN_RED) / (all_sets - 1) : training_plan_state.progress_bar.red-= 0 // Makes Color Transition For Progress Bar From rgb(255, 207, 32) To rgb(82, 207, 32)
-
-    // const all_sets = [...exercises].reduce((sum:number, one_exercise:HTMLDivElement) => sum + parseInt((one_exercise.querySelector(".sets .total") as HTMLSpanElement).textContent), 0) // Gets Total Amount Of Sets From All Exercises
 }
 
 // Function For Warm Up
