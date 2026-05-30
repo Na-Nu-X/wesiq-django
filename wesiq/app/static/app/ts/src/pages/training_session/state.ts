@@ -1,7 +1,10 @@
+import { getRemainingSecondsFromDate } from "./functions/getRemainingSecondsFromDate.js"
+
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
+const GLOBAL_SPEED:number = 1 // 1 Default (Lower = Faster)
 const training_plan:HTMLDivElement = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
-const GLOBAL_SPEED:number = 0.001 // 1 Default (Lower = Faster)
+const xp_boost_expiration_time:number = getRemainingSecondsFromDate((training_plan.querySelector(".current_activity_info") as HTMLParagraphElement).dataset["xp_boost_expiration_time"] || "") || 0 // Gets The XP Boost Expiration Time
 
 // GLOBAL STATES
 
@@ -67,28 +70,15 @@ export const break_interval:{
 export const xp_boost_interval:{
     SPEED:number,
     interval:number|null,
-    _amount:number,
+    amount:number,
     max_remaining_time:number,
-    remaining_time:number,
-    amount:number
+    remaining_time:number
 } = {
     SPEED: 1000 * GLOBAL_SPEED, // 1 Second Interval
     interval: null,
-    _amount: 2, // Double XP Boost
+    amount: 2, // Double XP Boost
     max_remaining_time: 600, // 10 Minutes
-    remaining_time: 600, // 10 Minutes
-
-    // Getter To Get Current XP Boost Amount
-    get amount():number {
-        return this._amount
-    },
-
-    // Setter To Set Current XP Boost Amount And Render Current Activity Info
-    set amount(value:number) {
-        this._amount = value
-        const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
-        current_activity_info.innerHTML = value === 1 ? gettext("<span>Žiadne aktívne navýšenie XP</span>") : `<i class="fa-solid fa-bolt"></i> ${value}x` // Shows Current Activity Info https://fontawesome.com/icons/bolt
-    }
+    remaining_time: xp_boost_expiration_time,
 }
 
 export const activity_summary:{

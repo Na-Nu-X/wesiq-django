@@ -2,7 +2,8 @@ import {
     training_plan_state, 
     activity_interval, 
     break_interval, 
-    activity_summary 
+    activity_summary, 
+    xp_boost_interval
 } from "../state.js"
 
 import { 
@@ -21,6 +22,8 @@ import {
     stopActivity
 } from "../functions/playback.js"
 
+import { getRemainingSecondsFromDate } from "../functions/getRemainingSecondsFromDate.js"
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
@@ -38,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const add_time:HTMLDivElement = training_plan.querySelector(".break .add_time") as HTMLDivElement // Gets Add Time Button
     const add_time_message:HTMLParagraphElement = add_time.querySelector(".add_time_message") as HTMLParagraphElement // Gets Add Time Message
     const skip_break_button:HTMLDivElement = training_plan.querySelector(".break .skip_break_button") as HTMLDivElement // Gets Skip Break Button
+
+    const current_activity_info:HTMLParagraphElement = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
 
     // Gets Ordered Days From Available Training Plans
     const ordered_days:(string|null)[] = [
@@ -151,4 +156,28 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Initialization
 
     generateTrainingPlan(activity) // Renders User's Training Plan If Has Any
+
+    // Initializes The Update Of The XP Boost Progress If Its Remaining Time Hasn't Already Passed
+    if(xp_boost_interval.remaining_time > 0) {
+        xp_boost_interval.interval = setInterval(function():void {
+            const xp_boost_expiration_time:number = getRemainingSecondsFromDate(current_activity_info.dataset["xp_boost_expiration_time"] || "") || 0 // Gets The XP Boost Expiration Time
+
+            xp_boost_interval.remaining_time = xp_boost_expiration_time // Updates The Remaining Time
+
+            const xp_boost_progress = 100 - ((xp_boost_interval.remaining_time / xp_boost_interval.max_remaining_time) * 100) // Gets Current Percentage Of Remaining Time Of XP Boost Progress
+            current_activity_info.style.setProperty("--progress", `${xp_boost_progress}%`)
+            current_activity_info.innerHTML = `<i class="fa-solid fa-bolt"></i> ${xp_boost_interval.amount}x` // https://fontawesome.com/icons/bolt
+
+            // Stops XP Boost Timer When Remaining Time Pass
+            if(xp_boost_interval.remaining_time === 0) {
+                if(xp_boost_interval.interval) {
+                    clearInterval(xp_boost_interval.interval)
+                    xp_boost_interval.interval = null
+                }
+
+                xp_boost_interval.amount = 1 // Resets XP Boost Amount
+                current_activity_info.innerHTML = gettext("<span>Žiadne aktívne navýšenie XP</span>")
+            }
+        }, xp_boost_interval.SPEED)
+    }
 })

@@ -22,6 +22,7 @@ import { getFormattedTime } from "../../../utils/timer.js"
 import { resetTrainingPlan } from "./trainingPlan.js"
 import { sendPOST } from "../../../services/sendPOST.js"
 import { displayMessage } from "../../../utils/displayMessage.js"
+import { useXPBoost } from "./xpBoost.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
@@ -60,8 +61,11 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
     const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
 
-    const current_activity_info:HTMLParagraphElement|null = training_plan ? training_plan.querySelector(".current_activity_info") as HTMLParagraphElement : null; // Gets Current Activity Info
+    const current_activity_info:HTMLParagraphElement = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
+    const is_xp_boost_available:string|null = current_activity_info.dataset["is_xp_boost_available"] || null // Checks If Is The XP Boost Available
 
+    if(is_xp_boost_available === "True") useXPBoost(current_activity_info); // Uses The Available XP Boost
+    
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 
     // Starts Activity Timer
@@ -74,28 +78,6 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
             updateTimer(timer) // Shows Elapsed Time On The Playback Timer
             checkOfficialTasksCompletion() // Ckecks The Completion Of The Official Tasks
         }, activity_interval.SPEED)
-    }
-
-    // Uses Available XP Boost
-    if(xp_boost_interval.amount !== 1) {
-        if(!xp_boost_interval.interval) {
-            xp_boost_interval.interval = setInterval(function():void {
-                xp_boost_interval.remaining_time -= 1 // Decreases Remaining Time
-
-                const xp_boost_progress = 100 - ((xp_boost_interval.remaining_time / xp_boost_interval.max_remaining_time) * 100) // Gets Current Percentage Of Remaining Time Of XP Boost Progress
-                if(current_activity_info) current_activity_info.style.setProperty("--progress", `${xp_boost_progress}%`)
-
-                // Stops XP Boost Timer When Remaining Time Pass
-                if(xp_boost_interval.remaining_time === 0) {
-                    if(xp_boost_interval.interval) {
-                        clearInterval(xp_boost_interval.interval)
-                        xp_boost_interval.interval = null
-                    }
-
-                    xp_boost_interval.amount = 1 // Resets XP Boost Amount
-                }
-            }, xp_boost_interval.SPEED)
-        }
     }
 
     deleteActivitySummary() // Deletes Activity Summary
@@ -174,6 +156,9 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                         const success_sound:HTMLAudioElement = todo.querySelector(".success_sound") as HTMLAudioElement // Gets The Success Sound
 
+                        const training_plan:HTMLDivElement|null = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement || null // Gets The Training Plan
+                        const finish_training:HTMLDivElement|null = training_plan ? training_plan.querySelector(".finish_training") as HTMLDivElement : null // Gets The Finish Training Slide
+
                         if(_2_activities) {
                             const checkbox:HTMLDivElement = _2_activities.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
 
@@ -185,29 +170,21 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
 
                         renderActivitySummary(elapsed_time, gained_xp) // Renders Activity Summary
 
-                        if(training_plan_summary.length > 0) {
-                            const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
-                            const training_plan_title:string = training_plan.dataset["title"] || "" // Gets Training Plan Title
-                            const training_plan_day:number|null = Number(training_plan.dataset["day"]) || null // Gets Training Plan Day
-                            const exercises_amount:number = training_plan.querySelectorAll(".exercise").length // Gets The Amount Of Exercises In The Training Plan
+                        // If User Has Completely Finished The Training Plan Activity
+                        if(finish_training && finish_training.classList.contains("active")) {
+                            const complete_training_plan_activity:HTMLDivElement|null = tasks.querySelector("[data-task='complete_training_plan_activity']") || null // Gets The "Complete Training Plan Activity" Official Task If Is Available
 
-                            new_activity_data.type = training_plan_title // Stores Training Plan Title
-                            new_activity_data.day = training_plan_day // Stores Training Plan Day
-                            new_activity_data.training_plan_summary = training_plan_summary // Stores The Training Plan Summary
+                            if(complete_training_plan_activity) {
+                                const checkbox:HTMLDivElement = complete_training_plan_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
 
-                            if(training_plan_state.active_exercise_index === exercises_amount - 1) {
-                                const complete_training_plan_activity:HTMLDivElement|null = tasks.querySelector("[data-task='complete_training_plan_activity']") || null // Gets The "Complete Training Plan Activity" Official Task If Is Available
-
-                                if(complete_training_plan_activity) {
-                                    const checkbox:HTMLDivElement = complete_training_plan_activity.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
-
-                                    // If The Task Isn't Already Completed
-                                    if(!checkbox.classList.contains("checked")) {
-                                        completeOfficialTask("complete_training_plan_activity", complete_training_plan_activity, success_sound) // Completes The "Complete Training Plan Activity" Official Task
-                                    }
+                                // If The Task Isn't Already Completed
+                                if(!checkbox.classList.contains("checked")) {
+                                    completeOfficialTask("complete_training_plan_activity", complete_training_plan_activity, success_sound) // Completes The "Complete Training Plan Activity" Official Task
                                 }
                             }
+                        }
 
+                        if(training_plan_summary.length > 0) {
                             renderTrainingPlanActivitySummary(training_plan_summary) // Renders Training Plan Activity Summary
                         }
                     }

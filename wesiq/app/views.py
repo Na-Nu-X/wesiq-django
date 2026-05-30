@@ -2171,8 +2171,34 @@ def trainingSessionView(request):
 
         two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
         activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago) # Gets The Activity History Items
-        
+
+        # XP Boost
+        is_xp_boost_available = False # Stores The Value If The XP Boost Is Available
+        one_day_ago = timezone.now() - timedelta(days=1) # Gets The 1 Day Ago Time
+        yesterdays_activity = Activity.objects.filter(end_time__gte=one_day_ago).first() # Gets One Of The Yesterday's Activity
+
+        # Checks If The User's XP Boost Expired Yesterday Or Earlier And If The User Recorded Any Activity Yesterday
+        if logged_in_user.xp_boost_expiration_time < one_day_ago and yesterdays_activity:
+            is_xp_boost_available = True
+
         if request.method == "POST":
+            # Use XP Boost
+            if request.headers.get("X-Requested-Action") == "use-xp-boost":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        xp_boost_expiration_time = timezone.now() + timedelta(minutes=10) # Creates The New XP Boost Expiration Time
+
+                        Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
+
+                        return JsonResponse({"success": True, "xp_boost_expiration_time": xp_boost_expiration_time, "message": _("Navýšenie XP bolo úspešne uplatnené.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Navýšenie XP nie je možné uplatniť bez prihlásenia.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri uplatňovaní navýšenia XP došlo k chybe.")}, status=500)
+
             # Complete Official Task
             if request.headers.get("X-Requested-Action") == "complete-official-task":
                 try:
@@ -2378,7 +2404,9 @@ def trainingSessionView(request):
             "official_tasks": official_tasks,
             "official_tasks_remaining_hours": official_tasks_remaining_hours,
             "custom_tasks": custom_tasks,
-            "activity_history": activity_history
+            "activity_history": activity_history,
+            "xp_boost_expiration_time": logged_in_user.xp_boost_expiration_time.isoformat(),
+            "is_xp_boost_available": is_xp_boost_available
         })
 
     return render(request, "app/training_session.html")
