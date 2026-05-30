@@ -8,6 +8,7 @@ import { displayMessage } from "../../../utils/displayMessage.js"
 
 import type { response } from "../../../services/sendPOST.js"
 
+// Function For Save The Training Plan
 export async function saveTrainingPlan(container:HTMLDivElement, state:{active_exercise_index:number}):Promise<void> {
     const training_plan:HTMLDivElement = container.querySelector(".training_plan") as HTMLDivElement // Gets Training Plan
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises

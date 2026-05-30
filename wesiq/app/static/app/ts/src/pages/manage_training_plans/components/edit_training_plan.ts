@@ -1,42 +1,35 @@
 import { 
     global_state, 
     edit_training_plan_state 
-} from "./state.js"
+} from "../state.js"
 
 import { 
     addExercise, 
     changeExercises, 
     changeExercisePosition, 
     removeExercise 
-} from "./functions/exercises.js"
+} from "../functions/exercises.js"
 
 import { 
     addPeriod, 
     changeReps, 
     changeSets, 
     updateUnitTypes 
-} from "./functions/periods.js"
-
-import { 
-    createTrainingPlanBars,
-    renderTrainingPlanBars,
-    createBars, 
-    renderBars 
-} from "../../components/trainingPlanFunctions.js"
+} from "../functions/periods.js"
 
 import { 
     startHold, 
     stopHold 
-} from "./functions/holdButton.js"
+} from "../functions/holdButton.js"
 
-import { changeWarmUpTime } from "./functions/changeWarmUpTime.js"
-import { saveTrainingPlan } from "./functions/saveTrainingPlan.js"
-import { getFormattedTime, getMinimalistFormattedTime } from "../../utils/timer.js"
-import { sendPOST } from "../../services/sendPOST.js"
-import { sendNotification } from "../../utils/sendNotification.js"
-import { displayMessage } from "../../utils/displayMessage.js"
+import { 
+    generateTrainingPlan,
+    changeTrainingPlans,
+    deleteTrainingPlan
+} from "../functions/editTrainingPlan.js"
 
-import type { response } from "../../services/sendPOST.js"
+import { changeWarmUpTime } from "../functions/changeWarmUpTime.js"
+import { saveTrainingPlan } from "../functions/saveTrainingPlan.js"
 
 "use strict"
 
@@ -49,12 +42,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     const edit_training_plan:HTMLDivElement = document.querySelector(".edit_training_plan") as HTMLDivElement // Gets Edit Training Plan
     const training_plan:HTMLDivElement = edit_training_plan.querySelector(".training_plan") as HTMLDivElement // Gets Training Plan
 
-    const warm_up_template:HTMLTemplateElement = document.querySelector(".warm_up_template") as HTMLTemplateElement // Gets Warm Up Template
-    const exercise_template:HTMLTemplateElement = document.querySelector(".exercise_template") as HTMLTemplateElement // Gets Exercise Template
-    const period_selection_template:HTMLTemplateElement = document.querySelector(".period_selection_template") as HTMLTemplateElement // Gets Period Selection Template
-
-    const exercises_data:NodeListOf<HTMLDivElement> = edit_training_plan.querySelectorAll<HTMLDivElement>(".one_exercise_data") // Gets Data From Every User's Exercise
-
     const drop_zone:HTMLDivElement = training_plan.querySelector(".drop_zone") as HTMLDivElement // Gets Training Plan Drop Zone
 
     const day_select_menu:HTMLDivElement = edit_training_plan.querySelector(".additional_info .day_select_menu") as HTMLDivElement // Gets Day Select Menu
@@ -66,239 +53,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     const save:HTMLButtonElement = buttons_container.querySelector(".save") as HTMLButtonElement // Gets Training Plan Save Button
     const delete_button:HTMLButtonElement = buttons_container.querySelector(".delete") as HTMLButtonElement // Gets Training Plan Delete Button
 
-    // Gets Current Order Of Training Plans By Day Value
-    const training_plan_days_order:(string|null)[] = [
-        ...new Set([...exercises_data].map(function(one_exercise_data:HTMLDivElement):string|null {
-            return one_exercise_data.dataset["day"] ? one_exercise_data.dataset["day"] : null
-        }))
-    ]
-
-    // Functions
-
-    // Function For Render Exercises Of The Selected Training Plan
-    function generateTrainingPlan(exercises_data:NodeListOf<HTMLDivElement>, container:HTMLDivElement):void {
-        // Set Defaults
-        edit_training_plan_state.active_exercise_index = 0 // Sets Active Exercise Index Back To 0
-
-        // Removes Exercises
-        container.querySelectorAll<HTMLDivElement>(".exercise").forEach(function(one_exercise:HTMLDivElement):void {
-            one_exercise.remove()
-        })
-
-        // Removes Training Plan Bar Container
-        container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach(function(one_bar_container:HTMLDivElement):void {
-            one_bar_container.remove()
-        })
-
-        // Day
-        let training_plan_day:string|null = training_plan_days_order[edit_training_plan_state.active_training_plan_index] ?? null // Gets The First Value From Training Plan Days Order (Current Or Upcoming Day By Default)
-
-        day_options.forEach(function(remove_selected:HTMLDivElement):void {
-            remove_selected.classList.remove("selected") // Removes Selected Class From Day Options
-        })
-
-        day_options.forEach(function(one_option:HTMLDivElement):void {
-            // Shows Current Selected Option From List Without Icon
-            if(one_option.dataset["day"] === training_plan_day) {
-                (day_select.querySelector("span") as HTMLSpanElement).textContent = (one_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
-                one_option.classList.add("selected") // Adds Selected Class To Selected Option
-            }
-        })
-
-        // Creates And Renders Training Plan Bars (Only If There Are More Than One Training Plans)
-        if(training_plan_days_order.length > 1) {
-            const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length, edit_training_plan_state)
-            renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
-
-            buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
-        }
-
-        // Orders Exercises By Order Value In Exercises Data
-        const ordered_exercises_data:HTMLDivElement[] = [...exercises_data].sort(function(a:HTMLDivElement, b:HTMLDivElement) {
-            return Number(a.dataset["order"]) - Number(b.dataset["order"])
-        })
-
-        // Extracts Data For Every Exercise
-        ordered_exercises_data.forEach(function(one_exercise_data:HTMLDivElement):void {
-            const training_plan_key:string = one_exercise_data.dataset["training_plan_key"] as string // Gets Training Plan Key
-            const day_data:string|null = one_exercise_data.dataset["day"] || null // Gets Training Day Of The Exercise If Has Any
-            const type_data:string = one_exercise_data.dataset["type"] as string // Gets Training Title Of The Exercise
-            const exercise_data:string = one_exercise_data.dataset["exercise"] as string // Gets Exercise Name
-            const periods_data:number[] = JSON.parse(one_exercise_data.dataset["periods"] || "[0]") // Gets Exercise Sets & Reps Periods
-            const unit_data:string = one_exercise_data.dataset["unit"] || "reps" // Gets Exercise Unit Type (Reps Or Seconds)
-
-            // Shows Exercises Only Which Have Some Training Plan Day
-            if(day_data !== null) {
-                // Shows Exercises Only Of The Selected Training Plan Day
-                if(training_plan_day === day_data) {
-                    // Creates Warm Up
-                    if(exercise_data === "Warm Up") {
-                        const warm_up_template_clone:DocumentFragment = warm_up_template.content.cloneNode(true) as DocumentFragment // Clones The Warm Up Template Content
-
-                        (warm_up_template_clone.querySelector(".timer .countdown") as HTMLHeadingElement).textContent = `${getFormattedTime("minutes", periods_data[0])}:${getFormattedTime("seconds", periods_data[0], true)}`; // Stores Timer Of Warm Up
-
-                        (container.querySelector(".training_plan") as HTMLDivElement).prepend(warm_up_template_clone) // Appends Exercise To The Training Plan
-                    }
-
-                    // Creates Exercises
-                    else {
-                        const exercise_template_clone:DocumentFragment = exercise_template.content.cloneNode(true) as DocumentFragment // Clones The Exercise Template Content
-
-                        (container.querySelector(".additional_info .title") as HTMLInputElement).value = type_data;
-                    
-                        (exercise_template_clone.querySelector(".exercise .title") as HTMLHeadingElement).textContent = exercise_data // Sets Title To The Exercise Title
-
-                        // Sets The Correct Unit Amount Label By Selection Dragged Exercise Unit
-                        if(unit_data === "reps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet opakovaní")
-                        if(unit_data === "seconds") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet sekúnd")
-                        if(unit_data === "steps") (exercise_template_clone.querySelector(".exercise .labels .unit_amount") as HTMLParagraphElement).textContent = gettext("Počet krokov");
-
-                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["training_plan_key"] = training_plan_key; // Stores Training Plan Key Data To The Exercise
-                        (exercise_template_clone.querySelector(".exercise") as HTMLDivElement).dataset["unit"] = unit_data; // Stores Unit Type Data To The Exercise
-
-                        (exercise_template_clone.querySelector(".exercise .periods_container") as HTMLDivElement).innerHTML = "" // Deletes All Period Selections
-
-                        generatePeriodSelections(periods_data, getConsecutiveNumbersCount(periods_data), unit_data, exercise_template_clone.querySelector(".periods_container") as HTMLDivElement); // Generates Exact Amount Of Period Selections For Exercise
-
-                        (container.querySelector(".training_plan") as HTMLDivElement).appendChild(exercise_template_clone) // Appends The Exercise To The Training Plan
-                    }
-                }
-            }
-        })
-
-        const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise"); // Gets All Training Plan Exercises
-        (exercises[edit_training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows Active Exercise
-
-        // Creates And Renders Bars
-        const bar_container:HTMLDivElement = createBars(exercises.length, edit_training_plan_state)
-        renderBars(training_plan, bar_container)
-    }
-
-    // Function For Count Consecutive Numbers In An Array (For Example From [1, 1, 2, 2, 3] To [2, 2, 1])
-    function getConsecutiveNumbersCount(array:number[]):number[] {
-        if(array.length === 0) return []
-
-        const result:number[] = []
-        let counter:number = 1
-
-        for(let i:number = 1; i <= array.length; i++) {
-            if(array[i] === array[i - 1]) counter += 1 // Increments The Counter
-
-            else {
-                result.push(counter) // Stores Previous Counter Value
-                counter = 1 // Resets The Counter
-            }
-        }
-
-        return result
-    }
-
-    // Function For Reduce An Array Of Repeating Numbers (For Example From [1, 1, 2, 2, 3] To [1, 2, 3])
-    function compressConsecutiveNumbers(array:number[]):number[] {
-        if(array.length === 0) return []
-    
-        const result:number[] = [array[0] as number] // Stores The First Number
-    
-        for(let i:number = 1; i < array.length; i++) {
-            if(array[i] !== array[i - 1]) {
-                result.push(array[i] as number) // Stores The Number
-            }
-        }
-    
-        return result
-    }
-
-    // Function For Generate Period Selections
-    function generatePeriodSelections(periods_data:number[], amount:number[], unit:string, parent_element:HTMLDivElement):void {
-        amount.forEach(function(one_unit:number, index:number) {
-            const period_selection_template_clone:DocumentFragment = period_selection_template.content.cloneNode(true) as DocumentFragment // Clones The Period Selection Template Content
-
-            // Fills Sets & Reps Inputs With The Values
-            const reps:HTMLInputElement = period_selection_template_clone.querySelector(".period_selection .reps_container .reps") as HTMLInputElement // Gets Reps Input
-            const sets:HTMLInputElement = period_selection_template_clone.querySelector(".period_selection .sets_container .sets") as HTMLInputElement // Gets Sets Input
-
-            reps.value = String(compressConsecutiveNumbers(periods_data)[index]) // Replaces Reps Input Value
-            sets.value = String(one_unit) // Replaces Sets Input Value
-
-            // Shows Reps Content
-            const to_failure:HTMLParagraphElement = period_selection_template_clone.querySelector(".period_selection .reps_container .to_failure") as HTMLParagraphElement // Gets To Failure Text
-            const time:HTMLParagraphElement = period_selection_template_clone.querySelector(".period_selection .reps_container .time") as HTMLParagraphElement // Gets Time Text
-
-            if(compressConsecutiveNumbers(periods_data)[index] === 0) to_failure.style.visibility = "visible" // Shows To Failure Text
-
-            else {
-                // Checks Exercise Unit Type
-                if(unit === "reps" || unit === "steps") reps.style.visibility = "visible" // Shows Reps Input
-
-                if(unit === "seconds") {
-                    time.style.visibility = "visible" // Shows Time Text
-                    if(compressConsecutiveNumbers(periods_data)[index]) time.textContent = getMinimalistFormattedTime(compressConsecutiveNumbers(periods_data)[index] as number)
-                }
-                
-                to_failure.style.visibility = "hidden" // Hides To Failure Text
-            }
-
-            parent_element.appendChild(period_selection_template_clone) // Appends Period Selection To The Exercise
-        })
-    }
-
-    // Function For Change Training Plans
-    function changeTrainingPlans(training_plan_index:number):void {
-        // Shows Blur Animation Between Change Of Training Plans
-        training_plan.classList.remove("blur")
-        void training_plan.offsetWidth
-        training_plan.classList.add("blur")
-
-        if(training_plan_index < 0) edit_training_plan_state.active_training_plan_index = training_plan_days_order.length - 1 // Shows The Last Training Plan
-        else if(training_plan_index > training_plan_days_order.length - 1) edit_training_plan_state.active_training_plan_index = 0 // Shows The First Training Plan
-        else edit_training_plan_state.active_training_plan_index = training_plan_index // Changes Active Training Plan Index
-
-        generateTrainingPlan(exercises_data, edit_training_plan)
-    }
-
-    async function deleteTrainingPlan(container:HTMLDivElement):Promise<void> {
-        const training_plan:HTMLDivElement = container.querySelector(".training_plan") as HTMLDivElement // Gets Training Plan
-        const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
-        const training_plan_title:HTMLInputElement = container.querySelector(".additional_info .title") as HTMLInputElement // Gets Training Plan Title
-
-        const training_plan_data:{}[] = [] // Stores All Delete Training Plan Data
-
-        exercises.forEach(function(one_exercise:HTMLDivElement):void {
-            const training_plan_key:string|undefined = one_exercise.dataset["training_plan_key"] // Gets Training Plan Key
-
-            if(!training_plan_key) return
-
-            // Creates And Fills The Object Of One Exercise For Delete Training Plan
-            const delete_training_plan_object:{
-                training_plan_key:string,
-                action:string
-
-            } = {
-                training_plan_key,
-                action: "delete_training_plan"
-            }
-
-            training_plan_data.push(delete_training_plan_object) // Fills Training Plan Data Array With Objects Of Exercises
-        })
-
-        try {
-            const delete_training_plan_response:response = await sendPOST(window.location.pathname, training_plan_data) // Sends The Data With POST
-
-            // If The Response Isn't Success
-            if(!delete_training_plan_response.success) {
-                displayMessage(delete_training_plan_response.message, "error") // Displays The Error Message
-                return
-            }
-
-            sendNotification(interpolate(gettext("Tréningový plán %s bol odstránený."), [training_plan_title.value])) // Sends The Notification For The User
-            window.location.reload() // Reloads The Page
-        }
-
-        catch {
-            displayMessage(gettext("Pri odstraňovaní tréningového plánu došlo k chybe."), "error") // Displays The Error Message
-        }
-    }
-
     // Global Event Delegations
 
     // All Training Plans Container Click Events
@@ -308,20 +62,21 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(!event.target.parentNode) return // Catch Errors
 
             const clicked_bar_index:number = [...event.target.parentNode.querySelectorAll<HTMLDivElement>(".bar")].indexOf(event.target as HTMLDivElement) // Gets Index Of The Clicked Bar
-            changeTrainingPlans(clicked_bar_index) // Changes Training Plans
+            changeTrainingPlans(clicked_bar_index, edit_training_plan) // Changes Training Plans
         }
     })
 
-    // Document Drop Events (Remove The Exercise From The Training Plan Functionality)
+    // Document Drag Over Functionality (Remove The Exercise From The Training Plan Functionality)
     document.addEventListener("dragover", function(event:DragEvent):void {
         if(event.target instanceof Node && dragged_exercise && !training_plan.contains(event.target)) event.preventDefault() // Makes The Drop Zone Functional (If There Is Dragged Exercise And Dragover Element Isn't Inside The Training Plan)
     })
 
+    // Document Drop Functionality (Remove The Exercise From The Training Plan Functionality)
     document.addEventListener("drop", function(event:DragEvent):void {
         if(event.target instanceof Node && dragged_exercise && !training_plan.contains(event.target)) removeExercise(dragged_exercise, training_plan, edit_training_plan_state) // Removes Dragged Exercise From The Training Plan (If There Is Dragged Exercise And Drop Element Isn't Inside The Training Plan)
     })
 
-    // Training Plan Drag & Drop Events
+    // Training Plan Drag Start Functionality
     training_plan.addEventListener("dragstart", function(event:DragEvent):void {
         // Training Plan Exercises Drag Functionality
         if((event.target as HTMLDivElement).classList.contains("exercise")) dragged_exercise = event.target as HTMLDivElement // Sets Training Plan Dragged Exercise
@@ -339,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Training Plan Drag End Functionality
     training_plan.addEventListener("dragend", function():void {
         dragged_exercise = null // Deletes Training Plan Dragged Exercise
         dragged_bar = null // Deletes Training Plan Dragged Bar
@@ -350,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     })
 
+    // Training Plan Drag Over Functionality
     training_plan.addEventListener("dragover", function(event:DragEvent):void {
         if(event.target === drop_zone) event.preventDefault() // Drop Zone For The First Exercise (Makes The Drop Zone Functional)
         if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[edit_training_plan_state.active_exercise_index]) event.preventDefault() // Drop Zone On Active Exercise In The Training Plan (Makes The Drop Zone Functional)
@@ -357,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if((event.target as HTMLDivElement).classList.contains("bar")) event.preventDefault() // Drop Zone On Bars In The Bar Container (Makes The Drop Zone Functional)
     })
 
+    // Training Plan Drop Functionality
     training_plan.addEventListener("drop", function(event:DragEvent):void {
         if(event.target === drop_zone) addExercise(this, edit_training_plan_state) // Drop Zone For The First Exercise (Adds Dragged Exercise From Exercise Selection To The Training Plan)
         if(event.target === this.querySelectorAll<HTMLDivElement>(".exercise")[edit_training_plan_state.active_exercise_index]) addExercise(this, edit_training_plan_state) // Drop Zone On Active Exercise In The Training Plan (Adds Dragged Exercise From Exercise Selection To The Training Plan) 
@@ -378,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Training Plan Drag Leave Functionality
     training_plan.addEventListener("dragleave", function():void {
         if(global_state.selection_dragged_exercise) this.classList.remove("animate") // Removes Drag Animation (Executes Only If The Dragged Element Is Selection Dragged Exercise)
     })
@@ -476,23 +235,23 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    training_plan.addEventListener("pointerup", stopHold)
-    training_plan.addEventListener("pointercancel", stopHold)
-    training_plan.addEventListener("pointerleave", stopHold)
+    training_plan.addEventListener("pointerup", stopHold) // Stops The Hold Loop
+    training_plan.addEventListener("pointercancel", stopHold) // Stops The Hold Loop
+    training_plan.addEventListener("pointerleave", stopHold) // Stops The Hold Loop
 
     // Events
 
-    // Change Training Plans With Scroll Wheel Functionality
+    // Edit Training Plan Wheel Functionality
     edit_training_plan.addEventListener("wheel", function(event:WheelEvent):void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
             event.preventDefault() // Stop Scrolling
 
-            if(event.deltaY < 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans (Shows Next Training Plan)
-            if(event.deltaY > 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans (Shows Previous Training Plan)
+            if(event.deltaY < 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1, edit_training_plan) // Changes Training Plans (Shows Next Training Plan)
+            if(event.deltaY > 0) changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1, edit_training_plan) // Changes Training Plans (Shows Previous Training Plan)
         }
     })
 
-    // Change Training Plan Exercises With Scroll Wheel Functionality
+    // Training Plan Wheel Functionality
     training_plan.addEventListener("wheel", function(event:WheelEvent):void {
         event.preventDefault() // Stop Scrolling
 
@@ -502,30 +261,30 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Change Training Plan Exercises And Training Plans With Arrow Keys Functionality
+    // Edit Training Plan Mouse Over Functionality
     edit_training_plan.addEventListener("mouseover", function(event:MouseEvent):void {
         if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("bar_container")) global_state.hovered_element = "edit_training_plan_exercises_bars" // Sets Hovered Element For Bar Container
         else if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("training_plan_bar_container") || (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) global_state.hovered_element = "edit_training_plan_bars" // Sets Hovered Element For Training Plan Bar Container
     })
 
-    edit_training_plan.addEventListener("mouseout", function():void {
-        global_state.hovered_element = null
-    })
+    edit_training_plan.addEventListener("mouseout", () => global_state.hovered_element = null) // Removes The Stored Hovered Element
 
+    // Document Keydown Functionalities
     document.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index - 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Previous Exercise)
         else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_exercises_bars") changeExercises(edit_training_plan_state.active_exercise_index + 1, training_plan, edit_training_plan_state) // Changes Training Plan Exercises (Shows Next Exercise)
 
-        else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1) // Changes Training Plans (Shows Previous Training Plan)
-        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1) // Changes Training Plans (Shows Next Training Plan)
+        else if(event.key === "ArrowLeft" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index - 1, edit_training_plan) // Changes Training Plans (Shows Previous Training Plan)
+        else if(event.key === "ArrowRight" && global_state.hovered_element === "edit_training_plan_bars") changeTrainingPlans(edit_training_plan_state.active_training_plan_index + 1, edit_training_plan) // Changes Training Plans (Shows Next Training Plan)
     })
 
-    // Day Select Menu
+    // Day Select Click Functionality
     day_select.addEventListener("click", function():void {
         day_options_list.classList.toggle("active"); // Shows / Hides Options List
         (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
     })
 
+    // Day Options Click Functionalities
     day_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
             if(!this.dataset["day"]) return
@@ -547,18 +306,11 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         })
     })
+ 
+    save.addEventListener("click", () => saveTrainingPlan(edit_training_plan, edit_training_plan_state)) // Save Edited Training Plan
+    delete_button.addEventListener("click", () => deleteTrainingPlan(edit_training_plan)) // Delete Training Plan
 
-    // Save Edited Training Plan
-    save.addEventListener("click", function():void {
-        saveTrainingPlan(edit_training_plan, edit_training_plan_state)
-    })
+    // Initialization
 
-    // Delete Training Plan
-    delete_button.addEventListener("click", function():void {
-        deleteTrainingPlan(edit_training_plan)
-    })
-
-    // MAIN
-
-    generateTrainingPlan(exercises_data, edit_training_plan) // Renders User's Training Plan If Has Any
+    generateTrainingPlan(edit_training_plan) // Renders User's Training Plan If Has Any
 })

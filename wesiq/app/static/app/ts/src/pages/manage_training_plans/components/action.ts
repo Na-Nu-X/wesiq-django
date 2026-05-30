@@ -1,15 +1,18 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Action
+
+    // Variables
+
     const new_training_plan:HTMLDivElement = document.querySelector(".new_training_plan") as HTMLDivElement // Gets New Training Plan
     const edit_training_plan:HTMLDivElement = document.querySelector(".edit_training_plan") as HTMLDivElement // Gets Edit Training Plan
-
     const sidebar:HTMLDivElement = document.querySelector(".sidebar") as HTMLDivElement // Gets Sidebar
-
     const create:HTMLAnchorElement = sidebar.querySelector(".create") as HTMLAnchorElement // Gets Create Button
     const edit:HTMLAnchorElement = sidebar.querySelector(".edit") as HTMLAnchorElement // Gets Edit Button
-
     const page_url:URL = new URL(window.location.href) // Gets The Current URL Address
+
+    // Initialization
 
     if(page_url.searchParams.has("edit")) {
         edit_training_plan.classList.remove("hidden") // Shows Edit Training Plan
