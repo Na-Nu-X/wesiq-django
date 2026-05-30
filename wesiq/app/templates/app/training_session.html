@@ -185,7 +185,17 @@
                         </div>
                     </div>
 
-                    <p class="current_activity_info"></p>
+                    <p class="current_activity_info" data-is_xp_boost_available={{ is_xp_boost_available }} data-xp_boost_expiration_time={{ xp_boost_expiration_time }}>
+                        <span>
+                            {% if is_xp_boost_available %}
+                                {% translate "Je dostupné navýšenie XP" %}
+
+                            {% else %}
+                                {% translate "Žiadne aktívne navýšenie XP" %}
+
+                            {% endif %}
+                        </span>
+                    </p>
                 </div>
             </div>
 
