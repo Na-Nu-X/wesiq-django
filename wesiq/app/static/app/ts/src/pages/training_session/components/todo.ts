@@ -110,12 +110,22 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Custom Tasks Drag Start Functionalities
     custom_tasks.addEventListener("dragstart", function(event:DragEvent):void {
+        const all_tasks:NodeListOf<HTMLDivElement> = custom_tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
         custom_tasks_state.dragged_task = event.target as HTMLDivElement
+
+        all_tasks.forEach(function(one_task:HTMLDivElement):void {
+            if(one_task !== custom_tasks_state.dragged_task) {
+                one_task.classList.add("dragging") // Adds The Dragging Class
+            }
+        })
     })
 
     // Custom Tasks Drag End Functionalities
     custom_tasks.addEventListener("dragend", function():void {
+        const all_tasks:NodeListOf<HTMLDivElement> = custom_tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
+
         custom_tasks_state.dragged_task = null
+        all_tasks.forEach(one_task => one_task.classList.remove("dragging")) // Removes The Dragging Class From All Tasks
     })
 
     // Custom Tasks Drag Over Functionalities
@@ -125,8 +135,11 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Custom Tasks Drop Functionalities
     custom_tasks.addEventListener("drop", function(event:DragEvent):void {
+        const all_tasks:NodeListOf<HTMLDivElement> = custom_tasks.querySelectorAll<HTMLDivElement>(".task") // Gets All Tasks
         const task:HTMLDivElement = (event.target as HTMLElement).closest(".task") as HTMLDivElement // Gets The Task
+
         if(custom_tasks_state.dragged_task) changeCustomTasksOrder(custom_tasks_state.dragged_task, task, this) // Changes The Order Of The Custom Tasks
+        all_tasks.forEach(one_task => one_task.classList.remove("dragging")) // Removes The Dragging Class From All Tasks
     })
 
     // Initialization
