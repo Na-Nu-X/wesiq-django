@@ -3266,6 +3266,11 @@ def postView(request, post_id):
     return render(request, "app/post.html")
 
 def profileView(request, username):
+    if request.method == "POST":
+        # Toggle Follow
+        if request.headers.get("X-Requested-Action") == "toggle-follow":
+            return toggleFollow(request)
+
     # Checks If The Profile With Searched Username Exists
     if Users.objects.filter(username=username).exists():
         user = Users.objects.get(username=username) # Gets The User By Username
@@ -3302,100 +3307,102 @@ def profileView(request, username):
                 ).distinct()
 
                 if request.method == "POST":
-                    edit_account_form = editAccountForm(request.POST, request.FILES) # Gets The Edit Account Form
+                    # Edit Account Form
+                    if request.POST.get("edit_account_form_submit"):
+                        edit_account_form = editAccountForm(request.POST, request.FILES) # Gets The Edit Account Form
 
-                    if edit_account_form.is_valid():
-                        delete_account = edit_account_form.cleaned_data["delete_account"]
+                        if edit_account_form.is_valid():
+                            delete_account = edit_account_form.cleaned_data["delete_account"]
 
-                        try:
-                            if delete_account:
-                                sendMail(
-                                    logged_in_user,
-                                    _("Odstránenie účtu"), # Subject
-                                    _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\n%(domain)s%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # Text Content
-                                    _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="%(domain)s%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # HTML Content
-                                    _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
-                                )
+                            try:
+                                if delete_account:
+                                    sendMail(
+                                        logged_in_user,
+                                        _("Odstránenie účtu"), # Subject
+                                        _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\n%(domain)s%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # Text Content
+                                        _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="%(domain)s%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # HTML Content
+                                        _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                                    )
 
-                                logged_in_user.account_status = "suspended" # Changes Account Status
-                                logged_in_user.save()
+                                    logged_in_user.account_status = "suspended" # Changes Account Status
+                                    logged_in_user.save()
 
-                                messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
-                                captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                                    messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name})
+                                    captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-                                del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
+                                    del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
-                                return HttpResponseRedirect(reverse("homepage_url"))
+                                    return HttpResponseRedirect(reverse("homepage_url"))
 
-                            if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
-                                profile_picture_file = request.FILES.get("select_profile_picture")
-                                if profile_picture_file:
-                                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
+                                    profile_picture_file = request.FILES.get("select_profile_picture")
+                                    if profile_picture_file:
+                                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
 
-                                    current_profile_picture_name = logged_in_user.profile_picture_name
-                                    if current_profile_picture_name != "" and current_profile_picture_name != None:
+                                        current_profile_picture_name = logged_in_user.profile_picture_name
+                                        if current_profile_picture_name != "" and current_profile_picture_name != None:
+                                            os.remove(f"{path}/{current_profile_picture_name}")
+
+                                        new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+
+                                        image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                                        image_save_location.save(new_image_name, profile_picture_file)
+
+                                        logged_in_user.profile_picture_name = new_image_name
+
+                                        logged_in_user.last_edit = timezone.now()
+
+                                    delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"] # Gets The Delete Profile Picture Hidden Checkbox Value
+
+                                    if delete_profile_picture:
+                                        current_profile_picture_name = logged_in_user.profile_picture_name
+                                        path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
                                         os.remove(f"{path}/{current_profile_picture_name}")
 
-                                    new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+                                        logged_in_user.profile_picture_name = ""
 
-                                    image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                                    image_save_location.save(new_image_name, profile_picture_file)
+                                        logged_in_user.last_edit = timezone.now()
 
-                                    logged_in_user.profile_picture_name = new_image_name
+                                    if logged_in_user.bio != edit_account_form.cleaned_data["bio"] and edit_account_form.cleaned_data["bio"] != "":
+                                        logged_in_user.bio = edit_account_form.cleaned_data["bio"]
+                                        logged_in_user.last_edit = timezone.now()
 
-                                    logged_in_user.last_edit = timezone.now()
+                                    if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
+                                        logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
+                                        logged_in_user.last_edit = timezone.now()
 
-                                delete_profile_picture = edit_account_form.cleaned_data["delete_profile_picture"] # Gets The Delete Profile Picture Hidden Checkbox Value
+                                    if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
+                                        logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
+                                        logged_in_user.last_edit = timezone.now()
 
-                                if delete_profile_picture:
-                                    current_profile_picture_name = logged_in_user.profile_picture_name
-                                    path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                                    os.remove(f"{path}/{current_profile_picture_name}")
+                                    if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
+                                        logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
+                                        logged_in_user.last_edit = timezone.now()
 
-                                    logged_in_user.profile_picture_name = ""
+                                    if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
+                                        logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
+                                        logged_in_user.last_edit = timezone.now()
 
-                                    logged_in_user.last_edit = timezone.now()
+                                    logged_in_user.save()
 
-                                if logged_in_user.bio != edit_account_form.cleaned_data["bio"] and edit_account_form.cleaned_data["bio"] != "":
-                                    logged_in_user.bio = edit_account_form.cleaned_data["bio"]
-                                    logged_in_user.last_edit = timezone.now()
+                                    messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 
-                                if logged_in_user.first_name != edit_account_form.cleaned_data["first_name"] and edit_account_form.cleaned_data["first_name"] != "":
-                                    logged_in_user.first_name = edit_account_form.cleaned_data["first_name"]
-                                    logged_in_user.last_edit = timezone.now()
+                                    return HttpResponseRedirect(reverse("homepage_url"))
 
-                                if logged_in_user.last_name != edit_account_form.cleaned_data["last_name"] and edit_account_form.cleaned_data["last_name"] != "":
-                                    logged_in_user.last_name = edit_account_form.cleaned_data["last_name"]
-                                    logged_in_user.last_edit = timezone.now()
+                                else:
+                                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
 
-                                if logged_in_user.email_address != edit_account_form.cleaned_data["email_address"] and edit_account_form.cleaned_data["email_address"] != "":
-                                    logged_in_user.email_address = edit_account_form.cleaned_data["email_address"]
-                                    logged_in_user.last_edit = timezone.now()
+                            # Error
+                            except Exception as e:
+                                messages.add_message(request, messages.ERROR, _("Pri vykonávaní zmien v účte došlo k chybe"))
+                                captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                        
+                        # Wrong Form
+                        else:
+                            messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
+                            captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-                                if logged_in_user.phone_number != edit_account_form.cleaned_data["phone_number"] and edit_account_form.cleaned_data["phone_number"] != "":
-                                    logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
-                                    logged_in_user.last_edit = timezone.now()
-
-                                logged_in_user.save()
-
-                                messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
-
-                                return HttpResponseRedirect(reverse("homepage_url"))
-
-                            else:
-                                messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
-
-                        # Error
-                        except Exception as e:
-                            messages.add_message(request, messages.ERROR, _("Pri vykonávaní zmien v účte došlo k chybe"))
-                            captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    
-                    # Wrong Form
-                    else:
-                        messages.add_message(request, messages.ERROR, _("Zmeny sa nepodarilo vykonať"))
-                        captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
-
-                    return HttpResponseRedirect(reverse("profile_url", kwargs={"username": user.username}))
+                        return HttpResponseRedirect(reverse("profile_url", kwargs={"username": user.username}))
                 
                 if request.GET.get("password-reset"):
                     code = generateCode() # Generates Random 6-Digit Code
@@ -3444,6 +3451,7 @@ def profileView(request, username):
 
             return render(request, "app/profile.html", {
                 "user": user,
+                "logged_in_user": logged_in_user,
                 "first_name": logged_in_user.first_name,
                 "last_name": logged_in_user.last_name,
                 "username": logged_in_user.username,

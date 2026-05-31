@@ -82,7 +82,7 @@
                 </div>
 
                 <p class="form_report" style="bottom: 194px;"></p>
-                <input type="submit" value="{% translate 'Uložiť zmeny' %}">
+                <input type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
 
                 <div class="form_questions">
                     <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
@@ -133,37 +133,40 @@
 
             <div class="middle">
                 <div class="follow_container">
-                    <div>
+                    <div class="followers">
                         <p class="label">{% translate "sledujú" %}</p>
-                        <p class="amount">{{ user.followers|length }}</p>
+                        <p class="amount">{{ user.followers.count }}</p>
                     </div>
 
-                    <div>
+                    <div class="following">
                         <p class="label">{% translate "sleduje" %}</p>
-                        <p class="amount">{{ user.following|length }}</p>
+                        <p class="amount">{{ user.following.count }}</p>
                     </div>
 
-                    <button 
-                        class="follow_button"
-                        data-id="{{ user.user_id }}"
-                        data-action="
-                            {% if not request.session.logged_in_user_id|stringformat:"i" in user.user.followers %}
-                                {% translate 'follow' %}
+                    {% if not request.session.logged_in_user_id == user.id %}
+                        <button 
+                            class="follow_button"
+                            data-id="{{ user.id }}"
+                            data-action="
+                                {% if not logged_in_user in user.followers.all %}
+                                    {% translate 'follow' %}
+
+                                {% else %}
+                                    {% translate 'unfollow' %}
+                                
+                                {% endif %}
+                            "
+                        >
+                            {% if not logged_in_user in user.followers.all %}
+                                {% translate "Začať sledovať" %}
 
                             {% else %}
-                                {% translate 'unfollow' %}
+                                {% translate "Prestať sledovať" %}
                             
                             {% endif %}
-                        "
-                    >
-                        {% if not request.session.logged_in_user_id|stringformat:"i" in user.followers %}
-                            {% translate "Začať sledovať" %}
-
-                        {% else %}
-                            {% translate "Prestať sledovať" %}
-                        
-                        {% endif %}
-                    </button>
+                        </button>
+                    
+                    {% endif %}
                 </div>
                 
                 <div class="badges_container">
@@ -184,7 +187,6 @@
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>
-                        
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>
@@ -316,6 +318,7 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
+    <script src="{% static 'app/ts/dist/pages/profile/components/profile.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/profile/components/grid_select.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/profile/components/badges.js' %}" type="module"></script>
 {% endblock script %}

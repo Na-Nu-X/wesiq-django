@@ -1,10 +1,16 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Toggle Settings
+
+    // Variables
+
     const profile_container:HTMLDivElement = document.querySelector(".profile_container") as HTMLDivElement // Gets The Profile Container
     const edit_account_form:HTMLFormElement = profile_container.querySelector(".edit_account_form") as HTMLFormElement // Gets The Edir Account Form
     const profile:HTMLDivElement = profile_container.querySelector(".profile") as HTMLDivElement // Gets The Profile Container
     const toggle_settings:HTMLElement = profile_container.querySelector(".fa-gear") as HTMLElement // Gets The Toggle Settings Icon
+
+    // Global Event Delegations
 
     toggle_settings.addEventListener("click", function():void {
         if(edit_account_form.classList.contains("hidden")) {

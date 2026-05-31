@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             if((event.target as HTMLDivElement).classList.contains("follow_button")) {
                 event.preventDefault() // Prevents Redirect To The User's Profile
 
-                const follow_button:HTMLDivElement = event.target as HTMLDivElement // Gets The Follow Button
+                const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
                 const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
                 toggleFollow(null, follow_button, clicked_user_id)
             }
