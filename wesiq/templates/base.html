@@ -156,7 +156,7 @@
             <a href="{% url 'login_url' %}" title="{% translate 'Prihlásenie' %}" target="_self">{% translate "Prihlásenie" %}</a>
             <a href="{% url 'password_reset_url' %}" title="{% translate 'Obnova hesla' %}" target="_self">{% translate "Obnova hesla" %}</a>
             <a href="{% url 'registration_url' %}" title="{% translate 'Registrácia' %}" target="_self">{% translate "Registrácia" %}</a>
-            <a href="{% url 'profile_url' request.session.logged_in_user_id %}" title="{% translate 'Môj účet' %}" target="_self">{% translate "Môj účet" %}</a>
+            {% comment %} <a href="{% url 'profile_url' request.session.logged_in_user_id %}" title="{% translate 'Môj účet' %}" target="_self">{% translate "Môj účet" %}</a> {% endcomment %}
             <a href="{% url 'edit_review_url' %}" title="{% translate 'Moje hodnotenie' %}" target="_self">{% translate "Moje hodnotenie" %}</a>
             <a href="{% url 'training_session_url' %}" title="{% translate 'Tréning' %}" target="_self">{% translate "Tréning" %}</a>
             <a href="{% url 'manage_training_plans_url' %}" title="{% translate 'Moje tréningové plány' %}" target="_self">{% translate "Moje tréningové plány" %}</a>

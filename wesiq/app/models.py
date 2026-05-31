@@ -47,6 +47,7 @@ class Users(models.Model):
     bio = models.TextField(verbose_name="Bio", max_length=100, null=True, blank=True)
     xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
     xp_boost_expiration_time = models.DateTimeField(verbose_name="XP Boost Expiration Time", auto_now_add=True, null=False)
+    total_activities = models.IntegerField(verbose_name="Total Activities", default=0, null=False)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
 

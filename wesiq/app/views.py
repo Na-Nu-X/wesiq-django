@@ -2185,15 +2185,11 @@ def trainingSessionView(request):
             # Use XP Boost
             if request.headers.get("X-Requested-Action") == "use-xp-boost":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        xp_boost_expiration_time = timezone.now() + timedelta(minutes=10) # Creates The New XP Boost Expiration Time
+                    xp_boost_expiration_time = timezone.now() + timedelta(minutes=10) # Creates The New XP Boost Expiration Time
 
-                        Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
+                    Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
 
-                        return JsonResponse({"success": True, "xp_boost_expiration_time": xp_boost_expiration_time, "message": _("Navýšenie XP bolo úspešne uplatnené.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Navýšenie XP nie je možné uplatniť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "xp_boost_expiration_time": xp_boost_expiration_time, "message": _("Navýšenie XP bolo úspešne uplatnené.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2202,48 +2198,42 @@ def trainingSessionView(request):
             # Complete Official Task
             if request.headers.get("X-Requested-Action") == "complete-official-task":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+                    task_data = json.loads(request.body) # Gets The Completed Task Data
+                    task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
 
-                        task_data = json.loads(request.body) # Gets The Completed Task Data
-                        task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
+                    # Gets The Task From User's Daily Official Tasks
+                    users_daily_official_task = UserDailyOfficialTasks.objects.filter(
+                        user=logged_in_user, 
+                        task=task
+                    ).first()
 
-                        # Gets The Task From User's Daily Official Tasks
-                        users_daily_official_task = UserDailyOfficialTasks.objects.filter(
-                            user=logged_in_user, 
-                            task=task
-                        ).first()
-
-                        # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
-                        if users_daily_official_task and not users_daily_official_task.is_completed:
-                            if users_daily_official_task.task.data == "2_activities":
-                                users_daily_official_task.progress_percentage += 50
-                                users_daily_official_task.save()
-
-                            else:
-                                users_daily_official_task.progress_percentage = 100.00
-                                users_daily_official_task.save()
-
-                            if users_daily_official_task.progress_percentage == 100.00:
-                                users_daily_official_task.is_completed=True # Marks The Task As Completed
-                                users_daily_official_task.save() # Saves The Updated Task
-
-                                # Increases And Updates The Amount Of User's Obtained XP
-                                Users.objects.filter(
-                                    id=logged_in_user_id
-                                ).update(
-                                    xp = F("xp") + task.xp
-                                )
-
-                                return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
-
-                            return JsonResponse({"success": True, "progress_percentage": users_daily_official_task.progress_percentage, "is_completed": False, "first_completion": True, "gained_xp": task.xp, "message": _("Pokrok úlohy bol úspešne zaznamenaný.")}, status=200)
+                    # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
+                    if users_daily_official_task and not users_daily_official_task.is_completed:
+                        if users_daily_official_task.task.data == "2_activities":
+                            users_daily_official_task.progress_percentage += 50
+                            users_daily_official_task.save()
 
                         else:
-                            return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha už bola dokončená.")}, status=200)
+                            users_daily_official_task.progress_percentage = 100.00
+                            users_daily_official_task.save()
 
-                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné označiť za dokončenú bez prihlásenia.")}, status=401)
+                        if users_daily_official_task.progress_percentage == 100.00:
+                            users_daily_official_task.is_completed=True # Marks The Task As Completed
+                            users_daily_official_task.save() # Saves The Updated Task
+
+                            # Increases And Updates The Amount Of User's Obtained XP
+                            Users.objects.filter(
+                                id=logged_in_user_id
+                            ).update(
+                                xp = F("xp") + task.xp
+                            )
+
+                            return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+
+                        return JsonResponse({"success": True, "progress_percentage": users_daily_official_task.progress_percentage, "is_completed": False, "first_completion": True, "gained_xp": task.xp, "message": _("Pokrok úlohy bol úspešne zaznamenaný.")}, status=200)
+
+                    else:
+                        return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha už bola dokončená.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2252,28 +2242,23 @@ def trainingSessionView(request):
             # Toggle Complete Custom Task
             if request.headers.get("X-Requested-Action") == "add-custom-task":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
-                        custom_task_title = json.loads(request.body) # Gets The Custom Task Title
+                    custom_task_title = json.loads(request.body) # Gets The Custom Task Title
 
-                        # Creates The New Custom Task
-                        new_custom_task = CustomTasks(
-                            user_id = logged_in_user_id,
-                            title = custom_task_title
-                        )
+                    # Creates The New Custom Task
+                    new_custom_task = CustomTasks(
+                        user_id = logged_in_user_id,
+                        title = custom_task_title
+                    )
 
-                        new_custom_task.save() # Saves The New Custom Task
+                    new_custom_task.save() # Saves The New Custom Task
 
-                        custom_task = {
-                            "id": new_custom_task.id,
-                            "title": new_custom_task.title,
-                            "created_at": new_custom_task.created_at
-                        }
+                    custom_task = {
+                        "id": new_custom_task.id,
+                        "title": new_custom_task.title,
+                        "created_at": new_custom_task.created_at
+                    }
 
-                        return JsonResponse({"success": True, "custom_task": custom_task, "message": _("Úloha bola úspešne pridaná.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné pridať bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "custom_task": custom_task, "message": _("Úloha bola úspešne pridaná.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2282,18 +2267,13 @@ def trainingSessionView(request):
             # Toggle Complete Custom Task
             if request.headers.get("X-Requested-Action") == "toggle-complete-custom-task":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
-                        task_id = json.loads(request.body) # Gets The Custom Task ID
-                        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+                    task_id = json.loads(request.body) # Gets The Custom Task ID
+                    task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
 
-                        task.is_completed = not task.is_completed # Inverts The Completion Status
-                        task.save(update_fields=["is_completed"]) # Saves The Updated Task
+                    task.is_completed = not task.is_completed # Inverts The Completion Status
+                    task.save(update_fields=["is_completed"]) # Saves The Updated Task
 
-                        return JsonResponse({"success": True, "message": _("Stav úlohy bol úspešne zmenený.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Stav úlohy nie je možné zmeniť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "message": _("Stav úlohy bol úspešne zmenený.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2302,17 +2282,12 @@ def trainingSessionView(request):
             # Delete Custom Task
             if request.headers.get("X-Requested-Action") == "delete-custom-task":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
-                        task_id = json.loads(request.body) # Gets The Custom Task Data
-                        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+                    task_id = json.loads(request.body) # Gets The Custom Task Data
+                    task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
 
-                        task.delete() # Deletes The User's Custom Task
+                    task.delete() # Deletes The User's Custom Task
 
-                        return JsonResponse({"success": True, "message": _("Úloha bola úspešne odstránená.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Úlohu nie je možné odstrániť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "message": _("Úloha bola úspešne odstránená.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2321,18 +2296,14 @@ def trainingSessionView(request):
             # Delete Completed Custom Tasks
             if request.headers.get("X-Requested-Action") == "delete-completed-custom-tasks":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        completed_custom_tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+                    completed_custom_tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
 
-                        CustomTasks.objects.filter(
-                            id__in=completed_custom_tasks_ids,
-                            user_id=logged_in_user_id
-                        ).delete()
+                    CustomTasks.objects.filter(
+                        id__in=completed_custom_tasks_ids,
+                        user_id=logged_in_user_id
+                    ).delete()
 
-                        return JsonResponse({"success": True, "message": _("Úlohy boli úspešne odstránené.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Úlohy nie je možné odstrániť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "message": _("Úlohy boli úspešne odstránené.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2341,20 +2312,16 @@ def trainingSessionView(request):
             # Change Custom Tasks Order
             if request.headers.get("X-Requested-Action") == "change-custom-tasks-order":
                 try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+                    tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
 
-                        # Updates The Order Of All The Logged In User's Custom Tasks
-                        for index, task_id in enumerate(tasks_ids):
-                            CustomTasks.objects.filter(
-                                id=task_id, 
-                                user_id=logged_in_user_id
-                            ).update(order=index)
+                    # Updates The Order Of All The Logged In User's Custom Tasks
+                    for index, task_id in enumerate(tasks_ids):
+                        CustomTasks.objects.filter(
+                            id=task_id, 
+                            user_id=logged_in_user_id
+                        ).update(order=index)
 
-                        return JsonResponse({"success": True, "message": _("Poradie úloh bolo úspešne zmenené.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Poradie úloh nie je možné zmeniť bez prihlásenia.")}, status=401)
+                    return JsonResponse({"success": True, "message": _("Poradie úloh bolo úspešne zmenené.")}, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2364,12 +2331,10 @@ def trainingSessionView(request):
             if request.headers.get("X-Requested-Action") == "new-activity":
                 try:
                     new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
-
                     gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
-                    # Increments Gained XP For The User In The Database
-                    logged_in_user.xp += int(gained_xp)
-                    logged_in_user.save()
+                    Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
+                    Users.objects.filter(id=logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
 
                     # Saves New Activity To Database
                     new_activity = Activity(

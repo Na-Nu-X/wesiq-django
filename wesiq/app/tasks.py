@@ -616,6 +616,17 @@ def weeklyReport():
     captureMessage(message)
     return message
 
+@shared_task(name="app.tasks.cleanupOldActivities")
+def cleanupOldActivities():
+    two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
+    old_activities = Activity.objects.filter(end_time__lt=two_weeks_ago).delete # Gets And Deletes The Activities Which Are Older Than 2 Weeks
+    old_activities_count = old_activities[0]
+    
+    # Sets Message
+    message = f"{old_activities_count} Activity Older Than 2 Weeks Has Been Deleted" if old_activities_count == 1 else f"{old_activities_count} Activities Older Than 2 Weeks Have Been Deleted"
+    captureMessage(message)
+    return message
+
 @shared_task(bind=True)
 def compressImage(self, post_media_id):
     try:
