@@ -756,6 +756,10 @@
                     }
                 }
 
+                &.dragging {
+                    transform: scale(0.9);
+                }
+
                 .checkbox {
                     position: relative;
                     display: block;
