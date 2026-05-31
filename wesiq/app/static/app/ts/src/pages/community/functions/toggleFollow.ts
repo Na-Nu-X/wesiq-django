@@ -4,7 +4,7 @@ import { displayMessage } from "../../../utils/displayMessage.js";
 import type { response } from "../../../services/sendPOST.js"
 
 // Function For Toggle Follow
-export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLDivElement|null, user_to_follow_id:number|null):Promise<void> {
+export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButtonElement|null, user_to_follow_id:number|null):Promise<void> {
     try {
         const toggle_follow_response:response = await sendPOST(window.location.pathname, user_to_follow_id, "toggle-follow"); // Sends Clicked User ID As A POST Data
 
@@ -36,24 +36,25 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLDivE
             }
 
             if(follow_button) {
+                const followers_counter:HTMLParagraphElement|null = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement || null // Gets The Followers Counter If Is Available
+                const followers:HTMLParagraphElement|null = (follow_button.closest(".follow_container") as HTMLDivElement).querySelector(".followers .amount") as HTMLParagraphElement || null // Gets The Followers Paragraph
+
                 // Follow
                 if(follow_button.dataset["action"]?.trim() === "follow") {
                     follow_button.textContent = "Prestať sledovať"
                     follow_button.dataset["action"] = "unfollow"
-
-                    const followers_counter:HTMLParagraphElement = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Followers Counter
-        
-                    followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+    
+                    if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
+                    if(followers) followers.textContent = String(parseInt(followers.textContent) + 1) // Increases The Followers Counter
                 }
     
                 // Unfollow
                 else if(follow_button.dataset["action"]?.trim() === "unfollow") {
                     follow_button.textContent = "Začať sledovať"
                     follow_button.dataset["action"] = "follow"
-
-                    const followers_counter:HTMLParagraphElement = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement // Gets The Followers Counter
     
-                    followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+                    if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
+                    if(followers) followers.textContent = String(parseInt(followers.textContent) - 1) // Decreases The Followers Counter
                 }
             }
         }
