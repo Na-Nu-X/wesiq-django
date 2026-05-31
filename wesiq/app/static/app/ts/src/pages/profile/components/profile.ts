@@ -12,8 +12,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Events
 
     // Follow Button Click Functionalities
-    follow_button.addEventListener("click", function():void {
-        const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
-        toggleFollow(null, follow_button, clicked_user_id) // Adds Or Removes The Follow
-    })
+    if(follow_button) {
+        follow_button.addEventListener("click", function():void {
+            const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
+            toggleFollow(null, follow_button, clicked_user_id) // Adds Or Removes The Follow
+        })
+    }
 })

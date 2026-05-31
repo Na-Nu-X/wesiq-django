@@ -2336,6 +2336,30 @@ def trainingSessionView(request):
                     Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
                     Users.objects.filter(id=logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
 
+                    yesterday = today - timedelta(days=1) # Determines Yesterday's Date
+
+                    # Gets The User's Last Activity Streak Increase Date
+                    last_activity_streak_increase_time_date = (
+                        logged_in_user.last_activity_streak_increase_time.date() if logged_in_user.last_activity_streak_increase_time else None
+                    )
+
+                    # Checks If The Streak Hasn't Been Already Increased Today Or Hasn't Been Increased Never Before
+                    if last_activity_streak_increase_time_date is None or last_activity_streak_increase_time_date < today:
+                        # Increases The Streak
+                        if last_activity_streak_increase_time_date == yesterday or logged_in_user.activity_streak == 0:
+                            Users.objects.filter(id=logged_in_user_id).update(
+                                activity_streak=F("activity_streak") + 1,
+                                last_activity_streak_increase_time=today
+                            )
+                        
+                        # Resets The Streak To 1
+                        else:
+                            # Používateľ naposledy hral pred viac než 1 dňom (streak prepadol) -> reset na 1
+                            Users.objects.filter(id=logged_in_user_id).update(
+                                activity_streak=1,
+                                last_activity_streak_increase_time=today
+                            )
+
                     # Saves New Activity To Database
                     new_activity = Activity(
                         user_id = logged_in_user_id,
