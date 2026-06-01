@@ -189,18 +189,75 @@
                     </div>
 
                     <div class="badges">
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
+                        <div 
+                            class="
+                                badge level
+                                
+                                {% if user.level < 10 %}
+                                    blue
+
+                                {% elif user.level < 25 %}
+                                    green
+
+                                {% elif user.level < 50 %}
+                                    yellow
+
+                                {% elif user.level < 75 %}
+                                    orange
+
+                                {% elif user.level < 100 %}
+                                    red
+
+                                {% else %}
+                                    purple
+                                 
+                                {% endif %}
+                            "
+                        >   
+                            <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
+                            <p>{{ user.level }}</p>
+                        </div>
+
+                        {% if not user.max_activity_streak == 0 %}
+                            <div class="badge max_activity_streak">
+                                <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
+                                <p>{{ user.max_activity_streak }}</p>
+                            </div>
+
+                        {% endif %}
+                        
+                        {% if not user.years_since_registration == 0 %}
+                            <div 
+                                class="
+                                    badge years_since_registration
+                                    
+                                    {% if user.years_since_registration < 1 %}
+                                        blue
+
+                                    {% elif user.years_since_registration < 2 %}
+                                        green
+
+                                    {% elif user.years_since_registration < 3 %}
+                                        yellow
+
+                                    {% elif user.years_since_registration < 4 %}
+                                        orange
+
+                                    {% elif user.years_since_registration < 5 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+                            >   
+                                <i class="fa-solid fa-cake-candles"></i> <!-- https://fontawesome.com/icons/cake-candles -->
+                                <p>{{ user.years_since_registration }}</p>
+                            </div>
+
+                        {% endif %}
+
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>

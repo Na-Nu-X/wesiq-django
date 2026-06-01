@@ -1,9 +1,10 @@
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
 from pathlib import Path
-import secrets, os
+import secrets, os, math
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
 class Users(models.Model):
@@ -45,14 +46,51 @@ class Users(models.Model):
     following = models.ManyToManyField('self', verbose_name="Following", related_name="followers", symmetrical=False, blank=True)
     saved_posts = models.ManyToManyField("Post", verbose_name="Saved Posts", related_name="saved_posts", blank=True)
     bio = models.TextField(verbose_name="Bio", max_length=100, null=True, blank=True)
-    xp = models.IntegerField(verbose_name="Total XP", default=0, null=False)
+    xp = models.PositiveIntegerField(verbose_name="Total XP", default=0, null=False)
     xp_boost_expiration_time = models.DateTimeField(verbose_name="XP Boost Expiration Time", auto_now_add=True, null=False)
-    total_activities = models.IntegerField(verbose_name="Total Activities", default=0, null=False)
-    activity_streak = models.IntegerField(verbose_name="Activity Streak", default=0, null=False)
-    max_activity_streak = models.IntegerField(verbose_name="Max Activity Streak", default=0, null=False)
+    total_activities = models.PositiveIntegerField(verbose_name="Total Activities", default=0, null=False)
+    activity_streak = models.PositiveIntegerField(verbose_name="Activity Streak", default=0, null=False)
+    max_activity_streak = models.PositiveIntegerField(verbose_name="Max Activity Streak", default=0, null=False)
     last_activity_streak_increase_time = models.DateTimeField(verbose_name="Last Activity Streak Increase Time", auto_now_add=False, null=True, blank=True)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
+
+    @property
+    def level(self):
+        if self.xp == 0:
+            return 1
+
+        return int(math.sqrt(self.xp / 100)) + 1 # Returns The User's Level According To Obtained XP
+
+    @property
+    def xp_for_next_level(self):
+        next_level = self.level + 1 # Gets The Next Level
+        return 100 * (next_level - 1) ** 2 # Returns The Amount Of XP Needed For Next Level
+
+    @property
+    def level_progress_percentage(self):
+        current_level = self.level # Gets The Current Level
+        xp_start_current_level = 100 * (current_level - 1) ** 2 # Gets The Starting Amount Of XP For Current Level
+        xp_start_next_level = 100 * (current_level) ** 2 # Gets The Starting Amount Of XP For Next Level
+        xp_needed_in_current_level = xp_start_next_level - xp_start_current_level # Gets The Amount Of XP Needed In The Current Level
+        xp_gained_in_current_level = self.xp - xp_start_current_level # Gets The Amount Of XP Needed In The Current Level
+        
+        if xp_needed_in_current_level == 0:
+            return 0
+            
+        return int((xp_gained_in_current_level / xp_needed_in_current_level) * 100) # Returns The Progress Percentage Of Current Level
+
+    @property
+    def years_since_registration(self):
+        today = timezone.now().date() # Determines Today's Date
+        registration_date = self.creation_time.date() # Gets The User's Registration Date
+        years_since_registration = today.year - registration_date.year # Gets The Difference In Years
+
+        # Subtracts 1 Year If The User Hasn't Had An Anniversary Yet
+        if (today.month, today.day) < (registration_date.month, registration_date.day):
+            years_since_registration -= 1
+
+        return years_since_registration # Returns The Amount Of Years Since Registration
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
@@ -89,10 +127,10 @@ class Activity(models.Model):
     )
 
     end_time = models.DateTimeField(verbose_name="End Time", auto_now_add=True, null=False)
-    elapsed_time = models.IntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
-    gained_xp = models.IntegerField(verbose_name="Gained XP", default=0, null=False)
+    elapsed_time = models.PositiveIntegerField(verbose_name="Elapsed Time (Seconds)", default=0, null=False)
+    gained_xp = models.PositiveIntegerField(verbose_name="Gained XP", default=0, null=False)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
-    training_plan_day = models.IntegerField(verbose_name="Day", null=True, blank=True)
+    training_plan_day = models.PositiveIntegerField(verbose_name="Day", null=True, blank=True)
     training_plan_summary = models.JSONField(verbose_name="Training Plan Summary", default=list, null=True, blank=True)
 
 class Reviews(models.Model):
@@ -119,10 +157,10 @@ class Reviews(models.Model):
         blank=True
     )
     
-    rating = models.IntegerField(verbose_name="Rating", default=0, null=False)
+    rating = models.PositiveIntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="pending")
-    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
@@ -169,7 +207,7 @@ class Articles(models.Model):
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     rating = models.FloatField(verbose_name="Rating", default=0, null=False)
-    visitors = models.IntegerField(verbose_name="Visitors", default=0, null=False)
+    visitors = models.PositiveIntegerField(verbose_name="Visitors", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)
     image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
@@ -197,7 +235,7 @@ class ArticleForum(models.Model):
     )
 
     comment = models.TextField(verbose_name="Comment", null=False)
-    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)
     likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
@@ -210,7 +248,7 @@ class ArticleForum(models.Model):
     )
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
-    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
 
 class TrainingPlan(models.Model):
@@ -229,12 +267,12 @@ class TrainingPlan(models.Model):
     )
 
     training_plan_key = models.CharField(verbose_name="Training Plan Key", max_length=50, default="None", null=False, blank=False)
-    day = models.IntegerField(verbose_name="Day", null=True, blank=True)
+    day = models.PositiveIntegerField(verbose_name="Day", null=True, blank=True)
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
-    periods = ArrayField(models.IntegerField(verbose_name="Reps"), default=list, null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
+    periods = ArrayField(models.PositiveIntegerField(verbose_name="Reps"), default=list, null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
     unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
-    order = models.IntegerField(verbose_name="Order", default=0, null=False)
+    order = models.PositiveIntegerField(verbose_name="Order", default=0, null=False)
 
 class Exercises(models.Model):
     unit_choices = [
@@ -251,7 +289,7 @@ class Exercises(models.Model):
 class OfficialTasks(models.Model):
     title = models.CharField(verbose_name="Title", max_length=100, null=False)
     data = models.CharField(verbose_name="Data", max_length=100, null=False)
-    xp = models.IntegerField(verbose_name="XP", default=0, null=False)
+    xp = models.PositiveIntegerField(verbose_name="XP", default=0, null=False)
 
 class CustomTasks(models.Model):
     user = models.ForeignKey(
@@ -263,7 +301,7 @@ class CustomTasks(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=100, null=False)
     is_completed = models.BooleanField(verbose_name="Is Completed", default=False, null=False)
-    order = models.IntegerField(verbose_name="Order", default=0, null=False)
+    order = models.PositiveIntegerField(verbose_name="Order", default=0, null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class Transactions(models.Model):
@@ -350,11 +388,11 @@ class Post(models.Model):
     public_visibility = models.BooleanField(verbose_name="Public Visibility", default=True, null=False)
     allow_comments = models.BooleanField(verbose_name="Allow Comments", default=True, null=False)
     hide_likes = models.BooleanField(verbose_name="Hide Likes", default=False, null=False)
-    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)
     likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_posts", blank=True)
     latest_interaction = models.DateTimeField(verbose_name="Latest Interaction", auto_now_add=True, db_index=True)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
-    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
 
 class PostReport(models.Model):
     report_reason_choices = [
@@ -402,7 +440,7 @@ class PostMedia(models.Model):
     original_filename = models.CharField(verbose_name="Original Filename", max_length=255, null=True, blank=True)
     original_size = models.BigIntegerField(verbose_name="Original Size", null=True, blank=True)
     compressed_size = models.BigIntegerField(verbose_name="Compressed Size", null=True, blank=True)
-    order = models.IntegerField(verbose_name="Order", default=0, null=False)
+    order = models.PositiveIntegerField(verbose_name="Order", default=0, null=False)
 
     @property
     def filename(self):
@@ -463,7 +501,7 @@ class PostForum(models.Model):
     comment = models.TextField(verbose_name="Comment", null=False)
     # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
-    likes = models.IntegerField(verbose_name="Likes", default=0, null=False)
+    likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)
     likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_post_forum_comments", blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
@@ -476,7 +514,7 @@ class PostForum(models.Model):
     )
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
-    reports = models.IntegerField(verbose_name="Reports", default=0, null=False)
+    reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     level = models.PositiveIntegerField(default=1)
 
     def save(self, *args, **kwargs):
