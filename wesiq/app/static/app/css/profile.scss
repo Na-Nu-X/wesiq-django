@@ -267,8 +267,12 @@
                     gap: 10px;
     
                     .fa-fire {
-                        color: $article-color;
+                        color: darken($secondary-color, 40%);
                         font-size: 1.2em;
+
+                        &.increased {
+                            color: $article-color;
+                        }
                     }
     
                     span {
