@@ -1165,27 +1165,25 @@ def homepageView(request):
             return HttpResponseRedirect(reverse("homepage_url"))
 
         # Get Logged In User From DB
-        user = Users.objects.get(id=logged_in_user_id)
+        logged_in_user = Users.objects.get(id=logged_in_user_id)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
         filled_contact_form = contactForm(initial={
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email_address": user.email_address,
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "email_address": logged_in_user.email_address,
         })
 
         # Renders Homepage With Filled Contact Form, User Data And Reviews
         return render(request, "app/homepage.html", {
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
             "login_form": loginForm,
             "registration_form": registrationForm,
             "contact_form": filled_contact_form,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email_address": user.email_address,
-            "phone_number": user.phone_number,
-            "role": user.role,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
             "review_form": reviewForm,
             "page_reviews": page_reviews,
             "total_reviews": total_reviews,
@@ -1195,8 +1193,7 @@ def homepageView(request):
             "avg_rating_rest": avg_rating_rest,
             "reviews_amount_by_stars": reviews_amount_by_stars,
             "my_review": my_review,
-            "logged_in_user": user,
-            "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+            "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
         })
     
     else:
@@ -1219,7 +1216,7 @@ def homepageView(request):
         "avg_rating_integer": avg_rating_integer,
         "avg_rating_rest": avg_rating_rest,
         "reviews_amount_by_stars": reviews_amount_by_stars,
-        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+        "publishable_key": settings.STRIPE_PUBLISHABLE_KEY
     })
 
 @ratelimit(key="ip", rate="3/m", method="POST", block=False)
@@ -1317,18 +1314,19 @@ def loginView(request):
 
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
-        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
         return render(request, "app/login.html", {
-            "login_form": loginForm,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
+            "login_form": loginForm
         })
 
     return render(request, "app/login.html", {
-        "login_form": loginForm,
+        "login_form": loginForm
     })
 
 def passwordResetView(request):
@@ -1412,12 +1410,13 @@ def passwordResetView(request):
                 logged_in_user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
                 return render(request, "app/password_reset.html", {
+                    "logged_in_user": {
+                        "username": logged_in_user.username,
+                        "profile_picture_name": logged_in_user.profile_picture_name
+                    },
+
                     "password_reset_form": passwordResetForm,
-                    "password_reset_code": request.GET.get("password-reset-code"),
-                    "first_name": logged_in_user.first_name,
-                    "last_name": logged_in_user.last_name,
-                    "username": logged_in_user.username,
-                    "profile_picture_name": logged_in_user.profile_picture_name,
+                    "password_reset_code": request.GET.get("password-reset-code")
                 })
 
             return render(request, "app/password_reset.html", {
@@ -1430,11 +1429,12 @@ def passwordResetView(request):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
         return render(request, "app/password_reset.html", {
-            "password_reset_form": passwordResetForm,
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
+            "password_reset_form": passwordResetForm
         })
 
     return render(request, "app/password_reset.html", {
@@ -1536,18 +1536,19 @@ def registrationView(request):
 
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
-        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
         return render(request, "app/registration.html", {
-            "registration_form": registrationForm,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
+            "registration_form": registrationForm
         })
 
     return render(request, "app/registration.html", {
-        "registration_form": registrationForm,
+        "registration_form": registrationForm
     })
     
 def editReviewView(request):
@@ -1593,18 +1594,19 @@ def editReviewView(request):
         
         filled_review_form = reviewForm(initial={
             "rating": review.rating,
-            "review": review.review,
+            "review": review.review
         })
 
-        user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
 
         return render(request, "app/edit_review.html", {
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+            
             "review_form": filled_review_form,
-            "review": review,
+            "review": review
         })
     
     return render(request, "app/edit_review.html")
@@ -1802,23 +1804,24 @@ def blogView(request):
         logged_in_user_id = request.session.get("logged_in_user_id")
 
         # Get Logged In User From DB
-        user = Users.objects.get(id=logged_in_user_id)
+        logged_in_user = Users.objects.get(id=logged_in_user_id)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
         filled_blog_subscribe_form = blogSubscribeForm(initial={
-            "email_address": user.email_address,
+            "email_address": logged_in_user.email_address
         })
 
         # Renders Blog Page With Filled Subscribe Form, User Data And Articles
         return render(request, "app/blog.html", {
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
             "articles": articles,
             "no_articles": no_articles,
             "blog_subscribe_form": filled_blog_subscribe_form,
-            "num_articles": num_articles,
+            "num_articles": num_articles
         })
 
     # Renders Page With Articles Data
@@ -1837,7 +1840,7 @@ def blogThemeView(request, theme):
 
             no_comments = True # Default Value That Says That There Are No Comments In The Database
 
-            user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From DB
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From DB
             article = Articles.objects.get(link=theme) # Gets Article By URL Address
 
             # Gets All Comments Of The Article
@@ -1979,10 +1982,11 @@ def blogThemeView(request, theme):
                     return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
 
         response = render(request, "app/articles.html", {
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "username": user.username,
-            "profile_picture_name": user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
             "article": article,
             "comments": comments,
             "replies": replies,
@@ -2339,26 +2343,24 @@ def trainingSessionView(request):
                     yesterday = today - timedelta(days=1) # Determines Yesterday's Date
 
                     # Gets The User's Last Activity Streak Increase Date
-                    last_activity_streak_increase_time_date = (
+                    last_activity_streak_increase_date = (
                         logged_in_user.last_activity_streak_increase_time.date() if logged_in_user.last_activity_streak_increase_time else None
                     )
 
-                    # Checks If The Streak Hasn't Been Already Increased Today Or Hasn't Been Increased Never Before
-                    if last_activity_streak_increase_time_date is None or last_activity_streak_increase_time_date < today:
-                        # Increases The Streak
-                        if last_activity_streak_increase_time_date == yesterday or logged_in_user.activity_streak == 0:
+                    # Checks If The Activity Streak Hasn't Been Already Increased Today Or If It Has Never Increased Before
+                    if last_activity_streak_increase_date is None or last_activity_streak_increase_date < today:
+                        # Increases The Activity Streak
+                        if last_activity_streak_increase_date == yesterday or logged_in_user.activity_streak == 0:
                             Users.objects.filter(id=logged_in_user_id).update(
                                 activity_streak=F("activity_streak") + 1,
                                 last_activity_streak_increase_time=today
                             )
-                        
-                        # Resets The Streak To 1
-                        else:
-                            # Používateľ naposledy hral pred viac než 1 dňom (streak prepadol) -> reset na 1
-                            Users.objects.filter(id=logged_in_user_id).update(
-                                activity_streak=1,
-                                last_activity_streak_increase_time=today
-                            )
+
+                            # Increases The Max Activity Streak
+                            if logged_in_user.activity_streak > logged_in_user.max_activity_streak:
+                                Users.objects.filter(id=logged_in_user_id).update(
+                                    max_activity_streak=F("activity_streak")
+                                )
 
                     # Saves New Activity To Database
                     new_activity = Activity(
@@ -2379,10 +2381,12 @@ def trainingSessionView(request):
                     return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
 
         return render(request, "app/training_session.html", {
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "xp_boost_expiration_time": logged_in_user.xp_boost_expiration_time.isoformat()
+            },
+
             "latest_activity": latest_activity,
             "longest_activity": longest_activity,
             "average_activity_time": average_activity_time,
@@ -2394,7 +2398,6 @@ def trainingSessionView(request):
             "official_tasks_remaining_hours": official_tasks_remaining_hours,
             "custom_tasks": custom_tasks,
             "activity_history": activity_history,
-            "xp_boost_expiration_time": logged_in_user.xp_boost_expiration_time.isoformat(),
             "is_xp_boost_available": is_xp_boost_available
         })
 
@@ -2494,10 +2497,11 @@ def manageTrainingPlansView(request):
                 return JsonResponse({"success": False, "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")}, status=404)
         
         return render(request, "app/manage_training_plans.html", {
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
             "exercises": exercises,
             "training_plan": training_plan,
         })
@@ -2713,8 +2717,12 @@ def communityView(request):
                             username__in=searched_users_history,
                             account_status="OK"
                         ).annotate(
+                            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                             has_follow=Exists(
-                                Users.objects.filter(id=OuterRef("pk"), followers=logged_in_user_id)
+                                Users.objects.filter(
+                                    id=OuterRef("pk"), 
+                                    followers=logged_in_user_id
+                                )
                             )
                         )
 
@@ -2895,10 +2903,11 @@ def communityView(request):
                 return togglePostCommentLike(request)
 
         return render(request, "app/community.html", {
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
+
             "upload_post_form": uploadPostForm,
             "processing_posts": processing_posts
         })
@@ -3271,20 +3280,19 @@ def postView(request, post_id):
                 post.longitude = str(post.coordinates.x).replace(",", ".")
 
             return render(request, "app/post.html", {
-                "logged_in_user": logged_in_user,
-                "first_name": logged_in_user.first_name,
-                "last_name": logged_in_user.last_name,
-                "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name,
+                "logged_in_user": {
+                    "username": logged_in_user.username,
+                    "profile_picture_name": logged_in_user.profile_picture_name
+                },
+
                 "post": post
             })
 
         return render(request, "app/post.html", {
-            "logged_in_user": logged_in_user,
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name,
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
         })
 
     return render(request, "app/post.html")
@@ -3297,8 +3305,17 @@ def profileView(request, username):
 
     # Checks If The Profile With Searched Username Exists
     if Users.objects.filter(username=username).exists():
-        user = Users.objects.get(username=username) # Gets The User By Username
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        user = Users.objects.get(username=username) # Gets The User By Username
+
+        today = timezone.now().date() # Determines Today's Date
+
+        # Creates The Has Already Increased Activity Streak Column (True If The User Already Has)
+        if user.last_activity_streak_increase_time:
+            user.has_already_increased_activity_streak = user.last_activity_streak_increase_time.date() == today
+
+        else:
+            user.has_already_increased_activity_streak = False
 
         # Gets All User's Posts With All Related Data
         posts = Post.objects.filter(
@@ -3456,30 +3473,29 @@ def profileView(request, username):
                     "first_name": logged_in_user.first_name,
                     "last_name": logged_in_user.last_name,
                     "email_address": logged_in_user.email_address,
-                    "phone_number": logged_in_user.phone_number,
+                    "phone_number": logged_in_user.phone_number
                 })
 
                 return render(request, "app/profile.html", {
+                    "logged_in_user": {
+                        "id": logged_in_user.id,
+                        "username": logged_in_user.username,
+                        "profile_picture_name": logged_in_user.profile_picture_name
+                    },
+
                     "user": user,
-                    "logged_in_user": logged_in_user,
                     "edit_account_form": filled_edit_account_form,
-                    "first_name": logged_in_user.first_name,
-                    "last_name": logged_in_user.last_name,
-                    "username": logged_in_user.username,
-                    "email_address": logged_in_user.email_address,
-                    "phone_number": logged_in_user.phone_number,
-                    "profile_picture_name": logged_in_user.profile_picture_name,
                     "posts": posts,
                     "saved_posts": saved_posts
                 })
 
             return render(request, "app/profile.html", {
+                "logged_in_user": {
+                    "username": logged_in_user.username,
+                    "profile_picture_name": logged_in_user.profile_picture_name
+                },
+
                 "user": user,
-                "logged_in_user": logged_in_user,
-                "first_name": logged_in_user.first_name,
-                "last_name": logged_in_user.last_name,
-                "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name,
                 "posts": posts
             })
         

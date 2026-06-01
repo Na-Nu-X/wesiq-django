@@ -85,19 +85,19 @@
             <div class="left">{% block banner %}{% endblock banner %}</div>
             
             <div class="right">
-                {% if request.session.logged_in_user_id and username %}
+                {% if request.session.logged_in_user_id and logged_in_user.username %}
                     {% comment %} <div class="notifications">
                         <p class="label">9+</p>
                         <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
                     </div> {% endcomment %}
 
                     <div class="account">
-                        <a href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">
+                        <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" target="_self">
                             <img 
                                 class="profile_picture skeleton_loading" 
                                 src="
-                                    {% if profile_picture_name %}
-                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                                    {% if logged_in_user.profile_picture_name %}
+                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
 
                                     {% else %}
                                         {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -107,9 +107,9 @@
                             >
                         </a>
 
-                        <a class="username" href="{% url 'profile_url' username %}" title="{% translate 'Môj účet' %}" target="_self">{{ username }}</a>
+                        <a class="username" href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" target="_self">{{ logged_in_user.username }}</a>
 
-                        <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ username }}" target="_self">{% translate "Odhlásiť" %}</a>
+                        <a class="logout" href="{% url 'logout_url' %}" title="{% translate 'Odhlásiť sa z účtu' %} {{ logged_in_user.username }}" target="_self">{% translate "Odhlásiť" %}</a>
                     </div>
 
                 {% else %}

@@ -12,7 +12,7 @@
     <div class="profile_container">
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-        {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+        {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
             <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
 
@@ -39,7 +39,7 @@
                             >
                         </label>
     
-                        <p class="username">{{ username }}</p>
+                        <p class="username">{{ logged_in_user.username }}</p>
                     </div>
 
                     {{ edit_account_form.select_profile_picture }}
@@ -85,7 +85,7 @@
                 <input type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
 
                 <div class="form_questions">
-                    <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+                    <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
                 </div>
 
                 <label for="delete_account"><img class="delete_account" src="{% static 'images/delete_account.png' %}" title="{% translate 'Odstrániť účet' %}"></label> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
@@ -120,7 +120,21 @@
                         {% endif %}
                     </div>
     
-                    <p class="streak"><i class="fa-solid fa-fire"></i><span>{{ user.activity_streak }}</span></p> <!-- https://fontawesome.com/icons/fire -->
+                    <p class="streak">
+                        <!-- https://fontawesome.com/icons/fire -->
+                        <i class="
+                                fa-solid fa-fire
+
+                                {% if user.has_already_increased_activity_streak %}
+                                    increased
+                                
+                                {% endif %}
+                            "
+                        >
+                        </i>
+
+                        <span>{{ user.activity_streak }}</span>
+                    </p>
                 </div>
     
                 <div class="bottom">

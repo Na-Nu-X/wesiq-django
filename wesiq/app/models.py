@@ -49,6 +49,7 @@ class Users(models.Model):
     xp_boost_expiration_time = models.DateTimeField(verbose_name="XP Boost Expiration Time", auto_now_add=True, null=False)
     total_activities = models.IntegerField(verbose_name="Total Activities", default=0, null=False)
     activity_streak = models.IntegerField(verbose_name="Activity Streak", default=0, null=False)
+    max_activity_streak = models.IntegerField(verbose_name="Max Activity Streak", default=0, null=False)
     last_activity_streak_increase_time = models.DateTimeField(verbose_name="Last Activity Streak Increase Time", auto_now_add=False, null=True, blank=True)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
