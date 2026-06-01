@@ -368,13 +368,13 @@
                             cursor: pointer;
                         }
 
-                        &.empty {
-                            
-                        }
-
                         &.level,
+                        &.xp,
                         &.max_activity_streak,
-                        &.years_since_registration {
+                        &.years_since_registration,
+                        &.total_activities,
+                        &.followers,
+                        &.posts {
                             p {
                                 position: absolute;
                                 font-size: 1.2em;
@@ -388,7 +388,11 @@
                         }
 
                         &.level,
-                        &.years_since_registration {
+                        &.xp,
+                        &.years_since_registration,
+                        &.total_activities,
+                        &.followers,
+                        &.posts {
                             $blue-level:   #3b82f6;
                             $green-level:  #10b981;
                             $yellow-level: #f59e0b;
@@ -436,6 +440,19 @@
                                 color: $purple-level;
                                 border-color: transparentize($purple-level, 0.7);
                                 box-shadow: 0 0 8px transparentize($purple-level, 0.5);
+                            }
+                        }
+
+                        &.xp {
+                            p {
+                                display: flex;
+                                flex-direction: column;
+                                line-height: 1;
+
+                                span {
+                                    line-height: 1;
+                                    font-weight: normal;
+                                }
                             }
                         }
 

@@ -193,19 +193,19 @@
                             class="
                                 badge level
                                 
-                                {% if user.level < 10 %}
+                                {% if user.level <= 10 %}
                                     blue
 
-                                {% elif user.level < 25 %}
+                                {% elif user.level <= 25 %}
                                     green
 
-                                {% elif user.level < 50 %}
+                                {% elif user.level <= 50 %}
                                     yellow
 
-                                {% elif user.level < 75 %}
+                                {% elif user.level <= 75 %}
                                     orange
 
-                                {% elif user.level < 100 %}
+                                {% elif user.level <= 100 %}
                                     red
 
                                 {% else %}
@@ -213,13 +213,70 @@
                                  
                                 {% endif %}
                             "
+
+                            title="{% translate 'Level' %}"
                         >   
                             <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
                             <p>{{ user.level }}</p>
                         </div>
 
+                        {% if not user.xp == 0 %}
+                            <div 
+                                class="
+                                    badge xp
+                                    
+                                    {% if user.xp < 1000 %}
+                                        blue
+
+                                    {% elif user.xp <= 5000 %}
+                                        green
+
+                                    {% elif user.xp <= 10000 %}
+                                        yellow
+
+                                    {% elif user.xp <= 50000 %}
+                                        orange
+
+                                    {% elif user.xp <= 100000 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Získané XP' %}"
+                            >
+                                <i class="fa-solid fa-bolt"></i> <!-- https://fontawesome.com/icons/bolt -->
+                                
+                                <p>
+                                    {% if user.xp < 1000 %}
+                                        &lt;1000<span>XP</span>
+    
+                                    {% elif user.xp <= 5000 %}
+                                        1K<span>XP</span>
+    
+                                    {% elif user.xp <= 10000 %}
+                                        5K<span>XP</span>
+    
+                                    {% elif user.xp <= 50000 %}
+                                        10K<span>XP</span>
+    
+                                    {% elif user.xp <= 100000 %}
+                                        50K<span>XP</span>
+    
+                                    {% else %}
+                                        100K+<span>XP</span>
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
+
                         {% if not user.max_activity_streak == 0 %}
-                            <div class="badge max_activity_streak">
+                            <div class="badge max_activity_streak" title="{% translate 'Najdlhšia rada aktivity' %}">
                                 <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
                                 <p>{{ user.max_activity_streak }}</p>
                             </div>
@@ -231,19 +288,19 @@
                                 class="
                                     badge years_since_registration
                                     
-                                    {% if user.years_since_registration < 1 %}
+                                    {% if user.years_since_registration == 1 %}
                                         blue
 
-                                    {% elif user.years_since_registration < 2 %}
+                                    {% elif user.years_since_registration == 2 %}
                                         green
 
-                                    {% elif user.years_since_registration < 3 %}
+                                    {% elif user.years_since_registration == 3 %}
                                         yellow
 
-                                    {% elif user.years_since_registration < 4 %}
+                                    {% elif user.years_since_registration == 4 %}
                                         orange
 
-                                    {% elif user.years_since_registration < 5 %}
+                                    {% elif user.years_since_registration == 5 %}
                                         red
 
                                     {% else %}
@@ -251,9 +308,176 @@
                                     
                                     {% endif %}
                                 "
+
+                                title="{% translate 'Roky od registrácie' %}"
                             >   
                                 <i class="fa-solid fa-cake-candles"></i> <!-- https://fontawesome.com/icons/cake-candles -->
                                 <p>{{ user.years_since_registration }}</p>
+                            </div>
+
+                        {% endif %}
+
+                        {% if not user.total_activities == 0 %}
+                            <div 
+                                class="
+                                    badge total_activities
+                                    
+                                    {% if user.total_activities < 10 %}
+                                        blue
+
+                                    {% elif user.total_activities <= 50 %}
+                                        green
+
+                                    {% elif user.total_activities <= 100 %}
+                                        yellow
+
+                                    {% elif user.total_activities <= 250 %}
+                                        orange
+
+                                    {% elif user.total_activities <= 500 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Zaznamenané aktivity' %}"
+                            >
+                                <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+
+                                <p>
+                                    {% if user.total_activities < 10 %}
+                                        &lt;10
+    
+                                    {% elif user.total_activities <= 50 %}
+                                        10
+    
+                                    {% elif user.total_activities <= 100 %}
+                                        50
+    
+                                    {% elif user.total_activities <= 250 %}
+                                        100
+    
+                                    {% elif user.total_activities <= 500 %}
+                                        250
+    
+                                    {% else %}
+                                        500+
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
+
+                        {% if not user.followers.all|length == 0 %}
+                            <div 
+                                class="
+                                    badge followers
+                                    
+                                    {% if user.followers.all|length < 5 %}
+                                        blue
+
+                                    {% elif user.followers.all|length <= 10 %}
+                                        green
+
+                                    {% elif user.followers.all|length <= 25 %}
+                                        yellow
+
+                                    {% elif user.followers.all|length <= 50 %}
+                                        orange
+
+                                    {% elif user.followers.all|length <= 100 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Počet sledovateľov' %}"
+                            >
+                                <i class="fa-brands fa-bluesky"></i> <!-- https://fontawesome.com/icons/bluesky -->
+
+                                <p>
+                                    {% if user.followers.all|length < 5 %}
+                                        &lt;5
+    
+                                    {% elif user.followers.all|length <= 10 %}
+                                        5
+    
+                                    {% elif user.followers.all|length <= 25 %}
+                                        10
+    
+                                    {% elif user.followers.all|length <= 50 %}
+                                        25
+    
+                                    {% elif user.followers.all|length <= 100 %}
+                                        50
+    
+                                    {% else %}
+                                        100+
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
+
+                        {% if not user.posts.all|length == 0 %}
+                            <div 
+                                class="
+                                    badge posts
+                                    
+                                    {% if user.posts.all|length < 5 %}
+                                        blue
+
+                                    {% elif user.posts.all|length <= 10 %}
+                                        green
+
+                                    {% elif user.posts.all|length <= 25 %}
+                                        yellow
+
+                                    {% elif user.posts.all|length <= 50 %}
+                                        orange
+
+                                    {% elif user.posts.all|length <= 100 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Počet príspevkov' %}"
+                            >
+                                <i class="fa-solid fa-camera"></i> <!-- https://fontawesome.com/icons/camera -->
+
+                                <p>
+                                    {% if user.posts.all|length < 5 %}
+                                        &lt;5
+    
+                                    {% elif user.posts.all|length <= 10 %}
+                                        5
+    
+                                    {% elif user.posts.all|length <= 25 %}
+                                        10
+    
+                                    {% elif user.posts.all|length <= 50 %}
+                                        25
+    
+                                    {% elif user.posts.all|length <= 100 %}
+                                        50
+    
+                                    {% else %}
+                                        100+
+                                    
+                                    {% endif %}
+                                </p>
                             </div>
 
                         {% endif %}
@@ -279,7 +503,7 @@
             </div>
 
             <div class="bottom">
-                {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                     <div class="grid_select">
                         <div class="all_posts_icon">
                             <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
@@ -338,7 +562,7 @@
                 </div>
 
                 <div class="saved_posts_container hidden">
-                    {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                    {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                         <div class="saved_posts">
                             {% for one_post in saved_posts %}
                                 <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
@@ -377,7 +601,7 @@
                         </div>
                    
 
-                    {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user == user %}
+                    {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                         <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
 
                     {% endif %}
