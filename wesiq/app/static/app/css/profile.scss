@@ -343,12 +343,12 @@
                 }
 
                 .badges {
-                    $blue-level:   #3b82f6;
-                    $green-level:  #10b981;
-                    $yellow-level: #f59e0b;
-                    $orange-level: #fa541c;
-                    $red-level:    #ef4444;
-                    $purple-level: #8b5cf6;
+                    $blue-rarity:   #3b82f6;
+                    $green-rarity:  #10b981;
+                    $yellow-rarity: #f59e0b;
+                    $orange-rarity: #fa541c;
+                    $red-rarity:    #ef4444;
+                    $purple-rarity: #8b5cf6;
 
                     @include scrollbar($direction: "vertical");
                     display: grid;
@@ -366,8 +366,10 @@
                         position: relative;
                         width: 50px;
                         height: 50px;
+                        background-color: transparentize(darken($secondary-color, 40%), 0.85);
+                        border: 1px solid darken($secondary-color, 40%);
                         border-radius: 50%;
-                        border: 1px solid $secondary-color;
+                        box-shadow: 0 0 8px transparentize(darken($secondary-color, 40%), 0.5);
                         transition: transform 0.3s ease;
 
                         &:hover {
@@ -386,61 +388,53 @@
                             opacity: 0.2;
                         }
 
-                        &.donations,
-                        &.level,
-                        &.xp,
-                        &.years_since_registration,
-                        &.total_activities,
-                        &.followers,
-                        &.posts {
-                            &.blue {
-                                background-color: transparentize($blue-level, 0.85);
-                                color: $blue-level;
-                                border-color: transparentize($blue-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($blue-level, 0.5);
-                            }
-                        
-                            &.green {
-                                background-color: transparentize($green-level, 0.85);
-                                color: $green-level;
-                                border-color: transparentize($green-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($green-level, 0.5);
-                            }
-                        
-                            &.yellow {
-                                background-color: transparentize($yellow-level, 0.85);
-                                color: $yellow-level;
-                                border-color: transparentize($yellow-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($yellow-level, 0.5);
-                            }
-                        
-                            &.orange {
-                                background-color: transparentize($orange-level, 0.85);
-                                color: $orange-level;
-                                border-color: transparentize($orange-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($orange-level, 0.5);
-                            }
-                        
-                            &.red {
-                                background-color: transparentize($red-level, 0.85);
-                                color: $red-level;
-                                border-color: transparentize($red-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($red-level, 0.5);
-                            }
-                        
-                            &.purple {
-                                background-color: transparentize($purple-level, 0.85);
-                                color: $purple-level;
-                                border-color: transparentize($purple-level, 0.7);
-                                box-shadow: 0 0 8px transparentize($purple-level, 0.5);
-                            }
+                        &.blue {
+                            background-color: transparentize($blue-rarity, 0.85);
+                            color: $blue-rarity;
+                            border-color: transparentize($blue-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($blue-rarity, 0.5);
+                        }
+                    
+                        &.green {
+                            background-color: transparentize($green-rarity, 0.85);
+                            color: $green-rarity;
+                            border-color: transparentize($green-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($green-rarity, 0.5);
+                        }
+                    
+                        &.yellow {
+                            background-color: transparentize($yellow-rarity, 0.85);
+                            color: $yellow-rarity;
+                            border-color: transparentize($yellow-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($yellow-rarity, 0.5);
+                        }
+                    
+                        &.orange {
+                            background-color: transparentize($orange-rarity, 0.85);
+                            color: $orange-rarity;
+                            border-color: transparentize($orange-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($orange-rarity, 0.5);
+                        }
+                    
+                        &.red {
+                            background-color: transparentize($red-rarity, 0.85);
+                            color: $red-rarity;
+                            border-color: transparentize($red-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($red-rarity, 0.5);
+                        }
+                    
+                        &.purple {
+                            background-color: transparentize($purple-rarity, 0.85);
+                            color: $purple-rarity;
+                            border-color: transparentize($purple-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($purple-rarity, 0.5);
                         }
 
                         &.developer {
-                            background-color: transparentize($red-level, 0.85);
-                            color: $red-level;
-                            border-color: transparentize($red-level, 0.7);
-                            box-shadow: 0 0 8px transparentize($red-level, 0.5);
+                            background-color: transparentize($red-rarity, 0.85);
+                            color: $red-rarity;
+                            border-color: transparentize($red-rarity, 0.7);
+                            box-shadow: 0 0 8px transparentize($red-rarity, 0.5);
                         }
 
                         &.xp {
@@ -462,6 +456,20 @@
                             color: $article-color;
                             border-color: transparentize($article-color, 0.7);
                             box-shadow: 0 0 8px transparentize($article-color, 0.5);
+                        }
+
+                        &.xmas_activity {
+                            background-color: transparentize(#dc2626, 0.88);
+                            color: #dc2626;
+                            border-color: transparentize(#dc2626, 0.6);
+                            box-shadow: 0 0 8px transparentize(#dc2626, 0.5);
+                        }
+                        
+                        &.new_year_new_goals {
+                            background-color: transparentize(#eab308, 0.9);
+                            color: darkene(#eab308, 15%);
+                            border-color: transparentize(#eab308, 0.5);
+                            box-shadow: 0 0 8px transparentize(#eab308, 0.5);
                         }
                     }
                 }

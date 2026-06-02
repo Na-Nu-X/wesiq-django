@@ -5,7 +5,7 @@ import secrets, os, math
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 
 class Users(models.Model):
@@ -56,6 +56,19 @@ class Users(models.Model):
     last_activity_streak_increase_time = models.DateTimeField(verbose_name="Last Activity Streak Increase Time", auto_now_add=False, null=True, blank=True)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
+
+    @property
+    def total_received_likes(self):
+        from .models import Post
+
+        # Gets The Total Amount Of User's Received Likes On Posts From Other Users
+        total_received_likes = Post.objects.filter(
+            user=self
+        ).aggregate(
+            total=Count("likes_from_users", filter=~Q(likes_from_users=self))
+        )["total"]
+
+        return total_received_likes or 0 # Returns The User's Total Received Likes
 
     @property
     def total_transactions_amount(self):
@@ -113,6 +126,7 @@ class SpecialBadges(models.Model):
 
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     data = models.CharField(verbose_name="Data", max_length=50, null=False)
+    obtained_in = models.DateTimeField(verbose_name="Obtained In", auto_now_add=True, null=False)
 
 class UserDailyOfficialTasks(models.Model):
     task = models.ForeignKey(

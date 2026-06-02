@@ -411,7 +411,7 @@
 
                                 <p>
                                     {% if user.total_activities < 10 %}
-                                        &lt;10
+                                        1
     
                                     {% elif user.total_activities <= 50 %}
                                         10
@@ -466,7 +466,7 @@
 
                                 <p>
                                     {% if user.followers.all|length < 5 %}
-                                        &lt;5
+                                        1
     
                                     {% elif user.followers.all|length <= 10 %}
                                         5
@@ -521,7 +521,7 @@
 
                                 <p>
                                     {% if user.posts.all|length < 5 %}
-                                        &lt;5
+                                        1
     
                                     {% elif user.posts.all|length <= 10 %}
                                         5
@@ -543,6 +543,116 @@
                             </div>
 
                         {% endif %}
+                        
+                        {% if not user.total_received_likes == 0 %}
+                            <div 
+                                class="
+                                    badge received_likes
+                                    
+                                    {% if user.total_received_likes < 5 %}
+                                        blue
+
+                                    {% elif user.total_received_likes <= 10 %}
+                                        green
+
+                                    {% elif user.total_received_likes <= 25 %}
+                                        yellow
+
+                                    {% elif user.total_received_likes <= 50 %}
+                                        orange
+
+                                    {% elif user.total_received_likes <= 100 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Získané lajky' %}"
+                            >
+                                <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                
+                                <p>
+                                    {% if user.total_received_likes < 5 %}
+                                        1
+
+                                    {% elif user.total_received_likes <= 10 %}
+                                        5
+
+                                    {% elif user.total_received_likes <= 25 %}
+                                        10
+
+                                    {% elif user.total_received_likes <= 50 %}
+                                        25
+
+                                    {% elif user.total_received_likes <= 100 %}
+                                        50
+
+                                    {% else %}
+                                        100+
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
+                        
+                        {% if not user.post_comments.all|length == 0 %}
+                            <div 
+                                class="
+                                    badge written_comments
+                                    
+                                    {% if user.post_comments.all|length < 5 %}
+                                        blue
+
+                                    {% elif user.post_comments.all|length <= 10 %}
+                                        green
+
+                                    {% elif user.post_comments.all|length <= 25 %}
+                                        yellow
+
+                                    {% elif user.post_comments.all|length <= 50 %}
+                                        orange
+
+                                    {% elif user.post_comments.all|length <= 100 %}
+                                        red
+
+                                    {% else %}
+                                        purple
+                                    
+                                    {% endif %}
+                                "
+
+                                title="{% translate 'Napísané komentáre' %}"
+                            >
+                                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                                
+                                <p>
+                                    {% if user.post_comments.all|length < 5 %}
+                                        1
+
+                                    {% elif user.post_comments.all|length <= 10 %}
+                                        5
+
+                                    {% elif user.post_comments.all|length <= 25 %}
+                                        10
+
+                                    {% elif user.post_comments.all|length <= 50 %}
+                                        25
+
+                                    {% elif user.post_comments.all|length <= 100 %}
+                                        50
+
+                                    {% else %}
+                                        100+
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
 
                         {% for one_badge in user.badges.all %}
                             <div class="badge {{ one_badge.data }}" title="{{ one_badge.title }}">
@@ -551,22 +661,19 @@
                                     <p>7</p>
 
                                 {% endif %}
+
+                                {% if one_badge.data == "xmas_activity" %}
+                                    <i class="fa-solid fa-gift"></i> <!-- https://fontawesome.com/icons/gift -->
+
+                                {% endif %}
+
+                                {% if one_badge.data == "new_year_new_goals" %}
+                                    <i class="fa-solid fa-champagne-glasses"></i> <!-- https://fontawesome.com/icons/champagne-glasses -->
+
+                                {% endif %}
                             </div>
                         
                         {% endfor %}
-
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
-                        <div class="badge empty"></div>
                     </div>
 
                     <div class="next">
