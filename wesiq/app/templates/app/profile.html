@@ -10,13 +10,18 @@
 
 {% block content %}
     <div class="profile_container">
-        <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+        <div class="options_container">
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+
+            {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
+
+            {% endif %}
+        </div>
 
         {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
             <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
-
-            <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
 
             <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -685,7 +690,7 @@
             <div class="bottom">
                 {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                     <div class="grid_select">
-                        <div class="all_posts_icon">
+                        <div class="all_posts_icon active">
                             <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
                         </div>
                         

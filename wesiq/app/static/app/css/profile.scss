@@ -29,23 +29,23 @@
         }
     }
 
-    .back {
-        @include form_back;
-    }
+    .options_container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
 
-    .fa-gear {
-        position: absolute;
-        top: 42.5px;
-        right: 50px;
-        font-size: 2em;
-        color: transparentize($blue-color, 0.5);
-        transition: color 0.3s ease, transform 0.3s ease;
-        z-index: 100;
-
-        &:hover {
-            color: $blue-color;
-            transform: scale(1.1);
-            cursor: pointer;
+        .back .fa-chevron-left,
+        .fa-gear {
+            font-size: 2em;
+            color: transparentize($blue-color, 0.5);
+            transition: color 0.3s ease, transform 0.3s ease;
+            z-index: 100;
+    
+            &:hover {
+                color: $blue-color;
+                transform: scale(1.1);
+                cursor: pointer;
+            }
         }
     }
 
@@ -264,7 +264,7 @@
                 .streak {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
+                    gap: 5px;
     
                     .fa-fire {
                         color: darken($secondary-color, 40%);
@@ -327,7 +327,6 @@
 
             .badges_container {
                 @include flex_center;
-                margin-bottom: 25px;
 
                 .previous {
                     transition: transform 0.3s ease;
@@ -350,7 +349,7 @@
                     $red-rarity:    #ef4444;
                     $purple-rarity: #8b5cf6;
 
-                    @include scrollbar($direction: "vertical");
+                    @include scrollbar($direction: "horizontal");
                     display: grid;
                     grid-auto-flow: column;
                     grid-template-rows: repeat(2, 50px);
@@ -370,6 +369,7 @@
                         border: 1px solid darken($secondary-color, 40%);
                         border-radius: 50%;
                         box-shadow: 0 0 8px transparentize(darken($secondary-color, 40%), 0.5);
+                        user-select: none;
                         transition: transform 0.3s ease;
 
                         &:hover {
@@ -490,34 +490,46 @@
         }
 
         .bottom {
-            position: relative;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 5px;
             padding-top: 5px;
             overflow: hidden;
 
             .grid_select {
-                display: flex;
-                justify-content: center;
-                gap: 50px;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+                margin-top: 30px;
+                margin-right: 5px;
 
                 .all_posts_icon,
                 .saved_posts_icon {
-                    @include blue_button(50px);
-                    position: relative;
+                    width: 50px;
+                    margin: 0px auto;
+                    border-bottom: 1px solid transparent;
+                    transition: transform 0.3s ease, border-color 0.3s ease;
 
+                    &:hover,
                     &.active {
-                        border-color: $blue-color;
                         transform: scale(1.05);
+                        border-color: darken($secondary-color, 20%);
+                        cursor: pointer;
                     }
                     
                     .fa-buffer,
                     .fa-bookmark {
-                        @include position_center;
                         font-size: 2em;
-                        color: $blue-color;
+                        color: darken($secondary-color, 40%);
                     }
+                }
+
+                .all_posts_icon {
+                    grid-column: 1;
+                }
+
+                .saved_posts_icon {
+                    grid-column: 3;
                 }
             }
 
@@ -571,6 +583,11 @@
                             color: $secondary-color;
                         }
                     }
+                }
+
+                .no_posts,
+                .no_saved_posts {
+                    margin-top: 30px;
                 }
             }
 
