@@ -375,7 +375,141 @@
         {% if my_review %}
             <div class="my_review">
                 <h3>{% translate "Moje&nbsp;hodnotenie" %}</h3>
-                {% include "partials/reviews.html" with one_review=my_review %}
+                
+                <div class="one_review" data-review_id="{{ my_review.id }}">
+                    <div class="reviewer">
+                        {% if my_review.user.username %}
+                            <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if my_review.user.profile_picture_name %}
+                                            /media/images/{{ my_review.user.id }}/{{ my_review.user.profile_picture_name }}
+                
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                            </a>
+                
+                        {% else %}
+                            <img 
+                                class="profile_picture skeleton_loading" 
+                                src="
+                                    {% if my_review.user.profile_picture_name %}
+                                        /media/images/{{ my_review.user.id }}/{{ my_review.user.profile_picture_name }}
+                
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+                
+                        {% endif %}
+                
+                        <p class="username">
+                            {% if my_review.user == None %}
+                                {% translate "Neexistujúci účet" %}
+                
+                            {% else %}
+                                <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">{{ my_review.user.username }}</a>
+                
+                            {% endif %}
+                            
+                            <span class="date">
+                                - {{ my_review.creation_time|date:"d.m. Y" }}
+                                    
+                                {% if my_review.last_edit != None %}
+                                    ({% translate "upravené" %})
+                
+                                {% endif %}
+                            </span>
+                        </p>
+                
+                        <button 
+                            class="show_review_properties_button" 
+                            popovertarget="review_properties"
+                            style="anchor-name: --show_review_properties_button;"
+                            title="{% translate 'Viac...' %}"
+                        >
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </button>
+                
+                        <div 
+                            class="review_properties" 
+                            id="review_properties"
+                            popover
+                            style="position-anchor: --show_review_properties_button;"
+                        >
+                            <a class="edit_review" href="{% url 'edit_review_url' %}">
+                                <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+                                <span>{% translate "Upraviť" %}</span>
+                            </a>
+            
+                            <button 
+                                class="delete_review_button"
+                                popovertarget="delete_review"
+                                style="anchor-name: --delete_review_button;"
+                            >
+                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                <span>{% translate "Vymazať" %}</span>
+                            </button>
+                
+                            <button 
+                                class="hide_review_properties_button" 
+                                popovertarget="review_properties" 
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
+                
+                        <div 
+                            class="delete_review" 
+                            id="delete_review"
+                            popover
+                            style="position-anchor: --delete_review_button;"
+                        >
+                            <p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
+            
+                            <button data-action="delete">
+                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                <span>{% translate "Vymazať" %}</span>
+                            </button>
+            
+                            <button 
+                                popovertarget="delete_review"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zrušiť" %}</span>
+                            </button>
+                        </div>
+                    </div>
+                
+                    <div class="review">
+                        <div class="rating">
+                            {% for _ in "12345" %}
+                                {% if forloop.counter <= my_review.rating %}
+                                    <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                
+                                {% else %}
+                                    <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                                
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                
+                        {% if my_review.review %}
+                            <p>{{ my_review.review }}</p>
+                        
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
         {% else %}

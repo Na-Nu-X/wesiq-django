@@ -318,6 +318,7 @@ class Exercises(models.Model):
     unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
+    image_filename = models.CharField(verbose_name="Image Filename", max_length=50, null=True, blank=True)
 
 class OfficialTasks(models.Model):
     title = models.CharField(verbose_name="Title", max_length=100, null=False)
