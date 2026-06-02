@@ -619,11 +619,32 @@ def weeklyReport():
 @shared_task(name="app.tasks.cleanupOldActivities")
 def cleanupOldActivities():
     two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
-    old_activities = Activity.objects.filter(end_time__lt=two_weeks_ago).delete # Gets And Deletes The Activities Which Are Older Than 2 Weeks
+    old_activities = Activity.objects.filter(end_time__lt=two_weeks_ago).delete() # Gets And Deletes The Activities Which Are Older Than 2 Weeks
     old_activities_count = old_activities[0]
     
     # Sets Message
     message = f"{old_activities_count} Activity Older Than 2 Weeks Has Been Deleted" if old_activities_count == 1 else f"{old_activities_count} Activities Older Than 2 Weeks Have Been Deleted"
+    captureMessage(message)
+    return message
+
+@shared_task
+def resetActivityStreak():
+    two_days_ago = timezone.now() - timedelta(days=2) # Gets The 2 Days Ago Time
+
+    # Gets The Users With Expired Streaks (2 Days Without Activity)
+    users_with_expired_streaks = Users.objects.filter(
+        activity_streak__gt=0,
+        last_activity_streak_increase_time__lt=two_days_ago
+    )
+
+    users_with_expired_streaks_count = users_with_expired_streaks.count() # Gets The Number Of Users With Expired Streaks
+
+    # Resets The Activity Streak For Every User With Expired Streak
+    if users_with_expired_streaks_count > 0:
+        users_with_expired_streaks.update(activity_streak=0)
+
+    # Sets Message
+    message = f"{users_with_expired_streaks_count} User Activity Streak Has Been Reset" if users_with_expired_streaks_count == 1 else f"{users_with_expired_streaks_count} Users Activity Streaks Has Been Reset"
     captureMessage(message)
     return message
 

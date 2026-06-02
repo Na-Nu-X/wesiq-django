@@ -2189,7 +2189,7 @@ def trainingSessionView(request):
             # Use XP Boost
             if request.headers.get("X-Requested-Action") == "use-xp-boost":
                 try:
-                    xp_boost_expiration_time = timezone.now() + timedelta(minutes=10) # Creates The New XP Boost Expiration Time
+                    xp_boost_expiration_time = timezone.now() + timedelta(minutes=30) # Creates The New XP Boost Expiration Time
 
                     Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
 
