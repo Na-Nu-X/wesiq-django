@@ -2374,7 +2374,7 @@ def trainingSessionView(request):
 
                     new_activity.save() # Saves The New Activity
 
-                    # No Day Off Badge Completion
+                    # No Day Off Week Badge Completion
                     if not logged_in_user.badges.filter(data="no_day_off_week").exists():
                         seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
 
@@ -2392,6 +2392,42 @@ def trainingSessionView(request):
                                 user_id = logged_in_user_id,
                                 title = "No Day Off Week",
                                 data = "no_day_off_week"
+                            )
+
+                            new_badge.save() # Saves The New Badge
+
+                    # X-Mas Activity Badge Completion
+                    if not logged_in_user.badges.filter(data="xmas_activity").exists():
+                        has_xmas_activity = Activity.objects.filter(
+                            user=logged_in_user,
+                            end_time__month=12,
+                            end_time__day=24
+                        ).exists()
+
+                        if has_xmas_activity:
+                            # Creates The New Badge
+                            new_badge = SpecialBadges(
+                                user_id = logged_in_user_id,
+                                title = "X-Mas Activity",
+                                data = "xmas_activity"
+                            )
+
+                            new_badge.save() # Saves The New Badge
+
+                    # New Year, New Goals Badge Completion
+                    if not logged_in_user.badges.filter(data="new_year_new_goals").exists():
+                        has_new_year_new_goals = Activity.objects.filter(
+                            user=logged_in_user,
+                            end_time__month=1,
+                            end_time__day=1
+                        ).exists()
+
+                        if has_new_year_new_goals:
+                            # Creates The New Badge
+                            new_badge = SpecialBadges(
+                                user_id = logged_in_user_id,
+                                title = "New Year, New Goals",
+                                data = "new_year_new_goals"
                             )
 
                             new_badge.save() # Saves The New Badge
