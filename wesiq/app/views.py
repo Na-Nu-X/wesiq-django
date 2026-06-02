@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
-from app.models import Users, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
+from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -2072,13 +2072,13 @@ def trainingSessionView(request):
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
         today = timezone.now().date() # Determines Today's Date
-        start_date = today - timedelta(days=6) # Determines Previous 7th Date
+        seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
 
         # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
         weekly_activity = (
             Activity.objects
             .filter(
-                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=start_date) & Q(end_time__date__lte=today)
+                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=seven_days_ago) & Q(end_time__date__lte=today)
             )
             .annotate(day=TruncDate("end_time"))
             .values("day")
@@ -2362,7 +2362,7 @@ def trainingSessionView(request):
                                     max_activity_streak=F("activity_streak")
                                 )
 
-                    # Saves New Activity To Database
+                    # Creates The New Activity
                     new_activity = Activity(
                         user_id = logged_in_user_id,
                         elapsed_time = int(new_activity_data["elapsed_time"]),
@@ -2372,7 +2372,29 @@ def trainingSessionView(request):
                         training_plan_summary = new_activity_data["training_plan_summary"]
                     )
 
-                    new_activity.save()
+                    new_activity.save() # Saves The New Activity
+
+                    # No Day Off Badge Completion
+                    if not logged_in_user.badges.filter(data="no_day_off_week").exists():
+                        seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
+
+                        # Gets The Number Of Consecutive Days With Some Recorded Activity
+                        unique_seven_days_of_activity = Activity.objects.filter(
+                            user=logged_in_user,
+                            end_time__date__range=[seven_days_ago, today]
+                        ).values(
+                            "end_time__date"
+                        ).distinct().count()
+
+                        if unique_seven_days_of_activity == 7:
+                            # Creates The New Badge
+                            new_badge = SpecialBadges(
+                                user_id = logged_in_user_id,
+                                title = "No Day Off Week",
+                                data = "no_day_off_week"
+                            )
+
+                            new_badge.save() # Saves The New Badge
 
                     return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
 

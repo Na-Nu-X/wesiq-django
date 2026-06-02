@@ -189,6 +189,68 @@
                     </div>
 
                     <div class="badges">
+                        {% if user.role == "developer" %}
+                            <div class="badge developer" title="{% translate 'Vývojár' %}">
+                                <i class="fa-solid fa-code"></i> <!-- https://fontawesome.com/icons/code -->
+                            </div>
+
+                        {% endif %}
+
+                        {% if not user.total_transactions_amount == 0 %}
+                            <div 
+                                class="
+                                    badge donations
+                                    
+                                    {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
+                                        blue
+    
+                                    {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
+                                        green
+    
+                                    {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
+                                        yellow
+    
+                                    {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
+                                        orange
+    
+                                    {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
+                                        red
+    
+                                    {% else %}
+                                        purple
+                                     
+                                    {% endif %}
+                                "
+    
+                                title="{% translate 'Prispievateľ' %}"
+                            >   
+                                <i class="fa-solid fa-dollar-sign"></i> <!-- https://fontawesome.com/icons/dollar-sign -->
+
+                                <p>
+                                    {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
+                                        1€
+    
+                                    {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
+                                        2€
+    
+                                    {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
+                                        5€
+    
+                                    {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
+                                        10€
+    
+                                    {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
+                                        50€
+    
+                                    {% else %}
+                                        100+€
+                                    
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                        {% endif %}
+
                         <div 
                             class="
                                 badge level
@@ -481,6 +543,17 @@
                             </div>
 
                         {% endif %}
+
+                        {% for one_badge in user.badges.all %}
+                            <div class="badge {{ one_badge.data }}" title="{{ one_badge.title }}">
+                                {% if one_badge.data == "no_day_off_week" %}
+                                    <i class="fa-regular fa-calendar-check"></i> <!-- https://fontawesome.com/icons/calendar-check -->
+                                    <p>7</p>
+
+                                {% endif %}
+                            </div>
+                        
+                        {% endfor %}
 
                         <div class="badge empty"></div>
                         <div class="badge empty"></div>

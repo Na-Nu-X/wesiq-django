@@ -343,6 +343,13 @@
                 }
 
                 .badges {
+                    $blue-level:   #3b82f6;
+                    $green-level:  #10b981;
+                    $yellow-level: #f59e0b;
+                    $orange-level: #fa541c;
+                    $red-level:    #ef4444;
+                    $purple-level: #8b5cf6;
+
                     @include scrollbar($direction: "vertical");
                     display: grid;
                     grid-auto-flow: column;
@@ -368,38 +375,24 @@
                             cursor: pointer;
                         }
 
-                        &.level,
-                        &.xp,
-                        &.max_activity_streak,
-                        &.years_since_registration,
-                        &.total_activities,
-                        &.followers,
-                        &.posts {
-                            p {
-                                position: absolute;
-                                font-size: 1.2em;
-                                font-weight: bold;
-                            }
-
-                            i {
-                                font-size: 2em;
-                                opacity: 0.2;
-                            }
+                        p {
+                            position: absolute;
+                            font-size: 1.2em;
+                            font-weight: bold;
                         }
 
+                        i {
+                            font-size: 2em;
+                            opacity: 0.2;
+                        }
+
+                        &.donations,
                         &.level,
                         &.xp,
                         &.years_since_registration,
                         &.total_activities,
                         &.followers,
                         &.posts {
-                            $blue-level:   #3b82f6;
-                            $green-level:  #10b981;
-                            $yellow-level: #f59e0b;
-                            $orange-level: #fa541c;
-                            $red-level:    #ef4444;
-                            $purple-level: #8b5cf6;
-
                             &.blue {
                                 background-color: transparentize($blue-level, 0.85);
                                 color: $blue-level;
@@ -443,6 +436,13 @@
                             }
                         }
 
+                        &.developer {
+                            background-color: transparentize($red-level, 0.85);
+                            color: $red-level;
+                            border-color: transparentize($red-level, 0.7);
+                            box-shadow: 0 0 8px transparentize($red-level, 0.5);
+                        }
+
                         &.xp {
                             p {
                                 display: flex;
@@ -456,15 +456,12 @@
                             }
                         }
 
-                        &.max_activity_streak {
+                        &.max_activity_streak,
+                        &.no_day_off_week {
                             background-color: transparentize($article-color, 0.85);
                             color: $article-color;
                             border-color: transparentize($article-color, 0.7);
                             box-shadow: 0 0 8px transparentize($article-color, 0.5);
-
-                            .fa-fire {
-                                color: $article-color;
-                            }
                         }
                     }
                 }
