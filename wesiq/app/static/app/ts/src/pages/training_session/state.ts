@@ -77,7 +77,7 @@ export const xp_boost_interval:{
     SPEED: 1000 * GLOBAL_SPEED, // 1 Second Interval
     interval: null,
     amount: 2, // Double XP Boost
-    max_remaining_time: 600, // 10 Minutes
+    max_remaining_time: 60 * 30, // 30 Minutes
     remaining_time: xp_boost_expiration_time,
 }
 
