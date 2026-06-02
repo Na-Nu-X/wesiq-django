@@ -5,12 +5,14 @@ import secrets, os, math
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.db.models import Sum
 from django.utils.translation import gettext as _
 
 class Users(models.Model):
     role_choices = [
-        ("user", "user"),
+        ("developer", "developer"),
         ("admin", "admin"),
+        ("user", "user")
     ]
 
     account_status_choices = [
@@ -56,6 +58,11 @@ class Users(models.Model):
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
 
     @property
+    def total_transactions_amount(self):
+        total_transactions_amount = self.transactions.aggregate(Sum("amount"))["amount__sum"] # Calculates And Gets The Dictionary With User's Total Transactions Amount
+        return total_transactions_amount or 0 # Returns The User's Total Transactions Amount
+
+    @property
     def level(self):
         if self.xp == 0:
             return 1
@@ -94,6 +101,18 @@ class Users(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
+
+class SpecialBadges(models.Model):
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        related_name="badges", 
+        null=False
+    )
+
+    title = models.CharField(verbose_name="Title", max_length=50, null=False)
+    data = models.CharField(verbose_name="Data", max_length=50, null=False)
 
 class UserDailyOfficialTasks(models.Model):
     task = models.ForeignKey(
