@@ -54,11 +54,21 @@
                     {{ edit_account_form.delete_profile_picture }}
                 </div>
 
+                <p class="friend_code">Friend Code - <span>{{ logged_in_user.friend_code }}</span></p>
+
                 <div class="bio_container">
                     {{ edit_account_form.bio }}
     
                     <div class="icons">
+                        <div class="links"></div>
+
+                        <i class="toggle_show_add_link_container fa-solid fa-link" title="{% translate 'Pridať odkaz' %}"></i> <!-- https://fontawesome.com/icons/link -->
                         <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                    </div>
+
+                    <div class="add_link_container active">
+                        <input class="url" type="text" placeholder="https://example.com">
+                        <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button>
                     </div>
     
                     <div class="emoji_picker_container hidden">
@@ -66,24 +76,26 @@
                     </div>
                 </div>
 
-                <div class="first_name_container">
-                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                    {{ edit_account_form.first_name }}
-                </div>
-                
-                <div class="last_name_container">
-                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                    {{ edit_account_form.last_name }}
-                </div>
-                
-                <div class="email_address_container">
-                    <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
-                    {{ edit_account_form.email_address }}
-                </div>
-                
-                <div class="phone_number_container">
-                    <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
-                    {{ edit_account_form.phone_number }}
+                <div class="inputs">
+                    <div class="first_name_container">
+                        <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                        {{ edit_account_form.first_name }}
+                    </div>
+                    
+                    <div class="last_name_container">
+                        <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                        {{ edit_account_form.last_name }}
+                    </div>
+                    
+                    <div class="email_address_container">
+                        <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                        {{ edit_account_form.email_address }}
+                    </div>
+                    
+                    <div class="phone_number_container">
+                        <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                        {{ edit_account_form.phone_number }}
+                    </div>
                 </div>
 
                 <p class="form_report" style="bottom: 194px;"></p>
@@ -117,34 +129,49 @@
                             "
                         >
             
-                        <p class="username">{{ user.username }}</p>
+                        <div class="name">
+                            <p class="username">{{ user.username }}</p>
 
-                        {% if user.first_name and user.last_name %}
-                            <p class="full_name">{{ user.first_name }} {{ user.last_name }}</p>
-                        
-                        {% endif %}
+                            {% if user.first_name and user.last_name %}
+                                <p class="full_name">{{ user.first_name }} {{ user.last_name }}</p>
+                            
+                            {% endif %}
+                        </div>
                     </div>
     
-                    <p class="streak">
-                        <!-- https://fontawesome.com/icons/fire -->
-                        <i class="
-                                fa-solid fa-fire
+                    <p class="
+                            streak
 
-                                {% if user.has_already_increased_activity_streak %}
-                                    increased
-                                
-                                {% endif %}
-                            "
-                        >
-                        </i>
-
+                            {% if user.has_already_increased_activity_streak %}
+                                increased
+                            
+                            {% endif %}
+                        "
+                    >
+                        <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
                         <span>{{ user.activity_streak }}</span>
                     </p>
                 </div>
     
                 <div class="bottom">
                     {% if user.bio %}
-                        <p class="bio">{{ user.bio }}</p>
+                        <div class="bio_container">
+                            <p class="bio">{{ user.bio }}</p>
+
+                            <div class="links">
+                                <a href="#">
+                                    <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
+                                </a>
+    
+                                <a href="#">
+                                    <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
+                                </a>
+    
+                                <a href="#">
+                                    <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
+                                </a>
+                            </div>
+                        </div>
                     
                     {% endif %}
                 </div>
@@ -152,14 +179,16 @@
 
             <div class="middle">
                 <div class="follow_container">
-                    <div class="followers">
-                        <p class="label">{% translate "sledujú" %}</p>
-                        <p class="amount">{{ user.followers.count }}</p>
-                    </div>
-
-                    <div class="following">
-                        <p class="label">{% translate "sleduje" %}</p>
-                        <p class="amount">{{ user.following.count }}</p>
+                    <div class="statistics">
+                        <div class="followers">
+                            <p class="amount">{{ user.followers.count }}</p>
+                            <p class="label">{% translate "sledujú" %}</p>
+                        </div>
+    
+                        <div class="following">
+                            <p class="amount">{{ user.following.count }}</p>
+                            <p class="label">{% translate "sleduje" %}</p>
+                        </div>
                     </div>
 
                     {% if not request.session.logged_in_user_id == user.id %}

@@ -3,7 +3,7 @@
 document.addEventListener("DOMContentLoaded", function():void {
     // Variables
 
-    const MAX_EMPTY_BADGES:number = 12 // Defines The Amount Of The Maximum Empty Badges
+    const MAX_EMPTY_BADGES:number = 14 // Defines The Amount Of The Maximum Empty Badges
 
     const SCROLL_STEP:number = 20
     const HOLD_INTERVAL_SPEED:number = 50 // 20-Times Per Second
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Initialization
     
-    if(all_badges.length < 12) {
+    if(all_badges.length < MAX_EMPTY_BADGES) {
         const remaining_empty_badges:number = MAX_EMPTY_BADGES - all_badges.length // Gets The Number Of Remaining Empty Badges
 
         for(let i:number = 0; i < remaining_empty_badges; i++) {

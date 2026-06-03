@@ -482,3 +482,29 @@ class uploadPostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ["location", "public_visibility", "allow_comments", "hide_likes"]
+
+class bioLinksForm(forms.Form):
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "title", "placeholder": _("Instagram / Facebook / YouTube...")}),
+        label=False,
+        max_length=20,
+        required=True,
+
+        error_messages={
+            "max_length": _("Zadaný názov je príliš dlhý"),
+            "required": _("Zadajte názov"),
+        }
+    )
+
+    url = forms.URLField(
+        widget=forms.URLInput(attrs={"class": "url", "placeholder": _("https://example.com")}),
+        label=False,
+        max_length=200,
+        required=True,
+
+        error_messages={
+            "invalid": _("Zadaná URL adresa nie je platná"),
+            "max_length": _("Zadaná URL adresa je príliš dlhá"),
+            "required": _("Zadajte URL adresu"),
+        }
+    )

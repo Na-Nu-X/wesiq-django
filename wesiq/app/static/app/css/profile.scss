@@ -11,7 +11,6 @@
     max-width: 500px;
     margin: 0px auto;
     padding: 30px 50px 50px;
-    text-align: center;
     border-radius: $medium-border-radius;
     overflow: hidden;
 
@@ -37,12 +36,12 @@
         .back .fa-chevron-left,
         .fa-gear {
             font-size: 2em;
-            color: transparentize($blue-color, 0.5);
+            color: darken($secondary-color, 40%);
             transition: color 0.3s ease, transform 0.3s ease;
             z-index: 100;
     
             &:hover {
-                color: $blue-color;
+                color: darken($secondary-color, 20%);
                 transform: scale(1.1);
                 cursor: pointer;
             }
@@ -66,6 +65,9 @@
     // Edit Account Form
 
     .edit_account_form {
+        position: relative;
+        text-align: center;
+
         .profile_picture_container {
             display: flex;
             align-items: center;
@@ -107,20 +109,36 @@
             }
         }
 
+        .friend_code {
+            text-align: left;
+
+            span {
+                font-weight: bold;
+            }
+        }
+
         .bio_container {
             position: relative;
             display: flex;
             flex-direction: column;
-            width: 90%;
-            margin: 10px auto 0px;
+            width: 100%;
+            margin: 10px auto 30px;
             border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $small-border-radius;
-            transition: width 0.3s ease, border-color 0.3s ease;
+            transition: border-color 0.3s ease;
     
             &:has(.bio:focus),
             &:hover {
-                width: 100%;
                 border-color: $blue-color;
+
+                .add_link_container {
+                    border-color: $blue-color;
+                }
+            }
+
+            &:has(.add_link_container.active) {
+                border-bottom: none;
+                border-radius: $small-border-radius $small-border-radius 0px 0px;
             }
     
             .bio {
@@ -143,13 +161,75 @@
                 display: flex;
                 align-items: center;
                 justify-content: right;
+                gap: 10px;
                 height: 25px;
                 padding: 0px 10px;
-                background-color: transparentize($main-color, 0.5);
+                background-color: transparentize($blue-color, 0.85);
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
+
+                .links {
+                    display: flex;
+                    gap: 10px;
+                    flex: 1;
+                    text-align: left
+                }
     
-                .add_emoji {
+                i {
                     @include icon;
+                }
+            }
+
+            .add_link_container {
+                visibility: hidden;
+                opacity: 0;
+                pointer-events: none;
+                position: absolute;
+                top: 100%;
+                transform: translate(-1px, -100%);
+                display: flex;
+                align-items: center;
+                width: calc(100% + 2px);
+                padding: 5px 0px;
+                background-color: transparentize($blue-color, 0.85);
+                backdrop-filter: blur(5px);
+                border-right: 1px solid transparentize($blue-color, 0.5);
+                border-bottom: 1px solid transparentize($blue-color, 0.5);
+                border-left: 1px solid transparentize($blue-color, 0.5);
+                border-radius: 0px 0px $small-border-radius $small-border-radius;
+                transition: visibility 0.3s ease, opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+                z-index: 100;
+
+                &.active {
+                    visibility: visible;
+                    opacity: 1;
+                    pointer-events: all;
+                    transform: translate(-1px, 0%);
+                }
+                
+                .url {
+                    flex: 1;
+                    padding: 0px 10px;
+                    vertical-align: middle;
+                    background: transparent;
+                    color: $secondary-color;
+                    border: none;
+                    outline: none;
+                }
+
+                .add_link {
+                    all: unset;
+                    margin-right: 10px;
+                    text-align: center;
+                    transition: transform 0.3s ease;
+                    
+                    &:hover {
+                        transform: scale(1.1);
+                        cursor: pointer;
+                    }
+    
+                    .fa-plus {
+                        font-size: 2em;
+                    }
                 }
             }
     
@@ -158,36 +238,67 @@
             }
         }
 
-        .first_name_container, .last_name_container, .email_address_container, .phone_number_container {
-            position: relative;
+        .inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            
+            .first_name_container, 
+            .last_name_container, 
+            .email_address_container, 
+            .phone_number_container {
+                position: relative;
 
-            input[type="text"], input[type="email"], input[type="tel"] {
-                @include form_input;
+                input[type="text"], input[type="email"], input[type="tel"] {
+                    width: 100%;
+                    height: 50px;
+                    margin-bottom: 10px;
+                    padding: 0px 10px;
+                    background: transparent;
+                    color: $secondary-color;
+                    border: none;
+                    border-bottom: 1px solid darken($secondary-color, 40%);
+                    outline: none;
+                    transition: border 0.3s ease;
+
+                    &:hover,
+                    &:focus {
+                        border-bottom: 1px solid darken($secondary-color, 20%);
+                    }
+
+                    &::placeholder {
+                        color: darken($secondary-color, 40%);
+                    }
+
+                    &:-webkit-autofill {
+                        -webkit-text-fill-color: rgb(255, 255, 255);
+                        transition: background-color 9999s ease;
+
+                        &:hover,
+                        &:focus {
+                            -webkit-text-fill-color: rgb(255, 255, 255);
+                            transition: background-color 9999s ease;
+                        }
+                    }
+                }
+
+                .first_name, .last_name {
+                    padding-right: 23px !important;
+                }
+
+                .email_address, .phone_number {
+                    padding-right: 25px !important;
+                }
+
+                i {
+                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    display: block;
+                    position: absolute;
+                    bottom: 10px;
+                    right: 0px;
+                    padding: 19px 0px 16px;
+                }
             }
-
-            .first_name, .last_name {
-                padding-right: 23px !important;
-            }
-
-            .email_address, .phone_number {
-                padding-right: 25px !important;
-            }
-
-            i {
-                @include icon;
-                display: block;
-                position: absolute;
-                bottom: 10px;
-                left: 3px;
-                padding: 19px 0px 16px;
-            }
-        }
-
-        .first_name_container:has(.first_name:hover) .fa-user, .first_name_container:has(.first_name:focus) .fa-user,
-        .last_name_container:has(.last_name:hover) .fa-user, .last_name_container:has(.last_name:focus) .fa-user,
-        .email_address_container:has(.email_address:hover) .fa-envelope, .email_address_container:has(.email_address:focus) .fa-envelope,
-        .phone_number_container:has(.phone_number:hover) .fa-phone, .phone_number_container:has(.phone_number:focus) .fa-phone {
-            left: -16px;
         }
 
         .form_report {
@@ -240,7 +351,7 @@
             .top {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-end;
     
                 .info {
                     display: flex;
@@ -255,36 +366,74 @@
                             transform: scale(1.05);
                         }
                     }
-    
-                    .username {
-                        font-size: 1.2em;
-                    }
-                }
-    
-                .streak {
-                    display: flex;
-                    align-items: center;
-                    gap: 5px;
-    
-                    .fa-fire {
-                        color: darken($secondary-color, 40%);
-                        font-size: 1.2em;
+                    
+                    .name {
+                        display: flex;
+                        flex-direction: column;
 
-                        &.increased {
-                            color: $article-color;
+                        .username {
+                            font-size: 1.2em;
+                        }
+
+                        .full_name {
+                            font-size: 0.9em;
                         }
                     }
-    
+                }
+
+                .streak {
+                    user-select: none;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    padding: 5px 10px;
+                    background-color: transparentize($secondary-color, 0.9);
+                    color: transparentize($secondary-color, 0.5);
+                    border: 1px solid transparentize($secondary-color, 0.8);
+                    border-radius: $big-border-radius;
+
+                    .fa-fire {
+                        font-size: 1em; 
+                    }
+
                     span {
-                        font-size: 1.2em;
+                        font-size: 1em;
+                        font-weight: bolder;
+                        line-height: 1;
+                    }
+
+                    &.increased {
+                        background-color: transparentize($article-color, 0.8);
+                        color: $article-color;
+                        border-color: transparentize($article-color, 0.6);
+                        
+                        .fa-fire,
+                        span {
+                            color: $article-color;
+                        }
                     }
                 }
             }
 
             .bottom {
-                .bio {
-                    font-size: 0.9em;
-                    text-align: justify;
+                gap: 0px;
+
+                .bio_container {
+                    .bio {
+                        font-size: 0.9em;
+                        text-align: justify;
+                    }
+
+                    .links {
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 5px;
+
+                        i {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                        }
+                    }
                 }
             }
         }
@@ -292,20 +441,30 @@
         .middle {
             .follow_container {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
+                gap: 20px;
                 margin-bottom: 20px;
+                
+                .statistics {
+                    display: flex;
+                    gap: 20px;
 
-                div {
-                    .label {
-                        font-size: 0.8em;
-                    }
+                    .followers,
+                    .following {
+                        .amount {
+                            font-size: 1.5em;
+                            font-weight: bold;
+                            line-height: 1;
+                        }
 
-                    .amount {
-                        font-size: 1.2em;
+                        .label {
+                            color: darken($secondary-color, 40%);
+                            text-transform: uppercase;
+                        }
                     }
                 }
-
+                
                 .follow_button {
                     height: 35px;
                     padding: 5px 10px;
@@ -326,13 +485,19 @@
             }
 
             .badges_container {
-                @include flex_center;
+                position: relative;
 
                 .previous {
-                    transition: transform 0.3s ease;
+                    position: absolute;
+                    top: 50%;
+                    left: 0px;
+                    transform: translate(calc(-100% - 10px), -50%);
+                    color: darken($secondary-color, 40%);
+                    transition: transform 0.3s ease, color 0.3s ease;
 
                     &:hover {
-                        transform: scale(1.1);
+                        transform: translate(calc(-100% - 10px), -50%) scale(1.1);
+                        color: darken($secondary-color, 20%);
                         cursor: pointer;
                     }
 
@@ -356,8 +521,8 @@
                     grid-auto-columns: 50px;
                     gap: 10px;
                     flex: 1;
-                    max-width: 100%;
-                    padding: 10px 10px 5px;
+                    width: 100%;
+                    padding: 10px 0px 10px;
                     scroll-behavior: smooth;
     
                     .badge {
@@ -365,10 +530,8 @@
                         position: relative;
                         width: 50px;
                         height: 50px;
-                        background-color: transparentize(darken($secondary-color, 40%), 0.85);
-                        border: 1px solid darken($secondary-color, 40%);
+                        border: 1px solid transparentize($secondary-color, 0.8);
                         border-radius: 50%;
-                        box-shadow: 0 0 8px transparentize(darken($secondary-color, 40%), 0.5);
                         user-select: none;
                         transition: transform 0.3s ease;
 
@@ -475,10 +638,16 @@
                 }
 
                 .next {
-                    transition: transform 0.3s ease;
+                    position: absolute;
+                    top: 50%;
+                    right: 0px;
+                    transform: translate(calc(100% + 10px), -50%);
+                    color: darken($secondary-color, 40%);
+                    transition: transform 0.3s ease, color 0.3s ease;
 
                     &:hover {
-                        transform: scale(1.1);
+                        transform: translate(calc(100% + 10px), -50%) scale(1.1);
+                        color: darken($secondary-color, 20%);
                         cursor: pointer;
                     }
 
@@ -505,22 +674,45 @@
 
                 .all_posts_icon,
                 .saved_posts_icon {
-                    width: 50px;
+                    position: relative;
+                    width: 100%;
                     margin: 0px auto;
+                    padding-bottom: 5px;
                     border-bottom: 1px solid transparent;
+                    text-align: center;
                     transition: transform 0.3s ease, border-color 0.3s ease;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        bottom: 0px;
+                        left: 0px;
+                        width: 100%;
+                        height: 2px;
+                        background-color: transparent;
+                        border-radius: $small-border-radius;
+                        transition: background-color 0.3s ease;
+                    }
 
                     &:hover,
                     &.active {
-                        transform: scale(1.05);
-                        border-color: darken($secondary-color, 20%);
                         cursor: pointer;
+
+                        &::before {
+                            background-color: $secondary-color;
+                        }
+
+                        .fa-buffer,
+                        .fa-bookmark {
+                            color: $secondary-color;
+                        }
                     }
                     
                     .fa-buffer,
                     .fa-bookmark {
-                        font-size: 2em;
+                        font-size: 1.8em;
                         color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
                     }
                 }
 
@@ -578,9 +770,22 @@
                             top: 5px;
                             right: 5px;
                             display: flex;
+                            align-items: center;
                             gap: 5px;
                             line-height: 15px;
+                            padding: 2px 5px;
+                            background-color: transparentize($main-color, 0.8);
                             color: $secondary-color;
+                            border-radius: $small-border-radius;
+                            
+                            span,
+                            i {
+                                font-size: 0.8em;
+                            }
+
+                            span {
+                                font-weight: bold;
+                            }
                         }
                     }
                 }
@@ -588,6 +793,7 @@
                 .no_posts,
                 .no_saved_posts {
                     margin-top: 30px;
+                    text-align: center;
                 }
             }
 
