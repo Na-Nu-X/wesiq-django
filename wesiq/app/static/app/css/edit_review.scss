@@ -121,7 +121,7 @@
             justify-content: right;
             height: 25px;
             padding: 0px 10px;
-            background-color: transparentize($main-color, 0.5);
+            background-color: transparentize($blue-color, 0.85);
             border-radius: 0px 0px $small-border-radius $small-border-radius;
 
             .add_emoji {

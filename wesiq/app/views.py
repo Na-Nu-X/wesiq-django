@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm, bioLinksForm
 from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
 from django.contrib.auth import logout
 from pathlib import Path
@@ -3538,11 +3538,13 @@ def profileView(request, username):
                     "logged_in_user": {
                         "id": logged_in_user.id,
                         "username": logged_in_user.username,
-                        "profile_picture_name": logged_in_user.profile_picture_name
+                        "profile_picture_name": logged_in_user.profile_picture_name,
+                        "friend_code": logged_in_user.friend_code
                     },
 
                     "user": user,
                     "edit_account_form": filled_edit_account_form,
+                    "bio_links_form": bioLinksForm,
                     "posts": posts,
                     "saved_posts": saved_posts
                 })

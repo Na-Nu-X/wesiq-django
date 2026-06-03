@@ -24,14 +24,85 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Bio Links Form
+
+    // Variables
+    
+    const bio_container:HTMLDivElement = edit_account_form.querySelector(".bio_container") as HTMLDivElement // Gets The Bio Container
+    const icons:HTMLDivElement = bio_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
+    const links:HTMLDivElement = icons.querySelector(".links") as HTMLDivElement // Gets The Links Container
+    const toggle_show_add_link_container:HTMLElement = icons.querySelector(".toggle_show_add_link_container") as HTMLElement // Gets The Toggle Show Bio Links Form Icon
+    const add_link_container:HTMLDivElement = bio_container.querySelector(".add_link_container") as HTMLDivElement // Gets The Bio Links Form
+    const url_input:HTMLInputElement = bio_container.querySelector(".url") as HTMLInputElement // Gets The URL Input
+    const add_link_button:HTMLButtonElement = add_link_container.querySelector(".add_link") as HTMLButtonElement // Gets The Add Link Button
+
+    // Functions
+
+    // Function For Get The URL From String
+    function getURL(string:string):URL|null {
+        try {
+            return new URL(string)
+        }
+        
+        catch(_) {
+            return null
+        }
+    }
+
+    // Function For Check If The URL Already Exist In Some Link
+    function isExistingLink(url:URL, container:HTMLDivElement):boolean {
+        const all_links:NodeListOf<HTMLAnchorElement> = container.querySelectorAll<HTMLAnchorElement>("a") // Gets All Links
+        return [...all_links].some(one_link => one_link.href === String(url)) // Returns True If The URL Already Exist
+    }
+
+    // Function For Create The Link
+    function createLink(url:URL):HTMLAnchorElement {
+        const link:HTMLAnchorElement = document.createElement("a") // Creates The Link
+        const hostname:string = url.hostname // Gets The URL's Hostname
+
+        link.href = String(url) // Sets The URL To The Link
+
+        switch(hostname) {
+            case "www.instagram.com":
+                link.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
+                break
+
+            case "www.facebook.com":
+                link.innerHTML = "<i class='fa-brands fa-facebook'></i>" // https://fontawesome.com/icons/brands/solid/facebook
+                break
+
+            case "www.youtube.com":
+                link.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
+                break
+        
+            default:
+                link.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
+                break
+        }
+
+        return link // Returns The Link
+    }
+
+    // Events
+
+    toggle_show_add_link_container.addEventListener("click", () => add_link_container.classList.toggle("active")) // Shows Or Hides The Bio Links Form
+
+    // Add Link Button Click Functionality
+    add_link_button.addEventListener("click", function():void {
+        const entered_url:string = url_input.value // Gets The Entered URL
+
+        if(getURL(entered_url)) {
+            const url:URL|null = getURL(entered_url) // Gets The URL
+            if(url && links.childElementCount < 3 && !isExistingLink(url, links)) links.appendChild(createLink(url)) // Appends The Link To The Links Container
+        }
+    })
+
     // Add Emoji
 
     // Variables
 
-    const edit_review_form:HTMLFormElement = document.querySelector(".profile_container .edit_account_form") as HTMLFormElement // Gets The Edit Account Form
-    const bio_container:HTMLDivElement = edit_review_form.querySelector(".bio_container") as HTMLDivElement // Gets The Bio Container
     const bio:HTMLTextAreaElement = bio_container.querySelector(".bio") as HTMLTextAreaElement // Gets The Bio Textarea
-    const add_emoji:HTMLElement = bio_container.querySelector(".icons .add_emoji") as HTMLElement // Gets The Add Emoji Icon
+    const add_emoji:HTMLElement = icons.querySelector(".add_emoji") as HTMLElement // Gets The Add Emoji Icon
     const emoji_picker_container:HTMLDivElement = bio_container.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
     const picker:Element = emoji_picker_container.querySelector("emoji-picker") as Element // Gets The Emoji Picker
 

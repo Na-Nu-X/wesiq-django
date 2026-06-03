@@ -269,7 +269,7 @@ header {
                     justify-content: space-between;
                     height: 25px;
                     padding: 0px 10px;
-                    background-color: transparentize($main-color, 0.5);
+                    background-color: transparentize($blue-color, 0.85);
                     border-radius: 0px 0px $small-border-radius $small-border-radius;
 
                     .settings {
@@ -1058,6 +1058,7 @@ header {
                             background-color: transparentize($main-color, 0.8);
                             border-radius: 50%;
                             transition: opacity 0.3s ease;
+                            z-index: 50;
                         
                             &.hidden {
                                 opacity: 0;
@@ -1084,6 +1085,7 @@ header {
                             align-items: center;
                             gap: 10px;
                             height: 50px;
+                            z-index: 50;
                         
                             &.hidden {
                                 span {

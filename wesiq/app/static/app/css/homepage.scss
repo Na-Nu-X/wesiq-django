@@ -487,6 +487,11 @@ header {
                     width: 50%;
                     transform-origin: left;
 
+                    &:has(input:hover) i, 
+                    &:has(input:focus) i {
+                        right: 0px;
+                    }
+
                     input[type="text"], input[type="email"], input[type="tel"] {
                         width: calc(90% - 20px);
                         height: 50px;
@@ -537,13 +542,6 @@ header {
                         right: 20px;
                         padding: 19px 0px 16px;
                     }
-                }
-
-                .first_name_container:has(.first_name:hover) .fa-user, .first_name_container:has(.first_name:focus) .fa-user,
-                .last_name_container:has(.last_name:hover) .fa-user, .last_name_container:has(.last_name:focus) .fa-user,
-                .email_address_container:has(.email_address:hover) .fa-envelope, .email_address_container:has(.email_address:focus) .fa-envelope,
-                .phone_number_container:has(.phone_number:hover) .fa-phone, .phone_number_container:has(.phone_number:focus) .fa-phone {
-                    right: 0px;
                 }
 
                 .phone_number_container {
@@ -1189,7 +1187,7 @@ header {
                         justify-content: right;
                         height: 25px;
                         padding: 0px 10px;
-                        background-color: transparentize($main-color, 0.5);
+                        background-color: transparentize($blue-color, 0.85);
                         border-radius: 0px 0px $small-border-radius $small-border-radius;
     
                         .add_emoji {
@@ -1353,7 +1351,7 @@ header {
                 justify-content: space-between;
                 height: 25px;
                 padding: 0px 10px;
-                background-color: transparentize($main-color, 0.5);
+                background-color: transparentize($blue-color, 0.85);
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
 
                 p {
