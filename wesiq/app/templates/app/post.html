@@ -128,10 +128,10 @@
                                     data-id="{{ post.user_id }}"
                                     data-action="
                                         {% if not logged_in_user in post.user.followers.all %}
-                                            {% translate 'follow' %}
+                                            follow
 
                                         {% else %}
-                                            {% translate 'unfollow' %}
+                                            unfollow
                                         
                                         {% endif %}
                                     "

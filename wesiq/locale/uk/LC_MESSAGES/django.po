@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 10:27+0000\n"
+"POT-Creation-Date: 2026-06-04 18:07+0000\n"
 "PO-Revision-Date: 2026-04-02 11:35+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,272 +16,559 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: app/forms.py:6 app/forms.py:12 app/forms.py:130
+#: app/forms.py:8 app/forms.py:22
 msgid "Zadajte vaše meno"
 msgstr "Введіть своє ім'я"
 
-#: app/forms.py:11 app/forms.py:129 app/forms.py:199
+#: app/forms.py:16 app/forms.py:152 app/forms.py:270
+msgid "Meno môže obsahovať iba písmená"
+msgstr ""
+
+#: app/forms.py:21 app/forms.py:157 app/forms.py:275
 msgid "Zadané meno je príliš dlhé"
 msgstr "Введене вами ім'я занадто довге"
 
-#: app/forms.py:17 app/forms.py:23 app/forms.py:141
+#: app/forms.py:27 app/forms.py:41
 msgid "Zadajte vaše priezvisko"
 msgstr "Введіть своє прізвище"
 
-#: app/forms.py:22 app/forms.py:140 app/forms.py:209
+#: app/forms.py:35 app/forms.py:170 app/forms.py:288
+msgid "Priezvisko môže obsahovať iba písmená"
+msgstr ""
+
+#: app/forms.py:40 app/forms.py:175 app/forms.py:293
 msgid "Zadané priezvisko je príliš dlhé"
 msgstr "Введене прізвище занадто довге"
 
-#: app/forms.py:28 app/forms.py:34 app/forms.py:89 app/forms.py:95
-#: app/forms.py:152 app/forms.py:337 app/forms.py:343
+#: app/forms.py:46 app/forms.py:53 app/forms.py:206
 msgid "Zadajte váš e-mail"
 msgstr "Введіть адресу електронної пошти"
 
-#: app/forms.py:33 app/forms.py:94 app/forms.py:151 app/forms.py:219
-#: app/forms.py:342
+#: app/forms.py:52 app/forms.py:205 app/forms.py:304
 msgid "Zadaný e-mail je príliš dlhý"
 msgstr "Введена вами електронна адреса занадто довга"
 
-#: app/forms.py:40 app/templates/app/homepage.html:615
-#: app/templates/app/homepage.html:618 app/templates/app/homepage.html:623
+#: app/forms.py:59 app/templates/app/homepage.html:603
+#: app/templates/app/homepage.html:606 app/templates/app/homepage.html:611
 msgid "Otázka"
 msgstr "Питання"
 
-#: app/forms.py:41 app/templates/app/homepage.html:624
+#: app/forms.py:60 app/templates/app/homepage.html:612
 msgid "Návrh na zlepšenie"
 msgstr "Пропозиція щодо покращення"
 
-#: app/forms.py:42 app/templates/app/homepage.html:625
+#: app/forms.py:61 app/templates/app/homepage.html:613
 msgid "Nahlásenie chyby"
 msgstr "Повідомити про помилку"
 
-#: app/forms.py:49 app/forms.py:55
+#: app/forms.py:68 app/forms.py:75
 msgid "Napíšte správu"
 msgstr "Написати повідомлення"
 
-#: app/forms.py:54
+#: app/forms.py:74
 msgid "Vaša správa je príliš dlhá"
 msgstr "Ваше повідомлення занадто довге"
 
-#: app/forms.py:74
+#: app/forms.py:94
 msgid "Zanechajte nám hodnotenie"
 msgstr "Залиште нам оцінку"
 
-#: app/forms.py:79
+#: app/forms.py:100
 msgid "Vaša recenzia je príliš dlhá"
 msgstr "Ваш відгук занадто довгий"
 
-#: app/forms.py:100 app/forms.py:104
+#: app/forms.py:106
+msgid "Používateľské meno alebo e-mail"
+msgstr ""
+
+#: app/forms.py:112
+#, fuzzy
+#| msgid "Zadaný e-mail je príliš dlhý"
+msgid "Zadané používateľské meno alebo e-mail je príliš dlhý"
+msgstr "Введена вами електронна адреса занадто довга"
+
+#: app/forms.py:113
+msgid "Zadajte používateľské meno alebo e-mail"
+msgstr ""
+
+#: app/forms.py:118 app/forms.py:123
 msgid "Zadajte vaše heslo"
 msgstr "Введіть свій пароль"
 
-#: app/forms.py:110 app/forms.py:118 app/forms.py:167 app/forms.py:175
+#: app/forms.py:129 app/forms.py:138 app/forms.py:222 app/forms.py:231
 msgid "Vytvorte heslo"
 msgstr "Створіть пароль"
 
-#: app/forms.py:116 app/forms.py:173 app/forms.py:186
+#: app/forms.py:136 app/forms.py:229 app/forms.py:243
 msgid "Zadané heslo je príliš krátke"
 msgstr "Введений вами пароль занадто короткий"
 
-#: app/forms.py:117 app/forms.py:174 app/forms.py:187
+#: app/forms.py:137 app/forms.py:230 app/forms.py:244
 msgid "Zadané heslo je príliš dlhé"
 msgstr "Введений вами пароль занадто довгий"
 
-#: app/forms.py:124
+#: app/forms.py:144
 msgid "Meno"
 msgstr "Ім'я"
 
-#: app/forms.py:135
+#: app/forms.py:162
 msgid "Priezvisko"
 msgstr "Прізвище"
 
-#: app/forms.py:146
+#: app/forms.py:180
+msgid "Používateľské meno"
+msgstr ""
+
+#: app/forms.py:188
+msgid "Zvoľte si iné používateľské meno"
+msgstr ""
+
+#: app/forms.py:193
+#, fuzzy
+#| msgid "Zadané meno je príliš dlhé"
+msgid "Zadané používateľské meno je príliš dlhé"
+msgstr "Введене вами ім'я занадто довге"
+
+#: app/forms.py:194
+msgid "Vytvorte používateľské meno"
+msgstr ""
+
+#: app/forms.py:199
 msgid "E-mail"
 msgstr "Електронна пошта"
 
-#: app/forms.py:157
+#: app/forms.py:211
 msgid "Telefónne číslo"
 msgstr "Номер телефону"
 
-#: app/forms.py:162 app/forms.py:229
+#: app/forms.py:217 app/forms.py:315
 msgid "Zadané telefónne číslo je príliš dlhé"
 msgstr "Введений вами номер телефону занадто довгий"
 
-#: app/forms.py:180
+#: app/forms.py:236
 msgid "Overte heslo"
 msgstr "Підтвердьте пароль"
 
-#: app/forms.py:188
+#: app/forms.py:245
 msgid "Znovu zadajte heslo"
 msgstr "Введіть свій пароль ще раз"
 
-#: app/forms.py:194
+#: app/forms.py:251
+msgid "Niečo o Vás"
+msgstr ""
+
+#: app/forms.py:257
+#, fuzzy
+#| msgid "Zadané meno je príliš dlhé"
+msgid "Zadané bio je príliš dlhé"
+msgstr "Введене вами ім'я занадто довге"
+
+#: app/forms.py:262
 msgid "Zmeniť meno"
 msgstr "Змінити назву"
 
-#: app/forms.py:204
+#: app/forms.py:280
 msgid "Zmeniť priezvisko"
 msgstr "Змінити прізвище"
 
-#: app/forms.py:214
+#: app/forms.py:298
 msgid "Zmeniť e-mail"
 msgstr "Змінити електронну адресу"
 
-#: app/forms.py:224
+#: app/forms.py:309
 msgid "Zmeniť telefónne číslo"
 msgstr "Змінити номер телефону"
 
-#: app/forms.py:251 app/templates/app/manage_training_plans.html:140
+#: app/forms.py:337 app/templates/app/manage_training_plans.html:140
 #: app/templates/app/manage_training_plans.html:194
 msgid "Názov"
 msgstr "Ім'я"
 
-#: app/forms.py:256
+#: app/forms.py:343 app/forms.py:481
 msgid "Zadaný názov je príliš dlhý"
 msgstr "Введене вами ім'я занадто довге"
 
-#: app/forms.py:257
+#: app/forms.py:344 app/forms.py:482
 msgid "Zadajte názov"
 msgstr "Введіть назву"
 
-#: app/forms.py:262
+#: app/forms.py:349
 msgid "Článok"
 msgstr "Стаття"
 
-#: app/forms.py:266
+#: app/forms.py:354
 msgid "Obsah článku nesmie byť prázdny"
 msgstr "Зміст статті не повинен бути порожнім"
 
-#: app/forms.py:273
+#: app/forms.py:361
 msgid "Kategória podľa určenia"
 msgstr "Категорія за призначенням"
 
-#: app/forms.py:274 app/templates/app/blog.html:69
+#: app/forms.py:362 app/templates/app/blog.html:69
 msgid "Statické prvky"
 msgstr "Статичні елементи"
 
-#: app/forms.py:275
+#: app/forms.py:363
 msgid "Dynamický trik"
 msgstr "Динамічний трюк"
 
-#: app/forms.py:276
+#: app/forms.py:364
 msgid "Izotonický cvik"
 msgstr "Ізотонічна вправа"
 
-#: app/forms.py:277 app/templates/app/blog.html:72
+#: app/forms.py:365 app/templates/app/blog.html:72
 msgid "O rovnováhe"
 msgstr "Про баланс"
 
-#: app/forms.py:278 app/templates/app/blog.html:73
+#: app/forms.py:366 app/templates/app/blog.html:73
 msgid "O flexibilite"
 msgstr "Про гнучкість"
 
-#: app/forms.py:283
+#: app/forms.py:372
 msgid "Vyberte kategóriu podľa určenia"
 msgstr "Виберіть категорію відповідно до пункту призначення"
 
-#: app/forms.py:290
+#: app/forms.py:379
 msgid "Kategória podľa pohybu"
 msgstr "Категорія за рухом"
 
-#: app/forms.py:291 app/templates/app/blog.html:76
+#: app/forms.py:380 app/templates/app/blog.html:76
 msgid "Ťah"
 msgstr "Tyaha"
 
-#: app/forms.py:292 app/templates/app/blog.html:75
+#: app/forms.py:381 app/templates/app/blog.html:75
 msgid "Tlak"
 msgstr "Жим"
 
-#: app/forms.py:293 app/templates/app/blog.html:77
+#: app/forms.py:382 app/templates/app/blog.html:77
 msgid "Nohy"
 msgstr "Ноги"
 
-#: app/forms.py:298
+#: app/forms.py:388
 msgid "Vyberte kategóriu podľa pohybu"
 msgstr "Виберіть категорію за рухом"
 
-#: app/forms.py:305
+#: app/forms.py:395
 msgid "Kategória podľa obtiažnosti"
 msgstr "Категорія за складністю"
 
-#: app/forms.py:306 app/templates/app/blog.html:79
+#: app/forms.py:396 app/templates/app/blog.html:79
 msgid "Pre začiatočníkov"
 msgstr "Для початківців"
 
-#: app/forms.py:307 app/templates/app/blog.html:80
+#: app/forms.py:397 app/templates/app/blog.html:80
 msgid "Pre stredne pokročilých"
 msgstr "Для проміжних"
 
-#: app/forms.py:308 app/templates/app/blog.html:81
+#: app/forms.py:398 app/templates/app/blog.html:81
 msgid "Pre pokročilých"
 msgstr "Для розширених"
 
-#: app/forms.py:309 app/templates/app/blog.html:82
+#: app/forms.py:399 app/templates/app/blog.html:82
 msgid "Pre profesionálov"
 msgstr "Для професіоналів"
 
-#: app/forms.py:314
+#: app/forms.py:405
 msgid "Vyberte kategóriu podľa obtiažnosti"
 msgstr "Виберіть категорію за складністю"
 
-#: app/forms.py:319
+#: app/forms.py:410
 msgid "Link"
 msgstr "Линк"
 
-#: app/forms.py:324
+#: app/forms.py:416
 msgid "Zadaný link je príliš dlhý"
 msgstr "Введене посилання занадто довге"
 
-#: app/forms.py:325
+#: app/forms.py:417
 msgid "Zadajte link"
 msgstr "Введіть посилання"
 
-#: app/forms.py:349
+#: app/forms.py:429 app/templates/app/community.html:372
+#: app/templates/app/post.html:638
 msgid "Napísať komentár"
 msgstr "Напишіть коментар"
 
-#: app/forms.py:354
+#: app/forms.py:435
 msgid "Zadaný komentár je príliš dlhý"
 msgstr "Введений коментар занадто довгий"
 
-#: app/forms.py:355
+#: app/forms.py:436
 msgid "Zanechajte komentár"
 msgstr "Залишити коментар"
 
-#: app/tasks.py:22 app/tasks.py:26 app/views.py:92 app/views.py:96
+#: app/forms.py:442
+msgid "Miesto"
+msgstr ""
+
+#: app/forms.py:448
+#, fuzzy
+#| msgid "Zadané meno je príliš dlhé"
+msgid "Zadané miesto je príliš dlhé"
+msgstr "Введене вами ім'я занадто довге"
+
+#: app/forms.py:475
+msgid "Instagram / Facebook / YouTube..."
+msgstr ""
+
+#: app/forms.py:487
+msgid "https://example.com"
+msgstr ""
+
+#: app/forms.py:493
+msgid "Zadaná URL adresa nie je platná"
+msgstr ""
+
+#: app/forms.py:494
+#, fuzzy
+#| msgid "Zadané heslo je príliš dlhé"
+msgid "Zadaná URL adresa je príliš dlhá"
+msgstr "Введений вами пароль занадто довгий"
+
+#: app/forms.py:495
+msgid "Zadajte URL adresu"
+msgstr ""
+
+#: app/models.py:558
+msgid "Maximum level of nested comments has been reached."
+msgstr ""
+
+#: app/tasks.py:31 app/tasks.py:35 app/tasks.py:53 app/tasks.py:56
+#: app/tasks.py:75 app/tasks.py:78 app/tasks.py:99 app/tasks.py:102
+#: app/views.py:147 app/views.py:151
 #, python-format
 msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgstr "Привіт %(first_name)s %(last_name)s"
 
-#: app/tasks.py:30 app/views.py:100
-msgid "Tím Wesiq."
-msgstr "Команда Wesiq."
+#: app/tasks.py:39 app/tasks.py:53 app/tasks.py:69 app/tasks.py:75
+#: app/tasks.py:93 app/tasks.py:99 app/tasks.py:125 app/views.py:155
+msgid "Tím"
+msgstr ""
 
-#: app/tasks.py:93 app/views.py:898
+#: app/tasks.py:53 app/tasks.py:58
+msgid "V poslednej dobe sme nezaznamenali žiadnu aktivitu."
+msgstr ""
+
+#: app/tasks.py:53 app/tasks.py:75 app/tasks.py:99
+msgid "Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie."
+msgstr ""
+
+#: app/tasks.py:53 app/tasks.py:75 app/tasks.py:99
+#, python-format
+msgid "%(domain)s%(language)s/trening/"
+msgstr ""
+
+#: app/tasks.py:60 app/tasks.py:84 app/tasks.py:116
+#, python-format
+msgid ""
+"Začni týždeň s prvou <a href=\"%(domain)s%(language)s/trening/\" "
+"title=\"Začať tréning\" target=\"_blank\">aktivitou</a>."
+msgstr ""
+
+#: app/tasks.py:75 app/tasks.py:80
+msgid "Minulý týždeň sme nezaznamenali žiadnu aktivitu."
+msgstr ""
+
+#: app/tasks.py:75
+#, python-format
+msgid ""
+"Celkovo si dosiahol aktívneho času 0s - to je o 100% horšie oproti "
+"predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:82
+msgid ""
+"Celkovo si dosiahol aktívneho času <span style=\"color: #df3535\">0s</span> "
+"- to je o <span style=\"color: #df3535\">100%</span> horšie oproti "
+"predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:99 app/tasks.py:104
+msgid "Pozri sa na svoj prehľad aktivít za posledný týždeň."
+msgstr ""
+
+#: app/tasks.py:99
+#, python-format
+msgid ""
+"Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity "
+"%(most_active_day_time)s"
+msgstr ""
+
+#: app/tasks.py:99
+#, python-format
+msgid "Priemerná aktivita trvala %(average_activity_time)s"
+msgstr ""
+
+#: app/tasks.py:99
+#, python-format
+msgid ""
+"Celkovo si dosiahol aktívneho času %(total_activity_time)s - "
+"%(activity_percentage_improvement)s"
+msgstr ""
+
+#: app/tasks.py:99
+#, python-format
+msgid "Celkovo si zaznamenal %(total_activity_amount)s aktivity"
+msgstr ""
+
+#: app/tasks.py:106
+#, python-format
+msgid ""
+"Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s celkovým "
+"časom aktivity <strong>%(most_active_day_time)s</strong>"
+msgstr ""
+
+#: app/tasks.py:108
+#, python-format
+msgid ""
+"Priemerná aktivita trvala <span style=\"color: "
+"#52cf20\">%(average_activity_time)s</span>"
+msgstr ""
+
+#: app/tasks.py:110
+#, python-format
+msgid ""
+"Celkovo si dosiahol aktívneho času <span style=\"color: "
+"#52cf20\">%(total_activity_time)s</span> - "
+"%(activity_percentage_improvement)s"
+msgstr ""
+
+#: app/tasks.py:112
+#, python-format
+msgid ""
+"Celkovo si zaznamenal <span style=\"color: "
+"#52cf20\">%(total_activity_amount)s</span> aktivity"
+msgstr ""
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:162
+#: app/templates/app/manage_training_plans.html:216
+msgid "PO"
+msgstr "Пн"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:163
+#: app/templates/app/manage_training_plans.html:217
+msgid "UT"
+msgstr "Вт"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:164
+#: app/templates/app/manage_training_plans.html:218
+msgid "ST"
+msgstr "Ср"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:165
+#: app/templates/app/manage_training_plans.html:219
+msgid "ŠT"
+msgstr "Чт"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:166
+#: app/templates/app/manage_training_plans.html:220
+msgid "PI"
+msgstr "Пт"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:167
+#: app/templates/app/manage_training_plans.html:221
+msgid "SO"
+msgstr "Сб"
+
+#: app/tasks.py:216 app/templates/app/manage_training_plans.html:168
+#: app/templates/app/manage_training_plans.html:222
+msgid "NE"
+msgstr "Нд"
+
+#: app/tasks.py:283
+#, python-format
+msgid ""
+"to je o <span style='color: #52cf20'>%(value)s%%</span> lepšie oproti "
+"predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:286
+#, python-format
+msgid "to je o %(value)s%% lepšie oproti predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:290
+#, python-format
+msgid ""
+"to je o <span style='color: #df3535'>%(value)s%%</span> horšie oproti "
+"predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:293
+#, python-format
+msgid "to je o %(value)s%% horšie oproti predchádzajúcemu týždňu"
+msgstr ""
+
+#: app/tasks.py:299
+#, python-format
+msgid ""
+"Tvoj obľúbený cvik týždňa bol <span style=\"color: %(color)s\">%(exercise)s</"
+"span>"
+msgstr ""
+
+#: app/tasks.py:302
+#, python-format
+msgid "Tvoj obľúbený cvik týždňa bol %(exercise)s"
+msgstr ""
+
+#: app/tasks.py:306
+#, python-format
+msgid ""
+"Vytvor si <a href=\"https://delinquently-overdistraught-glynis.ngrok-"
+"free.dev/%(language)s/my-training-plans/?create\" title=\"Vytvoriť "
+"tréningový plán\" target=\"_blank\">tréningový plán</a> pre získanie viac "
+"štatistík."
+msgstr ""
+
+#: app/tasks.py:309
+#, python-format
+msgid ""
+"Vytvor si tréningový plán kliknutím na href=\"https://delinquently-"
+"overdistraught-glynis.ngrok-free.dev/%(language)s/my-training-plans/?create "
+"pre získanie viac štatistík."
+msgstr ""
+
+#: app/tasks.py:381 app/views.py:3390
 msgid "Odstránenie účtu"
 msgstr "Видалення облікового запису"
 
-#: app/tasks.py:94
-#, python-format
+#: app/tasks.py:382
+#, fuzzy, python-format
+#| msgid ""
+#| "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#| "prihlásenie do pôvodného účtu už nie je možné.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s/registracia/\n"
+#| "\n"
+#| "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte "
+#| "nový.\n"
+#| "Tím Wesiq."
 msgid ""
-"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n"
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+"prihlásenie do pôvodného účtu už nie je možné.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/registracia/\n"
+"%(domain)s%(language)s/registracia/\n"
 "\n"
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Wesiq."
 msgstr ""
-"ми повідомляємо вас, що ваш обліковий запис користувача було видалено назавжди. Повторний вхід до початкового облікового запису більше неможливий.\n"
+"ми повідомляємо вас, що ваш обліковий запис користувача було видалено "
+"назавжди. Повторний вхід до початкового облікового запису більше "
+"неможливий.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/reyestratsiya/\n"
 "\n"
-"Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви створите новий.\n"
+"Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви створите "
+"новий.\n"
 "Команда Wesiq."
 
-#: app/tasks.py:95
+#: app/tasks.py:383
 msgid ""
 "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
 "prihlásenie do pôvodného účtu už nie je možné."
@@ -289,22 +576,26 @@ msgstr ""
 "ми повідомляємо вас, що ваш обліковий запис користувача було видалено "
 "назавжди. Повторний вхід до початкового облікового запису більше неможливий."
 
-#: app/tasks.py:96
-#, python-format
+#: app/tasks.py:384
+#, fuzzy, python-format
+#| msgid ""
+#| "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a "
+#| "href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
+#| "účet\" target=\"_blank\">vytvoríte nový</a>."
 msgid ""
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a "
-"href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
-"účet\" target=\"_blank\">vytvoríte nový</a>."
+"href=\"%(domain)s%(language)s/registracia/\" title=\"Vytvoriť účet\" "
+"target=\"_blank\">vytvoríte nový</a>."
 msgstr ""
-"Якщо ви захочете повернутися в майбутньому, ми будемо раді <a "
-"href=\"http://127.0.0.1:8000/%(language)s/reyestratsiya/\" title=\"Створіть "
-"обліковий запис\" target=\"_blank\">створити</a> новий."
+"Якщо ви захочете повернутися в майбутньому, ми будемо раді <a href=\"http://"
+"127.0.0.1:8000/%(language)s/reyestratsiya/\" title=\"Створіть обліковий "
+"запис\" target=\"_blank\">створити</a> новий."
 
-#: app/templates/app/articles.html:29 app/templates/app/blog.html:147
+#: app/templates/app/articles.html:29 app/templates/app/blog.html:155
 msgid "Zatiaľ žiadne hodnotenia"
 msgstr "Поки що немає оцінок"
 
-#: app/templates/app/articles.html:32 app/templates/app/blog.html:150
+#: app/templates/app/articles.html:32 app/templates/app/blog.html:158
 msgid "Priemerné hodnotenie"
 msgstr "Середній рейтинг"
 
@@ -321,10 +612,14 @@ msgid "Zobraziť profil"
 msgstr "Переглянути профіль"
 
 #: app/templates/app/articles.html:128 app/templates/app/articles.html:211
+#: app/templates/partials/comment.html:160
 msgid "Odpovedať..."
 msgstr "Відповісти..."
 
 #: app/templates/app/articles.html:133 app/templates/app/articles.html:216
+#: app/templates/app/community.html:183 app/templates/app/community.html:429
+#: app/templates/app/community.html:794 app/templates/app/post.html:53
+#: app/templates/app/post.html:560 app/templates/partials/comment.html:138
 msgid "Páči sa mi..."
 msgstr "Мені подобається..."
 
@@ -333,11 +628,12 @@ msgid "Nahlásiť..."
 msgstr "Звіт..."
 
 #: app/templates/app/articles.html:154 app/templates/app/articles.html:237
-#: app/templates/app/blog.html:187
+#: app/templates/app/blog.html:195 app/templates/app/community.html:437
+#: app/templates/app/post.html:61 app/templates/partials/comment.html:178
 msgid "Dátum zverejnenia"
 msgstr "Дата публікації"
 
-#: app/templates/app/blog.html:5 templates/base.html:158
+#: app/templates/app/blog.html:5 templates/base.html:168
 msgid "Blog"
 msgstr "Блог"
 
@@ -367,7 +663,7 @@ msgid "Nájsť článok"
 msgstr "Знайти статтю"
 
 #: app/templates/app/blog.html:39 app/templates/app/blog.html:58
-#: app/templates/app/homepage.html:453
+#: app/templates/app/homepage.html:336
 msgid "Obnoviť predvolené filtre"
 msgstr "Відновити фільтри за замовчуванням"
 
@@ -392,7 +688,7 @@ msgid "Podľa abecedy (Z-A)"
 msgstr "За алфавітом (Я-A)"
 
 #: app/templates/app/blog.html:63 app/templates/app/blog.html:68
-#: app/templates/app/homepage.html:458
+#: app/templates/app/homepage.html:341
 msgid "Všetky kategórie"
 msgstr "Всі категорії"
 
@@ -404,152 +700,362 @@ msgstr "Динамічні трюки"
 msgid "Izotonické cviky"
 msgstr "Ізотонічні вправи"
 
-#: app/templates/app/blog.html:90
+#: app/templates/app/blog.html:99
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
-"žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
 msgstr "Прости!<br>Не&nbsp;вдалося&nbsp;знайти&nbsp;статей."
 
-#: app/templates/app/blog.html:122
+#: app/templates/app/blog.html:130
 msgid "Tento článok pridal"
 msgstr "Ця стаття додала"
 
-#: app/templates/app/blog.html:127
+#: app/templates/app/blog.html:135
 msgid "Zdielať"
 msgstr "Поділитися"
 
-#: app/templates/app/blog.html:137
+#: app/templates/app/blog.html:145
 msgid "Zobraziť"
 msgstr "Шоу"
 
-#: app/templates/app/blog.html:168
+#: app/templates/app/blog.html:176
 msgid "Kategória"
 msgstr "Категорія"
 
-#: app/templates/app/blog.html:181
+#: app/templates/app/blog.html:189
 msgid "unikátnych návštevníkov"
 msgstr "унікальних відвідувачів"
 
-#: app/templates/app/blog.html:204
-msgid "Odoberať"
-msgstr "Підписатися"
+#: app/templates/app/community.html:5 templates/base.html:166
+#: templates/base.html:167
+msgid "Komunita"
+msgstr ""
 
-#: app/templates/app/blog.html:204
-msgid "Dostávať upozornenia o nových článkoch"
-msgstr "Отримувати повідомлення про нові статті"
+#: app/templates/app/community.html:18
+msgid "PRÍSPEVKY"
+msgstr ""
 
-#: app/templates/app/edit_account.html:5 templates/base.html:94
-#: templates/base.html:110
-msgid "Môj účet"
-msgstr "Мій рахунок"
+#: app/templates/app/community.html:24 app/templates/app/community.html:96
+#, fuzzy
+#| msgid "Uverejniť"
+msgid "Uverejniť príspevok"
+msgstr "Опублікувати"
 
-#: app/templates/app/edit_account.html:16
-msgid "Môj&nbsp;účet"
-msgstr "Мій&nbsp;рахунок"
+#: app/templates/app/community.html:33
+msgid "Zdieľať príspevok"
+msgstr ""
 
-#: app/templates/app/edit_account.html:18
-#: app/templates/app/edit_review.html:18
-#: app/templates/app/homepage.html:82 app/templates/app/homepage.html:145
-#: app/templates/app/login.html:23
-#: app/templates/app/password_reset.html:40
+#: app/templates/app/community.html:35 app/templates/app/community.html:169
+#: app/templates/app/community.html:305 app/templates/app/community.html:326
+#: app/templates/app/community.html:347 app/templates/app/community.html:421
+#: app/templates/app/community.html:520 app/templates/app/community.html:621
+#: app/templates/app/community.html:706 app/templates/app/homepage.html:82
+#: app/templates/app/homepage.html:145 app/templates/app/homepage.html:469
+#: app/templates/app/post.html:45 app/templates/app/post.html:204
+#: app/templates/app/post.html:314 app/templates/app/post.html:468
+#: app/templates/app/post.html:489 app/templates/app/post.html:510
+#: app/templates/app/training_session.html:365
+#: app/templates/app/training_session.html:418
+#: app/templates/partials/comment.html:81
+#: app/templates/partials/reviews.html:108
+msgid "Zavrieť"
+msgstr ""
+
+#: app/templates/app/community.html:45
+msgid "Popis príspevku"
+msgstr ""
+
+#: app/templates/app/community.html:53
+msgid "Zapnúť viditeľnosť len pre sledovateľov"
+msgstr ""
+
+#: app/templates/app/community.html:56
+#, fuzzy
+#| msgid "Napísať komentár"
+msgid "Vypnúť komentáre"
+msgstr "Напишіть коментар"
+
+#: app/templates/app/community.html:59
+msgid "Skryť počet označení páči sa mi to"
+msgstr ""
+
+#: app/templates/app/community.html:64 app/templates/app/community.html:376
+#: app/templates/app/edit_review.html:87 app/templates/app/homepage.html:555
+#: app/templates/app/post.html:654 app/templates/app/profile.html:69
+#, fuzzy
+#| msgid "Pridať sériu"
+msgid "Pridať emoji"
+msgstr "Додати серію"
+
+#: app/templates/app/community.html:65
+msgid "Označiť ľudí"
+msgstr ""
+
+#: app/templates/app/community.html:66
+#, fuzzy
+#| msgid "Pridať sériu"
+msgid "Pridať Hashtag"
+msgstr "Додати серію"
+
+#: app/templates/app/community.html:107
+msgid "Nájsť užívateľa"
+msgstr ""
+
+#: app/templates/app/community.html:112 app/templates/app/community.html:134
+#: app/templates/app/community.html:394 app/templates/app/community.html:556
+#: app/templates/app/edit_review.html:22 app/templates/app/homepage.html:382
+#: app/templates/app/homepage.html:420 app/templates/app/post.html:18
+#: app/templates/app/post.html:98 app/templates/partials/comment.html:19
+#: app/templates/partials/reviews.html:7 app/templates/partials/reviews.html:45
+msgid "Zobraziť užívateľa"
+msgstr ""
+
+#: app/templates/app/community.html:122 app/templates/app/community.html:209
+#: app/templates/app/community.html:829 app/templates/app/post.html:364
+msgid "Načítavam..."
+msgstr ""
+
+#: app/templates/app/community.html:143 app/templates/app/community.html:577
+#: app/templates/app/post.html:119
+msgid "Počet sledovateľov..."
+msgstr ""
+
+#: app/templates/app/community.html:152 app/templates/app/community.html:404
+#: app/templates/app/community.html:586 app/templates/app/homepage.html:438
+#: app/templates/app/post.html:28 app/templates/app/post.html:155
+#: app/templates/app/training_session.html:343
+#: app/templates/app/training_session.html:396
+#: app/templates/partials/comment.html:41
+#: app/templates/partials/reviews.html:63
+msgid "Viac..."
+msgstr ""
+
+#: app/templates/app/community.html:187 app/templates/app/community.html:799
+#: app/templates/app/post.html:584
+msgid "Komentáre..."
+msgstr ""
+
+#: app/templates/app/community.html:191 app/templates/app/community.html:804
+#: app/templates/app/post.html:596
+#, fuzzy
+#| msgid "Zdielať"
+msgid "Zdielať..."
+msgstr "Поділитися"
+
+#: app/templates/app/community.html:195 app/templates/app/community.html:808
+#: app/templates/app/post.html:600
+msgid "Počet videní..."
+msgstr ""
+
+#: app/templates/app/community.html:199 app/templates/app/community.html:813
+#: app/templates/app/post.html:605
+#, fuzzy
+#| msgid "Uložiť zmeny"
+msgid "Uložiť..."
+msgstr "Зберегти зміни"
+
+#: app/templates/app/community.html:243 app/templates/app/post.html:406
+#, fuzzy
+#| msgid "Napísať..."
+msgid "Pozastaviť..."
+msgstr "Напиши..."
+
+#: app/templates/app/community.html:260 app/templates/app/post.html:423
+#, fuzzy
+#| msgid "Nahlásiť..."
+msgid "Hlasitosť..."
+msgstr "Звіт..."
+
+#: app/templates/app/community.html:272 app/templates/app/post.html:435
+msgid "Nastavenia..."
+msgstr ""
+
+#: app/templates/app/community.html:287 app/templates/app/post.html:450
+msgid "Kvalita"
+msgstr ""
+
+#: app/templates/app/community.html:296 app/templates/app/post.html:459
+msgid "Rýchlosť"
+msgstr ""
+
+#: app/templates/app/community.html:338 app/templates/app/post.html:501
+msgid "Normálna"
+msgstr ""
+
+#: app/templates/app/community.html:352 app/templates/app/post.html:515
+msgid "Rozstiahnuť..."
+msgstr ""
+
+#: app/templates/app/community.html:453 app/templates/app/post.html:77
+#: app/templates/app/post.html:215 app/templates/partials/comment.html:92
+#: app/templates/partials/reviews.html:119
+msgid "Spam"
+msgstr ""
+
+#: app/templates/app/community.html:454 app/templates/app/post.html:78
+#: app/templates/app/post.html:216 app/templates/partials/comment.html:93
+#: app/templates/partials/reviews.html:120
+msgid "Obťažovanie"
+msgstr ""
+
+#: app/templates/app/community.html:455 app/templates/app/post.html:79
+#: app/templates/app/post.html:217 app/templates/partials/comment.html:94
+#: app/templates/partials/reviews.html:121
+msgid "Nenávistné prejavy"
+msgstr ""
+
+#: app/templates/app/community.html:456 app/templates/app/post.html:80
+#: app/templates/app/post.html:218 app/templates/partials/comment.html:95
+#: app/templates/partials/reviews.html:122
+msgid "Dezinformácie"
+msgstr ""
+
+#: app/templates/app/community.html:457 app/templates/app/post.html:81
+#: app/templates/app/post.html:219 app/templates/partials/comment.html:96
+#: app/templates/partials/reviews.html:123
+msgid "Explicitný obsah"
+msgstr ""
+
+#: app/templates/app/community.html:458 app/templates/app/post.html:82
+#: app/templates/app/post.html:220 app/templates/partials/comment.html:97
+#: app/templates/partials/reviews.html:124
+msgid "Iné"
+msgstr ""
+
+#: app/templates/app/community.html:466 app/templates/app/post.html:90
+#: app/templates/app/post.html:228 app/templates/partials/comment.html:105
+#: app/templates/partials/reviews.html:132
+msgid "Späť"
+msgstr ""
+
+#: app/templates/app/community.html:529
+#, fuzzy
+#| msgid "Nájsť cvik"
+msgid "Nájsť príspevky"
+msgstr "Знайти практику"
+
+#: app/templates/app/community.html:538
+msgid "Čakajte! Príspevok sa spracováva."
+msgstr ""
+
+#: app/templates/app/community.html:542
+msgid "Súbory: "
+msgstr ""
+
+#: app/templates/app/community.html:603 app/templates/app/homepage.html:451
+#: app/templates/app/manage_training_plans.html:132
+#: app/templates/app/post.html:184 app/templates/partials/reviews.html:88
+msgid "Upraviť"
+msgstr "Редагувати"
+
+#: app/templates/app/community.html:612 app/templates/app/community.html:720
+#: app/templates/app/homepage.html:460 app/templates/app/homepage.html:483
+#: app/templates/app/manage_training_plans.html:237
+#: app/templates/app/post.html:193 app/templates/app/post.html:328
+#: app/templates/app/training_session.html:356
+#: app/templates/app/training_session.html:409
+#: app/templates/partials/comment.html:70
+#: app/templates/partials/comment.html:120
+#: app/templates/partials/reviews.html:97
+#: app/templates/partials/reviews.html:147
+msgid "Vymazať"
+msgstr "Видалити"
+
+#: app/templates/app/community.html:716
+msgid "Naozaj chcete prerušiť nahrávanie?"
+msgstr ""
+
+#: app/templates/app/community.html:728 app/templates/app/homepage.html:491
+#: app/templates/app/post.html:336 app/templates/partials/comment.html:128
+#: app/templates/partials/reviews.html:155
+msgid "Zrušiť"
+msgstr ""
+
+#: app/templates/app/community.html:736 app/templates/app/post.html:346
+#, fuzzy
+#| msgid "Otvoriť Gmail"
+msgid "Otvoriť mapy"
+msgstr "Відкрити Gmail"
+
+#: app/templates/app/community.html:764 app/templates/app/community.html:775
+#: app/templates/app/profile.html:755 app/templates/app/profile.html:766
+#: app/templates/app/profile.html:800 app/templates/app/profile.html:811
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                                        Na základe %(amount)s recenzie\n"
+#| "                                        \n"
+#| "                                    "
+#| msgid_plural ""
+#| "\n"
+#| "                                        Na základe %(amount)s recenzií\n"
+#| "\n"
+#| "                                    "
+msgid ""
+"\n"
+"                                                    Príspevok užívateľa "
+"%(username)s\n"
+"                                                "
+msgstr ""
+"\n"
+"На основі %(amount)s відгук"
+
+#: app/templates/app/edit_review.html:5 templates/base.html:163
+msgid "Moje hodnotenie"
+msgstr "Мій рейтинг"
+
+#: app/templates/app/edit_review.html:16 app/templates/app/homepage.html:377
+msgid "Moje&nbsp;hodnotenie"
+msgstr "Мій&nbsp;рейтинг"
+
+#: app/templates/app/edit_review.html:18 app/templates/app/login.html:23
+#: app/templates/app/password_reset.html:40 app/templates/app/profile.html:14
 #: app/templates/app/registration.html:49
 #: app/templates/app/write_article.html:17
 msgid "Späť na úvodnú stránku"
 msgstr "Назад на домашню сторінку"
 
-#: app/templates/app/edit_account.html:34
-msgid "Nahrať obrázok"
-msgstr "Завантажити зображення"
-
-#: app/templates/app/edit_account.html:40
-msgid "Odstrániť obrázok"
-msgstr "Видалити зображення"
-
-#: app/templates/app/edit_account.html:66
-#: app/templates/app/edit_review.html:68
-#: app/templates/app/manage_training_plans.html:236
-msgid "Uložiť zmeny"
-msgstr "Зберегти зміни"
-
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
-msgid "Zabudli ste heslo?"
-msgstr "Забули пароль?"
-
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
-#: app/templates/app/password_reset.html:62
-msgid "Poslať overovací kód"
-msgstr "Надіслати код підтвердження"
-
-#: app/templates/app/edit_account.html:69
-#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
-#: app/templates/app/password_reset.html:59
-msgid "Zmeniť heslo"
-msgstr "Змінити пароль"
-
-#: app/templates/app/edit_account.html:73
-msgid "Odstrániť účet"
-msgstr "Видалити обліковий запис"
-
-#: app/templates/app/edit_account.html:80
-msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
-msgstr "Щоб внести зміни у свій обліковий запис, спочатку необхідно"
-
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:96 app/templates/app/homepage.html:190
-#: app/templates/app/login.html:33
-#: app/templates/app/manage_training_plans.html:23
-#: app/templates/app/password_reset.html:71
-#: app/templates/app/registration.html:78
-#: app/templates/app/training_session.html:58 templates/base.html:117
-msgid "Prihlásiť sa"
-msgstr "Увійти"
-
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-msgid "prihlásiť"
-msgstr "увійти"
-
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:99 app/templates/app/login.html:36
-msgid "alebo"
-msgstr "або"
-
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-#: app/templates/app/homepage.html:116 app/templates/app/homepage.html:187
-#: app/templates/app/login.html:53 app/templates/app/registration.html:75
-msgid "Vytvoriť účet"
-msgstr "Створити обліковий запис"
-
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
-msgid "zaregistrovať"
-msgstr "реєстр"
-
-#: app/templates/app/edit_review.html:5
-msgid "Moje hodnotenie"
-msgstr "Мій рейтинг"
-
-#: app/templates/app/edit_review.html:16
-msgid "Moje&nbsp;hodnotenie"
-msgstr "Мій&nbsp;рейтинг"
-
-#: app/templates/app/edit_review.html:42
-#: app/templates/app/homepage.html:510
+#: app/templates/app/edit_review.html:62 app/templates/app/homepage.html:428
+#: app/templates/partials/reviews.html:53
 msgid "upravené"
 msgstr "модифікований"
 
-#: app/templates/app/edit_review.html:72
-msgid "Odstrániť recenziu"
-msgstr "Вилучити відгук"
+#: app/templates/app/edit_review.html:96
+#: app/templates/app/manage_training_plans.html:236
+#: app/templates/app/profile.html:106
+msgid "Uložiť zmeny"
+msgstr "Зберегти зміни"
 
-#: app/templates/app/edit_review.html:80
+#: app/templates/app/edit_review.html:101
 msgid "Pre vykonávanie zmien vašej recenzie sa musíte najprv"
 msgstr "Щоб внести зміни до свого огляду, спочатку необхідно"
+
+#: app/templates/app/edit_review.html:101 app/templates/app/homepage.html:96
+#: app/templates/app/homepage.html:195 app/templates/app/login.html:33
+#: app/templates/app/manage_training_plans.html:23
+#: app/templates/app/password_reset.html:73
+#: app/templates/app/registration.html:79
+#: app/templates/app/training_session.html:60 templates/base.html:119
+msgid "Prihlásiť sa"
+msgstr "Увійти"
+
+#: app/templates/app/edit_review.html:101
+msgid "prihlásiť"
+msgstr "увійти"
+
+#: app/templates/app/edit_review.html:101 app/templates/app/homepage.html:99
+#: app/templates/app/login.html:36
+msgid "alebo"
+msgstr "або"
+
+#: app/templates/app/edit_review.html:101 app/templates/app/homepage.html:116
+#: app/templates/app/homepage.html:192 app/templates/app/login.html:53
+#: app/templates/app/registration.html:76
+msgid "Vytvoriť účet"
+msgstr "Створити обліковий запис"
+
+#: app/templates/app/edit_review.html:101
+msgid "zaregistrovať"
+msgstr "реєстр"
 
 #: app/templates/app/homepage.html:5
 msgid "Hlavná stránka"
@@ -559,8 +1065,8 @@ msgstr "Головна сторінка"
 msgid "KONTAKT"
 msgstr "КОНТАКТ"
 
-#: app/templates/app/homepage.html:27 app/templates/app/homepage.html:355
-#: app/templates/app/homepage.html:377
+#: app/templates/app/homepage.html:27 app/templates/app/homepage.html:241
+#: app/templates/app/homepage.html:263
 msgid "Zatiaľ žiadne recenzie"
 msgstr "Поки що немає відгуків"
 
@@ -587,10 +1093,6 @@ msgstr[1] ""
 msgid "Hľadať"
 msgstr "Пошук"
 
-#: app/templates/app/homepage.html:66
-msgid "Wesiq"
-msgstr "Wesiq"
-
 #: app/templates/app/homepage.html:70
 msgid "Prihlásiť"
 msgstr "Увійти"
@@ -600,65 +1102,74 @@ msgid "Zaregistrovať"
 msgstr "Реєструватися"
 
 #: app/templates/app/homepage.html:80 app/templates/app/login.html:5
-#: app/templates/app/login.html:21 templates/base.html:156
+#: app/templates/app/login.html:21 templates/base.html:158
 msgid "Prihlásenie"
 msgstr "Логін"
 
-#: app/templates/app/homepage.html:92 app/templates/app/homepage.html:175
-#: app/templates/app/login.html:29
-#: app/templates/app/password_reset.html:56
-#: app/templates/app/registration.html:65
+#: app/templates/app/homepage.html:92 app/templates/app/homepage.html:180
+#: app/templates/app/login.html:29 app/templates/app/password_reset.html:56
+#: app/templates/app/registration.html:66
 msgid "Zobraziť heslo"
 msgstr "Показати пароль"
+
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/profile.html:109
+msgid "Zabudli ste heslo?"
+msgstr "Забули пароль?"
+
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/password_reset.html:62 app/templates/app/profile.html:109
+msgid "Poslať overovací kód"
+msgstr "Надіслати код підтвердження"
+
+#: app/templates/app/homepage.html:115 app/templates/app/login.html:52
+#: app/templates/app/password_reset.html:59 app/templates/app/profile.html:109
+msgid "Zmeniť heslo"
+msgstr "Змінити пароль"
 
 #: app/templates/app/homepage.html:116 app/templates/app/login.html:53
 msgid "Ešte nemáte účet?"
 msgstr "У вас ще немає облікового запису?"
 
-#: app/templates/app/homepage.html:143
-#: app/templates/app/registration.html:5
-#: app/templates/app/registration.html:47 templates/base.html:157
+#: app/templates/app/homepage.html:143 app/templates/app/registration.html:5
+#: app/templates/app/registration.html:47 templates/base.html:160
 msgid "Registrácia"
 msgstr "Реєстрація"
 
-#: app/templates/app/homepage.html:173
-#: app/templates/app/password_reset.html:54
-#: app/templates/app/registration.html:63
+#: app/templates/app/homepage.html:178 app/templates/app/password_reset.html:54
+#: app/templates/app/registration.html:64
 msgid "Navrhnúť heslo"
 msgstr "Запропонувати пароль"
 
-#: app/templates/app/homepage.html:176
-#: app/templates/app/registration.html:66
+#: app/templates/app/homepage.html:181 app/templates/app/registration.html:67
 msgid "Skopírovať"
 msgstr "Копіювати"
 
-#: app/templates/app/homepage.html:182
-#: app/templates/app/registration.html:71
+#: app/templates/app/homepage.html:187 app/templates/app/registration.html:72
 msgid "Prilepiť"
 msgstr "Паста"
 
-#: app/templates/app/homepage.html:190
-#: app/templates/app/registration.html:78
+#: app/templates/app/homepage.html:195 app/templates/app/registration.html:79
 msgid "Už máte účet?"
 msgstr "Уже є обліковий запис?"
 
-#: app/templates/app/homepage.html:318
+#: app/templates/app/homepage.html:204
 msgid "Čo si myslia ostatní?"
 msgstr "Що думають інші?"
 
-#: app/templates/app/homepage.html:330
+#: app/templates/app/homepage.html:216
 msgid "recenzií"
 msgstr "відгуки"
 
-#: app/templates/app/homepage.html:333
+#: app/templates/app/homepage.html:219
 msgid "recenzia"
 msgstr "огляд"
 
-#: app/templates/app/homepage.html:336
+#: app/templates/app/homepage.html:222
 msgid "recenzie"
 msgstr "відгуки"
 
-#: app/templates/app/homepage.html:358
+#: app/templates/app/homepage.html:244
 #, python-format
 msgid ""
 "\n"
@@ -677,7 +1188,7 @@ msgstr[1] ""
 "\n"
 "На основі %(amount)s відгуків"
 
-#: app/templates/app/homepage.html:380
+#: app/templates/app/homepage.html:266
 #, python-format
 msgid ""
 "\n"
@@ -696,11 +1207,11 @@ msgstr[1] ""
 "\n"
 "На основі %(amount)s відгуків"
 
-#: app/templates/app/homepage.html:413
+#: app/templates/app/homepage.html:296
 msgid "Našla sa 1 recenzia."
 msgstr "1 відгук знайдено."
 
-#: app/templates/app/homepage.html:417
+#: app/templates/app/homepage.html:300
 #, python-format
 msgid ""
 "\n"
@@ -710,7 +1221,7 @@ msgstr ""
 "\n"
 "Знайдено <span>%(amount)s</span> відгуки."
 
-#: app/templates/app/homepage.html:424
+#: app/templates/app/homepage.html:307
 #, python-format
 msgid ""
 "\n"
@@ -720,82 +1231,91 @@ msgstr ""
 "\n"
 "Знайдено <span>%(amount)s</span> відгуків."
 
-#: app/templates/app/homepage.html:440 app/templates/app/homepage.html:445
+#: app/templates/app/homepage.html:323 app/templates/app/homepage.html:328
 msgid "Najnovšie recenzie"
 msgstr "Останні відгуки"
 
-#: app/templates/app/homepage.html:446
+#: app/templates/app/homepage.html:329
 msgid "Najstaršie recenzie"
 msgstr "Найстаріші відгуки"
 
-#: app/templates/app/homepage.html:447
+#: app/templates/app/homepage.html:330
 msgid "Najlepšie hodnotenie"
 msgstr "Найкращий рейтинг"
 
-#: app/templates/app/homepage.html:448
+#: app/templates/app/homepage.html:331
 msgid "Najhoršie hodnotenie"
 msgstr "Найгірший рейтинг"
 
-#: app/templates/app/homepage.html:463
+#: app/templates/app/homepage.html:346
 msgid "Všetky recenzie"
 msgstr "Всі відгуки"
 
-#: app/templates/app/homepage.html:476
-msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
-"žiadne&nbsp;recenzie."
+#: app/templates/app/homepage.html:363
+#, fuzzy
+#| msgid ""
+#| "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+#| "žiadne&nbsp;recenzie."
+msgid "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie."
 msgstr "Прости!<br>Не&nbsp;вдалося&nbsp;знайти&nbsp;жодних&nbsp;відгуків."
 
-#: app/templates/app/homepage.html:500
+#: app/templates/app/homepage.html:370
+#, fuzzy
+#| msgid "Zobraziť"
+msgid "Zobraziť viac"
+msgstr "Шоу"
+
+#: app/templates/app/homepage.html:417 app/templates/partials/reviews.html:42
 msgid "Neexistujúci účet"
 msgstr "Неіснуючий рахунок"
 
-#: app/templates/app/homepage.html:533
-#: app/templates/app/manage_training_plans.html:132
-msgid "Upraviť"
-msgstr "Редагувати"
+#: app/templates/app/homepage.html:479 app/templates/partials/reviews.html:143
+#, fuzzy
+#| msgid "Najhoršie hodnotenie"
+msgid "Naozaj chcete odstrániť Vaše hodnotenie?"
+msgstr "Найгірший рейтинг"
 
-#: app/templates/app/homepage.html:578
+#: app/templates/app/homepage.html:564
 msgid "Uverejniť"
 msgstr "Опублікувати"
 
-#: app/templates/app/homepage.html:607
+#: app/templates/app/homepage.html:595
 msgid "Kontaktujte nás"
 msgstr "Зв'яжіться з нами"
 
-#: app/templates/app/homepage.html:633
+#: app/templates/app/homepage.html:621
 msgid "Nie je vybraný žiaden súbor."
 msgstr "Файл не вибрано."
 
-#: app/templates/app/homepage.html:636
+#: app/templates/app/homepage.html:624
 msgid "Vyberte prílohu z vašich súborov"
 msgstr "Виберіть вкладення зі своїх файлів"
 
-#: app/templates/app/homepage.html:637
+#: app/templates/app/homepage.html:625
 msgid "Vybrať prílohu"
 msgstr "Виберіть долучення"
 
-#: app/templates/app/homepage.html:646
+#: app/templates/app/homepage.html:635
 msgid "Odoslať správu"
 msgstr "Надіслати повідомлення"
 
-#: app/templates/app/homepage.html:656
+#: app/templates/app/homepage.html:645
 msgid "Podporte nás"
 msgstr "Підтримайте нас"
 
-#: app/templates/app/homepage.html:664
+#: app/templates/app/homepage.html:653
 msgid "Číslo karty"
 msgstr "Номер картки"
 
-#: app/templates/app/homepage.html:670
+#: app/templates/app/homepage.html:659
 msgid "Držiteľ karty"
 msgstr "Візитниця"
 
-#: app/templates/app/homepage.html:675
+#: app/templates/app/homepage.html:664
 msgid "Platnosť"
 msgstr "Термін дії"
 
-#: app/templates/app/homepage.html:684
+#: app/templates/app/homepage.html:673
 msgid "CVC"
 msgstr "CVC"
 
@@ -804,18 +1324,19 @@ msgid "REGISTRÁCIA"
 msgstr "РЕЄСТРАЦІЯ"
 
 #: app/templates/app/manage_training_plans.html:5
-#: app/templates/app/training_session.html:32
-#: app/templates/app/training_session.html:35
-#: app/templates/app/training_session.html:64
+#: app/templates/app/training_session.html:34
+#: app/templates/app/training_session.html:37
+#: app/templates/app/training_session.html:66 templates/base.html:165
 msgid "Moje tréningové plány"
 msgstr "Мої плани тренувань"
 
 #: app/templates/app/manage_training_plans.html:13
+#: app/templates/app/training_session.html:436
 msgid "Aktivita"
 msgstr "Активність"
 
 #: app/templates/app/manage_training_plans.html:21
-#: app/templates/app/training_session.html:56
+#: app/templates/app/training_session.html:58
 msgid "Zdá sa, že nie ste prihlásený."
 msgstr "Здається, ви не ввійшли."
 
@@ -824,7 +1345,7 @@ msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
 msgstr "Неможливо створити план навчання без входу."
 
 #: app/templates/app/manage_training_plans.html:23
-#: app/templates/app/training_session.html:58
+#: app/templates/app/training_session.html:60
 msgid "Prihláste sa."
 msgstr "Увійти."
 
@@ -889,56 +1410,17 @@ msgstr "Низ"
 msgid "Nepriradiť deň"
 msgstr "Не призначати день"
 
-#: app/templates/app/manage_training_plans.html:162
-#: app/templates/app/manage_training_plans.html:216
-msgid "PO"
-msgstr "Пн"
-
-#: app/templates/app/manage_training_plans.html:163
-#: app/templates/app/manage_training_plans.html:217
-msgid "UT"
-msgstr "Вт"
-
-#: app/templates/app/manage_training_plans.html:164
-#: app/templates/app/manage_training_plans.html:218
-msgid "ST"
-msgstr "Ср"
-
-#: app/templates/app/manage_training_plans.html:165
-#: app/templates/app/manage_training_plans.html:219
-msgid "ŠT"
-msgstr "Чт"
-
-#: app/templates/app/manage_training_plans.html:166
-#: app/templates/app/manage_training_plans.html:220
-msgid "PI"
-msgstr "Пт"
-
-#: app/templates/app/manage_training_plans.html:167
-#: app/templates/app/manage_training_plans.html:221
-msgid "SO"
-msgstr "Сб"
-
-#: app/templates/app/manage_training_plans.html:168
-#: app/templates/app/manage_training_plans.html:222
-msgid "NE"
-msgstr "Нд"
-
 #: app/templates/app/manage_training_plans.html:181
 msgid "Pridať tréningový plán"
 msgstr "Додати план навчання"
-
-#: app/templates/app/manage_training_plans.html:237
-msgid "Vymazať"
-msgstr "Видалити"
 
 #: app/templates/app/manage_training_plans.html:248
 msgid "Nájsť cvik"
 msgstr "Знайти практику"
 
 #: app/templates/app/password_reset.html:5
-#: app/templates/app/password_reset.html:16 app/views.py:260
-#: app/views.py:698 app/views.py:768 app/views.py:978
+#: app/templates/app/password_reset.html:16 app/views.py:771 app/views.py:1295
+#: app/views.py:1386 app/views.py:3513 templates/base.html:159
 msgid "Obnova hesla"
 msgstr "Відновлення пароля"
 
@@ -950,82 +1432,280 @@ msgstr "Не отримали код підтвердження?"
 msgid "Skúsiť znovu"
 msgstr "Спробуйте ще раз"
 
-#: app/templates/app/password_reset.html:71
+#: app/templates/app/password_reset.html:73
 msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
 msgstr ""
 "Термін дії коду підтвердження для зміни пароля вашого облікового запису "
 "закінчився."
 
-#: app/templates/app/password_reset.html:71
+#: app/templates/app/password_reset.html:73
 msgid "Na stránke s"
 msgstr "На сторінці"
 
-#: app/templates/app/password_reset.html:71
+#: app/templates/app/password_reset.html:73
 msgid "prihlásením"
 msgstr "входу"
 
-#: app/templates/app/password_reset.html:71
+#: app/templates/app/password_reset.html:73
 msgid "požiadajte o nový."
 msgstr "запросіть новий."
+
+#: app/templates/app/post.html:5
+msgid "Príspevok"
+msgstr ""
+
+#: app/templates/app/post.html:132 app/templates/app/profile.html:212
+msgid "follow"
+msgstr ""
+
+#: app/templates/app/post.html:135 app/templates/app/profile.html:215
+msgid "unfollow"
+msgstr ""
+
+#: app/templates/app/post.html:141 app/templates/app/profile.html:221
+msgid "Začať sledovať"
+msgstr ""
+
+#: app/templates/app/post.html:144 app/templates/app/profile.html:224
+msgid "Prestať sledovať"
+msgstr ""
+
+#: app/templates/app/post.html:174 app/templates/partials/comment.html:60
+#: app/templates/partials/reviews.html:82
+#, fuzzy
+#| msgid "Nahlásiť..."
+msgid "Nahlásiť"
+msgstr "Звіт..."
+
+#: app/templates/app/post.html:324
+msgid "Naozaj chcete vymazať Váš príspevok?"
+msgstr ""
+
+#: app/templates/app/post.html:398 app/templates/app/post.html:538
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                                        Na základe %(amount)s recenzie\n"
+#| "                                        \n"
+#| "                                    "
+#| msgid_plural ""
+#| "\n"
+#| "                                        Na základe %(amount)s recenzií\n"
+#| "\n"
+#| "                                    "
+msgid ""
+"\n"
+"                                                Príspevok užívateľa "
+"%(username)s\n"
+"                                            "
+msgstr ""
+"\n"
+"На основі %(amount)s відгук"
+
+#: app/templates/app/post.html:576
+msgid "Skryté"
+msgstr ""
+
+#: app/templates/app/post.html:591
+msgid "Vypnuté"
+msgstr ""
+
+#: app/templates/app/post.html:673
+#, fuzzy
+#| msgid ""
+#| "Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+#| "žiadne&nbsp;recenzie."
+msgid "Ospravedlňujeme&nbsp;sa!<br>Hľadaný&nbsp;príspevok sa&nbsp;nenašiel."
+msgstr "Прости!<br>Не&nbsp;вдалося&nbsp;знайти&nbsp;жодних&nbsp;відгуків."
+
+#: app/templates/app/profile.html:5 templates/base.html:96
+#: templates/base.html:112
+msgid "Môj účet"
+msgstr "Мій рахунок"
+
+#: app/templates/app/profile.html:44
+msgid "Nahrať obrázok"
+msgstr "Завантажити зображення"
+
+#: app/templates/app/profile.html:53
+msgid "Odstrániť obrázok"
+msgstr "Видалити зображення"
+
+#: app/templates/app/profile.html:68
+#, fuzzy
+#| msgid "Pridať článok"
+msgid "Pridať odkaz"
+msgstr "Додати статтю"
+
+#: app/templates/app/profile.html:112
+msgid "Odstrániť účet"
+msgstr "Видалити обліковий запис"
+
+#: app/templates/app/profile.html:168
+#, fuzzy
+#| msgid "Otvoriť Gmail"
+msgid "Otvoriť odkaz"
+msgstr "Відкрити Gmail"
+
+#: app/templates/app/profile.html:197
+msgid "sledujú"
+msgstr ""
+
+#: app/templates/app/profile.html:202
+msgid "sleduje"
+msgstr ""
+
+#: app/templates/app/profile.html:239
+msgid "Vývojár"
+msgstr ""
+
+#: app/templates/app/profile.html:271
+msgid "Prispievateľ"
+msgstr ""
+
+#: app/templates/app/profile.html:325
+msgid "Level"
+msgstr ""
+
+#: app/templates/app/profile.html:357
+msgid "Získané XP"
+msgstr ""
+
+#: app/templates/app/profile.html:387
+#, fuzzy
+#| msgid "najdlhšia aktivita"
+msgid "Najdlhšia rada aktivity"
+msgstr "найдовша активність"
+
+#: app/templates/app/profile.html:420
+#, fuzzy
+#| msgid "Registrácia"
+msgid "Roky od registrácie"
+msgstr "Реєстрація"
+
+#: app/templates/app/profile.html:454
+msgid "Zaznamenané aktivity"
+msgstr ""
+
+#: app/templates/app/profile.html:509
+msgid "Počet sledovateľov"
+msgstr ""
+
+#: app/templates/app/profile.html:564
+msgid "Počet príspevkov"
+msgstr ""
+
+#: app/templates/app/profile.html:619
+msgid "Získané lajky"
+msgstr ""
+
+#: app/templates/app/profile.html:674
+#, fuzzy
+#| msgid "Napísať komentár"
+msgid "Napísané komentáre"
+msgstr "Напишіть коментар"
+
+#: app/templates/app/profile.html:785
+#, fuzzy
+#| msgid "Zatiaľ žiadne recenzie"
+msgid "Zatiaľ žiadne príspevky."
+msgstr "Поки що немає відгуків"
+
+#: app/templates/app/profile.html:831
+msgid "Žiadne uložené príspevky."
+msgstr ""
 
 #: app/templates/app/registration.html:39
 msgid "PRIHLÁSENIE"
 msgstr "ЛОГІН"
 
-#: app/templates/app/training_session.html:5
+#: app/templates/app/training_session.html:7 templates/base.html:164
 msgid "Tréning"
 msgstr "Тренінг"
 
-#: app/templates/app/training_session.html:57
+#: app/templates/app/training_session.html:59
 msgid "Bez prihlásenia nie je možné zaznamenať vašu aktivitu."
 msgstr "Вашу активність неможливо записати без входу в систему."
 
-#: app/templates/app/training_session.html:63
+#: app/templates/app/training_session.html:65
 msgid "Zatiaľ nemáte žiaden tréningový plán."
 msgstr "У вас ще немає плану тренувань."
 
-#: app/templates/app/training_session.html:64
+#: app/templates/app/training_session.html:66
 msgid "Vytvorte si prvý."
 msgstr "Створити перший."
 
-#: app/templates/app/training_session.html:128
-#: app/templates/app/training_session.html:141
+#: app/templates/app/training_session.html:130
+#: app/templates/app/training_session.html:143
 msgid "Tréningový plán"
 msgstr "План навчання"
 
-#: app/templates/app/training_session.html:129
+#: app/templates/app/training_session.html:131
 msgid "Začať tréning"
 msgstr "Почніть навчання"
 
-#: app/templates/app/training_session.html:142
+#: app/templates/app/training_session.html:144
 msgid "Dokončiť tréning"
 msgstr "Повне навчання"
 
-#: app/templates/app/training_session.html:200
+#: app/templates/app/training_session.html:193
+msgid "Je dostupné navýšenie XP"
+msgstr ""
+
+#: app/templates/app/training_session.html:196
+msgid "Žiadne aktívne navýšenie XP"
+msgstr ""
+
+#: app/templates/app/training_session.html:213
 msgid "priemer&nbsp;/ 7&nbsp;dní"
 msgstr "середня&nbsp;/ 7&nbsp;днів"
 
-#: app/templates/app/training_session.html:214
+#: app/templates/app/training_session.html:227
 msgid "počet&nbsp;/ 7&nbsp;dní"
 msgstr "кількість&nbsp;/ 7&nbsp;днів"
 
-#: app/templates/app/training_session.html:238
+#: app/templates/app/training_session.html:251
 msgid "posledná aktivita"
 msgstr "остання активність"
 
-#: app/templates/app/training_session.html:238
-#: app/templates/app/training_session.html:254
+#: app/templates/app/training_session.html:251
+#: app/templates/app/training_session.html:267
 msgid "žiadna"
 msgstr "жодного"
 
-#: app/templates/app/training_session.html:254
+#: app/templates/app/training_session.html:267
 msgid "najdlhšia aktivita"
 msgstr "найдовша активність"
 
-#: app/templates/app/training_session.html:269
-#: app/templates/app/training_session.html:273
+#: app/templates/app/training_session.html:282
+#: app/templates/app/training_session.html:286
 msgid "Graf sa nepodarilo načítať."
 msgstr "Не вдалося завантажити діаграму."
+
+#: app/templates/app/training_session.html:293
+msgid "Dnešné&nbsp;výzvy"
+msgstr ""
+
+#: app/templates/app/training_session.html:294
+#, python-format
+msgid "Ostáva <span>%(official_tasks_remaining_hours)s</span> hodín."
+msgstr ""
+
+#: app/templates/app/training_session.html:320
+#, fuzzy
+#| msgid "Môj&nbsp;účet"
+msgid "Moje&nbsp;úlohy"
+msgstr "Мій&nbsp;рахунок"
+
+#: app/templates/app/training_session.html:323
+msgid "Vymazať dokončené"
+msgstr ""
+
+#: app/templates/app/training_session.html:372
+#, fuzzy
+#| msgid "Pridať sériu"
+msgid "Pridať úlohu"
+msgstr "Додати серію"
 
 #: app/templates/app/write_article.html:29
 msgid "Navrhnúť link"
@@ -1034,6 +1714,16 @@ msgstr "Запропонуйте посилання"
 #: app/templates/app/write_article.html:31
 msgid "URL adresa vášho článku (napr. front-lever)"
 msgstr "URL-адреса вашої статті (напр. front-lever)"
+
+#: app/templates/partials/comment.html:116
+msgid "Naozaj chcete vymazať Váš komentár?"
+msgstr ""
+
+#: app/templates/partials/comment.html:169
+#, fuzzy
+#| msgid "Zobraziť profil"
+msgid "Zobraziť odpovede..."
+msgstr "Переглянути профіль"
 
 #: app/urls.py:7
 msgid "domov/"
@@ -1056,8 +1746,8 @@ msgid "registracia/"
 msgstr "reyestratsiya/"
 
 #: app/urls.py:12
-msgid "moj-ucet/"
-msgstr "miy-rakhunok/"
+msgid "profil/<str:username>"
+msgstr ""
 
 #: app/urls.py:13
 msgid "moje-hodnotenie/"
@@ -1075,42 +1765,265 @@ msgstr "treninh/"
 msgid "moje-treningove-plany/"
 msgstr "moyi-plany-trenuvan/"
 
-#: app/urls.py:20
+#: app/urls.py:17
+msgid "komunita/"
+msgstr ""
+
+#: app/urls.py:21
+msgid "prispevok/<str:post_id>"
+msgstr ""
+
+#: app/urls.py:25
 msgid "platba-uspesna/"
 msgstr "oplata-uspishna/"
 
-#: app/views.py:110
+#: app/views.py:106
+msgid "Lokálny test"
+msgstr ""
+
+#: app/views.py:113
+msgid "Neznáme."
+msgstr ""
+
+#: app/views.py:121
+msgid "Služba nie je nedostupná."
+msgstr ""
+
+#: app/views.py:165
 msgid "Ďakujeme za Vašu podporu!"
 msgstr "Дякуємо за підтримку!"
 
-#: app/views.py:209 app/views.py:670
+#: app/views.py:207
+msgid "Platba sa dá uskutočniť len pomocou POST metódy."
+msgstr ""
+
+#: app/views.py:274 app/views.py:419 app/views.py:570 app/views.py:1946
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Nahlásenie bolo úspešne odoslané."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:276 app/views.py:421 app/views.py:572 app/views.py:1948
+#, fuzzy
+#| msgid "Bez prihlásenia nie je možné vytvoriť tréningový plán."
+msgid "Nahlásenie nie je možné odoslať bez prihlásenia."
+msgstr "Неможливо створити план навчання без входу."
+
+#: app/views.py:280 app/views.py:425 app/views.py:576 app/views.py:1952
+msgid "Pri odosielaní nahlásenia došlo k chybe."
+msgstr ""
+
+#: app/views.py:293
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Recenzia bola úspešne odstránená."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:295
+#, fuzzy
+#| msgid "Zmeny sa nepodarilo vykonať"
+msgid "Recenziu sa nepodarilo odstrániť."
+msgstr "Зміни не вдалося внести"
+
+#: app/views.py:297
+msgid "Recenziu nie je možné odstrániť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:301
+msgid "Pri odstraňovaní recenzie došlo k chybe."
+msgstr ""
+
+#: app/views.py:316
+msgid "Príspevok bol úspešne označený za \"už videný\"."
+msgstr ""
+
+#: app/views.py:318
+msgid "Príspevok nie je možné označiť za \"už videný\" bez prihlásenia."
+msgstr ""
+
+#: app/views.py:322
+msgid "Pri označovaní príspevku za \"už videný\" došlo k chybe."
+msgstr ""
+
+#: app/views.py:341
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Sledovanie bolo úspešne pridané."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:348
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Sledovanie bolo úspešne odstránené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:350
+msgid "Sledovanie nie je možné zmeniť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:354
+msgid "Pri zmene sledovania došlo k chybe."
+msgstr ""
+
+#: app/views.py:373 app/views.py:658 app/views.py:1895
+msgid "Označenie páči sa mi to bolo úspešne pridané."
+msgstr ""
+
+#: app/views.py:380 app/views.py:666 app/views.py:1919
+msgid "Označenie páči sa mi to bolo úspešne odstránené."
+msgstr ""
+
+#: app/views.py:382 app/views.py:668
+msgid "Označenie páči sa mi to nie je možné zmeniť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:386 app/views.py:672
+msgid "Pri zmene označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/views.py:442
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Príspevok bol úspešne upravený."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:444
+#, fuzzy
+#| msgid "Správu sa nepodarilo odoslať"
+msgid "Príspevok sa nepodarilo upraviť."
+msgstr "Не вдалося надіслати повідомлення"
+
+#: app/views.py:446
+msgid "Príspevok nie je možné upraviť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:450
+msgid "Pri úprave príspevku došlo k chybe."
+msgstr ""
+
+#: app/views.py:497
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Príspevok bol úspešne odstránený."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:499
+#, fuzzy
+#| msgid "Správu sa nepodarilo odoslať"
+msgid "Príspevok sa nepodarilo odstrániť."
+msgstr "Не вдалося надіслати повідомлення"
+
+#: app/views.py:501
+msgid "Príspevok nie je možné odstrániť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:505
+msgid "Pri odstraňovaní príspevku došlo k chybe."
+msgstr ""
+
+#: app/views.py:524
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Príspevok bol úspešne uložený."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:531
+msgid "Príspevok bol odstránený zo zoznamu uložených."
+msgstr ""
+
+#: app/views.py:533
+msgid "Príspevok nie je možné uložiť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:537
+msgid "Pri zmene uloženia príspevku došlo k chybe."
+msgstr ""
+
+#: app/views.py:589
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Komentár bol úspešne odstránený."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:591
+#, fuzzy
+#| msgid "Zmeny sa nepodarilo vykonať"
+msgid "Komentár sa nepodarilo odstrániť."
+msgstr "Зміни не вдалося внести"
+
+#: app/views.py:593
+msgid "Komentár nie je možné odstrániť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:597
+msgid "Pri odstraňovaní komentáru došlo k chybe."
+msgstr ""
+
+#: app/views.py:631
+msgid "Komentár pre príspevok bol úspešne pridaný."
+msgstr ""
+
+#: app/views.py:638
+msgid "Pri pridávaní komentáru došlo k chybe."
+msgstr ""
+
+#: app/views.py:680 app/views.py:1229
+msgid ""
+"Príliš veľa pokusov!\n"
+"Skúste to opäť za minútu."
+msgstr ""
+
+#: app/views.py:705 app/views.py:1254
 msgid "Prihlásenie do účtu"
 msgstr "Вхід в обліковий запис"
 
-#: app/views.py:210 app/views.py:671
-#, python-format
+#: app/views.py:706 app/views.py:1255
+#, fuzzy, python-format
+#| msgid ""
+#| "bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+#| "informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+#| "môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
+#| "kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
+#| "\n"
+#| "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
+#| "Tím Wesiq."
 msgid ""
-"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
+"%(domain)s%(language)s/profil/%(username)s?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"bи ввійшли до свого облікового запису. Цим повідомленням ми хотіли б повідомити вас, що якщо ви не входили в систему протягом цього часу, ваші дані можуть бути під загрозою. Рекомендуємо вам негайно змінити пароль або зв’язатися з нами. Ми дбаємо про безпеку ваших даних.\n"
+"bи ввійшли до свого облікового запису. Цим повідомленням ми хотіли б "
+"повідомити вас, що якщо ви не входили в систему протягом цього часу, ваші "
+"дані можуть бути під загрозою. Рекомендуємо вам негайно змінити пароль або "
+"зв’язатися з нами. Ми дбаємо про безпеку ваших даних.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/miy-rakhunok?password-reset=true\n"
 "\n"
 "Якщо ви зареєструвалися, будь ласка, ігноруйте цей лист.\n"
 "Команда Wesiq."
 
-#: app/views.py:211 app/views.py:672
-#, python-format
+#: app/views.py:707 app/views.py:1256
+#, fuzzy, python-format
+#| msgid ""
+#| "bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+#| "informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+#| "môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a "
+#| "href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\" "
+#| "title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
+#| "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgid ""
 "bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
 "informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
 "môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo kliknutím na <a "
-"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\" "
+"href=\"%(domain)s%(language)s/profil/%(username)s?password-reset=true\" "
 "title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
@@ -1118,59 +2031,91 @@ msgstr ""
 "повідомити вас, що якщо ви не входили в систему протягом цього часу, ваші "
 "дані можуть бути під загрозою. Рекомендуємо вам негайно змінити пароль, "
 "натиснувши <a href=\"http://127.0.0.1:8000/%(language)s/moj-ucet?password-"
-"reset=true\" title=\"Скинути пароль\" target=\"_blank\">це</a> посилання або"
-" зв’язавшись з нами. Ми дбаємо про безпеку ваших даних."
+"reset=true\" title=\"Скинути пароль\" target=\"_blank\">це</a> посилання або "
+"зв’язавшись з нами. Ми дбаємо про безпеку ваших даних."
 
-#: app/views.py:212 app/views.py:673
+#: app/views.py:708 app/views.py:1257
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
 msgstr "Якщо ви зареєструвалися, будь ласка, ігноруйте цей лист."
 
-#: app/views.py:215 app/views.py:246 app/views.py:676
+#: app/views.py:709 app/views.py:1258
 #, python-format
-msgid ""
-"Úspešne prihlásený ako\n"
-"%(first_name)s %(last_name)s"
+msgid "Zariadenie: %(os)s<br>Miesto: %(location)s<br>IP Adresa: %(client_ip)s"
+msgstr ""
+
+#: app/views.py:712 app/views.py:1261
+#, fuzzy, python-format
+#| msgid ""
+#| "Úspešne prihlásený ako\n"
+#| "%(first_name)s %(last_name)s"
+msgid "Úspešne prihlásený ako %(username)s"
 msgstr "Успішно зареєстрований як %(first_name)s %(last_name)s"
 
-#: app/views.py:220 app/views.py:224 app/views.py:681 app/views.py:685
+#: app/views.py:719 app/views.py:724 app/views.py:1267 app/views.py:1272
 msgid "Nesprávne prihlasovacie údaje"
 msgstr "Неправильна інформація для входу"
 
-#: app/views.py:240
+#: app/views.py:729 app/views.py:1277
+msgid "Pri prihlasovaní došlo k chybe"
+msgstr ""
+
+#: app/views.py:734 app/views.py:1282
+msgid "Nepodarilo sa spracovať požiadavku o prihlásenie"
+msgstr ""
+
+#: app/views.py:750
 msgid "Úspešná registrácia"
 msgstr "Успішна реєстрація"
 
-#: app/views.py:241
-#, python-format
+#: app/views.py:751
+#, fuzzy, python-format
+#| msgid ""
+#| "máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a "
+#| "Váš účet je odteraz plne aktívny.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
+#| "\n"
+#| "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno "
+#| "využívať všetky funkcie našich služieb.\n"
+#| "Tím Wesiq."
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
+"%(domain)s%(language)s/profil/\n"
 "\n"
-"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
+"všetky funkcie našich služieb.\n"
 "Tím Wesiq."
 msgstr ""
-"у нас для вас чудові новини! Вашу адресу електронної пошти успішно перевірено, і ваш обліковий запис тепер повністю активний.\n"
+"у нас для вас чудові новини! Вашу адресу електронної пошти успішно "
+"перевірено, і ваш обліковий запис тепер повністю активний.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/miy-rakhunok/\n"
 "\n"
-"Ми раді, що ви приєдналися до нашої спільноти. Тепер ви можете повноцінно користуватися всіма функціями наших сервісів.\n"
+"Ми раді, що ви приєдналися до нашої спільноти. Тепер ви можете повноцінно "
+"користуватися всіма функціями наших сервісів.\n"
 "Команда Wesiq."
 
-#: app/views.py:242
-#, python-format
+#: app/views.py:752
+#, fuzzy, python-format
+#| msgid ""
+#| "máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a "
+#| "Váš účet je odteraz plne aktívny. Kliknite na <a href=\"http://"
+#| "127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
+#| "target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
-" účet je odteraz plne aktívny. Kliknite na <a "
-"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
-"target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny. Kliknite na <a href=\"%(domain)s%(language)s/"
+"profil/\" title=\"Môj účet\" target=\"_blank\">tento</a> odkaz pre "
+"zobrazenie Vášho úštu."
 msgstr ""
 "у нас для вас чудові новини! Вашу адресу електронної пошти успішно "
 "перевірено, і ваш обліковий запис тепер повністю активний. Натисніть на <a "
 "href=\"http://127.0.0.1:8000/%(language)s/miy-rakhunok/\" title=\"Мій "
 "рахунок\" target=\"_blank\">це</a> посилання, щоб переглянути свій рот."
 
-#: app/views.py:243
+#: app/views.py:753
 msgid ""
 "Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
 "všetky funkcie našich služieb."
@@ -1178,104 +2123,163 @@ msgstr ""
 "Ми раді, що ви приєдналися до нашої спільноти. Тепер ви можете повноцінно "
 "користуватися всіма функціями наших сервісів."
 
-#: app/views.py:261 app/views.py:699 app/views.py:769 app/views.py:979
+#: app/views.py:756
 #, python-format
 msgid ""
-"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"Úspešne prihlásený ako\n"
+"%(first_name)s %(last_name)s"
+msgstr "Успішно зареєстрований як %(first_name)s %(last_name)s"
+
+#: app/views.py:772 app/views.py:1296 app/views.py:1387 app/views.py:3514
+#, fuzzy, python-format
+#| msgid ""
+#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+#| "prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-"
+#| "code=%(code)s - %(code)s\n"
+#| "\n"
+#| "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
+#| "Tím Wesiq."
+msgid ""
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+"prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
+"%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"ми отримали запит на скидання пароля вашого облікового запису. Якщо це були ви, будь ласка, скористайтеся наступним посиланням і введіть наступний код підтвердження.\n"
+"ми отримали запит на скидання пароля вашого облікового запису. Якщо це були "
+"ви, будь ласка, скористайтеся наступним посиланням і введіть наступний код "
+"підтвердження.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/vidnovlennya-parolya?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/%(language)s/vidnovlennya-parolya?password-reset-"
+"code=%(code)s - %(code)s\n"
 "\n"
-"Якщо ви не подали запит на скидання пароля, проігноруйте цей електронний лист.\n"
+"Якщо ви не подали запит на скидання пароля, проігноруйте цей електронний "
+"лист.\n"
 "Команда Wesiq."
 
-#: app/views.py:262 app/views.py:700 app/views.py:770 app/views.py:980
-#, python-format
+#: app/views.py:773 app/views.py:1297 app/views.py:1388 app/views.py:3515
+#, fuzzy, python-format
+#| msgid ""
+#| "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+#| "prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-hesla?"
+#| "password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
+#| "target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
 msgid ""
 "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-"
-"hesla?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
-"target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
+"prosím použite <a href=\"%(domain)s%(language)s/obnova-hesla?password-reset-"
+"code=%(code)s\" title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz a "
+"zadajte nasledovný overovací kód."
 msgstr ""
 "ми отримали запит на скидання пароля вашого облікового запису. Якщо це були "
-"ви, будь ласка, скористайтеся <a "
-"href=\"http://127.0.0.1:8000/%(language)s/vidnovlennya-parolya?password-"
-"reset-code=%(code)s\" title=\"Скинути пароль\" "
+"ви, будь ласка, скористайтеся <a href=\"http://127.0.0.1:8000/%(language)s/"
+"vidnovlennya-parolya?password-reset-code=%(code)s\" title=\"Скинути пароль\" "
 "target=\"_blank\">наступним</a> посиланням і введіть наступний код "
 "підтвердження."
 
-#: app/views.py:263 app/views.py:701 app/views.py:771 app/views.py:981
+#: app/views.py:774 app/views.py:1298 app/views.py:1389 app/views.py:3516
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
 msgstr ""
 "Якщо ви не подали запит на скидання пароля, проігноруйте цей електронний "
 "лист."
 
-#: app/views.py:271 app/views.py:709 app/views.py:779 app/views.py:989
+#: app/views.py:782 app/views.py:1306 app/views.py:1397 app/views.py:3524
 #, python-format
 msgid ""
 "Overovací kód bol odoslaný na adresu\n"
 "%(email_address)s"
 msgstr "Код перевірки надіслано до %(email_address)s"
 
-#: app/views.py:295 app/views.py:362 app/views.py:564 app/views.py:824
+#: app/views.py:806 app/views.py:884 app/views.py:1124 app/views.py:1470
+#: app/views.py:2584
 msgid "Overenie reCaptcha zlyhalo"
 msgstr "Помилка автентифікації reCaptcha"
 
-#: app/views.py:302 app/views.py:833
+#: app/views.py:815 app/views.py:1481
 msgid "Tento e-mail už je zaregistrovaný"
 msgstr "Цей email вже зареєстрований"
 
-#: app/views.py:306 app/views.py:837
+#: app/views.py:819 app/views.py:1485
 msgid "Heslá sa nezhodujú"
 msgstr "Паролі не збігаються"
 
-#: app/views.py:309 app/views.py:735 app/views.py:840
+#: app/views.py:822 app/views.py:1347 app/views.py:1488
 msgid "Heslo je príliš krátke"
 msgstr "Пароль занадто короткий"
 
-#: app/views.py:332 app/views.py:863
+#: app/views.py:848 app/views.py:1514
 #, python-format
 msgid ""
 "Potvrdte vašu e-mailovú adresu\n"
 "%(email_address)s"
 msgstr "Підтвердьте свою адресу електронної пошти %(email_address)s"
 
-#: app/views.py:336 app/views.py:867
+#: app/views.py:852 app/views.py:1518
 msgid "Overenie účtu"
 msgstr "Перевірка облікового запису"
 
-#: app/views.py:337 app/views.py:868
-#, python-format
+#: app/views.py:853 app/views.py:1519
+#, fuzzy, python-format
+#| msgid ""
+#| "ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a "
+#| "aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím "
+#| "na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky "
+#| "prihlásený do svojho nového účtu.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s?verification-"
+#| "code=%(verification_code)s&id=%(id)s\n"
+#| "\n"
+#| "Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude "
+#| "z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste "
+#| "registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
+#| "Tím Wesiq."
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
+"uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
+"svojho nového účtu.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z "
+"bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu "
+"nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"дякуємо за вашу реєстрацію. Щоб завершити процес реєстрації та активувати свій обліковий запис, вам потрібно підтвердити свою адресу електронної пошти. Натисніть на посилання нижче, щоб підтвердити свою електронну пошту, і ви автоматично ввійдете до свого нового облікового запису.\n"
+"дякуємо за вашу реєстрацію. Щоб завершити процес реєстрації та активувати "
+"свій обліковий запис, вам потрібно підтвердити свою адресу електронної "
+"пошти. Натисніть на посилання нижче, щоб підтвердити свою електронну пошту, "
+"і ви автоматично ввійдете до свого нового облікового запису.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Це посилання дійсне протягом наступних 24 годин. Після цього вам потрібно буде зареєструватися знову з міркувань безпеки. Якщо ви не зареєструвалися, будь ласка, проігноруйте цей лист.\n"
+"Це посилання дійсне протягом наступних 24 годин. Після цього вам потрібно "
+"буде зареєструватися знову з міркувань безпеки. Якщо ви не зареєструвалися, "
+"будь ласка, проігноруйте цей лист.\n"
 "Команда Wesiq."
 
-#: app/views.py:338 app/views.py:869
-#, python-format
+#: app/views.py:854 app/views.py:1520
+#, fuzzy, python-format
+#| msgid ""
+#| "ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a "
+#| "aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím "
+#| "na <a href=\"http://127.0.0.1:8000/%(language)s?verification-"
+#| "code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
+#| "target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete "
+#| "automaticky prihlásený do svojho nového účtu. Tento odkaz je platný "
+#| "nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných "
+#| "dôvodov potrebné registráciu zopakovať."
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
-" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
-"href=\"http://127.0.0.1:8000/%(language)s?verification-"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"href=\"%(domain)s%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
-"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
-" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky "
+"prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
@@ -1288,153 +2292,437 @@ msgstr ""
 "дійсне протягом наступних 24 годин. Після цього вам потрібно буде "
 "зареєструватися знову з міркувань безпеки."
 
-#: app/views.py:339 app/views.py:870
+#: app/views.py:855 app/views.py:1521
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
 msgstr "Якщо ви не зареєструвалися, будь ласка, ігноруйте цей лист."
 
-#: app/views.py:345 app/views.py:876
-msgid "Registrácia zlyhala"
-msgstr "Не вдалося зареєструватися"
+#: app/views.py:862 app/views.py:1528
+msgid "Pri registrácii došlo k chybe"
+msgstr ""
 
-#: app/views.py:390 app/views.py:399
+#: app/views.py:867 app/views.py:1533
+msgid "Nepodarilo sa spracovať požiadavku o registráciu"
+msgstr ""
+
+#: app/views.py:914 app/views.py:923
 msgid "Správa bola odoslaná"
 msgstr "Повідомлення відправлено"
 
-#: app/views.py:393
+#: app/views.py:917
 msgid "Príloha je príliš veľká"
 msgstr "Прикріплення занадто велике"
 
-#: app/views.py:402
+#: app/views.py:927
+msgid "Pri odosielaní správy došlo k chybe"
+msgstr ""
+
+#: app/views.py:932
 msgid "Správu sa nepodarilo odoslať"
 msgstr "Не вдалося надіслати повідомлення"
 
-#: app/views.py:574
+#: app/views.py:1094
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Recenzie boli úspešné nájdené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:1136
 msgid "Skúste upraviť aktuálne hodnotenie"
 msgstr "Спробуйте відредагувати поточний рейтинг"
 
-#: app/views.py:581
+#: app/views.py:1143
 msgid "Ukážte nám vašu spokojnosť"
 msgstr "Покажіть нам своє задоволення"
 
-#: app/views.py:592
+#: app/views.py:1154
 msgid "Ďakujeme za vaše hodnotenie"
 msgstr "Дякуємо за відгук"
 
-#: app/views.py:595
+#: app/views.py:1158
+msgid "Pri spracovaní hodnotenia došlo k chybe"
+msgstr ""
+
+#: app/views.py:1163
 msgid "Hodnotenie sa nepodarilo uverejniť"
 msgstr "Рейтинг не вдалося опублікувати"
 
-#: app/views.py:635
+#: app/views.py:1203
 msgid "Pred napísaním hodnotenia sa prihláste"
 msgstr "Будь ласка, подайте заявку перед написанням відгуку"
 
-#: app/views.py:743
+#: app/views.py:1355
 msgid "Heslo bolo úspešne zmenené"
 msgstr "Пароль успішно змінено"
 
-#: app/views.py:751
+#: app/views.py:1363
 msgid "Overovací kód sa nezhoduje"
 msgstr "Код перевірки не збігається"
 
-#: app/views.py:755
+#: app/views.py:1368
+msgid "Pri spracovaní žiadosti o zmenu hesla došlo k chybe"
+msgstr ""
+
+#: app/views.py:1373
 msgid "Overenie zlyhalo"
 msgstr "Не вдалося перевірити"
 
-#: app/views.py:806
+#: app/views.py:1452
 msgid "Boli ste odhlásený"
 msgstr "Вас вибули"
 
-#: app/views.py:899
+#: app/views.py:1577 app/views.py:3489
+msgid "Zmeny boli uložené"
+msgstr "Зміни збережено"
+
+#: app/views.py:1583
+msgid "Pri úprave hodnotenia došlo k chybe"
+msgstr ""
+
+#: app/views.py:1588 app/views.py:3503
+msgid "Zmeny sa nepodarilo vykonať"
+msgstr "Зміни не вдалося внести"
+
+#: app/views.py:1594 app/views.py:3494
+#, python-format
+msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
+msgstr "Подальші коригування будуть можливі %(next_edit_time)s"
+
+#: app/views.py:1846 app/views.py:1871
+msgid "Pri pridávaní komentáru došlo k chybe"
+msgstr ""
+
+#: app/views.py:1851 app/views.py:1876
+msgid "Pridávanie komentáru zlyhalo"
+msgstr ""
+
+#: app/views.py:1897
+msgid "Označenie páči sa mi to sa nedá pridať bez prihlásenia."
+msgstr ""
+
+#: app/views.py:1901
+msgid "Pri pridávaní označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/views.py:1921
+msgid "Označenie páči sa mi to nie je možné odstrániť bez prihlásenia."
+msgstr ""
+
+#: app/views.py:1925
+msgid "Pri rušení označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/views.py:2011
+msgid "Pri pridávaní článku došlo k chybe"
+msgstr ""
+
+#: app/views.py:2016
+msgid "Pridávanie článku zlyhalo"
+msgstr ""
+
+#: app/views.py:2166
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Navýšenie XP bolo úspešne uplatnené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2170
+msgid "Pri uplatňovaní navýšenia XP došlo k chybe."
+msgstr ""
+
+#: app/views.py:2205
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Úloha bola úspešne dokončená."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2207
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Pokrok úlohy bol úspešne zaznamenaný."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2210
+msgid "Úloha už bola dokončená."
+msgstr ""
+
+#: app/views.py:2214
+msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
+msgstr ""
+
+#: app/views.py:2235
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Úloha bola úspešne pridaná."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2239
+msgid "Pri pridávaní úlohy došlo k chybe."
+msgstr ""
+
+#: app/views.py:2250
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Stav úlohy bol úspešne zmenený."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2254
+msgid "Pri zmene stavu úlohy došlo k chybe."
+msgstr ""
+
+#: app/views.py:2264
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Úloha bola úspešne odstránená."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2268
+msgid "Pri odstraňovaní úlohy došlo k chybe."
+msgstr ""
+
+#: app/views.py:2280
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Úlohy boli úspešne odstránené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2284
+msgid "Pri odstraňovaní úloh došlo k chybe."
+msgstr ""
+
+#: app/views.py:2298
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Poradie úloh bolo úspešne zmenené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2302
+msgid "Pri pokuse o zmenu poradia úloh došlo k chybe."
+msgstr ""
+
+#: app/views.py:2405
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Aktivita bola úspešne zaznamenaná."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:2409
+msgid "Pri zaznamenávaní aktivity došlo k chybe."
+msgstr ""
+
+#: app/views.py:2495
+msgid "Tréningový plán bol úspešne vytvorený / upravený."
+msgstr ""
+
+#: app/views.py:2514
+msgid "Tréningový plán bol úspešne vytvorený."
+msgstr ""
+
+#: app/views.py:2519
+msgid "Tréningový plán bol úspešne odstránený."
+msgstr ""
+
+#: app/views.py:2521
+msgid "Nepodarilo sa vykonať zmeny v tréningovom pláne."
+msgstr ""
+
+#: app/views.py:2525
+msgid "Pri vykonávaní zmien v tréningovom pláne došlo k chybe."
+msgstr ""
+
+#: app/views.py:2650
 #, python-format
 msgid ""
-"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n"
+"Súbor nemá podporovaný formát:\n"
+"%(file)s"
+msgstr ""
+
+#: app/views.py:2656
+#, fuzzy, python-format
+#| msgid "Príloha je príliš veľká"
+msgid ""
+"Súbor je príliš veľký:\n"
+"%(file)s"
+msgstr "Прикріплення занадто велике"
+
+#: app/views.py:2674
+#, fuzzy, python-format
+#| msgid "Zadané meno je príliš dlhé"
+msgid ""
+"Video je príliš dlhé:\n"
+"%(file)s"
+msgstr "Введене вами ім'я занадто довге"
+
+#: app/views.py:2677
+#, fuzzy, python-format
+#| msgid "Heslo je príliš krátke"
+msgid ""
+"Video je príliš krátke:\n"
+"%(file)s"
+msgstr "Пароль занадто короткий"
+
+#: app/views.py:2683
+#, python-format
+msgid ""
+"Pri spracovávaní videa došlo k chybe:\n"
+"%(file)s"
+msgstr ""
+
+#: app/views.py:2719
+#, python-format
+msgid ""
+"Chyba pri spracovaní súboru:\n"
+"%(file)s"
+msgstr ""
+
+#: app/views.py:2729
+msgid "Pri pridávaní príspevku došlo k chybe"
+msgstr ""
+
+#: app/views.py:2734
+msgid "Pridávanie príspevku zlyhalo"
+msgstr ""
+
+#: app/views.py:2803
+msgid "Užívatelia boli úspešne načítaný."
+msgstr ""
+
+#: app/views.py:2805
+msgid "Užívateľov nie je možné načítať bez prihlásenia."
+msgstr ""
+
+#: app/views.py:2809
+msgid "Pri načítavaní užívateľov došlo k chybe."
+msgstr ""
+
+#: app/views.py:2853
+msgid "Užívatelia boli úspešné nájdený."
+msgstr ""
+
+#: app/views.py:2857
+msgid "Pri hľadaní užívateľov došlo k chybe."
+msgstr ""
+
+#: app/views.py:2923
+msgid "Pri hľadaní užívateľov pre označenie došlo k chybe."
+msgstr ""
+
+#: app/views.py:3042
+msgid "Pri hľadaní príspevkov došlo k chybe."
+msgstr ""
+
+#: app/views.py:3127
+#, fuzzy
+#| msgid "Heslo bolo úspešne zmenené"
+msgid "Príspevky boli úspešné nájdené."
+msgstr "Пароль успішно змінено"
+
+#: app/views.py:3129
+msgid "Príspevky nie je možné načítať bez prihlásenia."
+msgstr ""
+
+#: app/views.py:3391
+#, fuzzy, python-format
+#| msgid ""
+#| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#| "možnosť prihlásiť sa.\n"
+#| "\n"
+#| "http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
+#| "\n"
+#| "V opačnom prípade bude váš účet neodvratne odstránený.\n"
+#| "Tím Wesiq."
+msgid ""
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+"možnosť prihlásiť sa.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
+"%(domain)s%(language)s/prihlasenie/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Wesiq."
 msgstr ""
-"ми отримали запит на видалення вашого облікового запису. У разі помилки у вас є можливість увійти протягом 30 днів. \n"
+"ми отримали запит на видалення вашого облікового запису. У разі помилки у "
+"вас є можливість увійти протягом 30 днів. \n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/lohin/\n"
 "\n"
 "В іншому випадку ваш аккаунт неминуче буде видалений.\n"
 "Команда Wesiq."
 
-#: app/views.py:900
-#, python-format
+#: app/views.py:3392
+#, fuzzy, python-format
+#| msgid ""
+#| "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#| "možnosť <a href=\"http://127.0.0.1:8000/%(language)s/prihlasenie/\" "
+#| "title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom "
+#| "prípade bude váš účet neodvratne odstránený."
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-"možnosť <a href=\"http://127.0.0.1:8000/%(language)s/prihlasenie/\" "
-"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade"
-" bude váš účet neodvratne odstránený."
+"možnosť <a href=\"%(domain)s%(language)s/prihlasenie/\" title=\"Prihlásiť "
+"sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade bude váš účet "
+"neodvratne odstránený."
 msgstr ""
 "ми отримали запит на видалення вашого облікового запису. У разі помилки у "
 "вас є можливість <a href=\"http://127.0.0.1:8000/%(language)s/lohin/\" "
 "title=\"Aвторизуватися\" target=\"_blank\">увійти</a> протягом 30 днів. В "
 "іншому випадку ваш аккаунт неминуче буде видалений."
 
-#: app/views.py:901
+#: app/views.py:3393
 msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
 msgstr "Будь ласка, проігноруйте цей лист, він лише для вашої інформації."
 
-#: app/views.py:907
+#: app/views.py:3399
 #, python-format
 msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgstr "Обліковий запис %(first_name)s %(last_name)s видалено"
 
-#: app/views.py:960 app/views.py:1042
-msgid "Zmeny boli uložené"
-msgstr "Зміни збережено"
+#: app/views.py:3486
+msgid "Pri spracovávaní vlastných odkazov došlo k chybe"
+msgstr ""
 
-#: app/views.py:965 app/views.py:1053
-#, python-format
-msgid "Ďalšie úpravy budú možné %(next_edit_time)s"
-msgstr "Подальші коригування будуть можливі %(next_edit_time)s"
+#: app/views.py:3498
+#, fuzzy
+#| msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
+msgid "Pri vykonávaní zmien v účte došlo k chybe"
+msgstr "Щоб внести зміни у свій обліковий запис, спочатку необхідно"
 
-#: app/views.py:968 app/views.py:1047
-msgid "Zmeny sa nepodarilo vykonať"
-msgstr "Зміни не вдалося внести"
-
-#: app/views.py:1038
-msgid "Vaše hodnotenie bolo odstránené"
-msgstr "Ваш рейтинг видалено"
-
-#: core/settings.py:238
+#: core/settings.py:245
 msgid "Slovak"
 msgstr "Словацький"
 
-#: core/settings.py:239
+#: core/settings.py:246
 msgid "Czech"
 msgstr "Чех"
 
-#: core/settings.py:240
+#: core/settings.py:247
 msgid "English"
 msgstr "Английский"
 
-#: core/settings.py:241
+#: core/settings.py:248
 msgid "Spanish"
 msgstr "Іспанська"
 
-#: core/settings.py:242
+#: core/settings.py:249
 msgid "French"
 msgstr "Французький"
 
-#: core/settings.py:243
+#: core/settings.py:250
 msgid "Ukrainian"
 msgstr "Український"
 
-#: core/settings.py:244
+#: core/settings.py:251
 msgid "Russian"
 msgstr "Русский"
 
-#: core/settings.py:245
+#: core/settings.py:252
 msgid "Portuguese (Brazil)"
 msgstr "Португальська (Бразилія)"
 
-#: core/settings.py:246
+#: core/settings.py:253
 msgid "Simplified Chinese"
 msgstr "Спрощена китайська"
+
+#: core/settings.py:254
+msgid "German"
+msgstr ""
 
 #: templates/404.html:5
 msgid "Stránka sa nenašla"
@@ -1452,87 +2740,112 @@ msgstr "Вибачте, але сторінка, яку ви шукали, не 
 msgid "Späť na hlavnú stránku"
 msgstr "Назад на головну сторінку"
 
-#: templates/base.html:46 templates/base.html:183
+#: templates/base.html:47 templates/base.html:206
 msgid "Zásady&nbsp;ochrany osobných&nbsp;údajov"
 msgstr "Політика&nbsp;конфіденційності"
 
-#: templates/base.html:48
+#: templates/base.html:49
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
-" zlepšovať naše služby."
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
+"zlepšovať naše služby."
 msgstr ""
 "Цей сайт використовує файли cookie, щоб забезпечити вам найкращий досвід "
 "перегляду. Файли cookie допомагають нам аналізувати, оптимізувати та "
 "покращувати наші послуги."
 
-#: templates/base.html:51
+#: templates/base.html:52
 msgid "Potvrdiť všetky"
 msgstr "Підтвердити всі"
 
-#: templates/base.html:52
+#: templates/base.html:53
 msgid "Iba nevyhnutné"
 msgstr "Тільки необхідно"
 
-#: templates/base.html:56
+#: templates/base.html:57
 msgid "PRESKOČIŤ"
 msgstr "ПРОПУСТИТИ"
 
-#: templates/base.html:58
+#: templates/base.html:59
 msgid "Posunúť nadol"
 msgstr "Рухатися вниз"
 
-#: templates/base.html:59
+#: templates/base.html:60
 msgid "Posunúť nahor"
 msgstr "Рухатися вгору"
 
-#: templates/base.html:71
+#: templates/base.html:72
 msgid "DOMOV"
 msgstr "ДОМОЙ"
 
-#: templates/base.html:72
+#: templates/base.html:73
 msgid "AKTIVITA"
 msgstr "АКТИВНІСТЬ"
 
-#: templates/base.html:73
+#: templates/base.html:74
 msgid "BLOG"
 msgstr "БЛОГ"
 
-#: templates/base.html:112
+#: templates/base.html:75
+msgid "KOMUNITA"
+msgstr ""
+
+#: templates/base.html:114
 msgid "Odhlásiť sa z účtu"
 msgstr "Вийдіть зі свого облікового запису"
 
-#: templates/base.html:112
+#: templates/base.html:114
 msgid "Odhlásiť"
 msgstr "Відписатися"
 
-#: templates/base.html:117
+#: templates/base.html:119
 msgid "Neprihlásený"
 msgstr "Не ввійшов"
 
-#: templates/base.html:140
-msgid "Wesiq"
-msgstr "Wesiq"
-
-#: templates/base.html:143
+#: templates/base.html:145
 msgid "Napísať..."
 msgstr "Напиши..."
 
-#: templates/base.html:145
+#: templates/base.html:147
 msgid "Zavolať..."
 msgstr "Телефонуйте..."
 
-#: templates/base.html:155
+#: templates/base.html:157
 msgid "Domov"
 msgstr "Додому"
 
-#: templates/base.html:184
-msgid "&copy; Wesiq 2025 - 2026, Všetky práva vyhradené."
+#: templates/base.html:208
+#, fuzzy
+#| msgid "&copy; Wesiq 2025 - 2026, Všetky práva vyhradené."
+msgid "Všetky práva vyhradené."
 msgstr "&copy; Wesiq 2025 - 2026, Всі права захищені."
 
-#: templates/base.html:192
-msgid "Wesiq by Patrik Behul"
-msgstr "Wesiq by Patrik Behul"
+#~ msgid "Tím Wesiq."
+#~ msgstr "Команда Wesiq."
+
+#~ msgid "Odoberať"
+#~ msgstr "Підписатися"
+
+#~ msgid "Dostávať upozornenia o nových článkoch"
+#~ msgstr "Отримувати повідомлення про нові статті"
+
+#~ msgid "Odstrániť recenziu"
+#~ msgstr "Вилучити відгук"
+
+#~ msgid "Wesiq"
+#~ msgstr "Wesiq"
+
+#~ msgid "moj-ucet/"
+#~ msgstr "miy-rakhunok/"
+
+#~ msgid "Registrácia zlyhala"
+#~ msgstr "Не вдалося зареєструватися"
+
+#~ msgid "Vaše hodnotenie bolo odstránené"
+#~ msgstr "Ваш рейтинг видалено"
+
+#~ msgid "Wesiq by Patrik Behul"
+#~ msgstr "Wesiq by Patrik Behul"
 
 #~ msgid "Zadajte 6-miestny overovací kód"
 #~ msgstr "Введіть 6-значний код підтвердження"
@@ -1540,20 +2853,22 @@ msgstr "Wesiq by Patrik Behul"
 #~ msgid "Zadaný kód je príliš dlhý"
 #~ msgstr "Введений вами код занадто довгий"
 
-#~ msgid "Otvoriť Gmail"
-#~ msgstr "Відкрити Gmail"
-
 #~ msgid "Wesiq - Odstránenie účtu"
 #~ msgstr "SW Zhylina - Видалення облікового запису"
 
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+#~ "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
+#~ "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 #~ "Tím Wesiq."
 #~ msgstr ""
 #~ "Привіт %(first_name)s %(last_name)s,\n"
-#~ "ми повідомляємо вас, що ваш обліковий запис користувача було видалено назавжди. Повторний вхід до початкового облікового запису більше неможливий. Якщо б ви хотіли повернутися в майбутньому, ми були б раді, якщо ви створите новий.\n"
+#~ "ми повідомляємо вас, що ваш обліковий запис користувача було видалено "
+#~ "назавжди. Повторний вхід до початкового облікового запису більше "
+#~ "неможливий. Якщо б ви хотіли повернутися в майбутньому, ми були б раді, "
+#~ "якщо ви створите новий.\n"
 #~ "Wesiq."
 
 #~ msgid "Wesiq - Obnova hesla"
@@ -1562,11 +2877,15 @@ msgstr "Wesiq by Patrik Behul"
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+#~ "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
+#~ "odstránený.\n"
 #~ "Tím Wesiq."
 #~ msgstr ""
 #~ "Привіт %(first_name)s %(last_name)s,\n"
-#~ "ми отримали запит на видалення вашого облікового запису. У разі помилки у вас є можливість увійти протягом 30 днів. В іншому випадку ваш аккаунт неминуче буде видалений."
+#~ "ми отримали запит на видалення вашого облікового запису. У разі помилки у "
+#~ "вас є можливість увійти протягом 30 днів. В іншому випадку ваш аккаунт "
+#~ "неминуче буде видалений."
 
 #~ msgid "Brazilian"
 #~ msgstr "Бразильський"
