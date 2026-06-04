@@ -927,11 +927,93 @@ The Post Feed serves as the central hub for community activity, where users can 
 
 - **Nested Reply System**: The platform supports replying to specific comments, creating discussion threads. To maintain a clean UI layout and prevent interface breakage on smaller screens, deep nesting is strictly capped at a maximum depth of 5 levels.
 
+- **Dynamic Reply Toggling**: To maintain a clutter-free interface, nested replies are hidden by default. The frontend intelligently renders a "Show Replies" toggle icon exclusively for comments that contain active sub-threads. If a comment has no replies, the UI remains perfectly clean without generating redundant buttons, allowing users to expand or collapse discussions seamlessly on demand.
+
+- **Visual Discussion Threading**: To enhance readability within nested conversations, the interface implements custom leading lines (threading paths) that visually anchor replies to their parent components. These indicator lines trace down the depth of the discussion and curve elegantly toward the specific reply, providing a clear, intuitive map of the conversation structure.
+
 #### 3.33.5 Fully Asynchronous Engine
 
 - **Zero-Reload Interactions**: Every core social action—liking a post, posting a comment, replying to a thread, or liking a specific comment / reply—is fully asynchronous.
 
 - **Fetch API Integration**: These functionalities are powered by secure JavaScript Fetch POST requests (Section 4.8.), ensuring that the user's position in the feed is never disrupted by a page refresh, mirroring the fluid experience of native mobile applications.
+
+### 3.34. Gamified Activity Engine and Daily Challenges
+
+To drive user engagement and encourage consistent training habits, the platform incorporates a dynamic daily challenge system. This module introduces core gamification mechanics, translating physical consistency into virtual progression.
+
+#### 3.34.1 Automated Task Generation and Rotation
+
+- **Personalized Daily Refresh**: Every calendar day, the backend automatically generates a customized set of randomized challenges tailored for each individual user profile. These tasks are prominently displayed on the user's personal Activity Page.
+
+- **Algorithmic Variety**: The system randomly pulls from a diverse pool of objective blueprints, ensuring the user is faced with unique variations daily. Example challenges include:
+
+  - **Duration Goals**: "Complete 1 hour of total activity today."
+
+  - **Completionist Benchmarks**: "Complete all official tasks for today."
+
+  - **Performance Milestones**: "Beat your current weekly average activity time."
+
+#### 3.34.2 Real-Time Completion Verification & Rewards
+
+- **Activity Tracking Integration**: The platform actively monitors the user's logged metrics throughout the day. When a background event triggers a change in training data, the system instantly recalculates the status of all active daily tasks.
+
+- **Experience Point (XP) Economy**: Upon achieving 100% completion of any designated task, the backend securely logs the state change and automatically rewards the user with a predetermined amount of Experience Points (XP), feeding into their global account progression.
+
+#### 3.34.3 Fluid Visual Progress Indicators
+
+- **Dynamic Background Gradient Fill**: On the client side, every task card acts as a visual progress bar. As progress increases, the card's background dynamically fills using a CSS transition effect that smoothly fades from a warm yellow to a vibrant green.
+
+- **State Settlement UI**: The moment the progress vector hits exactly 100%, the interface immediately updates the task's visual status, checking off a bespoke, custom-styled checkbox and freezing the animation to provide immediate, satisfying visual confirmation to the user.
+
+### 3.35. Custom User Tasks and Interactive To-Do Architecture
+
+To complement the system-generated daily challenges, the platform provides a decentralized personal goal-setting module. This feature enables users to manage their own workflows, adjust priorities on the fly, and maintain a fully customized task list directly within their activity dashboard.
+
+#### 3.35.1 Asynchronous Creation and Live Rendering
+
+- **Instant Task Injection**: Users can seamlessly define and add personalized tasks through a dedicated input container.
+
+- **Non-Blocking Fetch Pipelines**: The creation process utilizes an asynchronous JS Fetch POST Request to communicate with the backend. Upon a successful database entry, the new task is instantly rendered in the UI without a full-page reload.
+
+- **Reactive Aggregation Counters**: The application automatically tracks the scope of the user's workload, immediately incrementing the global "Total Tasks" indicator as soon as a new objective is initialized.
+
+#### 3.35.2 Stateful UI and Drag-and-Drop Reordering
+
+- **Manual Completion and Visual States**: Users retain full control over their task execution and can toggle completion status at will. The interface relies on distinct, high-contrast visual cues to separate pending goals from settled ones:
+
+  - **Active Tasks**: Rendered with standard priority styling.
+
+  - **Completed Tasks**: Transition smoothly to a semi-transparent green background, complemented by a automatically checked custom checkbox.
+
+- **Fluid Drag-and-Drop Layouts**: To maximize organization efficiency, users can dynamically rearrange the layout hierarchy. By dragging and dropping task cards, a client-side tracking script computes the new position indexes, updating the user's preferred layout sequence in real-time.
+
+#### 3.35.3 Dynamic Metrics and Storage Hygiene
+
+- **Live Progress Feedback**: The interface continuously renders a precise counter displaying the ratio of completed tasks against the absolute total (e.g., "3 / 8 Tasks Completed").
+
+- **Bulk Cleanup Action**: To prevent layout clutter and visual exhaustion, an automated cleanup utility is available. With a single click, users can purge all finalized tasks from their active list. This interaction triggers an immediate, synchronized recalculation of both the completed and total task indicators across the entire viewport.
+
+### 3.36. Temporal Experience Amplification (XP Boost Engine)
+
+To optimize user retention and create a high-engagement loop, the platform incorporates a daily temporal modifier system. This feature capitalizes on urgency-driven motivation, rewarding users who maintain a daily training momentum.
+
+#### 3.36.1 Multiplier Allocation and Daily Reset
+
+- **Daily Boost Pool**: Every user is allocated a non-stackable 30-minute double XP (2x) window resetting at the start of each calendar day.
+
+- **Dynamic Triggering**: Upon initializing a new physical training session via the Activity Page, the system automatically checks the availability of the boost pool. If available, the backend applies a strict multiplier to all experience points accumulated during that active window.
+
+#### 3.36.2 Reactive Countdown and Micro-Animations
+
+- **Linear Progress Tracking**: On the client side, the duration of the active amplifier is visualized via a high-precision, thinning progress line. This component utilizes fluid CSS or JavaScript-driven animations to slowly shrink, reflecting the exact remaining lifetime of the active multiplier in real-time.
+
+- **Contextual State Labels**: Anchored directly above the shrinking timeline is a dynamic text label. While active, it explicitly communicates the current multiplier status (e.g., "2x XP Boost Active").
+
+#### 3.36.3 Graceful Expiration Handling
+
+- **Asynchronous State Transition**: The exact moment the 30-minute threshold is crossed, the client-side timer triggers a clean state settlement.
+
+- **UI Deprecation**: The shrinking indicator line fades out entirely from the viewport, and the status label immediately updates to indicate that no multiplier is currently active. Subsequent activities revert to the baseline XP accumulation rates without requiring a application reload.
 
 ## 4. Features
 
@@ -1099,9 +1181,267 @@ To provide a seamless, page-reload-free experience without compromising applicat
 
 - **User Feedback**: Instead of failing silently or breaking the UI, the system translates these caught errors into user-friendly notifications (as detailed in Section 3.32.), keeping the user fully informed about why their action could not be completed.
 
+### 4.9. Asynchronous Media Compression and Optimization
+
+To optimize server storage capacity and maintain a highly responsive user experience, all uploaded media files undergo a rigorous, automated compression process. Given the computationally intensive nature of media encoding, these tasks are completely offloaded to background worker processes.
+
+#### 4.9.1 Asynchronous Processing Architecture
+
+- **Celery Task Queue**: All image and video compressions are queued and executed asynchronously via Celery. This ensures the main Django application thread remains unblocked, allowing the platform to handle concurrent uploads smoothly without timeout errors.
+
+- **State Management**: Each media object maintains a strict processing state within the database. Unprocessed posts are temporarily hidden from the public post feed but remain visible exclusively to the author at the top of their personal feed. Once the Celery task completes successfully, the post is flagged as processed and deployed to the public timeline.
+
+#### 4.9.2 Intelligent Processing Pipeline
+
+- **Validation & Detection**: Incoming files are strictly validated using the Magic Bytes library to confirm their true MIME types, alongside threshold checks for initial file sizes and video durations.
+
+- **Image Optimization (Pillow)**: Image files are routed through the Pillow (PIL) library, where they are intelligently resized, compressed, and standardized into the RGB color space.
+
+- **Video Transcoding (FFmpeg)**: Video processing is managed by FFmpeg executed via Python's subprocess module. The system compresses the video track and automatically extracts a high-quality thumbnail for UI rendering.
+
+- **Smart Size Fallback**: The compression engine intelligently compares the final processed file size against the original payload. If compression inadvertently results in a larger file (common with previously heavily compressed media), the system automatically discards the bloated output and retains the original file to maximize storage efficiency.
+
+#### 4.9.3 Real-Time Client-Side Progress Tracking
+
+- **TypeScript Polling**: While Celery processes the files in the background, it continuously broadcasts status updates and progress percentages. The client-side architecture (TypeScript) polls the backend endpoint every 3 seconds to fetch these live metrics.
+
+- **Dynamic Visual Feedback**: Authors can monitor the exact progress of their media processing. The UI renders this data via a dynamic progress bar that features a smooth color transition, fading from yellow to orange as the task approaches 100% completion.
+
+#### 4.9.4 Automated Storage Hygiene
+
+- **Temporary File Deletion**: The compression pipeline generates temporary files during the transcoding process. To prevent storage bloat, the django-cleanup library is utilized to automatically target and eradicate all temporary data immediately after the task is completed or aborted.
+
+### 4.10. High-Performance Infinite Scroll Architecture
+
+To provide a fluid and uninterrupted browsing experience, the post feed implements a highly optimized infinite scroll mechanism. This architecture combines lightweight frontend monitoring with efficient backend data chunking.
+
+#### 4.10.1 Client-Side Intersection Observer
+
+- **Optimized Triggering**: Instead of relying on resource-intensive, traditional scroll event listeners, the frontend utilizes the modern Intersection Observer API. This efficiently detects when the user scrolls near the bottom boundary of the feed, triggering the next data fetch with virtually zero performance overhead on the client's browser.
+
+- **Dynamic DOM Construction (CSR)**: Upon receiving the payload from the server, TypeScript takes over to dynamically construct the complex HTML structure for each new post. Elements such as media carousels, author context, post descriptions, and tags are built and seamlessly appended to the existing feed in real-time.
+
+#### 4.10.2 Server-Side Pagination and JSON API
+
+- **Efficient Database Chunking**: To minimize database load and optimize network transfer speeds, the server-side logic utilizes strict Pagination, dividing the global post query into manageable chunks of 5 posts per request.
+
+- **Lightweight Data Exchange**: When the Intersection Observer triggers a fetch request, the server responds rapidly with raw JSON data containing comprehensive post metadata rather than heavy, pre-rendered HTML templates. This ensures lightning-fast, asynchronous communication between the client and the server.
+
+#### 4.10.3 Dynamic Feed State Reporting (UX)
+
+- **Contextual User Feedback**: A dedicated "Feed Report" UI element is anchored at the bottom of the feed to continuously communicate the current system state to the user.
+
+- **Intelligent State Variations**: The text content of this paragraph adapts dynamically:
+
+  - **Loading State**: Displays a "loading..." indicator while the next batch of 5 posts is being fetched and built.
+
+  - **Error Handling**: Surfaces informative error messages if a network timeout or server issue interrupts the loading process.
+
+  - **Exhausted Feed**: Elegantly informs the user with a specific message once they have reached the absolute end of the database and viewed all available posts.
+
+### 4.11. Custom Video Player and Interactive Controls
+
+To ensure a premium, visually cohesive, and cross-browser consistent media experience, the platform completely replaces the browser's native video controls with a bespoke, custom-engineered video player interface built with JavaScript/TypeScript.
+
+#### 4.11.1 Playback and Time Management
+
+- **Dynamic Play/Pause Toggle**: Users can control playback using a dedicated button that seamlessly swaps between play and pause icons based on the current video state.
+
+- **Real-Time Timekeeping**: The interface features a precise digital timer displaying both the elapsed time and the total duration of the video. This timer, along with the main scrubber line, updates continuously in real-time as the media plays.
+
+#### 4.11.2 Advanced Scrubber and Buffering System
+
+Interactive Progress Bar: A custom-built scrubber visually represents the video's progression. Users can intuitively skip backward or forward (seek) by clicking anywhere on the timeline or dragging the scrubber handle.
+
+- **Hover State Preview**: When moving the cursor across the scrubber bar, the timer dynamically updates to preview the exact timestamp at that specific position, allowing for precise navigation before clicking.
+
+- **Network Buffering Indicator**: To keep the user informed about network performance, the scrubber incorporates a secondary background layer that visualizes the video's buffer and preload progress.
+
+#### 4.11.3 Audio and Viewport Adjustments
+
+- **Granular Volume Control**: Users can adjust the audio output smoothly via a draggable volume slider. The system intelligently updates the volume icon's visual state to reflect the current audio level (e.g., high, low, muted).
+
+- **Quick Mute/Unmute**: Clicking directly on the volume icon instantly toggles the audio state, providing quick control without needing to drag the slider.
+
+- **Immersive Fullscreen**: A dedicated fullscreen toggle button utilizes the browser's Fullscreen API, allowing users to seamlessly expand the video to occupy the entire screen for an immersive viewing experience.
+
+### 4.12. Multidimensional Post Search and Discovery
+
+The post feed includes a sophisticated search engine located at the top of the interface, allowing users to quickly filter and discover content across multiple data layers.
+
+#### 4.12.1 Global Query Coverage
+
+- **Multi-Layered Filtering**: The search algorithm is engineered to scan through various post attributes simultaneously. Users can find relevant content by querying:
+
+  - **Content**: Text within post descriptions and hashtags.
+
+  - **Metadata**: Specific locations or geolocated labels.
+
+  - **Social Context**: Tagged users or the original author’s username.
+
+- **Asynchronous Updates**: Utilizing JS Fetch POST requests, the feed updates in real-time as the user interacts with the search bar, ensuring a fast and responsive experience without full-page reloads.
+
+#### 4.12.2 Search History and State Management
+
+Smart History Tracking: To enhance user convenience, the system maintains a local search history. When a user clicks on the search bar, a dropdown of recent queries is automatically displayed.
+
+- **History Constraints**: The history is limited to a maximum of 5 entries. To keep the list relevant and uncluttered, the system follows a First-In-First-Out (FIFO) logic, where the oldest searches are automatically purged as new ones are added.
+
+- **Manual Control**: Users retain full control over their data, with the ability to manually delete individual history entries or clear the entire search bar instantly using a dedicated "Delete" button.
+
+#### 4.12.3 Real-Time Feedback
+
+- This module provides immediate visual feedback, ensuring that the transition between the global feed and filtered search results is seamless and transparent.
+
+#### 4.13. Viewability Tracking and Algorithmic Feed Optimization
+
+To ensure users are consistently served fresh content and to generate accurate engagement metrics, the post feed incorporates a highly precise view-tracking mechanism. This system differentiates between a rapid scroll-by and a genuine content view.
+
+#### 4.13.1 Client-Side Viewability Detection
+
+- **Viewport Threshold**: Leveraging the Intersection Observer API on the client side, the system continuously monitors the position of each post within the user's viewport. A view sequence is only initiated when a strict threshold is met: a minimum of 80% of the post's total height must be visible on the screen.
+
+- **Time-Based Verification**: Once the 80% visibility threshold is achieved, a background timer starts. If the user pauses their scrolling and the post remains in this highly visible state for 1 uninterrupted second, the system confirms it as a deliberate view.
+
+#### 4.13.2 Asynchronous State Management
+
+- **Real-Time Trigger**: Upon passing the 1-second verification, the client-side JavaScript fires a secure Fetch POST Request to the backend. This silently flags the specific post as "seen" by the authenticated user in the database without disrupting their browsing experience.
+
+#### 4.13.3 Algorithmic Impact and Analytics
+
+- **Feed Demotion Strategy**: This verified view data directly influences the platform's feed generation algorithm. Posts marked as "seen" are systematically demoted to lower positions in subsequent feed requests. This ensures that returning users are always prioritized with new, undiscovered content at the top of their feed.
+
+- **Verified Engagement Metrics**: By filtering out accidental scrolls, the backend aggregates these confirmed views to calculate highly accurate Unique View counts. This provides robust, trustworthy analytics regarding the true reach and performance of every uploaded post.
+
+### 4.14. Relational Database Optimization (Many-to-Many Architecture)
+
+To ensure high performance, data integrity, and efficient querying, the backend database strictly utilizes Django's Many-to-Many (M2M) relational fields rather than flat Array fields for complex data associations.
+
+#### 4.14.1 Structural Integrity via Junction Tables
+
+- **Relational Mapping**: When defining relationships such as "Followers" (where multiple users can follow multiple other users), the system avoids storing raw User IDs within a basic ArrayField. Instead, Django's M2M implementation automatically generates a dedicated, hidden junction table (join table) in the database.
+
+- **Referential Integrity**: This architecture ensures strict database normalization. Because the relationships are established using Foreign Keys within the junction table, the system inherently prevents "orphaned" data (e.g., if a user is deleted, their connections are automatically resolved, which would not happen with static IDs in an array).
+
+#### 4.14.2 Query Performance and ORM Efficiency
+
+- **Optimized Lookups**: By utilizing dedicated junction tables, the underlying SQL database (e.g., PostgreSQL) can leverage indexing on the relationship mapping. This drastically accelerates complex lookup queries compared to scanning and parsing flat array structures.
+
+- **Bidirectional Traversal**: The M2M architecture allows the Django Object-Relational Mapper (ORM) to perform highly efficient reverse queries. For example, the system can instantly fetch all users whom a specific user is following, or inversely, fetch all followers of that user, using simple and fast .filter() or .prefetch_related() methods without heavy algorithmic processing.
+
+### 4.15. Adaptive HTTP Live Streaming (HLS) Architecture
+
+To provide an enterprise-grade, buffer-free media experience, the platform completely moves beyond standard .mp4 delivery, implementing a robust HTTP Live Streaming (HLS) architecture. This allows the video player to dynamically adapt to the user's specific network conditions in real-time.
+
+#### 4.15.1 Asynchronous Multi-Bitrate Transcoding
+
+FFmpeg Segmentation Pipeline: Upon upload, video files are routed through an intensive, asynchronous Celery background worker. Utilizing FFmpeg, the system avoids serving monolithic .mp4 files.
+
+Multi-Tier Resolution: The original file is transcoded into multiple quality profiles (specifically 480p, 720p, and 1080p).
+
+Micro-Chunking: Each resolution track is sliced into highly manageable, 4-second video segments (.ts files). The system automatically generates a master playlist index (.m3u8 file) that maps these segments together, orchestrating exactly how the player should request the pieces.
+
+#### 4.15.2 Intelligent Bandwidth Adaptation
+
+- **Automatic Quality Shifting**: The HLS protocol continuously monitors the client's network speed. If the user's bandwidth drops, the player seamlessly requests the next 4-second segment from a lower-resolution pool (e.g., shifting from 1080p to 480p), entirely preventing playback interruptions or buffering wheels.
+
+- **Manual User Override**: Users retain full control over their viewing experience. A built-in quality selector allows them to manually lock the player to a specific resolution, which is highly beneficial for users looking to strictly manage and minimize their mobile data consumption.
+
+#### 4.15.3 Accelerated Delivery and Cost Efficiency
+
+- **Instant Playback**: Because the system only needs to fetch the initial .m3u8 manifest and the very first 4-second .ts chunk, the time-to-first-frame (TTFF) is blazingly fast. Users no longer have to wait for the server to process large, continuous file responses.
+
+- **Resource Optimization**: The server exclusively streams the exact segments the user is actively watching. If a user stops watching halfway through, the system hasn't wasted server bandwidth delivering the unviewed remainder of the video.
+
+### 4.16. Advanced Popover Menus and Contextual Actions
+
+To provide a clean, uncluttered user interface while offering extensive object-level controls, the platform utilizes a sophisticated, context-aware popover menu system. These menus are universally accessible via standard "three-dot" (meatball) action icons placed strategically throughout the UI.
+
+#### 4.16.1 Modern CSS Anchor Positioning
+
+- **Native Anchoring**: Moving beyond heavy JavaScript calculation libraries, the platform leverages cutting-edge CSS Anchor Positioning. This ensures the main popover dialog is perfectly tethered to its trigger button.
+
+- **Nested Stability**: When navigating into sub-menus, the new dialogs dynamically anchor to their parent popovers. This guarantees structural stability and prevents the menus from rendering off-screen, regardless of the device viewport.
+
+#### 4.16.2 Multi-Level Navigation Architecture
+
+- **Deep Nesting Support**: The menus support intuitive, multi-level nesting for complex, multi-step actions (e.g., initiating a deletion -> confirming the deletion).
+
+- **Safe Traversal**: To prevent accidental menu dismissals and improve the UX, every nested layer includes a dedicated "Back" option, allowing users to effortlessly traverse back up the menu hierarchy without losing their context.
+
+#### 4.16.3 Context-Aware Functionality
+
+The options presented within the popovers dynamically adapt based on the specific object being interacted with and the user's permission level:
+
+- Review Management:
+
+    - Authors can edit their reviews (triggering a redirect to a dedicated editor) or delete them (which opens a nested, fail-safe warning popover).
+
+    - Standard users only see the option to report the review, which opens a nested menu to specify the exact reason for the report.
+
+- Post Settings & Custom Toggles:
+
+    - Authors have granular control over their content. They can adjust real-time settings such as toggling public visibility, enabling/disabling comments, or hiding the like count. These settings are elegantly represented by custom-designed toggle buttons (engineered using hidden HTML checkboxes and styled labels).
+
+    - Standard users are restricted to reporting the post.
+
+- Active Upload Interception: Remarkably, these contextual menus remain active even while a post is asynchronously processing in the background (Section 3.44). Authors can proactively configure the post's settings or completely abort and delete the upload before the compression finishes and the post goes live.
+
+### 4.17. Dynamic Review Pagination and Filtering Engine
+
+To maintain optimal page loading speeds and prevent DOM clutter on the homepage, the application implements an interactive review pagination system. This architecture ensures that large volumes of user feedback are served in lightweight, controlled batches without sacrificing advanced search capabilities.
+
+#### 4.17.1 Server-Side Data Chunking
+
+- **Django Paginator Integration**: The backend leverages Django’s native Paginator system to partition the total review dataset. Reviews are strictly capped at a maximum of 5 items per batch for the initial page load.
+
+- **State Preservation**: The pagination logic is fully integrated with the platform's review filtering system. When users sort reviews by specific criteria (Best, Worst, Latest, Oldest) or filter by a selected star rating, the state is preserved across all subsequent data fetches.
+
+#### 4.17.2 Stateful Frontend Controls (UX)
+
+- **Dynamic "Show More" Generation**: If the system detects additional reviews beyond the currently displayed batch, it dynamically renders a "Show More" button. Clicking this button triggers an asynchronous request to fetch and append the next 5 reviews seamlessly into the view.
+
+- **Collapsible Reset ("Hide" Button)**: Once a user expands the list beyond the initial baseline, an additional "Hide" button is automatically generated. This allows the user to collapse the extended feed instantly and return to the clean layout of the primary 5 reviews, offering superior viewport control.
+
+### 4.18. Contextual Emoji Picker Integration
+
+To enrich user expression and drive engagement within communication fields (such as post descriptions and comments), the platform integrates a modern, highly responsive emoji picker interface.
+
+#### 4.18.1 Lightweight UI Component
+
+- **Native Web Component**: The interface features a dedicated emoji icon embedded directly within designated text inputs and textareas. Toggling this icon opens a sleek menu powered by the emoji-picker-element JavaScript library, which utilizes a high-performance web component architecture.
+
+- **Smart Click-Outside Dismissal**: To maintain a clean and non-intrusive layout, the picker is equipped with a click-outside event listener. If a user interacts with any other part of the screen while the menu is open, the picker automatically dismisses and closes itself.
+
+#### 4.18.2 Cursor-Position Insertion Logic
+
+- **Dynamic Caret Tracking**: Instead of simply appending chosen symbols to the absolute end of a text block, the custom client-side script (TypeScript) dynamically tracks the precise location of the user's cursor (caret position) within the input field.
+
+- **Seamless Text Injection**: When an emoji is selected, the system splits the existing string and injects the character exactly where the user is actively typing, immediately restoring focus and preserving a smooth user workflow.
+
+### 4.19. Dynamic Post Feed Algorithm and Content Ranking
+
+To maximize user engagement and ensure content relevance, the platform completely moves beyond simple chronological timelines or random data retrieval. Instead, the post feed is powered by a sophisticated ranking algorithm engineered to surface the most valuable content dynamically for each individual user.
+
+#### 4.19.1 Social Graph Prioritization
+
+- **Creator Affinity**: The algorithm inherently respects the user's established social connections. Content originating from accounts the user actively follows receives a significant relevance multiplier, ensuring these posts are systematically positioned at the very top of the feed hierarchy.
+
+#### 4.19.2 Engagement-Driven Relevancy
+
+- **Dynamic Interaction Timestamps**: The feed is highly reactive to ongoing community engagement. Every new interaction—specifically a like or a newly published comment—updates the post's internal interaction timestamp in the database.
+
+- **Organic Content Boosting**: Posts with the most recent interaction times are dynamically boosted back to the top of the feed. This creates a merit-based system where highly engaging content, regardless of its original upload date, continuously resurfaces and reaches a broader audience.
+
+#### 4.19.3 View Lifecycle and Content Freshness
+
+- **View-Based Demotion**: Tying directly into the viewability tracking system (Section 3.48), any post that is confirmed as "seen" by the user is systematically demoted to a lower priority rank upon the next feed reload, effectively preventing visual fatigue and repetition.
+
+- **30-Day Freshness Filter**: To maintain an uncluttered experience and optimize database query performance, the algorithm enforces a strict expiration rule. Any previously viewed post that exceeds 30 days in age is completely filtered out and no longer rendered in that specific user's feed.
+
 ## 5. Security
 
-### 5.1 Authentication Audit Logging (login.log)
+### 5.1. Authentication Audit Logging (login.log)
 
 To ensure high accountability and enable forensic analysis of user sessions, the application maintains a dedicated, server-side audit trail for all authentication events.
 
@@ -1118,3 +1458,37 @@ To ensure high accountability and enable forensic analysis of user sessions, the
     - **Precise Timestamps**: Every entry is timestamped to the second, allowing for accurate chronological sequencing of events.
 
     - **Security Utility**: This log serves as a primary diagnostic tool for identifying patterns such as "credential stuffing" or suspicious session-hopping, ensuring that administrators can respond to threats with documented evidence.
+
+### 5.2. Application Error Logging (error.log)
+
+To facilitate rapid debugging and maintain absolute platform stability, all server-side exceptions and handled catch-block errors are meticulously recorded in a dedicated error log file.
+
+- **Diagnostic Metadata**: When a user encounters an unexpected issue, the system automatically captures the exact timestamp of the event, the authenticated user's details, and the client's originating IP address.
+
+- **Traceback Capture**: If the issue is caught within a specific exception-handling block, the custom error message and the relevant stack trace are appended to the log, providing developers with the exact context needed to reproduce and resolve the bug efficiently without relying on user bug reports.
+
+### 5.3. Scheduled Tasks and Cron Job Logging
+
+To monitor the health and successful execution of automated backend processes, the system maintains a separate, dedicated log for all scheduled background tasks.
+
+- **Execution Verification**: This log provides verifiable confirmation of completed asynchronous operations. It records the start and end times of routine maintenance tasks triggered by the server.
+
+- **Operational Metrics**: Entries include detailed metrics regarding the outcome of the task. For example, it logs the exact number of permanently suspended accounts that were successfully purged from the database during a scheduled database cleanup cycle, ensuring full transparency of automated data management.
+
+## 6. Replaced Features
+
+### 6.1. Optimized Video Streaming Architecture (HTTP 206)
+
+To ensure smooth, buffer-free video playback across the platform, the backend implements a specialized streaming architecture rather than relying on standard static file serving methods.
+
+#### 6.1.1 Dedicated Streaming Endpoints
+
+- **Custom Routing**: Instead of exposing raw server file paths directly to the frontend, video media is securely delivered through dedicated, custom URL endpoints. This provides an additional layer of abstraction and control over how media is consumed.
+
+#### 6.1.2 Ranged Response Implementation
+
+- **Chunked Data Transfer**: The server utilizes a ranged response handler (such as the django-ranged-response library) to process incoming video requests. This allows the server to interpret and respond to specific byte-range requests generated by the HTML5 video player.
+
+- **HTTP 206 (Partial Content) Enforcement**: Standard file serving often results in HTTP 200 (OK) responses, which forces the client to download the entire file sequentially. By strictly enforcing HTTP 206 (Partial Content) status codes, the backend allows the browser to stream the video in dynamic chunks.
+
+- **Playback Stability**: This architecture drastically improves video stability, minimizes initial load times, and critically enables the custom video scrubber (Section 3.46) to function correctly. Users can seamlessly skip ahead (seek) to unbuffered sections of the video without waiting for the preceding data to download.
