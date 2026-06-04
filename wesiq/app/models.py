@@ -43,7 +43,6 @@ class Users(models.Model):
     verification_code = models.CharField(verbose_name="Verification Code", max_length=6, null=True, blank=True)
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
-    blog_subscribe = models.BooleanField(verbose_name="Blog Subscribe", default=False, null=False)
     friend_code = models.CharField(verbose_name="Friend Code", max_length=6, null=False)
     following = models.ManyToManyField('self', verbose_name="Following", related_name="followers", symmetrical=False, blank=True)
     saved_posts = models.ManyToManyField("Post", verbose_name="Saved Posts", related_name="saved_posts", blank=True)

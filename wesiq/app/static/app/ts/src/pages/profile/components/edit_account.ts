@@ -1,3 +1,8 @@
+// @ts-ignore
+import { isValidPhoneNumber } from "https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.44/+esm"
+
+import { formatPhoneNumber } from '../../../utils/formatPhoneNumber.js'
+
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
@@ -152,9 +157,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Delete Profile Picture Warning
 
+    // Variables
+
     const delete_profile_picture_checkbox:HTMLInputElement = document.querySelector("#delete_profile_picture") as HTMLInputElement
     const delete_profile_picture_image:HTMLImageElement = document.querySelector(".delete_profile_picture") as HTMLImageElement
     const form_report:HTMLParagraphElement = document.querySelector(".form_report") as HTMLParagraphElement
+
+    // Events
 
     delete_profile_picture_checkbox.addEventListener("click", function():void {
         if(this.checked) {
@@ -171,8 +180,12 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Delete Account Warning
 
+    // Variables
+
     const delete_account_checkbox:HTMLInputElement = document.querySelector("#delete_account") as HTMLInputElement
     const delete_account_image:HTMLImageElement = document.querySelector(".delete_account") as HTMLImageElement
+
+    // Events
 
     delete_account_checkbox.addEventListener("click", function():void {
         if(this.checked) {
@@ -187,9 +200,37 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Phone Number
+
+    // Variables
+
+    const phone_number_container:HTMLDivElement = edit_account_form.querySelector(".inputs .phone_number_container") as HTMLDivElement // Gets Phone Number Container
+    const phone_number:HTMLInputElement = phone_number_container.querySelector(".phone_number") as HTMLInputElement // Gets Phone Number Input
+    const flag:HTMLImageElement = phone_number_container.querySelector(".flag") as HTMLImageElement // Gets Flag Image
+    const edit_account_form_submit:HTMLInputElement = edit_account_form.querySelector(".edit_account_form_submit") as HTMLInputElement // Gets The Edit Account Form Submit Button
+
+    // Events
+
+    phone_number.addEventListener("input", () => formatPhoneNumber(phone_number, flag)) // Formats The Phone Number
+
+    // Phone Number Blur Functionality
+    phone_number.addEventListener("blur", function():void {
+        if(!this.value) return
+        isValidPhoneNumber(this.value) ? this.style.borderBottomColor = "#52cf20" : this.style.borderBottomColor = "#df3535" // Validates The Phone Number
+    })
+
+    // Edit Account Form Submit Button Click Functionality
+    edit_account_form_submit.addEventListener("click", function(event:PointerEvent):void {
+        if(!isValidPhoneNumber(phone_number.value)) event.preventDefault() // Prevents Default Behaviour
+    })
+
     // Password Reset
 
+    // Variables
+
     const password_reset:HTMLAnchorElement = document.querySelector(".password_reset") as HTMLAnchorElement
+
+    // Events
 
     password_reset.addEventListener("click", function():void {
         document.cookie = `email_address=${this.dataset["email_address"]}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address

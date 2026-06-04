@@ -172,7 +172,16 @@ header {
         // Heading
 
         .heading {
+            position: relative;
             text-align: center;
+
+            &::before {
+                content: "beta";
+                position: absolute;
+                top: -2px;
+                left: 0px;
+                color: transparentize($blue-color, 0.5);
+            }
     
             a {
                 text-decoration: none;

@@ -71,7 +71,7 @@
     position: relative;
     flex-wrap: wrap;
     width: 100%;
-    margin: 20px 0px;
+    margin-top: 20px;
     gap: 20px;
 
     .no_articles {
@@ -294,51 +294,6 @@
     }
 }
 
-// Subscribe For New Articles
-
-.blog_subscribe_form {
-    @include flex_center;
-    gap: 20px;
-    max-width: 500px;
-    width: 100%;
-    margin: 0px auto;
-    // padding-top: 10px;
-
-    input {
-        // max-width: 500px;
-        width: 100%;
-        height: 40px;
-        padding: 0px 10px;
-        background-color: transparentize($main-color, 0.8);
-        color: $secondary-color;
-        border: none;
-        border: 2px solid darken($secondary-color, 10%);
-        border-radius: $small-border-radius;
-        text-align: center;
-        outline: none;
-        z-index: 50;
-        transition: border 0.3s ease, color 0.3s ease, letter-spacing 0.3s ease;
-
-        &:hover,
-        &:focus {
-            border-color: $secondary-color;
-        }
-
-        &::placeholder {
-            color: darken($secondary-color, 20%);
-        }
-    }
-
-    input[type="submit"] {
-        &:hover,
-        &:focus {
-            color: $article-color;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-        }
-    }
-}
-
 /**************
  Media Queries
 **************/
@@ -346,12 +301,5 @@
 @media (width <= 1075px) {
     article {
         max-width: 800px !important;
-    }
-}
-
-@media (width <= 500px) {
-    .blog_subscribe_form {
-        @include flex_center($direction: column);
-        gap: 10px;
     }
 }

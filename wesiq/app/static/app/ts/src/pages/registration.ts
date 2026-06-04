@@ -1,5 +1,5 @@
 // @ts-ignore
-import { AsYouType, isValidPhoneNumber } from 'https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.44/+esm'
+import { isValidPhoneNumber } from "https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.44/+esm"
 
 import { 
     passwordVerification,
@@ -10,6 +10,7 @@ import {
 } from "../utils/password.js"
 
 import { generateKey } from "../utils/generateKey.js"
+import { formatPhoneNumber } from '../utils/formatPhoneNumber.js'
 
 "use strict"
 
@@ -39,84 +40,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
-    // Phone Number Input Functionality
-    phone_number.addEventListener("input", function():void {
-        // Phone Number Formatting
-        const phone_number_formatter = new AsYouType()
-        const formatted_phone_number = phone_number_formatter.input(this.value)
-        this.value = formatted_phone_number
-
-        // Language Flag
-
-        // Slovak
-        if(
-            this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "2" && this.value[3] === "1") {
-            flag.src = "/static/images/sk.png"
-            language.value = "sk"
-        }
-
-        // Czech
-        else if(this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "2" && this.value[3] === "0") {
-            flag.src = "/static/images/cs.png"
-            language.value = "cs"
-        }
-
-        // English (England & USA)
-        else if(
-            this.value[0] === "+" && this.value[1] === "4" && this.value[2] === "4" ||
-            this.value[0] === "+" && this.value[1] === "1"
-        ) {
-            flag.src = "/static/images/en.png"
-            language.value = "en"
-        }
-
-        // Spanish
-        else if(
-            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "4") {
-            flag.src = "/static/images/es.png"
-            language.value = "es"
-        }
-
-        // French
-        else if(
-            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "3") {
-            flag.src = "/static/images/fr.png"
-            language.value = "fr"
-        }
-
-        // Ukrainian
-        else if(
-            this.value[0] === "+" && this.value[1] === "3" && this.value[2] === "8" && this.value[3] === "0") {
-            flag.src = "/static/images/uk.png"
-            language.value = "uk"
-        }
-
-        // Russian
-        else if(
-            this.value[0] === "+" && this.value[1] === "7") {
-            flag.src = "/static/images/ru.png"
-            language.value = "ru"
-        }
-
-        // Portuguese (Brazil)
-        else if(
-            this.value[0] === "+" && this.value[1] === "5" && this.value[2] === "5") {
-            flag.src = "/static/images/pt-br.png"
-            language.value = "pt-br"
-        }
-
-        // Simplified Chinese
-        else if(
-            this.value[0] === "+" && this.value[1] === "8" && this.value[2] === "6") {
-            flag.src = "/static/images/zh-hans.png"
-            language.value = "zh-hans"
-        }
-
-        else {
-            flag.src = ""
-            language.value = "en"
-        }
-    })
+    phone_number.addEventListener("input", () => formatPhoneNumber(phone_number, flag, language)) // Formats The Phone Number
 
     // Phone Number Blur Functionality
     phone_number.addEventListener("blur", function():void {

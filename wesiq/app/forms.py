@@ -424,19 +424,6 @@ class writeArticleForm(forms.Form):
         required=False,
     )
 
-class blogSubscribeForm(forms.Form):
-    email_address = forms.EmailField(
-        widget=forms.EmailInput(attrs={"placeholder": _("Zadajte váš e-mail")}),
-        label=False,
-        max_length=50,
-        required=True,
-
-        error_messages={
-            "max_length": _("Zadaný e-mail je príliš dlhý"),
-            "required": _("Zadajte váš e-mail"),
-        },
-    )
-
 class writeCommentForm(forms.Form):
     comment = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": _("Napísať komentár"), "autocomplete": "off"}),

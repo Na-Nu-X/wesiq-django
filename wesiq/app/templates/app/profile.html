@@ -93,15 +93,16 @@
                         <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
                         {{ edit_account_form.email_address }}
                     </div>
-                    
+
                     <div class="phone_number_container">
                         <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
                         {{ edit_account_form.phone_number }}
+                        <img class="flag" src="" alt="">
                     </div>
                 </div>
 
                 <p class="form_report" style="bottom: 194px;"></p>
-                <input type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
+                <input class="edit_account_form_submit" type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
 
                 <div class="form_questions">
                     <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
