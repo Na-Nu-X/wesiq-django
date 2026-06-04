@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-05 19:46+0000\n"
+"POT-Creation-Date: 2026-06-04 18:07+0000\n"
 "PO-Revision-Date: 2026-05-15 18:13+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,17 +19,31 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
+#: app/static/app/ts/src/components/forum.ts:26
+msgid "Pri pridávaní označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/components/forum.ts:47
+msgid "Pri rušení označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/components/forum.ts:99
+#: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:58
+#: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:82
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:119
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:112
+msgid "Pri odosielaní nahlásenia došlo k chybe."
+msgstr ""
+
 #: app/static/app/ts/src/components/searchBar.ts:24
 msgid "Hlavná stránka"
 msgstr "Homepage"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#| msgid "Hlavná stránka"
 msgid "Domovská stránka"
 msgstr "Homepage"
 
 #: app/static/app/ts/src/components/searchBar.ts:24
-#| msgid "Hlavná stránka"
 msgid "Úvodná stránka"
 msgstr "Homepage"
 
@@ -42,7 +56,6 @@ msgid "Prihlásenie"
 msgstr "Login"
 
 #: app/static/app/ts/src/components/searchBar.ts:25
-#| msgid "Prihlásenie"
 msgid "Prihlásiť sa"
 msgstr "Log In"
 
@@ -59,12 +72,10 @@ msgid "Obnova hesla"
 msgstr "Password Reset"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#| msgid "Obnova hesla"
 msgid "Obnoviť heslo"
 msgstr "Reset Password"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
-#| msgid "Zobraziť heslo"
 msgid "Zmeniť heslo"
 msgstr "Change Password"
 
@@ -77,7 +88,6 @@ msgid "Registrácia"
 msgstr "Registration"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
-#| msgid "/registracia"
 msgid "Zaregistrovať sa"
 msgstr "Sign Up"
 
@@ -86,8 +96,12 @@ msgid "Vytvoriť účet"
 msgstr "Create an Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
-msgid "/moj-ucet"
-msgstr "/my-account"
+msgid "/profil"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:28
+msgid "Profil"
+msgstr ""
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Môj účet"
@@ -98,7 +112,6 @@ msgid "Upraviť účet"
 msgstr "Edit Account"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
-#| msgid "Zobraziť heslo"
 msgid "Zobraziť účet"
 msgstr "View Account"
 
@@ -115,7 +128,6 @@ msgid "Moja recenzia"
 msgstr "My Review"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
-#| msgid "Moje hodnotenie"
 msgid "Upraviť hodnotenie"
 msgstr "Edit Review"
 
@@ -156,87 +168,380 @@ msgid "Moje tréningové plány"
 msgstr "My Training Plans"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#| msgid "Moje tréningové plány"
 msgid "Vytvoriť tréningový plán"
 msgstr "Create a Training Plan"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#| msgid "Moje tréningové plány"
 msgid "Upraviť tréningový plán"
 msgstr "Edit Training Plan"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
-#| msgid "Moje tréningové plány"
 msgid "Odstrániť tréningový plán"
 msgstr "Delete Training Plan"
 
-#: app/static/app/ts/src/pages/community.ts:77
-#| msgid "Zobraziť heslo"
+#: app/static/app/ts/src/components/searchBar.ts:33
+msgid "/komunita"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:33
+msgid "Komunita"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:33
+msgid "Zdieľať príspevok"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:49
+msgid "Uverejniť príspevok"
+msgstr ""
+
+#: app/static/app/ts/src/components/searchBar.ts:33
+#, fuzzy
+#| msgid "Zobraziť užívateľa"
+msgid "Nájsť užívateľa"
+msgstr "Show an User"
+
+#: app/static/app/ts/src/pages/community/components/search_posts.ts:34
+#: app/static/app/ts/src/pages/community/components/search_posts.ts:73
+#: app/static/app/ts/src/pages/community/components/search_posts.ts:96
+#: app/static/app/ts/src/pages/community/components/search_posts.ts:144
+#: app/static/app/ts/src/pages/community/components/search_posts.ts:224
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:18
+msgid "Načítavam..."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:149
+msgid "Vypnúť viditeľnosť len pre sledovateľov"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:155
+msgid "Zapnúť viditeľnosť len pre sledovateľov"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:166
+msgid "Zapnúť komentáre"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:172
+msgid "Vypnúť komentáre"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:183
+msgid "Zobraziť počet označení páči sa mi to"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:189
+msgid "Skryť počet označení páči sa mi to"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:39
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:589
+#, fuzzy
+#| msgid "Prihlásiť sa"
+msgid "Nahlásiť"
+msgstr "Log In"
+
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:61
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:81
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:678
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:698
+msgid "Vymazať"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:74
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:691
+msgid "Naozaj chcete vymazať Váš komentár?"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:89
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:706
+msgid "Zrušiť"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:89
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:359
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:54
+#: app/static/app/ts/src/pages/community/functions/posts.ts:168
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:65
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:134
+#, javascript-format
+msgid "/sk/profil/%s"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:360
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:55
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:135
 msgid "Zobraziť užívateľa"
 msgstr "Show an User"
 
-#: app/static/app/ts/src/pages/community.ts:137
-msgid "An Error Occurred While Searching for Users."
-msgstr "An Error Occurred While Searching for Users."
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:114
+msgid "Začať sledovať"
+msgstr ""
 
-#: app/static/app/ts/src/pages/edit_account.ts:13
-msgid "Profilový obrázok bude odstránený"
-msgstr "Profile Picture Will be Deleted"
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:114
+msgid "Prestať sledovať"
+msgstr ""
 
-#: app/static/app/ts/src/pages/edit_account.ts:31
-msgid "Váš úcet bude odstránený"
-msgstr "Your Account Will be Deleted"
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:130
+msgid "Otvoriť mapy"
+msgstr ""
 
-#: app/static/app/ts/src/pages/edit_review.ts:13
-msgid "Vaše hodnotenie bude odstránené"
-msgstr "Your Review Will be Deleted"
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:170
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:230
+#, javascript-format
+msgid "Príspevok užívateľa %s"
+msgstr ""
 
-#: app/static/app/ts/src/pages/homepage.ts:265
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:226
+#: app/static/app/ts/src/pages/post/components/initialize_HLS_video_format.ts:17
+#, javascript-format
+msgid "/sk/stream-video/%s/%s/%s"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:260
+msgid "Skryté"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:287
+msgid "Vypnuté"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:294
+msgid "Zdielať..."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:298
+#, fuzzy
+#| msgid "Počet opakovaní"
+msgid "Počet videní..."
+msgstr "Number of Reps"
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:417
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:120
+msgid "Odpovedať..."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:437
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:141
+#, fuzzy
+#| msgid "Zobraziť heslo"
+msgid "Zobraziť odpovede..."
+msgstr "Show Password"
+
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:611
+#, fuzzy
+#| msgid "Upraviť účet"
+msgid "Upraviť"
+msgstr "Edit Account"
+
+#: app/static/app/ts/src/pages/community/functions/location.ts:69
+msgid "Pri načítaní polohy došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:90
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:191
+msgid "Napísať komentár"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:151
+msgid "Pri odosielaní komentáru došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:180
+#, javascript-format
+msgid "Odpoveď užívateľovi %s"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:31
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:34
+msgid "Pri zmene označenia páči sa mi to došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:93
+#, fuzzy
+#| msgid "Vybraný súbor je príliš veľký."
+msgid "Obrázok je príliš veľký"
+msgstr "Selected File is Too Large."
+
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:114
+#, fuzzy
+#| msgid "Vybraný súbor je príliš veľký."
+msgid "Video je príliš veľké"
+msgstr "Selected File is Too Large."
+
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:154
+msgid "Video je príliš dlhé"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:165
+msgid "Video je príliš krátke"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:40
+#, javascript-format
+msgid "/sk/prispevok/%s"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:92
+msgid "Pri zmene uloženia príspevku došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:174
+msgid "Pri úprave príspevku došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:222
+msgid "Pri odstraňovaní príspevku došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/posts.ts:54
+#: app/static/app/ts/src/pages/community/functions/posts.ts:83
+msgid "Pri hľadaní príspevkov došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/posts.ts:79
+msgid "Videli ste všetky príspevky."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/posts.ts:93
+msgid "Nenašli sa žiadne príspevky."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:31
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:55
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:60
+msgid "Pri spracovávaní príspevku došlo k chybe!"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:70
+#, fuzzy
+#| msgid "Tréningový plán %s bol úspešne pridaný."
+msgid "Príspevok bol úspešne pridaný."
+msgstr "Training Plan %s was Successfully Added."
+
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:55
+msgid "Pri načítavaní užívateľov došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:116
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:49
+msgid "Pri hľadaní užívateľov došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:247
+msgid "Označiť"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:398
+msgid "Odstrániť zmienku"
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/toggleFollow.ts:64
+msgid "Pri pridávaní sledovania došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:13
+msgid "Overuje sa..."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:19
+msgid "Spracuváva sa..."
+msgstr ""
+
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:42
+msgid "Skúste znovu"
+msgstr ""
+
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:30
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:50
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:59
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:82
+#, fuzzy
+#| msgid "Zobraziť heslo"
+msgid "Zobraziť viac"
+msgstr "Show Password"
+
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:41
+msgid "Skryť recenzie"
+msgstr ""
+
+#: app/static/app/ts/src/pages/homepage/functions/reviews.ts:132
+msgid "Pri odstraňovaní recenzie došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/homepage/functions/showAttachmentReport.ts:8
 msgid "Vybraný súbor"
 msgstr "Selected File"
 
-#: app/static/app/ts/src/pages/homepage.ts:266
+#: app/static/app/ts/src/pages/homepage/functions/showAttachmentReport.ts:9
 msgid "Vybraný súbor je príliš veľký."
 msgstr "Selected File is Too Large."
 
-#: app/static/app/ts/src/pages/homepage.ts:267
+#: app/static/app/ts/src/pages/homepage/functions/showAttachmentReport.ts:10
 msgid "Nie je vybraný žiaden súbor."
 msgstr "No File is Selected."
 
-#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:149
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:111
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:80
 msgid "Počet opakovaní"
 msgstr "Number of Reps"
 
-#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:150
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:112
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:81
 msgid "Počet sekúnd"
 msgstr "Number of Seconds"
 
-#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:151
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:113
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:82
 msgid "Počet krokov"
 msgstr "Number of Steps"
 
-#: app/static/app/ts/src/pages/manage_training_plans/edit_training_plan.ts:282
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:195
 #, javascript-format
 msgid "Tréningový plán %s bol odstránený."
 msgstr "Training Plan %s was Successfully Deleted."
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:89
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:200
+msgid "Pri odstraňovaní tréningového plánu došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:100
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne pridaný."
 msgstr "Training Plan %s was Successfully Added."
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:90
+#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:101
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne upravený."
 msgstr "Training Plan %s was Successfully Edited."
 
-#: app/static/app/ts/src/pages/password_reset.ts:121
-#: app/static/app/ts/src/pages/password_reset.ts:149
+#: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:107
+msgid "Pri ukladaní tréningového plánu došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/password_reset/components/timer.ts:23
+#: app/static/app/ts/src/pages/password_reset/components/timer.ts:47
 msgid "Platnosť vypršala!"
 msgstr "Expired!"
+
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:70
+msgid "Otvoriť odkaz"
+msgstr ""
+
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:171
+msgid "Profilový obrázok bude odstránený"
+msgstr "Profile Picture Will be Deleted"
+
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:193
+msgid "Váš úcet bude odstránený"
+msgstr "Your Account Will be Deleted"
+
+#: app/static/app/ts/src/pages/training_session/components/training_session.ts:179
+#: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
+msgid "<span>Žiadne aktívne navýšenie XP</span>"
+msgstr "<span>No Active XP Boost</span>"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
 msgid "Nezískali ste žiadne XP"
@@ -252,8 +557,7 @@ msgstr "<br>The Current Activity Lasted:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "The Current Activity Time was 100% Longer Than The Average for The Last 7 "
 "Days"
@@ -265,15 +569,41 @@ msgstr ""
 "The Current Activity Time was %s Longer Than The Average for The Last 7 Days"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
-msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgstr ""
-"The Current Activity Time was %s Shorter Than The Average for The Last 7 "
-"Days"
+"The Current Activity Time was %s Shorter Than The Average for The Last 7 Days"
 
-#: app/static/app/ts/src/pages/training_session/state.ts:90
-msgid "<span>Žiadne aktívne navýšenie XP</span>"
-msgstr "<span>No Active XP Boost</span>"
+#: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40
+msgid "Pri pridávaní úlohy došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:95
+msgid "Pri zmene stavu úlohy došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:112
+msgid "Pri odstraňovaní úlohy došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:156
+msgid "Pri odstraňovaní úloh došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:203
+msgid "Pri pokuse o zmenu poradia úloh došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:221
+msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/playback.ts:147
+msgid "Pri zaznamenávaní aktivity došlo k chybe."
+msgstr ""
+
+#: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:45
+msgid "Pri uplatňovaní navýšenia XP došlo k chybe."
+msgstr ""
 
 #: app/static/app/ts/src/utils/password.ts:4
 msgid "Heslá sa zhodujú"
@@ -294,3 +624,12 @@ msgstr "Show Password"
 #: app/static/app/ts/src/utils/password.ts:54
 msgid "Zadajte váš e-mail"
 msgstr "Enter your e-mail"
+
+#~ msgid "/moj-ucet"
+#~ msgstr "/my-account"
+
+#~ msgid "An Error Occurred While Searching for Users."
+#~ msgstr "An Error Occurred While Searching for Users."
+
+#~ msgid "Vaše hodnotenie bude odstránené"
+#~ msgstr "Your Review Will be Deleted"

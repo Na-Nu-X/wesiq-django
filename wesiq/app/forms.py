@@ -484,7 +484,7 @@ class bioLinksForm(forms.Form):
     )
 
     url = forms.URLField(
-        widget=forms.URLInput(attrs={"class": "url", "placeholder": _("https://example.com")}),
+        widget=forms.URLInput(attrs={"class": "url", "placeholder": "https://example.com"}),
         label=False,
         max_length=200,
         required=True,

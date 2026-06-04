@@ -207,10 +207,10 @@
                             data-id="{{ user.id }}"
                             data-action="
                                 {% if not logged_in_user in user.followers.all %}
-                                    {% translate 'follow' %}
+                                    follow
 
                                 {% else %}
-                                    {% translate 'unfollow' %}
+                                    unfollow
                                 
                                 {% endif %}
                             "

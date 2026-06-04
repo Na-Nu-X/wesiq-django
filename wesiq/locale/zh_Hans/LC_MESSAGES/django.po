@@ -267,7 +267,8 @@ msgstr "帐户删除"
 #: app/tasks.py:94
 #, python-format
 msgid ""
-"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n"
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
+"prihlásenie do pôvodného účtu už nie je možné.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/registracia/\n"
 "\n"
@@ -290,12 +291,12 @@ msgstr "我们谨通知您，您的用户帐户已被永久删除。您将无法
 #: app/tasks.py:96
 #, python-format
 msgid ""
-"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a "
-"href=\"http://127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť "
-"účet\" target=\"_blank\">vytvoríte nový</a>."
+"Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href=\"http://"
+"127.0.0.1:8000/%(language)s/registracia/\" title=\"Vytvoriť účet\" "
+"target=\"_blank\">vytvoríte nový</a>."
 msgstr ""
-"如果您以后想回来，我们很高兴您能<a href=\"http://127.0.0.1:8000/%(language)s/zhuce/\" "
-"title=\"创建账户\" target=\"_blank\">创建新的</a>。"
+"如果您以后想回来，我们很高兴您能<a href=\"http://127.0.0.1:8000/%(language)s/"
+"zhuce/\" title=\"创建账户\" target=\"_blank\">创建新的</a>。"
 
 #: app/templates/app/articles.html:29 app/templates/app/blog.html:147
 msgid "Zatiaľ žiadne hodnotenia"
@@ -403,8 +404,7 @@ msgstr "等张练习"
 
 #: app/templates/app/blog.html:90
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
-"žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
 msgstr "抱歉!<br>未找到文章。"
 
 #: app/templates/app/blog.html:122
@@ -444,10 +444,9 @@ msgstr "我的账户"
 msgid "Môj&nbsp;účet"
 msgstr "我的账户"
 
-#: app/templates/app/edit_account.html:18
-#: app/templates/app/edit_review.html:18 app/templates/app/homepage.html:82
-#: app/templates/app/homepage.html:145 app/templates/app/login.html:23
-#: app/templates/app/password_reset.html:40
+#: app/templates/app/edit_account.html:18 app/templates/app/edit_review.html:18
+#: app/templates/app/homepage.html:82 app/templates/app/homepage.html:145
+#: app/templates/app/login.html:23 app/templates/app/password_reset.html:40
 #: app/templates/app/registration.html:49
 #: app/templates/app/write_article.html:17
 msgid "Späť na úvodnú stránku"
@@ -461,8 +460,7 @@ msgstr "上传图片"
 msgid "Odstrániť obrázok"
 msgstr "删除图像"
 
-#: app/templates/app/edit_account.html:66
-#: app/templates/app/edit_review.html:68
+#: app/templates/app/edit_account.html:66 app/templates/app/edit_review.html:68
 #: app/templates/app/manage_training_plans.html:236
 msgid "Uložiť zmeny"
 msgstr "保存更改"
@@ -490,9 +488,9 @@ msgstr "删除帐户"
 msgid "Pre vykonávanie zmien vo vašom účte sa musíte najprv"
 msgstr "要更改您的帐户，您必须先"
 
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:96
-#: app/templates/app/homepage.html:190 app/templates/app/login.html:33
+#: app/templates/app/edit_account.html:80 app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:96 app/templates/app/homepage.html:190
+#: app/templates/app/login.html:33
 #: app/templates/app/manage_training_plans.html:23
 #: app/templates/app/password_reset.html:71
 #: app/templates/app/registration.html:78
@@ -500,26 +498,22 @@ msgstr "要更改您的帐户，您必须先"
 msgid "Prihlásiť sa"
 msgstr "登录"
 
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
+#: app/templates/app/edit_account.html:80 app/templates/app/edit_review.html:80
 msgid "prihlásiť"
 msgstr "登录"
 
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:99
-#: app/templates/app/login.html:36
+#: app/templates/app/edit_account.html:80 app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:99 app/templates/app/login.html:36
 msgid "alebo"
 msgstr "或者"
 
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80 app/templates/app/homepage.html:116
-#: app/templates/app/homepage.html:187 app/templates/app/login.html:53
-#: app/templates/app/registration.html:75
+#: app/templates/app/edit_account.html:80 app/templates/app/edit_review.html:80
+#: app/templates/app/homepage.html:116 app/templates/app/homepage.html:187
+#: app/templates/app/login.html:53 app/templates/app/registration.html:75
 msgid "Vytvoriť účet"
 msgstr "创建一个帐户"
 
-#: app/templates/app/edit_account.html:80
-#: app/templates/app/edit_review.html:80
+#: app/templates/app/edit_account.html:80 app/templates/app/edit_review.html:80
 msgid "zaregistrovať"
 msgstr "注册"
 
@@ -579,7 +573,7 @@ msgstr[1] ""
 msgid "Hľadať"
 msgstr "搜索"
 
-#: app/templates/app/homepage.html:66
+#: app/templates/app/homepage.html:66 templates/base.html:140
 msgid "Wesiq"
 msgstr "Wesiq"
 
@@ -611,8 +605,7 @@ msgstr "还没有账号？"
 msgid "Registrácia"
 msgstr "登记"
 
-#: app/templates/app/homepage.html:173
-#: app/templates/app/password_reset.html:54
+#: app/templates/app/homepage.html:173 app/templates/app/password_reset.html:54
 #: app/templates/app/registration.html:63
 msgid "Navrhnúť heslo"
 msgstr "建议密码"
@@ -1075,14 +1068,18 @@ msgstr "账户登录"
 #: app/views.py:210 app/views.py:671
 #, python-format
 msgid ""
-"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
+"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
+"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
+"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/moj-ucet?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。我们建议您立即更改密码或联系我们。我们非常重视您的数据安全。\n"
+"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。"
+"我们建议您立即更改密码或联系我们。我们非常重视您的数据安全。\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/wo-de-zhanghu?password-reset=true\n"
 "\n"
@@ -1099,9 +1096,10 @@ msgid ""
 "title=\"Obnoviť heslo\" target=\"_blank\">tento</a> odkaz alebo nás "
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
-"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。我们建议您立即点击<a "
-"href=\"http://127.0.0.1:8000/%(language)s/wo-de-zhanghu?password-"
-"reset=true\" title=\"重置密码\" target=\"_blank\">此</a>链接或联系我们更改密码。我们非常重视您的数据安全。"
+"您的账户已登录。我们特此通知您，如果您在此期间未登录，您的数据可能存在风险。"
+"我们建议您立即点击<a href=\"http://127.0.0.1:8000/%(language)s/wo-de-zhanghu?"
+"password-reset=true\" title=\"重置密码\" target=\"_blank\">此</a>链接或联系我"
+"们更改密码。我们非常重视您的数据安全。"
 
 #: app/views.py:212 app/views.py:673
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
@@ -1125,11 +1123,13 @@ msgstr "注册成功"
 #: app/views.py:241
 #, python-format
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/moj-ucet/\n"
 "\n"
-"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
+"všetky funkcie našich služieb.\n"
 "Tím Wesiq."
 msgstr ""
 "我们有好消息要告诉您！您的电子邮件地址已成功验证，您的帐户现已完全激活。\n"
@@ -1142,13 +1142,14 @@ msgstr ""
 #: app/views.py:242
 #, python-format
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
-" účet je odteraz plne aktívny. Kliknite na <a "
-"href=\"http://127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
+"účet je odteraz plne aktívny. Kliknite na <a href=\"http://"
+"127.0.0.1:8000/%(language)s/moj-ucet/\" title=\"Môj účet\" "
 "target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
 msgstr ""
-"好消息！您的邮箱地址已成功验证，账户现已完全激活。点击<a href=\"http://127.0.0.1:8000/%(language)s/wo-"
-"de-zhanghu/\" title=\"我的账户\" target=\"_blank\">此</a>链接查看您的账户。"
+"好消息！您的邮箱地址已成功验证，账户现已完全激活。点击<a href=\"http://"
+"127.0.0.1:8000/%(language)s/wo-de-zhanghu/\" title=\"我的账户\" "
+"target=\"_blank\">此</a>链接查看您的账户。"
 
 #: app/views.py:243
 msgid ""
@@ -1159,16 +1160,20 @@ msgstr "我们很高兴您加入我们的社区。现在您可以全面使用我
 #: app/views.py:261 app/views.py:699 app/views.py:769 app/views.py:979
 #, python-format
 msgid ""
-"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
+"prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/%(language)s/obnova-hesla?password-reset-code=%(code)s "
+"- %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"我们收到您重置账户密码的请求。如果您是发起此请求的人，请使用以下链接并输入以下验证码。\n"
+"我们收到您重置账户密码的请求。如果您是发起此请求的人，请使用以下链接并输入以"
+"下验证码。\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-code=%(code)s - %(code)s\n"
+"http://127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-"
+"code=%(code)s - %(code)s\n"
 "\n"
 "如果您没有申请重置密码，请忽略此邮件。\n"
 "Wesiq 团队。"
@@ -1177,13 +1182,13 @@ msgstr ""
 #, python-format
 msgid ""
 "dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-"
-"hesla?password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
+"prosím použite <a href=\"http://127.0.0.1:8000/%(language)s/obnova-hesla?"
+"password-reset-code=%(code)s\" title=\"Obnoviť heslo\" "
 "target=\"_blank\">tento</a> odkaz a zadajte nasledovný overovací kód."
 msgstr ""
-"我们收到您重置账户密码的请求。如果您是发起此请求的人，请点击<a "
-"href=\"http://127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-"
-"code=%(code)s\" title=\"重置密码\" target=\"_blank\">此</a>链接并输入以下验证码。"
+"我们收到您重置账户密码的请求。如果您是发起此请求的人，请点击<a href=\"http://"
+"127.0.0.1:8000/%(language)s/mima-chong-zhi?password-reset-code=%(code)s\" "
+"title=\"重置密码\" target=\"_blank\">此</a>链接并输入以下验证码。"
 
 #: app/views.py:263 app/views.py:701 app/views.py:771 app/views.py:981
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
@@ -1230,36 +1235,46 @@ msgstr "账户验证"
 #: app/views.py:337 app/views.py:868
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
+"uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
+"svojho nového účtu.\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z "
+"bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu "
+"nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"感谢您的注册。要完成注册并激活您的帐户，您必须验证您的电子邮件地址。请点击下方链接确认您的电子邮件，您将自动登录到您的新帐户。\n"
+"感谢您的注册。要完成注册并激活您的帐户，您必须验证您的电子邮件地址。请点击下"
+"方链接确认您的电子邮件，您将自动登录到您的新帐户。\n"
 "\n"
-"http://127.0.0.1:8000/%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
+"http://127.0.0.1:8000/%(language)s?verification-"
+"code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"此链接有效期为24小时。此后，出于安全考虑，您需要重新注册。如果您尚未注册，请忽略此邮件。\n"
+"此链接有效期为24小时。此后，出于安全考虑，您需要重新注册。如果您尚未注册，请"
+"忽略此邮件。\n"
 "Wesiq 团队。"
 
 #: app/views.py:338 app/views.py:869
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
-" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
+"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
 "href=\"http://127.0.0.1:8000/%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
-"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
-" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky "
+"prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
 "感谢您的注册。要完成注册并激活您的帐户，您需要验证您的电子邮件地址。点击<a "
 "href=\"http://127.0.0.1:8000/%(language)s?verification-"
-"code=%(verification_code)s&id=%(id)s\" title=\"完成注册\" "
-"target=\"_blank\">此</a>链接即可确认您的电子邮件地址，您将自动登录到您的新帐户。此链接有效期为24小时。此后，出于安全考虑，您需要重新注册。"
+"code=%(verification_code)s&id=%(id)s\" title=\"完成注册\" target=\"_blank\">"
+"此</a>链接即可确认您的电子邮件地址，您将自动登录到您的新帐户。此链接有效期为"
+"24小时。此后，出于安全考虑，您需要重新注册。"
 
 #: app/views.py:339 app/views.py:870
 msgid "Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."
@@ -1320,7 +1335,8 @@ msgstr "您已被登出"
 #: app/views.py:899
 #, python-format
 msgid ""
-"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n"
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
+"možnosť prihlásiť sa.\n"
 "\n"
 "http://127.0.0.1:8000/%(language)s/prihlasenie/\n"
 "\n"
@@ -1339,12 +1355,12 @@ msgstr ""
 msgid ""
 "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
 "možnosť <a href=\"http://127.0.0.1:8000/%(language)s/prihlasenie/\" "
-"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade"
-" bude váš účet neodvratne odstránený."
+"title=\"Prihlásiť sa\" target=\"_blank\">prihlásiť sa</a>. V opačnom prípade "
+"bude váš účet neodvratne odstránený."
 msgstr ""
-"我们收到删除您账户的请求。如果是误操作，您有30天的时间<a "
-"href=\"http://127.0.0.1:8000/%(language)s/denglu/\" title=\"登录\" "
-"target=\"_blank\">登录</a>。否则，您的账户将被永久删除。"
+"我们收到删除您账户的请求。如果是误操作，您有30天的时间<a href=\"http://"
+"127.0.0.1:8000/%(language)s/denglu/\" title=\"登录\" target=\"_blank\">登录</"
+"a>。否则，您的账户将被永久删除。"
 
 #: app/views.py:901
 msgid "Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."
@@ -1431,9 +1447,10 @@ msgstr "隐私政策"
 #: templates/base.html:48
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
-" zlepšovať naše služby."
-msgstr "本网站使用 Cookie 为您提供最佳浏览体验。Cookie 帮助我们分析、优化和改进服务。"
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
+"zlepšovať naše služby."
+msgstr ""
+"本网站使用 Cookie 为您提供最佳浏览体验。Cookie 帮助我们分析、优化和改进服务。"
 
 #: templates/base.html:51
 msgid "Potvrdiť všetky"
@@ -1478,10 +1495,6 @@ msgstr "登出"
 #: templates/base.html:117
 msgid "Neprihlásený"
 msgstr "未登录"
-
-#: templates/base.html:140
-msgid "Wesiq"
-msgstr "Wesiq"
 
 #: templates/base.html:143
 msgid "Napísať..."
