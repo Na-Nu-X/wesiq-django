@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport
+from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -47,6 +47,7 @@ from collections import defaultdict
 from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count
 from django.http import FileResponse
 from django.template.loader import render_to_string
+from django.db import transaction
 from celery import current_app
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -54,8 +55,8 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 # Functions
 
 def changeLanguage(request):
-    language_code = request.POST.get('language')
-    next_url = request.POST.get('next', '/')
+    language_code = request.POST.get("language")
+    next_url = request.POST.get("next", "/")
 
     response = HttpResponseRedirect(next_url)
 
@@ -3433,7 +3434,7 @@ def profileView(request, username):
 
                                     return HttpResponseRedirect(reverse("homepage_url"))
 
-                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=30):
+                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
                                     profile_picture_file = request.FILES.get("select_profile_picture")
                                     if profile_picture_file:
                                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
@@ -3482,7 +3483,39 @@ def profileView(request, username):
                                         logged_in_user.phone_number = edit_account_form.cleaned_data["phone_number"]
                                         logged_in_user.last_edit = timezone.now()
 
-                                    logged_in_user.save()
+                                    logged_in_user.save() # Updates The Logged In User
+
+                                    bio_links_json = request.POST.get("bio_links") # Gets The User's Bio Links In JSON Format
+
+                                    try:
+                                        bio_links_list = json.loads(bio_links_json) if bio_links_json else [] # Converts The Bio Links To The Python List Format
+
+                                        with transaction.atomic():
+                                            BioLinks.objects.filter(user=logged_in_user).delete() # Deletes All Previous User's Bio Links
+
+                                            new_bio_links = [] # Stores The New Bio Links
+                                            
+                                            # Removes White Spaces From Every URL
+                                            for one_url in bio_links_list:
+                                                one_url = one_url.strip()
+                                                if not one_url:
+                                                    continue
+
+                                                new_bio_links.append(
+                                                    BioLinks(
+                                                        user=logged_in_user,
+                                                        url=one_url
+                                                    )
+                                                )
+
+                                            # Bulk Creation Of Multiple User's Bio Links
+                                            if new_bio_links:
+                                                BioLinks.objects.bulk_create(new_bio_links)
+
+                                    # Invalid Bio Links JSON Format
+                                    except json.JSONDecodeError:
+                                        messages.add_message(request, messages.ERROR, _("Pri spracovávaní vlastných odkazov došlo k chybe"))
+                                        captureError(f"An error occurred while loading bio links from the JSON format.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                                     messages.add_message(request, messages.SUCCESS, _("Zmeny boli uložené"))
 

@@ -595,14 +595,14 @@ class PostForumReport(models.Model):
     class Meta:
         unique_together = ("postforum", "user")
 
-class bioLinks(models.Model):
+class BioLinks(models.Model):
     user = models.ForeignKey(
         Users,
         verbose_name="User",
         on_delete=models.CASCADE,
-        related_name="social_links",
+        related_name="bio_links",
         null=False
     )
 
-    title = models.CharField(verbose_name="Title", max_length=20, null=False)
+    # title = models.CharField(verbose_name="Title", max_length=20, null=False)
     url = models.URLField(verbose_name="URL Address", max_length=200, null=False)
