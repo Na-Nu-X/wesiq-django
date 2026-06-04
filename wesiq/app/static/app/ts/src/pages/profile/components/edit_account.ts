@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Variables
     
     const bio_container:HTMLDivElement = edit_account_form.querySelector(".bio_container") as HTMLDivElement // Gets The Bio Container
+    const bio_links:HTMLInputElement = bio_container.querySelector(".bio_links") as HTMLInputElement // Gets The Bio Links Hidden Input
     const icons:HTMLDivElement = bio_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
     const links:HTMLDivElement = icons.querySelector(".links") as HTMLDivElement // Gets The Links Container
     const toggle_show_add_link_container:HTMLElement = icons.querySelector(".toggle_show_add_link_container") as HTMLElement // Gets The Toggle Show Bio Links Form Icon
@@ -59,28 +60,25 @@ document.addEventListener("DOMContentLoaded", function():void {
     function createLink(url:URL):HTMLAnchorElement {
         const link:HTMLAnchorElement = document.createElement("a") // Creates The Link
         const hostname:string = url.hostname // Gets The URL's Hostname
-
-        link.href = String(url) // Sets The URL To The Link
-
-        switch(hostname) {
-            case "www.instagram.com":
-                link.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
-                break
-
-            case "www.facebook.com":
-                link.innerHTML = "<i class='fa-brands fa-facebook'></i>" // https://fontawesome.com/icons/brands/solid/facebook
-                break
-
-            case "www.youtube.com":
-                link.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
-                break
         
-            default:
-                link.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
-                break
-        }
+        link.href = String(url) // Sets The URL To The Link
+        link.title = gettext("Otvoriť odkaz")
+        link.target = "_blank"
+        link.rel = "noopener noreferrer"
+
+        if(hostname.includes("instagram.com")) link.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
+        else if(hostname.includes("facebook.com")) link.innerHTML = "<i class='fa-brands fa-facebook'></i>" // https://fontawesome.com/icons/brands/solid/facebook
+        else if(hostname.includes("youtube.com")) link.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
+        else link.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
 
         return link // Returns The Link
+    }
+
+    // Function For Store The New Link To The Hidden Input
+    function storeNewLink(url:URL, input:HTMLInputElement):void {
+        const current_bio_links:string[] = JSON.parse(input.value) || [] // Gets The Current Bio Links
+        current_bio_links.push(String(url)) // Adds The New URL To The Bio Links
+        bio_links.value = JSON.stringify(current_bio_links) // Stores The New Bio Links
     }
 
     // Events
@@ -93,7 +91,11 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         if(getURL(entered_url)) {
             const url:URL|null = getURL(entered_url) // Gets The URL
-            if(url && links.childElementCount < 3 && !isExistingLink(url, links)) links.appendChild(createLink(url)) // Appends The Link To The Links Container
+
+            if(url && links.childElementCount < 3 && !isExistingLink(url, links)) {
+                links.appendChild(createLink(url)) // Appends The Link To The Links Container
+                storeNewLink(url, bio_links) // Stores The New Link To The Bio Links Hidden Input
+            }
         }
     })
 

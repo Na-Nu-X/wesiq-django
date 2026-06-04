@@ -58,6 +58,8 @@
 
                 <div class="bio_container">
                     {{ edit_account_form.bio }}
+
+                    <input class="bio_links" type="hidden" name="bio_links" value="[]">
     
                     <div class="icons">
                         <div class="links"></div>
@@ -66,7 +68,7 @@
                         <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                     </div>
 
-                    <div class="add_link_container active">
+                    <div class="add_link_container">
                         <input class="url" type="text" placeholder="https://example.com">
                         <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button>
                     </div>
@@ -159,17 +161,24 @@
                             <p class="bio">{{ user.bio }}</p>
 
                             <div class="links">
-                                <a href="#">
-                                    <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
-                                </a>
-    
-                                <a href="#">
-                                    <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
-                                </a>
-    
-                                <a href="#">
-                                    <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
-                                </a>
+                                {% for one_link in user.bio_links.all %}
+                                    <a href="{{ one_link.url }}" title="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
+                                        {% if "instagram.com" in one_link.url %}
+                                            <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
+
+                                        {% elif "facebook.com" in one_link.url %}
+                                            <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
+
+                                        {% elif "youtube.com" in one_link.url %}
+                                            <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
+
+                                        {% else %}
+                                            <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+
+                                        {% endif %}
+                                    </a>
+
+                                {% endfor %}
                             </div>
                         </div>
                     
