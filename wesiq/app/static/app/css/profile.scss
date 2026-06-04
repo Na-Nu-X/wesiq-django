@@ -299,6 +299,17 @@
                     padding: 19px 0px 16px;
                 }
             }
+
+            .phone_number_container {
+                .flag {
+                    position: absolute;
+                    bottom: 21px;
+                    right: -30px;
+                    width: 24px;
+                    opacity: 0.8;
+                    transition: right 0.3s ease;
+                }
+            }
         }
 
         .form_report {

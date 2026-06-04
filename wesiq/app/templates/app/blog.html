@@ -202,14 +202,6 @@
         
         {% endfor %}
     </div>
-
-    <form class="blog_subscribe_form" action="{% url 'blog_url' %}" method="POST">
-        {% csrf_token %}
-
-        {{ blog_subscribe_form.email_address }}
-
-        <input type="submit" value="{% translate 'Odoberať' %}" title="{% translate 'Dostávať upozornenia o nových článkoch' %}">
-    </form>
 {% endblock content %}
 
 {% block script %}

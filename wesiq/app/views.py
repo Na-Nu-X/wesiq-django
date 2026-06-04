@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, blogSubscribeForm, writeCommentForm, uploadPostForm, bioLinksForm
+from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
 from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
 from django.contrib.auth import logout
 from pathlib import Path
@@ -1775,30 +1775,6 @@ def blogView(request):
     if articles is not None and len(articles) > 0:
         no_articles = False
 
-    # Blog Subscribe Form
-    if request.method == "POST":
-        blog_subscribe_form = blogSubscribeForm(request.POST) # Gets The Blog Subscribe Form
-
-        if blog_subscribe_form.is_valid():
-            email_address = blog_subscribe_form.cleaned_data["email_address"]
-            
-            try:
-                subscribed_user = Users.objects.get(email_address=email_address)
-                subscribed_user.blog_subscribe = True
-                subscribed_user.save()
-
-                messages.add_message(request, messages.SUCCESS, f"Budete dostávať upozornenia na adresu\n%(email_address)s" % {"email_address": email_address})
-
-            # Error
-            except Exception as e:
-                messages.add_message(request, messages.ERROR, _("Pri prihlásení na odber k blogu došlo k chybe"))
-                captureError(f"An error occurred while subscribing to the blog.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        
-        # Wrong Form
-        else:
-            messages.add_message(request, messages.ERROR, _("Prihlásení na odber k blogu zlyhalo"))
-            captureError(f"Blog subscription failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         # Get Logged In User ID From Session
@@ -1807,12 +1783,7 @@ def blogView(request):
         # Get Logged In User From DB
         logged_in_user = Users.objects.get(id=logged_in_user_id)
 
-        # Automatically Set Values Into Contact Form When User Is Logged In
-        filled_blog_subscribe_form = blogSubscribeForm(initial={
-            "email_address": logged_in_user.email_address
-        })
-
-        # Renders Blog Page With Filled Subscribe Form, User Data And Articles
+        # Renders Blog Page With User Data And Articles
         return render(request, "app/blog.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
@@ -1821,14 +1792,12 @@ def blogView(request):
 
             "articles": articles,
             "no_articles": no_articles,
-            "blog_subscribe_form": filled_blog_subscribe_form,
             "num_articles": num_articles
         })
 
     # Renders Page With Articles Data
     return render(request, "app/blog.html", {
         "articles": articles,
-        "blog_subscribe_form": blogSubscribeForm,
         "num_articles": num_articles,
     })
 
