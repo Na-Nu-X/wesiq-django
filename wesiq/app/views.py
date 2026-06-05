@@ -118,7 +118,7 @@ def getClientLocation(ip):
         return f"{country}, {city}"
     
     except requests.exceptions.RequestException:
-        return _("Služba nie je nedostupná.")
+        return _("Služba je nedostupná.")
 
 # Generates Random 6-Digit Code
 def generateCode(length=6, letters=False):
