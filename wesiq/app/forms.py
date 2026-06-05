@@ -472,7 +472,7 @@ class uploadPostForm(forms.ModelForm):
 
 class bioLinksForm(forms.Form):
     title = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "title", "placeholder": _("Instagram / Facebook / YouTube...")}),
+        widget=forms.TextInput(attrs={"class": "title", "placeholder": "Instagram / Facebook / YouTube..."}),
         label=False,
         max_length=20,
         required=True,
