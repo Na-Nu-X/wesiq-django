@@ -107,7 +107,6 @@
         a {
             color: $secondary-color;
             text-decoration: none;
-            font-size: 0.9em;
             font-style: italic;
 
             &:hover,
@@ -684,6 +683,22 @@
                             opacity: 0.8;
                         }
                     }
+                }
+            }
+        }
+
+        .no_logged_in {
+            text-align: center;
+
+            a {
+                color: $secondary-color;
+                text-decoration: none;
+                font-style: italic;
+    
+                &:hover,
+                &:active,
+                &:focus {
+                    text-decoration: underline;
                 }
             }
         }

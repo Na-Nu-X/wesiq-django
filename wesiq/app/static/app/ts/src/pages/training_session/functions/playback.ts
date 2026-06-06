@@ -61,10 +61,13 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
     const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
 
-    const current_activity_info:HTMLParagraphElement = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
-    const is_xp_boost_available:string|null = current_activity_info.dataset["is_xp_boost_available"] || null // Checks If Is The XP Boost Available
+    const current_activity_info:HTMLParagraphElement|null = training_plan ? training_plan.querySelector(".current_activity_info") as HTMLParagraphElement : null // Gets Current Activity Info
 
-    if(is_xp_boost_available === "True") useXPBoost(current_activity_info); // Uses The Available XP Boost
+    if(current_activity_info) {
+        const is_xp_boost_available:string|null = current_activity_info.dataset["is_xp_boost_available"] || null // Checks If Is The XP Boost Available
+    
+        if(is_xp_boost_available === "True") useXPBoost(current_activity_info); // Uses The Available XP Boost
+    }
     
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
 

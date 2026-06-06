@@ -586,6 +586,7 @@ header {
                         font-style: italic
                     }
 
+                    .fa-user,
                     .fa-user-plus,
                     .fa-user-minus {
                         @include icon;

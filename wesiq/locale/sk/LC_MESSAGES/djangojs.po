@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 06:41+0000\n"
+"POT-Creation-Date: 2026-06-06 14:41+0000\n"
 "PO-Revision-Date: 2026-06-06 06:43+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/forum.ts:26
@@ -259,8 +260,8 @@ msgstr "Zrušiť"
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:359
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:54
 #: app/static/app/ts/src/pages/community/functions/posts.ts:168
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:65
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:134
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:66
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:136
 #, javascript-format
 msgid "/sk/profil/%s"
 msgstr "/sk/profil/%s"
@@ -268,7 +269,7 @@ msgstr "/sk/profil/%s"
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:360
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:55
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:135
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:137
 msgid "Zobraziť užívateľa"
 msgstr "Zobraziť užívateľa"
 
@@ -405,11 +406,11 @@ msgstr "Pri spracovávaní príspevku došlo k chybe!"
 msgid "Príspevok bol úspešne pridaný."
 msgstr "Príspevok bol úspešne pridaný."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:55
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:56
 msgid "Pri načítavaní užívateľov došlo k chybe."
 msgstr "Pri načítavaní užívateľov došlo k chybe."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:116
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:118
 #: app/static/app/ts/src/pages/community/functions/tagUsers.ts:49
 msgid "Pri hľadaní užívateľov došlo k chybe."
 msgstr "Pri hľadaní užívateľov došlo k chybe."
@@ -539,8 +540,6 @@ msgstr "<br>Aktuálna aktivita trvala:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgid ""
 "Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
@@ -548,17 +547,12 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
-msgid ""
-"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgid ""
 "Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
 msgstr ""

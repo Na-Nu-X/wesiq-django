@@ -14,6 +14,7 @@ interface loadedUser {
 
 interface firstLoadedUsersResponse {
     success: boolean,
+    logged_in_user_id?:number,
     users:loadedUser[],
     message: string
 }
@@ -48,7 +49,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
             return
         }
 
-        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data))) // Creates The HTML For Every Loaded User
+        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data, first_loaded_users_response.logged_in_user_id))) // Creates The HTML For Every Loaded User
     }
 
     catch {
@@ -57,7 +58,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
 }
 
 // Function For Create Loaded User HTML
-function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser):HTMLAnchorElement {
+function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser, logged_in_user_id?:number):HTMLAnchorElement {
     const one_user_template_clone:DocumentFragment = one_user_template.content.cloneNode(true) as DocumentFragment // Clones The One User Template Content
     
     // One User Link
@@ -86,7 +87,8 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
 
     // Follow Button
     const follow_button:HTMLElement = one_user.querySelector(".fa-solid") as HTMLElement // Gets The Follow Button
-    user_data.has_follow ? follow_button.classList.add("fa-user-minus") : follow_button.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+    if(logged_in_user_id) user_data.has_follow ? follow_button.classList.add("fa-user-minus") : follow_button.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+    else follow_button.classList.add("fa-user") // https://fontawesome.com/icons/user
 
     return one_user // Returns The One User Link
 }
@@ -102,12 +104,12 @@ export async function getSearchedUsers(searched_text:string, all_users_container
             return
         }
 
-        if(search_bar_response.users && search_bar_response.logged_in_user_id) {
+        if(search_bar_response.users) {
             all_users_container.innerHTML = "" // Deletes All Users Container
 
             // Renders Users
             search_bar_response.users.forEach(function(one_user_data:searchedUser) {
-                if(search_bar_response.logged_in_user_id) renderUsers(one_user_data, search_bar_response.logged_in_user_id, all_users_container)
+                renderUsers(one_user_data, all_users_container, search_bar_response.logged_in_user_id)
             })
         }
     }
@@ -122,7 +124,7 @@ export async function getSearchedUsers(searched_text:string, all_users_container
 }
 
 // Function For Render Users From The POST Response
-function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users_container:HTMLDivElement):void {
+function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement, logged_in_user_id?:number):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
     const username:HTMLParagraphElement = document.createElement("p") // Creates The Username Paragraph
@@ -157,8 +159,9 @@ function renderUsers(user_data:searchedUser, logged_in_user_id:number, all_users
     followers.textContent = `${user_data.followers.length}` // Sets Followers Amount
     one_user.appendChild(followers) // Appends The Followers To The One User Container
 
-    follow_unfollow_icon.classList.add("fa-solid") // Adds fa-solid Class From https://fontawesome.com/
-    !user_data.followers.includes(logged_in_user_id) ? follow_unfollow_icon.classList.add("fa-user-plus") : follow_unfollow_icon.classList.add("fa-user-minus")
+    follow_unfollow_icon.classList.add("fa-solid")
+    if(logged_in_user_id) !user_data.followers.includes(logged_in_user_id) ? follow_unfollow_icon.classList.add("fa-user-plus") : follow_unfollow_icon.classList.add("fa-user-minus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+    else follow_unfollow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
     one_user.appendChild(follow_unfollow_icon) // Appends The Follow / Unfollow Icon To The One User Container
 }
 
