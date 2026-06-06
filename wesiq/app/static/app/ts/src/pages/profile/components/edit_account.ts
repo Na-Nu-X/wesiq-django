@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const bio_container:HTMLDivElement = edit_account_form.querySelector(".bio_container") as HTMLDivElement // Gets The Bio Container
     const bio_links:HTMLInputElement = bio_container.querySelector(".bio_links") as HTMLInputElement // Gets The Bio Links Hidden Input
     const icons:HTMLDivElement = bio_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
-    const links:HTMLDivElement = icons.querySelector(".links") as HTMLDivElement // Gets The Links Container
+    const added_links_container:HTMLDivElement = edit_account_form.querySelector(".added_links_container") as HTMLDivElement // Gets The Added Links Container
     const toggle_show_add_link_container:HTMLElement = icons.querySelector(".toggle_show_add_link_container") as HTMLElement // Gets The Toggle Show Bio Links Form Icon
     const add_link_container:HTMLDivElement = bio_container.querySelector(".add_link_container") as HTMLDivElement // Gets The Bio Links Form
     const url_input:HTMLInputElement = bio_container.querySelector(".url") as HTMLInputElement // Gets The URL Input
@@ -55,6 +55,11 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     }
 
+    // Function For Get The Domain From The URL (For Example: https://www.instagram.com/ -> instagram.com)
+    function getDomain(url:URL):string {
+        return new URL(url).hostname.replace(/^www\./, "")
+    }
+
     // Function For Check If The URL Already Exist In Some Link
     function isExistingLink(url:URL, container:HTMLDivElement):boolean {
         const all_links:NodeListOf<HTMLAnchorElement> = container.querySelectorAll<HTMLAnchorElement>("a") // Gets All Links
@@ -62,19 +67,29 @@ document.addEventListener("DOMContentLoaded", function():void {
     }
 
     // Function For Create The Link
-    function createLink(url:URL):HTMLAnchorElement {
-        const link:HTMLAnchorElement = document.createElement("a") // Creates The Link
-        const hostname:string = url.hostname // Gets The URL's Hostname
-        
-        link.href = String(url) // Sets The URL To The Link
-        link.title = gettext("Otvoriť odkaz")
-        link.target = "_blank"
-        link.rel = "noopener noreferrer"
+    function createLink(url:URL):HTMLDivElement {
+        // Link Container
+        const link:HTMLDivElement = document.createElement("div") // Creates The Link Container
+        link.classList.add("link") // Adds The Link Class
 
-        if(hostname.includes("instagram.com")) link.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
-        else if(hostname.includes("facebook.com")) link.innerHTML = "<i class='fa-brands fa-facebook'></i>" // https://fontawesome.com/icons/brands/solid/facebook
-        else if(hostname.includes("youtube.com")) link.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
-        else link.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
+        // Anchor
+        const anchor:HTMLAnchorElement = document.createElement("a") // Creates The Anchor
+        anchor.href = String(url) // Sets The URL To The Link
+        anchor.title = gettext("Otvoriť odkaz")
+        anchor.target = "_blank"
+        anchor.rel = "noopener noreferrer"
+
+        // Icon
+        const hostname:string = url.hostname // Gets The URL's Hostname
+
+        if(hostname.includes("instagram.com")) anchor.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
+        else if(hostname.includes("facebook.com")) anchor.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
+        else anchor.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
+
+        anchor.innerHTML += getDomain(url)
+
+        link.appendChild(anchor) // Appends The Anchor To The Link Container
+        link.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť odkaz')}"></i>` // https://fontawesome.com/icons/xmark
 
         return link // Returns The Link
     }
@@ -83,7 +98,21 @@ document.addEventListener("DOMContentLoaded", function():void {
     function storeNewLink(url:URL, input:HTMLInputElement):void {
         const current_bio_links:string[] = JSON.parse(input.value) || [] // Gets The Current Bio Links
         current_bio_links.push(String(url)) // Adds The New URL To The Bio Links
-        bio_links.value = JSON.stringify(current_bio_links) // Stores The New Bio Links
+        input.value = JSON.stringify(current_bio_links) // Stores The New Bio Links
+    }
+
+    // Function For Remove The Added Link
+    function removeAddedLink(link:HTMLDivElement, input:HTMLInputElement):void {
+        const current_bio_links:string[] = JSON.parse(input.value) || [] // Gets The Current Bio Links
+        const anchor:HTMLAnchorElement = link.querySelector("a") as HTMLAnchorElement // Gets The Anchor
+        const link_index:number = current_bio_links.indexOf(anchor.href) // Gets The Index Of The Link
+
+        if(link_index !== -1) {
+            current_bio_links.splice(link_index, 1) // Removes The Link From The Current Bio Links
+            input.value = JSON.stringify(current_bio_links) // Stores The Updated Bio Links
+        }
+
+        link.remove() // Removes The Link From DOM
     }
 
     // Events
@@ -97,10 +126,21 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(getURL(entered_url)) {
             const url:URL|null = getURL(entered_url) // Gets The URL
 
-            if(url && links.childElementCount < 3 && !isExistingLink(url, links)) {
-                links.appendChild(createLink(url)) // Appends The Link To The Links Container
+            if(url && added_links_container.childElementCount < 3 && !isExistingLink(url, added_links_container)) {
+                added_links_container.appendChild(createLink(url)) // Appends The Link To The Links Container
                 storeNewLink(url, bio_links) // Stores The New Link To The Bio Links Hidden Input
             }
+        }
+    })
+
+    // Global Event Delegations
+
+    // Added Links Container Click Functionality
+    added_links_container.addEventListener("click", function(event:PointerEvent):void {
+        // Remove Added Link
+        if((event.target as HTMLElement).classList.contains("fa-xmark")) {
+            const link:HTMLDivElement = (event.target as HTMLElement).closest(".link") as HTMLDivElement // Gets The Link Container
+            removeAddedLink(link, bio_links) // Removes The Added Link
         }
     })
 
