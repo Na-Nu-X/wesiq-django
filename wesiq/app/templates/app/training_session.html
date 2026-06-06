@@ -55,7 +55,7 @@
             {% if not request.session.logged_in_user_id %}
                 <p class="no_logged_in">
                     {% translate "Zdá sa, že nie ste prihlásený." %}<br>
-                    {% translate "Bez prihlásenia nie je možné zaznamenať vašu aktivitu." %}<br>
+                    {% translate "Bez prihlásenia nie je možné ukladať vašu aktivitu." %}<br>
                     <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
                 </p>
 
@@ -289,29 +289,39 @@
 
         <div class="official_tasks">
             <h3>{% translate "Dnešné&nbsp;výzvy" %}</h3>
-            <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
+            
+            {% if request.session.logged_in_user_id %}
+                <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
 
-            <div class="tasks">
-                {% for one_task in official_tasks %}               
-                    <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}" data-progress_percentage="{{ one_task.progress_percentage|unlocalize }}">
-                        <div 
-                            class="
-                                checkbox 
+                <div class="tasks">
+                    {% for one_task in official_tasks %}               
+                        <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}" data-progress_percentage="{{ one_task.progress_percentage|unlocalize }}">
+                            <div 
+                                class="
+                                    checkbox 
 
-                                {% if one_task.is_completed %}
-                                    checked
-                                 
-                                {% endif %}
-                            "
-                        >
+                                    {% if one_task.is_completed %}
+                                        checked
+                                    
+                                    {% endif %}
+                                "
+                            >
+                            </div>
+
+                            <p class="title">{{ one_task.title }}</p>
+                            <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
                         </div>
+                    
+                    {% endfor %}
+                </div>
 
-                        <p class="title">{{ one_task.title }}</p>
-                        <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
-                    </div>
-                
-                {% endfor %}
-            </div>
+            {% else %}
+                <p class="no_logged_in">
+                    {% translate "Pre prístup k denným výzvam sa musíte" %}
+                    <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť." %}</a>
+                </p>
+            
+            {% endif %}
         </div>
 
         <div class="custom_tasks">

@@ -597,38 +597,42 @@ def deletePostComment(request):
         return JsonResponse({"success": False, "message": _("Pri odstraňovaní komentáru došlo k chybe.")}, status=500)
 
 @require_POST
-def addComment(request, logged_in_user_id):
+def addComment(request):
     try:
-        comment_data = json.loads(request.body) # Gets The Comment Data
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            comment_data = json.loads(request.body) # Gets The Comment Data
 
-        new_comment = PostForum(
-            post_id = comment_data["post_id"],
-            user_id = logged_in_user_id,
-            comment = comment_data["comment"],
-            parent_id = comment_data["parent_id"]
-        )
+            new_comment = PostForum(
+                post_id = comment_data["post_id"],
+                user_id = logged_in_user_id,
+                comment = comment_data["comment"],
+                parent_id = comment_data["parent_id"]
+            )
 
-        new_comment.save()
+            new_comment.save()
 
-        logged_in_user = {
-            "logged_in_user_id": logged_in_user_id
-        }
+            logged_in_user = {
+                "logged_in_user_id": logged_in_user_id
+            }
 
-        # Creates Valid Format Of Comment For JSON Response
-        comment = {
-            "id": new_comment.id,
+            # Creates Valid Format Of Comment For JSON Response
+            comment = {
+                "id": new_comment.id,
 
-            "user": {
-                "id": new_comment.user.id,
-                "username": new_comment.user.username,
-                "profile_picture_name": new_comment.user.profile_picture_name
-            },
+                "user": {
+                    "id": new_comment.user.id,
+                    "username": new_comment.user.username,
+                    "profile_picture_name": new_comment.user.profile_picture_name
+                },
 
-            "creation_time": new_comment.creation_time,
-            "level": new_comment.level
-        }
+                "creation_time": new_comment.creation_time,
+                "level": new_comment.level
+            }
 
-        return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+            return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+
+        return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
 
     except ValidationError as e:
         return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
@@ -2539,6 +2543,179 @@ def manageTrainingPlansView(request):
     })
 
 def communityView(request):
+    # Load First Users
+    if request.headers.get("X-Requested-Action") == "load-first-users":
+        logged_in_user_id = None # Default State When The User Isn't Logged In
+        logged_in_user = None # Default State When The User Isn't Logged In
+
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+        try:
+            searched_users_history = json.loads(request.body) # Gets The Searched Users History
+
+            loaded_users_from_history = Users.objects.filter(
+                username__in=searched_users_history,
+                account_status="OK"
+            ).annotate(
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    Users.objects.filter(
+                        id=OuterRef("pk"), 
+                        followers=logged_in_user_id
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            )
+
+            loaded_users_from_history_list = list(loaded_users_from_history) # Converts The Loaded Users From History To List
+            loaded_users_from_history_list.sort(key=lambda user:searched_users_history.index(user.username)) # Sorts The Loaded Users From History List By The Original Order In The History
+
+            missing_users_amount = 3 - len(loaded_users_from_history_list) # Gets The Amount Of Missing Users To The Maximum Of 3
+            missing_users_list = []
+
+            if missing_users_amount > 0:
+                loaded_users_from_history_ids = [u.id for u in loaded_users_from_history_list] # Gets The IDs Of Users In History
+
+                # Gets The Missing Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
+                missing_users = Users.objects.filter(
+                    account_status="OK"
+                ).annotate(
+                    # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                    has_follow=Exists(
+                        Users.objects.filter(
+                            id=OuterRef("pk"),
+                            followers=logged_in_user_id
+                        )
+                    ) if logged_in_user else Value(False, output_field=BooleanField())
+                ).exclude(
+                    id__in=loaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
+                ).order_by(
+                    "-creation_time"
+                )
+
+                if logged_in_user:
+                    # Removes The Logged In User From Missing Users
+                    missing_users = missing_users.exclude(
+                        id=logged_in_user_id
+                    )
+
+                missing_users = missing_users[:missing_users_amount]
+                
+                missing_users_list = list(missing_users) # Converts The Missing Users To List
+
+            users = loaded_users_from_history_list + missing_users_list # Connects Loaded Users From History And Missing Users Into The One List
+
+            loaded_users = []
+
+            for one_user in users:
+                loaded_users.append({
+                    "id": one_user.id,
+                    "first_name": one_user.first_name,
+                    "last_name": one_user.last_name,
+                    "username": one_user.username,
+                    "profile_picture_name": one_user.profile_picture_name,
+                    "friend_code": one_user.friend_code,
+                    "followers": one_user.followers.count(),
+                    "has_follow": one_user.has_follow
+                })
+
+            if logged_in_user:
+                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
+
+            return JsonResponse({"success": True, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
+
+        except Exception as e:
+            captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+            return JsonResponse({"success": False, "message": _("Pri načítavaní užívateľov došlo k chybe.")}, status=500)
+
+    # Search Users
+    if request.headers.get("X-Requested-Action") == "search-users":
+        logged_in_user_id = None # Default State When The User Isn't Logged In
+        logged_in_user = None # Default State When The User Isn't Logged In
+
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+        try:
+            searched_text = json.loads(request.body) # Gets The Searched Text
+            
+            # Filters Users By Searched Text (Case-Insensitive)
+            users = Users.objects.filter(
+                Q(account_status="OK") & (
+                    Q(first_name__icontains=searched_text) | 
+                    Q(last_name__icontains=searched_text) | 
+                    Q(username__icontains=searched_text) | 
+                    Q(friend_code__contains=searched_text)
+                )
+            ).annotate(
+                # Creates Is Followed Column (True If The User Is Following The User)
+                is_followed=Case(
+                    When(id__in=logged_in_user.following.values_list("id", flat=True), then=True),
+                    default=False,
+                    output_field=BooleanField()
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).order_by(
+                "-is_followed",
+                "-creation_time"
+            )
+
+            if logged_in_user:
+                # Removes The Logged In User From Users
+                users = users.exclude(
+                    id=logged_in_user_id
+                )
+            
+            # Creates Valid Format Of Users For JSON Response
+            users = [
+                {
+                    "id": one_user.id, 
+                    "first_name": one_user.first_name, 
+                    "last_name": one_user.last_name, 
+                    "username": one_user.username,
+                    "profile_picture_name": one_user.profile_picture_name, 
+                    "friend_code": one_user.friend_code,
+                    "followers": list(one_user.followers.values_list("id", flat=True))
+                }
+
+                for one_user in users
+            ]
+
+            if logged_in_user:
+                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
+
+            return JsonResponse({"success": True, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
+
+        except Exception as e:
+            captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+            return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
+
+    if request.method == "POST":
+        # Toggle Post Like
+        if request.headers.get("X-Requested-Action") == "toggle-post-like":
+            return togglePostLike(request)
+
+        # Report Post
+        if request.headers.get("X-Requested-Action") == "report-post":
+            return reportPost(request)
+
+        # Toggle Post Save
+        if request.headers.get("X-Requested-Action") == "toggle-post-save":
+            return togglePostSave(request)
+
+        # Report Comment
+        if request.headers.get("X-Requested-Action") == "report-post-comment":
+            return reportPostComment(request)
+
+        # Add Comment
+        if request.headers.get("X-Requested-Action") == "add-comment":
+            return addComment(request)
+
+        # Toggle Post Comment Like
+        if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
+            return togglePostCommentLike(request)
+
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
@@ -2734,128 +2911,6 @@ def communityView(request):
                         messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo"))
                         captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
-            # Load First Users
-            if request.headers.get("X-Requested-Action") == "load-first-users":
-                try:
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        searched_users_history = json.loads(request.body) # Gets The Searched Users History
-
-                        loaded_users_from_history = Users.objects.filter(
-                            username__in=searched_users_history,
-                            account_status="OK"
-                        ).annotate(
-                            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                            has_follow=Exists(
-                                Users.objects.filter(
-                                    id=OuterRef("pk"), 
-                                    followers=logged_in_user_id
-                                )
-                            )
-                        )
-
-                        loaded_users_from_history_list = list(loaded_users_from_history) # Converts The Loaded Users From History To List
-                        loaded_users_from_history_list.sort(key=lambda user:searched_users_history.index(user.username)) # Sorts The Loaded Users From History List By The Original Order In The History
-
-                        missing_users_amount = 3 - len(loaded_users_from_history_list) # Gets The Amount Of Missing Users To The Maximum Of 3
-                        missing_users_list = []
-
-                        if missing_users_amount > 0:
-                            sloaded_users_from_history_ids = [u.id for u in loaded_users_from_history_list] # Gets The IDs Of Users In History
-
-                            # Gets The Missing Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
-                            missing_users = Users.objects.filter(
-                                account_status="OK"
-                            ).annotate(
-                                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                                has_follow=Exists(
-                                    Users.objects.filter(
-                                        id=OuterRef("pk"),
-                                        followers=logged_in_user_id
-                                    )
-                                )
-                            ).exclude(
-                                id=logged_in_user_id
-                            ).exclude(
-                                id__in=sloaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
-                            ).order_by(
-                                "-creation_time"
-                            )[:missing_users_amount]
-                            
-                            missing_users_list = list(missing_users) # Converts The Missing Users To List
-
-                        users = loaded_users_from_history_list + missing_users_list # Connects Loaded Users From History And Missing Users Into The One List
-
-                        loaded_users = []
-
-                        for one_user in users:
-                            loaded_users.append({
-                                "id": one_user.id,
-                                "first_name": one_user.first_name,
-                                "last_name": one_user.last_name,
-                                "username": one_user.username,
-                                "profile_picture_name": one_user.profile_picture_name,
-                                "friend_code": one_user.friend_code,
-                                "followers": one_user.followers.count(),
-                                "has_follow": one_user.has_follow
-                            })
-
-                        return JsonResponse({"success": True, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Užívateľov nie je možné načítať bez prihlásenia.")}, status=401)
-
-                except Exception as e:
-                    captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri načítavaní užívateľov došlo k chybe.")}, status=500)
-
-            # Search Users
-            if request.headers.get("X-Requested-Action") == "search-users":
-                try:
-                    searched_text = json.loads(request.body) # Gets The Searched Text
-                    
-                    # Filters Users By Searched Text (Case-Insensitive)
-                    users = Users.objects.filter(
-                        Q(account_status="OK") & (
-                            Q(first_name__icontains=searched_text) | 
-                            Q(last_name__icontains=searched_text) | 
-                            Q(username__icontains=searched_text) | 
-                            Q(friend_code__contains=searched_text)
-                        )
-                    ).exclude(
-                        id=logged_in_user_id
-                    ).annotate(
-                        # Creates Is Followed Column (True If The User Is Following The User)
-                        is_followed=Case(
-                            When(id__in=logged_in_user.following.values_list("id", flat=True), then=True),
-                            default=False,
-                            output_field=BooleanField()
-                        )
-                    ).order_by(
-                        "-is_followed",
-                        "-creation_time"
-                    )
-                    
-                    # Creates Valid Format Of Users For JSON Response
-                    users = [
-                        {
-                            "id": one_user.id, 
-                            "first_name": one_user.first_name, 
-                            "last_name": one_user.last_name, 
-                            "username": one_user.username,
-                            "profile_picture_name": one_user.profile_picture_name, 
-                            "friend_code": one_user.friend_code,
-                            "followers": list(one_user.followers.values_list("id", flat=True))
-                        }
-
-                        for one_user in users
-                    ]
-
-                    return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
-
-                except Exception as e:
-                    captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
-
             # Mark Post As Seen
             if request.headers.get("X-Requested-Action") == "mark-post-as-seen":
                 return markPostAsSeen(request)
@@ -2864,14 +2919,6 @@ def communityView(request):
             if request.headers.get("X-Requested-Action") == "toggle-follow":
                 return toggleFollow(request)
 
-            # Toggle Post Like
-            if request.headers.get("X-Requested-Action") == "toggle-post-like":
-                return togglePostLike(request)
-
-            # Report Post
-            if request.headers.get("X-Requested-Action") == "report-post":
-                return reportPost(request)
-
             # Edit Post Settings
             if request.headers.get("X-Requested-Action") == "edit-post-settings":
                 return editPostSettings(request)
@@ -2879,14 +2926,6 @@ def communityView(request):
             # Delete Post
             if request.headers.get("X-Requested-Action") == "delete-post":
                 return deletePost(request)
-
-            # Toggle Post Save
-            if request.headers.get("X-Requested-Action") == "toggle-post-save":
-                return togglePostSave(request)
-
-            # Report Comment
-            if request.headers.get("X-Requested-Action") == "report-post-comment":
-                return reportPostComment(request)
 
             # Delete Comment
             if request.headers.get("X-Requested-Action") == "delete-post-comment":
@@ -2922,14 +2961,6 @@ def communityView(request):
                     captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                     return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov pre označenie došlo k chybe.")}, status=404)
 
-            # Add Comment
-            if request.headers.get("X-Requested-Action") == "add-comment":
-                return addComment(request, logged_in_user_id)
-
-            # Toggle Post Comment Like
-            if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
-                return togglePostCommentLike(request)
-
         return render(request, "app/community.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
@@ -2940,184 +2971,188 @@ def communityView(request):
             "processing_posts": processing_posts
         })
 
-    return render(request, "app/community.html")
+    return render(request, "app/community.html", {
+        "upload_post_form": uploadPostForm
+    })
 
 def loadPostsView(request):
-    logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
 
-    # If The User Is Logged In
-    if logged_in_user_id:
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
-        page_number = request.GET.get("page", 1) # Gets Current Page Number
-        searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
+    page_number = request.GET.get("page", 1) # Gets Current Page Number
+    searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
 
-        # Gets The Posts With All Related Data
-        thirty_days_ago = timezone.now() - timedelta(days=30)
+    # Gets The Posts With All Related Data
+    thirty_days_ago = timezone.now() - timedelta(days=30)
 
-        posts_query = Post.objects.select_related(
-            "user"
-        ).prefetch_related(
-            "tagged_users", 
-            
-            Prefetch(
-                "media",
-                queryset=PostMedia.objects.order_by("order")
-            ),
+    posts_query = Post.objects.select_related(
+        "user"
+    ).prefetch_related(
+        "tagged_users", 
+        
+        Prefetch(
+            "media",
+            queryset=PostMedia.objects.order_by("order")
+        ),
 
-            Prefetch(
-                "comments",
-                queryset=PostForum.objects.exclude(
-                    status="hidden"
-                ).select_related(
-                    "user"
-                ).order_by(
-                    "creation_time"
-                ),
-                to_attr="visible_comments"
-            )
-        ).exclude(
-            media__is_processed=False
-        ).annotate(
-            views=Count("seen_by_instances", distinct=True),
-
-            # Creates Is Seen Column (True If The User Has Already Viewed The Post)
-            is_seen=Exists(
-                SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
-            ),
-            
-            # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
-            is_followed=Case(
-                When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
-                default=False,
-                output_field=BooleanField()
-            )
-        ).exclude(
-            # Excludes Already Viewed Posts Which Were Viewed 30 Days Ago
-            Exists(
-                SeenPost.objects.filter(
-                    post=OuterRef("pk"), 
-                    user=logged_in_user, 
-                    viewed_at__lt=thirty_days_ago
-                )
-            )
-        ).order_by(
-            "is_seen",
-            "-is_followed",
-            "-latest_interaction"
-        ).distinct()
-
-        # Filters Posts By Searched Text
-        if searched_text:
-            posts_query = posts_query.filter(
-                (Q(user__first_name__icontains=searched_text) | 
-                Q(user__last_name__icontains=searched_text) | 
-                Q(user__username__icontains=searched_text) | 
-                Q(description__icontains=searched_text) | 
-                Q(tagged_users__username__icontains=searched_text) |
-                Q(added_hashtags__icontains=searched_text) | 
-                Q(location__icontains=searched_text) | 
-                Q(tagged_users__first_name__icontains=searched_text) |
-                Q(tagged_users__last_name__icontains=searched_text)) &
-                Q(media__isnull=False)
+        Prefetch(
+            "comments",
+            queryset=PostForum.objects.exclude(
+                status="hidden"
             ).select_related(
                 "user"
-            ).prefetch_related(
-                "tagged_users",
-                "media",
-            ).exclude(
-                tagged_users__account_status="suspended",
-                media__is_processed=False
             ).order_by(
-                "-created_at"
-            ).distinct()
+                "creation_time"
+            ),
+            to_attr="visible_comments"
+        )
+    ).exclude(
+        media__is_processed=False
+    ).annotate(
+        views=Count("seen_by_instances", distinct=True),
 
-        paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
+        # Creates Is Seen Column (True If The Logged In User Has Already Viewed The Post)
+        is_seen=Exists(
+            SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
+        ) if logged_in_user else Value(False, output_field=BooleanField()),
 
-        try:
-            page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
+        # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
+        is_followed=Case(
+            When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
+            default=False,
+            output_field=BooleanField()
+        ) if logged_in_user else Value(False, output_field=BooleanField())
+    ).exclude(
+        # Excludes Already Viewed Posts Which Were Viewed 30 Days Ago
+        Exists(
+            SeenPost.objects.filter(
+                post=OuterRef("pk"), 
+                user=logged_in_user, 
+                viewed_at__lt=thirty_days_ago
+            )
+        )
+    ).order_by(
+        "is_seen",
+        "-is_followed",
+        "-latest_interaction"
+    ).distinct()
 
-        except Exception as e:
-            captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-            return JsonResponse({"success": False, "has_next": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
+    # Filters Posts By Searched Text
+    if searched_text:
+        posts_query = posts_query.filter(
+            (Q(user__first_name__icontains=searched_text) | 
+            Q(user__last_name__icontains=searched_text) | 
+            Q(user__username__icontains=searched_text) | 
+            Q(description__icontains=searched_text) | 
+            Q(tagged_users__username__icontains=searched_text) |
+            Q(added_hashtags__icontains=searched_text) | 
+            Q(location__icontains=searched_text) | 
+            Q(tagged_users__first_name__icontains=searched_text) |
+            Q(tagged_users__last_name__icontains=searched_text)) &
+            Q(media__isnull=False)
+        ).select_related(
+            "user"
+        ).prefetch_related(
+            "tagged_users",
+            "media",
+        ).exclude(
+            tagged_users__account_status="suspended",
+            media__is_processed=False
+        ).order_by(
+            "-created_at"
+        ).distinct()
 
-        # Creates Valid Format Of Posts For JSON Response
-        posts = [
-            {
-                "user": {
-                    "id": one_post.user.id,
-                    "first_name": one_post.user.first_name,
-                    "last_name": one_post.user.last_name,
-                    "username": one_post.user.username,
-                    "profile_picture_name": one_post.user.profile_picture_name,
-                    "following": list(one_post.user.following.values_list("id", flat=True)),
-                    "followers": list(one_post.user.followers.values_list("id", flat=True))
-                },
+    paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
 
-                "id": one_post.id,
+    try:
+        page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
 
-                "description": (
-                    one_post.description
-                    if one_post.description
-                    else None
-                ),
+    except Exception as e:
+        captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        return JsonResponse({"success": False, "has_next": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
 
-                "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
-                "added_hashtags": list(one_post.added_hashtags),
+    # Creates Valid Format Of Posts For JSON Response
+    posts = [
+        {
+            "user": {
+                "id": one_post.user.id,
+                "first_name": one_post.user.first_name,
+                "last_name": one_post.user.last_name,
+                "username": one_post.user.username,
+                "profile_picture_name": one_post.user.profile_picture_name,
+                "following": list(one_post.user.following.values_list("id", flat=True)),
+                "followers": list(one_post.user.followers.values_list("id", flat=True))
+            },
 
-                "location": (
-                    one_post.location.replace(",", "<span></span>")
-                    if one_post.coordinates
-                    else one_post.location if one_post.location else None
-                ),
+            "id": one_post.id,
 
-                "coordinates": (
-                    {
-                        "latitude": str(one_post.coordinates.y).replace(",", "."),
-                        "longitude": str(one_post.coordinates.x).replace(",", ".")
-                    }
+            "description": (
+                one_post.description
+                if one_post.description
+                else None
+            ),
 
-                    if one_post.coordinates and one_post.coordinates.x is not None and one_post.coordinates.y is not None
-                    else None
-                ),
+            "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
+            "added_hashtags": list(one_post.added_hashtags),
 
-                "public_visibility": one_post.public_visibility,
-                "allow_comments": one_post.allow_comments,
-                "hide_likes": one_post.hide_likes,
-                "likes": one_post.likes,
-                "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
-                "created_at": one_post.created_at.isoformat(),
-                "media": list(one_post.media.values("id", "file", "thumbnail", "is_video")),
-                "views": one_post.views, # TEST
+            "location": (
+                one_post.location.replace(",", "<span></span>")
+                if one_post.coordinates
+                else one_post.location if one_post.location else None
+            ),
 
-                "visible_comments": [
-                    {
-                        "id": one_comment.id,
+            "coordinates": (
+                {
+                    "latitude": str(one_post.coordinates.y).replace(",", "."),
+                    "longitude": str(one_post.coordinates.x).replace(",", ".")
+                }
 
-                        "user": {
-                            "id": one_comment.user.id,
-                            "first_name": one_comment.user.first_name,
-                            "last_name": one_comment.user.last_name,
-                            "username": one_comment.user.username,
-                            "profile_picture_name": one_comment.user.profile_picture_name
-                        },
+                if one_post.coordinates and one_post.coordinates.x is not None and one_post.coordinates.y is not None
+                else None
+            ),
 
-                        "comment": one_comment.comment,
-                        "likes": one_comment.likes,
-                        "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
-                        "creation_time": one_comment.creation_time.isoformat(),
-                        "parent_id": one_comment.parent_id,
-                        "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
-                        "level": one_comment.level
-                    }
+            "public_visibility": one_post.public_visibility,
+            "allow_comments": one_post.allow_comments,
+            "hide_likes": one_post.hide_likes,
+            "likes": one_post.likes,
+            "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
+            "created_at": one_post.created_at.isoformat(),
+            "media": list(one_post.media.values("id", "file", "thumbnail", "is_video")),
+            "views": one_post.views, # TEST
 
-                    for one_comment in one_post.visible_comments
-                ]
-            }
+            "visible_comments": [
+                {
+                    "id": one_comment.id,
 
-            for one_post in page_posts
-        ]
+                    "user": {
+                        "id": one_comment.user.id,
+                        "first_name": one_comment.user.first_name,
+                        "last_name": one_comment.user.last_name,
+                        "username": one_comment.user.username,
+                        "profile_picture_name": one_comment.user.profile_picture_name
+                    },
 
+                    "comment": one_comment.comment,
+                    "likes": one_comment.likes,
+                    "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
+                    "creation_time": one_comment.creation_time.isoformat(),
+                    "parent_id": one_comment.parent_id,
+                    "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
+                    "level": one_comment.level
+                }
+
+                for one_comment in one_post.visible_comments
+            ]
+        }
+
+        for one_post in page_posts
+    ]
+
+    if logged_in_user:
         logged_in_user = {
             "logged_in_user_id": logged_in_user_id, 
             "profile_picture_name": logged_in_user.profile_picture_name,
@@ -3126,7 +3161,7 @@ def loadPostsView(request):
 
         return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user": logged_in_user, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
 
-    return JsonResponse({"success": False, "message": _("Príspevky nie je možné načítať bez prihlásenia.")}, status=401)
+    return JsonResponse({"success": True, "has_next": page_posts.has_next(), "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
 
 def streamVideo(request, user_id, media_id, filename):
     # Manual Addition For HLS Types If The OS Doesn't Know Them
@@ -3174,10 +3209,11 @@ def getCompressionStatus(request, task_id):
     return JsonResponse(upload_progress_response)
 
 def postView(request, post_id):
-    logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
 
-    # If The User Is Logged In
-    if logged_in_user_id:
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
@@ -3189,14 +3225,6 @@ def postView(request, post_id):
             if request.headers.get("X-Requested-Action") == "toggle-follow":
                 return toggleFollow(request)
 
-            # Toggle Post Like
-            if request.headers.get("X-Requested-Action") == "toggle-post-like":
-                return togglePostLike(request)
-
-            # Report Post
-            if request.headers.get("X-Requested-Action") == "report-post":
-                return reportPost(request)
-
             # Edit Post Settings
             if request.headers.get("X-Requested-Action") == "edit-post-settings":
                 return editPostSettings(request)
@@ -3205,108 +3233,118 @@ def postView(request, post_id):
             if request.headers.get("X-Requested-Action") == "delete-post":
                 return deletePost(request)
 
-            # Toggle Post Save
-            if request.headers.get("X-Requested-Action") == "toggle-post-save":
-                return togglePostSave(request)
-
-            # Report Comment
-            if request.headers.get("X-Requested-Action") == "report-post-comment":
-                return reportPostComment(request)
-
             # Delete Comment
             if request.headers.get("X-Requested-Action") == "delete-post-comment":
                 return deletePostComment(request)
 
-            # Add Comment
-            if request.headers.get("X-Requested-Action") == "add-comment":
-                return addComment(request, logged_in_user_id)
+    if request.method == "POST":
+        # Toggle Post Like
+        if request.headers.get("X-Requested-Action") == "toggle-post-like":
+            return togglePostLike(request)
 
-            # Toggle Post Comment Like
-            if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
-                return togglePostCommentLike(request)
+        # Report Post
+        if request.headers.get("X-Requested-Action") == "report-post":
+            return reportPost(request)
 
-        # Gets The Post With All Related Data
-        post = Post.objects.filter(
-            id=post_id
-        ).annotate(
-            views=Count("seen_by_instances", distinct=True),
+        # Toggle Post Save
+        if request.headers.get("X-Requested-Action") == "toggle-post-save":
+            return togglePostSave(request)
 
-            # Creates The Has Like Column (True If The User Has Already Liked The Post)
-            has_like=Exists(
-                Post.likes_from_users.through.objects.filter(
-                    post_id=OuterRef("pk"),
-                    users_id=logged_in_user_id
-                )
-            ),
+        # Report Comment
+        if request.headers.get("X-Requested-Action") == "report-post-comment":
+            return reportPostComment(request)
 
-            # Creates The Has Save Column (True If The User Has Already Saved The Post)
-            has_save=Exists(
-                Users.objects.filter(
-                    id=logged_in_user_id, 
-                    saved_posts=OuterRef("pk")
-                )
+        # Add Comment
+        if request.headers.get("X-Requested-Action") == "add-comment":
+            return addComment(request)
+
+        # Toggle Post Comment Like
+        if request.headers.get("X-Requested-Action") == "toggle-post-comment-like":
+            return togglePostCommentLike(request)
+
+    # Gets The Post With All Related Data
+    post = Post.objects.filter(
+        id=post_id
+    ).annotate(
+        views=Count("seen_by_instances", distinct=True),
+
+        # Creates The Has Like Column (True If The User Has Already Liked The Post)
+        has_like=Exists(
+            Post.likes_from_users.through.objects.filter(
+                post_id=OuterRef("pk"),
+                users_id=logged_in_user_id
             )
-        ).select_related(
-            "user"
-        ).prefetch_related(
-            "user__followers",
-            "tagged_users", 
-            "likes_from_users",
-            
-            Prefetch(
-                "media",
-                queryset=PostMedia.objects.order_by("order")
-            ),
+        ),
 
-            Prefetch(
-                "comments",
-                queryset=PostForum.objects.exclude(
-                    status="hidden"
-                ).annotate(
-                    # Creates The Has Like Column (True If The User Has Already Liked The Comment)
-                    has_like=Exists(
-                        PostForum.likes_from_users.through.objects.filter(
-                            postforum_id=OuterRef("pk"),
-                            users_id=logged_in_user_id
-                        )
+        # Creates The Has Save Column (True If The User Has Already Saved The Post)
+        has_save=Exists(
+            Users.objects.filter(
+                id=logged_in_user_id, 
+                saved_posts=OuterRef("pk")
+            )
+        )
+    ).select_related(
+        "user"
+    ).prefetch_related(
+        "user__followers",
+        "tagged_users", 
+        "likes_from_users",
+        
+        Prefetch(
+            "media",
+            queryset=PostMedia.objects.order_by("order")
+        ),
+
+        Prefetch(
+            "comments",
+            queryset=PostForum.objects.exclude(
+                status="hidden"
+            ).annotate(
+                # Creates The Has Like Column (True If The User Has Already Liked The Comment)
+                has_like=Exists(
+                    PostForum.likes_from_users.through.objects.filter(
+                        postforum_id=OuterRef("pk"),
+                        users_id=logged_in_user_id
                     )
-                ).annotate(
-                    # Creates The Has Report Column (True If The User Has Already Reported The Comment)
-                    has_report=Exists(
-                        PostForum.reports_from_users.through.objects.filter(
-                            postforum_id=OuterRef("pk"),
-                            user_id=logged_in_user_id
-                        )
+                )
+            ).annotate(
+                # Creates The Has Report Column (True If The User Has Already Reported The Comment)
+                has_report=Exists(
+                    PostForum.reports_from_users.through.objects.filter(
+                        postforum_id=OuterRef("pk"),
+                        user_id=logged_in_user_id
                     )
-                ).select_related(
-                    "user"
-                ).order_by(
-                    "-creation_time"
-                ),
-                to_attr="visible_comments"
-            )
-        ).first()
+                )
+            ).select_related(
+                "user"
+            ).order_by(
+                "-creation_time"
+            ),
+            to_attr="visible_comments"
+        )
+    ).first()
 
-        if post != None:
-            # Splits Comments Into Parent And Child Comments
-            comments_by_parent = defaultdict(list)
-            
-            for one_comment in post.visible_comments:
-                comments_by_parent[one_comment.parent_id].append(one_comment)
-            
-            post.nested_comments = dict(comments_by_parent)
-            post.root_comments = comments_by_parent[None]
+    if post != None:
+        # Splits Comments Into Parent And Child Comments
+        comments_by_parent = defaultdict(list)
+        
+        for one_comment in post.visible_comments:
+            comments_by_parent[one_comment.parent_id].append(one_comment)
+        
+        post.nested_comments = dict(comments_by_parent)
+        post.root_comments = comments_by_parent[None]
 
-            # Gets The Tagged Users From The Post In JSON Format
-            post.tagged_users_json = json.dumps(
-                list(post.tagged_users.values_list("username", flat=True))
-            )
+        # Gets The Tagged Users From The Post In JSON Format
+        post.tagged_users_json = json.dumps(
+            list(post.tagged_users.values_list("username", flat=True))
+        )
 
-            if post.coordinates:
-                post.location = post.location.replace(",", "<span></span>")
-                post.latitude = str(post.coordinates.y).replace(",", ".")
-                post.longitude = str(post.coordinates.x).replace(",", ".")
+        if post.coordinates:
+            post.location = post.location.replace(",", "<span></span>")
+            post.latitude = str(post.coordinates.y).replace(",", ".")
+            post.longitude = str(post.coordinates.x).replace(",", ".")
 
+        if logged_in_user:
             return render(request, "app/post.html", {
                 "logged_in_user": {
                     "username": logged_in_user.username,
@@ -3316,12 +3354,10 @@ def postView(request, post_id):
                 "post": post
             })
 
-        return render(request, "app/post.html", {
-            "logged_in_user": {
-                "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name
-            },
-        })
+        else:
+            return render(request, "app/post.html", {
+                "post": post
+            })
 
     return render(request, "app/post.html")
 
@@ -3561,6 +3597,9 @@ def profileView(request, username):
                 "posts": posts
             })
         
-        return render(request, "app/profile.html")
+        return render(request, "app/profile.html", {
+            "user": user,
+            "posts": posts
+        })
 
     return HttpResponse("Nenašiel sa žiaden užívateľ.")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 06:41+0000\n"
+"POT-Creation-Date: 2026-06-06 14:41+0000\n"
 "PO-Revision-Date: 2026-06-06 08:02+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -259,8 +259,8 @@ msgstr "Stornieren"
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:359
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:54
 #: app/static/app/ts/src/pages/community/functions/posts.ts:168
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:65
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:134
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:66
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:136
 #, javascript-format
 msgid "/sk/profil/%s"
 msgstr "/de/profil/%s"
@@ -268,7 +268,7 @@ msgstr "/de/profil/%s"
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:360
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:55
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:135
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:137
 msgid "Zobraziť užívateľa"
 msgstr "Benutzer anzeigen"
 
@@ -405,11 +405,11 @@ msgstr "Beim Verarbeiten des Beitrags ist ein Fehler aufgetreten!"
 msgid "Príspevok bol úspešne pridaný."
 msgstr "Der Beitrag wurde erfolgreich hinzugefügt."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:55
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:56
 msgid "Pri načítavaní užívateľov došlo k chybe."
 msgstr "Beim Laden von Benutzern ist ein Fehler aufgetreten."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:116
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:118
 #: app/static/app/ts/src/pages/community/functions/tagUsers.ts:49
 msgid "Pri hľadaní užívateľov došlo k chybe."
 msgstr "Bei der Suche nach Benutzern ist ein Fehler aufgetreten."
@@ -539,8 +539,6 @@ msgstr "<br>Die aktuelle Aktivität dauerte:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgid ""
 "Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
@@ -549,18 +547,13 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
-msgid ""
-"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Die aktuelle Aktivitätszeit war %s %% länger als der Durchschnitt der "
 "letzten 7 Tage"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
 #, javascript-format
-#| msgid ""
-#| "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgid ""
 "Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
 msgstr ""

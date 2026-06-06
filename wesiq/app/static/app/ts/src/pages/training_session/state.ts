@@ -3,8 +3,14 @@ import { getRemainingSecondsFromDate } from "./functions/getRemainingSecondsFrom
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
 const GLOBAL_SPEED:number = 0.01 // 1 Default (Lower = Faster)
-const training_plan:HTMLDivElement = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
-const xp_boost_expiration_time:number = getRemainingSecondsFromDate((training_plan.querySelector(".current_activity_info") as HTMLParagraphElement).dataset["xp_boost_expiration_time"] || "") || 0 // Gets The XP Boost Expiration Time
+
+const training_plan:HTMLDivElement|null = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement || null // Gets The Training Plan
+let xp_boost_expiration_time:number = 0 // Sets The Default XP Boost Expiration Time
+
+if(training_plan) {
+    const current_activity_info:HTMLParagraphElement = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets The Current Activity Info Paragraph
+    xp_boost_expiration_time = getRemainingSecondsFromDate(current_activity_info.dataset["xp_boost_expiration_time"] || "") // Gets The XP Boost Expiration Time
+}
 
 // GLOBAL STATES
 

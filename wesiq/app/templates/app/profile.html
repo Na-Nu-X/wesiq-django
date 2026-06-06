@@ -201,7 +201,7 @@
                         </div>
                     </div>
 
-                    {% if not request.session.logged_in_user_id == user.id %}
+                    {% if not request.session.logged_in_user_id == user.id and request.session.logged_in_user_id %}
                         <button 
                             class="follow_button"
                             data-id="{{ user.id }}"
