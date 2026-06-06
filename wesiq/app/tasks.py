@@ -72,7 +72,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With No This Week's Activity Info
         elif activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] > 0:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100%% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>

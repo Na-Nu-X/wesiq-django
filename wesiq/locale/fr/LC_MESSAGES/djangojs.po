@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 18:07+0000\n"
-"PO-Revision-Date: 2026-06-05 13:25+0000\n"
+"POT-Creation-Date: 2026-06-06 06:41+0000\n"
+"PO-Revision-Date: 2026-06-06 07:59+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -197,7 +197,6 @@ msgid "Uverejniť príspevok"
 msgstr "Publier un message"
 
 #: app/static/app/ts/src/components/searchBar.ts:33
-#| msgid "Zobraziť užívateľa"
 msgid "Nájsť užívateľa"
 msgstr "Trouver un utilisateur"
 
@@ -236,7 +235,6 @@ msgstr "Masquer le nombre de likes"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:39
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:589
-#| msgid "Prihlásiť sa"
 msgid "Nahlásiť"
 msgstr "Rapport"
 
@@ -311,7 +309,6 @@ msgid "Zdielať..."
 msgstr "Partager..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:298
-#| msgid "Počet opakovaní"
 msgid "Počet videní..."
 msgstr "Nombre de vues..."
 
@@ -322,12 +319,10 @@ msgstr "Répondre..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:437
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:141
-#| msgid "Zobraziť heslo"
 msgid "Zobraziť odpovede..."
 msgstr "Afficher les réponses..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:611
-#| msgid "Upraviť účet"
 msgid "Upraviť"
 msgstr "Modifier"
 
@@ -356,12 +351,10 @@ msgstr ""
 "Une erreur s'est produite lors de la modification du libellé similaire."
 
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:93
-#| msgid "Vybraný súbor je príliš veľký."
 msgid "Obrázok je príliš veľký"
 msgstr "L'image est trop grande"
 
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:114
-#| msgid "Vybraný súbor je príliš veľký."
 msgid "Video je príliš veľké"
 msgstr "La vidéo est trop grande"
 
@@ -412,7 +405,6 @@ msgid "Pri spracovávaní príspevku došlo k chybe!"
 msgstr "Une erreur s'est produite lors du traitement de la publication !"
 
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:70
-#| msgid "Tréningový plán %s bol úspešne pridaný."
 msgid "Príspevok bol úspešne pridaný."
 msgstr "Le message a été ajouté avec succès."
 
@@ -453,7 +445,6 @@ msgstr "Essayer à nouveau"
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:50
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:59
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:82
-#| msgid "Zobraziť heslo"
 msgid "Zobraziť viac"
 msgstr "Afficher plus"
 
@@ -553,24 +544,32 @@ msgstr "<br>L'activité actuelle a duré :"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
+"Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
-"La durée d'activité actuelle est 100 % plus longue que la moyenne des 7 "
+"La durée d'activité actuelle est 100 %% plus longue que la moyenne des 7 "
 "derniers jours"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
-"La durée d'activité actuelle était supérieure de %s % à la moyenne des 7 "
+"La durée d'activité actuelle était supérieure de %s %% à la moyenne des 7 "
 "derniers jours"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
+#, javascript-format
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
+"Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
 msgstr ""
-"La durée d'activité actuelle était inférieure de %s % à la moyenne des 7 "
+"La durée d'activité actuelle était inférieure de %s %% à la moyenne des 7 "
 "derniers jours"
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 18:07+0000\n"
-"PO-Revision-Date: 2026-06-04 19:42+0000\n"
+"POT-Creation-Date: 2026-06-06 06:41+0000\n"
+"PO-Revision-Date: 2026-06-06 06:44+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -197,7 +197,6 @@ msgid "Uverejniť príspevok"
 msgstr "Zveřejnit příspěvek"
 
 #: app/static/app/ts/src/components/searchBar.ts:33
-#| msgid "Zobraziť užívateľa"
 msgid "Nájsť užívateľa"
 msgstr "Najít uživatele"
 
@@ -236,7 +235,6 @@ msgstr "Skrýt počet označení líbí se mi to"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:39
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:589
-#| msgid "Prihlásiť sa"
 msgid "Nahlásiť"
 msgstr "Nahlásit"
 
@@ -311,7 +309,6 @@ msgid "Zdielať..."
 msgstr "Sdílet..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:298
-#| msgid "Počet opakovaní"
 msgid "Počet videní..."
 msgstr "Počet vidění..."
 
@@ -322,12 +319,10 @@ msgstr "Odpovědět..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:437
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:141
-#| msgid "Zobraziť heslo"
 msgid "Zobraziť odpovede..."
 msgstr "Zobrazit odpovědi..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:611
-#| msgid "Upraviť účet"
 msgid "Upraviť"
 msgstr "Upravit"
 
@@ -355,12 +350,10 @@ msgid "Pri zmene označenia páči sa mi to došlo k chybe."
 msgstr "Při změně označení líbí se mi to došlo k chybě."
 
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:93
-#| msgid "Vybraný súbor je príliš veľký."
 msgid "Obrázok je príliš veľký"
 msgstr "Obrázek je příliš velký"
 
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:114
-#| msgid "Vybraný súbor je príliš veľký."
 msgid "Video je príliš veľké"
 msgstr "Video je příliš velké"
 
@@ -409,7 +402,6 @@ msgid "Pri spracovávaní príspevku došlo k chybe!"
 msgstr "Při zpracovávání příspěvku došlo k chybě!"
 
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:70
-#| msgid "Tréningový plán %s bol úspešne pridaný."
 msgid "Príspevok bol úspešne pridaný."
 msgstr "Příspěvek byl úspěšně přidán."
 
@@ -450,7 +442,6 @@ msgstr "Zkuste znovu"
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:50
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:59
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:82
-#| msgid "Zobraziť heslo"
 msgid "Zobraziť viac"
 msgstr "Zobrazit více"
 
@@ -548,19 +539,29 @@ msgstr "<br>Aktuální aktivita trvala:"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
 msgid ""
-"Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o 100% delší než průměr za posledních 7 dní"
+"Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
+msgstr ""
+"Čas aktuální aktivity byl o 100%% delší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o %s% delší než průměr za posledních 7 dní"
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgstr "Čas aktuální aktivity byl o %s%% delší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
+#, javascript-format
+#| msgid ""
+#| "Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
 msgid ""
-"Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o %s% kratší než průměr za posledních 7 dní"
+"Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
+msgstr ""
+"Čas aktuální aktivity byl o %s%% kratší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40
 msgid "Pri pridávaní úlohy došlo k chybe."
