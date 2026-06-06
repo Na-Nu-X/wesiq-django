@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 14:41+0000\n"
+"POT-Creation-Date: 2026-06-06 15:30+0000\n"
 "PO-Revision-Date: 2026-06-06 06:43+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -582,7 +582,7 @@ msgstr "Pri pokuse o zmenu poradia úloh došlo k chybe."
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
 msgstr "Pri označovaní úlohy za dokončenú došlo k chybe."
 
-#: app/static/app/ts/src/pages/training_session/functions/playback.ts:147
+#: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
 msgstr "Pri zaznamenávaní aktivity došlo k chybe."
 

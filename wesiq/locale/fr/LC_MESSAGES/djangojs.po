@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 14:41+0000\n"
+"POT-Creation-Date: 2026-06-06 15:30+0000\n"
 "PO-Revision-Date: 2026-06-06 07:59+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -592,7 +592,7 @@ msgstr ""
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
 msgstr "Une erreur s'est produite lors du marquage de la tâche comme terminée."
 
-#: app/static/app/ts/src/pages/training_session/functions/playback.ts:147
+#: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
 msgstr "Une erreur s'est produite lors de l'enregistrement de l'activité."
 

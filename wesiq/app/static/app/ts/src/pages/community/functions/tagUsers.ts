@@ -394,8 +394,8 @@ export function renderAllTaggedUsers(tagged_users_container:HTMLDivElement):void
 
         tag.classList.add("tag")
         paragraph.textContent = one_tag
-        tag.appendChild(paragraph)
-        tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>`
+        tag.appendChild(paragraph) // Appends The Paragraph To The Tag
+        tag.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť zmienku')}"></i>` // https://fontawesome.com/icons/xmark
 
         tagged_users_container.appendChild(tag)
     })

@@ -369,7 +369,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
             // Comment Properties
-            if(logged_in_user_id) createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
+            createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
 
             // Comment
             const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
