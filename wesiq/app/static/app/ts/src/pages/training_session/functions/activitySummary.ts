@@ -62,7 +62,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                    <span class="tooltip" data-tooltip="${gettext('Čas aktuálnej aktivity bol o 100% dlhší ako priemer za posledných 7 dní')}">
+                    <span class="tooltip" data-tooltip="${gettext('Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní')}">
                         (+100%)
                     </span>
                 </span>
@@ -74,7 +74,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
                 <span style="color: #52cf20">
                     ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                    <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% dlhší ako priemer za posledných 7 dní'), [((elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100) - 100).toFixed(2).replace(".", ",")])}">
+                    <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní'), [((elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100) - 100).toFixed(2).replace(".", ",")])}">
                         (+${((elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100) - 100).toFixed(2).replace(".", ",")}%)
                     </span>
                 </span>
@@ -88,7 +88,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
             <span style="color: #df3535">
                 ${getFormattedTime("hours", elapsed_time)}h ${getFormattedTime("minutes", elapsed_time)}m ${getFormattedTime("seconds", elapsed_time)}s
 
-                <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s% kratší ako priemer za posledných 7 dní'), [(100 - (elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100)).toFixed(2).replace(".", ",")])}">
+                <span class="tooltip" data-tooltip="${interpolate(gettext('Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní'), [(100 - (elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100)).toFixed(2).replace(".", ",")])}">
                     (-${(100 - (elapsed_time / parseInt(average_activity_time.dataset["average_activity_time"] || "0") * 100)).toFixed(2).replace(".", ",")}%)
                 </span>
             </span>
