@@ -7,9 +7,9 @@ export interface comment {
         profile_picture_name:string|null
     },
 
-    comment?:string,
+    comment:string,
     likes?:number,
-    likes_from_users?:number[],
+    likes_from_users:number[],
     creation_time:string,
     parent_id?:number|null,
     reports_from_users?:number[],
