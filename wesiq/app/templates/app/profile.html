@@ -23,10 +23,10 @@
             <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
 
-            <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
+            <form class="edit_account_form" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="profile_picture_container">
+                <div class="header">
                     <div class="info">
                         <label for="select_profile_picture">
                             <img 
@@ -49,9 +49,63 @@
 
                     {{ edit_account_form.select_profile_picture }}
                     
-                    <label for="delete_profile_picture"><img class="delete_profile_picture" src="{% static 'images/delete.png' %}" title="{% translate 'Odstrániť obrázok' %}"></label> <!-- https://www.flaticon.com/free-icon/delete_6861362 -->
-                    
-                    {{ edit_account_form.delete_profile_picture }}
+                    <button 
+                        type="button"
+                        class="show_account_properties_button" 
+                        popovertarget="account_properties"
+                        style="anchor-name: --show_account_properties_button;"
+                        title="{% translate 'Viac...' %}"     
+                    >
+                        <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                    </button>
+
+                    <div 
+                        class="account_properties" 
+                        id="account_properties"
+                        popover
+                        style="position-anchor: --show_account_properties_button;"
+                    >
+                        <div class="private_account_container">
+                            {% if not user.private_account %}
+                                <i class="fa-solid fa-lock-open"></i> <!-- https://fontawesome.com/icons/lock-open -->
+                                
+                            {% else %}
+                                <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                            
+                            {% endif %}
+
+                            <span>{% translate "Súkromný účet" %}</span>
+
+                            {{ edit_account_form.private_account }}
+                            <label for="private_account"></label>
+                        </div>
+
+                        <div class="delete_profile_picture_container">
+                            <i class="fa-solid fa-trash-can"></i> <!-- https://fontawesome.com/icons/trash-can -->
+                            <span>{% translate "Odstrániť profilový obrázok" %}</span>
+
+                            {{ edit_account_form.delete_profile_picture }}
+                            <label for="delete_profile_picture"></label>
+                        </div>
+
+                        <div class="delete_account_container">
+                            <i class="fa-solid fa-user-minus"></i> <!-- https://fontawesome.com/icons/user-minus -->
+                            <span>{% translate "Odstrániť účet" %}</span>
+
+                            {{ edit_account_form.delete_account }}
+                            <label for="delete_account"></label>
+                        </div>
+
+                        <button 
+                            type="button"
+                            class="hide_account_properties_button" 
+                            popovertarget="account_properties"
+                            popovertargetaction="hide"
+                        >
+                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                            <span>{% translate "Zavrieť" %}</span>
+                        </button>
+                    </div>
                 </div>
 
                 <p class="friend_code">Friend Code - <span>{{ logged_in_user.friend_code }}</span></p>
@@ -107,15 +161,11 @@
                 <div class="form_questions">
                     <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
                 </div>
-
-                <label for="delete_account"><img class="delete_account" src="{% static 'images/delete_account.png' %}" title="{% translate 'Odstrániť účet' %}"></label> <!-- https://www.flaticon.com/free-icon/delete-friend_12318444 -->
-                
-                {{ edit_account_form.delete_account }}
             </form>
 
         {% endif %}
         
-        <div class="profile">
+        <div class="profile hidden">
             <div class="header">
                 <div class="top">
                     <div class="info">

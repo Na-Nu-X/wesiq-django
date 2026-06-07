@@ -195,49 +195,37 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Delete Profile Picture Warning
+    // Toggle Private Account
 
     // Variables
 
-    const delete_profile_picture_checkbox:HTMLInputElement = document.querySelector("#delete_profile_picture") as HTMLInputElement
-    const delete_profile_picture_image:HTMLImageElement = document.querySelector(".delete_profile_picture") as HTMLImageElement
-    const form_report:HTMLParagraphElement = document.querySelector(".form_report") as HTMLParagraphElement
+    const account_properties:HTMLDivElement = edit_account_form.querySelector(".header .account_properties") as HTMLDivElement // Gets The Account Properties Popover Menu
+    const private_account_container:HTMLDivElement = account_properties.querySelector(".private_account_container") as HTMLDivElement // Gets The Private Account Container
+    const private_account_checkbox:HTMLInputElement = private_account_container.querySelector("#private_account") as HTMLInputElement // Gets The Private Account Checkbox
+    const private_account_icon:HTMLElement = private_account_container.querySelector("i") as HTMLElement // Gets The Private Account Icon
 
     // Events
 
-    delete_profile_picture_checkbox.addEventListener("click", function():void {
-        if(this.checked) {
-            delete_profile_picture_image.style.opacity = "1"
-            form_report.textContent = gettext("Profilový obrázok bude odstránený")
-            form_report.classList.add("error")
-        }
-
-        else {
-            delete_profile_picture_image.style.opacity = "0.6"
-            form_report.textContent = ""
-        }
+    private_account_checkbox.addEventListener("change", function():void {
+        this.checked ? private_account_icon.classList.replace("fa-lock-open", "fa-lock") : private_account_icon.classList.replace("fa-lock", "fa-lock-open") // https://fontawesome.com/icons/lock / https://fontawesome.com/icons/lock-open
     })
 
     // Delete Account Warning
 
     // Variables
 
+    const form_report:HTMLParagraphElement = document.querySelector(".form_report") as HTMLParagraphElement
     const delete_account_checkbox:HTMLInputElement = document.querySelector("#delete_account") as HTMLInputElement
-    const delete_account_image:HTMLImageElement = document.querySelector(".delete_account") as HTMLImageElement
 
     // Events
 
     delete_account_checkbox.addEventListener("click", function():void {
         if(this.checked) {
-            delete_account_image.style.opacity = "1"
             form_report.textContent = gettext("Váš úcet bude odstránený")
             form_report.classList.add("error")
         }
 
-        else {
-            delete_account_image.style.opacity = "0.6"
-            form_report.textContent = ""
-        }
+        else form_report.textContent = ""
     })
 
     // Phone Number
