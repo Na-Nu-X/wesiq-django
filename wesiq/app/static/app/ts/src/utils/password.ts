@@ -44,7 +44,6 @@ export function emailVerification(input:HTMLInputElement, report:HTMLParagraphEl
         report.textContent = ""
 
         document.cookie = `email_address=${input.value}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
-
         document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
     }
 

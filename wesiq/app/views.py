@@ -1338,9 +1338,9 @@ def passwordResetView(request):
     if request.COOKIES.get("email_address"):
         if request.method == "POST":
             password_reset_form = passwordResetForm(request.POST) # Gets The Password Reset Form
+            password_reset_code = request.POST.get("password_reset_code") # Gets The Password Reset Code
 
-            if password_reset_form.is_valid():
-                password_reset_code = password_reset_form.cleaned_data["password_reset_code"]
+            if password_reset_form.is_valid(): 
                 new_password = password_reset_form.cleaned_data["new_password"]
                 
                 try:
@@ -3583,6 +3583,7 @@ def profileView(request, username):
                     "logged_in_user": {
                         "id": logged_in_user.id,
                         "username": logged_in_user.username,
+                        "email_address": logged_in_user.email_address,
                         "profile_picture_name": logged_in_user.profile_picture_name,
                         "friend_code": logged_in_user.friend_code
                     },

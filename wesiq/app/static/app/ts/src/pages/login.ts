@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const password_container:HTMLDivElement = document.querySelector(".login_form .password_container") as HTMLDivElement // Gets Password Container
     const password:HTMLInputElement = password_container.querySelector(".login_form .password") as HTMLInputElement // Gets Password Input
     const password_reset:HTMLAnchorElement = document.querySelector(".login_form .password_reset") as HTMLAnchorElement // Gets Password Reset Button
-    const email_address:HTMLInputElement = document.querySelector(".login_form .email_address") as HTMLInputElement // Gets Email Address Input
+    const email_address:HTMLInputElement = document.querySelector(".login_form .identifier") as HTMLInputElement // Gets Email Address Input
     const form_report:HTMLParagraphElement = document.querySelector(".login_form .form_report") as HTMLParagraphElement // Gets Form Report
 
     // Global Event Delegations

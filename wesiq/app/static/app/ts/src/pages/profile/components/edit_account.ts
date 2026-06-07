@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", function():void {
     
     const bio_container:HTMLDivElement = edit_account_form.querySelector(".bio_container") as HTMLDivElement // Gets The Bio Container
     const bio_links:HTMLInputElement = bio_container.querySelector(".bio_links") as HTMLInputElement // Gets The Bio Links Hidden Input
-    const icons:HTMLDivElement = bio_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
     const added_links_container:HTMLDivElement = edit_account_form.querySelector(".added_links_container") as HTMLDivElement // Gets The Added Links Container
-    const toggle_show_add_link_container:HTMLElement = icons.querySelector(".toggle_show_add_link_container") as HTMLElement // Gets The Toggle Show Bio Links Form Icon
-    const add_link_container:HTMLDivElement = bio_container.querySelector(".add_link_container") as HTMLDivElement // Gets The Bio Links Form
-    const url_input:HTMLInputElement = bio_container.querySelector(".url") as HTMLInputElement // Gets The URL Input
-    const add_link_button:HTMLButtonElement = add_link_container.querySelector(".add_link") as HTMLButtonElement // Gets The Add Link Button
+    
+    const icons:HTMLDivElement = bio_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
+    const add_link_form:HTMLDivElement = icons.querySelector(".add_link_form") as HTMLDivElement // Gets The Add Link Form
+    const url_input:HTMLInputElement = add_link_form.querySelector(".form .url") as HTMLInputElement // Gets The URL Input
+    const add_link_button:HTMLButtonElement = add_link_form.querySelector(".form .add_link") as HTMLButtonElement // Gets The Add Link Button
 
     // Functions
 
@@ -116,8 +116,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     }
 
     // Events
-
-    toggle_show_add_link_container.addEventListener("click", () => add_link_container.classList.toggle("active")) // Shows Or Hides The Bio Links Form
 
     // Add Link Button Click Functionality
     add_link_button.addEventListener("click", function():void {
@@ -256,13 +254,12 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const password_reset:HTMLAnchorElement = document.querySelector(".password_reset") as HTMLAnchorElement
+    const password_reset:HTMLAnchorElement = edit_account_form.querySelector(".form_questions .password_reset") as HTMLAnchorElement
 
     // Events
 
     password_reset.addEventListener("click", function():void {
         document.cookie = `email_address=${this.dataset["email_address"]}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With User's Email Address
-
         document.cookie = `password_reset_timer=${Date.now() + 10 * 60 * 1000}; max-age=` + 60 * 10 + "; path=/" // 10 Minutes Timed Cookie With Timer
     })
 })

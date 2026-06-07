@@ -195,61 +195,54 @@
                 background-color: transparentize($blue-color, 0.85);
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
     
-                i {
+                .add_emoji {
                     @include icon;
                 }
-            }
 
-            .add_link_container {
-                visibility: hidden;
-                opacity: 0;
-                pointer-events: none;
-                position: absolute;
-                top: 100%;
-                transform: translate(-1px, -100%);
-                display: flex;
-                align-items: center;
-                width: calc(100% + 2px);
-                padding: 5px 0px;
-                background-color: transparentize($blue-color, 0.85);
-                backdrop-filter: blur(5px);
-                border-right: 1px solid transparentize($blue-color, 0.5);
-                border-bottom: 1px solid transparentize($blue-color, 0.5);
-                border-left: 1px solid transparentize($blue-color, 0.5);
-                border-radius: 0px 0px $small-border-radius $small-border-radius;
-                transition: visibility 0.3s ease, opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-                z-index: 100;
+                // Add Link Form
 
-                &.active {
-                    visibility: visible;
-                    opacity: 1;
-                    pointer-events: all;
-                    transform: translate(-1px, 0%);
-                }
-                
-                .url {
-                    flex: 1;
-                    padding: 0px 10px;
-                    vertical-align: middle;
-                    background: transparent;
-                    color: $secondary-color;
-                    border: none;
-                    outline: none;
+                .show_add_link_form_button {
+                    @include show_properties_button;
+                    @include icon;
                 }
 
-                .add_link {
-                    all: unset;
-                    margin-right: 10px;
-                    text-align: center;
-                    transition: transform 0.3s ease;
-                    
-                    &:hover {
-                        transform: scale(1.1);
-                        cursor: pointer;
-                    }
-    
-                    .fa-plus {
-                        font-size: 2em;
+                .add_link_form {
+                    @include properties_menu;
+
+                    .form {
+                        display: flex;
+                        align-items: center;
+                        height: 50px;
+
+                        .url {
+                            flex: 1;
+                            height: 100%;
+                            padding: 0px 10px;
+                            background: transparent;
+                            color: $secondary-color;
+                            border: none;
+                            outline: none;
+                        }
+        
+                        .add_link {
+                            all: unset;
+                            height: 100%;
+                            margin-right: 10px;
+                            transition: transform 0.3s ease;
+                            
+                            &:hover {
+                                transform: scale(1.1);
+                                cursor: pointer;
+                            }
+            
+                            .fa-plus {
+                                all: revert;
+                                display: block;
+                                line-height: 1;
+                                font-size: 2.5em;
+                                font-style: normal;
+                            }
+                        }
                     }
                 }
             }
