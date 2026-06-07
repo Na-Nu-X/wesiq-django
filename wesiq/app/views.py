@@ -3439,7 +3439,8 @@ def profileView(request, username):
 
                                     return HttpResponseRedirect(reverse("homepage_url"))
 
-                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
+                                # if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
+                                if True:
                                     profile_picture_file = request.FILES.get("select_profile_picture")
                                     if profile_picture_file:
                                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
@@ -3467,6 +3468,11 @@ def profileView(request, username):
                                         logged_in_user.profile_picture_name = ""
 
                                         logged_in_user.last_edit = timezone.now()
+
+                                    private_account = edit_account_form.cleaned_data["private_account"] # Gets The Private Account Hidden Checkbox Value
+
+                                    if logged_in_user.private_account != private_account:
+                                        logged_in_user.private_account = private_account
 
                                     if logged_in_user.bio != edit_account_form.cleaned_data["bio"] and edit_account_form.cleaned_data["bio"] != "":
                                         logged_in_user.bio = edit_account_form.cleaned_data["bio"]
@@ -3569,7 +3575,8 @@ def profileView(request, username):
                     "first_name": logged_in_user.first_name,
                     "last_name": logged_in_user.last_name,
                     "email_address": logged_in_user.email_address,
-                    "phone_number": logged_in_user.phone_number
+                    "phone_number": logged_in_user.phone_number,
+                    "private_account": logged_in_user.private_account
                 })
 
                 return render(request, "app/profile.html", {

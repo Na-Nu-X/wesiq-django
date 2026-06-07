@@ -53,6 +53,7 @@ class Users(models.Model):
     activity_streak = models.PositiveIntegerField(verbose_name="Activity Streak", default=0, null=False)
     max_activity_streak = models.PositiveIntegerField(verbose_name="Max Activity Streak", default=0, null=False)
     last_activity_streak_increase_time = models.DateTimeField(verbose_name="Last Activity Streak Increase Time", auto_now_add=False, null=True, blank=True)
+    private_account = models.BooleanField(verbose_name="Private Account", default=False, null=False)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
 
