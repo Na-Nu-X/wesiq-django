@@ -549,6 +549,7 @@
 
             .badges_container {
                 position: relative;
+                margin-bottom: 30px;
 
                 .previous {
                     position: absolute;
@@ -732,7 +733,6 @@
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 5px;
-                margin-top: 30px;
                 margin-right: 5px;
 
                 .all_posts_icon,
@@ -807,6 +807,17 @@
                     gap: 5px;
                     margin-right: 5px;
 
+                    .private_post_notice {
+                        @include flex_center;
+                        background-color: transparentize($secondary-color, 0.95);
+                        border-radius: $small-border-radius;
+                
+                        .fa-lock {
+                            font-size: 3em;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
                     a {
                         position: relative;
                         color: $secondary-color;
@@ -870,6 +881,19 @@
                 .no_saved_posts {
                     display: none;
                 }
+            }
+        }
+
+        .private_account_notice {
+            text-align: center;
+
+            .fa-lock {
+                font-size: 3em;
+                color: darken($secondary-color, 40%);
+            }
+
+            p {
+                margin-top: 10px;
             }
         }
     }

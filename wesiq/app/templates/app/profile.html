@@ -282,7 +282,7 @@
                             class="follow_button"
                             data-id="{{ user.id }}"
                             data-action="
-                                {% if not logged_in_user in user.followers.all %}
+                                {% if not user.has_follow %}
                                     follow
 
                                 {% else %}
@@ -291,7 +291,7 @@
                                 {% endif %}
                             "
                         >
-                            {% if not logged_in_user in user.followers.all %}
+                            {% if not user.has_follow %}
                                 {% translate "Začať sledovať" %}
 
                             {% else %}
@@ -816,96 +816,111 @@
 
                 {% endif %}
 
-                <div class="posts_container">
-                    {% if posts|length > 0 %}
-                        <div class="posts">
-                            {% for one_post in posts %}
-                                <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
-                                    {% if one_post.media.first.is_video == True %}
-                                        <img 
-                                            class="thumbnail"
-                                            src="{{ one_post.media.first.thumbnail.url }}" 
-                                            alt="
-                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ username }}
-                                                {% endblocktranslate %}
-                                            "
-                                        >
-                                
+                {% if user.private_account and request.session.logged_in_user_id != user.id and not user.has_follow %}
+                    <div class="private_account_notice">
+                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                        <p>{% translate "Tento účet je súkromný." %}</p>
+                    </div>
+                
+                {% else %}
+                    <div class="posts_container">
+                        {% if posts|length > 0 %}
+                            <div class="posts">
+                                {% for one_post in posts %}
+                                    {% if not one_post.public_visibility and request.session.logged_in_user_id != one_post.user.id and not one_post.user.has_follow %}
+                                        <div class="private_post_notice">
+                                            <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                        </div>
+
                                     {% else %}
-                                        <img 
-                                            class="image"
-                                            src="/../media/{{ one_post.media.first.file }}" 
-                                            alt="
-                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ username }}
-                                                {% endblocktranslate %}
-                                            "
-                                            data-post_id="{{ one_post.id }}"
-                                        >
-                                    
+                                        <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                            {% if one_post.media.first.is_video == True %}
+                                                <img 
+                                                    class="thumbnail"
+                                                    src="{{ one_post.media.first.thumbnail.url }}" 
+                                                    alt="
+                                                        {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                            Príspevok užívateľa {{ username }}
+                                                        {% endblocktranslate %}
+                                                    "
+                                                >
+                                        
+                                            {% else %}
+                                                <img 
+                                                    class="image"
+                                                    src="/../media/{{ one_post.media.first.file }}" 
+                                                    alt="
+                                                        {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                            Príspevok užívateľa {{ username }}
+                                                        {% endblocktranslate %}
+                                                    "
+                                                    data-post_id="{{ one_post.id }}"
+                                                >
+                                            
+                                            {% endif %}
+
+                                            {% if one_post.media.all|length > 1 %}
+                                                <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                            
+                                            {% endif %}
+                                        </a>
+
                                     {% endif %}
+                                {% endfor %}
+                            </div>
 
-                                    {% if one_post.media.all|length > 1 %}
-                                        <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                        {% else %}
+                            <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
+        
+                        {% endif %}
+                    </div>
+
+                    <div class="saved_posts_container hidden">
+                        {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                            <div class="saved_posts">
+                                {% for one_post in saved_posts %}
+                                    <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                        {% if one_post.media.first.is_video == True %}
+                                            <img 
+                                                class="thumbnail"
+                                                src="{{ one_post.media.first.thumbnail.url }}" 
+                                                alt="
+                                                    {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                        Príspevok užívateľa {{ username }}
+                                                    {% endblocktranslate %}
+                                                "
+                                            >
                                     
-                                    {% endif %}
-                                </a>
+                                        {% else %}
+                                            <img 
+                                                class="image"
+                                                src="/../media/{{ one_post.media.first.file }}" 
+                                                alt="
+                                                    {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                        Príspevok užívateľa {{ username }}
+                                                    {% endblocktranslate %}
+                                                "
+                                                data-post_id="{{ one_post.id }}"
+                                            >
+                                        
+                                        {% endif %}
 
-                            {% endfor %}
-                        </div>
+                                        {% if one_post.media.all|length > 1 %}
+                                            <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                        
+                                        {% endif %}
+                                    </a>
 
-                    {% else %}
-                        <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
-    
-                    {% endif %}
-                </div>
+                                {% endfor %}
+                            </div>
+                    
 
-                <div class="saved_posts_container hidden">
-                    {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                        <div class="saved_posts">
-                            {% for one_post in saved_posts %}
-                                <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
-                                    {% if one_post.media.first.is_video == True %}
-                                        <img 
-                                            class="thumbnail"
-                                            src="{{ one_post.media.first.thumbnail.url }}" 
-                                            alt="
-                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ username }}
-                                                {% endblocktranslate %}
-                                            "
-                                        >
-                                
-                                    {% else %}
-                                        <img 
-                                            class="image"
-                                            src="/../media/{{ one_post.media.first.file }}" 
-                                            alt="
-                                                {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                    Príspevok užívateľa {{ username }}
-                                                {% endblocktranslate %}
-                                            "
-                                            data-post_id="{{ one_post.id }}"
-                                        >
-                                    
-                                    {% endif %}
+                        {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                            <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
 
-                                    {% if one_post.media.all|length > 1 %}
-                                        <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
-                                    
-                                    {% endif %}
-                                </a>
-
-                            {% endfor %}
-                        </div>
-                   
-
-                    {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                        <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
-
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

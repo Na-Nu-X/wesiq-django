@@ -744,6 +744,15 @@
             transition: left 0.3s ease, background-color 0.3s ease;
         }
     }
+
+    input[type="checkbox"]:disabled + label {
+        background-color: transparentize($main-color, 0.8);
+        cursor: not-allowed;
+
+        &::before {
+            background-color: lighten($main-color, 20%);
+        }
+    }
 }
 
 // Emoji Picker Container
