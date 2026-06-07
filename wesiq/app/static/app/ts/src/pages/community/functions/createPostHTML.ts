@@ -234,6 +234,52 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         }
     })
 
+    // Comment Preview
+    const root_comments:comment[] = post_data.visible_comments.filter(one_comment => one_comment.level === 1) // Gets Only Root Comments
+
+    if(root_comments.length > 0) {
+        const random_comment:comment = root_comments[Math.floor(Math.random() * root_comments.length)] as comment // Gets The Random Comment
+
+        // Comment Preview
+        const comment_preview:HTMLDivElement = document.createElement("div") // Creates The Comment Preview Container
+        comment_preview.classList.add("comment_preview") // Adds The Comment Preview Class
+        media.appendChild(comment_preview) // Appends The Comment Preview To The Media Container
+
+        // Profile Picture
+        const profile_picture:HTMLImageElement = document.createElement("img") // Creates The Profile Picture Image
+        profile_picture.classList.add("profile_picture") // Adds The Profile Picture Class
+        profile_picture.src = random_comment.user.profile_picture_name ? `/../media/images/${random_comment.user.id}/${random_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+        comment_preview.appendChild(profile_picture) // Appends The Profile Picture To The Comment Preview
+
+        // Username
+        const username:HTMLParagraphElement = document.createElement("p") // Creates The Username Paragraph
+        username.classList.add("username") // Adds The Username Class
+        username.textContent = random_comment.user.username // Adds The Username
+        comment_preview.appendChild(username) // Appends The Username To The Comment Preview
+
+        // Comment
+        const comment:HTMLParagraphElement = document.createElement("p") // Creates The Comment Paragraph
+        comment.classList.add("comment") // Adds The Username Class
+        comment.textContent = random_comment.comment // Adds The Comment
+        comment_preview.appendChild(comment) // Appends The Comment To The Comment Preview
+
+        // Likes
+        const likes:HTMLDivElement = document.createElement("div") // Creates The Likes Container
+        likes.classList.add("likes") // Adds The Likes Class
+        comment_preview.appendChild(likes) // Appends The Likes Container To The Comment Preview
+
+        // Like Icon
+        const like_icon:HTMLElement = document.createElement("i") // Creates The Like Icon
+        like_icon.classList.add("fa-heart")
+        logged_in_user_id && random_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+        likes.appendChild(like_icon) // Appends The Like Icon To The Likes
+
+        // Likes Counter
+        const likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Likes Counter
+        likes_counter.textContent = String(random_comment.likes) // Sets The Likes Counter
+        likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
+    }
+
     // Particles
     const particles:HTMLDivElement = document.createElement("div") // Creates The Particles Container
     particles.classList.add("particles") // Adds The Particles Class

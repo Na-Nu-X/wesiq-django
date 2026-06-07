@@ -577,6 +577,56 @@ h2 {
             }
         }
 
+        .comment_preview {
+            position: absolute;
+            bottom: 22px + 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.5;
+            user-select: none;
+            animation: beep 5s ease-out alternate infinite;
+
+            .profile_picture {
+                @include profile_picture($width: 32px, $height: 32px);
+                display: block;
+                cursor: default;
+            }
+
+            .username,
+            .comment {
+                font-size: 0.8em;
+            }
+
+            .comment {
+                max-width: 100px;
+                margin-left: 5px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-decoration: none;
+            }
+
+            .likes {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                height: 20px;
+                margin-left: 5px;
+
+                .fa-heart {
+                    display: block;
+                    color: $error-color;
+                }
+
+                .likes_counter {
+                    display: inline-block;
+                    color: darken($secondary-color, 40%);
+                }
+            }
+        }
+
         .particles {
             position: absolute;
             bottom: 0px;
@@ -1167,5 +1217,15 @@ h2 {
     100% {
         transform: translate(var(--x), var(--y)) scale(0.5);
         opacity: 0;
+    }
+}
+
+@keyframes beep {
+    0% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0.8;
     }
 }
