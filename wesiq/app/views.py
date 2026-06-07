@@ -3041,6 +3041,21 @@ def loadPostsView(request):
         "-latest_interaction"
     ).distinct()
 
+    if logged_in_user:
+        posts_query = posts_query.exclude(
+            # Hides Posts Which Aren't For Public And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
+            (Q(public_visibility=False) & ~Q(user_id=logged_in_user_id) & ~Q(user__followers=logged_in_user_id)) |
+
+            # Hides Posts From Authors Which Accounts Are Private And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
+            (Q(user__private_account=True) & ~Q(user_id=logged_in_user_id) & ~Q(user__followers=logged_in_user_id))
+        )
+
+    else:
+        posts_query = posts_query.exclude(
+            # Hides All Posts Which Aren't For Public Or From Authors Which Accounts Are Private When The Viewer Isn't Logged In
+            Q(public_visibility=False) | Q(user__private_account=True)
+        )
+
     # Filters Posts By Searched Text
     if searched_text:
         posts_query = posts_query.filter(
@@ -3085,7 +3100,8 @@ def loadPostsView(request):
                 "username": one_post.user.username,
                 "profile_picture_name": one_post.user.profile_picture_name,
                 "following": list(one_post.user.following.values_list("id", flat=True)),
-                "followers": list(one_post.user.followers.values_list("id", flat=True))
+                "followers": list(one_post.user.followers.values_list("id", flat=True)),
+                "private_account": one_post.user.private_account
             },
 
             "id": one_post.id,
@@ -3283,12 +3299,22 @@ def postView(request, post_id):
                 saved_posts=OuterRef("pk")
             )
         )
-    ).select_related(
-        "user"
     ).prefetch_related(
-        "user__followers",
         "tagged_users", 
         "likes_from_users",
+
+        Prefetch(
+            "user",
+            queryset=Users.objects.annotate(
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    Users.objects.filter(
+                        id=OuterRef("pk"), 
+                        followers=logged_in_user_id
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            )
+        ),
         
         Prefetch(
             "media",
@@ -3369,8 +3395,25 @@ def profileView(request, username):
 
     # Checks If The Profile With Searched Username Exists
     if Users.objects.filter(username=username).exists():
-        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-        user = Users.objects.get(username=username) # Gets The User By Username
+        logged_in_user_id = None # Default State When The User Isn't Logged In
+        logged_in_user = None # Default State When The User Isn't Logged In
+
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+        # Gets The User By Username
+        user = Users.objects.filter(
+            username=username
+        ).annotate(
+            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+            has_follow=Exists(
+                Users.objects.filter(
+                    id=OuterRef("pk"), 
+                    followers=logged_in_user_id
+                )
+            ) if logged_in_user else Value(False, output_field=BooleanField())
+        ).first()
 
         today = timezone.now().date() # Determines Today's Date
 
@@ -3384,9 +3427,20 @@ def profileView(request, username):
         # Gets All User's Posts With All Related Data
         posts = Post.objects.filter(
             user_id=user.id
-        ).select_related(
-            "user"
         ).prefetch_related(
+            Prefetch(
+                "user",
+                queryset=Users.objects.annotate(
+                    # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                    has_follow=Exists(
+                        Users.objects.filter(
+                            id=OuterRef("pk"), 
+                            followers=logged_in_user_id
+                        )
+                    ) if logged_in_user else Value(False, output_field=BooleanField())
+                )
+            ),
+
             Prefetch(
                 "media",
                 queryset=PostMedia.objects.order_by("order")

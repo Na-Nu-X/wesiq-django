@@ -27,7 +27,8 @@ export interface searchedPost {
         username:string,
         profile_picture_name:string|null,
         following:number[],
-        followers:number[]
+        followers:number[],
+        private_account:boolean
     },
 
     id:number,
@@ -667,15 +668,24 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         const public_visibility_checkbox:HTMLInputElement = public_visibility_container.querySelector(".public_visibility") as HTMLInputElement // Gets The Public Visibility Checkbox
         const public_visibility_label:HTMLLabelElement = public_visibility_container.querySelector("label") as HTMLLabelElement // Gets The Public Visibility Label
         
-        if(post_data.public_visibility) {
-            public_visibility_icon.classList.add("fa-solid", "fa-eye") // https://fontawesome.com/icons/eye
-            public_visibility_checkbox.checked = true // Checks The Public Visibility Checkbox
+        if(post_data.user.private_account) {
+            public_visibility_icon.classList.add("fa-solid", "fa-eye-low-vision") // https://fontawesome.com/icons/eye-low-vision
+
+            public_visibility_checkbox.classList.replace("public_visibility", "disabled_public_visibility") // Adds The Disabled Public Visibility Class
+            public_visibility_checkbox.disabled = true // Disables The Checkbox
         }
         
-        else public_visibility_icon.classList.add("fa-solid", "fa-eye-low-vision") // https://fontawesome.com/icons/eye-low-vision
-
-        public_visibility_checkbox.id = `public_visibility_${post_data.id}`
-        public_visibility_label.htmlFor = `public_visibility_${post_data.id}`
+        else {
+            if(post_data.public_visibility) {
+                public_visibility_icon.classList.add("fa-solid", "fa-eye") // https://fontawesome.com/icons/eye
+                public_visibility_checkbox.checked = true // Checks The Public Visibility Checkbox
+            }
+            
+            else public_visibility_icon.classList.add("fa-solid", "fa-eye-low-vision") // https://fontawesome.com/icons/eye-low-vision
+    
+            public_visibility_checkbox.id = `public_visibility_${post_data.id}`
+            public_visibility_label.htmlFor = `public_visibility_${post_data.id}`
+        }
         
         // Allow Comments Container
         const allow_comments_container:HTMLDivElement = post_settings.querySelector(".allow_comments_container") as HTMLDivElement // Gets The Allow Comments Container

@@ -10,302 +10,371 @@
 
 {% block content %}
     {% if post %}
-        <div class="feed">
-            <template class="one_comment_template">
-                <div class="one_comment">
-                    <div class="comment_container">
-                        <div class="user">
-                            <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
-                                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
-                            </a>
-                            
-                            <p class="username"></p>
-    
-                            <button 
-                                class="show_comment_properties_button" 
-                                popovertarget=""
-                                style=""
-                                title="{% translate 'Viac...' %}"
-                            >
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                            </button>
-
-                            <div 
-                                class="comment_properties" 
-                                id=""
-                                popover
-                                style=""
-                            >
-                                <button 
-                                    class="hide_comment_properties_button" 
-                                    popovertarget=""
-                                    popovertargetaction="hide"
-                                >
-                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                    <span>{% translate "Zavrieť" %}</span>
-                                </button>
-                            </div>
-                        </div>
-    
-                        <div class="right">
-                            <p class="comment"></p>
-        
-                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                                <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                                <p class="likes_counter">{{ one_comment.likes }}</p>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="interactions">
-                        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                            <p></p>
-                        </div>
-                    </div>
-    
-                    <div class="reply_container hidden"></div>
-                </div>
-            </template>
-
-            <template class="report_template">
-                <div 
-                    class="report" 
-                    id=""
-                    popover
-                    style=""
-                >
-                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
-                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
-                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
-                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
-                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
-                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
-    
-                    <button 
-                        class="back_report_button"
-                        popovertarget="" 
-                        popovertargetaction="hide"
-                    >
-                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                        <span>{% translate "Späť" %}</span>
-                    </button>
-                </div>
-            </template>
-
-            <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
-                <div class="header">
-                    <div class="left">
-                        <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
-                            <img 
-                                class="profile_picture skeleton_loading" 
-                                src="
-                                    {% if post.user.profile_picture_name %}
-                                        /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
-
-                                    {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                    
-                                    {% endif %}
-                                "
-                            >
-                        </a>
-                    </div>
-                    
-                    <div class="right">
-                        <div class="top">
-                            <p class="username">{{ post.user.username }}</p>
-
-                            <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
-                                <p class="followers">{{ post.user.followers.all|length }}</p>
-
-                                <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-
-                            </div>
-                            
-                            {% if not request.session.logged_in_user_id == post.user_id and request.session.logged_in_user_id %}
-                                <button 
-                                    class="follow_button"
-                                    data-id="{{ post.user_id }}"
-                                    data-action="
-                                        {% if not logged_in_user in post.user.followers.all %}
-                                            follow
+        {% if not post.public_visibility and request.session.logged_in_user_id != post.user.id and not post.user.has_follow %}
+            <div class="feed">
+                <div class="post_container" data-post_id="{{ post.id }}">
+                    <div class="header">
+                        <div class="left">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if post.user.profile_picture_name %}
+                                            /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
 
                                         {% else %}
-                                            unfollow
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                         
                                         {% endif %}
                                     "
                                 >
-                                    {% if not logged_in_user in post.user.followers.all %}
-                                        {% translate "Začať sledovať" %}
+                            </a>
+                        </div>
+                        
+                        <div class="right">
+                            <div class="top">
+                                <p class="username">{{ post.user.username }}</p>
 
-                                    {% else %}
-                                        {% translate "Prestať sledovať" %}
-                                    
-                                    {% endif %}
-                                </button>
-                            
-                            {% endif %}
-
-                            <button 
-                                class="show_post_properties_button" 
-                                popovertarget="post_properties"
-                                style="anchor-name: --show_post_properties_button;"
-                                title="{% translate 'Viac...' %}"
-                            >
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                            </button>
-
-                            <div 
-                                class="post_properties" 
-                                id="post_properties"
-                                popover
-                                style="position-anchor: --show_post_properties_button;"
-                            >
-                                {% if not request.session.logged_in_user_id == post.user.id %}
-                                    <button 
-                                        class="show_report_post_button" 
-                                        popovertarget="report_post"
-                                        style="anchor-name: --show_report_post_button;"
-                                    >
-                                        <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
-                                        <span>{% translate "Nahlásiť" %}</span>
-                                    </button>
-
-                                {% else %}
-                                    <button 
-                                        class="show_post_settings_button"
-                                        popovertarget="post_settings"
-                                        style="anchor-name: --show_post_settings_button;"
-                                    >
-                                        <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
-                                        <span>{% translate "Upraviť" %}</span>
-                                    </button>
-                                    
-                                    <button 
-                                        class="delete_post_button"
-                                        popovertarget="delete_post"
-                                        style="anchor-name: --delete_post_button;"
-                                    >
-                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                        <span>{% translate "Vymazať" %}</span>
-                                    </button>
-
-                                {% endif %}
-
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                    <p class="followers">{{ post.user.followers.all|length }}</p>
+                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                </div>
+                                
                                 <button 
-                                    class="hide_post_properties_button" 
-                                    popovertarget="post_properties" 
-                                    popovertargetaction="hide"
+                                    class="follow_button"
+                                    data-id="{{ post.user_id }}"
+                                    data-action="follow"
                                 >
-                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                    <span>{% translate "Zavrieť" %}</span>
+                                    {% translate "Začať sledovať" %}
                                 </button>
                             </div>
 
-                            {% if not request.session.logged_in_user_id == post.user.id %}
-                                <div 
-                                    class="report report_post" 
-                                    id="report_post"
-                                    popover
-                                    style="position-anchor: --show_report_post_button;"
-                                >
-                                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
-                                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
-                                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
-                                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
-                                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
-                                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
+                            <div class="bottom">
+                                {% if post.location %}
+                                    {% if post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
 
+                                    {% else %}
+                                        <p class="location">{{ post.location }}</p>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="private_post_notice">
+                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                        <p>{% translate "Príspevok je viditeľný iba pre sledovateľov." %}</p>
+                    </div>
+
+                    <div class="society">
+                        <div class="likes">
+                            <i class="fa-heart fa-regular"></i> <!-- https://fontawesome.com/icons/heart -->
+                            <p class="likes_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="comments">
+                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                            <p class="comments_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                        </div>
+
+                        <div class="views">
+                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            <p class="views_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="save">
+                            <i class="fa-bookmark fa-regular"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
+                    </div>
+                </div>
+
+                <script src="{% static 'app/ts/dist/pages/post/components/hidden_post_feed.js' %}" type="module"></script>
+            </div>
+
+        {% elif post.user.private_account and request.session.logged_in_user_id != post.user.id and not post.user.has_follow %}
+            <div class="feed">
+                <div class="post_container" data-post_id="{{ post.id }}">
+                    <div class="header">
+                        <div class="left">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if post.user.profile_picture_name %}
+                                            /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
+
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                            </a>
+                        </div>
+                        
+                        <div class="right">
+                            <div class="top">
+                                <p class="username">{{ post.user.username }}</p>
+
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                    <p class="followers">{{ post.user.followers.all|length }}</p>
+                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                </div>
+                                
+                                <button 
+                                    class="follow_button"
+                                    data-id="{{ post.user_id }}"
+                                    data-action="follow"
+                                >
+                                    {% translate "Začať sledovať" %}
+                                </button>
+                            </div>
+
+                            <div class="bottom">
+                                {% if post.location %}
+                                    {% if post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+
+                                    {% else %}
+                                        <p class="location">{{ post.location }}</p>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="private_account_notice">
+                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                        <p>{% translate "Účet autora príspevku je súkromný." %}</p>
+                    </div>
+
+                    <div class="society">
+                        <div class="likes">
+                            <i class="fa-heart fa-regular"></i> <!-- https://fontawesome.com/icons/heart -->
+                            <p class="likes_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="comments">
+                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                            <p class="comments_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                        </div>
+
+                        <div class="views">
+                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            <p class="views_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="save">
+                            <i class="fa-bookmark fa-regular"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
+                    </div>
+                </div>
+
+                <script src="{% static 'app/ts/dist/pages/post/components/hidden_post_feed.js' %}" type="module"></script>
+            </div>
+        
+        {% else %}
+            <div class="feed">
+                <template class="one_comment_template">
+                    <div class="one_comment">
+                        <div class="comment_container">
+                            <div class="user">
+                                <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
+                                    <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                                </a>
+                                
+                                <p class="username"></p>
+        
+                                <button 
+                                    class="show_comment_properties_button" 
+                                    popovertarget=""
+                                    style=""
+                                    title="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
+
+                                <div 
+                                    class="comment_properties" 
+                                    id=""
+                                    popover
+                                    style=""
+                                >
                                     <button 
-                                        class="back_report_post_button"
-                                        popovertarget="report_post"
+                                        class="hide_comment_properties_button" 
+                                        popovertarget=""
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                        <span>{% translate "Späť" %}</span>
+                                        <span>{% translate "Zavrieť" %}</span>
                                     </button>
                                 </div>
+                            </div>
+        
+                            <div class="right">
+                                <p class="comment"></p>
+            
+                                <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                                    <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                    <p class="likes_counter">{{ one_comment.likes }}</p>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="interactions">
+                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="reply_container hidden"></div>
+                    </div>
+                </template>
 
-                            {% else %}
-                                <div 
-                                    class="post_settings" 
-                                    id="post_settings"
-                                    popover
-                                    style="position-anchor: --show_post_settings_button;"
+                <template class="report_template">
+                    <div 
+                        class="report" 
+                        id=""
+                        popover
+                        style=""
+                    >
+                        <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                        <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                        <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                        <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                        <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                        <button data-reason="other"><span>{% translate "Iné" %}</span></button>
+        
+                        <button 
+                            class="back_report_button"
+                            popovertarget="" 
+                            popovertargetaction="hide"
+                        >
+                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                            <span>{% translate "Späť" %}</span>
+                        </button>
+                    </div>
+                </template>
+
+                <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
+                    <div class="header">
+                        <div class="left">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if post.user.profile_picture_name %}
+                                            /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
+
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
                                 >
-                                    <div class="public_visibility_container">
-                                        {% if post.public_visibility %}
-                                            <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            </a>
+                        </div>
+                        
+                        <div class="right">
+                            <div class="top">
+                                <p class="username">{{ post.user.username }}</p>
 
-                                        {% else %}
-                                            <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
-                                        
-                                        {% endif %}
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                    <p class="followers">{{ post.user.followers.all|length }}</p>
 
-                                        <input 
-                                            class="public_visibility"
-                                            id="public_visibility"
-                                            type="checkbox"
+                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
 
-                                            {% if post.public_visibility %}
-                                                checked
+                                </div>
+                                
+                                {% if not request.session.logged_in_user_id == post.user_id and request.session.logged_in_user_id %}
+                                    <button 
+                                        class="follow_button"
+                                        data-id="{{ post.user_id }}"
+                                        data-action="
+                                            {% if not post.user.has_follow %}
+                                                follow
+
+                                            {% else %}
+                                                unfollow
                                             
                                             {% endif %}
-                                        >
-
-                                        <label for="public_visibility"></label>
-                                    </div>
-
-                                    <div class="allow_comments_container">
-                                        {% if post.allow_comments %}
-                                            <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                                        "
+                                    >
+                                        {% if not post.user.has_follow %}
+                                            {% translate "Začať sledovať" %}
 
                                         {% else %}
-                                            <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+                                            {% translate "Prestať sledovať" %}
                                         
                                         {% endif %}
+                                    </button>
+                                
+                                {% endif %}
 
-                                        <input 
-                                            class="allow_comments"
-                                            id="allow_comments"
-                                            type="checkbox"
+                                <button 
+                                    class="show_post_properties_button" 
+                                    popovertarget="post_properties"
+                                    style="anchor-name: --show_post_properties_button;"
+                                    title="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
 
-                                            {% if post.allow_comments %}
-                                                checked
-                                            
-                                            {% endif %}
+                                <div 
+                                    class="post_properties" 
+                                    id="post_properties"
+                                    popover
+                                    style="position-anchor: --show_post_properties_button;"
+                                >
+                                    {% if not request.session.logged_in_user_id == post.user.id %}
+                                        <button 
+                                            class="show_report_post_button" 
+                                            popovertarget="report_post"
+                                            style="anchor-name: --show_report_post_button;"
                                         >
+                                            <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                                            <span>{% translate "Nahlásiť" %}</span>
+                                        </button>
 
-                                        <label for="allow_comments"></label>
-                                    </div>
-
-                                    <div class="hide_likes_container">
-                                        {% if not post.hide_likes %}
-                                            <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-
-                                        {% else %}
-                                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                    {% else %}
+                                        <button 
+                                            class="show_post_settings_button"
+                                            popovertarget="post_settings"
+                                            style="anchor-name: --show_post_settings_button;"
+                                        >
+                                            <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+                                            <span>{% translate "Upraviť" %}</span>
+                                        </button>
                                         
-                                        {% endif %}
-
-                                        <input 
-                                            class="hide_likes"
-                                            id="hide_likes"
-                                            type="checkbox"
-
-                                            {% if not post.hide_likes %}
-                                                checked
-                                            
-                                            {% endif %}
+                                        <button 
+                                            class="delete_post_button"
+                                            popovertarget="delete_post"
+                                            style="anchor-name: --delete_post_button;"
                                         >
+                                            <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                            <span>{% translate "Vymazať" %}</span>
+                                        </button>
 
-                                        <label for="hide_likes"></label>
-                                    </div>
+                                    {% endif %}
 
                                     <button 
-                                        class="back_post_settings_button"
-                                        popovertarget="post_settings"
+                                        class="hide_post_properties_button" 
+                                        popovertarget="post_properties" 
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
@@ -313,245 +382,491 @@
                                     </button>
                                 </div>
 
-                                <div 
-                                    class="delete_post" 
-                                    id="delete_post"
-                                    popover
-                                    style="position-anchor: --delete_post_button;"
-                                >
-                                    <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
-
-                                    <button data-action="delete">
-                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                        <span>{% translate "Vymazať" %}</span>
-                                    </button>
-
-                                    <button 
-                                        popovertarget="delete_post"
-                                        popovertargetaction="hide"
+                                {% if not request.session.logged_in_user_id == post.user.id %}
+                                    <div 
+                                        class="report report_post" 
+                                        id="report_post"
+                                        popover
+                                        style="position-anchor: --show_report_post_button;"
                                     >
-                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                        <span>{% translate "Zrušiť" %}</span>
-                                    </button>
-                                </div>
+                                        <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                                        <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                                        <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                                        <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                                        <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                                        <button data-reason="other"><span>{% translate "Iné" %}</span></button>
 
-                            {% endif %}
-                        </div>
-
-                        <div class="bottom">
-                            {% if post.location %}
-                                {% if post.coordinates %}
-                                    <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
-
-                                {% else %}
-                                    <p class="location">{{ post.location }}</p>
-
-                                {% endif %}
-                            {% endif %}
-
-                            <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="media" data-active_index="0">
-                    {% for one_post_media in post.media.all %}
-                        {% if post.id == one_post_media.post.id %}
-                            <div class="one_post">
-                                <div class="loading hidden">
-                                    <p>{% translate "Načítavam..." %}</p>
-                                </div>
-
-                                <div class="previous hidden">
-                                    <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
-                                </div>
-
-                                {% if one_post_media.is_video == True %}
-                                    <div class="video_container">
-                                        <div class="play_pause_indicator hidden">
-                                            <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
-                                            {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
-                                        </div>
-
-                                        <div class="step_back_indicator hidden">
-                                            <i class="fa-solid fa-angle-left"></i><span>-5</span> <!-- https://fontawesome.com/icons/angle-left -->
-                                        </div>
-                        
-                                        <div class="step_further_indicator hidden">
-                                            <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                                        </div>
-
-                                        <video 
-                                            class="video" 
-                                            src=""
-                                            poster="{{ one_post_media.thumbnail.url }}" 
-                                            preload="metadata" 
-                                            autoplay 
-                                            loop 
-                                            muted
-                                            data-user_id="{{ post.user.id }}"
-                                            data-media_id="{{ one_post_media.id }}"
+                                        <button 
+                                            class="back_report_post_button"
+                                            popovertarget="report_post"
+                                            popovertargetaction="hide"
                                         >
-                                            {% blocktranslate with username=post.user.username %}
-                                                Príspevok užívateľa {{ username }}
-                                            {% endblocktranslate %}
-                                        </video>
-
-                                        <div class="controls">
-                                            <div class="buttons">
-                                                <button class="play_pause">
-                                                    <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
-                                                    {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
-                                                </button>
-
-                                                <button class="step_back">
-                                                    <i class="fa-solid fa-arrow-rotate-left"></i> <!-- https://fontawesome.com/icons/arrow-rotate-left -->
-                                                </button>
-                        
-                                                <button class="step_further">
-                                                    <i class="fa-solid fa-rotate-right"></i> <!-- https://fontawesome.com/icons/rotate-right -->
-                                                </button>
-
-                                                <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>
-                                                
-                                                <div class="volume_container">
-                                                    <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
-                                                    <i class="mute_unmute fa-solid fa-volume-xmark" title="{% translate 'Hlasitosť...' %}"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
-                                                    {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
-                                                    {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
-                                                </div>
-
-                                                <button 
-                                                    class="show_video_settings_button"
-                                                    popovertarget="video_settings"
-                                                    style="anchor-name: --show_video_settings_button;"
-                                                >
-                                                    <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
-                                                </button>
-
-                                                <div 
-                                                    class="video_settings" 
-                                                    id="video_settings"
-                                                    popover
-                                                    style="position-anchor: --show_video_settings_button;"
-                                                >
-                                                    <button 
-                                                        class="show_video_quality_button"
-                                                        popovertarget="video_quality"
-                                                        style="anchor-name: --show_video_quality_button;"
-                                                    >
-                                                        <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
-                                                        <span>{% translate "Kvalita" %}</span>
-                                                    </button>
-
-                                                    <button 
-                                                        class="show_video_speed_button"
-                                                        popovertarget="video_speed"
-                                                        style="anchor-name: --show_video_speed_button;"
-                                                    >
-                                                        <i class="fa-solid fa-stopwatch"></i> <!-- https://fontawesome.com/icons/stopwatch -->
-                                                        <span>{% translate "Rýchlosť" %}</span>
-                                                    </button>
-
-                                                    <button 
-                                                        class="back_video_settings_button"
-                                                        popovertarget="video_settings"
-                                                        popovertargetaction="hide"
-                                                    >
-                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                                        <span>{% translate "Zavrieť" %}</span>
-                                                    </button>
-                                                </div>
-
-                                                <div 
-                                                    class="video_quality" 
-                                                    id="video_quality"
-                                                    popover
-                                                    style="position-anchor: --show_video_quality_button;"
-                                                >
-                                                    <button class="quality_button quality_auto" data-quality="-1">auto</button>
-                                                    <button class="quality_button quality_1080p" data-quality="1080">1080p</button>
-                                                    <button class="quality_button quality_720p" data-quality="720">720p</button>
-                                                    <button class="quality_button quality_480p" data-quality="480">480p</button>
-
-                                                    <button 
-                                                        class="back_video_quality_button" 
-                                                        popovertarget="video_quality" 
-                                                        popovertargetaction="hide"
-                                                    >
-                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                                        <span>{% translate "Zavrieť" %}</span>
-                                                    </button>
-                                                </div>
-
-                                                <div 
-                                                    class="video_speed" 
-                                                    id="video_speed"
-                                                    popover
-                                                    style="position-anchor: --show_video_speed_button;"
-                                                >
-                                                    <button class="speed_button" data-speed="2">2×</button>
-                                                    <button class="speed_button" data-speed="1.5">1,5×</button>
-                                                    <button class="speed_button" data-speed="1">{% translate "Normálna" %}</button>
-                                                    <button class="speed_button" data-speed="0.5">0,5×</button>
-
-                                                    <button 
-                                                        class="back_video_speed_button" 
-                                                        popovertarget="video_speed" 
-                                                        popovertargetaction="hide"
-                                                    >
-                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                                        <span>{% translate "Zavrieť" %}</span>
-                                                    </button>
-                                                </div>
-
-                                                <button class="fullscreen">
-                                                    <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
-                                                    {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
-                                                </button>
-                                            </div>
-
-                                            <div class="scrubber_hitbox">
-                                                <div class="scrubber">
-                                                    <div class="buffering_bar"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                            <span>{% translate "Späť" %}</span>
+                                        </button>
                                     </div>
 
-                                    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script> <!-- HLS Video Support -->
-                                    <script src="{% static 'app/ts/dist/pages/post/components/initialize_HLS_video_format.js' %}" type="module"></script>
-                                    <script src="{% static 'app/ts/dist/pages/community/components/custom_video_playback.js' %}" type="module"></script>
-                            
-                                {% elif one_post_media.is_video == False %}
-                                    <img 
-                                        class="image"
-                                        src="{{ one_post_media.file.url }}" 
-                                        alt="
-                                            {% blocktranslate with username=post.user.username %}
-                                                Príspevok užívateľa {{ username }}
-                                            {% endblocktranslate %}
-                                        "
+                                {% else %}
+                                    <div 
+                                        class="post_settings" 
+                                        id="post_settings"
+                                        popover
+                                        style="position-anchor: --show_post_settings_button;"
                                     >
-                                
+                                        <div class="public_visibility_container">
+                                            {% if post.user.private_account %}
+                                                <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+
+                                                <input 
+                                                    class="disabled_public_visibility"
+                                                    type="checkbox"
+                                                    disabled
+                                                >
+
+                                                <label></label>
+                                            
+                                            {% else %}
+                                                {% if post.public_visibility %}
+                                                    <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+
+                                                {% else %}
+                                                    <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+                                                
+                                                {% endif %}
+
+                                                <input 
+                                                    class="public_visibility"
+                                                    id="public_visibility"
+                                                    type="checkbox"
+
+                                                    {% if post.public_visibility %}
+                                                        checked
+                                                    
+                                                    {% endif %}
+                                                >
+
+                                                <label for="public_visibility"></label>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="allow_comments_container">
+                                            {% if post.allow_comments %}
+                                                <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+
+                                            {% else %}
+                                                <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+                                            
+                                            {% endif %}
+
+                                            <input 
+                                                class="allow_comments"
+                                                id="allow_comments"
+                                                type="checkbox"
+
+                                                {% if post.allow_comments %}
+                                                    checked
+                                                
+                                                {% endif %}
+                                            >
+
+                                            <label for="allow_comments"></label>
+                                        </div>
+
+                                        <div class="hide_likes_container">
+                                            {% if not post.hide_likes %}
+                                                <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+
+                                            {% else %}
+                                                <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                            
+                                            {% endif %}
+
+                                            <input 
+                                                class="hide_likes"
+                                                id="hide_likes"
+                                                type="checkbox"
+
+                                                {% if not post.hide_likes %}
+                                                    checked
+                                                
+                                                {% endif %}
+                                            >
+
+                                            <label for="hide_likes"></label>
+                                        </div>
+
+                                        <button 
+                                            class="back_post_settings_button"
+                                            popovertarget="post_settings"
+                                            popovertargetaction="hide"
+                                        >
+                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                            <span>{% translate "Zavrieť" %}</span>
+                                        </button>
+                                    </div>
+
+                                    <div 
+                                        class="delete_post" 
+                                        id="delete_post"
+                                        popover
+                                        style="position-anchor: --delete_post_button;"
+                                    >
+                                        <p>{% translate "Naozaj chcete vymazať Váš príspevok?" %}</p>
+
+                                        <button data-action="delete">
+                                            <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                            <span>{% translate "Vymazať" %}</span>
+                                        </button>
+
+                                        <button 
+                                            popovertarget="delete_post"
+                                            popovertargetaction="hide"
+                                        >
+                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                            <span>{% translate "Zrušiť" %}</span>
+                                        </button>
+                                    </div>
+
                                 {% endif %}
-                                
-                                <div class="next hidden">
-                                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                                </div>
                             </div>
 
-                        {% endif %}
-                    {% endfor %}
+                            <div class="bottom">
+                                {% if post.location %}
+                                    {% if post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+
+                                    {% else %}
+                                        <p class="location">{{ post.location }}</p>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="media" data-active_index="0">
+                        {% for one_post_media in post.media.all %}
+                            {% if post.id == one_post_media.post.id %}
+                                <div class="one_post">
+                                    <div class="loading hidden">
+                                        <p>{% translate "Načítavam..." %}</p>
+                                    </div>
+
+                                    <div class="previous hidden">
+                                        <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                                    </div>
+
+                                    {% if one_post_media.is_video == True %}
+                                        <div class="video_container">
+                                            <div class="play_pause_indicator hidden">
+                                                <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
+                                                {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                                            </div>
+
+                                            <div class="step_back_indicator hidden">
+                                                <i class="fa-solid fa-angle-left"></i><span>-5</span> <!-- https://fontawesome.com/icons/angle-left -->
+                                            </div>
+                            
+                                            <div class="step_further_indicator hidden">
+                                                <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                            </div>
+
+                                            <video 
+                                                class="video" 
+                                                src=""
+                                                poster="{{ one_post_media.thumbnail.url }}" 
+                                                preload="metadata" 
+                                                autoplay 
+                                                loop 
+                                                muted
+                                                data-user_id="{{ post.user.id }}"
+                                                data-media_id="{{ one_post_media.id }}"
+                                            >
+                                                {% blocktranslate with username=post.user.username %}
+                                                    Príspevok užívateľa {{ username }}
+                                                {% endblocktranslate %}
+                                            </video>
+
+                                            <div class="controls">
+                                                <div class="buttons">
+                                                    <button class="play_pause">
+                                                        <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                                                        {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                                                    </button>
+
+                                                    <button class="step_back">
+                                                        <i class="fa-solid fa-arrow-rotate-left"></i> <!-- https://fontawesome.com/icons/arrow-rotate-left -->
+                                                    </button>
+                            
+                                                    <button class="step_further">
+                                                        <i class="fa-solid fa-rotate-right"></i> <!-- https://fontawesome.com/icons/rotate-right -->
+                                                    </button>
+
+                                                    <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>
+                                                    
+                                                    <div class="volume_container">
+                                                        <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
+                                                        <i class="mute_unmute fa-solid fa-volume-xmark" title="{% translate 'Hlasitosť...' %}"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
+                                                        {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
+                                                        {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
+                                                    </div>
+
+                                                    <button 
+                                                        class="show_video_settings_button"
+                                                        popovertarget="video_settings"
+                                                        style="anchor-name: --show_video_settings_button;"
+                                                    >
+                                                        <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
+                                                    </button>
+
+                                                    <div 
+                                                        class="video_settings" 
+                                                        id="video_settings"
+                                                        popover
+                                                        style="position-anchor: --show_video_settings_button;"
+                                                    >
+                                                        <button 
+                                                            class="show_video_quality_button"
+                                                            popovertarget="video_quality"
+                                                            style="anchor-name: --show_video_quality_button;"
+                                                        >
+                                                            <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
+                                                            <span>{% translate "Kvalita" %}</span>
+                                                        </button>
+
+                                                        <button 
+                                                            class="show_video_speed_button"
+                                                            popovertarget="video_speed"
+                                                            style="anchor-name: --show_video_speed_button;"
+                                                        >
+                                                            <i class="fa-solid fa-stopwatch"></i> <!-- https://fontawesome.com/icons/stopwatch -->
+                                                            <span>{% translate "Rýchlosť" %}</span>
+                                                        </button>
+
+                                                        <button 
+                                                            class="back_video_settings_button"
+                                                            popovertarget="video_settings"
+                                                            popovertargetaction="hide"
+                                                        >
+                                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                            <span>{% translate "Zavrieť" %}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div 
+                                                        class="video_quality" 
+                                                        id="video_quality"
+                                                        popover
+                                                        style="position-anchor: --show_video_quality_button;"
+                                                    >
+                                                        <button class="quality_button quality_auto" data-quality="-1">auto</button>
+                                                        <button class="quality_button quality_1080p" data-quality="1080">1080p</button>
+                                                        <button class="quality_button quality_720p" data-quality="720">720p</button>
+                                                        <button class="quality_button quality_480p" data-quality="480">480p</button>
+
+                                                        <button 
+                                                            class="back_video_quality_button" 
+                                                            popovertarget="video_quality" 
+                                                            popovertargetaction="hide"
+                                                        >
+                                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                            <span>{% translate "Zavrieť" %}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div 
+                                                        class="video_speed" 
+                                                        id="video_speed"
+                                                        popover
+                                                        style="position-anchor: --show_video_speed_button;"
+                                                    >
+                                                        <button class="speed_button" data-speed="2">2×</button>
+                                                        <button class="speed_button" data-speed="1.5">1,5×</button>
+                                                        <button class="speed_button" data-speed="1">{% translate "Normálna" %}</button>
+                                                        <button class="speed_button" data-speed="0.5">0,5×</button>
+
+                                                        <button 
+                                                            class="back_video_speed_button" 
+                                                            popovertarget="video_speed" 
+                                                            popovertargetaction="hide"
+                                                        >
+                                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                            <span>{% translate "Zavrieť" %}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <button class="fullscreen">
+                                                        <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
+                                                        {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
+                                                    </button>
+                                                </div>
+
+                                                <div class="scrubber_hitbox">
+                                                    <div class="scrubber">
+                                                        <div class="buffering_bar"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script> <!-- HLS Video Support -->
+                                        <script src="{% static 'app/ts/dist/pages/post/components/initialize_HLS_video_format.js' %}" type="module"></script>
+                                        <script src="{% static 'app/ts/dist/pages/community/components/custom_video_playback.js' %}" type="module"></script>
+                                
+                                    {% elif one_post_media.is_video == False %}
+                                        <img 
+                                            class="image"
+                                            src="{{ one_post_media.file.url }}" 
+                                            alt="
+                                                {% blocktranslate with username=post.user.username %}
+                                                    Príspevok užívateľa {{ username }}
+                                                {% endblocktranslate %}
+                                            "
+                                        >
+                                    
+                                    {% endif %}
+                                    
+                                    <div class="next hidden">
+                                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <div class="comment_preview">
+                            {% if post.root_comments %}
+                                {% with random_comment=post.root_comments|random %}
+                                    <img 
+                                        class="profile_picture" 
+                                        src="
+                                            {% if random_comment.user.profile_picture_name %}
+                                                /../media/images/{{ random_comment.user_id }}/{{ random_comment.user.profile_picture_name }}
                     
-                    <div class="comment_preview">
-                        {% if post.root_comments %}
-                            {% with random_comment=post.root_comments|random %}
+                                            {% else %}
+                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                            
+                                            {% endif %}
+                                        "
+                                    >
+
+                                    <p class="username">{{ random_comment.user.username }}</p>
+                                    <p class="comment">{{ random_comment.comment }}</p>
+
+                                    <div class="likes">
+                                        <i 
+                                            class="
+                                                {% if random_comment.has_like %}
+                                                    fa-solid
+                            
+                                                {% else %}
+                                                    fa-regular
+                                                
+                                                {% endif %}
+                            
+                                                fa-heart
+                                            "
+                                        ></i> <!-- https://fontawesome.com/icons/heart -->
+                            
+                                        <p class="likes_counter">{{ random_comment.likes }}</p>
+                                    </div>
+                                
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+
+                        <div class="particles"></div>
+                        <div class="post_bars"></div>
+                    </div>
+
+                    <div class="society">
+                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                            <i 
+                                class="
+                                    {% if post.has_like %}
+                                        fa-solid
+
+                                    {% else %}
+                                        fa-regular
+                                    
+                                    {% endif %}
+                                    
+                                    fa-heart
+                                "
+                            ></i> <!-- https://fontawesome.com/icons/heart -->
+
+                            {% if post.hide_likes and post.user.id != request.session.logged_in_user_id %}
+                                <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
+                            
+                            {% else %}
+                                <p class="likes_counter">{{ post.likes }}</p>
+                            
+                            {% endif %}
+                        </div>
+
+                        <div class="comments" title="{% translate 'Komentáre...' %}">
+                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+
+                            {% if post.allow_comments %}
+                                <p class="comments_counter">{{ post.visible_comments|length }}</p>
+
+                            {% else %}
+                                <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
+                            
+                            {% endif %}
+                        </div>
+
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                        </div>
+
+                        <div class="views" title="{% translate 'Počet videní...' %}">
+                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            <p class="views_counter">{{ post.views }}</p>
+                        </div>
+
+                        <div class="save" title="{% translate 'Uložiť...' %}">
+                            <i 
+                                class="
+                                    {% if post.has_save %}
+                                        fa-solid
+                                        active
+
+                                    {% else %}
+                                        fa-regular
+                                    
+                                    {% endif %}
+                                    
+                                    fa-bookmark
+                                "
+                            ></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
+                    </div>
+
+                    {% if post.description %}
+                        <p class="description" data-tagged_users="{{ post.tagged_users_json }}" data-added_hashtags="{{ post.added_hashtags }}">{{ post.description }}</p>
+
+                    {% endif %}
+
+                    {% if post.allow_comments %}
+                        <div class="comment_forum hidden">
+                            <div class="all_comments">
+                                {% for one_comment in post.root_comments %}
+                                    {% include "partials/comment.html" with one_comment=one_comment level=1 %}
+
+                                {% endfor %}
+                            </div>
+
+                            <div class="write_comment_form">
+                                <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
+                
                                 <img 
                                     class="profile_picture" 
                                     src="
-                                        {% if random_comment.user.profile_picture_name %}
-                                            /../media/images/{{ random_comment.user_id }}/{{ random_comment.user.profile_picture_name }}
+                                        {% if logged_in_user.profile_picture_name %}
+                                            /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
                 
                                         {% else %}
                                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -560,147 +875,25 @@
                                     "
                                 >
 
-                                <p class="username">{{ random_comment.user.username }}</p>
-                                <p class="comment">{{ random_comment.comment }}</p>
+                                <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
 
-                                <div class="likes">
-                                    <i 
-                                        class="
-                                            {% if random_comment.has_like %}
-                                                fa-solid
-                        
-                                            {% else %}
-                                                fa-regular
-                                            
-                                            {% endif %}
-                        
-                                            fa-heart
-                                        "
-                                    ></i> <!-- https://fontawesome.com/icons/heart -->
-                        
-                                    <p class="likes_counter">{{ random_comment.likes }}</p>
+                                <div class="emoji_picker_container hidden">
+                                    <emoji-picker></emoji-picker>
                                 </div>
-                            
-                            {% endwith %}
-                        {% endif %}
-                    </div>
-
-                    <div class="particles"></div>
-                    <div class="post_bars"></div>
-                </div>
-
-                <div class="society">
-                    <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                        <i 
-                            class="
-                                {% if post.has_like %}
-                                    fa-solid
-
-                                {% else %}
-                                    fa-regular
                                 
-                                {% endif %}
-                                
-                                fa-heart
-                            "
-                        ></i> <!-- https://fontawesome.com/icons/heart -->
-
-                        {% if post.hide_likes and post.user.id != request.session.logged_in_user_id %}
-                            <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
-                        
-                        {% else %}
-                            <p class="likes_counter">{{ post.likes }}</p>
-                        
-                        {% endif %}
-                    </div>
-
-                    <div class="comments" title="{% translate 'Komentáre...' %}">
-                        <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-
-                        {% if post.allow_comments %}
-                            <p class="comments_counter">{{ post.visible_comments|length }}</p>
-
-                        {% else %}
-                            <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
-                        
-                        {% endif %}
-                    </div>
-
-                    <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
-                        <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
-                    </div>
-
-                    <div class="views" title="{% translate 'Počet videní...' %}">
-                        <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
-                        <p class="views_counter">{{ post.views }}</p>
-                    </div>
-
-                    <div class="save" title="{% translate 'Uložiť...' %}">
-                        <i 
-                            class="
-                                {% if post.has_save %}
-                                    fa-solid
-                                    active
-
-                                {% else %}
-                                    fa-regular
-                                
-                                {% endif %}
-                                
-                                fa-bookmark
-                            "
-                        ></i> <!-- https://fontawesome.com/icons/bookmark -->
-                    </div>
-                </div>
-
-                {% if post.description %}
-                    <p class="description" data-tagged_users="{{ post.tagged_users_json }}" data-added_hashtags="{{ post.added_hashtags }}">{{ post.description }}</p>
-
-                {% endif %}
-
-                {% if post.allow_comments %}
-                    <div class="comment_forum hidden">
-                        <div class="all_comments">
-                            {% for one_comment in post.root_comments %}
-                                {% include "partials/comment.html" with one_comment=one_comment level=1 %}
-
-                            {% endfor %}
-                        </div>
-
-                        <div class="write_comment_form">
-                            <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
-            
-                            <img 
-                                class="profile_picture" 
-                                src="
-                                    {% if logged_in_user.profile_picture_name %}
-                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
-            
-                                    {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                    
-                                    {% endif %}
-                                "
-                            >
-
-                            <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-
-                            <div class="emoji_picker_container hidden">
-                                <emoji-picker></emoji-picker>
+                                <!-- https://heroicons.com/ -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                                </svg>
                             </div>
-                            
-                            <!-- https://heroicons.com/ -->
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="send">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                            </svg>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
+
+                <script src="{% static 'app/ts/dist/pages/community/components/post_feed.js' %}" type="module"></script>
             </div>
 
-            <script src="{% static 'app/ts/dist/pages/community/components/post_feed.js' %}" type="module"></script>
-        </div>
-
+        {% endif %}
     {% else %}
         <h2>{% translate "Ospravedlňujeme&nbsp;sa!<br>Hľadaný&nbsp;príspevok sa&nbsp;nenašiel." %}</h2>
     

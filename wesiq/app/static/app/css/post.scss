@@ -681,6 +681,20 @@ h2 {
         }
     }
 
+    .private_post_notice,
+    .private_account_notice {
+        text-align: center;
+
+        .fa-lock {
+            font-size: 3em;
+            color: darken($secondary-color, 40%);
+        }
+
+        p {
+            margin-top: 10px;
+        }
+    }
+
     .society {
         display: flex;
         align-items: center;
