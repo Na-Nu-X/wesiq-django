@@ -23,7 +23,7 @@
             <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
 
-            <form class="edit_account_form" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
+            <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="header">
@@ -50,8 +50,8 @@
                     {{ edit_account_form.select_profile_picture }}
                     
                     <button 
-                        type="button"
                         class="show_account_properties_button" 
+                        type="button"
                         popovertarget="account_properties"
                         style="anchor-name: --show_account_properties_button;"
                         title="{% translate 'Viac...' %}"     
@@ -97,8 +97,8 @@
                         </div>
 
                         <button 
-                            type="button"
                             class="hide_account_properties_button" 
+                            type="button"
                             popovertarget="account_properties"
                             popovertargetaction="hide"
                         >
@@ -116,13 +116,39 @@
                     <input class="bio_links" type="hidden" name="bio_links" value="[]">
     
                     <div class="icons">
-                        <i class="toggle_show_add_link_container fa-solid fa-link" title="{% translate 'Pridať odkaz' %}"></i> <!-- https://fontawesome.com/icons/link -->
-                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                    </div>
+                        <button 
+                            class="show_add_link_form_button" 
+                            type="button"
+                            popovertarget="add_link_form"
+                            style="anchor-name: --show_add_link_form_button;"
+                            title="{% translate 'Pridať odkaz' %}"
+                        >
+                            <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+                        </button>
 
-                    <div class="add_link_container">
-                        <input class="url" type="text" placeholder="https://example.com">
-                        <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button>
+                        <div 
+                            class="add_link_form" 
+                            id="add_link_form"
+                            popover
+                            style="position-anchor: --show_add_link_form_button;"
+                        >
+                            <div class="form">
+                                <input class="url" type="text" placeholder="https://example.com">
+                                <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button> <!-- https://fontawesome.com/icons/plus -->
+                            </div>
+
+                            <button 
+                                class="hide_add_link_form_button" 
+                                type="button"
+                                popovertarget="add_link_form"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
+
+                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                     </div>
     
                     <div class="emoji_picker_container hidden">
@@ -155,7 +181,7 @@
                     </div>
                 </div>
 
-                <p class="form_report" style="bottom: 194px;"></p>
+                <p class="form_report" style="bottom: 98px;"></p>
                 <input class="edit_account_form_submit" type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
 
                 <div class="form_questions">
@@ -165,7 +191,7 @@
 
         {% endif %}
         
-        <div class="profile hidden">
+        <div class="profile">
             <div class="header">
                 <div class="top">
                     <div class="info">
