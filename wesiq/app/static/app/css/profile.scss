@@ -171,7 +171,7 @@
     
             .bio {
                 width: 100%;
-                min-height: 50px;
+                min-height: 100px;
                 field-sizing: content;
                 padding: 5px 10px;
                 background: transparent;
@@ -839,26 +839,38 @@
                             }
                         }
 
-                        p {
+                        .post_settings {
                             position: absolute;
-                            top: 5px;
-                            right: 5px;
+                            top: 0px;
+                            left: 0px;
                             display: flex;
                             align-items: center;
+                            justify-content: space-between;
                             gap: 5px;
-                            line-height: 15px;
-                            padding: 2px 5px;
-                            background-color: transparentize($main-color, 0.8);
-                            color: $secondary-color;
-                            border-radius: $small-border-radius;
-                            
-                            span,
-                            i {
-                                font-size: 0.8em;
+                            width: 100%;
+                            padding: 5px;
+
+                            .settings,
+                            .multiple_posts {
+                                display: flex;
+                                align-items: center;
+                                gap: 5px;
+                                height: 20px;
+                                padding: 0px 5px;
+                                background-color: transparentize($main-color, 0.8);
+                                color: darken($secondary-color, 20%);
+                                border-radius: $small-border-radius;
+
+                                i {
+                                    font-size: 0.8em;
+                                }
                             }
 
-                            span {
-                                font-weight: bold;
+                            .multiple_posts {                                
+                                span {
+                                    font-size: 0.8em;
+                                    font-weight: bold;
+                                }
                             }
                         }
                     }

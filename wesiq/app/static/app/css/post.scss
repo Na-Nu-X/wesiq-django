@@ -133,14 +133,12 @@ h2 {
                 gap: 10px;
 
                 .location {
+                    @include crop_text;
                     display: flex;
                     align-items: center;
                     gap: 4px;
                     color: darken($secondary-color, 40%);
                     font-size: 0.8em;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
                     text-decoration: none;
 
                     span {
@@ -600,11 +598,9 @@ h2 {
             }
 
             .comment {
+                @include crop_text;
                 max-width: 100px;
                 margin-left: 5px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
                 text-decoration: none;
             }
 

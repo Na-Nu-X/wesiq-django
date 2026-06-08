@@ -1364,11 +1364,9 @@ header {
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
 
                 p {
+                    @include crop_text;
                     font-size: 0.8em;
                     color: darken($secondary-color, 40%);
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
                 }
 
                 // Attachment Tooltip

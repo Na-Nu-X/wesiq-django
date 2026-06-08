@@ -859,10 +859,32 @@
                                             
                                             {% endif %}
 
-                                            {% if one_post.media.all|length > 1 %}
-                                                <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
-                                            
-                                            {% endif %}
+                                            <div class="post_settings">
+                                                <div class="settings">
+                                                    {% if not one_post.public_visibility %}
+                                                        <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+    
+                                                    {% endif %}
+    
+                                                    {% if not one_post.allow_comments %}
+                                                        <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+    
+                                                    {% endif %}
+    
+                                                    {% if one_post.hide_likes %}
+                                                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+    
+                                                    {% endif %}
+                                                </div>
+
+                                                {% if one_post.media.all|length > 1 %}
+                                                    <div class="multiple_posts">
+                                                        <span>{{ one_post.media.all|length }}</span>
+                                                        <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                                    </div>
+                                                
+                                                {% endif %}
+                                            </div>
                                         </a>
 
                                     {% endif %}

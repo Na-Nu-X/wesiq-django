@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const post_info_container:HTMLDivElement = upload_post_form.querySelector(".post_info_container") as HTMLDivElement // Gets The Post Info Container
 
-    const public_visibility:HTMLElement = post_info_container.querySelector(".icons .settings .public_visibility") as HTMLElement // Gets The Public Visibility Icon
+    const public_visibility:HTMLElement|null = post_info_container.querySelector(".icons .settings .public_visibility") as HTMLElement || null // Gets The Public Visibility Icon
     const allow_comments:HTMLElement = post_info_container.querySelector(".icons .settings .allow_comments") as HTMLElement // Gets The Allow Comments Icon
     const hide_likes:HTMLElement = post_info_container.querySelector(".icons .settings .hide_likes") as HTMLElement // Gets The Hide Likes Icon
 
@@ -140,21 +140,23 @@ document.addEventListener("DOMContentLoaded", function():void {
     })
 
     // Public Visibility Click Functionality
-    public_visibility.addEventListener("click", function(event:PointerEvent):void {
-        const icon:HTMLElement = event.target as HTMLElement // Gets The Public Visibility Icon
-
-        // Sets The Private Visibility
-        if(icon.classList.contains("fa-eye")) {
-            icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
-            icon.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
-        }
-
-        // Sets The Public Visibility
-        else if(icon.classList.contains("fa-eye-low-vision")) {
-            icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
-            icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
-        }
-    })
+    if(public_visibility) {
+        public_visibility.addEventListener("click", function(event:PointerEvent):void {
+            const icon:HTMLElement = event.target as HTMLElement // Gets The Public Visibility Icon
+    
+            // Sets The Private Visibility
+            if(icon.classList.contains("fa-eye")) {
+                icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
+                icon.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+            }
+    
+            // Sets The Public Visibility
+            else if(icon.classList.contains("fa-eye-low-vision")) {
+                icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
+                icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+            }
+        })
+    }
     
     // Allow Comments Click Functionality
     allow_comments.addEventListener("click", function(event:PointerEvent):void {

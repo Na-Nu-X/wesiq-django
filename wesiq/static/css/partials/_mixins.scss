@@ -259,10 +259,8 @@
         transition: border 0.3s ease;
 
         span {
+            @include crop_text;
             margin-left: 15px + 8.5px - 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             
             i {
                 color: $article-color;
@@ -312,10 +310,8 @@
         }
 
         .option {
+            @include crop_text;
             padding: 5px 0px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             transition: color 0.3s ease;
 
             &:hover,
@@ -777,4 +773,12 @@
         display: none;
         opacity: 0;
     }
+}
+
+// Crop Text
+
+@mixin crop_text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

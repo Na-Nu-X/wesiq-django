@@ -281,6 +281,11 @@ header {
                             display: none;
                         }
 
+                        .disabled_public_visibility {
+                            color: transparentize($blue-color, 0.5);
+                            cursor: not-allowed;
+                        }
+
                         label {
                             .public_visibility, .allow_comments, .hide_likes {
                                 @include icon;
@@ -710,10 +715,8 @@ header {
                 }
             
                 .original_filename {
+                    @include crop_text;
                     min-width: 0;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
                     text-decoration: none;
                 }
             
@@ -902,14 +905,12 @@ header {
                         gap: 10px;
 
                         .location {
+                            @include crop_text;
                             display: flex;
                             align-items: center;
                             gap: 4px;
                             color: darken($secondary-color, 40%);
                             font-size: 0.8em;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
                             text-decoration: none;
 
                             span {
@@ -1388,11 +1389,9 @@ header {
                     }
         
                     .comment {
+                        @include crop_text;
                         max-width: 100px;
                         margin-left: 5px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
                         text-decoration: none;
                     }
         
