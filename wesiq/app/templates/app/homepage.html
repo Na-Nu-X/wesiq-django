@@ -36,6 +36,7 @@
                 {% endblocktranslate %}
             {% endif %}
         "
+        tabindex="0"
     >
         <p>{{ avg_rating.rating__avg|floatformat:2 }}</p>
 
@@ -319,7 +320,7 @@
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </div>
 
-                <div class="select">
+                <div class="select" tabindex="0">
                     <span>{% translate "Najnovšie recenzie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
@@ -337,7 +338,7 @@
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </div>
 
-                <div class="select">
+                <div class="select" tabindex="0">
                     <span>{% translate "Všetky kategórie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
@@ -600,7 +601,7 @@
         <div class="subject_select_menu">
             <input type="hidden" name="subject" value="{% translate 'Otázka' %}">
 
-            <div class="select">
+            <div class="select" tabindex="0">
                 <span>{% translate "Otázka" %}</span>
                 <i class="fas fa-angle-down"></i>
             </div>
@@ -618,7 +619,7 @@
             <div class="attachment">
                 <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
                 
-                <label for="select_attachment">
+                <label for="select_attachment" tabindex="0">
                     <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}">
                         <i class="fa-solid fa-paperclip" title="{% translate 'Vybrať prílohu' %}"></i> <!-- https://fontawesome.com/icons/paperclip -->
                     </div>

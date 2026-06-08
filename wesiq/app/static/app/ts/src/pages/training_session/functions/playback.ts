@@ -59,7 +59,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     const exercises:NodeListOf<HTMLDivElement>|null = training_plan ? training_plan.querySelectorAll<HTMLDivElement>(".exercise") : null // Gets All Training Plan Exercises
 
     const timer:HTMLHeadingElement = playback.querySelector(".timer") as HTMLHeadingElement // Gets The Playback Timer
-    const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
+    const play_pause:HTMLButtonElement = playback.querySelector(".play") as HTMLButtonElement // Gets The Play / Pause Button
 
     const current_activity_info:HTMLParagraphElement|null = training_plan ? training_plan.querySelector(".current_activity_info") as HTMLParagraphElement : null // Gets Current Activity Info
 
@@ -88,7 +88,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
 
 // Function For Pause Activity
 export function pauseActivity(playback:HTMLDivElement):void {
-    const play_pause:HTMLAnchorElement = playback.querySelector(".play") as HTMLAnchorElement // Gets The Play / Pause Button
+    const play_pause:HTMLButtonElement = playback.querySelector(".play") as HTMLButtonElement // Gets The Play / Pause Button
 
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-pause", "fa-play") // Shows The Play Icon
 

@@ -22,10 +22,12 @@ header {
         // Upload Post
 
         .upload_post {
+            all: unset;
             width: max-content;
 
             .fa-photo-film {
                 @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                display: block;
                 font-size: 1.5em;
             }
         }
@@ -167,12 +169,33 @@ header {
                         }
                     }
 
-                    .fa-xmark {
-                        @include icon;
+                    .remove_post {
+                        @include flex_center;
+                        all: unset;
                         position: absolute;
                         right: 0px;
-                        padding: 5px;
+                        width: 25px;
+                        height: 25px;
+                        margin: 5px;
+                        background-color: transparentize($main-color, 0.8);
+                        border-radius: 50%;
                         z-index: 50;
+
+                        &:hover,
+                        &:focus-visible {
+                            cursor: pointer;
+
+                            .fa-xmark {
+                                color: $secondary-color;
+                            }
+                        }
+
+                        .fa-xmark {
+                            display: block;
+                            color: darken($secondary-color, 20%);
+                            font-size: 1.2em;
+                            transition: color 0.3s ease;
+                        }
                     }
 
                     img,
@@ -214,7 +237,8 @@ header {
                 border-radius: $small-border-radius;
                 transition: border-color 0.3s ease;
 
-                &:hover {
+                &:hover,
+                &:has(.description:focus) {
                     border-color: $blue-color;
 
                     .users_for_tag_container {
@@ -287,10 +311,16 @@ header {
                         }
 
                         label {
-                            .public_visibility, .allow_comments, .hide_likes {
-                                @include icon;
-                                display: block;
+                            .public_visibility, 
+                            .allow_comments, 
+                            .hide_likes {
+                                all: unset;
                                 width: 18.75px;
+                                
+                                i {
+                                    @include icon;
+                                    display: block;
+                                }
                             }
                         }
                     }
@@ -303,7 +333,12 @@ header {
                         .add_emoji,
                         .tag_user,
                         .add_hashtag {
-                            @include icon;
+                            all: unset;
+
+                            i {
+                                @include icon;
+                                display: block;
+                            }
                         }
                     }
                 }
@@ -362,7 +397,7 @@ header {
                             cursor: pointer
                         }
 
-                        &:focus {
+                        &:focus-visible {
                             background-color: transparentize($blue-color, 0.8);
                         }
         
@@ -498,7 +533,7 @@ header {
                                 cursor: pointer
                             }
 
-                            &:focus {
+                            &:focus-visible {
                                 background-color: transparentize($blue-color, 0.8);
                             }
                         }
@@ -679,7 +714,7 @@ header {
                         transition: background-color 0.3s ease, letter-spacing 0.3s ease;
 
                         &:hover,
-                        &:focus {
+                        &:focus-visible {
                             background-color: transparentize($blue-color, 0.9);
                             letter-spacing: 0.5px;
                             outline: none;
@@ -797,15 +832,22 @@ header {
                 width: 100%;
 
                 .left {
+                    &:has(a:focus-visible) {
+                        outline: 2px solid $error-color !important;
+                        outline-offset: 2px !important;
+                    }
+
                     a {
+                        &:hover {
+                            .profile_picture {
+                                transform: scale(1.05);
+                            }
+                        }
+
                         .profile_picture {
                             @include profile_picture($width: 45px, $height: 45px);
                             display: block;
                             transition: transform 0.3s ease;
-    
-                            &:hover {
-                                transform: scale(1.05);
-                            }
                         }
                     }
                 }
@@ -851,7 +893,7 @@ header {
                             transition: border-color 0.3s ease;
     
                             &:hover,
-                            &:focus {
+                            &:focus-visible {
                                 border-color: $blue-color;
                                 cursor: pointer;
                             }
@@ -887,7 +929,7 @@ header {
                                 transition: background-color 0.3s ease;
 
                                 &:hover,
-                                &:focus {
+                                &:focus-visible {
                                     background-color: transparentize($blue-color, 0.9);
                                 }
                             }
@@ -1004,7 +1046,7 @@ header {
                         }
 
                         &:hover,
-                        &:focus {
+                        &:focus-visible {
                             transform: translateY(-50%) scale(1.05);
                             opacity: 1;
                         }
@@ -1475,6 +1517,7 @@ header {
                 margin-top: 10px;
 
                 .likes {
+                    all: unset;
                     display: flex;
                     align-items: center;
                     gap: 5px;
@@ -1512,6 +1555,7 @@ header {
                 }
 
                 .comments {
+                    all: unset;
                     display: flex;
                     align-items: center;
                     gap: 5px;
@@ -1544,6 +1588,8 @@ header {
                 }
 
                 .share {
+                    all: unset;
+
                     .fa-share-nodes {
                         font-size: 1.5em;
                         display: block;
@@ -1584,6 +1630,8 @@ header {
                 }
 
                 .save {
+                    all: unset;
+                    
                     .fa-bookmark {
                         font-size: 1.5em;
                         display: block;

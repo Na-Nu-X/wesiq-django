@@ -65,7 +65,13 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             post_loading_progress.classList.add("loading_progress") // Adds The Loading Progress Class
             post_loading_progress.textContent = "0%"
 
-            post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
+            const remove_post:HTMLButtonElement = document.createElement("button") // Creates The Remove Post Button
+            remove_post.classList.add("remove_post") // Adds The Remove Post Class
+            remove_post.type = "button" // Prevents Form Submission
+            remove_post.title = gettext("Odstrániť...")
+            remove_post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
+
+            post.appendChild(remove_post) // Appends The Remove Post Button To The Post
             post.appendChild(post_loading) // Appends Loading To The Post
             post.appendChild(post_loading_progress) // Appends The Loading Progress To The Post
             posts_preview.appendChild(post) // Appends The Post To The Post Preview
@@ -171,9 +177,9 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         })
                     }
 
-                    // Remove File By Clicking On X Mark Functionality
-                    ((element.parentNode as HTMLDivElement).querySelector(".fa-xmark") as HTMLElement).addEventListener("click", function():void {
-                        removeFile(index, select_posts, posts_preview)
+                    // Remove File By Clicking On Remove Post Button Functionality
+                    ((element.parentNode as HTMLDivElement).querySelector(".remove_post") as HTMLButtonElement).addEventListener("click", function():void {
+                        removeFile(index, select_posts, posts_preview) // Removes The File
                     })
                 }
             })

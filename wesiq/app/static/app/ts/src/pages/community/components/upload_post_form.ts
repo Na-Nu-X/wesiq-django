@@ -47,25 +47,26 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const upload_post_icon:HTMLElement = document.querySelector(".upload_post .fa-photo-film") as HTMLElement // Gets The Upload Post Icon
+    const upload_post_button:HTMLElement = document.querySelector(".upload_post") as HTMLButtonElement // Gets The Upload Post Button
     const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
     const upload_post_form:HTMLFormElement = upload_post_form_dialog.querySelector(".upload_post_form") as HTMLFormElement // Gets The Upload Post Form
 
     const select_posts:HTMLInputElement = upload_post_form.querySelector("#select_posts") as HTMLInputElement // Gets The Select Posts Input
     const posts_preview:HTMLDivElement = upload_post_form.querySelector(".posts_preview") as HTMLDivElement // Gets The Posts Preview
+    const select_posts_container:HTMLDivElement = upload_post_form.querySelector(".select_posts_container") as HTMLDivElement // Gets The Select Posts Container
 
     const post_info_container:HTMLDivElement = upload_post_form.querySelector(".post_info_container") as HTMLDivElement // Gets The Post Info Container
 
-    const public_visibility:HTMLElement|null = post_info_container.querySelector(".icons .settings .public_visibility") as HTMLElement || null // Gets The Public Visibility Icon
-    const allow_comments:HTMLElement = post_info_container.querySelector(".icons .settings .allow_comments") as HTMLElement // Gets The Allow Comments Icon
-    const hide_likes:HTMLElement = post_info_container.querySelector(".icons .settings .hide_likes") as HTMLElement // Gets The Hide Likes Icon
+    const public_visibility:HTMLButtonElement|null = post_info_container.querySelector(".icons .settings label .public_visibility") as HTMLButtonElement || null // Gets The Public Visibility Icon
+    const allow_comments:HTMLButtonElement = post_info_container.querySelector(".icons .settings label .allow_comments") as HTMLButtonElement // Gets The Allow Comments Icon
+    const hide_likes:HTMLButtonElement = post_info_container.querySelector(".icons .settings label .hide_likes") as HTMLButtonElement // Gets The Hide Likes Icon
 
     const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
-    const add_emoji:HTMLElement = post_info_container.querySelector(".icons .tags .add_emoji") as HTMLElement // Gets The Add Emoji Icon
+    const add_emoji:HTMLButtonElement = post_info_container.querySelector(".icons .tags .add_emoji") as HTMLButtonElement // Gets The Add Emoji Icon
     const emoji_picker_container:HTMLDivElement = post_info_container.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
     const picker:Element = emoji_picker_container.querySelector("emoji-picker") as Element // Gets The Emoji Picker
 
-    const tag_user:HTMLElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLElement // Gets The Tag User Icon
+    const tag_user:HTMLButtonElement = post_info_container.querySelector(".icons .tags .tag_user") as HTMLButtonElement // Gets The Tag User Icon
     const description_input:HTMLInputElement = upload_post_form.querySelector(".description_input") as HTMLInputElement // Gets The Description Hidden Input
     const users_for_tag_container:HTMLDivElement = upload_post_form.querySelector(".users_for_tag_container") as HTMLDivElement // Gets The Users For Tag Container
     const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const added_hashtags_input:HTMLInputElement = upload_post_form.querySelector(".added_hashtags") as HTMLInputElement // Gets The Hidden Input Of Added Hashtags
 
-    const add_hashtag:HTMLElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLElement // Gets The Add Hashtag Icon
+    const add_hashtag:HTMLButtonElement = post_info_container.querySelector(".icons .tags .add_hashtag") as HTMLButtonElement // Gets The Add Hashtag Icon
 
     const location_container:HTMLDivElement = upload_post_form.querySelector(".location_container") as HTMLDivElement // Gets The Location Container
     const location_input:HTMLInputElement = location_container.querySelector(".location_input_container .location") as HTMLInputElement // Gets The Location Input
@@ -92,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Events
 
     // Upload Post Form Click Functionality
-    upload_post_icon.addEventListener("click", () => upload_post_form_dialog.showModal()) // Shows The Upload Post Form Dialog
+    upload_post_button.addEventListener("click", () => upload_post_form_dialog.showModal()) // Shows The Upload Post Form Dialog
 
     // Upload Post Form Dialog Click Functionality
     upload_post_form_dialog.addEventListener("click", function(event:PointerEvent):void {
@@ -139,8 +140,16 @@ document.addEventListener("DOMContentLoaded", function():void {
         uploadPost(upload_post_form_submit, form_data) // Uploads The Post
     })
 
-    // Public Visibility Click Functionality
+    // Select Posts Container Keydown Functionality
+    select_posts_container.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            select_posts.click() // Opens The Select Files Dialog
+            upload_post_form_dialog.showModal() // Shows The Upload Post Form Dialog
+        }
+    })
+
     if(public_visibility) {
+        // Public Visibility Click Functionality
         public_visibility.addEventListener("click", function(event:PointerEvent):void {
             const icon:HTMLElement = event.target as HTMLElement // Gets The Public Visibility Icon
     
@@ -154,6 +163,25 @@ document.addEventListener("DOMContentLoaded", function():void {
             else if(icon.classList.contains("fa-eye-low-vision")) {
                 icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
                 icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+            }
+        })
+
+        // Public Visibility Keydown Functionality
+        public_visibility.addEventListener("keydown", function(event:KeyboardEvent):void {
+            if(event.key === "Enter") {
+                const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Public Visibility Icon
+        
+                // Sets The Private Visibility
+                if(icon.classList.contains("fa-eye")) {
+                    icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
+                    icon.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+                }
+        
+                // Sets The Public Visibility
+                else if(icon.classList.contains("fa-eye-low-vision")) {
+                    icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
+                    icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+                }
             }
         })
     }
@@ -175,6 +203,25 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Allow Comments Click Functionality
+    allow_comments.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Allow Comments Icon
+
+            // Disables The Comments
+            if(icon.classList.contains("fa-comment")) {
+                icon.classList.replace("fa-comment", "fa-comment-slash") // Changes The Icon
+                icon.title = gettext("Zapnúť komentáre")
+            }
+            
+            // Enables The Comments
+            else if(icon.classList.contains("fa-comment-slash")) {
+                icon.classList.replace("fa-comment-slash", "fa-comment") // Changes The Icon
+                icon.title = gettext("Vypnúť komentáre")
+            }
+        }
+    })
+
     // Hide Likes Click Functionality
     hide_likes.addEventListener("click", function(event:PointerEvent):void {
         const icon:HTMLElement = event.target as HTMLElement // Gets The Hide Likes Icon
@@ -189,6 +236,25 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if(icon.classList.contains("fa-regular")) {
             icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
             icon.title = gettext("Skryť počet označení páči sa mi to")
+        }
+    })
+
+    // Allow Comments Click Functionality
+    hide_likes.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Hide Likes Icon
+    
+            // Hides The Like Counter
+            if(icon.classList.contains("fa-solid")) {
+                icon.classList.replace("fa-solid", "fa-regular") // Changes The Icon
+                icon.title = gettext("Zobraziť počet označení páči sa mi to")
+            }
+    
+            // Shows The Like Counter
+            else if(icon.classList.contains("fa-regular")) {
+                icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
+                icon.title = gettext("Skryť počet označení páči sa mi to")
+            }
         }
     })
 
@@ -243,6 +309,13 @@ document.addEventListener("DOMContentLoaded", function():void {
         emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
     })
 
+    // Add Emoji Icon Keydown Functionality
+    add_emoji.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+        }
+    })
+
     // Picker Emoji Click Functionality
     picker.addEventListener("emoji-click", function(event:Event):void {
         const custom_event:CustomEvent<{
@@ -276,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Adds At Sign To The Description After Clicking On The Tag User Icon
+    // Tag User Click Functionality
     tag_user.addEventListener("click", function():void {
         // Checks For The Maximum Input Length
         if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
@@ -296,6 +369,31 @@ document.addEventListener("DOMContentLoaded", function():void {
             focusAtEnd(description) // Adds Focus To The Description
 
             description_input.value = description.textContent.trim() // Sets The Description Input Value
+        }
+    })
+
+    // Tag User Keydown Functionality
+    tag_user.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            // Checks For The Maximum Input Length
+            if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+                const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+    
+                previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing (If There Isn't Already)
+    
+                const at:tag = {
+                    position: {
+                        tag_start_index: description.innerText.length - 1,
+                        tag_end_index: description.innerText.length - 1
+                    }
+                }
+    
+                storeAtSignPosition(at) // Stores The At Sign Position
+                hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+                focusAtEnd(description) // Adds Focus To The Description
+    
+                description_input.value = description.textContent.trim() // Sets The Description Input Value
+            }
         }
     })
 
@@ -446,7 +544,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Add Hashtag Functionality
+    // Add Hashtag Click Functionality
     add_hashtag.addEventListener("click", function():void {
         // Checks For The Maximum Input Length
         if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
@@ -458,6 +556,23 @@ document.addEventListener("DOMContentLoaded", function():void {
             focusAtEnd(description) // Adds Focus To The Description
 
             description_input.value = description.textContent.trim() // Sets The Description Input Value
+        }
+    })
+
+    // Add Hashtag Keydown Functionality
+    add_hashtag.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            // Checks For The Maximum Input Length
+            if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+                const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+        
+                previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "#" : description.innerHTML += " #" // Adds Hashtag Sign At The End With Additional Spacing (If There Isn't Already)
+
+                hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+                focusAtEnd(description) // Adds Focus To The Description
+
+                description_input.value = description.textContent.trim() // Sets The Description Input Value
+            }
         }
     })
 

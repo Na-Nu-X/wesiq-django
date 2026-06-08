@@ -19,13 +19,19 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     toggle_settings.addEventListener("click", function():void {
         if(edit_account_form.classList.contains("hidden")) {
-            profile.classList.add("hidden")
-            edit_account_form.classList.remove("hidden")
+            profile.classList.add("hidden") // Adds The Hidden Class
+            profile.inert = true // Disables Focus
+
+            edit_account_form.classList.remove("hidden") // Removes The Hidden Class
+            edit_account_form.inert = false // Enables Focus
         }
 
         else if(profile.classList.contains("hidden")) {
-            edit_account_form.classList.add("hidden")
-            profile.classList.remove("hidden")
+            edit_account_form.classList.add("hidden") // Adds The Hidden Class
+            edit_account_form.inert = true // Disables Focus
+
+            profile.classList.remove("hidden") // Removes The Hidden Class
+            profile.inert = false // Enables Focus
         }
     })
 

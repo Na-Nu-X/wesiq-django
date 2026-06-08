@@ -10,7 +10,9 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
     const select_icon:HTMLElement = select.querySelector("i") as HTMLElement // Gets Select Icon
     const options_list:HTMLDivElement = select_menu.querySelector(".options_list") as HTMLDivElement // Gets Options List
     const options:NodeListOf<HTMLDivElement> = options_list.querySelectorAll<HTMLDivElement>(".option") // Gets All Options
+    const refresh_icon:HTMLElement = select_menu.querySelector(".refresh i") as HTMLElement
 
+    // Select Click Functionality
     select.addEventListener("click", function():void {
         // Changes Icon
         if(select_icon.classList.contains("fa-angle-down")) select_icon.classList.replace("fa-angle-down", "fa-angle-up")
@@ -19,6 +21,18 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
         options_list.classList.toggle("active") // Toggle Show / Hide Options List
     })
 
+    // Select Keydown Functionality
+    select.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            // Changes Icon
+            if(select_icon.classList.contains("fa-angle-down")) select_icon.classList.replace("fa-angle-down", "fa-angle-up")
+            else if(select_icon.classList.contains("fa-angle-up")) select_icon.classList.replace("fa-angle-up", "fa-angle-down")
+    
+            options_list.classList.toggle("active") // Toggle Show / Hide Options List
+        }
+    })
+
+    // Options Click Functionality
     options.forEach(function(one_option:HTMLDivElement):void {
         one_option.addEventListener("click", function() {
             options_list.classList.remove("active") // Hides Options List
@@ -33,9 +47,7 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
         }
     })
 
-    // Refresh
-    const refresh_icon:HTMLElement = select_menu.querySelector(".refresh i") as HTMLElement
-
+    // Refresh Icon Click Functionality
     refresh_icon.addEventListener("click", function():void {
         deleteURLParameter(parameter_name) // Deletes Parameter In The URL
     })

@@ -20,9 +20,9 @@
 {% endblock navigation_bar_items %}
 
 {% block banner %}
-    <div class="upload_post">
+    <button class="upload_post">
         <i class="fa-solid fa-photo-film" title="{% translate 'Uverejniť príspevok' %}"></i> <!-- https://fontawesome.com/icons/photo-film -->
-    </div>
+    </button>
 {% endblock banner %}
 
 {% block content %}
@@ -35,7 +35,7 @@
             <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             <div class="posts_preview">
-                <div class="select_posts_container">
+                <div class="select_posts_container" tabindex="0">
                     <label for="select_posts"><i class="fa-solid fa-photo-film"></i></label> <!-- https://fontawesome.com/icons/photo-film -->
                     <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
                 </div>
@@ -54,22 +54,45 @@
                             <i class="disabled_public_visibility fa-solid fa-eye-low-vision" title="{% translate 'Viditeľnosť len pre sledovateľov' %}"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
 
                         {% else %}
-                            <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                            <label for="public_visibility">
+                                <button class="public_visibility" type="button" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}">
+                                    <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                                </button>
+                            </label>
+
                         {% endif %}
                         
                         {{ upload_post_form.public_visibility }}
         
-                        <label for="allow_comments"><i class="allow_comments fa-solid fa-comment" title="{% translate 'Vypnúť komentáre' %}"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
+                        <label for="allow_comments">
+                            <button class="allow_comments" type="button" title="{% translate 'Vypnúť komentáre' %}">
+                                <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
+                            </button>
+                        </label>
+
                         {{ upload_post_form.allow_comments }}
         
-                        <label for="hide_likes"><i class="hide_likes fa-solid fa-heart" title="{% translate 'Skryť počet označení páči sa mi to' %}"></i></label> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
+                        <label for="hide_likes">
+                            <button class="hide_likes" type="button" title="{% translate 'Skryť počet označení páči sa mi to' %}">
+                                <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
+                            </button>
+                        </label>
+
                         {{ upload_post_form.hide_likes }}
                     </div>
 
                     <div class="tags">
-                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                        <i class="tag_user fa-solid fa-at" title="{% translate 'Označiť ľudí' %}"></i> <!-- https://fontawesome.com/icons/at -->
-                        <i class="add_hashtag fa-solid fa-hashtag" title="{% translate 'Pridať Hashtag' %}"></i> <!-- https://fontawesome.com/icons/hashtag -->
+                        <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}">
+                            <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                        </button>
+
+                        <button class="tag_user" type="button" title="{% translate 'Označiť ľudí' %}">
+                            <i class="fa-solid fa-at"></i> <!-- https://fontawesome.com/icons/at -->
+                        </button>
+
+                        <button class="add_hashtag" type="button" title="{% translate 'Pridať Hashtag' %}">
+                            <i class="fa-solid fa-hashtag"></i> <!-- https://fontawesome.com/icons/hashtag -->
+                        </button>
                     </div>
                 </div>
 
@@ -186,25 +209,25 @@
                 <div class="media" data-active_index="0"></div>
 
                 <div class="society">
-                    <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                    <button class="likes" title="{% translate 'Páči sa mi...' %}">
                         <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                    </div>
+                    </button>
 
-                    <div class="comments" title="{% translate 'Komentáre...' %}">
+                    <button class="comments" title="{% translate 'Komentáre...' %}">
                         <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                    </div>
+                    </button>
 
-                    <div class="share" title="{% translate 'Zdielať...' %}">
+                    <button class="share" title="{% translate 'Zdielať...' %}">
                         <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
-                    </div>
+                    </button>
 
                     <div class="views" title="{% translate 'Počet videní...' %}">
                         <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
                     </div>
 
-                    <div class="save" title="{% translate 'Uložiť...' %}">
+                    <button class="save" title="{% translate 'Uložiť...' %}">
                         <i class="fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                    </div>
+                    </button>
                 </div>
             </div>
         </template>

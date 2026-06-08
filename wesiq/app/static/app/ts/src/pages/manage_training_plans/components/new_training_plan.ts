@@ -171,14 +171,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         // Subtract Warm Up Time Functionality
-        if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("subtract_time") || (event.target.parentNode as HTMLDivElement).classList.contains("subtract_time")) {
-            const warm_up:HTMLDivElement = (event.target as HTMLDivElement).closest(".exercise") as HTMLDivElement // Gets Warm Up From The Training Plan
+        if(!(event.target instanceof Node) || (event.target as HTMLButtonElement).classList.contains("subtract_time") || (event.target.parentNode as HTMLButtonElement).classList.contains("subtract_time")) {
+            const warm_up:HTMLDivElement = (event.target as HTMLButtonElement).closest(".exercise") as HTMLDivElement // Gets Warm Up From The Training Plan
             changeWarmUpTime(warm_up, "subtract") // Subtracts Time
         }
 
         // Add Warm Up Time Functionality
-        if(!(event.target instanceof Node) || (event.target as HTMLDivElement).classList.contains("add_time") || (event.target.parentNode as HTMLDivElement).classList.contains("add_time")) {
-            const warm_up:HTMLDivElement = (event.target as HTMLDivElement).closest(".exercise") as HTMLDivElement // Gets Warm Up From The Training Plan
+        if(!(event.target instanceof Node) || (event.target as HTMLButtonElement).classList.contains("add_time") || (event.target.parentNode as HTMLButtonElement).classList.contains("add_time")) {
+            const warm_up:HTMLDivElement = (event.target as HTMLButtonElement).closest(".exercise") as HTMLDivElement // Gets Warm Up From The Training Plan
             changeWarmUpTime(warm_up, "add") // Adds Time
         }
     })

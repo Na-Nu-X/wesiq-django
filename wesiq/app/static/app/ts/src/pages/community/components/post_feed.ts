@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Toggle Post Like Click Functionality
             if(
                 (event.target as HTMLElement).classList.contains("fa-heart") &&
-                (((event.target as HTMLElement).parentElement as HTMLDivElement).parentElement as HTMLDivElement).classList.contains("society")
+                (event.target as HTMLElement).closest(".society")
             ) {
                 const toggle_like:HTMLElement = event.target as HTMLElement // Gets The Heart Icon
                 const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
@@ -426,6 +426,53 @@ document.addEventListener("DOMContentLoaded", function():void {
                     const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
                     changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
                 }
+            }
+        }
+
+        // Toggle Post Like Click Functionality
+        if(
+            (event.target as HTMLButtonElement).classList.contains("likes") &&
+            (event.target as HTMLElement).closest(".society")
+        ) {
+            if(event.key === "Enter") {
+                const toggle_like:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Heart Icon
+                const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
+                const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
+    
+                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
+            }
+        }
+
+        // Share Post
+        if((event.target as HTMLButtonElement).classList.contains("share")) {
+            if(event.key === "Enter") {
+                const share_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Share Icon
+                const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
+                const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+    
+                if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+            }
+        }
+
+        // Save Post
+        if((event.target as HTMLButtonElement).classList.contains("save")) {
+            if(event.key === "Enter") {
+                const save_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Save Icon
+                const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+    
+                if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+            }
+        }
+
+        // Comment Forum
+
+        // Toggle Show / Hide Comment Forum
+        if((event.target as HTMLButtonElement).classList.contains("comments")) {
+            if(event.key === "Enter") {
+                const comment_forum:HTMLDivElement = (((event.target as HTMLButtonElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+
+                !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
             }
         }
     })

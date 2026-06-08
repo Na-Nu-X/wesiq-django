@@ -92,6 +92,22 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
+    // Custom Tasks Keydown Functionalities
+    custom_tasks.addEventListener("keydown", function(event:KeyboardEvent):void {
+        // Toggle Custom Task Completion
+        if(event.key === "Enter") {
+            const task:HTMLDivElement = event.target as HTMLDivElement // Gets The Custom Task
+            const checkbox:HTMLInputElement = task.querySelector("input[type='checkbox']") as HTMLInputElement // Gets The Clicked Checkbox
+            const task_id:number|null = Number(task.dataset["task_id"]) || null // Gets The Task ID
+
+            if(task_id) {
+                checkbox.checked = !checkbox.checked // Inverts Checkbox's Check State
+                toggleCompleteCustomTask(task_id) // Toggles Completion Of The User's Custom Task
+                initializeCustomTasksAmount(tasks_amount, custom_tasks) // Updates The Remaining Custom Tasks Amount
+            }
+        }
+    })
+
     // Custom Tasks Click Functionalities
     custom_tasks.addEventListener("click", async function(event:PointerEvent):Promise<void> {
         // Delete Custom Task

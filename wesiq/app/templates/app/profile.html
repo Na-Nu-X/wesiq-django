@@ -14,7 +14,7 @@
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
+                <button><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
 
             {% endif %}
         </div>
@@ -23,7 +23,7 @@
             <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
             <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
 
-            <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data">
+            <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data" inert>
                 {% csrf_token %}
 
                 <div class="header">
@@ -805,13 +805,13 @@
             <div class="bottom">
                 {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                     <div class="grid_select">
-                        <div class="all_posts_icon active">
+                        <button class="all_posts_icon active">
                             <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
-                        </div>
+                        </button>
                         
-                        <div class="saved_posts_icon">
+                        <button class="saved_posts_icon">
                             <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                        </div>
+                        </button>
                     </div>
 
                 {% endif %}
@@ -859,23 +859,26 @@
                                             
                                             {% endif %}
 
-                                            <div class="post_settings">
-                                                <div class="settings">
-                                                    {% if not one_post.public_visibility %}
-                                                        <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
-    
-                                                    {% endif %}
-    
-                                                    {% if not one_post.allow_comments %}
-                                                        <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
-    
-                                                    {% endif %}
-    
-                                                    {% if one_post.hide_likes %}
-                                                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-    
-                                                    {% endif %}
-                                                </div>
+                                            <div class="post_info">
+                                                {% if not one_post.public_visibility or not one_post.allow_comments or one_post.hide_likes %}
+                                                    <div class="settings">
+                                                        {% if not one_post.public_visibility %}
+                                                            <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+        
+                                                        {% endif %}
+        
+                                                        {% if not one_post.allow_comments %}
+                                                            <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+        
+                                                        {% endif %}
+        
+                                                        {% if one_post.hide_likes %}
+                                                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+        
+                                                        {% endif %}
+                                                    </div>
+
+                                                {% endif %}
 
                                                 {% if one_post.media.all|length > 1 %}
                                                     <div class="multiple_posts">
@@ -897,7 +900,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="saved_posts_container hidden">
+                    <div class="saved_posts_container hidden" inert>
                         {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                             <div class="saved_posts">
                                 {% for one_post in saved_posts %}
@@ -928,7 +931,12 @@
                                         {% endif %}
 
                                         {% if one_post.media.all|length > 1 %}
-                                            <p><span>{{ one_post.media.all|length }}</span> <i class="fa-brands fa-buffer"></i></p> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                            <div class="post_info">
+                                                <div class="multiple_posts">
+                                                    <span>{{ one_post.media.all|length }}</span>
+                                                    <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                                </div>
+                                            </div>
                                         
                                         {% endif %}
                                     </a>
