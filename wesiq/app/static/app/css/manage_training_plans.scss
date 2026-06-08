@@ -174,10 +174,8 @@
                         }
 
                         span {
+                            @include crop_text;
                             margin-left: 5px;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
                         }
 
                         .fa-angle-down {
@@ -207,10 +205,8 @@
                         }
 
                         .option {
+                            @include crop_text;
                             padding: 5px 0px;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
                             transition: color 0.3s ease;
 
                             &:hover,
@@ -372,10 +368,8 @@
                                 }
 
                                 .option {
+                                    @include crop_text;
                                     padding: 5px 0px;
-                                    white-space: nowrap;
-                                    text-overflow: ellipsis;
-                                    overflow: hidden;
                                     transition: color 0.3s ease;
 
                                     &:hover,

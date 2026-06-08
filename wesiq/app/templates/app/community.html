@@ -50,7 +50,13 @@
 
                 <div class="icons">
                     <div class="settings">
-                        <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                        {% if logged_in_user.private_account %}
+                            <i class="disabled_public_visibility fa-solid fa-eye-low-vision" title="{% translate 'Viditeľnosť len pre sledovateľov' %}"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+
+                        {% else %}
+                            <label for="public_visibility"><i class="public_visibility fa-solid fa-eye" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}"></i></label> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
+                        {% endif %}
+                        
                         {{ upload_post_form.public_visibility }}
         
                         <label for="allow_comments"><i class="allow_comments fa-solid fa-comment" title="{% translate 'Vypnúť komentáre' %}"></i></label> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
