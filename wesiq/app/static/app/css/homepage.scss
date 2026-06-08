@@ -156,7 +156,7 @@ header {
                         transition: background-color 0.3s ease, letter-spacing 0.3s ease;
 
                         &:hover,
-                        &:focus {
+                        &:focus-visible {
                             background-color: transparentize($blue-color, 0.9);
                             letter-spacing: 0.5px;
                         }
@@ -514,7 +514,7 @@ header {
                         transition: width 0.3s ease, border 0.3s ease;
 
                         &:hover,
-                        &:focus {
+                        &:focus-visible {
                             width: calc(100%);
                             border-bottom: 1px solid darken($secondary-color, 20%);
                         }
@@ -528,7 +528,7 @@ header {
                             transition: width 0.3s ease, background-color 9999s ease;
 
                             &:hover,
-                            &:focus {
+                            &:focus-visible {
                                 -webkit-text-fill-color: rgb(255, 255, 255);
                                 transition: width 0.3s ease, background-color 9999s ease;
                             }
@@ -610,7 +610,7 @@ header {
                 transition: width 0.3s ease, border 0.3s ease;
 
                 &:hover,
-                &:focus {
+                &:focus-visible {
                     width: 100%;
                     border-bottom: 1px solid darken($secondary-color, 20%);
                 }
@@ -624,7 +624,7 @@ header {
                     transition: width 0.3s ease, background-color 9999s ease;
 
                     &:hover,
-                    &:focus {
+                    &:focus-visible {
                         -webkit-text-fill-color: rgb(255, 255, 255);
                         transition: width 0.3s ease, background-color 9999s ease;
                     }
@@ -1110,7 +1110,7 @@ header {
                 all: unset;
     
                 &:hover,
-                &:focus {
+                &:focus-visible {
                     text-decoration: underline;
                     cursor: pointer;
                 }
@@ -1243,7 +1243,13 @@ header {
             margin-bottom: 10px;
             cursor: pointer;
 
+            &:has(.select:hover) .options_list,
+            &:has(.select:focus-visible) .options_list {
+                width: 100%;
+            }
+
             .select {
+                @include focus;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -1256,7 +1262,8 @@ header {
                 border-bottom: 1px solid transparentize($blue-color, 0.5);
                 transition: width 0.3s ease, border-color 0.3s ease;
 
-                &:hover {
+                &:hover,
+                &:focus-visible {
                     width: 100%;
                     border-color: $blue-color;
 
@@ -1311,10 +1318,6 @@ header {
                     }
                 }
             }
-
-            &:has(.select:hover) .options_list {
-                width: 100%;
-            }
         }
         
         .message_container {
@@ -1325,7 +1328,7 @@ header {
             border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $small-border-radius;
             transition: border-color 0.3s ease;
-
+            
             &.drag_active {
                 background-color: transparentize($main-color, 0.8);
                 border: 2px dashed transparentize($blue-color, 0.5);
@@ -1333,7 +1336,9 @@ header {
                 animation: dropZone 1s infinite alternate;
             }
 
-            &:hover {
+            &:hover,
+            &:has(textarea:hover), 
+            &:has(textarea:focus) {
                 border-color: $blue-color;
             }
 
@@ -1382,10 +1387,6 @@ header {
                 #select_attachment {
                     display: none;
                 }
-            }
-
-            &:has(textarea:hover) .attachment, &:has(textarea:focus) .attachment {
-                width: 100%;
             }
         }
 

@@ -64,7 +64,8 @@
             gap: 20px;
             width: 100%;
 
-            a {
+            .play,
+            .stop {
                 @include blue_button;
                 position: relative;
 
@@ -77,7 +78,7 @@
                     }
 
                     &:hover,
-                    &:focus {
+                    &:focus-visible {
                         background-color: lighten($blue-color, 2%);
                     }
                 }
@@ -111,7 +112,7 @@
 
             &:hover,
             &:active,
-            &:focus {
+            &:focus-visible {
                 text-decoration: underline;
             }
         }
@@ -566,7 +567,7 @@
                 cursor: pointer;
     
                 &:hover,
-                &:focus {
+                &:focus-visible {
                     text-decoration: underline;
                 }
             }
@@ -697,7 +698,7 @@
     
                 &:hover,
                 &:active,
-                &:focus {
+                &:focus-visible {
                     text-decoration: underline;
                 }
             }
@@ -730,7 +731,7 @@
 
                 .add_task {
                     all: unset;
-                    margin-right: 15px;
+                    margin: 5px 15px 5px 0px;
                     text-align: center;
                     transition: transform 0.3s ease;
                     

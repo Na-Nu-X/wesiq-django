@@ -34,6 +34,14 @@ body {
     overflow-x: hidden;
 }
 
+button,
+input[type="submit"],
+a[href],
+select,
+[tabindex] {
+    @include focus;
+}
+
 // Background Canvas
 
 .background_canvas {
@@ -110,7 +118,7 @@ body {
     color: $secondary-color;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 
-    &:focus {
+    &:focus-visible {
         opacity: 1;
         outline: none;
     }
@@ -442,15 +450,19 @@ footer {
     }
 
     .social_media {
-        i {
+        a {
+            display: inline-block;
             margin: 0px 5px;
-            font-size: 2em;
             color: $secondary-color;
             transition: transform 0.3s ease;
 
             &:hover {
                 transform: scale(1.1);
                 cursor: pointer;
+            }
+
+            i {
+                font-size: 2em;
             }
         }
     }
@@ -516,6 +528,7 @@ footer {
         color: darken($secondary-color, 40%);
 
         .privacy_policy_again {
+            all: unset;
             display: inline;
             font-size: 0.9em;
 

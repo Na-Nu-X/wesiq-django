@@ -15,11 +15,21 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
+    // Subject Select Click Functionality
     subject_select.addEventListener("click", function():void {
         subject_options_list.classList.toggle("active");
         (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
     })
 
+    // Subject Select Keydown Functionality
+    subject_select.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            subject_options_list.classList.toggle("active");
+            (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
+        }
+    })
+
+    // Subject Options Click Functionality
     subject_options.forEach(function(option:HTMLDivElement):void {
         option.addEventListener("click", function():void {
             if(!this.dataset["subject"]) return
@@ -49,13 +59,15 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Variables
     
     const message_container:HTMLDivElement = document.querySelector(".message_container") as HTMLDivElement // Gets The Message Container
-    const attachment:HTMLInputElement = message_container.querySelector("#select_attachment") as HTMLInputElement // Gets The Attachment Input
+    const attachment:HTMLDivElement = message_container.querySelector(".attachment") as HTMLDivElement // Gets The Attachment Container
+    const attachment_input:HTMLInputElement = attachment.querySelector("#select_attachment") as HTMLInputElement // Gets The Attachment Input
+    const attachment_label:HTMLLabelElement = attachment.querySelector("label") as HTMLLabelElement // Gets The Attachment Label
     const attachment_report:HTMLParagraphElement = attachment.querySelector(".attachment_report") as HTMLParagraphElement // Gets The Attachment Report
 
     // Events
 
-    // Attachment Change Functionalities
-    attachment.addEventListener("change", function(event:Event):void {
+    // Attachment Input Change Functionalities
+    attachment_input.addEventListener("change", function(event:Event):void {
         if(!(event.target instanceof HTMLInputElement)) return
         if(!event.target.files || event.target.files.length === 0) return
 
@@ -66,10 +78,14 @@ document.addEventListener("DOMContentLoaded", function():void {
         showAttachmentReport(file, attachment_report) // Shows The Attachment Report
     })
 
+    // Attachment Label Keydown Functionality
+    attachment_label.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") attachment_input.click() // Opens The Select File Dialog
+    })
+
     // Message Container Drag Over Functionality
     message_container.addEventListener("dragover", function(event:DragEvent):void {
         event.preventDefault() // Prevents Default Behaviour
-        
         this.classList.add("drag_active") // Adds Drag Animation
     })
 
@@ -86,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const data_transfer:DataTransfer = new DataTransfer() // Creates New Data Transfer
 
         data_transfer.items.add(file) // Adds File To The Stored File Data
-        attachment.files = data_transfer.files // Synchronizes Selected Files With Stored File Data
+        attachment_input.files = data_transfer.files // Synchronizes Selected Files With Stored File Data
 
         showAttachmentReport(file, attachment_report) // Shows The Attachment Report
     })

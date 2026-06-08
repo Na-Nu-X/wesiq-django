@@ -22,7 +22,7 @@
 
             &:hover,
             &:active,
-            &:focus {
+            &:focus-visible {
                 text-decoration: underline;
             }
         }
@@ -66,7 +66,7 @@
                 }
 
                 &:hover,
-                &:focus {
+                &:focus-visible {
                     transform: scale(1.1);
                     background-color: $blue-color;
 
@@ -717,7 +717,7 @@
                 }
     
                 &:hover, 
-                &:focus {
+                &:focus-visible {
                     border-color: lighten($blue-color, 2%);
                     outline: none;
     

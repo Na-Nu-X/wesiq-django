@@ -782,7 +782,7 @@
                     </div>
 
                     <div class="society">
-                        <div class="likes" title="{% translate 'Páči sa mi...' %}">
+                        <button class="likes" title="{% translate 'Páči sa mi...' %}">
                             <i 
                                 class="
                                     {% if post.has_like %}
@@ -804,9 +804,9 @@
                                 <p class="likes_counter">{{ post.likes }}</p>
                             
                             {% endif %}
-                        </div>
+                        </button>
 
-                        <div class="comments" title="{% translate 'Komentáre...' %}">
+                        <button class="comments" title="{% translate 'Komentáre...' %}">
                             <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
 
                             {% if post.allow_comments %}
@@ -816,18 +816,18 @@
                                 <p class="hidden_comments_counter">{% translate "Vypnuté" %}</p>
                             
                             {% endif %}
-                        </div>
+                        </button>
 
-                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                        <button class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
                             <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
-                        </div>
+                        </button>
 
                         <div class="views" title="{% translate 'Počet videní...' %}">
                             <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
                             <p class="views_counter">{{ post.views }}</p>
                         </div>
 
-                        <div class="save" title="{% translate 'Uložiť...' %}">
+                        <button class="save" title="{% translate 'Uložiť...' %}">
                             <i 
                                 class="
                                     {% if post.has_save %}
@@ -842,7 +842,7 @@
                                     fa-bookmark
                                 "
                             ></i> <!-- https://fontawesome.com/icons/bookmark -->
-                        </div>
+                        </button>
                     </div>
 
                     {% if post.description %}

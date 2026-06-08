@@ -7,8 +7,9 @@ export function createTrainingPlanBars(amount:number, state:{active_training_pla
     // Creates Bars By Amount Of Training Plans
     for(let i:number = 0; i < amount; i++) {
         // Creates Bar
-        const bar:HTMLDivElement = document.createElement("div")
-        bar.classList.add("bar")
+        const bar:HTMLDivElement = document.createElement("div") // Creates The Bar
+        bar.classList.add("bar") // Adds The Bar Class
+        bar.tabIndex = 0 // Makes The Bar Focusable
         training_plan_bar_container.appendChild(bar)
 
         if(i === state.active_training_plan_index) bar.classList.add("active") // Adds Active Class For Bar Of Active Training Plan

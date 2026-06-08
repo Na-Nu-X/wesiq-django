@@ -34,7 +34,8 @@
         margin-bottom: 20px;
 
         .back .fa-chevron-left,
-        .fa-gear {
+        button .fa-gear {
+            display: block;
             font-size: 2em;
             color: darken($secondary-color, 40%);
             transition: color 0.3s ease, transform 0.3s ease;
@@ -45,6 +46,14 @@
                 transform: scale(1.1);
                 cursor: pointer;
             }
+        }
+
+        .back {
+            text-decoration: none;
+        }
+
+        button {
+            all: unset;
         }
     }
 
@@ -130,7 +139,7 @@
                     transition: background-color 0.3s ease;
 
                     &:hover,
-                    &:focus {
+                    &:focus-visible {
                         background-color: transparentize($blue-color, 0.9);
                     }
                 }
@@ -314,7 +323,7 @@
                     transition: border 0.3s ease;
 
                     &:hover,
-                    &:focus {
+                    &:focus-visible {
                         border-bottom: 1px solid darken($secondary-color, 20%);
                     }
 
@@ -327,7 +336,7 @@
                         transition: background-color 9999s ease;
 
                         &:hover,
-                        &:focus {
+                        &:focus-visible {
                             -webkit-text-fill-color: rgb(255, 255, 255);
                             transition: background-color 9999s ease;
                         }
@@ -540,7 +549,7 @@
                     transition: border-color 0.3s ease;
         
                     &:hover,
-                    &:focus {
+                    &:focus-visible {
                         border-color: $blue-color;
                         cursor: pointer;
                     }
@@ -579,6 +588,7 @@
                     $purple-rarity: #8b5cf6;
 
                     @include scrollbar($direction: "horizontal");
+                    @include focus;
                     display: grid;
                     grid-auto-flow: column;
                     grid-template-rows: repeat(2, 50px);
@@ -725,18 +735,18 @@
         .bottom {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            width: calc(100% + 10px);
             padding-top: 5px;
-            overflow: hidden;
 
             .grid_select {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 5px;
-                margin-right: 5px;
+                margin: 0px 5px;
 
                 .all_posts_icon,
                 .saved_posts_icon {
+                    all: unset;
                     position: relative;
                     width: 100%;
                     margin: 0px auto;
@@ -758,6 +768,7 @@
                     }
 
                     &:hover,
+                    &:focus-visible,
                     &.active {
                         cursor: pointer;
 
@@ -805,7 +816,7 @@
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
                     gap: 5px;
-                    margin-right: 5px;
+                    margin: 5px;
 
                     .private_post_notice {
                         @include flex_center;
@@ -839,7 +850,7 @@
                             }
                         }
 
-                        .post_settings {
+                        .post_info {
                             position: absolute;
                             top: 0px;
                             left: 0px;
@@ -866,7 +877,9 @@
                                 }
                             }
 
-                            .multiple_posts {                                
+                            .multiple_posts {
+                                margin-left: auto;
+
                                 span {
                                     font-size: 0.8em;
                                     font-weight: bold;

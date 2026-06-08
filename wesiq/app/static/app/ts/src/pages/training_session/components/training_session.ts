@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", function():void {
     const training_plan_container:HTMLDivElement = activity.querySelector(".training_plan_container") as HTMLDivElement // Gets The Training Plan Container
     const training_plan:HTMLDivElement = training_plan_container.querySelector(".training_plan") as HTMLDivElement // Gets The Training Plan
     const exercises_data:NodeListOf<HTMLDivElement> = training_plan_container.querySelectorAll<HTMLDivElement>(".one_exercise_data") // Gets Data From Every User's Exercise
-    const start_training_button:HTMLDivElement = training_plan.querySelector(".start_training .start_training_button") as HTMLDivElement // Gets Start Training Button
+    const start_training_button:HTMLButtonElement = training_plan.querySelector(".start_training .start_training_button") as HTMLButtonElement // Gets Start Training Button
     const finish_training_button:HTMLDivElement = training_plan.querySelector(".finish_training .finish_training_button") as HTMLDivElement // Gets Start Training Button
-    const add_time:HTMLDivElement = training_plan.querySelector(".break .add_time") as HTMLDivElement // Gets Add Time Button
+    const add_time:HTMLButtonElement = training_plan.querySelector(".break .add_time") as HTMLButtonElement // Gets Add Time Button
     const add_time_message:HTMLParagraphElement = add_time.querySelector(".add_time_message") as HTMLParagraphElement // Gets Add Time Message
-    const skip_break_button:HTMLDivElement = training_plan.querySelector(".break .skip_break_button") as HTMLDivElement // Gets Skip Break Button
+    const skip_break_button:HTMLButtonElement = training_plan.querySelector(".break .skip_break_button") as HTMLButtonElement // Gets Skip Break Button
 
     const current_activity_info:HTMLParagraphElement = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
 
@@ -63,10 +63,22 @@ document.addEventListener("DOMContentLoaded", function():void {
             changeTrainingPlans(activity, clicked_bar_index, ordered_days) // Changes Training Plans
         }
 
-        if((event.target as HTMLDivElement).classList.contains("next_exercise_button") || ((event.target as HTMLDivElement).parentNode as HTMLDivElement).classList.contains("next_exercise_button")) nextExercise(activity) // Next Exercise
+        // Next Exercise
+        if((event.target as HTMLButtonElement).classList.contains("next_exercise_button") || ((event.target as HTMLElement).parentNode as HTMLButtonElement).classList.contains("next_exercise_button")) nextExercise(activity)
 
         // Skip Warm Up
         if((event.target as HTMLDivElement).classList.contains("skip_warm_up_button") || ((event.target as HTMLDivElement).parentNode as HTMLDivElement).classList.contains("skip_warm_up_button")) skipWarmUp(activity)
+    })
+
+    // Training Plan Container Keydown Functionalities
+    training_plan_container.addEventListener("keydown", function(event:KeyboardEvent):void {
+        // Training Plan Bars
+        if(event.key === "Enter" && event.target instanceof Node && (event.target as HTMLDivElement).classList.contains("bar") && (event.target.parentNode as HTMLDivElement).classList.contains("training_plan_bar_container")) {
+            if(!event.target.parentNode) return // Catch Errors
+
+            const clicked_bar_index:number = [...event.target.parentNode.querySelectorAll<HTMLDivElement>(".bar")].indexOf(event.target as HTMLDivElement) // Gets Index Of The Clicked Bar
+            changeTrainingPlans(activity, clicked_bar_index, ordered_days) // Changes Training Plans
+        }
     })
 
     // Training Plan Container Wheel Functionalities

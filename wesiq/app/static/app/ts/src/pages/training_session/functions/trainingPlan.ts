@@ -206,10 +206,17 @@ export function resetTrainingPlan(container:HTMLDivElement):void {
 
     container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "flex"); // Shows Training Plan Bar Container
 
-    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active"); // Hides Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = true // Disables Focus
+
     exercises_break.classList.remove("active") // Hides Exercises Break Slide
+    exercises_break.inert = true // Disables Focus
+
     finish_training.classList.remove("active") // Hides Finish Training Slide
+    finish_training.inert = true // Disables Focus
+
     start_training.classList.add("active") // Shows Start Training Slide
+    start_training.inert = false // Enables Focus
 
     // Resets Current Set On Exercises
     exercises.forEach(function(one_exercise:HTMLDivElement) {
@@ -345,8 +352,11 @@ export function startTraining(container:HTMLDivElement):void {
 
         container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
 
-        start_training.classList.remove("active"); // Hides The Start Training Slide
-        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+        start_training.classList.remove("active") // Hides The Start Training Slide
+        start_training.inert = true; // Disables Focus
+
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows The Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
 
         generateReps(periods_data, 1, unit_data, exercises[training_plan_state.active_exercise_index] as HTMLDivElement); // Sets Exercise Current Reps, Hold Time, Or Steps Amount For The First Set Of The First Exercise
         updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
@@ -359,7 +369,10 @@ export function startTraining(container:HTMLDivElement):void {
         container.querySelectorAll<HTMLDivElement>(".training_plan_bar_container").forEach((one_bar_container:HTMLDivElement) => one_bar_container.style.display = "none") // Hides Training Plan Bar Container
 
         start_training.classList.remove("active"); // Hides The Start Training Slide
-        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active") // Shows The Active Exercise
+        start_training.inert = true; // Disables Focus
+
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows The Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
 
         warmUp(container) // Starts Warm Up
         updateProgress(container.querySelector(".training_plan") as HTMLDivElement) // Updates Progress Bar
@@ -377,6 +390,7 @@ export function finishTraining(container:HTMLDivElement):void {
 
 // Function For Change Exercises Or Their Set Progress In The Training Plan
 export function nextExercise(container:HTMLDivElement):void {
+    console.log(container)
     const playback:HTMLDivElement = container.querySelector(".record_activity") as HTMLDivElement // Gets The Activity Playback
     const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise"); // Gets All Training Plan Exercises
@@ -413,15 +427,22 @@ export function nextExercise(container:HTMLDivElement):void {
 
     // Exercises Break Slide
     else if(current_set === sets_amount && training_plan_state.active_exercise_index < exercises.length - 1) {
-        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active"); // Hides Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = true // Disables Focus
+
         exercises_break.classList.add("active") // Shows Exercises Break Slide
-        exercisesBreak(container) // Must pass activity container so skipBreak/nextExercise resolve DOM correctly
+        exercises_break.inert = false // Enables Focus
+
+        exercisesBreak(container)
     }
 
     // Finish Training Slide
     else {
-        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active") // Hides Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.remove("active"); // Hides Active Exercise
+        (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = true // Disables Focus
+
         finish_training.classList.add("active") // Shows Finish Training Slide
+        finish_training.inert = false // Enables Focus
     }
 
     startActivity(container, playback) // Starts Activity
@@ -442,9 +463,14 @@ export function skipWarmUp(container:HTMLDivElement):void {
     warm_up_interval.remaining_time = 0
 
     training_plan_state.active_exercise_index += 1; // Changes Active Exercise Index
+
     (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
+
     nextExercise(container) // Next Exercise
+
     warm_up.classList.remove("active") // Hides Warm Up
+    warm_up.inert = true // Disables Focus
 }
 
 // Function For Skip Exercises Break
@@ -465,7 +491,12 @@ export function skipBreak(container:HTMLDivElement):void {
     break_countdown.style.color = "#ffffff" // Sets Break Countdown Color To White
 
     training_plan_state.active_exercise_index += 1; // Changes Active Exercise Index
+
     (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+    (exercises[training_plan_state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
+    
     nextExercise(container) // Next Exercise
+
     exercises_break.classList.remove("active") // Hides Break Between Sets Tab
+    exercises_break.inert = true // Disables Focus
 }
