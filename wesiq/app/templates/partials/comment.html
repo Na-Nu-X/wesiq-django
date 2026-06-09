@@ -133,7 +133,7 @@
 		<div class="right">
 			<p class="comment">{{ one_comment.comment }}</p>
 
-			<div class="likes" title="{% translate 'Páči sa mi...' %}">
+			<button class="likes" title="{% translate 'Páči sa mi...' %}">
 				<i 
 					class="
 						{% if one_comment.has_like %}
@@ -149,25 +149,25 @@
 				></i> <!-- https://fontawesome.com/icons/heart -->
 	
 				<p class="likes_counter">{{ one_comment.likes }}</p>
-			</div>
+			</button>
 		</div>
     </div>
 
     <div class="interactions">
         {% if level < 5 %}
-            <div class="reply" title="{% translate 'Odpovedať...' %}">
+            <button class="reply" title="{% translate 'Odpovedať...' %}">
                 <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-            </div>
+            </button>
 
         {% endif %}
 
 		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
 			{% if nested_comments|length > 0 %}
-				<div class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
+				<button class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
 					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
 					{% comment %} <i class="fa-solid fa-angle-up"></i> <!-- https://fontawesome.com/icons/angle-up --> {% endcomment %}
-				</div>
+				</button>
 			
 			{% endif %}
 		{% endwith %}

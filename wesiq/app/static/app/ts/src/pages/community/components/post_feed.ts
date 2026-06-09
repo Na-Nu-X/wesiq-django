@@ -133,9 +133,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                 (event.target as HTMLElement).classList.contains("fa-comment") &&
                 ((event.target as HTMLElement).parentElement as HTMLDivElement).classList.contains("comments")
             ) {
-                const comment_forum:HTMLDivElement = (((event.target as HTMLElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+                const comment_forum:HTMLDivElement|null = (((event.target as HTMLElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement || null // Gets The Comment Forum (Null If The Comments Are Turned Off)
 
-                !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                if(comment_forum) {
+                    !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                }
             }
 
             // Add Emoji To The Write Comment Input
@@ -143,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 (event.target as HTMLElement).classList.contains("add_emoji") &&
                 (event.target as HTMLElement).closest(".write_comment_form")
             ) {
-                const add_emoji:HTMLElement = event.target as HTMLElement // Gets The Add Emoji Icon
+                const add_emoji:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Add Emoji Button
                 const emoji_picker_container:HTMLDivElement = (add_emoji.parentElement as HTMLDivElement).querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
 
                 event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
@@ -151,8 +153,8 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
 
             // Send Comment
-            if((event.target as HTMLImageElement).classList.contains("send")) {
-                const send_comment:HTMLImageElement = event.target as HTMLImageElement // Gets The Send Comment Icon
+            if((event.target as HTMLButtonElement).classList.contains("send")) {
+                const send_comment:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Send Comment Button
                 const post_container:HTMLDivElement = send_comment.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const comments_counter:HTMLParagraphElement = post_container.querySelector(".society .comments .comments_counter") as HTMLParagraphElement // Gets The Comments Counter
                 const write_comment_form:HTMLDivElement = post_container.querySelector(".comment_forum .write_comment_form") as HTMLDivElement // Gets The Write Comment Form
@@ -229,10 +231,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Previous Post
         if(
-            (event.target as HTMLDivElement).classList.contains("previous") && 
-            !(event.target as HTMLDivElement).classList.contains("hidden")
+            (event.target as HTMLButtonElement).classList.contains("previous") && 
+            !(event.target as HTMLButtonElement).classList.contains("hidden")
         ) {
-            const previous:HTMLDivElement = event.target as HTMLDivElement // Gets The Previous Button
+            const previous:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Previous Button
             const media_container:HTMLDivElement = previous.closest(".media") as HTMLDivElement // Gets The Media Container
             const post_bars:HTMLDivElement = ((previous.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
             const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
@@ -243,10 +245,10 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Next Post
         if(
-            (event.target as HTMLDivElement).classList.contains("next") && 
-            !(event.target as HTMLDivElement).classList.contains("hidden")
+            (event.target as HTMLButtonElement).classList.contains("next") && 
+            !(event.target as HTMLButtonElement).classList.contains("hidden")
         ) {
-            const next:HTMLDivElement = event.target as HTMLDivElement // Gets The Next Button
+            const next:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Next Button
             const media_container:HTMLDivElement = next.closest(".media") as HTMLDivElement // Gets The Media Container
             const post_bars:HTMLDivElement = ((next.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
             const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
@@ -281,8 +283,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         // Mute / Unmute Video
-        if((event.target as HTMLDivElement).classList.contains("mute_unmute")) {
-            const volume_icon:HTMLElement = event.target as HTMLElement // Gets The Volume Icon
+        if((event.target as HTMLButtonElement).classList.contains("mute_unmute")) {
+            const volume_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Volume Icon
             const volume_input:HTMLInputElement = (volume_icon.closest(".volume_container") as HTMLDivElement).querySelector(".volume") as HTMLInputElement // Gets the Volume Input
             const video:HTMLVideoElement = (volume_icon.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
@@ -393,8 +395,29 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             if(event.key === "ArrowLeft" || event.key === "ArrowRight") event.preventDefault() // Prevents Default Behaviour
 
+            // Change Video Volume
+            if((event.target as HTMLInputElement).classList.contains("volume")) {
+                // Lower Volume
+                if(event.key === "ArrowLeft") {
+                    const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input
+                    const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".mute_unmute i") as HTMLElement // Gets the Volume Icon
+                    const video:HTMLVideoElement = (volume_input.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                    changeVideoVolume(volume_input, volume_icon, video, -0.05) // Decreases The Video Volume
+                }
+
+                // Higher Volume
+                else if(event.key === "ArrowRight") {
+                    const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input
+                    const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".mute_unmute i") as HTMLElement // Gets the Volume Icon
+                    const video:HTMLVideoElement = (volume_input.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
+
+                    changeVideoVolume(volume_input, volume_icon, video, 0.05) // Increases The Video Volume
+                }
+            }
+
             // Change Video Time
-            if(media_container.querySelector(".video_container:hover")) {
+            else if(media_container.querySelector(".video_container:hover")) {
                 const video_container:HTMLDivElement = media_container.querySelector(".video_container:hover") as HTMLDivElement // Gets The Video Container
                 const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
 
@@ -429,50 +452,91 @@ document.addEventListener("DOMContentLoaded", function():void {
             }
         }
 
-        // Toggle Post Like Click Functionality
-        if(
-            (event.target as HTMLButtonElement).classList.contains("likes") &&
-            (event.target as HTMLElement).closest(".society")
-        ) {
-            if(event.key === "Enter") {
-                const toggle_like:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Heart Icon
-                const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
-                const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
-                const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
-    
-                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
+        if(event.key === "Enter") {
+            // Post Container
+            if((event.target as HTMLElement).closest(".post_container") as HTMLDivElement) {
+                // Toggle Post Like
+                if(
+                    (event.target as HTMLButtonElement).classList.contains("likes") &&
+                    (event.target as HTMLElement).closest(".society")
+                ) {
+                    const toggle_like:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Heart Icon
+                    const likes_counter:HTMLParagraphElement|null = (toggle_like.parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement || null // Gets The Likes Counter
+                    const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
+
+                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
+                }
+
+                // Share Post
+                if((event.target as HTMLButtonElement).classList.contains("share")) {
+                    const share_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Share Icon
+                    const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
+                    const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+                }
+
+                // Save Post
+                if((event.target as HTMLButtonElement).classList.contains("save")) {
+                    const save_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Save Icon
+                    const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                }
+
+                // Comment Forum
+
+                // Toggle Show / Hide Comment Forum
+                if((event.target as HTMLButtonElement).classList.contains("comments")) {
+                    const comment_forum:HTMLDivElement = (((event.target as HTMLButtonElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+
+                    !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                }
+
+                // Toggle Reply On Comment
+                if(
+                    (event.target as HTMLButtonElement).closest(".interactions") &&
+                    ((event.target as HTMLButtonElement).classList.contains("reply") ||
+                    ((event.target as HTMLButtonElement).querySelector("i") as HTMLElement).classList.contains("fa-comment-slash"))
+                ) {
+                    const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Reply Icon
+                    const write_comment_form:HTMLDivElement = (icon.closest(".comment_forum") as HTMLDivElement).querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
+                    const one_comment:HTMLDivElement = icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment
+
+                    toggleReplyOnComment(icon, write_comment_form, one_comment)
+                }
+
+                // Toggle Comment Like
+                if(
+                    (event.target as HTMLButtonElement).classList.contains("likes") &&
+                    (event.target as HTMLButtonElement).closest(".one_comment") as HTMLDivElement
+                ) {
+                    const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Icon
+                    const one_comment:HTMLDivElement = (event.target as HTMLButtonElement).closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const comment_likes_counter:HTMLParagraphElement = ((event.target as HTMLButtonElement).parentElement as HTMLDivElement).querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
+
+                    if(one_comment.dataset["comment_id"]) togglePostCommentLike(icon, comment_likes_counter, Number(one_comment.dataset["comment_id"])) // Adds Or Removes Like From The Comment
+                }
+
+                // Show Replies
+                if((event.target as HTMLButtonElement).classList.contains("show_replies")) {
+                    const show_replies_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Show Replies Icon
+                    const one_comment:HTMLDivElement = show_replies_icon.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
+                    const reply_container:HTMLDivElement = one_comment.querySelector(".reply_container") as HTMLDivElement // Gets The Reply Container
+                    
+                    toggleShowReplies(show_replies_icon, reply_container) // Toggles Visibility Of The Comment Replies
+                }
             }
-        }
 
-        // Share Post
-        if((event.target as HTMLButtonElement).classList.contains("share")) {
-            if(event.key === "Enter") {
-                const share_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Share Icon
-                const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
-                const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
-    
-                if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
-            }
-        }
+            // Post Bars Click Functionalities
+            if((event.target as HTMLDivElement).classList.contains("bar")) {
+                const clicked_bar:HTMLDivElement = event.target as HTMLDivElement // Gets The Clicked Bar
+                const media_container:HTMLDivElement = clicked_bar.closest(".media") as HTMLDivElement // Gets The Media Container
+                const post_bars:HTMLDivElement = clicked_bar.parentElement as HTMLDivElement // Gets The Post Bars Container
+                const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
 
-        // Save Post
-        if((event.target as HTMLButtonElement).classList.contains("save")) {
-            if(event.key === "Enter") {
-                const save_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Save Icon
-                const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
-    
-                if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
-            }
-        }
-
-        // Comment Forum
-
-        // Toggle Show / Hide Comment Forum
-        if((event.target as HTMLButtonElement).classList.contains("comments")) {
-            if(event.key === "Enter") {
-                const comment_forum:HTMLDivElement = (((event.target as HTMLButtonElement).closest(".society") as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
-
-                !comment_forum.classList.contains("hidden") ? comment_forum.classList.add("hidden") : comment_forum.classList.remove("hidden") // Shows or Hides The Comment Forum
+                changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
             }
         }
     })
@@ -480,9 +544,9 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Feed Input Functionality
     feed.addEventListener("input", function(event:Event):void {
         // Change Video Volume
-        if((event.target as HTMLDivElement).classList.contains("volume")) {
+        if((event.target as HTMLInputElement).classList.contains("volume")) {
             const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input
-            const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".mute_unmute") as HTMLElement // Gets the Volume Icon
+            const volume_icon:HTMLElement = (volume_input.closest(".volume_container") as HTMLDivElement).querySelector(".mute_unmute i") as HTMLElement // Gets the Volume Icon
             const video:HTMLVideoElement = (volume_input.closest(".video_container") as HTMLDivElement).querySelector(".video") as HTMLVideoElement // Gets The Video
 
             changeVideoVolume(volume_input, volume_icon, video) // Changes The Video Volume

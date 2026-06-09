@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const selection_exercises:NodeListOf<HTMLDivElement> = exercise_selection.querySelectorAll<HTMLDivElement>(".exercises .exercise") // Gets All Exercises From The Exercise Selection
 
     const search_bar:HTMLInputElement = exercise_selection.querySelector(".search_bar_menu .search_bar") as HTMLInputElement // Gets Search Bar Input
-    const delete_search_bar:HTMLElement = exercise_selection.querySelector(".search_bar_menu .fa-xmark") as HTMLElement // Gets Delete Search Bar Button
+    const delete_search_bar:HTMLButtonElement = exercise_selection.querySelector(".search_bar_menu .delete_search_bar") as HTMLButtonElement // Gets Delete Search Bar Button
 
     // Events
     

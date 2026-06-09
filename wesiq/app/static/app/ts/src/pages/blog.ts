@@ -22,12 +22,15 @@ document.addEventListener("DOMContentLoaded", function():void {
     let articles_data:article[] = [] // Data - Array of Objects of Articles
     articles_data = fillArticlesData(all_articles) // Fills Articles Data
 
-    const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement // Gets Search Bar
-    const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement // Gets Delete Search Bar Icon
+    const search_bar_container:HTMLDivElement = document.querySelector(".search_bar_container") as HTMLDivElement // Gets The Search Bar Container
+    const search_bar_menu:HTMLDivElement = search_bar_container.querySelector(".search_bar_menu") as HTMLDivElement // Gets The Search Bar Menu
+    const search_bar:HTMLInputElement = search_bar_menu.querySelector(".search_bar") as HTMLInputElement // Gets Search Bar
+    const delete_search_bar:HTMLButtonElement = search_bar_menu.querySelector(".delete_search_bar") as HTMLButtonElement // Gets Delete Search Bar Button
     const share_buttons:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".share") // Gets Every Share Button
 
-    const sort_select_menu:HTMLDivElement = document.querySelector(".sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
-    const category_select_menu:HTMLDivElement = document.querySelector(".category_select_menu") as HTMLDivElement // Gets Category Select Menu
+    const select_menus:HTMLDivElement = search_bar_container.querySelector(".select_menus") as HTMLDivElement // Gets The Select Menus
+    const sort_select_menu:HTMLDivElement = select_menus.querySelector(".sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
+    const category_select_menu:HTMLDivElement = select_menus.querySelector(".category_select_menu") as HTMLDivElement // Gets Category Select Menu
 
     // Events
 

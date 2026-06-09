@@ -71,7 +71,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         comment.textContent = comment_input.textContent // Sets The Comment Text
 
         // Likes
-        const likes:HTMLDivElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLDivElement // Gets The Likes Container
+        const likes:HTMLButtonElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLButtonElement // Gets The Like Button
 
         const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
         like_icon.classList.add("fa-regular") // Shows The Empty Heart Icon - https://fontawesome.com/icons/heart
@@ -115,11 +115,11 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         // Reply
         // Displays The Reply Option Only If The Nested Level Of The Comment Is Less Than 5
         if(add_comment_response.comment.level < 5) {
-            const reply:HTMLDivElement = document.createElement("div") // Creates The Reply Container
+            const reply:HTMLButtonElement = document.createElement("button") // Creates The Reply Button
             reply.classList.add("reply") // Adds The Reply Class
             reply.title = gettext("Odpovedať...")
             reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
-            interactions.prepend(reply) // Prepends The Reply Container To The Interactions
+            interactions.prepend(reply) // Prepends The Reply Button To The Interactions
         }
 
         // Date
@@ -136,7 +136,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
 
             // Checks If The Toggle Show Replies Button Isn't Already In DOM
             if(!new_parent_comment_interactions.querySelector(".show_replies")) {
-                const show_replies:HTMLDivElement = document.createElement("div") // Creates The Show Replies Container
+                const show_replies:HTMLButtonElement = document.createElement("button") // Creates The Show Replies Button
                 show_replies.classList.add("show_replies") // Adds The Show Replies Class
                 show_replies.title = gettext("Zobraziť odpovede...")
                 show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon

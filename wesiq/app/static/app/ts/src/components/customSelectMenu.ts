@@ -10,7 +10,7 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
     const select_icon:HTMLElement = select.querySelector("i") as HTMLElement // Gets Select Icon
     const options_list:HTMLDivElement = select_menu.querySelector(".options_list") as HTMLDivElement // Gets Options List
     const options:NodeListOf<HTMLDivElement> = options_list.querySelectorAll<HTMLDivElement>(".option") // Gets All Options
-    const refresh_icon:HTMLElement = select_menu.querySelector(".refresh i") as HTMLElement
+    const refresh:HTMLButtonElement = select_menu.querySelector(".refresh") as HTMLButtonElement // Gets The Refresh Button
 
     // Select Click Functionality
     select.addEventListener("click", function():void {
@@ -19,6 +19,7 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
         else if(select_icon.classList.contains("fa-angle-up")) select_icon.classList.replace("fa-angle-up", "fa-angle-down")
 
         options_list.classList.toggle("active") // Toggle Show / Hide Options List
+        options_list.inert = !options_list.inert // Enables / Disables The Focus
     })
 
     // Select Keydown Functionality
@@ -29,15 +30,28 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
             else if(select_icon.classList.contains("fa-angle-up")) select_icon.classList.replace("fa-angle-up", "fa-angle-down")
     
             options_list.classList.toggle("active") // Toggle Show / Hide Options List
+            options_list.inert = !options_list.inert // Enables / Disables The Focus
         }
     })
 
-    // Options Click Functionality
+    // Options Functionalities
     options.forEach(function(one_option:HTMLDivElement):void {
-        one_option.addEventListener("click", function() {
+        // Option Click Functionalities
+        one_option.addEventListener("click", function():void {
             options_list.classList.remove("active") // Hides Options List
+            options_list.inert = !options_list.inert // Enables / Disables The Focus
 
             if(this.dataset[parameter_name]) setURLParameter(parameter_name, this.dataset[parameter_name]) // Sets Sort URL Parameter With Value From Data In Option
+        })
+
+        // Option Keydown Functionalities
+        one_option.addEventListener("keydown", function(event:KeyboardEvent):void {
+            if(event.key === "Enter") {
+                options_list.classList.remove("active") // Hides Options List
+                options_list.inert = !options_list.inert // Enables / Disables The Focus
+    
+                if(this.dataset[parameter_name]) setURLParameter(parameter_name, this.dataset[parameter_name]) // Sets Sort URL Parameter With Value From Data In Option
+            }
         })
 
         if(one_option.classList[1] === "selected") {
@@ -47,8 +61,8 @@ export function customSelectMenu(select_menu:HTMLDivElement, parameter_name:stri
         }
     })
 
-    // Refresh Icon Click Functionality
-    refresh_icon.addEventListener("click", function():void {
+    // Refresh Button Click Functionality
+    refresh.addEventListener("click", function():void {
         deleteURLParameter(parameter_name) // Deletes Parameter In The URL
     })
 }

@@ -20,7 +20,7 @@
 {% endblock navigation_bar_items %}
 
 {% block banner %}
-    <div 
+    <button 
         class="reviews_info" 
         title="
             {% if total_reviews == 0 %}
@@ -36,7 +36,6 @@
                 {% endblocktranslate %}
             {% endif %}
         "
-        tabindex="0"
     >
         <p>{{ avg_rating.rating__avg|floatformat:2 }}</p>
 
@@ -49,14 +48,18 @@
         
             {% endif %}
         {% endfor %}
-    </div>
+</button>
 {% endblock banner %}
 
 {% block search_bar %}
     <div class="search_container">
         <div class="search_bar_container">
             <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
-            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+            
+            <button class="delete_search_bar">
+                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+            </button>
+
             <input class="search_bar" type="text" placeholder="{% translate 'Hľadať' %}" autocomplete="off">
         </div>
 
@@ -316,40 +319,40 @@
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
             <div class="sort_select_menu">
-                <div class="refresh" title="Obnoviť predvolené filtre">
+                <button class="refresh" title="Obnoviť predvolené filtre">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </div>
+                </button>
 
                 <div class="select" tabindex="0">
                     <span>{% translate "Najnovšie recenzie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
-                <div class="options_list">
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest"><i class="fa-regular fa-clock"></i><span>{% translate "Najnovšie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
-                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest"><i class="fa-solid fa-clock-rotate-left"></i><span>{% translate "Najstaršie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best"><i class="fa-solid fa-angles-up"></i><span>{% translate "Najlepšie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-up -->
-                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst"><i class="fa-solid fa-angles-down"></i><span>{% translate "Najhoršie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-down -->
+                <div class="options_list" inert>
+                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest" tabindex="0"><i class="fa-regular fa-clock"></i><span>{% translate "Najnovšie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
+                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest" tabindex="0"><i class="fa-solid fa-clock-rotate-left"></i><span>{% translate "Najstaršie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
+                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best" tabindex="0"><i class="fa-solid fa-angles-up"></i><span>{% translate "Najlepšie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-up -->
+                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst" tabindex="0"><i class="fa-solid fa-angles-down"></i><span>{% translate "Najhoršie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-down -->
                 </div>
             </div>
 
             <div class="rating_select_menu">
-                <div class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
+                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </div>
+                </button>
 
                 <div class="select" tabindex="0">
                     <span>{% translate "Všetky kategórie" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
-                <div class="options_list">
-                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
-                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                <div class="options_list" inert>
+                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all" tabindex="0"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
+                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
                 </div>
             </div>
         </div>
@@ -606,10 +609,10 @@
                 <i class="fas fa-angle-down"></i>
             </div>
 
-            <div class="options_list">
-                <div class="option" data-subject="question"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
-                <div class="option" data-subject="suggestion"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
-                <div class="option" data-subject="bug"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
+            <div class="options_list" inert>
+                <div class="option" data-subject="question" tabindex="0"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
+                <div class="option" data-subject="suggestion" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+                <div class="option" data-subject="bug" tabindex="0"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
             </div>
         </div>
 
@@ -757,7 +760,7 @@
                         const data = await response.json()
 
                         if(data.error) {
-                            error_report.textContent = gettext("Nastala chyba. Skúste znovu") // Shows Error Message
+                            error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
                             donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
                             return
                         }
@@ -773,7 +776,7 @@
                         })
 
                         if(error) {
-                            error_report.textContent = gettext("Nastala chyba. Skúste znovu") // Shows Error Message
+                            error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
                             donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
                         } 
                         
@@ -785,7 +788,7 @@
                     }
                     
                     catch(e) {
-                        error_report.textContent = gettext("Nastala chyba. Skúste znovu") // Shows Error Message
+                        error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
                         donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
                     }
                 })

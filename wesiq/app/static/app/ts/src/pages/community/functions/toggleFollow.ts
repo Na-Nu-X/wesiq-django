@@ -20,7 +20,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
                 if(icon.classList.contains("fa-user-plus")) {
                     icon.classList.replace("fa-user-plus", "fa-user-minus") // Shows The Unfollow Icon
         
-                    const followers_counter:HTMLParagraphElement = (icon.parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+                    const followers_counter:HTMLParagraphElement = (icon.closest(".one_user") as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
         
                     followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
                 }
@@ -29,7 +29,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
                 else if(icon.classList.contains("fa-user-minus")) {
                     icon.classList.replace("fa-user-minus", "fa-user-plus") // Shows The Follow Icon
     
-                    const followers_counter:HTMLParagraphElement = (icon.parentNode as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
+                    const followers_counter:HTMLParagraphElement = (icon.closest(".one_user") as HTMLDivElement).querySelector(".followers") as HTMLParagraphElement // Gets The Followers Counter
     
                     followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
                 }

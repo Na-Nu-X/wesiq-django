@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
 
     const search_bar_container:HTMLDivElement = document.querySelector(".search_bar_container") as HTMLDivElement // Gets Search Bar Container
     const search_bar:HTMLInputElement = search_bar_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Bar Input
-    const delete_search_bar:HTMLElement = search_bar_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Bar Icon
+    const delete_search_bar:HTMLButtonElement = search_bar_container.querySelector(".delete_search_bar") as HTMLButtonElement // Gets The Delete Search Bar Button
 
     const search_result_container:HTMLDivElement = document.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
     const one_user_template:HTMLTemplateElement = search_result_container.querySelector(".one_user_template") as HTMLTemplateElement // Gets The One User Template
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
         else resetSearchedUsers(search_bar, all_users_container, first_users) // Resets The Searched Users
     })
 
-    // Delete Search Bar Icon Click Functionality
+    // Delete Search Bar Click Functionality
     delete_search_bar.addEventListener("click", () => resetSearchedUsers(search_bar, all_users_container, first_users)) // Resets The Searched Users
 
     // Global Event Delegations
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             event.preventDefault() // Prevents Redirect To The User's Profile
 
             const icon:HTMLElement = event.target as HTMLElement // Gets The Follow / Unfollow Icon
-            const clicked_user_id:number|null = Number(((event.target as HTMLElement).parentNode as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
+            const clicked_user_id:number|null = Number(((event.target as HTMLElement).closest(".one_user") as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
             toggleFollow(icon, null, clicked_user_id)
         }
 
@@ -106,6 +106,20 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const username:HTMLParagraphElement = one_user.querySelector(".username") as HTMLParagraphElement // Gets The Username Paragraph
 
             storeSearchedUserToHistory(username.textContent) // Stores The Searched User To The Searched Users History 
+        }
+    })
+
+    // All Users Container Keydown Functionalities
+    all_users_container.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            // Toggle Follow
+            if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
+                event.preventDefault() // Prevents Redirect To The User's Profile
+
+                const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Follow / Unfollow Icon
+                const clicked_user_id:number|null = Number(((event.target as HTMLElement).closest(".one_user") as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
+                toggleFollow(icon, null, clicked_user_id)
+            }
         }
     })
 })

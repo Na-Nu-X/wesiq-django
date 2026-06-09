@@ -24,6 +24,7 @@ header {
         // Reviews Informations
 
         .reviews_info {
+            all: unset;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -159,6 +160,10 @@ header {
                         &:focus-visible {
                             background-color: transparentize($blue-color, 0.9);
                             letter-spacing: 0.5px;
+                        }
+
+                        &:focus-visible {
+                            outline: none !important;
                         }
                     }
                 }
@@ -945,24 +950,32 @@ header {
             max-width: 500px;
             margin: 0px auto 10px;
 
-            .sort_select_menu, .rating_select_menu {
+            .sort_select_menu, 
+            .rating_select_menu {
                 @include custom_select_menu($options_list_height: calc(33px * 4));
 
                 .refresh {
-                    .fa-arrow-rotate-right {
-                        position: absolute;
-                        top: 50%;
-                        left: 0px;
-                        transform: translateY(-50%);
-                        padding: 12.5px 0px 12.5px 8.5px;
-                        color: darken($secondary-color, 10%);
-                        transition: color 0.3s ease;
-                        z-index: 50;
-            
-                        &:hover {
+                    all: unset;
+                    position: absolute;
+                    top: 50%;
+                    left: 0px;
+                    transform: translateY(-50%);
+                    height: 100%;
+                    padding-left: 8.5px;
+                    z-index: 50;
+
+                    &:hover {
+                        cursor: pointer;
+
+                        .fa-arrow-rotate-right {
                             color: $secondary-color;
-                            cursor: pointer;
                         }
+                    }
+
+                    .fa-arrow-rotate-right {
+                        display: block;
+                        color: darken($secondary-color, 20%);
+                        transition: color 0.3s ease;
                     }
                 }
             }
@@ -1290,7 +1303,6 @@ header {
                 left: 50%;
                 transform: translateX(-50%);
                 text-align: left;
-                padding: 0px 15px;
                 color: $secondary-color;
                 background-color: transparentize($main-color, 0.2);
                 border-radius: 0px 0px 5px 5px;
@@ -1303,12 +1315,18 @@ header {
                 }
 
                 .option {
-                    padding: 5px 0px;
-                    transition: color 0.3s ease;
+                    padding: 5px 15px;
+                    transition: background-color 0.3s ease, color 0.3s ease;
 
                     &:hover,
+                    &:focus-visible,
                     &.selected {
+                        background-color: transparentize($blue-color, 0.9);
                         color: $blue-color !important;
+                    }
+
+                    &:focus-visible {
+                        outline: none !important;
                     }
 
                     i {
