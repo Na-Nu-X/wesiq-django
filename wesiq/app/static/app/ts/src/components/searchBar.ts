@@ -12,9 +12,11 @@ interface Pages {
 document.addEventListener("DOMContentLoaded", function():void {
     // Variables
 
-    const search_bar:HTMLInputElement = document.querySelector(".search_bar") as HTMLInputElement // Gets The Search Bar Input
-    const search_result_container:HTMLDivElement = document.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
-    const delete_search_bar:HTMLElement = document.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Bar Icon
+    const search_container:HTMLDivElement = document.querySelector(".search_container") as HTMLDivElement // Gets The Search Container
+    const search_bar_container:HTMLDivElement = search_container.querySelector(".search_bar_container") as HTMLDivElement // Gets The Search Bar Container
+    const search_bar:HTMLInputElement = search_bar_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Bar Input
+    const search_result_container:HTMLDivElement = search_container.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
+    const delete_search_bar:HTMLButtonElement = search_bar_container.querySelector(".delete_search_bar") as HTMLButtonElement // Gets The Delete Search Bar Button
 
     const MAX_HISTORY_LENGTH = 3 // Sets Maximum Search History Length
     let focused_search_result_index:number = 0 // Focused Search Result Index

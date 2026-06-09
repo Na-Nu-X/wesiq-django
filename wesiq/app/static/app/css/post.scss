@@ -438,6 +438,7 @@ h2 {
                             .volume {
                                 --volume: "0%";
 
+                                @include focus;
                                 appearance: none !important;
                                 -webkit-appearance: none !important;
                                 direction: rtl;
@@ -478,14 +479,18 @@ h2 {
                             }
 
                             .mute_unmute {
-                                display: block;
+                                all: unset;
                                 width: 22.5px;
                                 text-align: right;
-                                pointer-events: all;
+                                transition: transform 0.3s ease;
 
                                 &:hover {
                                     transform: scale(1.1);
                                     cursor: pointer;
+                                }
+
+                                i {
+                                    display: block;
                                 }
                             }
                         }
@@ -870,8 +875,6 @@ h2 {
     }
 
     .comment_forum {
-        margin-top: 10px;
-
         &.hidden {
             display: none;
             opacity: 0;
@@ -880,6 +883,7 @@ h2 {
         .all_comments {
             @include scrollbar;
             max-height: 300px;
+            padding-top: 10px;
 
             .one_comment {
                 position: relative;
@@ -957,6 +961,7 @@ h2 {
                         }
 
                         .likes {
+                            all: unset;
                             display: flex;
                             align-items: center;
                             gap: 5px;
@@ -993,8 +998,11 @@ h2 {
                     padding-right: 10px;
 
                     .reply {
+                        all: unset;
+
                         .fa-comment,
                         .fa-comment-slash {
+                            display: block;
                             color: darken($secondary-color, 40%);
                             cursor: pointer;
 
@@ -1043,9 +1051,12 @@ h2 {
                     }
 
                     .show_replies {
+                        all: unset;
+
                         .fa-angle-down,
                         .fa-angle-up {
                             @include icon;
+                            display: block;
                         }
                     }
                 }
@@ -1192,11 +1203,16 @@ h2 {
             }
 
             .add_emoji {
-                @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                all: unset;
                 position: absolute;
                 top: 24px;
                 left: calc(6px + 38px + 10px);
                 transform: translateY(-50%);
+
+                i {
+                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    display: block;
+                }
             }
 
             .emoji_picker_container {
@@ -1204,6 +1220,7 @@ h2 {
             }
 
             .send {
+                all: unset;
                 position: absolute;
                 top: 50%;
                 right: 10px;
@@ -1219,7 +1236,7 @@ h2 {
                     cursor: pointer;
                 }
 
-                path {
+                svg {
                     pointer-events: none;
                 }
             }

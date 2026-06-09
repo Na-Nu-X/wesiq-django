@@ -17,26 +17,30 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Subject Select Click Functionality
     subject_select.addEventListener("click", function():void {
-        subject_options_list.classList.toggle("active");
+        subject_options_list.classList.toggle("active")
+        subject_options_list.inert = !subject_options_list.inert; // Enables / Disables The Focus
         (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
     })
 
     // Subject Select Keydown Functionality
     subject_select.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "Enter") {
-            subject_options_list.classList.toggle("active");
+            subject_options_list.classList.toggle("active")
+            subject_options_list.inert = !subject_options_list.inert; // Enables / Disables The Focus
             (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up")
         }
     })
 
-    // Subject Options Click Functionality
-    subject_options.forEach(function(option:HTMLDivElement):void {
-        option.addEventListener("click", function():void {
+    // Subject Options FunctionalitIES
+    subject_options.forEach(function(one_option:HTMLDivElement):void {
+        // Option Click Functionalities
+        one_option.addEventListener("click", function():void {
             if(!this.dataset["subject"]) return
 
             sessionStorage.setItem("subject", this.dataset["subject"])
 
-            subject_options_list.classList.toggle("active");
+            subject_options_list.classList.toggle("active")
+            subject_options_list.inert = !subject_options_list.inert; // Enables / Disables The Focus
             (subject_select.querySelector(".fa-angle-down") as HTMLDivElement).classList.toggle("fa-angle-up")
 
             // Removes Selected Class From Options
@@ -50,6 +54,32 @@ document.addEventListener("DOMContentLoaded", function():void {
                 (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
 
                 this.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
+
+        // Option Keydown Functionalities
+        one_option.addEventListener("keydown", function(event:KeyboardEvent):void {
+            if(event.key === "Enter") {
+                if(!this.dataset["subject"]) return
+
+                sessionStorage.setItem("subject", this.dataset["subject"])
+
+                subject_options_list.classList.toggle("active")
+                subject_options_list.inert = !subject_options_list.inert; // Enables / Disables The Focus
+                (subject_select.querySelector(".fa-angle-down") as HTMLDivElement).classList.toggle("fa-angle-up")
+
+                // Removes Selected Class From Options
+                subject_options.forEach(function(remove_selected:HTMLDivElement):void {
+                    remove_selected.classList.remove("selected")
+                })
+
+                // Shows Current Selected Option From List Without Icon
+                if(this.dataset["subject"] === sessionStorage.getItem("subject")) {
+                    (subject_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent;
+                    (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
+
+                    this.classList.add("selected") // Adds Selected Class To Selected Option
+                }
             }
         })
     })

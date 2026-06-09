@@ -186,6 +186,7 @@ export function generatePostBars(all_media:NodeListOf<HTMLDivElement>, post_bars
 
             generateButtons(i, all_media) // Generates The Change Buttons (Previous / Next)
             bar.classList.add("bar") // Adds The Bar Class
+            bar.tabIndex = 0 // Makes The Bar Focusable
 
             if(i === 0) {
                 bar.classList.add("active")

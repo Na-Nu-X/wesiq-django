@@ -560,16 +560,15 @@ header {
 
         .search_bar_container {
             @include search_bar;
-            // margin: 0px auto;
             z-index: 100;
         }
 
         .search_result_container {
             position: relative;
-            max-width: 500px;
-            width: 100%;
-            height: calc(3 * 50px + 20px);
-            margin: 20px auto 0px;
+            max-width: 510px;
+            width: calc(100% + 10px);
+            height: calc(3 * 50px + 20px + 10px);
+            margin: 15px auto 0px;
 
             .loading {
                 @include position_center;
@@ -594,7 +593,6 @@ header {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
-                width: 100%;
                 height: 100%;
 
                 .one_user {
@@ -602,11 +600,20 @@ header {
                     display: flex;
                     align-items: center;
                     gap: 10px;
+                    margin: 0px 5px;
                     padding: 5px;
                     color: $secondary-color;
                     border: 1px solid transparentize($blue-color, 0.5);
                     border-radius: $small-border-radius;
                     transition: background-color 0.3s ease, transform 0.3s ease, display 0.3s ease allow-discrete;
+
+                    &:first-child {
+                        margin-top: 5px;
+                    }
+
+                    &:last-child {
+                        margin-bottom: 5px;
+                    }
 
                     &.hidden {
                         transform: translateY(calc(300% + 20px));
@@ -626,11 +633,16 @@ header {
                         font-style: italic
                     }
 
-                    .fa-user,
-                    .fa-user-plus,
-                    .fa-user-minus {
-                        @include icon;
-                        display: block;
+                    .follow_button {
+                        all: unset;
+
+                        .fa-user,
+                        .fa-user-plus,
+                        .fa-user-minus {
+                            @include icon;
+                            display: block;
+                            padding: 11.5px 0px;
+                        }
                     }
                 }
             }
@@ -1245,6 +1257,7 @@ header {
                                     .volume {
                                         --volume: "0%";
 
+                                        @include focus;
                                         appearance: none !important;
                                         -webkit-appearance: none !important;
                                         direction: rtl;
@@ -1285,14 +1298,18 @@ header {
                                     }
         
                                     .mute_unmute {
-                                        display: block;
+                                        all: unset;
                                         width: 22.5px;
                                         text-align: right;
-                                        pointer-events: all;
+                                        transition: transform 0.3s ease;
         
                                         &:hover {
                                             transform: scale(1.1);
                                             cursor: pointer;
+                                        }
+        
+                                        i {
+                                            display: block;
                                         }
                                     }
                                 }
@@ -1682,8 +1699,6 @@ header {
             }
 
             .comment_forum {
-                margin-top: 10px;
-
                 &.hidden {
                     display: none;
                     opacity: 0;
@@ -1692,6 +1707,7 @@ header {
                 .all_comments {
                     @include scrollbar;
                     max-height: 300px;
+                    padding-top: 10px;
 
                     .one_comment {
                         position: relative;
@@ -1769,6 +1785,7 @@ header {
                                 }
     
                                 .likes {
+                                    all: unset;
                                     display: flex;
                                     align-items: center;
                                     gap: 5px;
@@ -1805,8 +1822,11 @@ header {
                             padding-right: 10px;
         
                             .reply {
+                                all: unset;
+
                                 .fa-comment,
                                 .fa-comment-slash {
+                                    display: block;
                                     color: darken($secondary-color, 40%);
                                     cursor: pointer;
 
@@ -1855,9 +1875,12 @@ header {
                             }
 
                             .show_replies {
+                                all: unset;
+
                                 .fa-angle-down,
                                 .fa-angle-up {
                                     @include icon;
+                                    display: block;
                                 }
                             }
                         }
@@ -2004,11 +2027,16 @@ header {
                     }
 
                     .add_emoji {
-                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                        all: unset;
                         position: absolute;
                         top: 24px;
                         left: calc(6px + 38px + 10px);
                         transform: translateY(-50%);
+
+                        i {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            display: block;
+                        }
                     }
 
                     .emoji_picker_container {
@@ -2016,6 +2044,7 @@ header {
                     }
         
                     .send {
+                        all: unset;
                         position: absolute;
                         top: 50%;
                         right: 10px;
@@ -2031,7 +2060,7 @@ header {
                             cursor: pointer;
                         }
 
-                        path {
+                        svg {
                             pointer-events: none;
                         }
                     }

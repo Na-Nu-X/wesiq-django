@@ -104,8 +104,16 @@ export function muteUnmuteVideo(volume_icon:HTMLElement, volume_input:HTMLInputE
 }
 
 // Function For Change The Video Volume
-export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement):void {
-    const volume:number = Number(volume_input.value) // Gets The Volume Value
+export function changeVideoVolume(volume_input:HTMLInputElement, volume_icon:HTMLElement, video:HTMLVideoElement, step?:number):void {
+    let volume:number = Number(volume_input.value) // Gets The Volume Value
+
+    if(step) {
+        volume += step // Updates The Volume By Step Amount
+        volume_input.value = String(volume) // Updates The Volume Input
+
+        if(volume < 0) volume = 0 // Sets Back To The Mininum Volume
+        if(volume > 1) volume = 1 // Sets Back To The Maximum Volume
+    }
 
     volume_input.style.setProperty("--volume", `"${Math.round(volume * 100)}%"`) // Shows The Volume Percentage
 

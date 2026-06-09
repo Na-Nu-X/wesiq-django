@@ -224,6 +224,31 @@ document.addEventListener("DOMContentLoaded", function():void {
     training_plan.addEventListener("pointercancel", stopHold) // Stops The Hold Loop
     training_plan.addEventListener("pointerleave", stopHold) // Stops The Hold Loop
 
+    // Training Plan Keydown Events
+    training_plan.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            // Add Decrease Exercise Reps Functionality
+            if((event.target as HTMLButtonElement).classList.contains("decrease_reps")) {
+                changeReps(event.target as HTMLButtonElement, "decrease") // Decreases Amount Of Reps
+            }
+
+            // Add Increase Exercise Reps Functionality
+            if((event.target as HTMLButtonElement).classList.contains("increase_reps")) {
+                changeReps(event.target as HTMLButtonElement, "increase") // Increases Amount Of Reps
+            }
+
+            // Add Decrease Exercise Sets Functionality
+            if((event.target as HTMLButtonElement).classList.contains("decrease_sets")) {
+                changeSets(event.target as HTMLButtonElement, "decrease") // Decreases Amount Of Sets
+            }
+
+            // Add Increase Exercise Sets Functionality
+            if((event.target as HTMLButtonElement).classList.contains("increase_sets")) {
+                changeSets(event.target as HTMLButtonElement, "increase") // Increases Amount Of Sets
+            }
+        }
+    })
+
     // Events
 
     // Training Plan Wheel Functionality
@@ -251,8 +276,18 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Day Select Click Functionality
     day_select.addEventListener("click", function():void {
-        day_options_list.classList.toggle("active"); // Shows / Hides Options List
+        day_options_list.classList.toggle("active") // Shows / Hides Options List
+        day_options_list.inert = !day_options_list.inert; // Enables / Disables The Focus
         (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
+    })
+
+    // Day Select Keydown Functionality
+    day_select.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            day_options_list.classList.toggle("active") // Shows / Hides Options List
+            day_options_list.inert = !day_options_list.inert; // Enables / Disables The Focus
+            (this.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
+        }
     })
 
     // Day Options Click Functionalities
@@ -262,7 +297,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             sessionStorage.setItem("new_training_plan_day", this.dataset["day"]) // Stores New Training Plan Day To Session Storage
 
-            day_options_list.classList.toggle("active"); // Shows / Hides Options List
+            day_options_list.classList.toggle("active") // Shows / Hides Options List
+            day_options_list.inert = !day_options_list.inert; // Enables / Disables The Focus
             (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
 
             // Removes Selected Class From Options

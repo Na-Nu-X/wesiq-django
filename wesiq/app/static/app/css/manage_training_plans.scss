@@ -154,6 +154,7 @@
                     cursor: pointer;
 
                     .select {
+                        @include focus;
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
@@ -165,7 +166,8 @@
                         border-bottom: 1px solid transparentize($blue-color, 0.5);
                         transition: border 0.3s ease;
 
-                        &:hover {
+                        &:hover,
+                        &:focus-visible {
                             border-color: $blue-color;
 
                             .fa-angle-down {
@@ -210,8 +212,13 @@
                             transition: color 0.3s ease;
 
                             &:hover,
+                            &:focus-visible,
                             &.selected {
                                 color: $blue-color !important;
+                            }
+
+                            &:focus-visible {
+                                outline: none !important;
                             }
 
                             i {
@@ -373,8 +380,13 @@
                                     transition: color 0.3s ease;
 
                                     &:hover,
+                                    &:focus-visible,
                                     &.selected {
                                         color: $article-color !important;
+                                    }
+
+                                    &:focus-visible {
+                                        outline: none !important;
                                     }
 
                                     i {
@@ -662,14 +674,14 @@
 
     .exercise_selection {
         @include flex_center($direction: column);
-        max-width: 500px;
+        max-width: calc(500px + 10px);
         width: 100%;
         min-height: 500px;
     
         .search_bar_menu {
             @include search_bar;
-            max-width: 100%;
-            margin-bottom: 20px;
+            width: 100%;
+            margin-bottom: 15px;
         }
     
         .exercises {
@@ -680,7 +692,8 @@
             width: 100%;
             max-height: 440px;
             margin: 0px auto;
-            padding-right: 5px;
+            // padding-right: 5px;
+            padding: 5px;
             text-align: center;
     
             .custom_exercise,

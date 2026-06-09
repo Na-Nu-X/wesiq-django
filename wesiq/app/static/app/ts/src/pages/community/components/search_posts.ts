@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const feed_report:HTMLParagraphElement = feed.querySelector(".feed_report") as HTMLParagraphElement // Gets The Feed Report
     const search_posts_container:HTMLDivElement = feed.querySelector(".search_posts_container") as HTMLDivElement // Gets The Search Posts Container
     const search_posts_input:HTMLInputElement = search_posts_container.querySelector(".search_bar") as HTMLInputElement // Gets The Search Posts Input
-    const delete_search_posts_input:HTMLElement = search_posts_container.querySelector(".fa-xmark") as HTMLElement // Gets The Delete Search Posts Input Icon
+    const delete_search_posts_input:HTMLButtonElement = search_posts_container.querySelector(".delete_search_bar") as HTMLButtonElement // Gets The Delete Search Posts Input Button
     const history_container:HTMLDivElement = search_posts_container.querySelector(".history_container") as HTMLDivElement // Gets The History Container
     let search_posts_timeout:number // Debounce Timeout Between Requests
 

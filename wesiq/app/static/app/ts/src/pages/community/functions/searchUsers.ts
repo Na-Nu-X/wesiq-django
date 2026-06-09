@@ -86,9 +86,11 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
     followers.textContent = String(user_data.followers)
 
     // Follow Button
-    const follow_button:HTMLElement = one_user.querySelector(".fa-solid") as HTMLElement // Gets The Follow Button
-    if(logged_in_user_id) user_data.has_follow ? follow_button.classList.add("fa-user-minus") : follow_button.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
-    else follow_button.classList.add("fa-user") // https://fontawesome.com/icons/user
+    const follow_button:HTMLButtonElement = one_user.querySelector(".follow_button") as HTMLButtonElement // Gets The Follow Button
+    const follow_icon:HTMLElement = follow_button.querySelector("i") as HTMLElement // Gets The Follow Icon
+
+    if(logged_in_user_id) user_data.has_follow ? follow_icon.classList.add("fa-user-minus") : follow_icon.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+    else follow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
 
     return one_user // Returns The One User Link
 }
@@ -130,7 +132,8 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement,
     const username:HTMLParagraphElement = document.createElement("p") // Creates The Username Paragraph
     const full_name:HTMLParagraphElement = document.createElement("p") // Creates Full Name Paragraph
     const followers:HTMLParagraphElement = document.createElement("p") // Creates Followers Paragraph
-    const follow_unfollow_icon:HTMLElement = document.createElement("i") // Creates Follow / Unfollow Icon
+    const follow_button:HTMLButtonElement = document.createElement("button") // Creates The Follow Button
+    const follow_icon:HTMLElement = document.createElement("i") // Creates Follow Icon
 
     one_user.classList.add("one_user") // Adds One User Class
     one_user.href = interpolate(gettext("/sk/profil/%s"), [user_data.username]) // Sets The Link To The User's Profile
@@ -158,10 +161,13 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement,
     followers.textContent = `${user_data.followers.length}` // Sets Followers Amount
     one_user.appendChild(followers) // Appends The Followers To The One User Container
 
-    follow_unfollow_icon.classList.add("fa-solid")
-    if(logged_in_user_id) !user_data.followers.includes(logged_in_user_id) ? follow_unfollow_icon.classList.add("fa-user-plus") : follow_unfollow_icon.classList.add("fa-user-minus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
-    else follow_unfollow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
-    one_user.appendChild(follow_unfollow_icon) // Appends The Follow / Unfollow Icon To The One User Container
+    follow_button.classList.add("follow_button") // Adds The Follow Button Class
+    one_user.appendChild(follow_button) // Appends The Follow Button To The One User Container
+    
+    follow_icon.classList.add("fa-solid")
+    if(logged_in_user_id) !user_data.followers.includes(logged_in_user_id) ? follow_icon.classList.add("fa-user-plus") : follow_icon.classList.add("fa-user-minus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
+    else follow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
+    follow_button.appendChild(follow_icon) // Appends The Follow Icon To The Follow Button
 }
 
 // Function For Reset Searched Users (Displays The Initial State)
