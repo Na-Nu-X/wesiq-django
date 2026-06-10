@@ -3,34 +3,31 @@
 document.addEventListener("DOMContentLoaded", function():void {
     // Write Review Form
 
-    const stars:NodeListOf<HTMLImageElement> = document.querySelectorAll<HTMLImageElement>(".write_review_form .rating .fa-star, .edit_review_form .rating .fa-star")
+    const stars:NodeListOf<HTMLButtonElement> = document.querySelectorAll<HTMLButtonElement>(".write_review_form .rating button, .edit_review_form .rating button")
     const rating:HTMLInputElement = document.querySelector(".write_review_form .rating input, .edit_review_form .rating input") as HTMLInputElement
     let selected_rating:number = parseInt(rating.value) || 0
 
     function updateStars(hover_value:number = 0):void {
-        stars.forEach(function(star:HTMLImageElement, index:number):void {
+        stars.forEach(function(one_star:HTMLElement, index:number):void {
+            const icon:HTMLElement = one_star.querySelector(".fa-star") as HTMLElement // Gets The Star Icon
+
             if(hover_value > 0) {
-                index < hover_value ? star.classList.replace("empty", "full") : star.classList.replace("full", "empty")
+                index < hover_value ? icon.classList.replace("empty", "full") : one_star.classList.replace("full", "empty")
             }
 
             else {
-                index < selected_rating ? star.classList.replace("empty", "full") : star.classList.replace("full", "empty")
+                index < selected_rating ? icon.classList.replace("empty", "full") : icon.classList.replace("full", "empty")
             }
         })
     }
 
-    stars.forEach(function(star:HTMLImageElement, index:number):void {
+    stars.forEach(function(one_star:HTMLElement, index:number):void {
         const rating_number:number = index + 1
 
-        star.addEventListener("mouseover", function():void {
-            updateStars(rating_number)
-        })
+        one_star.addEventListener("mouseover", () => updateStars(rating_number))
+        one_star.addEventListener("mouseout", () => updateStars())
 
-        star.addEventListener("mouseout", function():void {
-            updateStars()
-        })
-
-        star.addEventListener("click", function():void {
+        one_star.addEventListener("click", function():void {
             selected_rating = rating_number
             rating.value = String(rating_number)
             updateStars()

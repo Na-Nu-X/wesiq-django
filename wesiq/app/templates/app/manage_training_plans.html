@@ -28,7 +28,7 @@
 
     {% if request.session.logged_in_user_id %}
         <template class="exercise_template">
-            <div class="exercise" draggable="true">
+            <div class="exercise" draggable="true" inert>
                 <h3 class="title"></h3>
                 
                 <div class="labels">
@@ -60,7 +60,7 @@
         </template>
 
         <template class="warm_up_template">
-            <div class="exercise warm_up" draggable="true" data-unit="seconds">
+            <div class="exercise warm_up" draggable="true" data-unit="seconds" inert>
                 <h3 class="title">Warm Up</h3>
                 
                 <div class="timer_container">
@@ -112,14 +112,14 @@
             <div class="unit_select_menu">
                 <input type="hidden" name="unit" value="reps">
 
-                <div class="select">
+                <div class="select" tabindex="0">
                     <span>{% translate "Počet" %}</span>
                     <i class="fas fa-angle-down"></i>
                 </div>
 
-                <div class="options_list">
-                    <div class="option" data-unit_option="reps"><i class="fa-solid fa-repeat"></i><span>{% translate "Opakovaní" %}</span></div> <!-- https://fontawesome.com/icons/repeat -->
-                    <div class="option" data-unit_option="seconds"><i class="fa-regular fa-clock"></i><span>{% translate "Sekúnd" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
+                <div class="options_list" inert>
+                    <div class="option" data-unit_option="reps" tabindex="0"><i class="fa-solid fa-repeat"></i><span>{% translate "Opakovaní" %}</span></div> <!-- https://fontawesome.com/icons/repeat -->
+                    <div class="option" data-unit_option="seconds" tabindex="0"><i class="fa-regular fa-clock"></i><span>{% translate "Sekúnd" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
                 </div>
             </div>
         </template>

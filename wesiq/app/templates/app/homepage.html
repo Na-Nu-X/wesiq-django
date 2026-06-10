@@ -543,7 +543,9 @@
 
                     <div class="rating">
                         {% for _ in "12345" %}
-                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            <button type="button">
+                                <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            </button>
                             
                         {% endfor %}
 
@@ -554,7 +556,9 @@
                         {{ review_form.review }}
 
                         <div class="icons">
-                            <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                            <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}">
+                                <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                            </button>
                         </div>
 
                         <div class="emoji_picker_container hidden">

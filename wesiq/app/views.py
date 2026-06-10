@@ -3494,8 +3494,7 @@ def profileView(request, username):
 
                                     return HttpResponseRedirect(reverse("homepage_url"))
 
-                                # if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
-                                if True:
+                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
                                     profile_picture_file = request.FILES.get("select_profile_picture")
                                     if profile_picture_file:
                                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
