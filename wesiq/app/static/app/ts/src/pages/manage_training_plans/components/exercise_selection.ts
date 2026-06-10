@@ -103,6 +103,28 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("mouseleave", function():void {
             exercise_selection_state.hovered_exercise = null // Deletes Hovered Exercise Selection Exercise Element
         })
+
+        // Exercise Keydown Functionalities
+        one_exercise.addEventListener("keydown", function(event:KeyboardEvent):void {
+            if(event.key === "Enter") {
+                // Executes Only If The Click Is Outside The Increase Weight Button, Decrease Weight Button And Weight Print
+                if((event.target instanceof Node) && !(event.target as HTMLDivElement).classList.contains("increase_weight") && !(event.target as HTMLDivElement).classList.contains("decrease_weight") && !(event.target.parentNode as HTMLDivElement).classList.contains("weight")) {
+                    global_state.selection_dragged_exercise = this // Sets Selection Dragged Exercise
+    
+                    const page_url:URL = new URL(window.location.href) // Gets The Current URL Address
+                    
+                    if(page_url.searchParams.has("edit")) {
+                        addExercise(edit_training_plan.querySelector(".training_plan") as HTMLDivElement, edit_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan (Edit Training Plan)
+                    }
+                    
+                    else {
+                        addExercise(new_training_plan.querySelector(".training_plan") as HTMLDivElement, new_training_plan_state) // Adds Dragged Exercise From Exercise Selection To The Training Plan (New Training Plan)
+                    }
+                    
+                    global_state.selection_dragged_exercise = null // Deletes Selection Dragged Exercise
+                }
+            }
+        })
     })
 
     // Document Keydown Functionalities

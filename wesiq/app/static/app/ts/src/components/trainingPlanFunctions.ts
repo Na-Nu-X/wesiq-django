@@ -36,8 +36,9 @@ export function createBars(amount:number, state:{active_exercise_index:number}):
     // Creates Bars By Amount Of Exercises In The Training Plan
     for(let i:number = 0; i < amount; i++) {
         // Creates Bar
-        const bar:HTMLDivElement = document.createElement("div")
-        bar.classList.add("bar")
+        const bar:HTMLDivElement = document.createElement("div") // Creates The Bar Container
+        bar.classList.add("bar") // Adds The Bar Class
+        bar.tabIndex = 0 // Makes The Bar Focusable
         bar.draggable = true
         bar_container.appendChild(bar)
 

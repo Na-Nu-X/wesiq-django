@@ -115,18 +115,21 @@ export function changeSlides(training_plan:HTMLDivElement, state:{active_exercis
             // Removes Active Class From All Exercises In The Training Plan
             exercises.forEach(function(one_exercise:HTMLDivElement) {
                 one_exercise.classList.remove("active")
+                one_exercise.inert = true // Disables Focus
             })
 
             state.active_exercise_index = 0 // Sets Index Of Active Exercise In Training Plan To First Index (Shows The Warm Up)
         }
 
         else {
-            exercises[state.active_exercise_index]!.classList.remove("active") // Hides Previous Active Exercise
-            state.active_exercise_index = exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+            (exercises[state.active_exercise_index] as HTMLDivElement).classList.remove("active"); // Hides Previous Active Exercise
+            (exercises[state.active_exercise_index] as HTMLDivElement).inert = true // Disables Focus
+            state.active_exercise_index = exercises.length - 1; // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
         }
     }
 
-    exercises[state.active_exercise_index]!.classList.add("active") // Shows Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
 
     // Creates And Renders Bars
     const bar_container:HTMLDivElement = createBars(exercises.length, state)
@@ -135,15 +138,17 @@ export function changeSlides(training_plan:HTMLDivElement, state:{active_exercis
 
 // Function For Change Exercises In The Training Plan
 export function changeExercises(exercise_index:number, training_plan:HTMLDivElement, state:{active_exercise_index:number}):void {
-    const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
+    const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise"); // Gets All Training Plan Exercises
 
-    exercises[state.active_exercise_index]!.classList.remove("active") // Hides Previous Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).classList.remove("active"); // Hides Previous Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).inert = true // Disables Focus
 
     if(exercise_index < 0) state.active_exercise_index = exercises.length - 1 // Shows The Last Exercise
     else if(exercise_index > exercises.length - 1) state.active_exercise_index = 0 // Shows The First Exercise
-    else state.active_exercise_index = exercise_index // Updates Index Of Active Exercise
+    else state.active_exercise_index = exercise_index; // Updates Index Of Active Exercise
     
-    exercises[state.active_exercise_index]!.classList.add("active") // Shows New Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows New Active Exercise
+    (exercises[state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
 
     // Creates And Renders Bars
     const bar_container:HTMLDivElement = createBars(exercises.length, state)
@@ -168,6 +173,10 @@ export function changeExercisePosition(dropped_bar_index:number, dragged_bar:HTM
         active_exercise.classList.remove("active") // Hides Previous Active Exercise
         dragged_exercise.classList.remove("active") // Hides Previous Active Exercise
         dropped_exercise.classList.remove("active") // Hides Previous Active Exercise
+
+        active_exercise.inert = true // Disables Focus
+        dragged_exercise.inert = true // Disables Focus
+        dropped_exercise.inert = true // Disables Focus
         
         changeExercises(dropped_bar_index, training_plan, state) // Shows The Exercise Of Dropped Bar Index
     }
@@ -185,11 +194,12 @@ export function removeExercise(dragged_exercise:HTMLDivElement, training_plan:HT
 
         // Checks If There Will Be Still Any Exercise In The Training Plan After Removal
         if(exercises.length >= 1) {
-            state.active_exercise_index = exercises.length - 1 // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
-            exercises[state.active_exercise_index]!.classList.add("active") // Shows Active Exercise
+            state.active_exercise_index = exercises.length - 1; // Sets Index Of Active Exercise In Training Plan To Last Possible Index (Shows The Last Exercise)
+            (exercises[state.active_exercise_index] as HTMLDivElement).classList.add("active"); // Shows Active Exercise
+            (exercises[state.active_exercise_index] as HTMLDivElement).inert = false // Enables Focus
         }
 
-        else drop_zone!.classList.add("active") // Shows Training Plan Drop Zone
+        else drop_zone.classList.add("active") // Shows Training Plan Drop Zone
         
         // Creates And Renders Bars
         const bar_container:HTMLDivElement = createBars(exercises.length, state)

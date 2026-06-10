@@ -227,6 +227,43 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Training Plan Keydown Events
     training_plan.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "Enter") {
+            // Change Exercise In Training Plan With Bars Functionality
+            if((event.target as HTMLDivElement).classList.contains("bar")) {
+                if(!(event.target instanceof Node) || !event.target.parentNode) return // Catch Errors
+
+                const clicked_bar_index:number = [...event.target.parentNode.querySelectorAll<HTMLDivElement>(".bar")].indexOf(event.target as HTMLDivElement) // Gets Index Of The Clicked Bar
+                changeExercises(clicked_bar_index, this, new_training_plan_state) // Changes Training Plan Exercises
+            }
+
+            // Unit Select Menu
+            if((event.target as HTMLDivElement).closest(".unit_select_menu") as HTMLDivElement) {
+                const unit_select_menu:HTMLDivElement = (event.target as HTMLDivElement).closest(".unit_select_menu") as HTMLDivElement // Gets Unit Select Menu
+                const unit_select:HTMLDivElement = unit_select_menu.querySelector(".select") as HTMLDivElement // Gets Selected Option Print
+                const unit_options_list:HTMLDivElement = unit_select_menu.querySelector(".options_list") as HTMLDivElement // Gets Unit Options List
+                const unit_options:NodeListOf<HTMLDivElement> = unit_options_list.querySelectorAll<HTMLDivElement>(".option") // Gets All Unit Options
+
+                unit_options_list.classList.toggle("active"); // Shows / Hides Options List
+                unit_options_list.inert = !unit_options_list.inert; // Enables / Disables The Focus
+                (unit_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
+
+                if((event.target as HTMLDivElement).closest(".option") as HTMLDivElement) {
+                    const clicked_option:HTMLDivElement = (event.target as HTMLDivElement).closest(".option") as HTMLDivElement // Gets Clicked Option
+                    (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"] = clicked_option.dataset["unit_option"] // Sets Unit Data To The Exercise
+
+                    // Removes Selected Class From Options
+                    unit_options.forEach(function(one_option:HTMLDivElement) {
+                        one_option.classList.remove("selected")
+                    })
+
+                    if(clicked_option.dataset["unit_option"] === (unit_select_menu.closest(".exercise") as HTMLDivElement).dataset["unit"]) {
+                        (unit_select.querySelector("span") as HTMLSpanElement).textContent = (clicked_option.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
+                        clicked_option.classList.add("selected") // Adds Selected Class To Selected Option
+                    }
+
+                    if(clicked_option.dataset["unit_option"]) updateUnitTypes(clicked_option.dataset["unit_option"], this, new_training_plan_state) // Updates Unit Type For Every Reps Container
+                }
+            }
+
             // Add Decrease Exercise Reps Functionality
             if((event.target as HTMLButtonElement).classList.contains("decrease_reps")) {
                 changeReps(event.target as HTMLButtonElement, "decrease") // Decreases Amount Of Reps
@@ -292,6 +329,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Day Options Click Functionalities
     day_options.forEach(function(option:HTMLDivElement):void {
+        // Option Click Functionality
         option.addEventListener("click", function():void {
             if(!this.dataset["day"]) return
 
@@ -310,6 +348,30 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(this.dataset["day"] === sessionStorage.getItem("new_training_plan_day")) {
                 (day_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
                 this.classList.add("selected") // Adds Selected Class To Selected Option
+            }
+        })
+
+        // Option Keydown Functionality
+        option.addEventListener("keydown", function(event:KeyboardEvent):void {
+            if(event.key === "Enter") {
+                if(!this.dataset["day"]) return
+    
+                sessionStorage.setItem("new_training_plan_day", this.dataset["day"]) // Stores New Training Plan Day To Session Storage
+    
+                day_options_list.classList.toggle("active") // Shows / Hides Options List
+                day_options_list.inert = !day_options_list.inert; // Enables / Disables The Focus
+                (day_select.querySelector(".fa-angle-down") as HTMLElement).classList.toggle("fa-angle-up") // Toggle Icons
+    
+                // Removes Selected Class From Options
+                day_options.forEach(function(remove_selected:HTMLDivElement):void {
+                    remove_selected.classList.remove("selected")
+                })
+    
+                // Shows Current Selected Option From List Without Icon
+                if(this.dataset["day"] === sessionStorage.getItem("new_training_plan_day")) {
+                    (day_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent // Shows Current Selected Option From List Without Icon
+                    this.classList.add("selected") // Adds Selected Class To Selected Option
+                }
             }
         })
     })

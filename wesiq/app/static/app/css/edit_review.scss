@@ -58,23 +58,28 @@
     }
 
     .rating {
-        .fa-star {
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: color 0.1s ease, transform 0.1s ease;
+        button {
+            all: unset;
 
-            &.full {
-                color: $article-color;
-                opacity: 1;
-            }
-            
-            &.empty {
-                color: darken($secondary-color, 40%);
-                opacity: 0.5;
-            }
-
-            &:hover {
-                transform: scale(1.1);
+            .fa-star {
+                display: block;
+                font-size: 1.5em;
+                cursor: pointer;
+                transition: color 0.1s ease, transform 0.1s ease;
+    
+                &.full {
+                    color: $article-color;
+                    opacity: 1;
+                }
+                
+                &.empty {
+                    color: darken($secondary-color, 40%);
+                    opacity: 0.5;
+                }
+    
+                &:hover {
+                    transform: scale(1.1);
+                }
             }
         }
 
@@ -125,7 +130,12 @@
             border-radius: 0px 0px $small-border-radius $small-border-radius;
 
             .add_emoji {
-                @include icon;
+                all: unset;
+
+                .fa-face-surprise {
+                    @include icon;
+                    display: block;
+                }
             }
         }
 
