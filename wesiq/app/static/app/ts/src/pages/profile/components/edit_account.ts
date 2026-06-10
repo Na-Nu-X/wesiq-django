@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const profile_container:HTMLDivElement = document.querySelector(".profile_container") as HTMLDivElement // Gets The Profile Container
     const edit_account_form:HTMLFormElement = profile_container.querySelector(".edit_account_form") as HTMLFormElement // Gets The Edir Account Form
     const profile:HTMLDivElement = profile_container.querySelector(".profile") as HTMLDivElement // Gets The Profile Container
-    const toggle_settings:HTMLElement = profile_container.querySelector(".fa-gear") as HTMLElement // Gets The Toggle Settings Icon
+    const toggle_settings:HTMLButtonElement = profile_container.querySelector(".toggle_settings") as HTMLButtonElement // Gets The Toggle Settings Icon
 
     // Global Event Delegations
 
@@ -95,7 +95,12 @@ document.addEventListener("DOMContentLoaded", function():void {
         anchor.innerHTML += getDomain(url)
 
         link.appendChild(anchor) // Appends The Anchor To The Link Container
-        link.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť odkaz')}"></i>` // https://fontawesome.com/icons/xmark
+
+        const remove_link:HTMLButtonElement = document.createElement("button") as HTMLButtonElement // Creates The Remove Button
+        remove_link.classList.add("remove_link") // Adds The Remove Link Class
+        remove_link.type = "button" // Prevents The Submit Of Edit Account Form
+        remove_link.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť odkaz')}"></i>` // https://fontawesome.com/icons/xmark
+        link.appendChild(remove_link) // Appends The Remove Link Button To The Link Container
 
         return link // Returns The Link
     }
@@ -142,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Added Links Container Click Functionality
     added_links_container.addEventListener("click", function(event:PointerEvent):void {
         // Remove Added Link
-        if((event.target as HTMLElement).classList.contains("fa-xmark")) {
+        if((event.target as HTMLElement).classList.contains("remove_link")) {
             const link:HTMLDivElement = (event.target as HTMLElement).closest(".link") as HTMLDivElement // Gets The Link Container
             removeAddedLink(link, bio_links) // Removes The Added Link
         }
@@ -206,20 +211,49 @@ document.addEventListener("DOMContentLoaded", function():void {
     const account_properties:HTMLDivElement = edit_account_form.querySelector(".header .account_properties") as HTMLDivElement // Gets The Account Properties Popover Menu
     const private_account_container:HTMLDivElement = account_properties.querySelector(".private_account_container") as HTMLDivElement // Gets The Private Account Container
     const private_account_checkbox:HTMLInputElement = private_account_container.querySelector("#private_account") as HTMLInputElement // Gets The Private Account Checkbox
+    const private_account_label:HTMLLabelElement = private_account_container.querySelector("label") as HTMLLabelElement // Gets The Private Account Label
     const private_account_icon:HTMLElement = private_account_container.querySelector("i") as HTMLElement // Gets The Private Account Icon
 
     // Events
 
+    // Private Account Checkbox Change Functionality
     private_account_checkbox.addEventListener("change", function():void {
         this.checked ? private_account_icon.classList.replace("fa-lock-open", "fa-lock") : private_account_icon.classList.replace("fa-lock", "fa-lock-open") // https://fontawesome.com/icons/lock / https://fontawesome.com/icons/lock-open
     })
 
-    // Delete Account Warning
+    // Global Event Delegations
+
+    // Private Account Label Keydown Functionality
+    private_account_label.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            private_account_checkbox.click() // Checks / Unchecks The Private Account Checkbox
+            private_account_checkbox.checked ? private_account_icon.classList.replace("fa-lock-open", "fa-lock") : private_account_icon.classList.replace("fa-lock", "fa-lock-open") // https://fontawesome.com/icons/lock / https://fontawesome.com/icons/lock-open
+        }
+    })
+
+    // Toggle Delete Profile Picture
 
     // Variables
 
-    const form_report:HTMLParagraphElement = document.querySelector(".form_report") as HTMLParagraphElement
-    const delete_account_checkbox:HTMLInputElement = document.querySelector("#delete_account") as HTMLInputElement
+    const delete_profile_picture_container:HTMLDivElement = account_properties.querySelector(".delete_profile_picture_container") as HTMLDivElement // Gets The Delete Profile Picture Container
+    const delete_profile_picture_checkbox:HTMLInputElement = delete_profile_picture_container.querySelector("#delete_profile_picture") as HTMLInputElement // Gets The Delete Profile Picture Checkbox
+    const delete_profile_picture_label:HTMLLabelElement = delete_profile_picture_container.querySelector("label") as HTMLLabelElement // Gets The Delete Profile Picture Label
+
+    // Global Event Delegations
+
+    // Private Account Label Keydown Functionality
+    delete_profile_picture_label.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") delete_profile_picture_checkbox.click() // Checks / Unchecks The Private Account Checkbox
+    })
+
+    // Toggle Delete Account
+
+    // Variables
+
+    const form_report:HTMLParagraphElement = edit_account_form.querySelector(".form_report") as HTMLParagraphElement
+    const delete_account_container:HTMLDivElement = account_properties.querySelector(".delete_account_container") as HTMLDivElement // Gets The Delete Account Container
+    const delete_account_checkbox:HTMLInputElement = delete_account_container.querySelector("#delete_account") as HTMLInputElement
+    const delete_account_label:HTMLLabelElement = delete_account_container.querySelector("label") as HTMLLabelElement // Gets The Delete Account Label
 
     // Events
 
@@ -230,6 +264,13 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         else form_report.textContent = ""
+    })
+
+    // Global Event Delegations
+
+    // Private Account Label Keydown Functionality
+    delete_account_label.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") delete_account_checkbox.click() // Checks / Unchecks The Private Account Checkbox
     })
 
     // Phone Number

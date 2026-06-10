@@ -14,7 +14,7 @@
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                <button><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
+                <button class="toggle_settings"><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
 
             {% endif %}
         </div>
@@ -77,7 +77,7 @@
                             <span>{% translate "Súkromný účet" %}</span>
 
                             {{ edit_account_form.private_account }}
-                            <label for="private_account"></label>
+                            <label for="private_account" tabindex="0"></label>
                         </div>
 
                         <div class="delete_profile_picture_container">
@@ -85,7 +85,7 @@
                             <span>{% translate "Odstrániť profilový obrázok" %}</span>
 
                             {{ edit_account_form.delete_profile_picture }}
-                            <label for="delete_profile_picture"></label>
+                            <label for="delete_profile_picture" tabindex="0"></label>
                         </div>
 
                         <div class="delete_account_container">
@@ -93,7 +93,7 @@
                             <span>{% translate "Odstrániť účet" %}</span>
 
                             {{ edit_account_form.delete_account }}
-                            <label for="delete_account"></label>
+                            <label for="delete_account" tabindex="0"></label>
                         </div>
 
                         <button 
