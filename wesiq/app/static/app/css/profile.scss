@@ -34,7 +34,7 @@
         margin-bottom: 20px;
 
         .back .fa-chevron-left,
-        button .fa-gear {
+        .toggle_settings .fa-gear {
             display: block;
             font-size: 2em;
             color: darken($secondary-color, 40%);
@@ -52,7 +52,7 @@
             text-decoration: none;
         }
 
-        button {
+        .toggle_settings {
             all: unset;
         }
     }
@@ -235,6 +235,8 @@
         
                         .add_link {
                             all: unset;
+                            @include flex_center;
+                            @include focus;
                             height: 100%;
                             margin-right: 10px;
                             transition: transform 0.3s ease;
@@ -243,11 +245,13 @@
                                 transform: scale(1.1);
                                 cursor: pointer;
                             }
+
+                            &:focus-visible {
+                                outline-offset: 0px !important;
+                            }
             
                             .fa-plus {
                                 all: revert;
-                                display: block;
-                                line-height: 1;
                                 font-size: 2.5em;
                                 font-style: normal;
                             }
@@ -283,10 +287,6 @@
                 &.hidden {
                     display: none;
                 }
-
-                i {
-                    @include icon;
-                }
                 
                 a {
                     display: flex;
@@ -295,6 +295,24 @@
                     text-decoration: none;
                     font-size: 0.8em;
                     color: $blue-color;
+                }
+
+                .remove_link {
+                    all: unset;
+
+                    &:hover {
+                        cursor: pointer;
+                        
+                        .fa-xmark {
+                            color: $blue-color;
+                            transition: color 0.3s ease;
+                        }
+                    }
+
+                    .fa-xmark {
+                        color: transparentize($blue-color, 0.5);
+                        pointer-events: none;
+                    }
                 }
             }
         }

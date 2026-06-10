@@ -454,8 +454,8 @@
     transition: top 0.3s ease, right 0.3s ease, bottom 0.3s ease, left 0.3s ease;
 
     &:hover {
-        cursor: pointer;
         color: $hover_color;
+        cursor: pointer;
         transition: color 0.3s ease, top 0.3s ease, right 0.3s ease, bottom 0.3s ease, left 0.3s ease;
     }
 }
@@ -661,6 +661,10 @@
             span {
                 letter-spacing: 0.5px;
             }
+        }
+
+        &:focus-visible {
+            outline: none !important;
         }
 
         &[popovertargetaction="hide"] {

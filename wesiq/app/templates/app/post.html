@@ -445,7 +445,7 @@
                                                     {% endif %}
                                                 >
 
-                                                <label for="public_visibility"></label>
+                                                <label for="public_visibility" tabindex="0"></label>
                                             {% endif %}
                                         </div>
 
@@ -469,7 +469,7 @@
                                                 {% endif %}
                                             >
 
-                                            <label for="allow_comments"></label>
+                                            <label for="allow_comments" tabindex="0"></label>
                                         </div>
 
                                         <div class="hide_likes_container">
@@ -492,7 +492,7 @@
                                                 {% endif %}
                                             >
 
-                                            <label for="hide_likes"></label>
+                                            <label for="hide_likes" tabindex="0"></label>
                                         </div>
 
                                         <button 
@@ -591,16 +591,16 @@
 
                                             <div class="controls">
                                                 <div class="buttons">
-                                                    <button class="play_pause">
-                                                        <i class="fa-solid fa-pause" title="{% translate 'Pozastaviť...' %}"></i> <!-- https://fontawesome.com/icons/pause -->
+                                                    <button class="play_pause" title="{% translate 'Pozastaviť...' %}">
+                                                        <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
                                                         {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
                                                     </button>
 
-                                                    <button class="step_back">
+                                                    <button class="step_back" title="{% translate 'O 5 sekúnd späť...' %}">
                                                         <i class="fa-solid fa-arrow-rotate-left"></i> <!-- https://fontawesome.com/icons/arrow-rotate-left -->
                                                     </button>
                             
-                                                    <button class="step_further">
+                                                    <button class="step_further" title="{% translate 'O 5 sekúnd ďalej...' %}">
                                                         <i class="fa-solid fa-rotate-right"></i> <!-- https://fontawesome.com/icons/rotate-right -->
                                                     </button>
 

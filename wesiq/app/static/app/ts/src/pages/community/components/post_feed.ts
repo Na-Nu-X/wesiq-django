@@ -485,6 +485,20 @@ document.addEventListener("DOMContentLoaded", function():void {
                     if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
                 }
 
+                // Edit Post Settings
+                if(
+                    event.target instanceof HTMLLabelElement && ((event.target as HTMLLabelElement).parentElement as HTMLDivElement).classList.contains("public_visibility_container") ||
+                    event.target instanceof HTMLLabelElement && ((event.target as HTMLLabelElement).parentElement as HTMLDivElement).classList.contains("allow_comments_container") ||
+                    event.target instanceof HTMLLabelElement && ((event.target as HTMLLabelElement).parentElement as HTMLDivElement).classList.contains("hide_likes_container")
+                ) {
+                    const toggle_button:HTMLInputElement = ((event.target as HTMLLabelElement).parentElement as HTMLDivElement).querySelector("input[type='checkbox']") as HTMLInputElement // Gets The Toggle Button
+                    const post_container:HTMLDivElement = toggle_button.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                    const icon:HTMLElement = (toggle_button.parentElement as HTMLDivElement).querySelector("i") as HTMLElement // Gets The Icon
+
+                    toggle_button.checked = !toggle_button.checked // Checks / Unchecks The Toggle Button
+                    if(post_container.dataset["post_id"]) editPostSettings(Number(post_container.dataset["post_id"]), toggle_button, icon) // Edits The Post Settings
+                }
+
                 // Comment Forum
 
                 // Toggle Show / Hide Comment Forum
