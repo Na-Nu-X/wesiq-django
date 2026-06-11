@@ -455,8 +455,8 @@ header {
                     left: -16px;
                 }
 
-                &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
-                &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
+                &:has(.password:hover) .show_hide_password, 
+                &:has(.password:focus) .show_hide_password {
                     right: 0px;
                 }
 
@@ -465,9 +465,8 @@ header {
                     -webkit-text-security: disc;
                 }
 
-                .fa-eye, .fa-eye-slash {
-                    display: block;
-                    color: darken($secondary-color, 40%);
+                .show_hide_password {
+                    all: unset;
                     position: absolute;
                     bottom: 10px;
                     right: 20px;
@@ -476,9 +475,19 @@ header {
                     transition: right 0.3s ease;
 
                     &:hover {
-                        color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease, right 0.3s ease;
+                        
+                        .fa-eye, 
+                        .fa-eye-slash {
+                            color: darken($secondary-color, 20%);
+                        }
+                    }
+
+                    .fa-eye, 
+                    .fa-eye-slash {
+                        display: block;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
                     }
                 }
             }
@@ -639,16 +648,18 @@ header {
             .password_container {
                 position: relative;
 
-                &:has(.password:hover) .fa-key, &:has(.password:focus) .fa-key {
+                &:has(.password:hover) .generate_password, 
+                &:has(.password:focus) .generate_password {
                     left: -16px;
                 }
 
-                &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
-                &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
+                &:has(.password:hover) .show_hide_password, 
+                &:has(.password:focus) .show_hide_password {
                     right: 0px;
                 }
 
-                &:has(.password:hover) .fa-copy, &:has(.password:focus) .fa-copy {
+                &:has(.password:hover) .copy_password, 
+                &:has(.password:focus) .copy_password {
                     right: -19px;
                 }
 
@@ -657,49 +668,78 @@ header {
                     -webkit-text-security: disc;
                 }
 
-                .fa-key {
-                    display: block;
-                    color: darken($secondary-color, 40%);
+                .generate_password {
+                    all: unset;
                     position: absolute;
                     bottom: 10px;
-                    padding-bottom: 16px;
-                    padding-top: 19px;
-
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease, left 0.3s ease;
-                    }
-                }
-
-                .fa-eye, .fa-eye-slash, .fa-copy {
-                    display: block;
-                    color: darken($secondary-color, 40%);
-                    position: absolute;
-                    bottom: 10px;
-                    padding-bottom: 16px;
-                    padding-top: 19px;
-
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease, right 0.3s ease;
-                    }
-                }
-
-                .fa-eye, .fa-eye-slash {
-                    right: 20px;
-                    transition: right 0.3s ease;
-                }
-
-                .fa-key {
                     left: 3px;
+                    padding-bottom: 16px;
+                    padding-top: 19px;
                     transition: left 0.3s ease;
+
+                    &:hover {
+                        cursor: pointer;
+
+                        .fa-key {
+                            color: darken($secondary-color, 20%);
+                        }
+                    }
+
+                    .fa-key {
+                        display: block;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
+                    }
                 }
 
-                .fa-copy {
-                    right: 1px;
+                .show_hide_password {
+                    all: unset;
+                    position: absolute;
+                    bottom: 10px;
+                    right: 20px;
+                    padding-bottom: 16px;
+                    padding-top: 19px;
                     transition: right 0.3s ease;
+
+                    &:hover {
+                        cursor: pointer;
+                        
+                        .fa-eye, 
+                        .fa-eye-slash {
+                            color: darken($secondary-color, 20%);
+                        }
+                    }
+
+                    .fa-eye, 
+                    .fa-eye-slash {
+                        display: block;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
+                    }
+                }
+
+                .copy_password {
+                    all: unset;
+                    position: absolute;
+                    bottom: 10px;
+                    right: 1px;
+                    padding-bottom: 16px;
+                    padding-top: 19px;
+                    transition: right 0.3s ease;
+
+                    &:hover {
+                        cursor: pointer;
+
+                        .fa-copy {
+                            color: darken($secondary-color, 20%);
+                        }
+                    }
+
+                    .fa-copy {
+                        display: block;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
+                    }
                 }
             }
 
@@ -728,8 +768,8 @@ header {
                     left: -16px;
                 }
 
-                &:has(.password_check:hover) .fa-copy, 
-                &:has(.password_check:focus) .fa-copy {
+                &:has(.password_check:hover) .paste_password, 
+                &:has(.password_check:focus) .paste_password {
                     right: -19px;
                 }
 
@@ -737,20 +777,27 @@ header {
                     padding-right: 28px !important;
                 }
 
-                .fa-copy {
-                    display: block;
-                    color: darken($secondary-color, 40%);
+                .paste_password {
+                    all: unset;
                     position: absolute;
-                    right: 1px;
                     bottom: 10px;
+                    right: 1px;
                     padding-bottom: 16px;
                     padding-top: 19px;
                     transition: right 0.3s ease;
 
                     &:hover {
-                        color: darken($secondary-color, 20%);
                         cursor: pointer;
-                        transition: color 0.3s ease, right 0.3s ease;
+
+                        .fa-copy {
+                            color: darken($secondary-color, 20%);
+                        }
+                    }
+
+                    .fa-copy {
+                        display: block;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
                     }
                 }
             }
@@ -1609,8 +1656,8 @@ header {
         }
     }
 
-    .login_form .password_container .fa-eye,
-    .login_form .password_container .fa-eye-slash {
+    .login_form .password_container .show_hide_password .fa-eye,
+    .login_form .password_container .show_hide_password .fa-eye-slash {
         right: 0px !important;
     }
 
@@ -1618,16 +1665,17 @@ header {
         width: 100% !important;
     }
 
-    .registration_form .password_container .fa-eye,
-    .registration_form .password_container .fa-eye-slash {
+    .registration_form .password_container .show_hide_password .fa-eye,
+    .registration_form .password_container .show_hide_password .fa-eye-slash {
         right: 0px !important;
     }
     
-    .registration_form .password_container .fa-key {
+    .registration_form .password_container .generate_password {
         left: -16px !important;
     }
 
-    .registration_form .password_container .fa-copy, .password_check_container .fa-copy {
+    .registration_form .password_container .copy_password, 
+    .password_check_container .paste_password {
         right: -19px !important;
     }
 

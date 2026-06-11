@@ -11,21 +11,25 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const password_container:HTMLDivElement = document.querySelector(".login_form .password_container") as HTMLDivElement // Gets Password Container
-    const password:HTMLInputElement = password_container.querySelector(".login_form .password") as HTMLInputElement // Gets Password Input
-    const password_reset:HTMLAnchorElement = document.querySelector(".login_form .password_reset") as HTMLAnchorElement // Gets Password Reset Button
-    const email_address:HTMLInputElement = document.querySelector(".login_form .identifier") as HTMLInputElement // Gets Email Address Input
-    const form_report:HTMLParagraphElement = document.querySelector(".login_form .form_report") as HTMLParagraphElement // Gets Form Report
-
-    // Global Event Delegations
-
-    // Password Container Click Functionalities
-    password_container.addEventListener("click", function(event:PointerEvent):void {
-        if((event.target as HTMLElement).matches(".fa-eye-slash")) showPassword((event.target as HTMLElement), password) // Shows The Password
-        else if((event.target as HTMLElement).matches(".fa-eye")) hidePassword((event.target as HTMLElement), password) // Hides The Password
-    })
+    const login_form_dialog:HTMLDialogElement|null = document.querySelector(".login_form_dialog") as HTMLDialogElement || null // Gets The Login Form Dialog If Is Available
+    const login_form:HTMLFormElement = document.querySelector(".login_form") as HTMLFormElement // Gets The Login Form
+    const password_container:HTMLDivElement = login_form.querySelector(".password_container") as HTMLDivElement // Gets Password Container
+    const password:HTMLInputElement = password_container.querySelector(".password") as HTMLInputElement // Gets Password Input
+    const password_reset:HTMLAnchorElement = login_form.querySelector(".password_reset") as HTMLAnchorElement // Gets Password Reset Button
+    const email_address:HTMLInputElement = login_form.querySelector(".identifier") as HTMLInputElement // Gets Email Address Input
+    const form_report:HTMLParagraphElement = login_form.querySelector(".form_report") as HTMLParagraphElement // Gets Form Report
+    const show_hide_password:HTMLButtonElement = password_container.querySelector(".show_hide_password") as HTMLButtonElement // Gets The Toggle Show Hide Password Button
 
     // Events
+
+    // Show Hide Password Click Functionality
+    show_hide_password.addEventListener("click", function():void {
+        const icon:HTMLElement = this.querySelector("i") as HTMLElement // Gets The Icon
+
+        if(icon.matches(".fa-eye-slash")) showPassword(icon, password) // Shows The Password
+        else if(icon.matches(".fa-eye")) hidePassword(icon, password) // Hides The Password
+        if(login_form_dialog) login_form_dialog.showModal() // Shows The Login Form Dialog
+    })
 
     password_reset.addEventListener("click", (event:PointerEvent) => emailVerification(email_address, form_report, event)) // Checks If The Has Entered An E-mail
 })

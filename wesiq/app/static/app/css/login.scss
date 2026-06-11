@@ -40,8 +40,8 @@
     .password_container {
         position: relative;
 
-        &:has(.password:hover) .fa-eye, &:has(.password:focus) .fa-eye,
-        &:has(.password:hover) .fa-eye-slash, &:has(.password:focus) .fa-eye-slash {
+        &:has(.password:hover) .show_hide_password, 
+        &:has(.password:focus) .show_hide_password {
             right: 0px;
         }
 
@@ -50,13 +50,30 @@
             -webkit-text-security: disc;
         }
 
-        .fa-eye, .fa-eye-slash {
-            @include icon;
-            display: block;
+        .show_hide_password {
+            all: unset;
             position: absolute;
             bottom: 10px;
             right: 20px;
-            padding: 19px 0px 16px;
+            padding-bottom: 16px;
+            padding-top: 19px;
+            transition: right 0.3s ease;
+
+            &:hover {
+                cursor: pointer;
+                
+                .fa-eye, 
+                .fa-eye-slash {
+                    color: darken($secondary-color, 20%);
+                }
+            }
+
+            .fa-eye, 
+            .fa-eye-slash {
+                display: block;
+                color: darken($secondary-color, 40%);
+                transition: color 0.3s ease;
+            }
         }
     }
 
@@ -195,8 +212,8 @@
             width: 100% !important;
         }
 
-        .password_container .fa-eye,
-        .password_container .fa-eye-slash {
+        .password_container .show_hide_password .fa-eye,
+        .password_container .show_hide_password .fa-eye-slash {
             right: 0px !important;
         }
 
