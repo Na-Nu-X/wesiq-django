@@ -44,20 +44,27 @@
             @include custom_select_menu($options_list_height: 160px, $scrollbar: auto);
 
             .refresh {
-                .fa-arrow-rotate-right {
-                    position: absolute;
-                    top: 50%;
-                    left: 0px;
-                    transform: translateY(-50%);
-                    padding: 12.5px 0px 12.5px 8.5px;
-                    color: darken($secondary-color, 10%);
-                    transition: color 0.3s ease;
-                    z-index: 50;
+                all: unset;
+                position: absolute;
+                top: 50%;
+                left: 0px;
+                transform: translateY(-50%);
+                height: 100%;
+                padding-left: 8.5px;
+                z-index: 50;
 
-                    &:hover {
+                &:hover {
+                    cursor: pointer;
+
+                    .fa-arrow-rotate-right {
                         color: $secondary-color;
-                        cursor: pointer;
                     }
+                }
+
+                .fa-arrow-rotate-right {
+                    display: block;
+                    color: darken($secondary-color, 20%);
+                    transition: color 0.3s ease;
                 }
             }
         }

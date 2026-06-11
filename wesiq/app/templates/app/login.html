@@ -26,7 +26,10 @@
         
         <div class="password_container">
             {{ login_form.password }}
-            <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+
+            <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}">
+                <i class="fa-regular fa-eye-slash"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+            </button>
         </div>
 
         <p class="form_report" style="bottom: 264px;"></p>

@@ -61,15 +61,28 @@
         </div>
         
         <div class="password_container">
-            <i class="fa-solid fa-key" title="{% translate 'Navrhnúť heslo' %}"></i> <!-- https://fontawesome.com/icons/key -->
+            <button class="generate_password" type="button" title="{% translate 'Navrhnúť heslo' %}">
+                <i class="fa-solid fa-key"></i> <!-- https://fontawesome.com/icons/key -->
+            </button>
+
             {{ registration_form.password }}
-            <i class="fa-regular fa-eye-slash" title="{% translate 'Zobraziť heslo' %}"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
-            <i class="fa-solid fa-copy copy_password" title="{% translate 'Skopírovať' %}"></i> <!-- https://fontawesome.com/icons/copy -->
+
+            <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}">
+                <i class="fa-regular fa-eye-slash"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
+            </button>
+
+            <button class="copy_password" type="button" title="{% translate 'Skopírovať' %}">
+                <i class="fa-solid fa-copy"></i> <!-- https://fontawesome.com/icons/copy -->
+            </button>
         </div>
 
         <div class="password_check_container">
+            <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
             {{ registration_form.password_check }}
-            <i class="fa-regular fa-copy paste_password" title="{% translate 'Prilepiť' %}"></i> <!-- https://fontawesome.com/icons/copy -->
+
+            <button class="paste_password" type="button" title="{% translate 'Prilepiť' %}">
+                <i class="fa-regular fa-copy"></i> <!-- https://fontawesome.com/icons/copy -->
+            </button>
         </div>
 
         <p class="form_report error" style="bottom: 241px;"></p>
