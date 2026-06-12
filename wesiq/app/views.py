@@ -1806,177 +1806,125 @@ def blogView(request):
     })
 
 def blogThemeView(request, theme):
-    try:
-        # Gets Logged In User
-        if "logged_in_user_id" in request.session:
-            # Gets Logged In User ID From Session
-            logged_in_user_id = request.session.get("logged_in_user_id")
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
 
-            no_comments = True # Default Value That Says That There Are No Comments In The Database
-
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From DB
-            article = Articles.objects.get(link=theme) # Gets Article By URL Address
-
-            # Gets All Comments Of The Article
-            comments = ArticleForum.objects.filter(article_id=article.id, parent_id=None, status="OK")
-            replies = ArticleForum.objects.filter(Q(article_id=article.id) & ~Q(parent_id=None) & Q(status="OK"))
-
-            # Checks If There Are Any Articles In The Database
-            if(comments.exists()):
-                no_comments = False
-
-        # Adds 1 Visitor to The Article's Unique Visitors
-        if not request.COOKIES.get(article.link):
-            article.visitors += 1
-            article.save()
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
-            # Write Comment Form
-            if request.POST.get("write_comment_form"):
-                write_comment_form = writeCommentForm(request.POST) # Gets The Write Comment Form
+            # Add Article Comment
+            if request.headers.get("X-Requested-Action") == "add-comment":
+                try:
+                    if "logged_in_user_id" in request.session:
+                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        comment_data = json.loads(request.body) # Gets The Comment Data
 
-                if write_comment_form.is_valid():
-                    try:
                         new_comment = ArticleForum(
-                            article_id = article.id,
+                            article_id = comment_data["article_id"],
                             user_id = logged_in_user_id,
-                            comment = write_comment_form.cleaned_data["comment"],
+                            comment = comment_data["comment"],
+                            parent_id = comment_data["parent_id"]
                         )
 
                         new_comment.save()
 
-                    # Error
-                    except Exception as e:
-                        messages.add_message(request, messages.ERROR, _("Pri pridávaní komentáru došlo k chybe"))
-                        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                
-                # Wrong Form
-                else:
-                    messages.add_message(request, messages.ERROR, _("Pridávanie komentáru zlyhalo"))
-                    captureError(f"Adding comment failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                        logged_in_user = {
+                            "logged_in_user_id": logged_in_user_id
+                        }
 
-            # Reply Comment Form
-            if request.POST.get("reply_comment_form"):
-                write_comment_form = writeCommentForm(request.POST) # Write Comment Form
+                        # Creates Valid Format Of Comment For JSON Response
+                        comment = {
+                            "id": new_comment.id,
 
-                if write_comment_form.is_valid():
-                    try:
-                        new_comment_reply = ArticleForum(
-                            article_id = article.id,
-                            user_id = logged_in_user_id,
-                            comment = write_comment_form.cleaned_data["comment"],
-                            parent_id = request.POST.get("parent_id")
-                        )
+                            "user": {
+                                "id": new_comment.user.id,
+                                "username": new_comment.user.username,
+                                "profile_picture_name": new_comment.user.profile_picture_name
+                            },
 
-                        new_comment_reply.save()
+                            "creation_time": new_comment.creation_time,
+                            "level": new_comment.level
+                        }
 
-                    # Error
-                    except Exception as e:
-                        messages.add_message(request, messages.ERROR, _("Pri pridávaní komentáru došlo k chybe"))
-                        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                
-                # Wrong Form
-                else:
-                    messages.add_message(request, messages.ERROR, _("Pridávanie komentáru zlyhalo"))
-                    captureError(f"Adding comment failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                        return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre článok bol úspešne pridaný.")}, status=201)
 
-            # Like Comment
-            if request.headers.get("X-Requested-Action") == "like-comment":
-                try:
-                    comment_id = json.loads(request.body) # Gets The Comment Data
+                    return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
 
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-                        comment = ArticleForum.objects.get(id=comment_id)
-
-                        if(str(logged_in_user_id) not in comment.likes_from_users):
-                            comment.likes_from_users.append(logged_in_user_id)
-                            comment.likes += 1
-                            
-                            comment.save()
-
-                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to sa nedá pridať bez prihlásenia.")}, status=401)
+                except ValidationError as e:
+                    return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
 
                 except Exception as e:
-                    captureError(f"An error occurred while adding a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pridávaní označenia páči sa mi to došlo k chybe.")}, status=404)
+                    captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
 
-            # Cancel Like Comment
-            if request.headers.get("X-Requested-Action") == "cancel-like-comment":
-                try:
-                    comment_id = json.loads(request.body) # Gets The Comment Data
+    not_found = True
 
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+    # Gets The Article By URL Address With All Related Data
+    article = Articles.objects.filter(
+        link=theme
+    ).prefetch_related(
+        Prefetch(
+            "comments",
+            queryset=ArticleForum.objects.exclude(
+                status="hidden"
+            ).annotate(
+                # Creates The Has Like Column (True If The User Has Already Liked The Comment)
+                has_like=Exists(
+                    ArticleForum.likes_from_users.through.objects.filter(
+                        articleforum_id=OuterRef("pk"),
+                        users_id=logged_in_user_id
+                    )
+                )
+            ).annotate(
+                # Creates The Has Report Column (True If The User Has Already Reported The Comment)
+                has_report=Exists(
+                    ArticleForum.reports_from_users.through.objects.filter(
+                        articleforum_id=OuterRef("pk"),
+                        user_id=logged_in_user_id
+                    )
+                )
+            ).select_related(
+                "user"
+            ).order_by(
+                "-creation_time"
+            ),
+            to_attr="visible_comments"
+        )
+    ).first()
 
-                        comment = ArticleForum.objects.get(id=comment_id)
+    if article != None:
+        not_found = False
 
-                        if(str(logged_in_user_id) in comment.likes_from_users):
-                            comment.likes_from_users.remove(str(logged_in_user_id))
-                            comment.likes -= 1
-                            
-                            comment.save()
+        # Splits Comments Into Parent And Child Comments
+        comments_by_parent = defaultdict(list)
+        
+        for one_comment in article.visible_comments:
+            comments_by_parent[one_comment.parent_id].append(one_comment)
+        
+        article.nested_comments = dict(comments_by_parent)
+        article.root_comments = comments_by_parent[None]
 
-                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+    # Adds 1 Visitor to The Article's Unique Visitors
+    if not request.COOKIES.get(article.link):
+        article.visitors += 1
+        article.save()
 
-                    return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné odstrániť bez prihlásenia.")}, status=401)
+    response = render(request, "app/articles.html", {
+        "logged_in_user": {
+            "username": logged_in_user.username,
+            "profile_picture_name": logged_in_user.profile_picture_name
+        },
 
-                except Exception as e:
-                    captureError(f"An error occurred while removing the like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri rušení označenia páči sa mi to došlo k chybe.")}, status=404)
+        "article": article,
+        "write_comment_form": writeCommentForm,
+        "not_found": not_found,
+    })
 
-            # Report Comment
-            if request.headers.get("X-Requested-Action") == "report-comment":
-                try:
-                    comment_id = json.loads(request.body) # Gets The Comment Data
+    response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
 
-                    if "logged_in_user_id" in request.session:
-                        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-
-                        comment = ArticleForum.objects.get(id=comment_id)
-
-                        if(str(logged_in_user_id) not in comment.reports_from_users):
-                            comment.reports_from_users.append(logged_in_user_id)
-                            comment.reports += 1
-
-                            if comment.reports >= 5:
-                                comment.status = "hidden"
-                            
-                            comment.save()
-
-                        return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
-
-                    return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
-
-                except Exception as e:
-                    captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=404)
-
-        response = render(request, "app/articles.html", {
-            "logged_in_user": {
-                "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name
-            },
-
-            "article": article,
-            "comments": comments,
-            "replies": replies,
-            "write_comment_form": writeCommentForm,
-            "no_comments": no_comments,
-            "not_found": False,
-        })
-
-        response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
-
-        return response
-    
-    except:
-        return render(request, "app/articles.html", {
-            "not_found": True,
-        })
+    return response
     
 def writeArticleView(request):
     logged_in_user_id = request.session.get("logged_in_user_id")

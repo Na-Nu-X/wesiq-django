@@ -1,4 +1,5 @@
 @import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
 
 .content {
     max-width: $main-width;
@@ -81,13 +82,6 @@
                         transform: scale(1.1);
                     }
                 }
-
-                // .date {
-                //     p {
-                //         padding-top: 3px;
-                //         font-size: 0.9em;
-                //     }
-                // }
             }
         }
     }
@@ -96,40 +90,333 @@
         margin: 10px 20px;
     }
 
-    // Forum
+    .comment_forum {
+        max-width: 800px;
+        width: 100%;
+        margin: 0px auto;
 
-    .article_forum {
-        width: 90%;
-        margin: 50px auto 0px;
+        &.hidden {
+            display: none;
+            opacity: 0;
+        }
 
-        .write_comment_form, .reply_comment_form {
-            position: relative;
-            // border-bottom: 1px solid $secondary-color;
-            // padding-bottom: 20px;
+        .all_comments {
+            @include scrollbar;
+            max-height: 300px;
+            padding-top: 10px;
 
-            input {
-                width: calc(100%);
-                height: 50px;
-                padding-left: 38px + 6px + 10px;
-                padding-right: 38px + 5px + 10px;
-                color: $secondary-color;
-                background-color: transparentize($secondary-color, 0.9);
-                backdrop-filter: blur(5px);
-                border: 1px solid $secondary-color;
-                border-radius: $big-border-radius;
-                outline: none;
+            .one_comment {
+                position: relative;
+                margin-bottom: 10px;
+                
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: 38px;
+                    left: calc(6px + 38px / 2);
+                    width: 1px;
+                    height: calc(100% - 38px);
+                    background-color: lighten($main-color, 20%);
+                }
 
-                &::placeholder {
-                    color: darken($secondary-color, 20%);
+                &:last-child {
+                    margin-bottom: 20px;
+                }
+
+                .comment_container {
+                    margin-left: 6px;
+
+                    .user {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+    
+                        a {
+                            .profile_picture {
+                                @include profile_picture($width: 38px, $height: 38px);
+                                display: block;
+                                transition: transform 0.3s ease;
+        
+                                &:hover {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        .username {
+                            font-weight: bold;
+                        }
+
+                        // Comment Properties
+
+                        .show_comment_properties_button {
+                            @include show_properties_button;
+                            margin-left: auto;
+                            margin-right: 10px;
+                        }
+
+                        .comment_properties,
+                        .report,
+                        .delete_comment {
+                            @include properties_menu;
+                        }
+
+                        .report {
+                            min-width: 200px;
+                        }
+                    }
+
+                    .right {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 7.5px;
+                        margin-left: 38px + 10px;
+                        padding-right: 10px;
+
+                        .comment {
+                            text-align: justify;
+                            padding-right: 10px;
+                            line-break: anywhere;
+                        }
+
+                        .likes {
+                            all: unset;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            height: 20px;
+        
+                            .fa-heart {
+                                display: block;
+                                color: darken($secondary-color, 40%);
+        
+                                &:hover {
+                                    color: $error-color !important;
+                                    cursor: pointer;
+                                    transition: color 0.3s ease;
+                                }
+                            }
+        
+                            .fa-solid {
+                                color: $error-color;
+                            }
+        
+                            .likes_counter {
+                                display: inline-block;
+                                color: darken($secondary-color, 40%);
+                            }
+                        }
+                    }
+                }
+
+                .interactions {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-left: 6px + 10px + 38px;
+                    padding-right: 10px;
+
+                    .reply {
+                        all: unset;
+
+                        .fa-comment,
+                        .fa-comment-slash {
+                            display: block;
+                            color: darken($secondary-color, 40%);
+                            cursor: pointer;
+
+                            &:hover {
+                                color: darken($secondary-color, 20%);
+                                transition: color 0.3s ease;
+                            }
+                        }
+                    }
+
+                    .likes {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        height: 20px;
+    
+                        .fa-heart {
+                            display: block;
+                            color: darken($secondary-color, 40%);
+    
+                            &:hover {
+                                color: $error-color !important;
+                                cursor: pointer;
+                                transition: color 0.3s ease;
+                            }
+                        }
+    
+                        .fa-solid {
+                            color: $error-color;
+                        }
+    
+                        .likes_counter {
+                            display: inline-block;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
+                    .date {
+                        margin-left: auto;
+
+                        p {
+                            font-size: 0.8em;
+                            font-style: italic;
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
+                    .show_replies {
+                        all: unset;
+
+                        .fa-angle-down,
+                        .fa-angle-up {
+                            @include icon;
+                            display: block;
+                        }
+                    }
+                }
+
+                .reply_container {
+                    position: relative;
+                    margin-top: 10px;
+                    margin-left: 6px + 10px + 32px;
+                    margin-right: 10px;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: 0px;
+                        bottom: 82px;
+                        left: calc(6px + 32px / 2);
+                        width: 1px;
+                        background-color: lighten($main-color, 20%);
+                    }
+
+                    &.hidden {
+                        display: none;
+                    }
+
+                    .one_comment {
+                        &::before {
+                            display: none;
+                        }
+
+                        &::after {
+                            content: "";
+                            position: absolute;
+                            top: 103px;
+                            left: calc(6px + 32px / 2);
+                            width: 1px;
+                            height: 196px;
+                            background-color: transparent;
+                        }
+
+                        &.first_level_reply {
+                            > .comment_container {
+                                &::before {
+                                    left: -15px;
+                                    width: 15px;
+                                }
+
+                                &::after {
+                                    left: -29px;
+                                }
+                            }
+                        }
+
+                        .comment_container {
+                            position: relative;
+
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                top: calc(32px / 2);
+                                left: -18px;
+                                width: 18px;
+                                height: 1px;
+                                background-color: lighten($main-color, 20%);
+                            }
+
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                top: 3px;
+                                left: -32px;
+                                width: calc(28px / 2);
+                                height: calc(28px / 2);
+                                border-bottom: 1px solid lighten($main-color, 20%);
+                                border-left: 1px solid lighten($main-color, 20%);
+                                border-bottom-left-radius: $medium-border-radius;
+                            }
+                        }
+                    }
+
+                    .one_comment .comment_container .user a .profile_picture {
+                        width: 32px;
+                        height: 32px;
+                    }
                 }
             }
-            
+        }
+
+        .write_comment_form {
+            position: relative;
+
+            .comment {
+                display: block;
+                width: 100%;
+                min-height: 50px;
+                field-sizing: content;
+                padding-top: 12px;
+                padding-right: 30px + 10px + 10px;
+                padding-bottom: 12px;
+                padding-left: 38px + 6px + 10px + 15px + 10px;
+                text-align: left;
+                background-color: lighten($main-color, 20%);
+                color: $secondary-color;
+                border-radius: $big-border-radius;
+                outline: none;
+                resize: none;
+                transition: padding 0.3s ease;
+
+                &:empty::before {
+                    content: attr(data-placeholder);
+                    color: darken($secondary-color, 40%);
+                    cursor: text;
+                }
+                
+                .tag,
+                .hashtag {
+                    display: inline-block;
+                    height: 25px;
+                    line-height: 25px;
+                    padding: 0px 5px;
+                    border-radius: $small-border-radius;
+                    font-size: 0.8em;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
+
+                .tag {
+                    background-color: transparentize($blue-color, 0.8);
+                    color: $blue-color;
+                }
+
+                .hashtag {
+                    background-color: transparentize($success-color, 0.9);
+                    color: $success-color;
+                }
+            }
+
             .profile_picture {
                 position: absolute;
+                top: 6px;
                 left: 6px;
-                // top: calc(50% - 10px);
-                top: 50%;
-                transform: translateY(-50%);
                 width: 38px;
                 height: 38px;
                 padding: 2px;
@@ -137,160 +424,42 @@
                 border-radius: 50%;
             }
 
-            button {
+            .add_emoji {
+                all: unset;
+                position: absolute;
+                top: 24px;
+                left: calc(6px + 38px + 10px);
+                transform: translateY(-50%);
+
+                i {
+                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    display: block;
+                }
+            }
+
+            .emoji_picker_container {
+                @include emoji_picker_container;
+            }
+
+            .send {
+                all: unset;
                 position: absolute;
                 top: 50%;
-                right: 0px;
-                background-color: transparent;
-                border: none;
-                outline: none;
+                right: 10px;
+                transform: translateY(-50%) scale(1);
+                width: 30px;
+                height: 30px;
+                color: darken($secondary-color, 40%);
+                transition: transform 0.3s ease, color 0.3s ease;
 
-                .send {
-                    position: absolute;
-                    top: 50%;
-                    right: 15px;
-                    transform: translateY(-50%) scale(1);
-                    transition: transform 0.3s ease;
-
-                    &:hover {
-                        transform: translateY(-50%) scale(1.1);
-                        cursor: pointer;
-                    }
-                }
-            }
-        }
-
-        .all_comments {
-            margin-top: 50px;
-
-            .no_comments {
-                margin-bottom: 10px;
-                font-family: $article-heading-font;
-                font-size: 2em;
-                color: $secondary-color;
-            }
-
-            .one_comment {
-                margin-bottom: 20px;
-
-                .comment {
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-                    margin-left: 6px;
-
-                    .profile_picture {
-                        width: 38px;
-                        height: 38px;
-                        margin-right: 10px;
-                        padding: 2px;
-                        border: 1px solid $secondary-color;
-                        border-radius: 50%;
-                        transition: transform 0.3s ease;
-
-                        &:hover {
-                            transform: scale(1.1);
-                            cursor: pointer;
-                        }
-                    }
+                &:hover {
+                    transform: translateY(-50%) scale(1.1);
+                    color: darken($secondary-color, 20%);
+                    cursor: pointer;
                 }
 
-                .interactions {
-                    margin-left: 50px + 4px;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-
-                    .reply {
-                        .fa-reply {
-                            font-size: 1em;
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: darken($secondary-color, 20%);
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
-                        }
-
-                        .fa-xmark {
-                            font-size: 1em;
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: $error-color;
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
-                        }
-                    }
-                    
-                    .likes {
-                        .fa-heart {
-                            font-size: 1em;
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: $error-color !important;
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
-                        }
-
-                        p {
-                            display: inline-block;
-                            color: darken($secondary-color, 40%);
-                        }
-                    }
-
-                    .report {
-                        .fa-flag {
-                            font-size: 1em;
-                            color: darken($secondary-color, 40%);
-
-                            &:hover {
-                                color: $error-color;
-                                cursor: pointer;
-                                transition: color 0.3s ease;
-                            }
-                        }
-                    }
-
-                    .date {
-                        margin-left: 10px;
-
-                        p {
-                            font-size: 0.9em;
-                            font-style: italic;
-                            color: darken($secondary-color, 40%);
-                        }
-                    }
-                }
-
-                .reply_comment_form {
-                    display: none;
-                    margin-top: 10px;
-                    margin-left: 50px + 4px;
-                    padding-left: 10px;
-                    border-left: 2px solid darken($secondary-color, 20%);
-
-                    &.visible {
-                        display: block;
-                    }
-
-                    .profile_picture {
-                        left: 6px + 10px;
-                    }
-                }
-
-                .all_replies {
-                    margin-left: 50px + 4px;
-                    padding-left: 10px;
-                    border-left: 2px solid darken($secondary-color, 20%);
-
-                    .one_reply {
-                        margin-top: 10px;
-                    }
+                svg {
+                    pointer-events: none;
                 }
             }
         }

@@ -1,33 +1,22 @@
 import { sendPOST } from "../../../services/sendPOST.js"
-import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import { displayMessage } from "../../../utils/displayMessage.js"
-import { createCommentPropertiesHTML } from "./createCommentPropertiesHTML.js"
+import { getFormattedDate } from "../../../utils/getFormattedDate.js"
+import { createCommentPropertiesHTML } from "../../community/functions/createCommentPropertiesHTML.js"
 
-import type { comment } from "./createCommentPropertiesHTML.js"
-
-export interface addCommentResponse {
-    success: boolean,
-
-    logged_in_user:{
-        logged_in_user_id:number,
-    },
-
-    comment:comment,
-    message: string
-}
+import type { addCommentResponse } from "../../community/functions/postForum.js"
 
 // Function For Add Comment
-export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
+export async function addComment(article_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, comment_forum:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
     try {
-        const comment_input:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+        const comment_input:HTMLTextAreaElement = write_comment_form.querySelector(".comment") as HTMLTextAreaElement // Gets The Comment Input
 
         const comment_data:{
-            post_id:number,
+            article_id:number,
             comment:string,
             parent_id:number|null
         } = {
-            post_id: Number(post_id),
-            comment: comment_input.textContent,
+            article_id,
+            comment: comment_input.value,
             parent_id: parent_id
         }
 
@@ -39,11 +28,13 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
             return
         }
 
-        const one_comment_template:HTMLTemplateElement = feed.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
+        console.log(add_comment_response)
+
+        const one_comment_template:HTMLTemplateElement = comment_forum.querySelector(".one_comment_template") as HTMLTemplateElement // Gets The One Comment Template
         const one_comment_template_clone:DocumentFragment = one_comment_template.content.cloneNode(true) as DocumentFragment // Clones The One Comment Template Content
         const one_comment_container:HTMLDivElement = one_comment_template_clone.querySelector(".one_comment") as HTMLDivElement // Gets The One Comment Container
 
-        const report_template:HTMLTemplateElement = feed.querySelector(".report_template") as HTMLTemplateElement // Gets The Report Template
+        const report_template:HTMLTemplateElement = comment_forum.querySelector(".report_template") as HTMLTemplateElement // Gets The Report Template
         const report_template_clone:DocumentFragment = report_template.content.cloneNode(true) as DocumentFragment // Clones The Report Template Content
         const report_container:HTMLDivElement = report_template_clone.querySelector(".report") as HTMLDivElement // Gets The Report Container
         
@@ -69,7 +60,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
 
         // Comment
         const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
-        comment.textContent = comment_input.textContent // Sets The Comment Text
+        comment.textContent = comment_input.value // Sets The Comment Text
 
         // Likes
         const likes:HTMLButtonElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLButtonElement // Gets The Like Button
@@ -82,7 +73,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         likes_counter.textContent = "0" // Sets The Likes Counter
         likes.appendChild(likes_counter) // Appends The Likes Counter To The Likes
 
-        comment_input.innerHTML = "" // Deletes The Comment Input
+        comment_input.value = "" // Deletes The Comment Input
 
         if(parent_id) {
             const parent_comment:HTMLDivElement|null = all_comments.querySelector(`[data-comment_id="${parent_id}"]`) as HTMLDivElement || null
