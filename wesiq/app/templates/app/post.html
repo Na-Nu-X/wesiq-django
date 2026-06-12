@@ -861,7 +861,7 @@
                         <div class="comment_forum hidden">
                             <div class="all_comments">
                                 {% for one_comment in post.root_comments %}
-                                    {% include "partials/comment.html" with one_comment=one_comment level=1 %}
+                                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=post.nested_comments %}
 
                                 {% endfor %}
                             </div>

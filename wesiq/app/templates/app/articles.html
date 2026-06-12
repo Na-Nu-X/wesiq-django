@@ -10,6 +10,10 @@
 
 {% block content %}
     {% if not_found == False %}
+        <script src="{% static 'app/ts/dist/pages/articles/components/article_feed.js' %}" type="module"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
+
         <div class="article_banner">
             <div class="banner_image">
                 <img src="{% static '/../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
@@ -63,21 +67,113 @@
             </div>
         </div>
 
-        <div class="article_content">
+        <div class="article_content" data-article_id="{{ article.id }}">
             <p>{{ article.content }}</p>
         </div>
 
-        <div class="article_forum">
-            <form class="write_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
-                {% csrf_token %}
-                
+        <div class="comment_forum ">
+            <template class="one_comment_template">
+                <div class="one_comment">
+                    <div class="comment_container">
+                        <div class="user">
+                            <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                            </a>
+                            
+                            <p class="username"></p>
+    
+                            <button 
+                                class="show_comment_properties_button" 
+                                popovertarget=""
+                                style=""
+                                title="{% translate 'Viac...' %}"
+                                aria-label="{% translate 'Viac...' %}"
+                            >
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </button>
+
+                            <div 
+                                class="comment_properties" 
+                                id=""
+                                popover
+                                style=""
+                            >
+                                <button 
+                                    class="hide_comment_properties_button" 
+                                    popovertarget=""
+                                    popovertargetaction="hide"
+                                >
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zavrieť" %}</span>
+                                </button>
+                            </div>
+                        </div>
+    
+                        <div class="right">
+                            <p class="comment"></p>
+        
+                            <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
+                                <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                <p class="likes_counter">{{ one_comment.likes }}</p>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <div class="interactions">
+                        <div class="date" title="{% translate 'Dátum zverejnenia' %}" aria-label="{% translate 'Dátum zverejnenia' %}">
+                            <p></p>
+                        </div>
+                    </div>
+    
+                    <div class="reply_container hidden"></div>
+                </div>
+            </template>
+
+            <template class="report_template">
+                <div 
+                    class="report" 
+                    id=""
+                    popover
+                    style=""
+                >
+                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
+    
+                    <button 
+                        class="back_report_button"
+                        popovertarget="" 
+                        popovertargetaction="hide"
+                    >
+                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                        <span>{% translate "Späť" %}</span>
+                    </button>
+                </div>
+            </template>
+
+            <div class="comments_counter">
+                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                <p>{{ article.visible_comments|length }}</p>
+            </div>
+
+            <div class="all_comments">
+                {% for one_comment in article.root_comments %}
+                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=article.nested_comments %}
+
+                {% endfor %}
+            </div>
+
+            <div class="write_comment_form">
                 {{ write_comment_form.comment }}
 
                 <img 
                     class="profile_picture" 
                     src="
-                        {% if profile_picture_name %}
-                            /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
+                        {% if logged_in_user.profile_picture_name %}
+                            /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
 
                         {% else %}
                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -86,188 +182,20 @@
                     "
                 >
 
-                <input type="hidden" name="write_comment_form" value="write_comment_form"/>
-                
-                <button type="submit">
-                    <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
+                <button class="add_emoji" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
+                    <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                 </button>
-            </form>
 
-            <div class="all_comments">
-                <h2 class="no_comments">
-                    {% if no_comments %}
-                        {% translate "Zatiaľ&nbsp;žiadne&nbsp;komentáre." %}<br>{% translate "Buďte&nbsp;prvým&nbsp;a&nbsp;začnite&nbsp;diskusiu!" %}
-                    
-                    {% endif %}
-                </h2>
-
-                {% for one_comment in comments %}
-                    <div class="one_comment" data-id="{{ one_comment.id }}" data-article="{{ one_comment.article.link }}">
-                        <div class="comment">
-                            <img 
-                                class="profile_picture" 
-                                src="
-                                    {% if one_comment.user.profile_picture_name %}
-                                        /../media/images/{{ one_comment.user.id }}/{{ one_comment.user.profile_picture_name }}
-
-                                    {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                    
-                                    {% endif %}
-                                "
-                                title="{% translate 'Zobraziť profil' %} {{ one_comment.user.username }}"
-                            >
-
-                            <p>{{ one_comment.comment }}</p>
-                        </div>
-
-                        <div class="interactions">
-                            <div class="reply" title="{% translate 'Odpovedať...' %}">
-                                <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
-                                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                            </div>
-                            
-                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                                <i 
-                                    class="
-                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_comment.likes_from_users %}
-                                            fa-solid
-
-                                        {% else %}
-                                            fa-regular
-                                        
-                                        {% endif %}
-                                        fa-heart
-                                    "
-                                ></i> <!-- https://fontawesome.com/icons/heart -->
-
-                                <p class="likes_counter">{{ one_comment.likes }}</p>
-                            </div>
-
-                            <div class="report" title="{% translate 'Nahlásiť...' %}">
-                                <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
-                            </div>
-
-                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                                <p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
-                            </div>
-                        </div>
-
-                        <form class="reply_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
-                            {% csrf_token %}
-                            
-                            {{ write_comment_form.comment }}
-
-                            <img 
-                                class="profile_picture" 
-                                src="
-                                    {% if profile_picture_name %}
-                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-
-                                    {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                    
-                                    {% endif %}
-                                "
-                            >
-
-                            <input type="hidden" name="parent_id" value={{ one_comment.id }}>
-
-                            <input type="hidden" name="reply_comment_form" value="reply_comment_form"/>
-                            
-                            <button type="submit">
-                                <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
-                            </button>
-                        </form>
-
-                        <div class="all_replies">
-                            {% for one_reply in replies %}
-                                {% if one_comment.id == one_reply.parent_id %}
-                                    <div class="one_reply" data-id="{{ one_reply.id }}">
-                                        <div class="comment" data-id="{{ one_reply.id }}">
-                                            <img 
-                                                class="profile_picture" 
-                                                src="
-                                                    {% if one_reply.user.profile_picture_name %}
-                                                        /../media/images/{{ one_reply.user.id }}/{{ one_reply.user.profile_picture_name }}
-
-                                                    {% else %}
-                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                    
-                                                    {% endif %}
-                                                "
-                                                title="{% translate 'Zobraziť profil' %} {{ one_reply.user.username }}"
-                                            >
-
-                                            <p>{{ one_reply.comment }}</p>
-                                        </div>
-
-                                        <div class="interactions">
-                                            <div class="reply" title="{% translate 'Odpovedať...' %}">
-                                                <i class="fa-solid fa-reply"></i> <!-- https://fontawesome.com/icons/reply -->
-                                                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-                                            </div>
-                                            
-                                            <div class="likes" title="{% translate 'Páči sa mi...' %}">
-                                                <i 
-                                                    class="
-                                                        {% if request.session.logged_in_user_id|stringformat:"i" in one_reply.likes_from_users %}
-                                                            fa-solid
-
-                                                        {% else %}
-                                                            fa-regular
-                                                        
-                                                        {% endif %}
-                                                        fa-heart
-                                                    "
-                                                ></i> <!-- https://fontawesome.com/icons/heart -->
-
-                                                <p class="likes_counter">{{ one_reply.likes }}</p>
-                                            </div>
-
-                                            <div class="report" title="{% translate 'Nahlásiť...' %}">
-                                                <i class="fa-regular fa-flag"></i> <!-- https://fontawesome.com/icons/flag -->
-                                            </div>
-
-                                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
-                                                <p>{{ one_reply.creation_time|date:"d.m. Y" }}</p>
-                                            </div>
-                                        </div>
-
-                                        <form class="reply_comment_form" action="{% url 'blog_theme_url' article.link %}" method="POST">
-                                            {% csrf_token %}
-                                            
-                                            {{ write_comment_form.comment }}
-
-                                            <img 
-                                                class="profile_picture" 
-                                                src="
-                                                    {% if profile_picture_name %}
-                                                        /../media/images/{{ request.session.logged_in_user_id }}/{{ profile_picture_name }}
-
-                                                    {% else %}
-                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                    
-                                                    {% endif %}
-                                                "
-                                            >
-
-                                            <input type="hidden" name="parent_id" value={{ one_reply.id }}>
-
-                                            <input type="hidden" name="reply_comment_form" value="reply_comment_form"/>
-                                            
-                                            <button type="submit">
-                                                <img class="send" src="{% static 'images/send.png' %}"> <!-- https://www.flaticon.com/free-icon/send_5562584 -->
-                                            </button>
-                                        </form>
-                                    </div>
-                                    
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                {% endfor %}
+                <div class="emoji_picker_container hidden">
+                    <emoji-picker></emoji-picker>
+                </div>
+                
+                <button class="send">
+                    <!-- https://heroicons.com/ -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -275,5 +203,7 @@
 {% endblock content %}
 
 {% block script %}
+    <script src="{% url 'javascript_catalog_url' %}"></script>
+
     <script src="{% static 'app/ts/dist/pages/articles.js' %}" type="module"></script>
 {% endblock script %}

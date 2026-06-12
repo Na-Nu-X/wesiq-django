@@ -5,7 +5,7 @@ import { createCommentPropertiesHTML } from "./createCommentPropertiesHTML.js"
 
 import type { comment } from "./createCommentPropertiesHTML.js"
 
-interface addCommentResponse {
+export interface addCommentResponse {
     success: boolean,
 
     logged_in_user:{

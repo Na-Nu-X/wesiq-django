@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
             // Add Emoji To The Write Comment Input
             if(
-                (event.target as HTMLElement).classList.contains("add_emoji") &&
-                (event.target as HTMLElement).closest(".write_comment_form")
+                (event.target as HTMLButtonElement).classList.contains("add_emoji") &&
+                (event.target as HTMLButtonElement).closest(".write_comment_form")
             ) {
                 const add_emoji:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Add Emoji Button
                 const emoji_picker_container:HTMLDivElement = (add_emoji.parentElement as HTMLDivElement).querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     feed.addEventListener("mousedown", function(event:MouseEvent):void {
         // Add Emoji To The Write Comment Input
         if(
-            ((event.target as HTMLElement).classList.contains("add_emoji") ||
+            ((event.target as HTMLButtonElement).classList.contains("add_emoji") ||
             (event.target as HTMLElement).classList.contains("emoji_picker_container")) &&
             (event.target as HTMLElement).closest(".write_comment_form")
         ) {

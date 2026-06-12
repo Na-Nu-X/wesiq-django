@@ -262,14 +262,24 @@ class ArticleForum(models.Model):
     user = models.ForeignKey(
         Users, 
         verbose_name="User", 
-        on_delete=models.DO_NOTHING, 
-        related_name="comments", 
+        on_delete=models.CASCADE, 
+        related_name="article_comments",
         null=True,
     )
 
+    reports_from_users = models.ManyToManyField(
+        Users, 
+        through="ArticleForumReport", 
+        verbose_name="Reports From Users", 
+        related_name="reported_article_forum_comments", 
+        blank=True
+    )
+
     comment = models.TextField(verbose_name="Comment", null=False)
+    # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
+    # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)
-    likes_from_users = ArrayField(models.CharField(verbose_name="Likes From Users", max_length=20), default=list, null=False)
+    likes_from_users = models.ManyToManyField(Users, verbose_name="Likes From Users", related_name="liked_article_forum_comments", blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
     parent = models.ForeignKey(
@@ -282,7 +292,51 @@ class ArticleForum(models.Model):
 
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
-    reports_from_users = ArrayField(models.CharField(verbose_name="Reports From Users", max_length=20), default=list, null=False)
+    level = models.PositiveIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        if self.parent:
+            calculated_level = self.parent.level + 1
+            
+            if calculated_level > 5:
+                raise ValidationError(_("Maximum level of nested comments has been reached."))
+            
+            self.level = calculated_level
+            
+        else:
+            self.level = 1
+            
+        super().save(*args, **kwargs)
+
+class ArticleForumReport(models.Model):
+    report_reason_choices = [
+        ("spam", "spam"),
+        ("harassment", "harassment"),
+        ("hate_speech", "hate speech"),
+        ("misinformation", "misinformation"),
+        ("explicit_content", "explicit content"),
+        ("other", "other")
+    ]
+
+    articleforum = models.ForeignKey(
+        ArticleForum,
+        verbose_name="Article Forum Comment",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("articleforum", "user")
 
 class TrainingPlan(models.Model):
     unit_choices = [

@@ -163,7 +163,7 @@
 
         {% endif %}
 
-		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
+		{% with nested_comments=all_nested_comments|get_item:one_comment.id %}
 			{% if nested_comments|length > 0 %}
 				<button class="show_replies" title="{% translate 'Zobraziť odpovede...' %}" aria-label="{% translate 'Zobraziť odpovede...' %}">
 					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
@@ -179,7 +179,7 @@
     </div>
 
     <div class="reply_container hidden">
-        {% with nested_comments=post.nested_comments|get_item:one_comment.id %}
+        {% with nested_comments=all_nested_comments|get_item:one_comment.id %}
             {% for one_comment in nested_comments %}
                 {% include "partials/comment.html" with one_comment=one_comment level=level|add:1 %}
 
