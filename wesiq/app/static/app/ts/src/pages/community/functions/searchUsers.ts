@@ -138,6 +138,7 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement,
     one_user.classList.add("one_user") // Adds One User Class
     one_user.href = interpolate(gettext("/sk/profil/%s"), [user_data.username]) // Sets The Link To The User's Profile
     one_user.title = gettext("Zobraziť užívateľa") // Sets The Title
+    one_user.ariaLabel = gettext("Zobraziť užívateľa")
     one_user.target = "_self" // Sets The Target
     one_user.dataset["id"] = String(user_data.id) // Stores User's ID
     one_user.dataset["full_name"] = `${user_data.first_name} ${user_data.last_name}`

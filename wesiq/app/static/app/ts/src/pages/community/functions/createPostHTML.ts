@@ -89,6 +89,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     const post_author_profile_picture_link:HTMLAnchorElement = post_container.querySelector(".header .left a") as HTMLAnchorElement // Gets The Post Author Profile Picture Link
     post_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
     post_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+    post_author_profile_picture_link.ariaLabel = gettext("Zobraziť užívateľa")
 
     // Post Author Profile Picture
     const post_author_profile_picture:HTMLImageElement = post_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Post Author Profile Picture 
@@ -339,10 +340,12 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     const share:HTMLDivElement = society.querySelector(".share") as HTMLDivElement // Gets The Share Container
     share.dataset["author"] = post_data.user.username // Stores The Author's Username
     share.title = gettext("Zdielať...")
+    share.ariaLabel = gettext("Zdielať...")
 
     // Views
     const views:HTMLDivElement = society.querySelector(".views") as HTMLDivElement // Gets The Views Container
     views.title = gettext("Počet videní...")
+    views.ariaLabel = gettext("Počet videní...")
 
     // Views Counter
     const views_counter:HTMLParagraphElement = document.createElement("p") // Creates The Views Counter
@@ -406,6 +409,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
                 comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [post_data.user.username]) // Sets The Link To The User's Profile
                 comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+                comment_author_profile_picture_link.ariaLabel = gettext("Zobraziť užívateľa")
 
                 // Comment Author Profile Picture
                 const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
@@ -463,6 +467,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                     const reply:HTMLButtonElement = document.createElement("button") // Creates The Reply Button
                     reply.classList.add("reply") // Adds The Reply Class
                     reply.title = gettext("Odpovedať...")
+                    reply.ariaLabel = gettext("Odpovedať...")
                     reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
                     interactions.prepend(reply) // Prepends The Reply Button To The Interactions
                 }
@@ -483,6 +488,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                         const show_replies:HTMLButtonElement = document.createElement("button") // Creates The Show Replies Button
                         show_replies.classList.add("show_replies") // Adds The Show Replies Class
                         show_replies.title = gettext("Zobraziť odpovede...")
+                        show_replies.ariaLabel = gettext("Zobraziť odpovede...")
                         show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
                         new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".date") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
                     }

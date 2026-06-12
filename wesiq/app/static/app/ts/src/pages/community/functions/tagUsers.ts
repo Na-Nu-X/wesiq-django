@@ -245,6 +245,7 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
     one_user.classList.add("one_user") // Adds One User Class
     one_user.dataset["username"] = data.username // Stores User's Username
     one_user.title = gettext("Označiť") // Adds The Title
+    one_user.ariaLabel = gettext("Označiť")
     one_user.tabIndex = -1 // Makes The Element Focusable
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class

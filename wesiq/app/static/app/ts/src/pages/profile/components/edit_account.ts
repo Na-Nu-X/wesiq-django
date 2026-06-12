@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const anchor:HTMLAnchorElement = document.createElement("a") // Creates The Anchor
         anchor.href = String(url) // Sets The URL To The Link
         anchor.title = gettext("Otvoriť odkaz")
+        anchor.ariaLabel = gettext("Otvoriť odkaz")
         anchor.target = "_blank"
         anchor.rel = "noopener noreferrer"
 

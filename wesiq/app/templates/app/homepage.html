@@ -22,9 +22,10 @@
 {% block banner %}
     <button 
         class="reviews_info" 
+
         title="
             {% if total_reviews == 0 %}
-                {% translate "Zatiaľ žiadne recenzie" %}
+                {% translate 'Zatiaľ žiadne recenzie' %}
 
             {% else %}
                 {% blocktranslate count amount=total_reviews %}
@@ -36,6 +37,8 @@
                 {% endblocktranslate %}
             {% endif %}
         "
+
+        aria-label="{% if total_reviews == 0 %}{% translate 'Zatiaľ žiadne recenzie' %}{% else %}{% blocktranslate count amount=total_reviews %}Na základe {{ amount }} recenzie{% plural %}Na základe {{ amount }} recenzií{% endblocktranslate %}{% endif %}"
     >
         <p>{{ avg_rating.rating__avg|floatformat:2 }}</p>
 
@@ -60,7 +63,7 @@
                 <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
             </button>
 
-            <input class="search_bar" type="text" placeholder="{% translate 'Hľadať' %}" autocomplete="off">
+            <input class="search_bar" type="text" placeholder="{% translate 'Hľadať' %}" aria-label="{% translate 'Hľadať' %}" autocomplete="off">
         </div>
 
         <div class="search_result_container"></div>
@@ -83,7 +86,7 @@
 
             <h2>{% translate "Prihlásenie" %}</h2>
 
-            <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             <div class="identifier_container">
                 <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
@@ -94,7 +97,7 @@
                 <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                 {{ login_form.password }}
 
-                <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}">
+                <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}" aria-label="{% translate 'Zobraziť heslo' %}">
                     <i class="fa-regular fa-eye-slash"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
                 </button>
             </div>
@@ -149,7 +152,7 @@
 
             <h2>{% translate "Registrácia" %}</h2>
 
-            <a class="back" href="#" title="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
             
             <div class="inputs">
                 <div class="first_name_container">
@@ -182,17 +185,17 @@
             </div>
                 
             <div class="password_container">
-                <button class="generate_password" type="button" title="{% translate 'Navrhnúť heslo' %}">
+                <button class="generate_password" type="button" title="{% translate 'Navrhnúť heslo' %}" aria-label="{% translate 'Navrhnúť heslo' %}">
                     <i class="fa-solid fa-key"></i> <!-- https://fontawesome.com/icons/key -->
                 </button>
 
                 {{ registration_form.password }}
 
-                <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}">
+                <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}" aria-label="{% translate 'Zobraziť heslo' %}">
                     <i class="fa-regular fa-eye-slash"></i> <!-- https://fontawesome.com/icons/eye-slash --> <!-- https://fontawesome.com/icons/eye -->
                 </button>
 
-                <button class="copy_password" type="button" title="{% translate 'Skopírovať' %}">
+                <button class="copy_password" type="button" title="{% translate 'Skopírovať' %}" aria-label="{% translate 'Skopírovať' %}">
                     <i class="fa-solid fa-copy"></i> <!-- https://fontawesome.com/icons/copy -->
                 </button>
             </div>
@@ -201,7 +204,7 @@
                 <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                 {{ registration_form.password_check }}
 
-                <button class="paste_password" type="button" title="{% translate 'Prilepiť' %}">
+                <button class="paste_password" type="button" title="{% translate 'Prilepiť' %}" aria-label="{% translate 'Prilepiť' %}">
                     <i class="fa-regular fa-copy"></i> <!-- https://fontawesome.com/icons/copy -->
                 </button>
             </div>
@@ -211,7 +214,7 @@
             <input class="registration_form_submit" type="submit" value="{% translate 'Vytvoriť účet' %}">
 
             <div class="form_questions">
-                <p>{% translate "Už máte účet?" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">Prihlásiť sa</a></p>
+                <p>{% translate "Už máte účet?" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihlásiť sa" %}</a></p>
             </div>
 
             <!-- Google reCAPTCHA V3 -->
@@ -334,7 +337,7 @@
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
             <div class="sort_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
+                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </button>
 
@@ -352,7 +355,7 @@
             </div>
 
             <div class="rating_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
+                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </button>
 
@@ -363,11 +366,11 @@
 
                 <div class="options_list" inert>
                     <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all" tabindex="0"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
-                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1" tabindex="0"><span><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5" tabindex="0"><span aria-label="{% translate '5 hviezd' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4" tabindex="0"><span aria-label="{% translate '4 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3" tabindex="0"><span aria-label="{% translate '3 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2" tabindex="0"><span aria-label="{% translate '2 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1" tabindex="0"><span aria-label="{% translate '1 hviezda' %}"><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
                 </div>
             </div>
         </div>
@@ -398,7 +401,7 @@
                 <div class="one_review" data-review_id="{{ my_review.id }}">
                     <div class="reviewer">
                         {% if my_review.user.username %}
-                            <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                            <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
                                     class="profile_picture skeleton_loading" 
                                     src="
@@ -434,7 +437,7 @@
                                 {% translate "Neexistujúci účet" %}
                 
                             {% else %}
-                                <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">{{ my_review.user.username }}</a>
+                                <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ my_review.user.username }}</a>
                 
                             {% endif %}
                             
@@ -453,6 +456,7 @@
                             popovertarget="review_properties"
                             style="anchor-name: --show_review_properties_button;"
                             title="{% translate 'Viac...' %}"
+                            aria-label="{% translate 'Viac...' %}"
                         >
                             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </button>
@@ -571,7 +575,7 @@
                         {{ review_form.review }}
 
                         <div class="icons">
-                            <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}">
+                            <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
                                 <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                             </button>
                         </div>
@@ -642,8 +646,8 @@
                 <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
                 
                 <label for="select_attachment" tabindex="0">
-                    <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}">
-                        <i class="fa-solid fa-paperclip" title="{% translate 'Vybrať prílohu' %}"></i> <!-- https://fontawesome.com/icons/paperclip -->
+                    <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}" title="{% translate 'Vybrať prílohu' %}" aria-label="{% translate 'Vybrať prílohu' %}">
+                        <i class="fa-solid fa-paperclip"></i> <!-- https://fontawesome.com/icons/paperclip -->
                     </div>
                 </label>
                 

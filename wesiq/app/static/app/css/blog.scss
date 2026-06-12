@@ -113,6 +113,7 @@
             animation: fadeIn 1s ease-out forwards;
         }
 
+        &:has(a:focus-visible),
         &:hover {
             transform: scale(1.01);
             cursor: pointer;
@@ -160,13 +161,15 @@
         }
 
         .share {
+            all: unset;
             position: absolute;
             top: 20px + (45px / 2) - (26px / 2);
             right: 20px;
             z-index: 50;
 
-            i {
-                font-size: 25px;
+            .fa-share-nodes {
+                display: block;
+                font-size: 2em;
                 color: darken($secondary-color, 40%);
                 transition: color 0.3s ease;
 

@@ -9,7 +9,7 @@
 {% endblock style %}
 
 {% block banner %}
-    <a href="{% url 'write_article_url' %}" title="{% translate 'Pridať článok' %}" target="_self">{% translate "Pridať článok" %}</a>
+    <a href="{% url 'write_article_url' %}" title="{% translate 'Pridať článok' %}" aria-label="{% translate 'Pridať článok' %}" target="_self">{% translate "Pridať článok" %}</a>
 {% endblock banner %}
 
 {% block content %}
@@ -34,13 +34,13 @@
                 <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
             </button>
 
-            <input class="search_bar" type="text" placeholder="{% translate 'Nájsť článok' %}" autocomplete="off">
+            <input class="search_bar" type="text" placeholder="{% translate 'Nájsť článok' %}" aria-label="{% translate 'Nájsť článok' %}" autocomplete="off">
         </div>
         
         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
         <div class="select_menus">
             <div class="sort_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
+                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </button>
 
@@ -59,7 +59,7 @@
             </div>
 
             <div class="category_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}">
+                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
                     <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
                 </button>
 
@@ -130,22 +130,21 @@
                 -->
 
                 <div class="info">
-                    <div class="tooltip" data-tooltip="{% translate 'Tento článok pridal' %} {{ one_article.user.username }}">
+                    <div class="tooltip" data-tooltip="{% translate 'Tento článok pridal' %} {{ one_article.user.username }}" aria-label="{% translate 'Tento článok pridal' %} {{ one_article.user.username }}">
                         <i class="fa-solid fa-circle-info"></i> <!-- https://fontawesome.com/icons/circle-info -->
                     </div>
                 </div>
                 
-                <div class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="{% translate 'Zdielať' %}">
+                <button class="share" data-title="{{ one_article.title }}" data-link="{{ one_article.link }}" title="{% translate 'Zdielať' %}" aria-label="{% translate 'Zdielať' %}">
                     <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
-
                     <p class="share_result"></p>
-                </div>
+                </button>
 
                 <div class="description skeleton_loading skeleton_text">
                     <p class="hidden">{{ one_article.content|truncatechars:200 }}</p>
                 </div>
 
-                <a href="{% url 'blog_theme_url' one_article.link %}" title="{% translate 'Zobraziť' %}" target="_self">
+                <a href="{% url 'blog_theme_url' one_article.link %}" title="{% translate 'Zobraziť' %}" aria-label="{% translate 'Zobraziť' %}" target="_self">
                     <div class="skeleton_loading skeleton_text">
                         <h2 class="hidden">{{ one_article.title }}</h2>
                     </div>
@@ -176,7 +175,7 @@
                             </div>
                         </div>
 
-                        <div class="category" title="{% translate 'Kategória' %}">
+                        <div class="category" title="{% translate 'Kategória' %}" aria-label="{% translate 'Kategória' %}">
                             <div class="skeleton_loading skeleton_text">
                                 <p class="hidden">
                                     <i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
@@ -189,13 +188,13 @@
                             </div>
                         </div>
 
-                        <div class="visitors" title="{{ one_article.visitors }} {% translate 'unikátnych návštevníkov' %}">
+                        <div class="visitors" title="{{ one_article.visitors }} {% translate 'unikátnych návštevníkov' %}" aria-label="{{ one_article.visitors }} {% translate 'unikátnych návštevníkov' %}">
                             <div class="skeleton_loading skeleton_text">
                                 <p class="hidden"><i class="fa-regular fa-eye"> </i> {{ one_article.visitors }}</p> <!-- https://fontawesome.com/icons/eye -->
                             </div>
                         </div>
 
-                        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+                        <div class="date" title="{% translate 'Dátum zverejnenia' %}" aria-label="{% translate 'Dátum zverejnenia' %}">
                             <div class="skeleton_loading skeleton_text">
                                 <p class="hidden">{{ one_article.creation_time|date:"d.m. Y" }}</p>
                             </div>

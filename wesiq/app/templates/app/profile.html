@@ -11,7 +11,7 @@
 {% block content %}
     <div class="profile_container">
         <div class="options_container">
-            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+            <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                 <button class="toggle_settings"><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
@@ -41,6 +41,7 @@
                                     {% endif %}
                                 "
                                 title="{% translate 'Nahrať obrázok' %}"
+                                aria-label="{% translate 'Nahrať obrázok' %}"
                             >
                         </label>
     
@@ -54,7 +55,8 @@
                         type="button"
                         popovertarget="account_properties"
                         style="anchor-name: --show_account_properties_button;"
-                        title="{% translate 'Viac...' %}"     
+                        title="{% translate 'Viac...' %}"
+                        aria-label="{% translate 'Viac...' %}"
                     >
                         <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                     </button>
@@ -122,6 +124,7 @@
                             popovertarget="add_link_form"
                             style="anchor-name: --show_add_link_form_button;"
                             title="{% translate 'Pridať odkaz' %}"
+                            aria-label="{% translate 'Pridať odkaz' %}"
                         >
                             <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
                         </button>
@@ -148,7 +151,9 @@
                             </button>
                         </div>
 
-                        <i class="add_emoji fa-regular fa-face-surprise" title="{% translate 'Pridať emoji' %}"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                        <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
+                            <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                        </button>
                     </div>
     
                     <div class="emoji_picker_container hidden">
@@ -239,7 +244,7 @@
 
                             <div class="links">
                                 {% for one_link in user.bio_links.all %}
-                                    <a href="{{ one_link.url }}" title="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
+                                    <a href="{{ one_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
                                         {% if "instagram.com" in one_link.url %}
                                             <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
 
@@ -310,7 +315,7 @@
 
                     <div class="badges">
                         {% if user.role == "developer" %}
-                            <div class="badge developer" title="{% translate 'Vývojár' %}">
+                            <div class="badge developer" title="{% translate 'Vývojár' %}" aria-label="{% translate 'Vývojár' %}">
                                 <i class="fa-solid fa-code"></i> <!-- https://fontawesome.com/icons/code -->
                             </div>
 
@@ -343,6 +348,7 @@
                                 "
     
                                 title="{% translate 'Prispievateľ' %}"
+                                aria-label="{% translate 'Prispievateľ' %}"
                             >   
                                 <i class="fa-solid fa-dollar-sign"></i> <!-- https://fontawesome.com/icons/dollar-sign -->
 
@@ -397,6 +403,7 @@
                             "
 
                             title="{% translate 'Level' %}"
+                            aria-label="{% translate 'Level' %}"
                         >   
                             <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
                             <p>{{ user.level }}</p>
@@ -429,6 +436,7 @@
                                 "
 
                                 title="{% translate 'Získané XP' %}"
+                                aria-label="{% translate 'Získané XP' %}"
                             >
                                 <i class="fa-solid fa-bolt"></i> <!-- https://fontawesome.com/icons/bolt -->
                                 
@@ -458,7 +466,7 @@
                         {% endif %}
 
                         {% if not user.max_activity_streak == 0 %}
-                            <div class="badge max_activity_streak" title="{% translate 'Najdlhšia rada aktivity' %}">
+                            <div class="badge max_activity_streak" title="{% translate 'Najdlhšia rada aktivity' %}" aria-label="{% translate 'Najdlhšia rada aktivity' %}">
                                 <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
                                 <p>{{ user.max_activity_streak }}</p>
                             </div>
@@ -492,6 +500,7 @@
                                 "
 
                                 title="{% translate 'Roky od registrácie' %}"
+                                aria-label="{% translate 'Roky od registrácie' %}"
                             >   
                                 <i class="fa-solid fa-cake-candles"></i> <!-- https://fontawesome.com/icons/cake-candles -->
                                 <p>{{ user.years_since_registration }}</p>
@@ -526,6 +535,7 @@
                                 "
 
                                 title="{% translate 'Zaznamenané aktivity' %}"
+                                aria-label="{% translate 'Zaznamenané aktivity' %}"
                             >
                                 <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
 
@@ -581,6 +591,7 @@
                                 "
 
                                 title="{% translate 'Počet sledovateľov' %}"
+                                aria-label="{% translate 'Počet sledovateľov' %}"
                             >
                                 <i class="fa-brands fa-bluesky"></i> <!-- https://fontawesome.com/icons/bluesky -->
 
@@ -636,6 +647,7 @@
                                 "
 
                                 title="{% translate 'Počet príspevkov' %}"
+                                aria-label="{% translate 'Počet príspevkov' %}"
                             >
                                 <i class="fa-solid fa-camera"></i> <!-- https://fontawesome.com/icons/camera -->
 
@@ -691,6 +703,7 @@
                                 "
 
                                 title="{% translate 'Získané lajky' %}"
+                                aria-label="{% translate 'Získané lajky' %}"
                             >
                                 <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
                                 
@@ -746,6 +759,7 @@
                                 "
 
                                 title="{% translate 'Napísané komentáre' %}"
+                                aria-label="{% translate 'Napísané komentáre' %}"
                             >
                                 <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                                 

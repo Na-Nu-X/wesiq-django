@@ -69,6 +69,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             remove_post.classList.add("remove_post") // Adds The Remove Post Class
             remove_post.type = "button" // Prevents Form Submission
             remove_post.title = gettext("Odstrániť...")
+            remove_post.ariaLabel = gettext("Odstrániť...")
             remove_post.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
 
             post.appendChild(remove_post) // Appends The Remove Post Button To The Post

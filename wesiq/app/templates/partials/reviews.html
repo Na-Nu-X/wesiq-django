@@ -4,7 +4,7 @@
 <div class="one_review" data-review_id="{{ one_review.id }}">
 	<div class="reviewer">
 		{% if one_review.user.username %}
-			<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+			<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
 				<img 
 					class="profile_picture skeleton_loading" 
 					src="
@@ -40,7 +40,7 @@
 				{% translate "Neexistujúci účet" %}
 
 			{% else %}
-				<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">{{ one_review.user.username }}</a>
+				<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ one_review.user.username }}</a>
 
 			{% endif %}
 			
@@ -59,6 +59,7 @@
 			popovertarget="review_properties_{{ one_review.id }}"
 			style="anchor-name: --show_review_properties_button_{{ one_review.id }};"
 			title="{% translate 'Viac...' %}"
+			aria-label="{% translate 'Viac...' %}"
 		>
 			<i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
 		</button>

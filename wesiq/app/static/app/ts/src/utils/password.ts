@@ -14,16 +14,22 @@ export function passwordVerification(input_1:HTMLInputElement, input_2:HTMLInput
 }
 
 // Function For Showing Password
-export function showPassword(icon:HTMLElement, input:HTMLInputElement):void {
+export function showPassword(button:HTMLButtonElement, input:HTMLInputElement):void {
+    const icon:HTMLElement = button.querySelector(".fa-eye-slash") as HTMLButtonElement // Gets The Icon
+
     icon.classList.replace("fa-eye-slash", "fa-eye") // Shows Open Eye
-    icon.title = gettext("Skryť heslo"); // Changes Title Attribute
+    button.title = gettext("Skryť heslo") // Changes Title Attribute
+    button.ariaLabel = gettext("Skryť heslo");
     (input.style as CSSStyleDeclaration & { webkitTextSecurity?: string }).webkitTextSecurity = "none" // Shows Password (input.style.webkitTextSecurity = "none")
 }
 
 // Function For Hiding Password
-export function hidePassword(icon:HTMLElement, input:HTMLInputElement):void {
+export function hidePassword(button:HTMLButtonElement, input:HTMLInputElement):void {
+    const icon:HTMLElement = button.querySelector(".fa-eye") as HTMLButtonElement // Gets The Icon
+
     icon.classList.replace("fa-eye", "fa-eye-slash") // Shows Slashed Eye
-    icon.title = gettext("Zobraziť heslo"); // Changes Title Attribute
+    button.title = gettext("Zobraziť heslo") // Changes Title Attribute
+    button.ariaLabel = gettext("Zobraziť heslo");
     (input.style as CSSStyleDeclaration & { webkitTextSecurity?: string }).webkitTextSecurity = "disc" // Hides Password (input.style.webkitTextSecurity = "disc")
 }
 

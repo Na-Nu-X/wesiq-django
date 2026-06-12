@@ -16,7 +16,7 @@
 >
     <div class="comment_container">
         <div class="user">
-            <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+            <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                 <img 
 					class="profile_picture" 
 					src="
@@ -38,6 +38,7 @@
 				popovertarget="comment_properties_{{ one_comment.id }}"
 				style="anchor-name: --show_comment_properties_button_{{ one_comment.id }};"
 				title="{% translate 'Viac...' %}"
+				aria-label="{% translate 'Viac...' %}"
 			>
 				<i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
 			</button>
@@ -133,7 +134,7 @@
 		<div class="right">
 			<p class="comment">{{ one_comment.comment }}</p>
 
-			<button class="likes" title="{% translate 'Páči sa mi...' %}">
+			<button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
 				<i 
 					class="
 						{% if one_comment.has_like %}
@@ -155,7 +156,7 @@
 
     <div class="interactions">
         {% if level < 5 %}
-            <button class="reply" title="{% translate 'Odpovedať...' %}">
+            <button class="reply" title="{% translate 'Odpovedať...' %}" aria-label="{% translate 'Odpovedať...' %}">
                 <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                 <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
             </button>
@@ -164,7 +165,7 @@
 
 		{% with nested_comments=post.nested_comments|get_item:one_comment.id %}
 			{% if nested_comments|length > 0 %}
-				<button class="show_replies" title="{% translate 'Zobraziť odpovede...' %}">
+				<button class="show_replies" title="{% translate 'Zobraziť odpovede...' %}" aria-label="{% translate 'Zobraziť odpovede...' %}">
 					<i class="fa-solid fa-angle-down"></i> <!-- https://fontawesome.com/icons/angle-down -->
 					{% comment %} <i class="fa-solid fa-angle-up"></i> <!-- https://fontawesome.com/icons/angle-up --> {% endcomment %}
 				</button>
@@ -172,7 +173,7 @@
 			{% endif %}
 		{% endwith %}
 
-        <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+        <div class="date" title="{% translate 'Dátum zverejnenia' %}" aria-label="{% translate 'Dátum zverejnenia' %}">
 			<p>{{ one_comment.creation_time|date:"d.m. Y" }}</p>
 		</div>
     </div>

@@ -21,7 +21,7 @@
 
             <div class="reviewer">
                 {% if review.user.username %}
-                    <a href="{% url 'profile_url' review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                    <a href="{% url 'profile_url' review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                         <img 
                             class="profile_picture skeleton_loading" 
                             src="

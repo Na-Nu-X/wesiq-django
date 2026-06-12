@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const search_bar_menu:HTMLDivElement = search_bar_container.querySelector(".search_bar_menu") as HTMLDivElement // Gets The Search Bar Menu
     const search_bar:HTMLInputElement = search_bar_menu.querySelector(".search_bar") as HTMLInputElement // Gets Search Bar
     const delete_search_bar:HTMLButtonElement = search_bar_menu.querySelector(".delete_search_bar") as HTMLButtonElement // Gets Delete Search Bar Button
-    const share_buttons:NodeListOf<HTMLDivElement> = document.querySelectorAll<HTMLDivElement>(".share") // Gets Every Share Button
+    const share_buttons:NodeListOf<HTMLButtonElement> = document.querySelectorAll<HTMLButtonElement>(".share") // Gets Every Share Button
 
     const select_menus:HTMLDivElement = search_bar_container.querySelector(".select_menus") as HTMLDivElement // Gets The Select Menus
     const sort_select_menu:HTMLDivElement = select_menus.querySelector(".sort_select_menu") as HTMLDivElement // Gets Sort Select Menu
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     })
 
     // Share Button Click Functionality
-    share_buttons.forEach(function(one_share_button:HTMLDivElement):void {
+    share_buttons.forEach(function(one_share_button:HTMLButtonElement):void {
         one_share_button.addEventListener("click", async function():Promise<void> {
             let title:string = this.dataset["title"] || "" // Gets Title
             let link:string = this.dataset["link"] || "" // Gets Link
