@@ -32,6 +32,7 @@
                 {% endif %}
             "
             title="{% translate 'Moje tréningové plány' %}"
+            aria-label="{% translate 'Moje tréningové plány' %}"
             target="_self"
         >
             {% translate "Moje tréningové plány" %}
@@ -348,6 +349,7 @@
                             popovertarget=""
                             style=""
                             title="{% translate 'Viac...' %}"
+                            aria-label="{% translate 'Viac...' %}"
                         >
                             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </button>
@@ -376,7 +378,7 @@
                 </template>
 
                 <div class="add_task_container">
-                    <input class="new_task" type="text" placeholder="{% translate 'Pridať úlohu' %}">
+                    <input class="new_task" type="text" placeholder="{% translate 'Pridať úlohu' %}" aria-label="{% translate 'Pridať úlohu' %}">
                     <button class="add_task"><i class="fa-solid fa-plus"></i></button>
                 </div>
 
@@ -401,6 +403,7 @@
                             popovertarget="custom_task_properties_{{ one_task.id }}"
                             style="anchor-name: --show_custom_task_properties_button_{{ one_task.id }};"
                             title="{% translate 'Viac...' %}"
+                            aria-label="{% translate 'Viac...' %}"
                         >
                             <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </button>

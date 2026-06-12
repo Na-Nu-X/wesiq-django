@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     show_hide_password.addEventListener("click", function():void {
         const icon:HTMLElement = this.querySelector("i") as HTMLElement // Gets The Icon
 
-        if(icon.matches(".fa-eye-slash")) showPassword(icon, password) // Shows The Password
-        else if(icon.matches(".fa-eye")) hidePassword(icon, password) // Hides The Password
+        if(icon.matches(".fa-eye-slash")) showPassword(this, password) // Shows The Password
+        else if(icon.matches(".fa-eye")) hidePassword(this, password) // Hides The Password
         if(login_form_dialog) login_form_dialog.showModal() // Shows The Login Form Dialog
     })
 

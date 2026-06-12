@@ -15,7 +15,7 @@
                 <div class="post_container" data-post_id="{{ post.id }}">
                     <div class="header">
                         <div class="left">
-                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
                                     class="profile_picture skeleton_loading" 
                                     src="
@@ -35,7 +35,7 @@
                             <div class="top">
                                 <p class="username">{{ post.user.username }}</p>
 
-                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
                                     <p class="followers">{{ post.user.followers.all|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
@@ -52,7 +52,7 @@
                             <div class="bottom">
                                 {% if post.location %}
                                     {% if post.coordinates %}
-                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" aria-label="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
 
                                     {% else %}
                                         <p class="location">{{ post.location }}</p>
@@ -81,7 +81,7 @@
                             <p class="comments_counter" style="filter: blur(5px);">123</p>
                         </div>
 
-                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
                             <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                         </div>
 
@@ -104,7 +104,7 @@
                 <div class="post_container" data-post_id="{{ post.id }}">
                     <div class="header">
                         <div class="left">
-                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
                                     class="profile_picture skeleton_loading" 
                                     src="
@@ -124,7 +124,7 @@
                             <div class="top">
                                 <p class="username">{{ post.user.username }}</p>
 
-                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
                                     <p class="followers">{{ post.user.followers.all|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
@@ -141,7 +141,7 @@
                             <div class="bottom">
                                 {% if post.location %}
                                     {% if post.coordinates %}
-                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" aria-label="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
 
                                     {% else %}
                                         <p class="location">{{ post.location }}</p>
@@ -170,7 +170,7 @@
                             <p class="comments_counter" style="filter: blur(5px);">123</p>
                         </div>
 
-                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
                             <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                         </div>
 
@@ -194,7 +194,7 @@
                     <div class="one_comment">
                         <div class="comment_container">
                             <div class="user">
-                                <a href="#" title="{% translate 'Zobraziť užívateľa' %}">
+                                <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                     <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                                 </a>
                                 
@@ -205,6 +205,7 @@
                                     popovertarget=""
                                     style=""
                                     title="{% translate 'Viac...' %}"
+                                    aria-label="{% translate 'Viac...' %}"
                                 >
                                     <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                                 </button>
@@ -229,7 +230,7 @@
                             <div class="right">
                                 <p class="comment"></p>
             
-                                <button class="likes" title="{% translate 'Páči sa mi...' %}">
+                                <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
                                     <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
                                     <p class="likes_counter">{{ one_comment.likes }}</p>
                                 </button>
@@ -237,7 +238,7 @@
                         </div>
         
                         <div class="interactions">
-                            <div class="date" title="{% translate 'Dátum zverejnenia' %}">
+                            <div class="date" title="{% translate 'Dátum zverejnenia' %}" aria-label="{% translate 'Dátum zverejnenia' %}">
                                 <p></p>
                             </div>
                         </div>
@@ -274,7 +275,7 @@
                 <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
                     <div class="header">
                         <div class="left">
-                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
                                     class="profile_picture skeleton_loading" 
                                     src="
@@ -294,7 +295,7 @@
                             <div class="top">
                                 <p class="username">{{ post.user.username }}</p>
 
-                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}">
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
                                     <p class="followers">{{ post.user.followers.all|length }}</p>
 
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
@@ -331,6 +332,7 @@
                                     popovertarget="post_properties"
                                     style="anchor-name: --show_post_properties_button;"
                                     title="{% translate 'Viac...' %}"
+                                    aria-label="{% translate 'Viac...' %}"
                                 >
                                     <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                                 </button>
@@ -533,7 +535,7 @@
                             <div class="bottom">
                                 {% if post.location %}
                                     {% if post.coordinates %}
-                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" aria-label="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
 
                                     {% else %}
                                         <p class="location">{{ post.location }}</p>
@@ -591,16 +593,16 @@
 
                                             <div class="controls">
                                                 <div class="buttons">
-                                                    <button class="play_pause" title="{% translate 'Pozastaviť...' %}">
+                                                    <button class="play_pause" title="{% translate 'Pozastaviť...' %}" aria-label="{% translate 'Pozastaviť...' %}">
                                                         <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
                                                         {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
                                                     </button>
 
-                                                    <button class="step_back" title="{% translate 'O 5 sekúnd späť...' %}">
+                                                    <button class="step_back" title="{% translate 'O 5 sekúnd späť...' %}" aria-label="{% translate 'O 5 sekúnd späť...' %}">
                                                         <i class="fa-solid fa-arrow-rotate-left"></i> <!-- https://fontawesome.com/icons/arrow-rotate-left -->
                                                     </button>
                             
-                                                    <button class="step_further" title="{% translate 'O 5 sekúnd ďalej...' %}">
+                                                    <button class="step_further" title="{% translate 'O 5 sekúnd ďalej...' %}" aria-label="{% translate 'O 5 sekúnd ďalej...' %}">
                                                         <i class="fa-solid fa-rotate-right"></i> <!-- https://fontawesome.com/icons/rotate-right -->
                                                     </button>
 
@@ -609,7 +611,7 @@
                                                     <div class="volume_container">
                                                         <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
 
-                                                        <button class="mute_unmute" title="{% translate 'Hlasitosť...' %}">
+                                                        <button class="mute_unmute" title="{% translate 'Hlasitosť...' %}" aria-label="{% translate 'Hlasitosť...' %}">
                                                             <i class="fa-solid fa-volume-xmark"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
                                                             {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
                                                             {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
@@ -620,8 +622,10 @@
                                                         class="show_video_settings_button"
                                                         popovertarget="video_settings"
                                                         style="anchor-name: --show_video_settings_button;"
+                                                        title="{% translate 'Nastavenia...' %}"
+                                                        aria-label="{% translate 'Nastavenia...' %}"
                                                     >
-                                                        <i class="fa-solid fa-gear" title="{% translate 'Nastavenia...' %}"></i> <!-- https://fontawesome.com/icons/gear -->
+                                                        <i class="fa-solid fa-gear"></i> <!-- https://fontawesome.com/icons/gear -->
                                                     </button>
 
                                                     <div 
@@ -700,8 +704,8 @@
                                                         </button>
                                                     </div>
 
-                                                    <button class="fullscreen">
-                                                        <i class="fa-solid fa-expand" title="{% translate 'Rozstiahnuť...' %}"></i> <!-- https://fontawesome.com/icons/expand -->
+                                                    <button class="fullscreen" title="{% translate 'Rozstiahnuť...' %}" aria-label="{% translate 'Rozstiahnuť...' %}">
+                                                        <i class="fa-solid fa-expand"></i> <!-- https://fontawesome.com/icons/expand -->
                                                         {% comment %} <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress --> {% endcomment %}
                                                     </button>
                                                 </div>
@@ -785,7 +789,7 @@
                     </div>
 
                     <div class="society">
-                        <button class="likes" title="{% translate 'Páči sa mi...' %}">
+                        <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
                             <i 
                                 class="
                                     {% if post.has_like %}
@@ -809,7 +813,7 @@
                             {% endif %}
                         </button>
 
-                        <button class="comments" title="{% translate 'Komentáre...' %}">
+                        <button class="comments" title="{% translate 'Komentáre...' %}" aria-label="{% translate 'Komentáre...' %}">
                             <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
 
                             {% if post.allow_comments %}
@@ -821,16 +825,16 @@
                             {% endif %}
                         </button>
 
-                        <button class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}">
+                        <button class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
                             <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
                         </button>
 
-                        <div class="views" title="{% translate 'Počet videní...' %}">
+                        <div class="views" title="{% translate 'Počet videní...' %}" aria-label="{% translate 'Počet videní...' %}">
                             <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
                             <p class="views_counter">{{ post.views }}</p>
                         </div>
 
-                        <button class="save" title="{% translate 'Uložiť...' %}">
+                        <button class="save" title="{% translate 'Uložiť...' %}" aria-label="{% translate 'Uložiť...' %}">
                             <i 
                                 class="
                                     {% if post.has_save %}
@@ -863,7 +867,7 @@
                             </div>
 
                             <div class="write_comment_form">
-                                <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}"></div>
+                                <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}" aria-label="{% translate 'Napísať komentár' %}"></div>
                 
                                 <img 
                                     class="profile_picture" 
@@ -878,7 +882,7 @@
                                     "
                                 >
 
-                                <button class="add_emoji" title="{% translate 'Pridať emoji' %}">
+                                <button class="add_emoji" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
                                     <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
                                 </button>
 

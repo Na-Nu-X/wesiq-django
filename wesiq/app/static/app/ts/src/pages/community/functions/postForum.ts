@@ -53,6 +53,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         const comment_author_profile_picture_link:HTMLAnchorElement = one_comment_container.querySelector(".comment_container .user a") as HTMLAnchorElement // Gets The Comment Author Profile Picture Link
         comment_author_profile_picture_link.href = interpolate(gettext("/sk/profil/%s"), [add_comment_response.comment.user.username]) // Sets The Link To The User's Profile
         comment_author_profile_picture_link.title = gettext("Zobraziť užívateľa")
+        comment_author_profile_picture_link.ariaLabel = gettext("Zobraziť užívateľa")
 
         // Comment Author Profile Picture
         const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
@@ -118,6 +119,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
             const reply:HTMLButtonElement = document.createElement("button") // Creates The Reply Button
             reply.classList.add("reply") // Adds The Reply Class
             reply.title = gettext("Odpovedať...")
+            reply.ariaLabel = gettext("Odpovedať...")
             reply.innerHTML = "<i class='fa-regular fa-comment'></i>" // https://fontawesome.com/icons/comment
             interactions.prepend(reply) // Prepends The Reply Button To The Interactions
         }
@@ -139,6 +141,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
                 const show_replies:HTMLButtonElement = document.createElement("button") // Creates The Show Replies Button
                 show_replies.classList.add("show_replies") // Adds The Show Replies Class
                 show_replies.title = gettext("Zobraziť odpovede...")
+                show_replies.ariaLabel = gettext("Zobraziť odpovede...")
                 show_replies.innerHTML = "<i class='fa-solid fa-angle-down'></i>" // Adds The Icon
                 new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".date") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
             }

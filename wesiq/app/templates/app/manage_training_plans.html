@@ -137,7 +137,7 @@
         <div class="top">
             <div class="new_training_plan" tabindex="0">
                 <div class="additional_info">
-                    <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
+                    <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="{% translate 'Názov' %}" aria-label="title" list="title">
 
                     <datalist id="title">
                         <option value="{% translate 'Pull' %}">
@@ -159,13 +159,13 @@
 
                         <div class="options_list" inert>
                             <div class="option" data-day="not_selected" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="1" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="2" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="3" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="4" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="5" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="6" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                            <div class="option" data-day="0" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="1" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Pondelok' %}">{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="2" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Utorok' %}">{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="3" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Streda' %}">{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="4" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Štvrtok' %}">{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="5" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Piatok' %}">{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="6" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Sobota' %}">{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                            <div class="option" data-day="0" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Nedeľa' %}">{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
                         </div>
                     </div>
                 </div>
@@ -190,7 +190,7 @@
                     {% endfor %}
 
                     <div class="additional_info">
-                        <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="title" list="title">
+                        <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="{% translate 'Názov' %}" list="title">
 
                         <datalist id="title">
                             <option value="{% translate 'Pull' %}">
@@ -212,13 +212,13 @@
 
                             <div class="options_list" inert>
                                 <div class="option" data-day="not_selected" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "Nepriradiť deň" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="1" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="2" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="3" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="4" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="5" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="6" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
-                                <div class="option" data-day="0" tabindex="0"><i class="fa-solid fa-list"></i><span>{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="1" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Pondelok' %}">{% translate "PO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="2" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Utorok' %}">{% translate "UT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="3" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Streda' %}">{% translate "ST" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="4" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Štvrtok' %}">{% translate "ŠT" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="5" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Piatok' %}">{% translate "PI" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="6" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Sobota' %}">{% translate "SO" %}</span></div> <!-- https://fontawesome.com/icons/list -->
+                                <div class="option" data-day="0" tabindex="0"><i class="fa-solid fa-list"></i><span aria-label="{% translate 'Nedeľa' %}">{% translate "NE" %}</span></div> <!-- https://fontawesome.com/icons/list -->
                             </div>
                         </div>
                     </div>
@@ -247,7 +247,7 @@
                     <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
                 </button>
 
-                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť cvik' %}" autocomplete="off">
+                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť cvik' %}" aria-label="{% translate 'Nájsť cvik' %}" autocomplete="off">
             </div>
 
             <div class="exercises">

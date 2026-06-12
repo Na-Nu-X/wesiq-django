@@ -156,13 +156,15 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Sets The Private Visibility
             if(icon.classList.contains("fa-eye")) {
                 icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
-                icon.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+                this.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+                this.ariaLabel = gettext("Vypnúť viditeľnosť len pre sledovateľov")
             }
     
             // Sets The Public Visibility
             else if(icon.classList.contains("fa-eye-low-vision")) {
                 icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
-                icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+                this.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+                this.ariaLabel = gettext("Zapnúť viditeľnosť len pre sledovateľov")
             }
         })
 
@@ -174,13 +176,15 @@ document.addEventListener("DOMContentLoaded", function():void {
                 // Sets The Private Visibility
                 if(icon.classList.contains("fa-eye")) {
                     icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
-                    icon.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+                    this.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
+                    this.ariaLabel = gettext("Vypnúť viditeľnosť len pre sledovateľov")
                 }
         
                 // Sets The Public Visibility
                 else if(icon.classList.contains("fa-eye-low-vision")) {
                     icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
-                    icon.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+                    this.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
+                    this.ariaLabel = gettext("Zapnúť viditeľnosť len pre sledovateľov")
                 }
             }
         })
@@ -193,13 +197,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Disables The Comments
         if(icon.classList.contains("fa-comment")) {
             icon.classList.replace("fa-comment", "fa-comment-slash") // Changes The Icon
-            icon.title = gettext("Zapnúť komentáre")
+            this.title = gettext("Zapnúť komentáre")
+            this.ariaLabel = gettext("Zapnúť komentáre")
         }
         
         // Enables The Comments
         else if(icon.classList.contains("fa-comment-slash")) {
             icon.classList.replace("fa-comment-slash", "fa-comment") // Changes The Icon
-            icon.title = gettext("Vypnúť komentáre")
+            this.title = gettext("Vypnúť komentáre")
+            this.ariaLabel = gettext("Vypnúť komentáre")
         }
     })
 
@@ -211,13 +217,15 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Disables The Comments
             if(icon.classList.contains("fa-comment")) {
                 icon.classList.replace("fa-comment", "fa-comment-slash") // Changes The Icon
-                icon.title = gettext("Zapnúť komentáre")
+                this.title = gettext("Zapnúť komentáre")
+                this.ariaLabel = gettext("Zapnúť komentáre")
             }
             
             // Enables The Comments
             else if(icon.classList.contains("fa-comment-slash")) {
                 icon.classList.replace("fa-comment-slash", "fa-comment") // Changes The Icon
-                icon.title = gettext("Vypnúť komentáre")
+                this.title = gettext("Vypnúť komentáre")
+                this.ariaLabel = gettext("Vypnúť komentáre")
             }
         }
     })
@@ -229,13 +237,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         // Hides The Like Counter
         if(icon.classList.contains("fa-solid")) {
             icon.classList.replace("fa-solid", "fa-regular") // Changes The Icon
-            icon.title = gettext("Zobraziť počet označení páči sa mi to")
+            this.title = gettext("Zobraziť počet označení páči sa mi to")
+            this.ariaLabel = gettext("Zobraziť počet označení páči sa mi to")
         }
 
         // Shows The Like Counter
         else if(icon.classList.contains("fa-regular")) {
             icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
-            icon.title = gettext("Skryť počet označení páči sa mi to")
+            this.title = gettext("Skryť počet označení páči sa mi to")
+            this.ariaLabel = gettext("Skryť počet označení páči sa mi to")
         }
     })
 
@@ -247,13 +257,15 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Hides The Like Counter
             if(icon.classList.contains("fa-solid")) {
                 icon.classList.replace("fa-solid", "fa-regular") // Changes The Icon
-                icon.title = gettext("Zobraziť počet označení páči sa mi to")
+                this.title = gettext("Zobraziť počet označení páči sa mi to")
+                this.ariaLabel = gettext("Zobraziť počet označení páči sa mi to")
             }
     
             // Shows The Like Counter
             else if(icon.classList.contains("fa-regular")) {
                 icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
-                icon.title = gettext("Skryť počet označení páči sa mi to")
+                this.title = gettext("Skryť počet označení páči sa mi to")
+                this.ariaLabel = gettext("Skryť počet označení páči sa mi to")
             }
         }
     })

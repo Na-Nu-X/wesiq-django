@@ -205,7 +205,12 @@
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
     
                 .add_emoji {
-                    @include icon;
+                    all: unset;
+    
+                    .fa-face-surprise {
+                        @include icon;
+                        display: block;
+                    }
                 }
 
                 // Add Link Form
