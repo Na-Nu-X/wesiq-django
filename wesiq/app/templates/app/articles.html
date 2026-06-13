@@ -11,6 +11,7 @@
 {% block content %}
     {% if not_found == False %}
         <script src="{% static 'app/ts/dist/pages/articles/components/article_feed.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/articles/components/rating.js' %}" type="module"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
 
@@ -29,17 +30,17 @@
                     <div 
                         class="rating" 
                         title="
-                            {% if article.rating|floatformat:0|add:0 == 0 %}
+                            {% if article.average_rating|default:0|floatformat:0|add:0 %}
                                 {% translate 'Zatiaľ žiadne hodnotenia' %}
                             
                             {% else %}
-                                {% translate 'Priemerné hodnotenie' %} {{ article.rating }}
+                                {% translate 'Priemerné hodnotenie' %} {{ article.average_rating|default:0|floatformat:2|add:0 }}
 
                             {% endif %}
                         "
                     >
                         {% for _ in "12345" %}
-                            {% if forloop.counter <= article.rating|floatformat:0|add:0 %}
+                            {% if forloop.counter <= article.average_rating|default:0|floatformat:0|add:0 %}
                                 <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                             {% else %}
@@ -48,27 +49,45 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                    
-                    <a href="#" title="{{ article.user.username }}" target="_self">
-                        <img 
-                            class="profile_picture" 
-                            src="
-                                {% if article.user.profile_picture_name %}
-                                    /../media/images/{{ article.user_id }}/{{ article.user.profile_picture_name }}
-
-                                {% else %}
-                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                
-                                {% endif %}
-                            "
-                        >
-                    </a>
                 </div>
             </div>
         </div>
 
         <div class="article_content" data-article_id="{{ article.id }}">
             <p>{{ article.content }}</p>
+        </div>
+
+        <div class="rating">
+            <a href="{% url 'profile_url' article.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                <img 
+                    class="profile_picture skeleton_loading" 
+                    src="
+                        {% if article.user.profile_picture_name %}
+                            /../media/images/{{ article.user.id }}/{{ article.user.profile_picture_name }}
+
+                        {% else %}
+                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                        
+                        {% endif %}
+                    "
+                >
+            </a>
+
+            {% for _ in "12345" %}
+                {% if forloop.counter <= article.given_rating %}
+                    <button type="button">
+                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                    </button>
+
+                {% else %}
+                    <button type="button">
+                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                    </button>
+                
+                {% endif %}
+            {% endfor %}
+
+            <input type="number" name="rating" value="{{ article.given_rating }}" min="0" max="5">
         </div>
 
         <div class="comment_forum ">
@@ -154,9 +173,13 @@
                 </div>
             </template>
 
-            <div class="comments_counter">
-                <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                <p>{{ article.visible_comments|length }}</p>
+            <div class="heading">
+                <div class="comments_counter">
+                    <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                    <p>{{ article.visible_comments|length }}</p>
+                </div>
+
+                <h2>{% translate "Komentáre" %}</h2>
             </div>
 
             <div class="all_comments">
@@ -204,6 +227,4 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-
-    <script src="{% static 'app/ts/dist/pages/articles.js' %}" type="module"></script>
 {% endblock script %}
