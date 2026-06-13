@@ -27,28 +27,71 @@ document.addEventListener("DOMContentLoaded", function():void {
     const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets The All Comments Container
     const write_comment_form:HTMLDivElement = comment_forum.querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
     const comment:HTMLTextAreaElement = write_comment_form.querySelector(".comment") as HTMLTextAreaElement // Gets The Comment Input
+    const add_emoji:HTMLButtonElement = write_comment_form.querySelector(".add_emoji") as HTMLButtonElement // Gets The Add Emoji Button
     const emoji_picker_container:HTMLDivElement = write_comment_form.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
+    const send:HTMLButtonElement = write_comment_form.querySelector(".send") as HTMLButtonElement // Gets The Send Button
+
+    // Events
+
+    // Add Emoji Button Click Functionality
+    add_emoji.addEventListener("click", function(event:PointerEvent):void {
+        event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+        emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+    })
+
+    // Emoji Picker Click Functionality
+    emoji_picker_container.addEventListener("emoji-click", function(event:Event):void {
+        // Add Emoji To The Write Comment Input
+        if(
+            (event.target as HTMLElement).tagName.toLowerCase() === "emoji-picker" &&
+            (event.target as HTMLElement).closest(".write_comment_form")
+        ) {
+            const picker:Element = event.target as Element // Gets The Emoji Picker
+            const comment:HTMLDivElement = (picker.closest(".write_comment_form") as HTMLDivElement).querySelector(".comment") as HTMLDivElement // Gets The Comment Input
+
+            const custom_event:CustomEvent<{
+                unicode:string
+            }> = event as CustomEvent<{ unicode: string }>
+        
+            const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
+            const selection:Selection|null = window.getSelection()
+            const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && comment.contains(selection.anchorNode)
+
+            if(!isInsideEditable) focusAtEnd(comment)
+
+            const active_selection:Selection|null = window.getSelection()
+
+            if(active_selection && active_selection.rangeCount > 0) {
+                const range:Range = active_selection.getRangeAt(0)
+            
+                range.deleteContents() // Deletes The Selected Text
+
+                // Inserts The Emoji To The Text
+                const text_node:Text = document.createTextNode(emoji)
+                range.insertNode(text_node)
+
+                // Sets The Cursor Position Behind The Inserted Emoji
+                range.setStartAfter(text_node)
+                range.setEndAfter(text_node)
+                
+                // Updates The Cursor
+                active_selection.removeAllRanges()
+                active_selection.addRange(range)
+            }
+        }
+    })
+
+    // Send Button Click Functionality
+    send.addEventListener("click", function():void {
+        const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
+    
+        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter) // Adds Comment To The Post
+    })
 
     // Global Event Delegations
 
     // Comment Forum Click Functionalities
     comment_forum.addEventListener("click", function(event:PointerEvent):void {
-        // Add Emoji To The Write Comment Input
-        if(
-            (event.target as HTMLButtonElement).classList.contains("add_emoji") &&
-            (event.target as HTMLButtonElement).closest(".write_comment_form")
-        ) {
-            event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
-            emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
-        }
-
-        // Send Comment
-        if((event.target as HTMLButtonElement).classList.contains("send")) {
-            const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
-
-            if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter) // Adds Comment To The Post
-        }
-
         // Toggle Reply On Comment
         if(
             (event.target as HTMLElement).closest(".interactions") &&
@@ -98,48 +141,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
 
             if(one_comment.dataset["comment_id"] && action && action === "delete") deleteArticleComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
-        }
-    })
-
-    // Feed Emoji Click Functionality
-    emoji_picker_container.addEventListener("emoji-click", function(event:Event):void {
-        // Add Emoji To The Write Comment Input
-        if(
-            (event.target as HTMLElement).tagName.toLowerCase() === "emoji-picker" &&
-            (event.target as HTMLElement).closest(".write_comment_form")
-        ) {
-            const picker:Element = event.target as Element // Gets The Emoji Picker
-            const comment:HTMLDivElement = (picker.closest(".write_comment_form") as HTMLDivElement).querySelector(".comment") as HTMLDivElement // Gets The Comment Input
-
-            const custom_event:CustomEvent<{
-                unicode:string
-            }> = event as CustomEvent<{ unicode: string }>
-        
-            const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
-            const selection:Selection|null = window.getSelection()
-            const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && comment.contains(selection.anchorNode)
-
-            if(!isInsideEditable) focusAtEnd(comment)
-
-            const active_selection:Selection|null = window.getSelection()
-
-            if(active_selection && active_selection.rangeCount > 0) {
-                const range:Range = active_selection.getRangeAt(0)
-            
-                range.deleteContents() // Deletes The Selected Text
-
-                // Inserts The Emoji To The Text
-                const text_node:Text = document.createTextNode(emoji)
-                range.insertNode(text_node)
-
-                // Sets The Cursor Position Behind The Inserted Emoji
-                range.setStartAfter(text_node)
-                range.setEndAfter(text_node)
-                
-                // Updates The Cursor
-                active_selection.removeAllRanges()
-                active_selection.addRange(range)
-            }
         }
     })
 
