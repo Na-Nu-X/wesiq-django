@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
+from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -44,7 +44,7 @@ from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
-from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count
+from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count, Subquery
 from django.http import FileResponse
 from django.template.loader import render_to_string
 from django.db import transaction
@@ -1807,6 +1807,31 @@ def blogView(request):
 
 def blogThemeView(request, theme):
     if request.method == "POST":
+        # Add Article Rating
+        if request.headers.get("X-Requested-Action") == "add-article-rating":
+            try:
+                if "logged_in_user_id" in request.session:
+                    logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                    article_rating_data = json.loads(request.body) # Gets The Article Rating Data
+                    article_id = article_rating_data["article_id"] # Gets The Article ID
+                    rating = article_rating_data["rating"] # Gets The Rating
+                    comment = Articles.objects.get(id=article_id) # Gets The Article
+
+                    # Stores The Added Article Rating
+                    ArticleRating.objects.update_or_create(
+                        article_id=article_id,
+                        user_id=logged_in_user_id,
+                        defaults={"rating": rating} # Rating Can Be Updated
+                    )
+
+                    return JsonResponse({"success": True, "message": _("Hodnotenie bolo úspešne odoslané.")}, status=200)
+
+                return JsonResponse({"success": False, "message": _("Hodnotenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+            except Exception as e:
+                captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                return JsonResponse({"success": False, "message": _("Pri pridávaní hodnotenia došlo k chybe.")}, status=500)
+
         # Report Article Comment
         if request.headers.get("X-Requested-Action") == "report-article-comment":
             try:
@@ -1959,6 +1984,16 @@ def blogThemeView(request, theme):
     # Gets The Article By URL Address With All Related Data
     article = Articles.objects.filter(
         link=theme
+    ).annotate(
+        average_rating=Avg("articlerating__rating"),
+
+        # Creates The Given Article Rating Column Of Logged In User
+        given_rating=Subquery(
+            ArticleRating.objects.filter(
+                article_id=OuterRef("pk"),
+                user_id=logged_in_user_id
+            ).values("rating")[:1]
+        )
     ).prefetch_related(
         Prefetch(
             "comments",

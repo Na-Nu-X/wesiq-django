@@ -236,14 +236,41 @@ class Articles(models.Model):
         null=True,
     )
 
+    rating_from_users = models.ManyToManyField(
+        Users, 
+        through="ArticleRating",
+        verbose_name="Rating From Users", 
+        blank=True
+    )
+
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
     content = models.TextField(verbose_name="Content", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
-    rating = models.FloatField(verbose_name="Rating", default=0, null=False)
     visitors = models.PositiveIntegerField(verbose_name="Visitors", default=0, null=False)
     link = models.CharField(verbose_name="Link", max_length=50, null=False)
     image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
+
+class ArticleRating(models.Model):
+    article = models.ForeignKey(
+        Articles,
+        verbose_name="Article",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False,
+    )
+
+    rating = models.PositiveIntegerField(verbose_name="Rating", default=0, null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("article", "user")
 
 class ArticleForum(models.Model):
     status_choices = [
