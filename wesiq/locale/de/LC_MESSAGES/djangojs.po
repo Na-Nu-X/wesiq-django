@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 14:49+0000\n"
+"POT-Creation-Date: 2026-06-13 15:56+0000\n"
 "PO-Revision-Date: 2026-06-06 08:02+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,8 @@ msgid "Pri rušení označenia páči sa mi to došlo k chybe."
 msgstr "Beim Ablehnen ist ein Fehler aufgetreten."
 
 #: app/static/app/ts/src/components/forum.ts:99
+#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:58
+#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:82
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:58
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:82
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:119
@@ -35,170 +37,236 @@ msgstr "Beim Ablehnen ist ein Fehler aufgetreten."
 msgid "Pri odosielaní nahlásenia došlo k chybe."
 msgstr "Beim Senden des Berichts ist ein Fehler aufgetreten."
 
-#: app/static/app/ts/src/components/searchBar.ts:24
+#: app/static/app/ts/src/components/searchBar.ts:26
 msgid "Hlavná stránka"
 msgstr "Hauptseite"
 
-#: app/static/app/ts/src/components/searchBar.ts:24
+#: app/static/app/ts/src/components/searchBar.ts:26
 msgid "Domovská stránka"
 msgstr "Homepage"
 
-#: app/static/app/ts/src/components/searchBar.ts:24
+#: app/static/app/ts/src/components/searchBar.ts:26
 msgid "Úvodná stránka"
 msgstr "Startseite"
 
-#: app/static/app/ts/src/components/searchBar.ts:25
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/prihlasenie"
 msgstr "/login"
 
-#: app/static/app/ts/src/components/searchBar.ts:25
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Prihlásenie"
 msgstr "Login"
 
-#: app/static/app/ts/src/components/searchBar.ts:25
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Prihlásiť sa"
 msgstr "Einloggen"
 
-#: app/static/app/ts/src/components/searchBar.ts:25
+#: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Autorizovať sa"
 msgstr "Autorisieren Sie sich"
 
-#: app/static/app/ts/src/components/searchBar.ts:26
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/obnova-hesla"
 msgstr "/passwortwiederherstellung"
 
-#: app/static/app/ts/src/components/searchBar.ts:26
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Obnova hesla"
 msgstr "Passwortwiederherstellung"
 
-#: app/static/app/ts/src/components/searchBar.ts:26
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Obnoviť heslo"
 msgstr "Passwort zurücksetzen"
 
-#: app/static/app/ts/src/components/searchBar.ts:26
+#: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Zmeniť heslo"
 msgstr "Kennwort ändern"
 
-#: app/static/app/ts/src/components/searchBar.ts:27
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "/registracia"
 msgstr "/anmeldung"
 
-#: app/static/app/ts/src/components/searchBar.ts:27
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Registrácia"
 msgstr "Anmeldung"
 
-#: app/static/app/ts/src/components/searchBar.ts:27
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Zaregistrovať sa"
 msgstr "Melden Sie sich an"
 
-#: app/static/app/ts/src/components/searchBar.ts:27
+#: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Vytvoriť účet"
 msgstr "Ein Konto erstellen"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/profil"
 msgstr "/profil"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Profil"
 msgstr "Profil"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Môj účet"
 msgstr "Mein Konto"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Upraviť účet"
 msgstr "Konto bearbeiten"
 
-#: app/static/app/ts/src/components/searchBar.ts:28
+#: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Zobraziť účet"
 msgstr "Konto ansehen"
 
-#: app/static/app/ts/src/components/searchBar.ts:29
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "/moje-hodnotenie"
 msgstr "/meine-bewertung"
 
-#: app/static/app/ts/src/components/searchBar.ts:29
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moje hodnotenie"
 msgstr "Meine Bewertung"
 
-#: app/static/app/ts/src/components/searchBar.ts:29
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moja recenzia"
 msgstr "Meine Rezension"
 
-#: app/static/app/ts/src/components/searchBar.ts:29
+#: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Upraviť hodnotenie"
 msgstr "Bewertung bearbeiten"
 
-#: app/static/app/ts/src/components/searchBar.ts:30
+#: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/blog"
 msgstr "/blog"
 
-#: app/static/app/ts/src/components/searchBar.ts:30
+#: app/static/app/ts/src/components/searchBar.ts:32
 msgid "Blog"
 msgstr "Blog"
 
-#: app/static/app/ts/src/components/searchBar.ts:30
+#: app/static/app/ts/src/components/searchBar.ts:32
 msgid "Články"
 msgstr "Artikel"
 
-#: app/static/app/ts/src/components/searchBar.ts:31
+#: app/static/app/ts/src/components/searchBar.ts:33
 msgid "/trening"
 msgstr "/training"
 
-#: app/static/app/ts/src/components/searchBar.ts:31
+#: app/static/app/ts/src/components/searchBar.ts:33
 msgid "Tréning"
 msgstr "Training"
 
-#: app/static/app/ts/src/components/searchBar.ts:31
+#: app/static/app/ts/src/components/searchBar.ts:33
 msgid "Aktivita"
 msgstr "Aktivität"
 
-#: app/static/app/ts/src/components/searchBar.ts:31
+#: app/static/app/ts/src/components/searchBar.ts:33
 msgid "Spustiť aktivitu"
 msgstr "Starten Sie die Aktivität"
 
-#: app/static/app/ts/src/components/searchBar.ts:32
+#: app/static/app/ts/src/components/searchBar.ts:34
 msgid "/moje-treningove-plany"
 msgstr "/meine-trainingspläne"
 
-#: app/static/app/ts/src/components/searchBar.ts:32
+#: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Moje tréningové plány"
 msgstr "Meine Trainingspläne"
 
-#: app/static/app/ts/src/components/searchBar.ts:32
+#: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Vytvoriť tréningový plán"
 msgstr "Erstellen Sie einen Trainingsplan"
 
-#: app/static/app/ts/src/components/searchBar.ts:32
+#: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Upraviť tréningový plán"
 msgstr "Bearbeiten Sie den Trainingsplan"
 
-#: app/static/app/ts/src/components/searchBar.ts:32
+#: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Odstrániť tréningový plán"
 msgstr "Trainingsplan löschen"
 
-#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/components/searchBar.ts:35
 msgid "/komunita"
 msgstr "/gemeinschaft"
 
-#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Komunita"
 msgstr "Gemeinschaft"
 
-#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Zdieľať príspevok"
 msgstr "Teile den Beitrag"
 
-#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/components/searchBar.ts:35
 #: app/static/app/ts/src/pages/community/functions/uploadPost.ts:49
 msgid "Uverejniť príspevok"
 msgstr "Posten Sie einen Beitrag"
 
-#: app/static/app/ts/src/components/searchBar.ts:33
+#: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Nájsť užívateľa"
 msgstr "Finden Sie einen Benutzer"
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:43
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:410
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:54
+#: app/static/app/ts/src/pages/community/functions/posts.ts:168
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:66
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:139
+#, javascript-format
+msgid "/sk/profil/%s"
+msgstr "/de/profil/%s"
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:44
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:45
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:91
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:92
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:411
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:412
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:55
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:56
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:140
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:141
+msgid "Zobraziť užívateľa"
+msgstr "Benutzer anzeigen"
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:80
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:183
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:91
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:194
+msgid "Napísať komentár"
+msgstr "Schreiben Sie einen Kommentar"
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:110
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:111
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:469
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:470
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:121
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:122
+msgid "Odpovedať..."
+msgstr "Antwort..."
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:132
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:133
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:490
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:491
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:143
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:144
+msgid "Zobraziť odpovede..."
+msgstr "Antworten anzeigen..."
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:143
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:154
+msgid "Pri odosielaní komentáru došlo k chybe."
+msgstr "Beim Senden Ihres Kommentars ist ein Fehler aufgetreten."
+
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:172
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:183
+#, javascript-format
+msgid "Odpoveď užívateľovi %s"
+msgstr "Antwort an Benutzer %s"
+
+#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:31
+#: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:31
+#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:34
+msgid "Pri zmene označenia páči sa mi to došlo k chybe."
+msgstr "Beim Ändern des Like-Labels ist ein Fehler aufgetreten."
 
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:34
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:73
@@ -210,125 +278,112 @@ msgid "Načítavam..."
 msgstr "Laden..."
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:159
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:177
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:160
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:179
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:180
 msgid "Vypnúť viditeľnosť len pre sledovateľov"
 msgstr "Deaktivieren Sie die Sichtbarkeit nur für Follower"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:165
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:183
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:166
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:167
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:186
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:187
 msgid "Zapnúť viditeľnosť len pre sledovateľov"
 msgstr "Aktivieren Sie die Sichtbarkeit nur für Follower"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:196
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:214
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:200
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:201
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:220
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:221
 msgid "Zapnúť komentáre"
 msgstr "Kommentare aktivieren"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:202
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:220
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:207
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:208
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:227
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:228
 msgid "Vypnúť komentáre"
 msgstr "Kommentare deaktivieren"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:232
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:250
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:240
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:241
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:260
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:261
 msgid "Zobraziť počet označení páči sa mi to"
 msgstr "Likes anzeigen"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:238
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:256
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:247
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:248
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:267
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:268
 msgid "Skryť počet označení páči sa mi to"
 msgstr "Anzahl der Likes ausblenden"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:39
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:636
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:644
 msgid "Nahlásiť"
 msgstr "Bericht"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:61
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:81
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:734
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:754
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:742
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:762
 msgid "Vymazať"
 msgstr "Löschen"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:74
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:747
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:755
 msgid "Naozaj chcete vymazať Váš komentár?"
 msgstr "Sind Sie sicher, dass Sie Ihren Kommentar löschen möchten?"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:89
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:762
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:770
 msgid "Zrušiť"
 msgstr "Stornieren"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:406
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:54
-#: app/static/app/ts/src/pages/community/functions/posts.ts:168
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:66
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:139
-#, javascript-format
-msgid "/sk/profil/%s"
-msgstr "/de/profil/%s"
-
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:91
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:407
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:55
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:140
-msgid "Zobraziť užívateľa"
-msgstr "Benutzer anzeigen"
-
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:115
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:116
 msgid "Začať sledovať"
 msgstr "Folgen"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:115
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:116
 msgid "Prestať sledovať"
 msgstr "Entfolgen"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:131
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:132
 msgid "Otvoriť mapy"
 msgstr "Karten öffnen"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:171
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:231
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:172
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:232
 #, javascript-format
 msgid "Príspevok užívateľa %s"
 msgstr "Beitrag von Benutzer %s"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:227
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:228
 #: app/static/app/ts/src/pages/post/components/initialize_HLS_video_format.ts:17
 #, javascript-format
 msgid "/sk/stream-video/%s/%s/%s"
 msgstr "/de/stream-video/%s/%s/%s"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:307
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:308
 msgid "Skryté"
 msgstr "Versteckt"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:334
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:335
 msgid "Vypnuté"
 msgstr "Aus"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:341
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:342
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:343
 msgid "Zdielať..."
 msgstr "Aktie..."
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:345
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:347
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:348
 msgid "Počet videní..."
 msgstr "Anzahl der Aufrufe..."
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:464
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:120
-msgid "Odpovedať..."
-msgstr "Antwort..."
-
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:484
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:141
-msgid "Zobraziť odpovede..."
-msgstr "Antworten anzeigen..."
-
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:658
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:666
 msgid "Upraviť"
 msgstr "Bearbeiten"
 
@@ -336,44 +391,26 @@ msgstr "Bearbeiten"
 msgid "Pri načítaní polohy došlo k chybe."
 msgstr "Beim Abrufen des Standorts ist ein Fehler aufgetreten."
 
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:90
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:191
-msgid "Napísať komentár"
-msgstr "Schreiben Sie einen Kommentar"
-
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:151
-msgid "Pri odosielaní komentáru došlo k chybe."
-msgstr "Beim Senden Ihres Kommentars ist ein Fehler aufgetreten."
-
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:180
-#, javascript-format
-msgid "Odpoveď užívateľovi %s"
-msgstr "Antwort an Benutzer %s"
-
-#: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:31
-#: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:34
-msgid "Pri zmene označenia páči sa mi to došlo k chybe."
-msgstr "Beim Ändern des Like-Labels ist ein Fehler aufgetreten."
-
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:71
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:72
 #, fuzzy
 #| msgid "Odstrániť zmienku"
 msgid "Odstrániť..."
 msgstr "Erwähnung entfernen"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:99
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:100
 msgid "Obrázok je príliš veľký"
 msgstr "Das Bild ist zu groß"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:120
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:121
 msgid "Video je príliš veľké"
 msgstr "Das Video ist zu groß"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:160
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:161
 msgid "Video je príliš dlhé"
 msgstr "Das Video ist zu lang"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:171
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:172
 msgid "Video je príliš krátke"
 msgstr "Das Video ist zu kurz"
 
@@ -427,10 +464,11 @@ msgid "Pri hľadaní užívateľov došlo k chybe."
 msgstr "Bei der Suche nach Benutzern ist ein Fehler aufgetreten."
 
 #: app/static/app/ts/src/pages/community/functions/tagUsers.ts:247
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:248
 msgid "Označiť"
 msgstr "Markieren"
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:398
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:399
 msgid "Odstrániť zmienku"
 msgstr "Erwähnung entfernen"
 
@@ -521,16 +559,17 @@ msgid "Platnosť vypršala!"
 msgstr "Abgelaufen!"
 
 #: app/static/app/ts/src/pages/profile/components/edit_account.ts:84
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:85
 msgid "Otvoriť odkaz"
 msgstr "Öffnen Sie den Link"
 
-#: app/static/app/ts/src/pages/profile/components/edit_account.ts:98
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:103
 #, fuzzy
 #| msgid "Otvoriť odkaz"
 msgid "Odstrániť odkaz"
 msgstr "Öffnen Sie den Link"
 
-#: app/static/app/ts/src/pages/profile/components/edit_account.ts:228
+#: app/static/app/ts/src/pages/profile/components/edit_account.ts:263
 msgid "Váš úcet bude odstránený"
 msgstr "Ihr Konto wird gelöscht"
 
@@ -616,15 +655,17 @@ msgstr "Passwörter stimmen überein"
 msgid "Heslá sa nezhodujú"
 msgstr "Passwörter stimmen nicht überein"
 
-#: app/static/app/ts/src/utils/password.ts:19
+#: app/static/app/ts/src/utils/password.ts:21
+#: app/static/app/ts/src/utils/password.ts:22
 msgid "Skryť heslo"
 msgstr "Passwort verbergen"
 
-#: app/static/app/ts/src/utils/password.ts:26
+#: app/static/app/ts/src/utils/password.ts:31
+#: app/static/app/ts/src/utils/password.ts:32
 msgid "Zobraziť heslo"
 msgstr "Passwort anzeigen"
 
-#: app/static/app/ts/src/utils/password.ts:53
+#: app/static/app/ts/src/utils/password.ts:59
 msgid "Zadajte váš e-mail"
 msgstr "Geben Sie Ihre E-Mail-Adresse ein"
 

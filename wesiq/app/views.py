@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
+from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1806,6 +1806,125 @@ def blogView(request):
     })
 
 def blogThemeView(request, theme):
+    if request.method == "POST":
+        # Report Article Comment
+        if request.headers.get("X-Requested-Action") == "report-article-comment":
+            try:
+                if "logged_in_user_id" in request.session:
+                    logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                    report_comment_data = json.loads(request.body) # Gets The Report Comment Data
+                    comment_id = report_comment_data["articleforum_id"] # Gets The Article Forum ID
+                    reason = report_comment_data["reason"] # Gets The Reason
+                    comment = ArticleForum.objects.get(id=comment_id) # Gets The Comment
+                    has_report = comment.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
+
+                    # Stores The Reported Comment
+                    ArticleForumReport.objects.update_or_create(
+                        articleforum_id=comment_id,
+                        user_id=logged_in_user_id,
+                        defaults={"reason": reason} # Reason Can Be Updated
+                    )
+
+                    # Report
+                    if not has_report:
+                        comment.reports += 1 # Increases The Reports Counter
+
+                        if comment.reports >= 5:
+                            article = Articles.objects.get(id=comment.article_id) # Gets The Article
+                            report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
+
+                            if report_percentage > 10:
+                                comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
+
+                        comment.save() # Saves The Comment
+
+                    return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+                return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+            except Exception as e:
+                captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+        # Add Article Comment
+        if request.headers.get("X-Requested-Action") == "add-article-comment":
+            try:
+                if "logged_in_user_id" in request.session:
+                    logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                    comment_data = json.loads(request.body) # Gets The Comment Data
+
+                    new_comment = ArticleForum(
+                        article_id = comment_data["article_id"],
+                        user_id = logged_in_user_id,
+                        comment = comment_data["comment"],
+                        parent_id = comment_data["parent_id"]
+                    )
+
+                    new_comment.save()
+
+                    logged_in_user = {
+                        "logged_in_user_id": logged_in_user_id
+                    }
+
+                    # Creates Valid Format Of Comment For JSON Response
+                    comment = {
+                        "id": new_comment.id,
+
+                        "user": {
+                            "id": new_comment.user.id,
+                            "username": new_comment.user.username,
+                            "profile_picture_name": new_comment.user.profile_picture_name
+                        },
+
+                        "creation_time": new_comment.creation_time,
+                        "level": new_comment.level
+                    }
+
+                    return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre článok bol úspešne pridaný.")}, status=201)
+
+                return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
+
+            except ValidationError as e:
+                return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
+
+            except Exception as e:
+                captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
+
+        # Toggle Article Comment Like
+        if request.headers.get("X-Requested-Action") == "toggle-article-comment-like":
+            try:
+                if "logged_in_user_id" in request.session:
+                    logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                    logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+
+                    comment_id = json.loads(request.body) # Gets The Comment ID
+                    comment = ArticleForum.objects.get(id=int(comment_id)) # Gets The Comment
+
+                    has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+
+                    # Like
+                    if not has_like:
+                        comment.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Comment
+                        comment.likes = F("likes") + 1 # Increases The Likes Counter
+                        comment.save() # Updates The Comment
+
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+
+                    # Cancel Like
+                    else:
+                        comment.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Comment
+                        comment.likes = F("likes") - 1 # Decreases The Likes Counter
+                        comment.save() # Updates The Comment
+                        
+                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+
+                return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
+
+            except Exception as e:
+                captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
+
     logged_in_user_id = None # Default State When The User Isn't Logged In
     logged_in_user = None # Default State When The User Isn't Logged In
 
@@ -1814,50 +1933,26 @@ def blogThemeView(request, theme):
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         if request.method == "POST":
-            # Add Article Comment
-            if request.headers.get("X-Requested-Action") == "add-comment":
+            # Delete Article Comment
+            if request.headers.get("X-Requested-Action") == "delete-article-comment":
                 try:
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                        comment_data = json.loads(request.body) # Gets The Comment Data
+                        comment_id = json.loads(request.body) # Gets The Comment ID
+                        comment = ArticleForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
 
-                        new_comment = ArticleForum(
-                            article_id = comment_data["article_id"],
-                            user_id = logged_in_user_id,
-                            comment = comment_data["comment"],
-                            parent_id = comment_data["parent_id"]
-                        )
+                        if comment:
+                            comment.delete() # Deletes The Comment
 
-                        new_comment.save()
+                            return JsonResponse({"success": True, "message": _("Komentár bol úspešne odstránený.")}, status=200)
 
-                        logged_in_user = {
-                            "logged_in_user_id": logged_in_user_id
-                        }
+                        return JsonResponse({"success": False, "message": _("Komentár sa nepodarilo odstrániť.")}, status=400)
 
-                        # Creates Valid Format Of Comment For JSON Response
-                        comment = {
-                            "id": new_comment.id,
-
-                            "user": {
-                                "id": new_comment.user.id,
-                                "username": new_comment.user.username,
-                                "profile_picture_name": new_comment.user.profile_picture_name
-                            },
-
-                            "creation_time": new_comment.creation_time,
-                            "level": new_comment.level
-                        }
-
-                        return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre článok bol úspešne pridaný.")}, status=201)
-
-                    return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
-
-                except ValidationError as e:
-                    return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
+                    return JsonResponse({"success": False, "message": _("Komentár nie je možné odstrániť bez prihlásenia.")}, status=401)
 
                 except Exception as e:
-                    captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
+                    captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní komentáru došlo k chybe.")}, status=500)
 
     not_found = True
 

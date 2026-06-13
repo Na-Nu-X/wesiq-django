@@ -1209,9 +1209,19 @@ h2 {
                 left: calc(6px + 38px + 10px);
                 transform: translateY(-50%);
 
-                i {
-                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                &:hover {
+                    cursor: pointer;
+                    
+                    .fa-face-surprise {
+                        color: darken($secondary-color, 20%);
+                        transition: color 0.3s ease;
+                    }
+                }
+
+                .fa-face-surprise {
                     display: block;
+                    color: darken($secondary-color, 40%);
+                    pointer-events: none;
                 }
             }
 

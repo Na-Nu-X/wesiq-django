@@ -793,7 +793,7 @@
     transform: translateX(-50%);
     height: $height;
     box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
-    z-index: 100;
+    z-index: 4000;
     transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
 
     emoji-picker {
