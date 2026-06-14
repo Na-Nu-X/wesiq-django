@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.core.cache import cache
 from quickchart import QuickChart
 from email.mime.image import MIMEImage
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from django.db.models.functions import TruncDate
 from django.core.files.base import ContentFile
 from PIL import Image
@@ -340,7 +340,14 @@ def randomColor(from_=0, to=255):
 @shared_task
 def modelsWarmUp():
     reviews = list(Reviews.objects.filter(status="approved").order_by("-creation_time")) # Gets All Approved Reviews
-    articles = list(Articles.objects.all()) # Gets All Articles
+
+    # Gets All Articles
+    articles = list(
+        Articles.objects.all().annotate(
+            average_rating=Avg("articlerating__rating"),
+        )
+    )
+
     exercises = list(Exercises.objects.all().order_by("exercise")) # Gets All Exercises
     
     cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews

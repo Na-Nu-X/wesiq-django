@@ -13,16 +13,14 @@
     .article_banner {
         display: flex;
         flex-direction: row;
-        align-items: center;
-        height: 250px;
+        align-items: stretch;
+        gap: 20px;
         background-color: transparentize($secondary-color, 0.1);
 
         .banner_image {
-            height: 100%;
-
             img {
-                width: $main-width / 2.5;
-                height: 100%;
+                display: block;
+                max-width: 400px;
             }
         }
 
@@ -30,12 +28,12 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
-            padding: 20px 20px 10px;
+            gap: 10px;
+            padding: 10px 20px 10px 0px;
             color: $main-color;
 
             .article_opening {
-                padding: 0px 0px 5px 10px;
+                padding-left: 10px;
                 border-left: 3px solid $main-color;
 
                 h2 {
@@ -43,15 +41,22 @@
                     font-family: $article-heading-font;
                     font-size: 3em;
                 }
+
+                p {
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 5;
+                    line-clamp: 5;
+                    overflow: hidden;
+                    text-align: left;
+                }
             }
 
             .article_info {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-
                 .rating {
+                    justify-content: left;
+                    margin: 0px;
+
                     .fa-star {
                         font-size: 1.5em;
                         cursor: pointer;
@@ -72,14 +77,15 @@
     }
 
     .article_content {
-        margin: 10px 20px;
+        margin: 10px 0px 50px;
     }
 
     .rating {
         display: flex;
         justify-content: right;
         gap: 5px;
-        margin: 20px;
+        margin-bottom: 50px;
+        margin-left: 10px + 3px;
 
         a {
             margin-right: 5px;
@@ -544,6 +550,48 @@
 
                 svg {
                     pointer-events: none;
+                }
+            }
+        }
+    }
+}
+
+/**************
+ Media Queries
+**************/
+
+@media (width <= 800px) {
+    .article_banner {
+        flex-direction: column !important;
+
+        .banner_image {
+            img {
+                max-width: 100% !important;
+            }
+        }
+
+        .banner_info {
+            padding: 0px 20px 10px !important;
+        }
+    }
+}
+
+@media (width <= 400px) {
+    .article_banner {
+        .banner_info {
+            padding: 0px 10px 10px !important;
+
+            .article_opening {
+                h2 {
+                    font-size: 2em !important;
+                }
+            }
+
+            .article_info {
+                .rating {
+                    .fa-star {
+                        font-size: 1em !important;
+                    }
                 }
             }
         }

@@ -17,13 +17,13 @@
 
         <div class="article_banner">
             <div class="banner_image">
-                <img src="{% static '/../media/images/' %}{{ article.user_id }}/{{ article.image_name }}">
+                <img src="{% static './images/articles' %}/{{ article.image_name }}">
             </div>
             
             <div class="banner_info">
                 <div class="article_opening">
                     <h2>{{ article.title }}</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, consequatur.</p>
+                    <p>{{ article.description }}</p>
                 </div>
 
                 <div class="article_info">
@@ -54,7 +54,13 @@
         </div>
 
         <div class="article_content" data-article_id="{{ article.id }}">
-            <p>{{ article.content }}</p>
+            {% if article.html_filename %}
+                {% include "partials/articles/"|add:article.html_filename %}
+            
+            {% else %}
+                <h2>{% translate "Tento článok nie je ešte dokončený." %}</h2>
+            
+            {% endif %}
         </div>
 
         <div class="rating">

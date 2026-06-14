@@ -110,7 +110,7 @@
                 style="
                     {% if one_article.image_name %}
                         background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
-                        url('{% static '../media/images/' %}{{ one_article.user_id }}/{{ one_article.image_name }}');
+                        url('{% static './images/articles' %}/{{ one_article.image_name }}');
 
                     {% else %}
                         background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
@@ -140,7 +140,7 @@
                 </button>
 
                 <div class="description skeleton_loading skeleton_text">
-                    <p class="hidden">{{ one_article.content|truncatechars:200 }}</p>
+                    <p class="hidden">{{ one_article.description }}</p>
                 </div>
 
                 <a href="{% url 'blog_theme_url' one_article.link %}" title="{% translate 'Zobraziť' %}" aria-label="{% translate 'Zobraziť' %}" target="_self">
@@ -163,7 +163,7 @@
                         >
                             <div class="skeleton_loading skeleton_text">
                                 {% for _ in "12345" %}
-                                    {% if forloop.counter <= one_article.rating %}
+                                    {% if forloop.counter <= one_article.average_rating %}
                                         <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                                     {% else %}

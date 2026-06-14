@@ -244,11 +244,12 @@ class Articles(models.Model):
     )
 
     title = models.CharField(verbose_name="Title", max_length=50, null=False)
-    content = models.TextField(verbose_name="Content", null=False)
+    description = models.TextField(verbose_name="Description", max_length=250, null=False)
+    image_name = models.CharField(verbose_name="Image File", max_length=50, null=False)
+    html_filename = models.CharField(verbose_name="HTML Filename", max_length=50, null=True, blank=True)
+    link = models.CharField(verbose_name="Link", max_length=50, null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     visitors = models.PositiveIntegerField(verbose_name="Visitors", default=0, null=False)
-    link = models.CharField(verbose_name="Link", max_length=50, null=False)
-    image_name = models.CharField(verbose_name="Image File", max_length=50, null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class ArticleRating(models.Model):
