@@ -1015,6 +1015,32 @@ To optimize user retention and create a high-engagement loop, the platform incor
 
 - **UI Deprecation**: The shrinking indicator line fades out entirely from the viewport, and the status label immediately updates to indicate that no multiplier is currently active. Subsequent activities revert to the baseline XP accumulation rates without requiring a application reload.
 
+### 3.37. Comprehensive User Profile Architecture
+
+To serve as the central identity hub for each user, the platform features a highly dynamic and context-aware Profile Page. The system intelligently alters the displayed UI and available data based on the authentication state and the specific social relationship between the viewer and the profile owner.
+
+#### 3.37.1 Seamless Navigation and Identity Display
+
+- **Universal Routing**: Users can effortlessly navigate to any profile by clicking on the respective user's avatar, which is strategically embedded across the platform (e.g., within feed posts, active comment threads, and search results).
+
+- **Public Metrics & Gamification**: The profile header aggregates and displays core identity markers, including the user's display name, customized biography, dynamically earned achievement badges, and their current, live activity streak.
+
+#### 3.37.2 Context-Aware Content Grid and Privacy Controls
+
+- **Interactive Media Grid**: Uploaded content is systematically organized into a clean, visually appealing grid layout. Clicking any specific thumbnail dynamically opens the full post view for detailed interaction.
+
+- **Strict Privacy Masking**: The backend enforces rigid permission checks before delivering grid data. If a specific post is marked as "Followers Only" and the viewing user lacks the required relationship status, the content is securely withheld. Instead of breaking the UI layout, the frontend elegantly renders an "empty post" placeholder, maintaining visual grid symmetry while strictly protecting the author's privacy.
+
+#### 3.37.3 Owner-Exclusive Dashboard and Configurations
+
+When the authenticated user navigates to their own personal profile, the system recognizes their ownership and dynamically unlocks specialized management panels:
+
+- **Private Collections (Saved Posts)**: A dedicated, private section becomes uniquely visible to the owner, allowing them to conveniently browse through their personal collection of bookmarked and saved posts from across the network.
+
+- **Account Settings Portal**: A secure settings toggle icon is rendered exclusively for the owner. This serves as a gateway to the core configuration menu where users can execute crucial account updates, such as modifying their display name, updating linked phone numbers, or executing secure password resets.
+
+- **Global Visibility Toggle**: Embedded directly within the settings menu is a master privacy switch, granting the user absolute control to seamlessly transition their entire profile state between Public and Private visibility modes.
+
 ## 4. Features
 
 ### 4.1. Contextual Tooltip System
@@ -1438,6 +1464,124 @@ To maximize user engagement and ensure content relevance, the platform completel
 - **View-Based Demotion**: Tying directly into the viewability tracking system (Section 3.48), any post that is confirmed as "seen" by the user is systematically demoted to a lower priority rank upon the next feed reload, effectively preventing visual fatigue and repetition.
 
 - **30-Day Freshness Filter**: To maintain an uncluttered experience and optimize database query performance, the algorithm enforces a strict expiration rule. Any previously viewed post that exceeds 30 days in age is completely filtered out and no longer rendered in that specific user's feed.
+
+### 4.20. Gamified Achievement System and Dynamic Badges
+
+To reward long-term user dedication and highlight milestone accomplishments, the platform incorporates a robust, multi-tiered badge and achievement system. These digital accolades are displayed as prominent visual markers on the user's profile page.
+
+#### 4.20.1 Multi-Tiered Rarity Framework
+
+- **Visual Rarity Scale**: Achievements are organized into a strict progression hierarchy composed of 6 distinct color-coded levels that represent the rarity and difficulty of the achievement:
+
+    1. Blue (Common / Baseline)
+
+    1. Green (Uncommon)
+
+    1. Yellow (Rare)
+
+    1. Orange (Epic)
+
+    1. Red (Legendary)
+
+    1. Purple (Mythic / Peak Achievement)
+
+- **Upgradable Archetypes**: Standard badges are not static; they are designed to accumulate data and automatically "level up" to the next color tier as the user crosses higher statistical thresholds.
+
+#### 4.20.2 Milestone and Temporal Event Classifications
+
+The badge generation engine dynamically monitors two distinct categories of user behavior:
+
+- **Performance Milestones**: Tracks core platform engagement metrics, such as the total volume of accumulated Experience Points (XP) or the user's global account level.
+
+- **Temporal and Special Events**: Rewards participation during unique calendar events or community milestones. These include loyalty markers (e.g., celebrating exact years since the user's registration date) and time-sensitive holiday challenges (e.g., successfully completing a physical activity on Christmas Eve).
+
+#### 4.20.3 Encapsulated Model Logic and On-The-Fly Computation
+
+- **Model-Level Integration**: To ensure strict data consistency, the core evaluation logic for all badge states, criteria checking, and tier thresholds is encapsulated directly within the backend User Model architecture (e.g., utilizing Django model methods or property decorators).
+
+- **Live Calculation Real-Time Delivery**: Instead of relying on heavy, continuously running database listeners that update states on every minor action, the system utilizes an on-demand generation strategy. The exact badge levels and rarity distributions are dynamically calculated and loaded in real-time at the precise moment the user's profile page is initialized or refreshed, ensuring absolute performance efficiency.
+
+### 4.21. Automated Activity Streak Engine
+
+To cultivate long-term user retention and encourage daily physical consistency, the application features a robust Activity Streak tracker. This system rewards users for maintaining an unbroken chain of consecutive active days, functioning as a powerful psychological motivator.
+
+#### 4.21.1 Conditional Progression Logic
+
+- **Daily Increment Protocols**: A user's ongoing streak counter is inherently tied to their daily activity logging. The system automatically increments the streak tally by exactly one point upon the successful completion and saving of an activity.
+
+- **Validation Rules**: To prevent artificial inflation, the backend strictly validates two conditions before granting an increment: the user must have recorded an activity on the immediately preceding day, and the streak cannot have already been incremented during the current calendar day.
+
+#### 4.21.2 Asynchronous Expiration Handling
+
+- **Automated Penalty Enforcement**: The integrity of the streak system is maintained by a scheduled, asynchronous Celery background task.
+
+- **48-Hour Inactivity Threshold**: This background worker continuously monitors user activity timestamps. If the worker detects that a user has failed to record any valid activity for two consecutive days (a 48-hour void), it automatically triggers a state reset, reverting the user's current streak counter back to zero.
+
+#### 4.21.3 Dynamic Visual Representation
+
+- **Color-Coded Status UI**: The user's current streak count is prominently displayed on their public Profile Page using an intuitive, state-driven fire icon.
+
+- **Daily Action Indicator**: The frontend logic visually communicates the user's daily status. If the user has already secured their streak for the current day, the icon illuminates as a vibrant orange fire. Conversely, if the daily activity is still pending, the icon remains in a muted gray state, serving as a subtle visual prompt to complete a workout.
+
+### 4.22. Keyboard Accessibility (A11y) and Focus Management
+
+To deliver an inclusive and highly efficient user experience, the platform features robust keyboard navigation support fully aligned with modern accessibility (A11y) guidelines. Users can seamlessly navigate, inspect, and trigger all interactive modules without the use of a pointing device.
+
+#### 4.22.1 High-Contrast Focus Visualization
+
+- **Deterministic Navigation**: Users can traverse sequentially through all focusable UI elements—including buttons, hyperlinks, inputs, and custom controllers—using the standard TAB and SHIFT + TAB keystrokes.
+
+- **Enhanced Focus Rings**: To aid users with visual impairments or those operating purely via keyboard, the default browser focus ring is replaced. Currently focused elements are dynamically emphasized with a thick, high-contrast red outline, ensuring clear visual state confirmation at a glance.
+
+#### 4.22.2 Native-Emulated Controls for Custom Components
+
+- **Tab Index Injection**: Elements designed as interactive components that lack native browser focus capabilities (such as custom div-based cards or icons) are explicitly injected with a tabindex="0" attribute directly within the HTML. This safely positions them into the document's sequential keyboard navigation flow.
+
+- **Keystroke Interception**: To guarantee parity with native buttons, these custom elements are backed by reactive TypeScript event listeners. The system monitors the keydown stream; if a user highlights a custom component and presses the Enter key, the handler intercepts the event and programmatically triggers the underlying .click() method.
+
+#### 4.22.3 Focus Leak Prevention via HTML inert Masking
+
+- **Dynamic Viewport Isolation**: When dealing with collapsible or toggleable layouts (such as slide-out menus, dropdowns, or modal dialogs), hidden content can accidentally catch focus while off-screen, causing erratic viewport jumping.
+
+- **Automated inert Orchestration**: The platform dynamically applies the native HTML inert attribute to inactive or hidden DOM subtrees via TypeScript code. When a container is closed, inert completely strips all containing elements of their focusability and hides them from assistive technologies. Upon activation, the script removes the attribute, instantly restoring accessibility and preventing out-of-order interaction bugs.
+
+### 4.23. Screen Reader Accessibility and ARIA Integration
+
+To ensure the platform is fully inclusive, compliant with modern web accessibility standards (WCAG), and navigable for visually impaired users utilizing assistive technologies, the UI incorporates extensive ARIA (Accessible Rich Internet Applications) implementations.
+
+#### 4.23.1 Descriptive ARIA Labeling
+
+- **Contextualizing Iconography**: Interactive elements that lack explicit text content—most notably buttons or anchors containing only graphical icons (such as an "X" mark for a close button or a magnifying glass for search)—are systematically augmented with aria-label attributes. This guarantees that screen readers accurately verbalize the element's exact function rather than reading out ambiguous HTML tags.
+
+- **Enhanced Readability**: These descriptive tags act as an invisible layer of metadata, seamlessly bridging the gap between visual UI design and auditory navigation, ensuring visually impaired users receive the exact same contextual information as sighted users.
+
+#### 4.23.2 Reactive Accessibility Management
+
+- **Static and Dynamic Injection**: While baseline ARIA attributes are hardcoded directly within the static HTML templates, the accessibility architecture extends deeply into the client-side scripting logic.
+
+- **TypeScript (JS) DOM Mutability**: When interactive content is generated, modified, or destroyed asynchronously (e.g., rendering new task components or dynamically generating popover menus), the governing TypeScript functions actively apply and update the necessary aria-label attributes on the fly. This ensures that the accessibility tree remains perfectly synchronized with the dynamic visual state of the application at all times.
+
+### 4.24. User Privacy and Granular Visibility Controls
+
+To ensure strict data protection and empower users with total control over their digital footprint, the platform implements a robust, multi-layered privacy architecture. Users can manage their visibility at both the global account level and the individual object (post) level.
+
+#### 4.24.1 Global Account Privacy State
+
+- **Master Toggle**: Accessible directly within the Profile Settings menu, users can dynamically switch their global account state between Standard (Public) and Private modes.
+
+- **Inherited Restrictions**: When an account is toggled to Private, the backend enforces a strict override on all content associated with that user. The system automatically restricts the visibility of all uploaded posts exclusively to the user's approved followers, permanently disabling public feed distribution for that specific account.
+
+#### 4.24.2 Strict Content Masking and Routing Protection
+
+- **Feed and URL Interception**: The privacy protocols extend deeply into the application's routing logic. If a non-follower attempts to directly access a specific post URL belonging to a private account, the backend actively intercepts the request.
+
+- **Graceful Degradation (UI)**: Instead of throwing a harsh server error or a broken layout, the application gracefully degrades the view. It renders an "empty post" placeholder equipped with a dedicated notice, clearly informing the unauthorized viewer that the author's account is private and the content is restricted.
+
+#### 4.24.3 Granular Object-Level Visibility
+
+- **Public Account Flexibility**: For users maintaining a Standard (Public) account, the system grants granular, object-level control.
+
+- **Per-Post Toggles**: Authors can manually dictate the audience for each individual upload. By accessing the custom post popover settings menu (Section 3.52), users can seamlessly toggle the specific post's visibility on or off for the general public, allowing a mixed feed of public and follower-only content under a single public profile.
 
 ## 5. Security
 

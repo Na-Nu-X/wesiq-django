@@ -1625,8 +1625,9 @@ def blogView(request):
     if articles is None:
         # Gets All Articles
         articles = list(
-            Articles.objects.all()
-            # .values("user", "title", "content", "categories", "rating", "visitors", "link", "image_name", "creation_time")
+            Articles.objects.all().annotate(
+                average_rating=Avg("articlerating__rating"),
+            )
         )
 
         cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles

@@ -193,10 +193,10 @@
             
             p {
                 padding: 0px 20px;
-                text-align: justify;
+                text-align: left;
 
                 &::first-letter {
-                    margin-right: 5px;
+                    margin-right: 10px;
                     initial-letter: 2;
                 }
             }

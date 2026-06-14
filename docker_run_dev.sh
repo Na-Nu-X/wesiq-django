@@ -12,7 +12,7 @@ gnome-terminal -- bash -c "npm run watch; exec bash"
 gnome-terminal -- bash -c "npx sass --watch .:.; exec bash"
 
 # Ngrok
-gnome-terminal -- bash -c "ngrok config add-authtoken 3BiRHm4nENPy49HZVOtJprxcpwj_bG3tnyuBv8sE8PmRNQN5 && ngrok http --domain=delinquently-overdistraught-glynis.ngrok-free.dev 8000; exec bash"
+# gnome-terminal -- bash -c "ngrok config add-authtoken 3BiRHm4nENPy49HZVOtJprxcpwj_bG3tnyuBv8sE8PmRNQN5 && ngrok http --domain=delinquently-overdistraught-glynis.ngrok-free.dev 8000; exec bash"
 
 # Django Translations
 gnome-terminal -- bash -c "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 15:56+0000\n"
+"POT-Creation-Date: 2026-06-14 09:05+0000\n"
 "PO-Revision-Date: 2026-06-06 06:43+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,6 +202,12 @@ msgstr "Uverejniť príspevok"
 #: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Nájsť užívateľa"
 msgstr "Nájsť užívateľa"
+
+#: app/static/app/ts/src/pages/articles/components/rating.ts:56
+#, fuzzy
+#| msgid "Pri pridávaní sledovania došlo k chybe."
+msgid "Pri pridávaní hodnotenia došlo k chybe."
+msgstr "Pri pridávaní sledovania došlo k chybe."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:43
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:90
