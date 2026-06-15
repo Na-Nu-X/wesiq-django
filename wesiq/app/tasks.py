@@ -96,7 +96,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With Activity Info
         else:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], user.language, styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
@@ -111,7 +111,7 @@ def sendWeeklyReportMail(user, activity_data):
 
                 <h1>{_('Celkovo si zaznamenal <span style="color: #52cf20">%(total_activity_amount)s</span> aktivity') % {"total_activity_amount": activity_data["total_activity_amount"]}}</h1>
 
-                <p>{getFavoriteExerciseText(activity_data["favorite_exercise"])}</p>
+                <p>{getFavoriteExerciseText(activity_data["favorite_exercise"], user.language)}</p>
 
                 <p>{_('Začni týždeň s prvou <a href="%(domain)s%(language)s/trening/" title="Začať tréning" target="_blank">aktivitou</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language}}</p>
 
@@ -293,7 +293,7 @@ def getAverageActivityTimeImprovementText(activity_percentage_improvement, style
             return _("to je o %(value)s%% horšie oproti predchádzajúcemu týždňu") % {"value": abs(round(activity_percentage_improvement))}
 
 # Function For Getting Favorite Exercise Text Text
-def getFavoriteExerciseText(favorite_exercise, styled=True):
+def getFavoriteExerciseText(favorite_exercise, language, styled=True):
     if favorite_exercise:
         if styled:
             favorite_exercise_text = _('Tvoj obľúbený cvik týždňa bol <span style="color: %(color)s">%(exercise)s</span>') % {"color": favorite_exercise["color"],"exercise": favorite_exercise["exercise"]}
@@ -303,10 +303,10 @@ def getFavoriteExerciseText(favorite_exercise, styled=True):
 
     else:
         if styled:
-            favorite_exercise_text = _('Vytvor si <a href="https://delinquently-overdistraught-glynis.ngrok-free.dev/%(language)s/my-training-plans/?create" title="Vytvoriť tréningový plán" target="_blank">tréningový plán</a> pre získanie viac štatistík.')
+            favorite_exercise_text = _('Vytvor si <a href="%(domain)s%(language)s/my-training-plans/?create" title="Vytvoriť tréningový plán" target="_blank">tréningový plán</a> pre získanie viac štatistík.') % {"domain": settings.DOMAIN_URL, "language": language}
 
         else:
-            favorite_exercise_text = _('Vytvor si tréningový plán kliknutím na href="https://delinquently-overdistraught-glynis.ngrok-free.dev/%(language)s/my-training-plans/?create pre získanie viac štatistík.')
+            favorite_exercise_text = _('Vytvor si tréningový plán kliknutím na href="%(domain)s%(language)s/my-training-plans/?create pre získanie viac štatistík.') % {"domain": settings.DOMAIN_URL, "language": language}
 
     return favorite_exercise_text
 

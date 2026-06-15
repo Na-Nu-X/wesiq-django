@@ -249,8 +249,6 @@ function storeHashSignPosition(data:hashtag):void {
 
 // Function For Update Hashtags Positions
 function updateHashtagsPositions(start_from:number, step:number, operation:"add"|"sub"):void {
-    console.log(step)
-
     add_hashtag_state.hashtags.forEach(function(one_hashtag:hashtag, index:number) {
         if(index > start_from) {
             // Adds Positions

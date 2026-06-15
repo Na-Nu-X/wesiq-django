@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     let processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
 
-    console.log(processing_posts)
-
     const processing_posts_media_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_media_id) // Gets All Current Media IDs From The Local Storage
 
     all_processing_post_containers.forEach(function(one_post_container:HTMLDivElement):void {
