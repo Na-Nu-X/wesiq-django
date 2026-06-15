@@ -927,7 +927,7 @@ header {
                     .average_rating_number {
                         position: relative;
                         width: 70px;
-                        height: 45px;
+                        line-height: 1;
                         color: darken($secondary-color, 20%);
 
                         &:hover {
@@ -936,8 +936,7 @@ header {
 
                         span {
                             position: relative;
-                            // bottom: 14px;
-                            bottom: 22.5px;
+                            bottom: 14px;
                             font-size: 20px;
                         }
                     }
@@ -945,7 +944,7 @@ header {
 
                 .stars {
                     display: flex;
-                    flex-direction: row;
+                    align-items: center;
                     gap: 20px;
                     width: 100%;
                     height: 32px;
@@ -960,6 +959,8 @@ header {
                             height: 32px;
 
                             svg {
+                                display: block;
+
                                 &:hover {
                                     transform: scale(1.1);
                                     cursor: pointer;

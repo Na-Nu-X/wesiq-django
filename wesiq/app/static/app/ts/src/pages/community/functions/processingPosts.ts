@@ -9,7 +9,7 @@ export interface uploadPostResponse {
     compress_tasks:compressTask[]
 }
 
-interface uploadProgressResponse {
+export interface uploadProgressResponse {
     task_id:string,
     state:"PENDING"|"PROGRESS"|"SUCCESS"|"FAILURE",
     progress:number

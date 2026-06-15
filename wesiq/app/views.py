@@ -758,7 +758,7 @@ def homepageView(request):
             )
 
             messages.add_message(request, messages.SUCCESS, _("Úspešne prihlásený ako\n%(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name})
-            captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {email_address},\n\t- IP Address: {getClientIp(request)}\n")
+            captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {user.email_address},\n\t- IP Address: {getClientIp(request)}\n")
 
         return HttpResponseRedirect(reverse("homepage_url"))
 

@@ -63,8 +63,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
         }
     }
 
-    catch(e) {
+    catch {
         displayMessage(gettext("Pri pridávaní sledovania došlo k chybe."), "error") // Displays The Error Message
-        console.log(e)
     }
 }

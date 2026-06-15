@@ -390,7 +390,6 @@ export function finishTraining(container:HTMLDivElement):void {
 
 // Function For Change Exercises Or Their Set Progress In The Training Plan
 export function nextExercise(container:HTMLDivElement):void {
-    console.log(container)
     const playback:HTMLDivElement = container.querySelector(".record_activity") as HTMLDivElement // Gets The Activity Playback
     const training_plan:HTMLDivElement = container.querySelector(".training_plan_container .training_plan") as HTMLDivElement // Gets The Training Plan
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise"); // Gets All Training Plan Exercises
