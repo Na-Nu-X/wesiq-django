@@ -250,6 +250,7 @@ function renderUsersForTag(data:taggedUser, users_for_tag_container:HTMLDivEleme
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
     data.profile_picture_name ? profile_picture.src = `/../media/images/${data.id}/${data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture Name
+    profile_picture.alt = ""
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container
 
     username.classList.add("username") // Adds Username Class

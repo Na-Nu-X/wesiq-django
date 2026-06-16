@@ -94,6 +94,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     // Post Author Profile Picture
     const post_author_profile_picture:HTMLImageElement = post_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Post Author Profile Picture 
     post_author_profile_picture.src = post_data.user.profile_picture_name ? `/../media/images/${post_data.user.id}/${post_data.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+    post_author_profile_picture.alt = ""
 
     const right:HTMLDivElement = post_container.querySelector(".header .right") as HTMLDivElement // Gets The Right Container Of The Header
     const top:HTMLDivElement = right.querySelector(".top") as HTMLDivElement // Gets The Top Container Of The Right Container
@@ -251,6 +252,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         const profile_picture:HTMLImageElement = document.createElement("img") // Creates The Profile Picture Image
         profile_picture.classList.add("profile_picture") // Adds The Profile Picture Class
         profile_picture.src = random_comment.user.profile_picture_name ? `/../media/images/${random_comment.user.id}/${random_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+        profile_picture.alt = ""
         comment_preview.appendChild(profile_picture) // Appends The Profile Picture To The Comment Preview
 
         // Username
@@ -387,6 +389,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         // Write Comment Form Profile Picture
         const write_comment_form_profile_picture:HTMLImageElement = comment_forum_template_clone.querySelector(".comment_forum .write_comment_form .profile_picture") as HTMLImageElement // Gets The Write Comment Form Profile Picture
         write_comment_form_profile_picture.src = profile_picture_name ? `/../media/images/${logged_in_user_id}/${profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+        write_comment_form_profile_picture.alt = ""
 
         const all_comments:HTMLDivElement = comment_forum_template_clone.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets The All Comments Container
 
@@ -414,6 +417,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 // Comment Author Profile Picture
                 const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
                 comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+                comment_author_profile_picture.alt = ""
 
                 // Comment Author Username
                 const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .user .username") as HTMLParagraphElement // Gets The Comment Author Username

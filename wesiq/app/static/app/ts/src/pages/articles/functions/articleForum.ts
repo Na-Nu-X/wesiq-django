@@ -47,6 +47,7 @@ export async function addComment(article_id:number, write_comment_form:HTMLDivEl
         // Comment Author Profile Picture
         const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
         comment_author_profile_picture.src = add_article_comment_response.comment.user.profile_picture_name ? `/../media/images/${add_article_comment_response.comment.user.id}/${add_article_comment_response.comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+        comment_author_profile_picture.alt = ""
 
         // Comment Author Username
         const comment_author_username:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .user .username") as HTMLParagraphElement // Gets The Comment Author Username
