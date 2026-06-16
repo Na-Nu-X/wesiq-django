@@ -144,11 +144,11 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
-        text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
+        text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}"
         sender = settings.EMAIL_HOST_USER
         receiver = [user.email_address]
         html_content = f"""
-            <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+            <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
             <p>{html_content}<p>
             <h1>{html_content_middle}</h1>
             <p>{html_content_end}<br>

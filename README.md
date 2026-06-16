@@ -1,5 +1,107 @@
 # Wesiq
 
+## 0. Installation & Setup Guide
+
+- Follow these steps to get the development environment running on your local machine
+
+### Windows:
+
+#### 1. Clone the repository
+
+- Open your terminal and clone the project using Git.
+`git clone https://github.com/Na-Nu-X/wesiq-django.git`
+
+#### 2. Setup a Virtual Environment (For IDE autocompletion)
+
+- Type these commands to your terminal.
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r .\wesiq\requirements.txt
+```
+- Note for **Visual Studio Code** / **Cursor** users: Press **CTRL + SHIFT + P**, type **"Python: Select Interpreter"**, and select the newly created virtual environment to enable proper code autocompletion.
+
+#### 3. Configure Environment Variables
+
+- Create a custom .env file at the root level of the project. You can use the attached **.env.example file** as a template for your variables.
+
+#### 4. Build and Start Docker Containers
+
+- Make sure you are outside the virtual environment (use the `deactivate` command if necessary), and run Docker.
+`docker compose up -d --build`
+
+#### 5. Run Database Migrations
+
+- Set up your database tables by running Django migrations inside the Docker container.
+`docker compose exec web python manage.py migrate`
+
+#### 6. Update the NPM Watch Script
+
+- Open the **wesiq/package.json** file and update the **"watch"** script to the following to ensure both TypeScript instances compile correctly on Windows.
+```json
+"watch": "tsc -w -p app/static/app/ts/tsconfig.json | tsc -w -p static/ts/tsconfig.json"
+```
+
+#### 7. Run the Development Batch Script
+
+- Start the asset compilation and background processes using the provided batch script.
+`.\docker_run_dev.bat`
+
+#### 8. Database Connection Troubleshooting (Optional)
+
+- If you want to connect to the Database using tools like **pgAdmin** and the default connection fails, you likely have a port conflict. Change the database port mapping in the **docker-compose.yml** file located in the root directory.
+```yaml
+ports:
+  - "5433:5432"
+```
+
+### Linux:
+
+#### 1. Clone the repository
+
+- Open your terminal and clone the project using Git.
+`git clone https://github.com/Na-Nu-X/wesiq-django.git`
+
+#### 2. Setup a Virtual Environment (For IDE autocompletion)
+
+- Type these commands to your terminal.
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r wesiq/requirements.txt
+```
+- Note for **Visual Studio Code** / **Cursor** users: Press **CTRL + SHIFT + P**, type **"Python: Select Interpreter"**, and select the newly created virtual environment to enable proper code autocompletion.
+
+#### 3. Configure Environment Variables
+
+- Create a custom .env file at the root level of the project. You can use the attached **.env.example file** as a template for your variables.
+
+#### 4. Build and Start Docker Containers
+
+- Make sure you are outside the virtual environment (use the `deactivate` command if necessary), and run Docker.
+`docker compose up -d --build`
+
+#### 5. Run Database Migrations
+
+- Set up your database tables by running Django migrations inside the Docker container.
+`docker compose exec web python manage.py migrate`
+
+#### 6. Run the Development Shell Script
+
+- Start the asset compilation and background processes using the provided shell script.
+`./docker_run_dev.sh`
+
+- If you need execution permission, change the file permissions.
+`chmod +x docker_run_dev.sh`
+
+#### 7. Database Connection Troubleshooting (Optional)
+
+- If you want to connect to the Database using tools like **pgAdmin** and the default connection fails, you likely have a port conflict. Change the database port mapping in the **docker-compose.yml** file located in the root directory.
+```yaml
+ports:
+  - "5433:5432"
+```
+
 ## 1. Stack Overview
 
 The project's **Back-End** is built on popular Python-Based Web Framework called **Django**, utilizing **PostgreSQL** for Database Management instead of default SQLite. To enhance **Front-End** security and streamline debugging, **TypeScript** was implemented instead of Vanilla JavaScript. additionally, **SCSS** was utilized to accelerate and organize style development.

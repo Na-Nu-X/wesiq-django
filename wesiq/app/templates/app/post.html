@@ -906,7 +906,62 @@
 
         {% endif %}
     {% else %}
-        <h2>{% translate "Ospravedlňujeme&nbsp;sa!<br>Hľadaný&nbsp;príspevok sa&nbsp;nenašiel." %}</h2>
+        <div class="feed">
+            <div class="post_container" data-post_id="{{ post.id }}">
+                <div class="header">
+                    <div class="left">
+                        <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                            <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                        </a>
+                    </div>
+                    
+                    <div class="right">
+                        <div class="top">
+                            <p class="username">{% translate "Neexistujúci účet" %}</p>
+
+                            <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
+                                <p class="followers">{{ post.user.followers.all|length }}</p>
+                                <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                            </div>
+                        </div>
+
+                        <div class="bottom">
+                            <p class="created_at">1.1. 2100</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no_found_post_notice">
+                    <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
+                    <p>{% translate "Ospravedlňujeme sa!<br>Hľadaný príspevok sa nenašiel." %}</p>
+                </div>
+
+                <div class="society">
+                    <div class="likes">
+                        <i class="fa-heart fa-regular"></i> <!-- https://fontawesome.com/icons/heart -->
+                        <p class="likes_counter" style="filter: blur(5px);">123</p>
+                    </div>
+
+                    <div class="comments">
+                        <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                        <p class="comments_counter" style="filter: blur(5px);">123</p>
+                    </div>
+
+                    <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
+                        <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                    </div>
+
+                    <div class="views">
+                        <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                        <p class="views_counter" style="filter: blur(5px);">123</p>
+                    </div>
+
+                    <div class="save">
+                        <i class="fa-bookmark fa-regular"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                    </div>
+                </div>
+            </div>
+        </div>
     
     {% endif %}
 {% endblock content %}

@@ -50,7 +50,11 @@ export async function uploadPost(submit_button:HTMLInputElement, form_data:FormD
         
                     if(all_tasks_finished) {
                         clearInterval(check_upload_progress_interval) // Deletes The Upload Progress Interval
-                        window.location.reload() // Reloads The Page
+
+                        // Reloads The Page After 500 MS Timeout
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 500)
                     }
                     
                     else if(any_task_failed) {

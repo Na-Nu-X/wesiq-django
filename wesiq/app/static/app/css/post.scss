@@ -5,10 +5,6 @@
  Main Styles
 ************/
 
-h2 {
-    font-family: $article-heading-font;
-}
-
 .post_container {
     position: relative;
     display: flex;
@@ -690,10 +686,12 @@ h2 {
     }
 
     .private_post_notice,
-    .private_account_notice {
+    .private_account_notice,
+    .no_found_post_notice {
         text-align: center;
 
-        .fa-lock {
+        .fa-lock,
+        .fa-magnifying-glass {
             font-size: 3em;
             color: darken($secondary-color, 40%);
         }
