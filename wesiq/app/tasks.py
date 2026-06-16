@@ -28,11 +28,11 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
-        text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + f",\n{text_content}"
+        text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}"
         sender = settings.EMAIL_HOST_USER
         receiver = [user.email_address]
         html_content = f"""
-            <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+            <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
             <p>{html_content}<p>
             <h1>{html_content_middle}</h1>
             <p>{html_content_end}<br>
@@ -50,10 +50,10 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With No Activity Info
         if activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] == 0:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("V poslednej dobe sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Ahoj %(username)s") % {"username": user.username} + ",\n" + _("V poslednej dobe sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
-                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+                <h1>{_('Ahoj %(username)s') % {"first_name": user.username}},</h1>
 
                 <p>{_('V poslednej dobe sme nezaznamenali žiadnu aktivitu.')}</p>
 
@@ -72,10 +72,10 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With No This Week's Activity Info
         elif activity_data["average_activity_time"] == 0 and activity_data["previous_average_activity_time"] > 0:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100%% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Ahoj %(username)s") % {"username": user.username} + ",\n" + _("Minulý týždeň sme nezaznamenali žiadnu aktivitu.") + "\n" + _("Celkovo si dosiahol aktívneho času 0s - to je o 100%% horšie oproti predchádzajúcemu týždňu") + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
-                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+                <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
 
                 <p>{_('Minulý týždeň sme nezaznamenali žiadnu aktivitu.')}</p>
 
@@ -96,10 +96,10 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With Activity Info
         else:
             # Send Mail
-            text_content = _("Dobrý deň %(first_name)s %(last_name)s") % {"first_name": user.first_name, "last_name": user.last_name} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], user.language, styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Ahoj %(username)s") % {"username": user.username} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], user.language, styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
-                <h1>{_('Dobrý deň %(first_name)s %(last_name)s') % {"first_name": user.first_name, "last_name": user.last_name}},</h1>
+                <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
 
                 <p>{_('Pozri sa na svoj prehľad aktivít za posledný týždeň.')}</p>
 

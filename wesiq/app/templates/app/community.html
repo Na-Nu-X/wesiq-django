@@ -803,15 +803,21 @@
                                     </button>
 
                                     {% if one_post_media.is_video == True %}
-                                        <img 
-                                            class="thumbnail"
-                                            src="{{ one_post_media.thumbnail.url }}" 
-                                            alt="
-                                                {% blocktranslate with username=one_post_media.post.user.username %}
-                                                    Príspevok užívateľa {{ username }}
-                                                {% endblocktranslate %}
-                                            "
-                                        >
+                                        {% if one_post_media.thumbnail %}
+                                            <img 
+                                                class="thumbnail"
+                                                src="{{ one_post_media.thumbnail.url }}" 
+                                                alt="
+                                                    {% blocktranslate with username=one_post_media.post.user.username %}
+                                                        Príspevok užívateľa {{ username }}
+                                                    {% endblocktranslate %}
+                                                "
+                                            >
+
+                                        {% else %}
+                                            <div class="thumbnail"></div>
+
+                                        {% endif %}
 
                                     {% elif one_post_media.is_video == False %}
                                         <img 
