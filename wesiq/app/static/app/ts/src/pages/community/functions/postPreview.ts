@@ -91,6 +91,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     element = document.createElement("img") // Creates The Image
                     
                     element.src = file_data // Sets The Source
+                    element.alt = ""
 
                     // Checks The Image Size
                     if(one_file.size > posts_preview_state.MAX_IMAGE_SIZE) {

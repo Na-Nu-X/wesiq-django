@@ -6,7 +6,9 @@ export function formatPhoneNumber(input:HTMLInputElement, flag:HTMLImageElement,
     // Phone Number Formatting
     const phone_number_formatter = new AsYouType()
     const formatted_phone_number = phone_number_formatter.input(input.value)
+
     input.value = formatted_phone_number
+    flag.alt = ""
 
     // Language Flag
 

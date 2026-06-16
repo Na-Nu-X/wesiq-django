@@ -17,7 +17,7 @@
 
         <div class="article_banner">
             <div class="banner_image">
-                <img src="{% static './images/articles' %}/{{ article.image_name }}">
+                <img src="{% static './images/articles' %}/{{ article.image_name }}" alt="">
             </div>
             
             <div class="banner_info">
@@ -76,6 +76,7 @@
                         
                         {% endif %}
                     "
+                    alt=""
                 >
             </a>
 
@@ -102,7 +103,7 @@
                     <div class="comment_container">
                         <div class="user">
                             <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
-                                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}"> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
+                                <img class="profile_picture" src="{% static 'images/profile_picture.png' %}" alt=""> <!-- https://www.flaticon.com/free-icon/user_3177440 -->
                             </a>
                             
                             <p class="username"></p>
@@ -209,6 +210,7 @@
                         
                         {% endif %}
                     "
+                    alt=""
                 >
 
                 <button class="add_emoji" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">

@@ -72,6 +72,7 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
     // Profile Picture
     const profile_picture:HTMLImageElement = one_user.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture 
     profile_picture.src = user_data.profile_picture_name ? `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+    profile_picture.alt = ""
 
     // Username
     const username:HTMLParagraphElement = one_user.querySelector(".username") as HTMLParagraphElement // Gets The Username Paragraph
@@ -148,6 +149,7 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement,
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
     user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+    profile_picture.alt = ""
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container
 
     username.classList.add("username") // Adds The Username Class
