@@ -468,10 +468,12 @@
                     <div class="right">
                         <p class="comment"></p>
     
-                        <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
-                            <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                            <p class="likes_counter">{{ one_comment.likes }}</p>
-                        </button>
+                        <div class="likes_container">
+                            <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
+                                <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                <p class="likes_counter">{{ one_comment.likes }}</p>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
