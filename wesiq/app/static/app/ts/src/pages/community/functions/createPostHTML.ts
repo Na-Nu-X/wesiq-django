@@ -431,11 +431,27 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
                 comment.textContent = one_visible_comment.comment as string // Sets The Comment Text
 
+                // Likes Container
+                const likes_container:HTMLDivElement = one_comment_container.querySelector(".comment_container .right .likes_container") as HTMLDivElement // Gets The Likes Container
+
+                const is_liked_by_author:boolean = one_visible_comment.likes_from_users.includes(post_data.user.id) // Checks If The Comment Is Liked By Author
+
+                // Liked Comment By Author
+                if(is_liked_by_author) {
+                    const profile_picture:HTMLImageElement = document.createElement("img") // Creates The Profile Picture
+
+                    profile_picture.classList.add("profile_picture") // Adds The Profile Picture Class
+                    profile_picture.src = post_data.user.profile_picture_name ? `/../media/images/${post_data.user.id}/${post_data.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+                    profile_picture.alt = gettext("Autorovi príspevku sa páči komentár.")
+                    profile_picture.title = gettext("Autorovi príspevku sa páči komentár.")
+                    likes_container.prepend(profile_picture) // Prepends The Profile Picture To The Likes Counter
+                }
+
                 // Likes
-                const likes:HTMLButtonElement = one_comment_container.querySelector(".comment_container .right .likes") as HTMLButtonElement // Gets The Like Button
+                const likes:HTMLButtonElement = likes_container.querySelector(".likes") as HTMLButtonElement // Gets The Like Button
 
                 const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-                logged_in_user_id && (one_visible_comment.likes_from_users as number[]).includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+                logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
                 // Likes Counter
                 const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter

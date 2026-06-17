@@ -135,23 +135,43 @@
 		<div class="right">
 			<p class="comment">{{ one_comment.comment }}</p>
 
-			<button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
-				<i 
-					class="
-						{% if one_comment.has_like %}
-							fa-solid
+			<div class="likes_container">
+				{% if one_comment.is_liked_by_author %}
+					<img 
+						class="profile_picture" 
+						src="
+							{% if logged_in_user.profile_picture_name %}
+								/../media/images/{{ post_author.id }}/{{ post_author.profile_picture_name }}
 	
-						{% else %}
-							fa-regular
-						
-						{% endif %}
+							{% else %}
+								{% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+							
+							{% endif %}
+						"
+						alt="{% translate 'Autorovi príspevku sa páči komentár.' %}"
+						title="{% translate 'Autorovi príspevku sa páči komentár.' %}"
+					>
+				
+				{% endif %}
 	
-						fa-heart
-					"
-				></i> <!-- https://fontawesome.com/icons/heart -->
-	
-				<p class="likes_counter">{{ one_comment.likes }}</p>
-			</button>
+				<button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
+					<i 
+						class="
+							{% if one_comment.has_like %}
+								fa-solid
+		
+							{% else %}
+								fa-regular
+							
+							{% endif %}
+		
+							fa-heart
+						"
+					></i> <!-- https://fontawesome.com/icons/heart -->
+		
+					<p class="likes_counter">{{ one_comment.likes }}</p>
+				</button>
+			</div>
 		</div>
     </div>
 

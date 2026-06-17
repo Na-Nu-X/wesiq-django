@@ -948,6 +948,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
+                        gap: 10px;
                         margin-bottom: 7.5px;
                         margin-left: 38px + 10px;
                         padding-right: 10px;
@@ -958,31 +959,45 @@
                             line-break: anywhere;
                         }
 
-                        .likes {
-                            all: unset;
+                        .likes_container {
                             display: flex;
                             align-items: center;
-                            gap: 5px;
-                            height: 20px;
-        
-                            .fa-heart {
-                                display: block;
-                                color: darken($secondary-color, 40%);
-        
-                                &:hover {
-                                    color: $error-color !important;
-                                    cursor: pointer;
-                                    transition: color 0.3s ease;
+                            gap: 10px;
+
+                            .profile_picture {
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                opacity: 0.8;
+                                cursor: pointer;
+                            }
+    
+                            .likes {
+                                all: unset;
+                                display: flex;
+                                align-items: center;
+                                gap: 5px;
+                                height: 20px;
+            
+                                .fa-heart {
+                                    display: block;
+                                    color: darken($secondary-color, 40%);
+            
+                                    &:hover {
+                                        color: $error-color !important;
+                                        cursor: pointer;
+                                        transition: color 0.3s ease;
+                                    }
                                 }
-                            }
-        
-                            .fa-solid {
-                                color: $error-color;
-                            }
-        
-                            .likes_counter {
-                                display: inline-block;
-                                color: darken($secondary-color, 40%);
+            
+                                .fa-solid {
+                                    color: $error-color;
+                                }
+            
+                                .likes_counter {
+                                    display: inline-block;
+                                    color: darken($secondary-color, 40%);
+                                }
                             }
                         }
                     }

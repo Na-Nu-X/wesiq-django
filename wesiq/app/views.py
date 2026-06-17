@@ -3412,13 +3412,21 @@ def postView(request, post_id):
                         postforum_id=OuterRef("pk"),
                         users_id=logged_in_user_id
                     )
-                )
-            ).annotate(
+                ),
+
                 # Creates The Has Report Column (True If The User Has Already Reported The Comment)
                 has_report=Exists(
                     PostForum.reports_from_users.through.objects.filter(
                         postforum_id=OuterRef("pk"),
                         user_id=logged_in_user_id
+                    )
+                ),
+
+                # Creates The Is Liked By Author Column (True If The Comment Obtained Like From The Author Of The Post)
+                is_liked_by_author=Exists(
+                    PostForum.likes_from_users.through.objects.filter(
+                        postforum_id=OuterRef("pk"),
+                        users_id=OuterRef("post__user_id")
                     )
                 )
             ).select_related(
@@ -3464,6 +3472,14 @@ def postView(request, post_id):
             return render(request, "app/post.html", {
                 "post": post
             })
+
+    if logged_in_user:
+        return render(request, "app/post.html", {
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            }
+        })
 
     return render(request, "app/post.html")
 
