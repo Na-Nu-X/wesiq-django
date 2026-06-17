@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
+from urllib.parse import urlparse
 
 class Users(models.Model):
     role_choices = [
@@ -688,3 +689,9 @@ class BioLinks(models.Model):
 
     # title = models.CharField(verbose_name="Title", max_length=20, null=False)
     url = models.URLField(verbose_name="URL Address", max_length=200, null=False)
+
+    @property
+    def domain(self):
+        url = urlparse(self.url) # Gets The URL
+        domain = url.netloc.replace("www.", "") # Gets The Domain
+        return domain # Returns The URL Domain

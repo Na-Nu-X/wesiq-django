@@ -2575,11 +2575,12 @@ def manageTrainingPlansView(request):
 
                         new_training_plan.save() # Saves New Training Plan
 
-                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne vytvorený / upravený.")}, status=201) # Returns Success Response
-
                     # Edited Training Plan
                     elif one_object["action"] == "edited_training_plan":
-                        training_plan.filter(training_plan_key=one_object["previous_training_plan_key"]).delete() # Deletes Exercises With Previous Training Plan Key
+                        previous_training_plan_key = one_object["previous_training_plan_key"] # Gets The Previous Training Plan Key
+
+                        if previous_training_plan_key:
+                            training_plan.filter(training_plan_key=previous_training_plan_key).delete()
 
                         edited_training_plan = TrainingPlan(
                             user_id = logged_in_user_id,
@@ -2594,14 +2595,10 @@ def manageTrainingPlansView(request):
 
                         edited_training_plan.save() # Saves Edited Training Plan
 
-                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne vytvorený.")}, status=201) # Returns Success Response
-
                     elif one_object["action"] == "delete_training_plan":
                         training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
 
-                        return JsonResponse({"success": True, "message": _("Tréningový plán bol úspešne odstránený.")}, status=200) # Returns Success Response
-
-                    return JsonResponse({"success": False, "message": _("Nepodarilo sa vykonať zmeny v tréningovom pláne.")}, status=404)
+                return JsonResponse({"success": True, "message": _("Zmeny v tréningovom pláne boli úspešne vykonané.")}, status=201) # Returns Success Response
 
             except Exception as e:
                 captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -3734,7 +3731,8 @@ def profileView(request, username):
                         "username": logged_in_user.username,
                         "email_address": logged_in_user.email_address,
                         "profile_picture_name": logged_in_user.profile_picture_name,
-                        "friend_code": logged_in_user.friend_code
+                        "friend_code": logged_in_user.friend_code,
+                        "bio_links": logged_in_user.bio_links
                     },
 
                     "user": user,

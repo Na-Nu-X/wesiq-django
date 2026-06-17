@@ -162,7 +162,32 @@
                     </div>
                 </div>
 
-                <div class="added_links_container"></div>
+                <div class="added_links_container">
+                    {% for one_bio_link in logged_in_user.bio_links.all %}
+                        <div class="link">
+                            <a href="{{ one_bio_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
+                                {% if "instagram.com" in one_bio_link.url %}
+                                    <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
+
+                                {% elif "facebook.com" in one_bio_link.url %}
+                                    <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
+
+                                {% elif "youtube.com" in one_bio_link.url %}
+                                    <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
+
+                                {% else %}
+                                    <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+
+                                {% endif %}
+
+                                {{ one_bio_link.domain }}
+                            </a>
+
+                            <button class="remove_link" type="button" title="{% translate 'Odstrániť odkaz' %}"><i class="fa-solid fa-xmark"></i></button> <!-- https://fontawesome.com/icons/xmark -->
+                        </div>
+                    
+                    {% endfor %}
+                </div>
 
                 <div class="inputs">
                     <div class="first_name_container">
