@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const hostname:string = url.hostname // Gets The URL's Hostname
 
         if(hostname.includes("instagram.com")) anchor.innerHTML = "<i class='fa-brands fa-instagram'></i>" // https://fontawesome.com/icons/brands/solid/instagram
-        else if(hostname.includes("facebook.com")) anchor.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
+        else if(hostname.includes("facebook.com")) anchor.innerHTML = "<i class='fa-brands fa-facebook'></i>" // https://fontawesome.com/icons/brands/solid/facebook
+        else if(hostname.includes("youtube.com")) anchor.innerHTML = "<i class='fa-brands fa-youtube'></i>" // https://fontawesome.com/icons/brands/solid/youtube
         else anchor.innerHTML = "<i class='fa-solid fa-link'></i>" // https://fontawesome.com/icons/link
 
         anchor.innerHTML += getDomain(url)
@@ -100,7 +101,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const remove_link:HTMLButtonElement = document.createElement("button") as HTMLButtonElement // Creates The Remove Button
         remove_link.classList.add("remove_link") // Adds The Remove Link Class
         remove_link.type = "button" // Prevents The Submit Of Edit Account Form
-        remove_link.innerHTML += `<i class="fa-solid fa-xmark" title="${gettext('Odstrániť odkaz')}"></i>` // https://fontawesome.com/icons/xmark
+        remove_link.title = gettext('Odstrániť odkaz')
+        remove_link.innerHTML += "<i class='fa-solid fa-xmark'></i>" // https://fontawesome.com/icons/xmark
         link.appendChild(remove_link) // Appends The Remove Link Button To The Link Container
 
         return link // Returns The Link
@@ -125,6 +127,15 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
 
         link.remove() // Removes The Link From DOM
+    }
+
+    function initializeStoredLinks(added_links_container:HTMLDivElement):void {
+        added_links_container.querySelectorAll<HTMLDivElement>(".link").forEach(function(one_link:HTMLDivElement):void {
+            const anchor:HTMLAnchorElement = one_link.querySelector("a") as HTMLAnchorElement // Gets The Anchor
+            const url:URL|null = getURL(anchor.href) // Gets The URL
+    
+            if(url) storeNewLink(url, bio_links) // Stores The New Link To The Bio Links Hidden Input
+        })
     }
 
     // Events
@@ -153,6 +164,10 @@ document.addEventListener("DOMContentLoaded", function():void {
             removeAddedLink(link, bio_links) // Removes The Added Link
         }
     })
+
+    // Initialization
+
+    initializeStoredLinks(added_links_container) // Initializes The Stored Links
 
     // Add Emoji
 

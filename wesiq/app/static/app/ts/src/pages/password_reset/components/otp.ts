@@ -69,12 +69,15 @@ document.addEventListener("DOMContentLoaded", function():void {
                 }
             }
 
-            // Final Code
-            if(index === otp_inputs.length - 1 && !this.disabled && this.value !== "") {
-                otp_inputs.forEach((one_input:HTMLInputElement) => password_reset_code_input.value += one_input.value) // Sets Final Code Value
+            else {
+                // Final Code
+                if(index === otp_inputs.length - 1 && !this.disabled && this.value !== "") {
+                    password_reset_code_input.value = "" // Deletes The Final Code Value
+                    otp_inputs.forEach((one_input:HTMLInputElement) => password_reset_code_input.value += one_input.value) // Sets The Final Code Value
+                }
+    
+                else password_reset_code_input.value = "" // Deletes The Final Code Value
             }
-
-            else password_reset_code_input.value = "" // Deletes Final Code Value
         })
 
         // Paste Functionality
