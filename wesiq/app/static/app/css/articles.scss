@@ -77,15 +77,46 @@
     }
 
     .article_content {
-        margin: 10px 0px 50px;
+        max-width: 800px;
+        margin: 10px auto 50px;
+
+        h3 {
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        h4 {
+            width: fit-content;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            border-bottom: 2px solid $secondary-color;
+        }
+
+        p {
+            margin-bottom: 20px;
+
+            &:first-of-type {
+                &::first-letter {
+                    margin-right: 10px;
+                    initial-letter: 2;
+                }
+            }
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
     }
 
     .rating {
         display: flex;
         justify-content: right;
         gap: 5px;
+        max-width: 800px;
+        margin: 0px auto 50px;
         margin-bottom: 50px;
-        margin-left: 10px + 3px;
 
         a {
             margin-right: 5px;
