@@ -337,7 +337,7 @@ class ArticleForum(models.Model):
         blank=True
     )
 
-    comment = models.TextField(verbose_name="Comment", null=False)
+    comment = models.TextField(verbose_name="Comment", max_length=100, null=False)
     # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)
@@ -648,7 +648,7 @@ class PostForum(models.Model):
         blank=True
     )
 
-    comment = models.TextField(verbose_name="Comment", null=False)
+    comment = models.TextField(verbose_name="Comment", max_length=100, null=False)
     # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
     # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
     likes = models.PositiveIntegerField(verbose_name="Likes", default=0, null=False)

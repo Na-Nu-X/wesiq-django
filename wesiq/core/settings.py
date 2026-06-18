@@ -250,7 +250,7 @@ LANGUAGES = [
     ('uk', _('Ukrainian')),
     ('ru', _('Russian')),
     ('pt-br', _('Portuguese (Brazil)')),
-    ('zh-hans', _('Simplified Chinese')),
+    # ('zh-hans', _('Simplified Chinese')),a
     ('de', _('German')),
 ]
 

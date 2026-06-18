@@ -433,7 +433,7 @@ class writeCommentForm(forms.Form):
     comment = forms.CharField(
         widget=forms.Textarea(attrs={"class": "comment", "placeholder": _("Napísať komentár"), "autocomplete": "off", "aria-label": _("Napísať komentár")}),
         label=False,
-        max_length=200,
+        max_length=100,
         required=True,
 
         error_messages={

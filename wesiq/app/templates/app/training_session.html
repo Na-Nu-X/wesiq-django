@@ -294,7 +294,7 @@
                 <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
 
                 <div class="tasks">
-                    {% for one_task in official_tasks %}               
+                    {% for one_task in official_tasks %}
                         <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}" data-progress_percentage="{{ one_task.progress_percentage|unlocalize }}">
                             <div 
                                 class="
@@ -308,7 +308,37 @@
                             >
                             </div>
 
-                            <p class="title">{{ one_task.title }}</p>
+                            <p class="title">
+                                {% if one_task.data == "30_minutes_activity" %}
+                                    {% translate "Zaznamenaj 30 minút aktivity." %}
+                        
+                                {% elif one_task.data == "1_hour_activity" %}
+                                    {% translate "Zaznamenaj 1h aktivity." %}
+
+                                {% elif one_task.data == "2_hours_activity" %}
+                                    {% translate "Zaznamenaj 2h aktivity." %}
+
+                                {% elif one_task.data == "3_hours_activity" %}
+                                    {% translate "Zaznamenaj 3h aktivity." %}
+
+                                {% elif one_task.data == "beat_average_activity_time" %}
+                                    {% translate "Prekonaj týždenný priemer času aktivity." %}
+
+                                {% elif one_task.data == "complete_training_plan_activity" %}
+                                    {% translate "Dokonči aktivitu podľa tréningového plánu." %}
+
+                                {% elif one_task.data == "2_activities" %}
+                                    {% translate "Zaznamenaj 2 aktivity." %}
+
+                                {% elif one_task.data == "complete_all_official_tasks" %}
+                                    {% translate "Splň všetky dnešné výzvy." %}
+
+                                {% elif one_task.data == "add_custom_task" %}
+                                    {% translate "Pridaj vlastnú úlohu." %}
+                                
+                                {% endif %}
+                            </p>
+
                             <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
                         </div>
                     
