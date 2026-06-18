@@ -30,11 +30,11 @@
                     <div 
                         class="rating" 
                         title="
-                            {% if article.average_rating|default:0|floatformat:0|add:0 %}
+                            {% if article.average_rating|default:0|floatformat:0|add:0 == 0 %}
                                 {% translate 'Zatiaľ žiadne hodnotenia' %}
                             
                             {% else %}
-                                {% translate 'Priemerné hodnotenie' %} {{ article.average_rating|default:0|floatformat:2|add:0 }}
+                                {% translate 'Priemerné hodnotenie' %} {{ article.average_rating|default:0 }}
 
                             {% endif %}
                         "

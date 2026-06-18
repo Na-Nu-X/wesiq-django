@@ -152,23 +152,23 @@
                         <div 
                             class="rating" 
                             title="
-                                {% if one_article.rating|floatformat:0|add:0 == 0 %}
+                                {% if one_article.average_rating|default:0|floatformat:0|add:0 == 0 %}
                                     {% translate 'Zatiaľ žiadne hodnotenia' %}
                                 
                                 {% else %}
-                                    {% translate 'Priemerné hodnotenie' %} {{ one_article.rating }}
+                                    {% translate 'Priemerné hodnotenie' %} {{ one_article.average_rating|default:0 }}
 
                                 {% endif %}
                             "
                         >
                             <div class="skeleton_loading skeleton_text">
                                 {% for _ in "12345" %}
-                                    {% if forloop.counter <= one_article.average_rating %}
+                                    {% if forloop.counter <= one_article.average_rating|default:0|floatformat:0|add:0 %}
                                         <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
                                     {% else %}
                                         <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                                    
+
                                     {% endif %}
                                 {% endfor %}
                             </div>
