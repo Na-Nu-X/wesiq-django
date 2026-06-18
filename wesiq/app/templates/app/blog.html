@@ -140,10 +140,42 @@
                 </button>
 
                 <div class="description skeleton_loading skeleton_text">
-                    <p class="hidden">{{ one_article.description }}</p>
+                    <p class="
+                            hidden
+
+                            {% if not one_article.html_filename %}
+                                unfinished
+                            
+                            {% endif %}
+                        "
+                    >
+                        {{ one_article.description }}
+                    </p>
+
+                    {% if not one_article.html_filename %}
+                        <div class="unfinished_article_notice">
+                            <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                            <p>{% translate "Tento článok nie je ešte dokončený." %}</p>
+                        </div>
+                    
+                    {% endif %}
                 </div>
 
-                <a href="{% url 'blog_theme_url' one_article.link %}" title="{% translate 'Zobraziť' %}" aria-label="{% translate 'Zobraziť' %}" target="_self">
+                <a 
+                    href="
+                        {% if one_article.html_filename %}
+                            {% url 'blog_theme_url' one_article.link %}
+
+                        {% else %}
+                            #
+                        
+                        {% endif %}
+                    "
+
+                    title="{% translate 'Zobraziť' %}" 
+                    aria-label="{% translate 'Zobraziť' %}" 
+                    target="_self"
+                >
                     <div class="skeleton_loading skeleton_text">
                         <h2 class="hidden">{{ one_article.title }}</h2>
                     </div>

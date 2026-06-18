@@ -39,6 +39,7 @@ import {
 
 import { focusAtEnd } from "../functions/customTextarea.js"
 import { toggleFollow } from "../functions/toggleFollow.js"
+import { comment_input_state } from "../state.js"
 
 "use strict"
 
@@ -557,6 +558,17 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Feed Input Functionality
     feed.addEventListener("input", function(event:Event):void {
+        // Write Comment Custom Input Length Checker
+        if((event.target as HTMLDivElement).closest(".write_comment_form")) {
+            const comment:HTMLDivElement = event.target as HTMLDivElement // Gets The Comment Input
+            const text:string = comment.textContent || "" // Gets The Text Content Of The Comment
+
+            if(text.length > comment_input_state.MAX_LENGTH) {
+                comment.textContent = text.substring(0, comment_input_state.MAX_LENGTH)
+                focusAtEnd(comment)
+            }
+        }
+
         // Change Video Volume
         if((event.target as HTMLInputElement).classList.contains("volume")) {
             const volume_input:HTMLInputElement = event.target as HTMLInputElement // Gets The Volume Input

@@ -36,6 +36,8 @@ export const tag_user_state:{
     tagged_users:string[],
     tagged_user:string,
     focused_user_for_tag_index:number,
+    tag_start_index:number,
+    tag_cursor_position:number,
 
     tags:tag[]
 } = {
@@ -44,6 +46,8 @@ export const tag_user_state:{
     tagged_users: [], // Stores All Tagged Users
     tagged_user: "", // Stores The Tagged User
     focused_user_for_tag_index: 0, // Focused User For Tag Index
+    tag_start_index: -1, // Stores Active Tag Start Index While Typing (Survives Dropdown Click)
+    tag_cursor_position: -1, // Stores Active Tag Cursor Position While Typing (Survives Dropdown Click)
 
     tags: [] // Stores All Tags And Their Position Or Only The Position Of An Ordinary At Sign
 }
@@ -86,4 +90,10 @@ export const feed_state:{
     current_page: 1, // Stores The Corrent Page
     is_loading: false, // Stores If The User Hits The Bottom Of The Feed
     has_more_posts: true // Stores If There Are More Posts
+}
+
+export const comment_input_state:{
+    MAX_LENGTH:number
+} = {
+    MAX_LENGTH:100
 }

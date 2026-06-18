@@ -32,7 +32,8 @@ import {
 
 import {
     handleDescriptionPaste,
-    pruneDescriptionMetadata
+    pruneDescriptionMetadata,
+    syncDescriptionFromText
 } from "../functions/syncDescription.js"
 
 import { syncFiles } from "../functions/postPreview.js"
@@ -330,6 +331,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Picker Emoji Click Functionality
     picker.addEventListener("emoji-click", function(event:Event):void {
+        if(description.innerText.length >= MAX_DESCRIPTION_LENGTH) return
+
         const custom_event:CustomEvent<{
             unicode:string
         }> = event as CustomEvent<{ unicode: string }>
@@ -431,8 +434,34 @@ document.addEventListener("DOMContentLoaded", function():void {
     })
 
     // Searches For Users For Tag If There Is At Sign In The Description
-    description.addEventListener("input", function():void {
+    description.addEventListener("input", async function():Promise<void> {
         if(is_syncing_description_paste) return
+
+        if(this.innerText.length > MAX_DESCRIPTION_LENGTH) {
+            const cursor_position:number = getCursorPosition(this) ?? MAX_DESCRIPTION_LENGTH
+            const truncated_text:string = this.innerText.slice(0, MAX_DESCRIPTION_LENGTH)
+
+            is_syncing_description_paste = true
+
+            await syncDescriptionFromText(
+                this,
+                description_input,
+                tagged_users_container,
+                tagged_users,
+                added_hashtags_input,
+                MAX_DESCRIPTION_LENGTH,
+                Math.min(cursor_position, MAX_DESCRIPTION_LENGTH),
+                truncated_text
+            )
+
+            previous_description_length = this.innerText.length
+
+            requestAnimationFrame(function():void {
+                is_syncing_description_paste = false
+            })
+
+            return
+        }
 
         description_input.value = this.textContent.trim() // Sets The Description Input Value
 
@@ -457,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
             const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
             const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
-            
+
             // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
             if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
             else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
@@ -467,7 +496,6 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Add Hashtags
 
             checkHashtags(this, added_hashtags_input)
-
             checkHashtagsPositions(this, cursor_position, previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
         }
 

@@ -30,7 +30,15 @@ export async function getUsersForTag(description:HTMLDivElement, users_for_tag_c
     const cursor_position:number = getCursorPosition(description) // Gets The Cursor Position
     const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
 
-    if(tag_start_index === -1) return
+    if(tag_start_index === -1) {
+        tag_user_state.tag_start_index = -1
+        tag_user_state.tag_cursor_position = -1
+
+        return
+    }
+
+    tag_user_state.tag_start_index = tag_start_index
+    tag_user_state.tag_cursor_position = cursor_position
 
     tag_user_state.tagged_user = "" // Deletes Tagged User Value
 
@@ -220,6 +228,9 @@ export function hideUsersForTag(users_for_tag_container:HTMLDivElement):void {
         users_for_tag_container.classList.remove("active"); // Hides The Container
         (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
     }
+
+    tag_user_state.tag_start_index = -1
+    tag_user_state.tag_cursor_position = -1
 }
 
 // Function For Change Focused Focused User For Tag
@@ -408,8 +419,8 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     if(!tagged_user.includes("@")) tagged_user = `@${tagged_user.trim()}`
 
     const text:string = description.innerText // Gets The Text
-    const cursor_position:number = getCursorPosition(description) // Gets The Cursor Position
-    const tag_start_index:number = getTagStartIndex(text, cursor_position) // Gets The Tag Start Index
+    const cursor_position:number = tag_user_state.tag_cursor_position !== -1 ? tag_user_state.tag_cursor_position : getCursorPosition(description) // Gets The Cursor Position (Stored Value Survives Dropdown Click)
+    const tag_start_index:number = tag_user_state.tag_start_index !== -1 ? tag_user_state.tag_start_index : getTagStartIndex(text, cursor_position) // Gets The Tag Start Index (Stored Value Survives Dropdown Click)
 
     if(tag_start_index === -1) return
 
@@ -417,7 +428,7 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     const tagged_user_length:number = tagged_user.length // Gets The Length Of The Tagged User
 
     const text_without_unfinished_tag:string = text.slice(0, tag_start_index) + text.slice(entered_tag_end_index + 1) // Deletes Unfinished Tag From The Text (For Example: Hello @us -> Hello )
-    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `${tagged_user}\u00a0` + text_without_unfinished_tag.slice(tag_start_index + 1) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user )
+    const text_with_finished_tag:string = text_without_unfinished_tag.slice(0, tag_start_index) + `${tagged_user}\u00a0` + text_without_unfinished_tag.slice(tag_start_index) // Sets Finished Tag To The Text (For Example: Hello  -> Hello @user )
 
     description.innerHTML = highlightTaggedUsersInPlainText(highlightHashtagsInText(text_with_finished_tag)) // Sets The New Value
 
@@ -428,6 +439,9 @@ function placeTagToText(description:HTMLDivElement, tagged_user:string, users_fo
     setCursorPosition(description, tag_start_index + tagged_user_length + 1) // Places Cursor After The Tag
     hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
     storeTaggedUserToHistory(tagged_user) // Stores The Tagged User To The History
+
+    tag_user_state.tag_start_index = -1
+    tag_user_state.tag_cursor_position = -1
 
     // Stores The Tag With All Information
     const tag_end_index:number = tag_start_index + tagged_user_length - 1 // Gets The Tag End Index
