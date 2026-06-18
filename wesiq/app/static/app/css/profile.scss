@@ -55,6 +55,17 @@
         .toggle_settings {
             all: unset;
         }
+
+        // Account Properties
+
+        .show_account_properties_button {
+            @include show_properties_button;
+        }
+
+        .account_properties,
+        .report {
+            @include properties_menu;
+        }
     }
 
     .edit_account_form,
