@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks
+from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks, UsersReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -3742,15 +3742,47 @@ def profileView(request, username):
                     "saved_posts": saved_posts
                 })
 
-            return render(request, "app/profile.html", {
-                "logged_in_user": {
-                    "username": logged_in_user.username,
-                    "profile_picture_name": logged_in_user.profile_picture_name
-                },
+            else:
+                if request.method == "POST":
+                    # Report User
+                    if request.headers.get("X-Requested-Action") == "report-user":
+                        try:
+                            if "logged_in_user_id" in request.session:
+                                logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                                report_user_data = json.loads(request.body) # Gets The Report User Data
+                                reported_user_id = report_user_data["reported_user_id"] # Gets The Reported User ID
+                                reason = report_user_data["reason"] # Gets The Reason
+                                reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
+                                has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
 
-                "user": user,
-                "posts": posts
-            })
+                                # Stores The Reported Comment
+                                UsersReport.objects.update_or_create(
+                                    reported_user_id=reported_user_id,
+                                    reporting_user_id=logged_in_user_id,
+                                    defaults={"reason": reason} # Reason Can Be Updated
+                                )
+
+                                # Report
+                                if not has_report:
+                                    Users.objects.filter(id=int(reported_user_id)).update(reports = F("reports") + 1) # Increases And Updates The Reports Counter
+
+                                return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+
+                            return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+
+                        except Exception as e:
+                            captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                            return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+                return render(request, "app/profile.html", {
+                    "logged_in_user": {
+                        "username": logged_in_user.username,
+                        "profile_picture_name": logged_in_user.profile_picture_name
+                    },
+
+                    "user": user,
+                    "posts": posts
+                })
         
         return render(request, "app/profile.html", {
             "user": user,

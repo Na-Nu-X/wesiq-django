@@ -57,6 +57,7 @@ class Users(models.Model):
     private_account = models.BooleanField(verbose_name="Private Account", default=False, null=False)
     account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
+    reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
 
     @property
     def total_received_likes(self):
@@ -150,6 +151,38 @@ class UserDailyOfficialTasks(models.Model):
 
     class Meta:
         unique_together = ("task", "user")
+
+class UsersReport(models.Model):
+    report_reason_choices = [
+        ("spam", "spam"),
+        ("harassment", "harassment"),
+        ("hate_speech", "hate speech"),
+        ("misinformation", "misinformation"),
+        ("explicit_content", "explicit content"),
+        ("other", "other")
+    ]
+
+    reported_user = models.ForeignKey(
+        Users,
+        verbose_name="Reported User",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="reports_received"
+    )
+
+    reporting_user = models.ForeignKey(
+        Users,
+        verbose_name="Reporting User",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="reports_sent"
+    )
+
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("reported_user", "reporting_user")
     
 class Activity(models.Model):
     user = models.ForeignKey(

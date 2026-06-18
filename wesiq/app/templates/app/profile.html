@@ -9,12 +9,71 @@
 {% endblock style %}
 
 {% block content %}
-    <div class="profile_container">
+    <div class="profile_container" data-user_id="{{ user.id }}">
         <div class="options_container">
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
             {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                 <button class="toggle_settings"><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
+
+            {% else %}
+                <button 
+                    class="show_account_properties_button" 
+                    popovertarget="account_properties"
+                    style="anchor-name: --show_account_properties_button;"
+                    title="{% translate 'Viac...' %}"
+                    aria-label="{% translate 'Viac...' %}"
+                >
+                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                </button>
+
+                <div 
+                    class="account_properties" 
+                    id="account_properties"
+                    popover
+                    style="position-anchor: --show_account_properties_button;"
+                >
+                    <button 
+                        class="show_report_profile_button" 
+                        popovertarget="report_profile"
+                        style="anchor-name: --show_report_profile_button;"
+                    >
+                        <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                        <span>{% translate "Nahlásiť" %}</span>
+                    </button>
+
+                    <button 
+                        class="hide_account_properties_button" 
+                        popovertarget="account_properties"
+                        popovertargetaction="hide"
+                    >
+                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                        <span>{% translate "Zavrieť" %}</span>
+                    </button>
+                </div>
+
+                <div 
+                    class="report report_profile" 
+                    id="report_profile"
+                    popover
+                    style="position-anchor: --show_report_profile_button;"
+                >
+                    <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                    <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                    <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                    <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                    <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                    <button data-reason="other"><span>{% translate "Iné" %}</span></button>
+
+                    <button 
+                        class="back_report_profile_button"
+                        popovertarget="report_profile"
+                        popovertargetaction="hide"
+                    >
+                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                        <span>{% translate "Späť" %}</span>
+                    </button>
+                </div>
 
             {% endif %}
         </div>
