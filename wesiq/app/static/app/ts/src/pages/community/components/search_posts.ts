@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
         // Gets The Posts After 2 Seconds Of Delay
-        search_posts_timeout = window.setTimeout(function() {
+        search_posts_timeout = window.setTimeout(function():void {
             feed_state.current_page = 1
             feed_state.is_loading = false
             feed_state.has_more_posts = true
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
             // Gets The Posts After 2 Seconds Of Delay
-            search_posts_timeout = window.setTimeout(function() {
+            search_posts_timeout = window.setTimeout(function():void {
                 feed_state.current_page = 1
                 feed_state.is_loading = false
                 feed_state.has_more_posts = true
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
             // Gets The Posts After 2 Seconds Of Delay
-            search_posts_timeout = window.setTimeout(function() {
+            search_posts_timeout = window.setTimeout(function():void {
                 feed_state.current_page = 1
                 feed_state.is_loading = false
                 feed_state.has_more_posts = true
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
                 // Gets The Posts After 2 Seconds Of Delay
-                search_posts_timeout = window.setTimeout(function() {
+                search_posts_timeout = window.setTimeout(function():void {
                     feed_state.current_page = 1
                     feed_state.is_loading = false
                     feed_state.has_more_posts = true
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             all_post_containers.forEach(one_post_container => (one_post_container.querySelector(".loading") as HTMLDivElement).classList.remove("hidden")) // Shows The Loader
 
             // Gets The Posts After 2 Seconds Of Delay
-            search_posts_timeout = window.setTimeout(function() {
+            search_posts_timeout = window.setTimeout(function():void {
                 feed_state.current_page = 1
                 feed_state.is_loading = false
                 feed_state.has_more_posts = true

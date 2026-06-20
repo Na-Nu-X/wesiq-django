@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 if(search_users_timeout) clearTimeout(search_users_timeout) // Deletes The Previous Search Users Timeout
 
                 // Gets The Users After 1 Second Of Delay
-                search_users_timeout = window.setTimeout(function() {
+                search_users_timeout = window.setTimeout(function():void {
                     getSearchedUsers(search_bar.value, all_users_container, users_loading) // Gets The Searched Users
                 }, 1000)
             }

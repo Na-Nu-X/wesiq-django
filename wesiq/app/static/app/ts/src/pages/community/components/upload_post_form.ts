@@ -641,7 +641,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         location_loading.classList.remove("hidden") // Shows The Loader
 
         // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
-        debounce_timeout = window.setTimeout(function() {
+        debounce_timeout = window.setTimeout(function():void {
             getLocation(searched_location, location_results, location_input, latitude, longitude)
         }, 1000)
     })

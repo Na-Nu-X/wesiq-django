@@ -1,5 +1,5 @@
 // Function For Set Observer Animation
-export function setObserverAnimation(element:HTMLDivElement|NodeListOf<HTMLDivElement>, threshold:number = 0.5, additional_function?:() => void):void {
+export function setObserverAnimation(element:HTMLElement|NodeListOf<HTMLElement>, threshold:number = 0.5, additional_function?:() => void):void {
     const observer:IntersectionObserver = new IntersectionObserver(
         function(entries:IntersectionObserverEntry[], observer:IntersectionObserver):void {
             entries.forEach(function(one_entry:IntersectionObserverEntry):void {
@@ -18,11 +18,11 @@ export function setObserverAnimation(element:HTMLDivElement|NodeListOf<HTMLDivEl
         }
     )
 
-    if(element instanceof HTMLDivElement) observer.observe(element) // Observes Only One Element
+    if(element instanceof HTMLElement) observer.observe(element) // Observes Only One Element
 
     else {
         // Observes Multiple Elements
-        element.forEach(function(one_element:HTMLDivElement):void {
+        element.forEach(function(one_element:HTMLElement):void {
             observer.observe(one_element)
         })
     }

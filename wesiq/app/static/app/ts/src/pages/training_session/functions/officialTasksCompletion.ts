@@ -179,7 +179,7 @@ export async function completeOfficialTask(task:string, task_container:HTMLDivEl
 
                 // activity_summary.gained_xp += completed_official_task_response.gained_xp // Increases The Gained XP For The Activity
 
-                window.setTimeout(function() {
+                window.setTimeout(function():void {
                     displayMessage(`+${completed_official_task_response.gained_xp} XP`, "success") // Displays The Amount Of Gained XP For The Completed Task
                     success_sound.play() // Plays The Success Sound
                 }, 100)
