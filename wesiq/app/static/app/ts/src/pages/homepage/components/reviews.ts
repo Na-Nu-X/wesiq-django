@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     
     const load_reviews_buttons:HTMLDivElement|null = reviews.querySelector(".load_reviews_buttons") as HTMLDivElement // Gets The Load Reviews Buttons Container
     const reviews_info_container:HTMLDivElement = reviews.querySelector(".reviews_info_container") as HTMLDivElement // Gets Reviews Info
+    const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
+    const pending_reviews:HTMLDivElement|null = reviews.querySelector(".pending_reviews") as HTMLDivElement || null // Gets The Pending Reviews Container If Is Available
 
     // Global Event Delegations
 
@@ -86,7 +88,10 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Initialization
 
     setObserverAnimation(reviews_info_container, 1, reviewsInfoAnimation) // Animates Reviews Info
-
-    const all_reviews:NodeListOf<HTMLDivElement> = all_reviews_container.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Reviews
     setObserverAnimation(all_reviews) // Animates Each Review From All Reviews
+
+    if(pending_reviews) {
+        const all_pending_reviews:NodeListOf<HTMLDivElement> = pending_reviews.querySelectorAll<HTMLDivElement>(".one_review") // Gets All Pending Reviews
+        setObserverAnimation(all_pending_reviews) // Animates Each Review From All Reviews
+    }
 })

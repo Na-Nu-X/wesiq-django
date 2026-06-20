@@ -375,9 +375,21 @@
             </div>
         </div>
 
+        {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+            {% if pending_reviews %}
+                <div class="pending_reviews">
+                    {% for one_review in pending_reviews %}
+                        {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
+
+                    {% endfor %}
+                </div>
+            
+            {% endif %}
+        {% endif %}
+
         <div class="all_reviews">
             {% for one_review in page_reviews.object_list %}
-                {% include "partials/reviews.html" with one_review=one_review %}
+                {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
 
             {% endfor %}
 

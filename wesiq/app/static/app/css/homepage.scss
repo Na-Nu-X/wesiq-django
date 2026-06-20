@@ -1035,6 +1035,7 @@ header {
 
         // All Reviews
 
+        .pending_reviews,
         .all_reviews,
         .my_review {
             display: grid;
@@ -1099,7 +1100,8 @@ header {
     
                     // Review Properties
     
-                    .show_review_properties_button {
+                    .show_review_properties_button,
+                    .approve_review {
                         @include show_properties_button;
                         margin-left: auto;
                     }
@@ -1108,6 +1110,12 @@ header {
                     .report_review,
                     .delete_review {
                         @include properties_menu;
+
+                        .delete_review_button {
+                            &.red {
+                                color: $error-color;
+                            }
+                        }
                     }
     
                     .report_review {
@@ -1145,6 +1153,10 @@ header {
                     }
                 }
             }
+        }
+
+        .pending_reviews {
+            margin-bottom: 20px;
         }
 
         .my_review {
