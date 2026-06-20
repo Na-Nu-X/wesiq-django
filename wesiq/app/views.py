@@ -284,8 +284,9 @@ def deleteReview(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
             review_id = json.loads(request.body) # Gets The Review ID
-            review = Reviews.objects.get(id=review_id, user_id=logged_in_user_id) # Gets The Review
+            review = Reviews.objects.get(id=review_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Reviews.objects.get(id=review_id, user_id=logged_in_user_id) # Gets The Review
 
             if review:
                 review.delete() # Deletes The Review
@@ -1109,7 +1110,10 @@ def homepageView(request):
     # Checks If User Is Logged In
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+        
         my_review = Reviews.objects.filter(user_id=logged_in_user_id).first() # Gets Logged In User's Review If Has Already Written Any
+        pending_reviews = Reviews.objects.filter(status="pending") if logged_in_user.role == "developer" or logged_in_user.role == "admin" else None # Gets The Pending Reviews If The Logged In User Is Developer Or Admin
 
         # Write Review Form
         if request.method == "POST" and request.POST.get("write_review_form_submit"):
@@ -1169,9 +1173,6 @@ def homepageView(request):
 
             return HttpResponseRedirect(reverse("homepage_url"))
 
-        # Get Logged In User From DB
-        logged_in_user = Users.objects.get(id=logged_in_user_id)
-
         # Automatically Set Values Into Contact Form When User Is Logged In
         filled_contact_form = contactForm(initial={
             "first_name": logged_in_user.first_name,
@@ -1183,6 +1184,7 @@ def homepageView(request):
         return render(request, "app/homepage.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
+                "role": logged_in_user.role,
                 "profile_picture_name": logged_in_user.profile_picture_name
             },
 
@@ -1191,6 +1193,7 @@ def homepageView(request):
             "contact_form": filled_contact_form,
             "review_form": reviewForm,
             "page_reviews": page_reviews,
+            "pending_reviews": pending_reviews,
             "total_reviews": total_reviews,
             "found_reviews": found_reviews,
             "avg_rating": avg_rating,

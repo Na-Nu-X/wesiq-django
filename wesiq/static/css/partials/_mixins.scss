@@ -605,7 +605,7 @@
 @mixin show_properties_button {
     all: unset;
 
-    .fa-ellipsis-vertical {
+    i {
         @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
         display: block;
         font-size: 1.2em;
