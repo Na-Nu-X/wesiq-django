@@ -207,6 +207,38 @@ header {
                         transition: filter 0.3s ease;
                     }
 
+                    .toggle_mute_label {
+                        @include flex_center;
+                        position: absolute;
+                        left: 0px;
+                        width: 25px;
+                        height: 25px;
+                        margin: 5px;
+                        z-index: 50;
+
+                        &:hover,
+                        &:focus-visible {
+                            cursor: pointer;
+
+                            .fa-volume-high,
+                            .fa-volume-xmark {
+                                color: $secondary-color;
+                            }
+                        }
+
+                        .fa-volume-high,
+                        .fa-volume-xmark {
+                            display: block;
+                            color: darken($secondary-color, 20%);
+                            font-size: 1.2em;
+                            transition: color 0.3s ease;
+                        }
+                    }
+
+                    .toggle_mute_checkbox {
+                        display: none;
+                    }
+
                     .tooltip {
                         @include tooltip($top: 3.5px);
                         position: absolute;

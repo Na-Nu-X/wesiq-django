@@ -114,6 +114,25 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     element.controls = false // Disables The Controls
                     element.muted = true // Mutes The Video
 
+                    const toggle_mute_label:HTMLLabelElement = document.createElement("label") as HTMLLabelElement // Creates The Toggle Mute Label
+                    toggle_mute_label.classList.add("toggle_mute_label") // Adds The Toggle Mute Label Class
+                    toggle_mute_label.htmlFor = `toggle_mute_checkbox_${index}`
+                    toggle_mute_label.title = gettext("Vypnúť zvuk")
+                    toggle_mute_label.ariaLabel = gettext("Vypnúť zvuk")
+                    toggle_mute_label.innerHTML = "<i class='fa-solid fa-volume-high'></i>" // https://fontawesome.com/icons/volume-high
+                    post.appendChild(toggle_mute_label) // Appends The Toggle Mute Label To The Post
+
+                    const toggle_mute_checkbox:HTMLInputElement = document.createElement("input") as HTMLInputElement // Creates The Toggle Mute Checkbox
+                    toggle_mute_checkbox.classList.add("toggle_mute_checkbox") // Adds The Toggle Mute Checkbox Class
+                    toggle_mute_checkbox.id = `toggle_mute_checkbox_${index}`
+                    toggle_mute_checkbox.type = "checkbox"
+                    post.appendChild(toggle_mute_checkbox) // Appends The Toggle Mute Checkbox To The Post
+
+                    // Toggle Mute Checkbox Click Functionality
+                    toggle_mute_checkbox.addEventListener("click", function():void {
+                        toggleMuteVideo(post, this, toggle_mute_label.querySelector("i") as HTMLElement) // Toggles Mute / Unmute Of Video
+                    })
+
                     // Checks The Video Size
                     if(one_file.size > posts_preview_state.MAX_VIDEO_SIZE) {
                         const tooltip:HTMLDivElement = document.createElement("div") // Creates The Tooltip
@@ -147,6 +166,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         element.addEventListener("loadeddata", function() {
                             const post:HTMLDivElement = element.closest(".post") as HTMLDivElement // Gets The Post Container
                             post.dataset["filename"] = one_file.name // Stores The Filename
+                            post.dataset["is_muted"] = String(false) // Stores The Is Muted Property
 
                             element.style.filter = "blur(0px)" // Sharpens The Image
                             post_loading.classList.add("hidden") // Hides The Loading
@@ -179,7 +199,7 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                         })
                     }
 
-                    // Remove File By Clicking On Remove Post Button Functionality
+                    // Remove Post Button Click Functionality
                     ((element.parentNode as HTMLDivElement).querySelector(".remove_post") as HTMLButtonElement).addEventListener("click", function():void {
                         removeFile(index, select_posts, posts_preview) // Removes The File
                     })
@@ -207,6 +227,19 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
 function removeFile(index:number, select_posts:HTMLInputElement, posts_preview:HTMLDivElement):void {
     posts_preview_state.current_files.splice(index, 1) // Removes The File From The Current Files
     syncFiles(select_posts, posts_preview) // Synchronizes Files
+}
+
+// Function For Toggle Mute Video
+function toggleMuteVideo(post:HTMLDivElement, checkbox:HTMLInputElement, icon:HTMLElement):void {
+    if(checkbox.checked) {
+        icon.classList.replace("fa-volume-high", "fa-volume-xmark") // Shows Muted Icon
+        post.dataset["is_muted"] = String(true) // Set Is Muted Property To True
+    }
+
+    else {
+        icon.classList.replace("fa-volume-xmark", "fa-volume-high") // Shows Unmuted Icon
+        post.dataset["is_muted"] = String(false) // Set Is Muted Property To False
+    }
 }
 
 // Function For Change The Post Order
