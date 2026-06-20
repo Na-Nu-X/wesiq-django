@@ -770,39 +770,66 @@ def compressVideo(self, post_media_id):
         segment_pattern = os.path.join(temp_hls_path, "v%v_segment_%03d.ts")
         variant_playlist_pattern = os.path.join(temp_hls_path, "v%v_index.m3u8")
 
-        # FFmpeg Compression And HLS Command
-        command = [
-            "ffmpeg", "-y", "-i", input_path,
-            "-progress", "pipe:1",
-    
-            # Mapping The Video For Each Quality
-            "-map", "0:v:0", "-map", "0:v:0", "-map", "0:v:0", 
-            "-map", "0:a?", "-map", "0:a?", "-map", "0:a?", 
-            
-            # 480p (Stream v:0 a a:0)
-            "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
-            "-c:a:0", "aac", "-b:a:0", "128k",
-            
-            # 720p (Stream v:1 a a:1)
-            "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
-            "-c:a:1", "aac", "-b:a:1", "128k",
-            
-            # 1080p (Stream v:2 a a:2)
-            "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
-            "-c:a:2", "aac", "-b:a:2", "128k",
-            
+        # HLS Settings Command
+        hls_settings = [
             # HLS Multi-Variant Settings
             "-f", "hls",
             "-hls_time", "4",
             "-hls_playlist_type", "vod",
-            
-            "-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
-            "-master_pl_name", "index.m3u8", # Main Map File For Segments
-            
+
             # Output For Segments And Playlists
             "-hls_segment_filename", segment_pattern,
             variant_playlist_pattern
         ]
+
+        if media_object.is_muted:
+            # FFmpeg Compression And HLS Command For Video Without Audio
+            command = [
+                "ffmpeg", "-y", "-i", input_path,
+                "-progress", "pipe:1",
+        
+                # Mapping The Video For Each Quality
+                "-map", "0:v:0", "-map", "0:v:0", "-map", "0:v:0", 
+                "-an",
+                
+                # 480p (Stream v:0 a a:0)
+                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
+                
+                # 720p (Stream v:1 a a:1)
+                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
+                
+                # 1080p (Stream v:2 a a:2)
+                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
+                
+                "-var_stream_map", "v:0 v:1 v:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
+                "-master_pl_name", "index.m3u8", # Main Map File For Segments
+            ] + hls_settings
+
+        else:
+            # FFmpeg Compression And HLS Command For Video With Audio
+            command = [
+                "ffmpeg", "-y", "-i", input_path,
+                "-progress", "pipe:1",
+        
+                # Mapping The Video For Each Quality
+                "-map", "0:v:0", "-map", "0:v:0", "-map", "0:v:0", 
+                "-map", "0:a?", "-map", "0:a?", "-map", "0:a?", 
+                
+                # 480p (Stream v:0 a a:0)
+                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
+                "-c:a:0", "aac", "-b:a:0", "128k",
+                
+                # 720p (Stream v:1 a a:1)
+                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
+                "-c:a:1", "aac", "-b:a:1", "128k",
+                
+                # 1080p (Stream v:2 a a:2)
+                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
+                "-c:a:2", "aac", "-b:a:2", "128k",
+                
+                "-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
+                "-master_pl_name", "index.m3u8", # Main Map File For Segments
+            ] + hls_settings
 
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 

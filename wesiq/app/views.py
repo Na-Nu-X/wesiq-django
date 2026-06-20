@@ -2830,7 +2830,12 @@ def communityView(request):
                 }
 
                 # Loads reCaptcha API
-                recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+                recaptcha_api = requests.post(
+                    "https://www.google.com/recaptcha/api/siteverify",
+                    data=recaptcha_data,
+                    headers={"Connection": "close"},
+                    timeout=10
+                ).json()
 
                 # Checks Validity Of reCaptcha Response
                 if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
@@ -2843,8 +2848,17 @@ def communityView(request):
 
                     # Saves Only if The Form is Valid And Includes at Least One File
                     if upload_post_form.is_valid() and files:
-                        media_order = json.loads(request.POST.get("media_order", "[]")) # Gets The Media Order
-                        media_order_dict = {item["filename"]: item["order"] for item in media_order} # Converts The Media Order To The Dictionary Format (For Example: {"photo1.jpg": 0, "photo2.jpg": 1})
+                        media_data = json.loads(request.POST.get("media_data", "[]")) # Gets The Media Data
+
+                        # Converts The Media Data To The Dictionary Format (For Example: {"photo1.jpg": {"order": 0, "is_muted": False}, "photo2.jpg": {"order": 1, "is_muted": False}})
+                        media_data_dict = {
+                            one_item["filename"]: {
+                                "order": int(one_item["order"]), 
+                                "is_muted": bool(one_item["is_muted"])
+                            }
+
+                            for one_item in media_data if one_item["filename"]
+                        }
 
                         try:
                             # Gets The Coordinates Data
@@ -2935,7 +2949,9 @@ def communityView(request):
 
                                             return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
 
-                                    order = media_order_dict.get(one_file.name, 0) # Gets The Order Of The Current File
+                                    file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False})
+                                    order = file_settings["order"] # Gets The Order Of The Current File
+                                    is_muted = file_settings["is_muted"] # Gets The Value Of If The Current File Is Muted
                                     
                                     # Saves The New Post Media
                                     new_post_media = PostMedia.objects.create(
@@ -2944,7 +2960,8 @@ def communityView(request):
                                         is_video=is_video,
                                         original_filename=one_file.name,
                                         original_size=one_file.size,
-                                        order=order
+                                        order=order,
+                                        is_muted=is_muted if is_video else False
                                     )
 
                                     # Video
