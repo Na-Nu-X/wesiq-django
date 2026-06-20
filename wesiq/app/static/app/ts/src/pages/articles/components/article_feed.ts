@@ -15,7 +15,7 @@ import {
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Post Feed
+    // Article Feed
 
     // Variables
 
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     send.addEventListener("click", function():void {
         const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
     
-        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter) // Adds Comment To The Post
+        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter) // Adds Comment To The Article
     })
 
     // Global Event Delegations

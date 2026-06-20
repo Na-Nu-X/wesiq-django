@@ -12,6 +12,8 @@
     {% if not_found == False %}
         <script src="{% static 'app/ts/dist/pages/articles/components/article_feed.js' %}" type="module"></script>
         <script src="{% static 'app/ts/dist/pages/articles/components/rating.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/articles/components/exercise_statistics.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/articles/components/article_content.js' %}" type="module"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
 
@@ -51,6 +53,73 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="exercise_statistics">
+            <div 
+                class="bar difficulty" 
+                data-label="
+                    {% translate 'obtiažnosť: ' %}
+
+                    {% if article.difficulty <= 10 %}
+                        {% translate 'jednoduchá' %}
+
+                    {% elif article.difficulty <= 30 %}
+                        {% translate 'stredná' %}
+
+                    {% elif article.difficulty <= 60 %}
+                        {% translate 'náročná' %}
+
+                    {% elif article.difficulty <= 90 %}
+                        {% translate 'veľmi náročná' %}
+
+                    {% else %}
+                        {% translate 'elitná' %}
+
+                    {% endif %}
+                " 
+                data-percentage="{{ article.difficulty }}">
+            </div>
+
+            <div class="bar time_to_learn" 
+                data-label="
+                    {% translate 'doba učenia: ' %}
+
+                    {% if article.time_to_learn_text == "2 - 6 months" %}
+                        {% translate '2 - 6 mesiacov' %}
+                    
+                    {% endif %}
+                " 
+                data-percentage="{{ article.time_to_learn }}">
+            </div>
+
+            <div 
+                class="bar rarity" 
+                data-label="
+                    {% translate 'vzácnosť: ' %}
+
+                    {% if article.ratity <= 10 %}
+                        {% translate 'bežné' %}
+
+                    {% elif article.rarity <= 30 %}
+                        {% translate 'nevídané' %}
+
+                    {% elif article.rarity <= 60 %}
+                        {% translate 'vzácne' %}
+
+                    {% elif article.rarity <= 90 %}
+                        {% translate 'epické' %}
+
+                    {% else %}
+                        {% translate 'legendárne' %}
+
+                    {% endif %}
+                " 
+                data-percentage="{{ article.rarity }}">
+            </div>
+
+            <div class="bar strength" data-label="{% translate 'sila' %}" data-percentage="{{ article.strength }}"></div>
+            <div class="bar technique" data-label="{% translate 'technika' %}" data-percentage="{{ article.technique }}"></div>
         </div>
 
         <div class="article_content" data-article_id="{{ article.id }}">
@@ -186,7 +255,7 @@
                     <p>{{ article.visible_comments|length }}</p>
                 </div>
 
-                <h2>{% translate "Komentáre" %}</h2>
+                <h3>{% translate "Komentáre" %}</h3>
             </div>
 
             <div class="all_comments">

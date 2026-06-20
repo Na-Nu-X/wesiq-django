@@ -286,6 +286,13 @@ class Articles(models.Model):
     visitors = models.PositiveIntegerField(verbose_name="Visitors", default=0, null=False)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
+    difficulty = models.IntegerField(verbose_name="Difficulty Percentage", default=0, null=False, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    time_to_learn = models.IntegerField(verbose_name="Time To Learn Percentage", default=0, null=False, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    time_to_learn_text = models.CharField(verbose_name="Time To Learn Text", max_length=20, null=False)
+    rarity = models.IntegerField(verbose_name="Rarity Percentage", default=0, null=False, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    strength = models.IntegerField(verbose_name="Strength Percentage", default=0, null=False, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    technique = models.IntegerField(verbose_name="Technique Percentage", default=0, null=False, validators=[MinValueValidator(0), MaxValueValidator(100)])
+
 class ArticleRating(models.Model):
     article = models.ForeignKey(
         Articles,

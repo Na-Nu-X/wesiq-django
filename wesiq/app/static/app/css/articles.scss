@@ -35,6 +35,7 @@
             .article_opening {
                 padding-left: 10px;
                 border-left: 3px solid $main-color;
+                animation: fadeIn 0.3s ease-in forwards;
 
                 h2 {
                     text-align: left;
@@ -76,9 +77,78 @@
         }
     }
 
+    .exercise_statistics {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 800px;
+        margin: 10px auto 0px;
+        padding: 10px;
+        background-color: transparentize($secondary-color, 0.95);
+        border-radius: $medium-border-radius;
+
+        .bar {
+            --percentage: 0;
+            --max-width: 250px;
+            --hue: calc(120 - (var(--percentage) * 120 / 100)); // 120 - Easiest, 0 - Hardest
+
+            position: relative;
+            width: calc(var(--max-width) * var(--percentage) / 100);
+            height: 5px;
+            background-color: hsl(var(--hue), 80%, 50%);
+            border-radius: $small-border-radius;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            
+            &:hover {
+                background-color: hsl(var(--hue), 80%, 60%);
+                cursor: pointer;
+            }
+
+            // Label
+            &:before {
+                content: attr(data-label);
+                position: absolute;
+                top: 50%;
+                right: -5px;
+                transform: translate(100%, -50%);
+                line-height: 1;
+                text-align: center;
+                font-size: 12px;
+                opacity: 0.5;
+                white-space: nowrap;
+                color: transparentize($secondary-color, 0.5);
+                pointer-events: none;
+            }
+        }
+    }
+
     .article_content {
         max-width: 800px;
-        margin: 10px auto 50px;
+        margin: 0px auto 50px;
+        padding: 10px 20px;
+        background-color: transparentize($secondary-color, 0.95);
+        border-radius: $medium-border-radius;
+        overflow: hidden;
+
+        section {
+            transform: translateX(calc(-50%));
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+
+            &.animate {
+                transform: translateX(0%);
+                opacity: 1;
+            }
+
+            &:first-of-type {
+                p:first-of-type {
+                    &::first-letter {
+                        margin-right: 10px;
+                        initial-letter: 2;
+                    }
+                }
+            }
+        }
 
         h3 {
             margin-bottom: 10px;
@@ -96,17 +166,15 @@
 
         p {
             margin-bottom: 20px;
-
-            &:first-of-type {
-                &::first-letter {
-                    margin-right: 10px;
-                    initial-letter: 2;
-                }
-            }
         }
 
-        li {
-            margin-bottom: 10px;
+        ul,
+        ol {
+            margin-left: 20px;
+
+            li {
+                margin-bottom: 10px;
+            }
         }
     }
 
@@ -203,11 +271,12 @@
                 }
             }
 
-            h2 {
+            h3 {
                 position: relative;
                 right: calc(38.83px / 2);
                 line-height: 1;
                 margin: 0px auto;
+                font-size: 2em;
             }
         }
 

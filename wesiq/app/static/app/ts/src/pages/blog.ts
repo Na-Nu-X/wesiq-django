@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Animate Articles
     const observer:IntersectionObserver = new IntersectionObserver(
-        function(entries:IntersectionObserverEntry[], observer:IntersectionObserver) {
+        function(entries:IntersectionObserverEntry[], observer:IntersectionObserver):void {
             entries.forEach(function(one_entry:IntersectionObserverEntry):void {
                 if(one_entry.isIntersecting) {
                     one_entry.target.classList.add("animate") // Adds Animation
