@@ -426,6 +426,23 @@ def cleanupUnverifiedUsers():
     captureMessage(message)
     return message
 
+@shared_task(name="app.tasks.cleanupRejectedReviews")
+def cleanupRejectedReviews():
+    one_week_ago = timezone.now() - timedelta(days=7) # Gets The 1 Week Ago Time
+
+    # Gets And Deletes The Denied Reviews Which Are Older Than 1 Week
+    rejected_reviews = Reviews.objects.filter(
+        status="denied",
+        rejection_time__lt=one_week_ago
+    ).delete()
+
+    rejected_reviews_count = rejected_reviews[0]
+    
+    # Sets Message
+    message = f"{rejected_reviews_count} Denied Review Older Than 1 Week Has Been Deleted" if rejected_reviews_count == 1 else f"{rejected_reviews_count} Denied Reviews Older Than 1 Week Have Been Deleted"
+    captureMessage(message)
+    return message
+
 @shared_task(name="app.tasks.weeklyReport")
 def weeklyReport():
     users = Users.objects.filter(account_status="OK", id=16) # Gets All Users With Valid Account Status
