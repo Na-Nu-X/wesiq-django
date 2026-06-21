@@ -1115,63 +1115,101 @@ def homepageView(request):
         my_review = Reviews.objects.filter(user_id=logged_in_user_id).first() # Gets Logged In User's Review If Has Already Written Any
         pending_reviews = Reviews.objects.filter(status="pending") if logged_in_user.role == "developer" or logged_in_user.role == "admin" else None # Gets The Pending Reviews If The Logged In User Is Developer Or Admin
 
-        # Write Review Form
-        if request.method == "POST" and request.POST.get("write_review_form_submit"):
-            # Loads Data From reCaptcha In Registration Page
-            recaptcha_response = request.POST.get("g-recaptcha-response")
-            recaptcha_data = {
-                "secret": settings.RECAPTCHA_SECRET_KEY,
-                "response": recaptcha_response
-            }
+        if request.method == "POST":
+            # Write Review Form
+            if request.POST.get("write_review_form_submit"):
+                # Loads Data From reCaptcha In Registration Page
+                recaptcha_response = request.POST.get("g-recaptcha-response")
+                recaptcha_data = {
+                    "secret": settings.RECAPTCHA_SECRET_KEY,
+                    "response": recaptcha_response
+                }
 
-            # Loads reCaptcha API
-            recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
+                # Loads reCaptcha API
+                recaptcha_api = requests.post('https://www.google.com/recaptcha/api/siteverify', data=recaptcha_data).json()
 
-            # Checks Validity Of reCaptcha Response
-            if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
-                messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
-                captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+                # Checks Validity Of reCaptcha Response
+                if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
+                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo"))
+                    captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+                    return HttpResponseRedirect(reverse("homepage_url"))
+                
+                else:
+                    review_form = reviewForm(request.POST) # Gets The Review Form
+
+                    if review_form.is_valid():
+                        try:
+                            # Checks If User Has Already Written A Review
+                            if Reviews.objects.filter(user_id=logged_in_user_id).exists():
+                                messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
+
+                                return HttpResponseRedirect(reverse("edit_review_url"))
+
+                            # Saves New Review To DB
+                            else:
+                                if int(review_form.cleaned_data["rating"]) == 0:
+                                    messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
+
+                                else:
+                                    new_review = Reviews(
+                                        user_id = logged_in_user_id,
+                                        rating = int(review_form.cleaned_data["rating"]),
+                                        review = review_form.cleaned_data["review"],
+                                    )
+
+                                    new_review.save()
+
+                                    messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
+
+                        # Error
+                        except Exception as e:
+                            messages.add_message(request, messages.ERROR, _("Pri spracovaní hodnotenia došlo k chybe"))
+                            captureError(f"An error occurred while processing the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    
+                    # Wrong Form
+                    else:
+                        messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
+                        captureError(f"Review could not be published.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                 return HttpResponseRedirect(reverse("homepage_url"))
-            
-            else:
-                review_form = reviewForm(request.POST) # Gets The Review Form
 
-                if review_form.is_valid():
-                    try:
-                        # Checks If User Has Already Written A Review
-                        if Reviews.objects.filter(user_id=logged_in_user_id).exists():
-                            messages.add_message(request, messages.ERROR, _("Skúste upraviť aktuálne hodnotenie"))
+            # Approve Review
+            if request.headers.get("X-Requested-Action") == "approve-review":
+                try:
+                    review_id = json.loads(request.body) # Gets The Review ID
+                    review = Reviews.objects.get(id=review_id) # Gets The Review
 
-                            return HttpResponseRedirect(reverse("edit_review_url"))
+                    if logged_in_user.role == "developer" or logged_in_user.role == "admin":
+                        review.status = "approved"
+                        review.save() # Saves The Updated Review
 
-                        # Saves New Review To DB
-                        else:
-                            if int(review_form.cleaned_data["rating"]) == 0:
-                                messages.add_message(request, messages.ERROR, _("Ukážte nám vašu spokojnosť"))
+                        return JsonResponse({"success": True, "message": _("Recenzia bola úspešne schválená správcom.")}, status=200)
 
-                            else:
-                                new_review = Reviews(
-                                    user_id = logged_in_user_id,
-                                    rating = int(review_form.cleaned_data["rating"]),
-                                    review = review_form.cleaned_data["review"],
-                                )
+                    return JsonResponse({"success": False, "message": _("Recenziu môže schváliť len správca.")}, status=401)
 
-                                new_review.save()
+                except Exception as e:
+                    captureError(f"An error occurred while approving the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pokuse o schválenie recenzie došlo k chybe.")}, status=500)
 
-                                messages.add_message(request, messages.SUCCESS, _("Ďakujeme za vaše hodnotenie"))
+            # Reject Review
+            if request.headers.get("X-Requested-Action") == "reject-review":
+                try:
+                    review_id = json.loads(request.body) # Gets The Review ID
+                    review = Reviews.objects.get(id=review_id) # Gets The Review
 
-                    # Error
-                    except Exception as e:
-                        messages.add_message(request, messages.ERROR, _("Pri spracovaní hodnotenia došlo k chybe"))
-                        captureError(f"An error occurred while processing the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                
-                # Wrong Form
-                else:
-                    messages.add_message(request, messages.ERROR, _("Hodnotenie sa nepodarilo uverejniť"))
-                    captureError(f"Review could not be published.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                    if logged_in_user.role == "developer" or logged_in_user.role == "admin":
+                        review.status = "denied"
+                        review.rejection_time = timezone.now()
+                        review.save() # Saves The Updated Review
 
-            return HttpResponseRedirect(reverse("homepage_url"))
+                        return JsonResponse({"success": True, "message": _("Recenzia bola zamietnutá správcom.")}, status=200)
+
+                    return JsonResponse({"success": False, "message": _("Recenziu môže zamietnuť len správca.")}, status=401)
+
+                except Exception as e:
+                    captureError(f"An error occurred while rejecting the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                    return JsonResponse({"success": False, "message": _("Pri pokuse o zamietnutie recenzie došlo k chybe.")}, status=500)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
         filled_contact_form = contactForm(initial={

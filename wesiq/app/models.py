@@ -227,6 +227,7 @@ class Reviews(models.Model):
     rating = models.PositiveIntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
     status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="pending")
+    rejection_time = models.DateTimeField(verbose_name="Rejection Time", null=True, blank=True)
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)

@@ -1100,8 +1100,7 @@ header {
     
                     // Review Properties
     
-                    .show_review_properties_button,
-                    .approve_review {
+                    .show_review_properties_button {
                         @include show_properties_button;
                         margin-left: auto;
                     }
@@ -1120,6 +1119,21 @@ header {
     
                     .report_review {
                         min-width: 200px;
+                    }
+
+                    .approve_review,
+                    .reject_review {
+                        all: unset;
+
+                        i {
+                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            display: block;
+                            font-size: 1.2em;
+                        }
+                    }
+
+                    .approve_review {
+                        margin-left: auto;
                     }
                 }
     
