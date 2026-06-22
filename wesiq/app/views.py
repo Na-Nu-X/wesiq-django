@@ -409,13 +409,16 @@ def reportPost(request):
                 post.reports += 1 # Increases The Reports Counter
 
                 if post.reports >= 5:
-                    post = Post.objects.get(id=post.post_id) # Gets The Post
-                    report_percentage = (post.reports / post.likes) * 100 # Gets The Percentage Of The Post Reports Amount By Likes On The Post
+                    if post.likes > 0:
+                        report_percentage = (post.reports / post.likes) * 100 # Gets The Percentage Of The Post Reports Amount By Likes On The Post
+
+                    else:
+                        report_percentage = 100
 
                     if report_percentage > 10:
                         post.status = "hidden" # Hides The Post If Has More Than 10% Of Reports
 
-                post.save() # Saves The Comment
+                post.save() # Saves The Updated Post
 
             return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
 
@@ -557,7 +560,12 @@ def reportPostComment(request):
 
                 if comment.reports >= 5:
                     post = Post.objects.get(id=comment.post_id) # Gets The Post
-                    report_percentage = (comment.reports / post.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
+
+                    if post.likes > 0:
+                        report_percentage = (comment.reports / post.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
+
+                    else:
+                        report_percentage = 100
 
                     if report_percentage > 10:
                         comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
@@ -1177,7 +1185,7 @@ def homepageView(request):
                     review = Reviews.objects.get(id=review_id) # Gets The Review
 
                     if logged_in_user.role == "developer" or logged_in_user.role == "admin":
-                        review.status = "approved"
+                        review.status = "approved" # Sets The Review Status As Approved
                         review.save() # Saves The Updated Review
 
                         return JsonResponse({"success": True, "message": _("Recenzia bola úspešne schválená správcom.")}, status=200)
@@ -1195,8 +1203,8 @@ def homepageView(request):
                     review = Reviews.objects.get(id=review_id) # Gets The Review
 
                     if logged_in_user.role == "developer" or logged_in_user.role == "admin":
-                        review.status = "denied"
-                        review.rejection_time = timezone.now()
+                        review.status = "denied" # Sets The Review Status As Denied
+                        review.rejection_time = timezone.now() # Updates The Rejection Time
                         review.save() # Saves The Updated Review
 
                         return JsonResponse({"success": True, "message": _("Recenzia bola zamietnutá správcom.")}, status=200)
@@ -1894,7 +1902,12 @@ def blogThemeView(request, theme):
 
                         if comment.reports >= 5:
                             article = Articles.objects.get(id=comment.article_id) # Gets The Article
-                            report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
+
+                            if article.likes > 0:
+                                report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
+
+                            else:
+                                report_percentage = 100
 
                             if report_percentage > 10:
                                 comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
@@ -3802,36 +3815,82 @@ def profileView(request, username):
                     # Report User
                     if request.headers.get("X-Requested-Action") == "report-user":
                         try:
-                            if "logged_in_user_id" in request.session:
-                                logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-                                report_user_data = json.loads(request.body) # Gets The Report User Data
-                                reported_user_id = report_user_data["reported_user_id"] # Gets The Reported User ID
-                                reason = report_user_data["reason"] # Gets The Reason
-                                reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
-                                has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
+                            report_user_data = json.loads(request.body) # Gets The Report User Data
+                            reported_user_id = report_user_data["reported_user_id"] # Gets The Reported User ID
+                            reason = report_user_data["reason"] # Gets The Reason
+                            reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
+                            has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
 
-                                # Stores The Reported Comment
-                                UsersReport.objects.update_or_create(
-                                    reported_user_id=reported_user_id,
-                                    reporting_user_id=logged_in_user_id,
-                                    defaults={"reason": reason} # Reason Can Be Updated
-                                )
+                            # Stores The Reported Comment
+                            UsersReport.objects.update_or_create(
+                                reported_user_id=reported_user_id,
+                                reporting_user_id=logged_in_user_id,
+                                defaults={"reason": reason} # Reason Can Be Updated
+                            )
 
-                                # Report
-                                if not has_report:
-                                    Users.objects.filter(id=int(reported_user_id)).update(reports = F("reports") + 1) # Increases And Updates The Reports Counter
+                            if not has_report:
+                                reported_user.reports += 1 # Increases The Reports Counter
 
-                                return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+                                if reported_user.reports >= 5:
+                                    followers_amount = reported_user.followers.count() # Gets The Amount Of Followers Of The Reported User
 
-                            return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+                                    if followers_amount > 0:
+                                        report_percentage = (reported_user.reports / followers_amount) * 100
+
+                                    else:
+                                        report_percentage = 100 
+
+                                    if report_percentage > 10:
+                                        reported_user.account_status = "suspended" # Suspends The User If Has More Than 10% Of Reports
+                                        reported_user.suspension_time = timezone.now() # Updates The Suspension Time
+
+                                        sendMail(
+                                            reported_user,
+                                            _("Odstavenie účtu"), # Subject
+                                            _("oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # Text Content
+                                            _('oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # HTML Content
+                                            _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                                        )
+
+                                reported_user.save() # Saves The Updated User
+
+                            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
 
                         except Exception as e:
                             captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
                             return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
 
+                    # Suspend User
+                    if request.headers.get("X-Requested-Action") == "suspend-user":
+                        try:
+                            if logged_in_user.role == "developer" or logged_in_user.role == "admin":
+                                user_id = json.loads(request.body) # Gets The Suspended User ID
+                                user = Users.objects.get(id=user_id) # Gets The User
+
+                                user.account_status = "suspended" # Changes Account Status
+                                user.suspension_time = timezone.now() # Updates The Suspension Time
+                                user.save() # Saves The Updated User
+
+                                sendMail(
+                                    user,
+                                    _("Odstavenie účtu"), # Subject
+                                    _("oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language}, # Text Content
+                                    _('oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": user.language}, # HTML Content
+                                    _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                                )
+
+                                return JsonResponse({"success": True, "message": _("Užívateľ bol obmedzený.")}, status=200)
+
+                            return JsonResponse({"success": False, "message": _("Užívateľa môže obmedziť len správca.")}, status=401)
+
+                        except Exception as e:
+                            captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                            return JsonResponse({"success": False, "message": _("Pri pokuse o obmedzenie užívateľa došlo k chybe.")}, status=500)
+
                 return render(request, "app/profile.html", {
                     "logged_in_user": {
                         "username": logged_in_user.username,
+                        "role": logged_in_user.role,
                         "profile_picture_name": logged_in_user.profile_picture_name
                     },
 

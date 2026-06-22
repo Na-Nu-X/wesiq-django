@@ -63,7 +63,8 @@
         }
 
         .account_properties,
-        .report {
+        .report,
+        .suspend_account {
             @include properties_menu;
         }
     }

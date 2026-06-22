@@ -33,6 +33,41 @@
                     popover
                     style="position-anchor: --show_account_properties_button;"
                 >
+                    {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                        <button 
+                            class="show_suspend_account_button red" 
+                            popovertarget="suspend_account"
+                            style="anchor-name: --show_suspend_account_button;"
+                        >
+                            <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                            <span>{% translate "Obmedziť" %}</span>
+                        </button>
+
+                        <div 
+                            class="suspend_account" 
+                            id="suspend_account"
+                            popover
+                            style="position-anchor: --show_suspend_account_button;"
+                        >
+                            <p>{% translate "Naozaj chcete obmedziť tento účet?" %}</p>
+
+                            <button data-action="suspend">
+                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                <span class="red">{% translate "Obmedziť" %}</span>
+                            </button>
+
+                            <button 
+                                class="back_suspend_account_button"
+                                popovertarget="suspend_account"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Späť" %}</span>
+                            </button>
+                        </div>
+                    
+                    {% endif %}
+
                     <button 
                         class="show_report_profile_button" 
                         popovertarget="report_profile"
@@ -278,6 +313,9 @@
                     <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
                 </div>
             </form>
+
+        {% else %}
+            <script src="{% static 'app/ts/dist/pages/profile/components/profile.js' %}" type="module"></script>
 
         {% endif %}
         
@@ -1058,7 +1096,6 @@
 
 {% block script %}
     <script src="{% url 'javascript_catalog_url' %}"></script>
-    <script src="{% static 'app/ts/dist/pages/profile/components/profile.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/profile/components/grid_select.js' %}" type="module"></script>
     <script src="{% static 'app/ts/dist/pages/profile/components/badges.js' %}" type="module"></script>
 {% endblock script %}

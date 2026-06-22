@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.core.cache import cache
 from quickchart import QuickChart
 from email.mime.image import MIMEImage
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, Q
 from django.db.models.functions import TruncDate
 from django.core.files.base import ContentFile
 from PIL import Image
@@ -361,10 +361,12 @@ def modelsWarmUp():
 
 @shared_task(name="app.tasks.cleanupSuspendedUsers")
 def cleanupSuspendedUsers():
-    # Gets Users From Database Which Are Suspended And Their Last Login Is Older Than 30 Days
+    # Gets Users From Database Which Are Suspended And Their Last Login Is Older Than 30 Days Or Suspension Time Is Older Than 7 Days
     users_for_deletion = Users.objects.filter(
-        account_status="suspended",
-        last_login__lt=timezone.now() - timedelta(days=30)
+        account_status="suspended"
+    ).filter(
+        Q(last_login__lt=timezone.now() - timedelta(days=30)) |
+        Q(suspension_time__lt=timezone.now() - timedelta(days=7))
     )
     
     users_for_deletion_count = users_for_deletion.count() # Gets Amount Of Users For Deletion
