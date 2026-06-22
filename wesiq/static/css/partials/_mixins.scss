@@ -648,6 +648,10 @@
         padding: 5px 10px;
         transition: background-color 0.3s ease;
 
+        &.red {
+            color: $error-color;
+        }
+
         &:hover,
         &:focus-visible {
             background-color: transparentize($blue-color, 0.9);

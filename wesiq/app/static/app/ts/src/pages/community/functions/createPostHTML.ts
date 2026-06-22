@@ -18,6 +18,7 @@ import { getFormattedTime } from "../../../utils/timer.js"
 import { createCommentPropertiesHTML } from "./createCommentPropertiesHTML.js"
 
 import type { comment } from "./createCommentPropertiesHTML.js"
+import type { loggedInUser } from "./posts.js"
 
 export interface searchedPost {
     user:{
@@ -69,7 +70,7 @@ export interface searchedPost {
 }
 
 // Function For Create Post HTML Structure
-export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user_id?:number, profile_picture_name?:string, saved_posts?:number[]):DocumentFragment {
+export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logged_in_user?:loggedInUser):DocumentFragment {
     const post_container_template:HTMLTemplateElement = feed.querySelector(".post_container_template") as HTMLTemplateElement // Gets The Post Container Template
     const post_container_template_clone:DocumentFragment = post_container_template.content.cloneNode(true) as DocumentFragment // Clones The Post Container Template Content
     const post_container:HTMLDivElement = post_container_template_clone.querySelector(".post_container") as HTMLDivElement // Creates The Post Container
@@ -108,18 +109,18 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     post_author_followers.textContent = String(post_data.user.followers.length) // Sets The Amount Of Post Author Followers
 
     // Follow Button
-    if(logged_in_user_id && logged_in_user_id !== post_data.user.id) {
+    if(logged_in_user && logged_in_user.id !== post_data.user.id) {
         const follow_button:HTMLButtonElement = document.createElement("button") // Creates The Follow Button
 
         follow_button.classList.add("follow_button") // Adds The Follow Button Class
         follow_button.dataset["id"] = String(post_data.user.id) // Stores The User ID
-        follow_button.dataset["action"] = !post_data.user.followers.includes(logged_in_user_id) ? "follow" : "unfollow"
-        follow_button.textContent = !post_data.user.followers.includes(logged_in_user_id) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
+        follow_button.dataset["action"] = !post_data.user.followers.includes(logged_in_user.id) ? "follow" : "unfollow"
+        follow_button.textContent = !post_data.user.followers.includes(logged_in_user.id) ? gettext("Začať sledovať") : gettext("Prestať sledovať")
         top.insertBefore(follow_button, top.querySelector(".show_post_properties_button") as HTMLButtonElement) // Appends The Follow Button To The Top Container
     }
 
     // Post Properties
-    createPostPropertiesHTML(top, report_container, post_settings, post_data, logged_in_user_id) // Creates The Post Properties HTML
+    createPostPropertiesHTML(top, report_container, post_settings, post_data, logged_in_user) // Creates The Post Properties HTML
 
     const bottom:HTMLDivElement = right.querySelector(".bottom") as HTMLDivElement // Gets The Bottom Container Of The Right Container
 
@@ -275,7 +276,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         // Like Icon
         const like_icon:HTMLElement = document.createElement("i") // Creates The Like Icon
         like_icon.classList.add("fa-heart")
-        logged_in_user_id && random_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+        logged_in_user && random_comment.likes_from_users.includes(logged_in_user.id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
         likes.appendChild(like_icon) // Appends The Like Icon To The Likes
 
         // Likes Counter
@@ -301,10 +302,10 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     const likes:HTMLButtonElement = society.querySelector(".likes") as HTMLButtonElement // Gets The Like Button
     const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
 
-    logged_in_user_id && post_data.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+    logged_in_user && post_data.likes_from_users.includes(logged_in_user.id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
     // Hidden Likes Counter
-    if(post_data.hide_likes && post_data.user.id !== logged_in_user_id) {
+    if(logged_in_user && post_data.hide_likes && post_data.user.id !== logged_in_user.id) {
         const hidden_likes_counter:HTMLParagraphElement = document.createElement("p") // Creates The Hidden Likes Counter
         hidden_likes_counter.classList.add("hidden_likes_counter") // Adds The Hidden Likes Counter
         hidden_likes_counter.textContent = gettext("Skryté")
@@ -360,7 +361,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     const save_icon:HTMLElement = save.querySelector(".fa-bookmark") as HTMLElement // Gets The Save Icon
 
     // https://fontawesome.com/icons/bookmark
-    if(saved_posts && saved_posts.includes(post_data.id)) {
+    if(logged_in_user && logged_in_user.saved_posts.includes(post_data.id)) {
         save_icon.classList.add("fa-solid") // Shows The Filled Bookmark Icon
         save_icon.classList.add("active") // Adds The Active Class
     }
@@ -388,7 +389,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
         // Write Comment Form Profile Picture
         const write_comment_form_profile_picture:HTMLImageElement = comment_forum_template_clone.querySelector(".comment_forum .write_comment_form .profile_picture") as HTMLImageElement // Gets The Write Comment Form Profile Picture
-        write_comment_form_profile_picture.src = profile_picture_name ? `/../media/images/${logged_in_user_id}/${profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+        write_comment_form_profile_picture.src = logged_in_user && logged_in_user.profile_picture_name ? `/../media/images/${logged_in_user.id}/${logged_in_user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
         write_comment_form_profile_picture.alt = ""
 
         const all_comments:HTMLDivElement = comment_forum_template_clone.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets The All Comments Container
@@ -425,7 +426,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
                 // Comment Properties
-                createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
+                createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user?.id) // Creates The Comment Properties HTML
 
                 // Comment
                 const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
@@ -451,7 +452,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 const likes:HTMLButtonElement = likes_container.querySelector(".likes") as HTMLButtonElement // Gets The Like Button
 
                 const like_icon:HTMLElement = likes.querySelector(".fa-heart") as HTMLElement // Gets The Heart Icon
-                logged_in_user_id && one_visible_comment.likes_from_users.includes(logged_in_user_id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
+                logged_in_user && one_visible_comment.likes_from_users.includes(logged_in_user.id) ? like_icon.classList.add("fa-solid") : like_icon.classList.add("fa-regular") // Shows The Empty Or Filled Heart Icon - https://fontawesome.com/icons/heart
 
                 // Likes Counter
                 const likes_counter:HTMLParagraphElement = likes.querySelector(".likes_counter") as HTMLParagraphElement // Gets The Likes Counter
@@ -642,7 +643,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 }
 
 // Function For Create The Post Properties HTML
-function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTMLDivElement, post_settings:HTMLDivElement, post_data:searchedPost, logged_in_user_id:number|undefined):void {
+function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTMLDivElement, post_settings:HTMLDivElement, post_data:searchedPost, logged_in_user:loggedInUser|undefined):void {
     const show_post_properties_button:HTMLButtonElement = container.querySelector(".show_post_properties_button") as HTMLButtonElement // Gets The Show Post Properties Button
     const post_properties:HTMLDivElement = container.querySelector(".post_properties") as HTMLDivElement // Gets The Post Properties Menu
     const hide_post_properties_button:HTMLButtonElement = post_properties.querySelector(".hide_post_properties_button") as HTMLButtonElement // Gets The Hide Post Properties Button
@@ -654,7 +655,7 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
     hide_post_properties_button.setAttribute("popovertarget", `post_properties_${post_data.id}`) // Links The Popover
 
     // If The Post Doesn't Belong To The Logged In User The Report Option Will Be Shown
-    if(post_data.user.id !== logged_in_user_id) {
+    if(logged_in_user && post_data.user.id !== logged_in_user.id) {
         // Show Report Post Button
         const show_report_post_button:HTMLButtonElement = document.createElement("button") // Creates The Show Report Post Button
         show_report_post_button.classList.add("show_report_post_button") // Adds The Show Report Post Button
@@ -675,8 +676,8 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         back_report_post_button.setAttribute("popovertarget", `report_post_${post_data.id}`) // Links The Popover
     }
 
-    // If The Post Belongs To The Logged In User The Settings And The Delete Option Will Be Shown
-    else {
+    // If The Post Belongs To The Logged In User The Settings Option Will Be Shown
+    else if(logged_in_user && post_data.user.id === logged_in_user.id) {
         // Show Post Settings Button
         const show_post_settings_button:HTMLButtonElement = document.createElement("button") // Creates The Show Post Settings Button
         show_post_settings_button.classList.add("show_post_settings_button") // Adds The Show Post Settings Button Class
@@ -752,10 +753,19 @@ function createPostPropertiesHTML(container:HTMLDivElement, report_container:HTM
         // Back Post Settings Button
         const back_post_settings_button:HTMLButtonElement = post_settings.querySelector(".back_post_settings_button") as HTMLButtonElement // Gets The Back Post Settings Button
         back_post_settings_button.setAttribute("popovertarget", `post_settings_${post_data.id}`) // Links The Popover
+    }
 
+    // If The Post Belongs To The Logged In User Or The Logged In User Is Developer Or Admin The Delete Option Will Be Shown
+    if(
+        logged_in_user && (
+        post_data.user.id === logged_in_user.id || 
+        logged_in_user.role === "developer" || 
+        logged_in_user.role === "admin")
+    ) {
         // Delete Post Button
         const delete_post_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Post Button
         delete_post_button.classList.add("delete_post_button") // Adds The Delete Post Button
+        if(post_data.user.id !== logged_in_user.id && (logged_in_user.role === "developer" || logged_in_user.role === "admin")) delete_post_button.classList.add("red") // Adds The Red Class If The Logged In User Is Developer Or Admin
         delete_post_button.setAttribute("popovertarget", `delete_post_${post_data.id}`) // Links The Popover
         delete_post_button.style = `anchor-name: --delete_post_button_${post_data.id}` // Creates The Anchor
         delete_post_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
