@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Variables
 
     const profile_container:HTMLDivElement = document.querySelector(".profile_container") as HTMLDivElement // Gets The Profile Container
-    const report_profile:HTMLDivElement = profile_container.querySelector(".options_container .report_profile") as HTMLDivElement // Gets The Report Profile
+    const report_profile:HTMLDivElement = profile_container.querySelector(".options_container .report_profile") as HTMLDivElement // Gets The Report Profile Menu
+    const suspend_account:HTMLDivElement|null = profile_container.querySelector(".options_container .suspend_account") as HTMLDivElement || null // Gets The Suspend Account Menu If Is Available
 
     // Functions
 
@@ -43,6 +44,25 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     }
 
+    // Function For Suspend The User
+    async function suspendUser(id:number):Promise<void> {
+        try {
+            const suspend_user_response:response = await sendPOST(window.location.pathname, id, "suspend-user") // Sends Suspended User ID As A POST Data
+
+            // If The Response Isn't Success
+            if(!suspend_user_response.success) {
+                displayMessage(suspend_user_response.message, "error") // Displays The Error Message
+                return
+            }
+
+            displayMessage(suspend_user_response.message, "success") // Displays The Success Message
+        }
+
+        catch {
+            displayMessage(gettext("Pri pokuse o obmedzenie užívateľa došlo k chybe."), "error") // Displays The Error Message
+        }
+    }
+
     // Events
 
     // Report Profile Click Functionality
@@ -52,6 +72,16 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         if(profile_container.dataset["user_id"] && report_reason) reportUser(Number(profile_container.dataset["user_id"]), report_reason) // Reports The User
     })
+
+    // Suspend Account Click Functionality
+    if(suspend_account) {
+        suspend_account.addEventListener("click", function(event:PointerEvent):void {
+            const suspend_account_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Suspend Account Button
+            const action:string|null = suspend_account_button.dataset["action"] || null // Gets The Action
+    
+            if(profile_container.dataset["user_id"] && action === "suspend") suspendUser(Number(profile_container.dataset["user_id"])) // Suspends The User
+        })
+    }
 
     // Toggle Follow
 
