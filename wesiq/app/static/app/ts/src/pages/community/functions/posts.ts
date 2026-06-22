@@ -13,16 +13,17 @@ import { changeVideoQuality } from "./customVideoPlayback.js"
 import type { response } from "../../../services/sendPOST.js"
 import type { searchedPost } from "./createPostHTML.js"
 
+export interface loggedInUser {
+    id:number,
+    role:string,
+    profile_picture_name:string,
+    saved_posts:number[]
+}
+
 interface searchedPostsResponse {
     success:boolean,
     has_next?:boolean,
-
-    logged_in_user?:{
-        logged_in_user_id:number,
-        profile_picture_name:string,
-        saved_posts:number[]
-    },
-
+    logged_in_user?:loggedInUser,
     posts:searchedPost[],
     message:string
 }
@@ -74,7 +75,7 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
             )
         })
 
-        no_already_rendered_posts_data.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user?.logged_in_user_id, loaded_posts_response.logged_in_user?.profile_picture_name, loaded_posts_response.logged_in_user?.saved_posts), feed_report)) // Appends The Post To The Feed
+        no_already_rendered_posts_data.forEach(one_post => feed.insertBefore(createPostHTML(one_post, feed, loaded_posts_response.logged_in_user), feed_report)) // Appends The Post To The Feed
         feed_state.has_more_posts = loaded_posts_response.has_next || false // Sets The Has More Posts
         feed_state.has_more_posts ? feed_state.current_page++ : feed_report.textContent = gettext("Videli ste všetky príspevky.") // Shows The Message If The User Has Already Viewed All Posts
     }

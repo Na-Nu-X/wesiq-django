@@ -1109,12 +1109,6 @@ header {
                     .report_review,
                     .delete_review {
                         @include properties_menu;
-
-                        .delete_review_button {
-                            &.red {
-                                color: $error-color;
-                            }
-                        }
                     }
     
                     .report_review {

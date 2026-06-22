@@ -455,13 +455,9 @@ def deletePost(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
             post_id = json.loads(request.body) # Gets The Post ID
-
-            post = Post.objects.prefetch_related(
-                "media"
-            ).get(
-                id=post_id, user_id=logged_in_user_id
-            )
+            post = Post.objects.prefetch_related("media").get(id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(id=post_id, user_id=logged_in_user_id) # Gets The Post
 
             if post:
                 unfinished_media = post.media.filter(is_processed=False)
@@ -3305,7 +3301,8 @@ def loadPostsView(request):
 
     if logged_in_user:
         logged_in_user = {
-            "logged_in_user_id": logged_in_user_id, 
+            "id": logged_in_user_id, 
+            "role": logged_in_user.role,
             "profile_picture_name": logged_in_user.profile_picture_name,
             "saved_posts": list(logged_in_user.saved_posts.values_list("id", flat=True))
         }
