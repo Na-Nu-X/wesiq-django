@@ -2013,6 +2013,23 @@ header {
                             }
                         }
                     }
+
+                    .show_more {
+                        all: unset;
+                        display: block;
+                        margin: 0px auto 10px;
+                        color: darken($secondary-color, 40%);
+                        transition: color 0.3s ease;
+
+                        &.hidden {
+                            display: none;
+                        }
+
+                        &:hover {
+                            color: darken($secondary-color, 20%);
+                            cursor: pointer;
+                        }
+                    }
                 }
 
                 .write_comment_form {

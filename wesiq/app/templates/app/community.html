@@ -403,7 +403,9 @@
 
         <template class="comment_forum_template">
             <div class="comment_forum hidden">
-                <div class="all_comments"></div>
+                <div class="all_comments" data-page="1" data-has_next="false">
+                    <button class="show_more hidden">{% translate "Zobraziť viac" %}</button>
+                </div>
 
                 <div class="write_comment_form">
                     <div class="comment" name="comment" contenteditable="true" data-placeholder="{% translate 'Napísať komentár' %}" aria-label="{% translate 'Napísať komentár' %}"></div>

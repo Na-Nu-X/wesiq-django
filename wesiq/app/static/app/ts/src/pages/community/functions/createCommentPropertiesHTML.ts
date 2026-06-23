@@ -17,7 +17,7 @@ export interface comment {
 }
 
 // Function For Create The Comment Properties HTML
-export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_container:HTMLDivElement, comment:comment, logged_in_user_id?:number):void {
+export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_container:HTMLDivElement, comment:comment, logged_in_user_id:number|null):void {
     const show_comment_properties_button:HTMLButtonElement = one_comment.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
     const comment_properties:HTMLDivElement = one_comment.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
     const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
