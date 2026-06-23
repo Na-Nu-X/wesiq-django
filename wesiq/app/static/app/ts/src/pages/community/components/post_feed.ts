@@ -40,6 +40,7 @@ import {
 import { focusAtEnd } from "../functions/customTextarea.js"
 import { toggleFollow } from "../functions/toggleFollow.js"
 import { comment_input_state } from "../state.js"
+import { loadComments } from "../functions/comments.js"
 
 "use strict"
 
@@ -217,6 +218,17 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const comments_counter:HTMLParagraphElement = post_container.querySelector(".society .comments .comments_counter") as HTMLParagraphElement // Gets The Comments Counter
 
                 if(one_comment.dataset["comment_id"] && action && action === "delete") deleteComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
+            }
+
+            // Show More Comments
+            if((event.target as HTMLButtonElement).classList.contains("show_more")) {
+                const show_more:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Show More Button
+                const post_container:HTMLDivElement = show_more.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                const all_comments:HTMLDivElement = post_container.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
+                const logged_in_user_id:number|null = Number(post_container.dataset["logged_in_user_id"]) || null // Gets The Logged In User ID If Is Available
+                const has_next:boolean = all_comments.dataset["has_next"] === "true" ? true : false // Checks If There Are Any More Pages Of Post Comments
+
+                if(has_next) loadComments(feed, post_container, all_comments, logged_in_user_id) // Loads The Comments
             }
         }
         

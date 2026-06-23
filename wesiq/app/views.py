@@ -49,6 +49,7 @@ from django.http import FileResponse
 from django.template.loader import render_to_string
 from django.db import transaction
 from celery import current_app
+from itertools import chain
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -956,7 +957,7 @@ def homepageView(request):
     else:
         print("Getting Reviews Data From The Redis Cache.") # Test Print
 
-    page_number = request.GET.get("reviews-page", 1) # Gets Current Page Number
+    page_number = request.GET.get("reviews-page", 1) # Gets The Current Page Number
     paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
     page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
 
@@ -3127,8 +3128,8 @@ def loadPostsView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
-    page_number = request.GET.get("page", 1) # Gets Current Page Number
-    searched_text = request.GET.get("searched_text", "") # Gets Current Page Number
+    page_number = request.GET.get("page", 1) # Gets The Current Page Number
+    searched_text = request.GET.get("searched_text", "") # Gets The Searched Text
 
     # Gets The Posts With All Related Data
     thirty_days_ago = timezone.now() - timedelta(days=30)
@@ -3142,18 +3143,6 @@ def loadPostsView(request):
             "media",
             queryset=PostMedia.objects.order_by("order")
         ),
-
-        Prefetch(
-            "comments",
-            queryset=PostForum.objects.exclude(
-                status="hidden"
-            ).select_related(
-                "user"
-            ).order_by(
-                "creation_time"
-            ),
-            to_attr="visible_comments"
-        )
     ).exclude(
         media__is_processed=False
     ).annotate(
@@ -3169,7 +3158,9 @@ def loadPostsView(request):
             When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
             default=False,
             output_field=BooleanField()
-        ) if logged_in_user else Value(False, output_field=BooleanField())
+        ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+        comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True)
     ).exclude(
         # Excludes Already Viewed Posts Which Were Viewed 30 Days Ago
         Exists(
@@ -3282,31 +3273,8 @@ def loadPostsView(request):
             "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
             "created_at": one_post.created_at.isoformat(),
             "media": list(one_post.media.values("id", "file", "thumbnail", "is_video")),
-            "views": one_post.views, # TEST
-
-            "visible_comments": [
-                {
-                    "id": one_comment.id,
-
-                    "user": {
-                        "id": one_comment.user.id,
-                        "first_name": one_comment.user.first_name,
-                        "last_name": one_comment.user.last_name,
-                        "username": one_comment.user.username,
-                        "profile_picture_name": one_comment.user.profile_picture_name
-                    },
-
-                    "comment": one_comment.comment,
-                    "likes": one_comment.likes,
-                    "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
-                    "creation_time": one_comment.creation_time.isoformat(),
-                    "parent_id": one_comment.parent_id,
-                    "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
-                    "level": one_comment.level
-                }
-
-                for one_comment in one_post.visible_comments
-            ]
+            "views": one_post.views,
+            "comments_amount": one_post.comments_amount
         }
 
         for one_post in page_posts
@@ -3323,6 +3291,93 @@ def loadPostsView(request):
         return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user": logged_in_user, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
 
     return JsonResponse({"success": True, "has_next": page_posts.has_next(), "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
+
+def loadPostCommentsView(request, post_id):
+    page_number = request.GET.get("page", 1) # Gets The Current Page Number
+
+    try:
+        # Gets The Post Root Comments With All Related Data
+        post_root_comments_query = PostForum.objects.filter(
+            post_id=post_id,
+            parent__isnull=True
+        ).exclude(
+            status="hidden"
+        ).select_related(
+            "user"
+        ).prefetch_related(
+            "likes_from_users",
+            "reports_from_users"
+        ).order_by(
+            "creation_time"
+        )
+
+        paginator = Paginator(post_root_comments_query, 5) # Divides The Root Comments By Maximum 5 Per Page
+        page_post_root_comments = paginator.page(page_number) # Gets Only The Root Comments For The Selected Page
+
+        post_root_comments_ids = [comment.id for comment in page_post_root_comments] # Gets All Post Root Comments IDs
+        
+        # Gets The Post Replies Comments With All Related Data
+        post_replies_comments_query = PostForum.objects.filter(
+            Q(parent_id__in=post_root_comments_ids) | # Level 2 (Reply On Root Comment)
+            Q(parent__parent_id__in=post_root_comments_ids) | # Level 3 (Reply On Level 2)
+            Q(parent__parent__parent_id__in=post_root_comments_ids) | # Level 4 (Reply On Level 3)
+            Q(parent__parent__parent__parent_id__in=post_root_comments_ids), # Level 5 (Reply On Level 4)
+            post_id=post_id
+        ).exclude(
+            status="hidden"
+        ).select_related(
+            "user"
+        ).prefetch_related(
+            "likes_from_users",
+            "reports_from_users"
+        )
+
+        # Combines The Post Root Comments And Replies
+        combined_post_comments = sorted(
+            chain(page_post_root_comments, post_replies_comments_query),
+            key=lambda x: x.creation_time
+        )
+
+    except Exception as e:
+        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return JsonResponse({
+            "success": False, 
+            "has_next": False, 
+            "message": _("Pri hľadaní komentárov došlo k chybe.")
+        }, status=404)
+
+    # Creates Valid Format Of Post Comments For JSON Response
+    post_comments = [
+        {
+            "id": one_comment.id,
+
+            "user": {
+                "id": one_comment.user.id,
+                "first_name": one_comment.user.first_name,
+                "last_name": one_comment.user.last_name,
+                "username": one_comment.user.username,
+                "profile_picture_name": one_comment.user.profile_picture_name
+            },
+
+            "comment": one_comment.comment,
+            "likes": one_comment.likes,
+            "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
+            "creation_time": one_comment.creation_time.isoformat(),
+            "parent_id": one_comment.parent_id,
+            "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
+            "level": one_comment.level
+        }
+
+        for one_comment in combined_post_comments
+    ]
+
+    return JsonResponse({
+        "success": True, 
+        "has_next": page_post_root_comments.has_next(), 
+        "visible_comments": post_comments, 
+        "message": _("Komentáre boli úspešné nájdené.")
+    }, status=200)
 
 def streamVideo(request, user_id, media_id, filename):
     # Manual Addition For HLS Types If The OS Doesn't Know Them
