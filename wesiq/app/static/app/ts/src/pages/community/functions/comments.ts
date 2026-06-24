@@ -11,7 +11,7 @@ interface loadedPostCommentsResponse {
 }
 
 // Function For Load Comments
-export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivElement, all_comments:HTMLDivElement, logged_in_user_id:number|null):Promise<void> {
+export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivElement, all_comments:HTMLDivElement, logged_in_user_id:number|null, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
     const post_id:number = Number(post_container.dataset["post_id"]) // Gets The Post ID
     const page:number = Number(all_comments.dataset["page"]) || 1 // Gets The Current Page Number
     const show_more:HTMLButtonElement = all_comments.querySelector(".show_more") as HTMLButtonElement // Gets The Show More Button
@@ -56,8 +56,8 @@ export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivEl
         })
 
         no_already_rendered_post_comments_data.forEach(function(one_comment:comment):void {
-            if(all_comment_containers.length >= 5 && !show_more.classList.contains("hidden")) all_comments.insertBefore(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id), show_more) // Appends The Comment To The All Comments Container To The Bottom Position
-            else all_comments.prepend(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id)) // Appends The Comment To The All Comments Container To The Top Position
+            if(all_comment_containers.length >= 5 && !show_more.classList.contains("hidden")) all_comments.insertBefore(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id, logged_in_user_role), show_more) // Appends The Comment To The All Comments Container To The Bottom Position
+            else all_comments.prepend(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id, logged_in_user_role)) // Appends The Comment To The All Comments Container To The Top Position
         })
 
         all_comments.dataset["has_next"] = String(loaded_post_comments_response.has_next || false) // Sets The Has More Comments

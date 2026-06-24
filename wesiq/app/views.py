@@ -586,8 +586,9 @@ def deletePostComment(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
             comment_id = json.loads(request.body) # Gets The Comment ID
-            comment = PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+            comment = PostForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
 
             if comment:
                 comment.delete() # Deletes The Comment
@@ -2015,8 +2016,9 @@ def blogThemeView(request, theme):
                 try:
                     if "logged_in_user_id" in request.session:
                         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
+                        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
                         comment_id = json.loads(request.body) # Gets The Comment ID
-                        comment = ArticleForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+                        comment = ArticleForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
 
                         if comment:
                             comment.delete() # Deletes The Comment
@@ -2093,16 +2095,26 @@ def blogThemeView(request, theme):
         article.visitors += 1
         article.save()
 
-    response = render(request, "app/articles.html", {
-        "logged_in_user": {
-            "username": logged_in_user.username,
-            "profile_picture_name": logged_in_user.profile_picture_name
-        },
+    if logged_in_user:
+        response = render(request, "app/articles.html", {
+            "logged_in_user": {
+                "id": logged_in_user.id,
+                "username": logged_in_user.username,
+                "role": logged_in_user.role,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            },
 
-        "article": article,
-        "write_comment_form": writeCommentForm,
-        "not_found": not_found,
-    })
+            "article": article,
+            "write_comment_form": writeCommentForm,
+            "not_found": not_found,
+        })
+
+    else:
+        response = render(request, "app/articles.html", {
+            "article": article,
+            "write_comment_form": writeCommentForm,
+            "not_found": not_found,
+        })
 
     response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
 
@@ -3582,6 +3594,7 @@ def postView(request, post_id):
             return render(request, "app/post.html", {
                 "logged_in_user": {
                     "username": logged_in_user.username,
+                    "role": logged_in_user.role,
                     "profile_picture_name": logged_in_user.profile_picture_name
                 },
 
@@ -3597,6 +3610,7 @@ def postView(request, post_id):
         return render(request, "app/post.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
+                "role": logged_in_user.role,
                 "profile_picture_name": logged_in_user.profile_picture_name
             }
         })

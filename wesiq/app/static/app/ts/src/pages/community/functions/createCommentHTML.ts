@@ -4,7 +4,7 @@ import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import type { comment } from "./createCommentPropertiesHTML.js"
 
 // Function For Create Comment HTML Structure
-export function createCommentHTML(feed:HTMLDivElement, all_comments:HTMLDivElement, one_visible_comment:comment, post_container:HTMLDivElement, logged_in_user_id:number|null):DocumentFragment {
+export function createCommentHTML(feed:HTMLDivElement, all_comments:HTMLDivElement, one_visible_comment:comment, post_container:HTMLDivElement, logged_in_user_id:number|null, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):DocumentFragment {
     const user_id:number = Number(post_container.dataset["user_id"]) // Gets The Post Author's ID
     const username:string = post_container.dataset["username"] as string // Gets The Post Author's Username
     const profile_picture_name:string = post_container.dataset["profile_picture_name"] as string // Gets The Post Author's Profile Picture Name
@@ -36,7 +36,7 @@ export function createCommentHTML(feed:HTMLDivElement, all_comments:HTMLDivEleme
     comment_author_username.textContent = one_visible_comment.user.username // Sets The Comment Author Username Text
 
     // Comment Properties
-    createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id) // Creates The Comment Properties HTML
+    createCommentPropertiesHTML(one_comment_container, report_container, one_visible_comment, logged_in_user_id, logged_in_user_role) // Creates The Comment Properties HTML
 
     // Comment
     const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph

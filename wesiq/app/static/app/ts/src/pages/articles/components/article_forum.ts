@@ -15,7 +15,7 @@ import {
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Article Feed
+    // Article Forum
 
     // Variables
 
@@ -84,8 +84,9 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Send Button Click Functionality
     send.addEventListener("click", function():void {
         const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
+        const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (comment_forum.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
     
-        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter) // Adds Comment To The Article
+        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter, logged_in_user_role) // Adds Comment To The Article
     })
 
     // Global Event Delegations
