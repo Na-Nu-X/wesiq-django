@@ -1,7 +1,7 @@
 import { setObserverAnimation } from "../../../utils/setObserverAnimation.js"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Article Feed
+    // Article Content
 
     // Variables
 

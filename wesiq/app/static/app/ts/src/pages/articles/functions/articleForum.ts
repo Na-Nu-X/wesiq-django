@@ -6,7 +6,7 @@ import { createCommentPropertiesHTML } from "../../community/functions/createCom
 import type { addCommentResponse } from "../../community/functions/postForum.js"
 
 // Function For Add Comment
-export async function addComment(article_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, comment_forum:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
+export async function addComment(article_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, comment_forum:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
     try {
         const comment_input:HTMLTextAreaElement = write_comment_form.querySelector(".comment") as HTMLTextAreaElement // Gets The Comment Input
 
@@ -55,7 +55,7 @@ export async function addComment(article_id:number, write_comment_form:HTMLDivEl
         comment_author_username.textContent = add_article_comment_response.comment.user.username // Sets The Comment Author Username Text
 
         // Comment Properties
-        createCommentPropertiesHTML(one_comment_container, report_container, add_article_comment_response.comment, add_article_comment_response.logged_in_user.logged_in_user_id) // Creates The Comment Properties HTML
+        createCommentPropertiesHTML(one_comment_container, report_container, add_article_comment_response.comment, add_article_comment_response.logged_in_user.logged_in_user_id, logged_in_user_role) // Creates The Comment Properties HTML
 
         // Comment
         const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph

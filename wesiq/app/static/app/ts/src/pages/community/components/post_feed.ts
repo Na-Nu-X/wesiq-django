@@ -226,9 +226,10 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const post_container:HTMLDivElement = show_more.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const all_comments:HTMLDivElement = post_container.querySelector(".all_comments") as HTMLDivElement // Gets All Comments Container
                 const logged_in_user_id:number|null = Number(post_container.dataset["logged_in_user_id"]) || null // Gets The Logged In User ID If Is Available
+                const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (post_container.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
                 const has_next:boolean = all_comments.dataset["has_next"] === "true" ? true : false // Checks If There Are Any More Pages Of Post Comments
 
-                if(has_next) loadComments(feed, post_container, all_comments, logged_in_user_id) // Loads The Comments
+                if(has_next) loadComments(feed, post_container, all_comments, logged_in_user_id, logged_in_user_role) // Loads The Comments
             }
         }
         

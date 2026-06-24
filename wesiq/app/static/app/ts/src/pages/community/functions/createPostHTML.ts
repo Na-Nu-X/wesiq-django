@@ -89,6 +89,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     post_container.dataset["username"] = post_data.user.username // Stores The Username
     post_container.dataset["profile_picture_name"] = post_data.user.profile_picture_name || "" // Stores The Profile Picture Name
     post_container.dataset["logged_in_user_id"] = logged_in_user ? String(logged_in_user.id) : "" // Stores The Logged In User ID
+    post_container.dataset["logged_in_user_role"] = logged_in_user ? String(logged_in_user.role) : "unauthorized" // Stores The Logged In User Role
 
     // Post Author Profile Picture Link
     const post_author_profile_picture_link:HTMLAnchorElement = post_container.querySelector(".header .left a") as HTMLAnchorElement // Gets The Post Author Profile Picture Link
@@ -355,10 +356,12 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
         // Comments
         if(post_data.comments_amount > 0) {
+            const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (post_container.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
+
             all_comments.dataset["page"] = String(1)
             all_comments.dataset["has_next"] = String(true)
             
-            loadComments(feed, post_container, all_comments, Number(post_container.dataset["logged_in_user_id"])) // Loads The Comments
+            loadComments(feed, post_container, all_comments, Number(post_container.dataset["logged_in_user_id"]), logged_in_user_role) // Loads The Comments
         }
     }
 

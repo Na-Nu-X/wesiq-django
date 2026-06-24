@@ -17,7 +17,7 @@ export interface comment {
 }
 
 // Function For Create The Comment Properties HTML
-export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_container:HTMLDivElement, comment:comment, logged_in_user_id:number|null):void {
+export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_container:HTMLDivElement, comment:comment, logged_in_user_id:number|null, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):void {
     const show_comment_properties_button:HTMLButtonElement = one_comment.querySelector(".comment_container .user .show_comment_properties_button") as HTMLButtonElement // Gets The Show Comment Properties Button
     const comment_properties:HTMLDivElement = one_comment.querySelector(".comment_container .user .comment_properties") as HTMLDivElement // Gets The Comment Properties Menu
     const hide_comment_properties_button:HTMLButtonElement = comment_properties.querySelector(".hide_comment_properties_button") as HTMLButtonElement // Gets The Hide Comment Properties Button
@@ -51,10 +51,11 @@ export function createCommentPropertiesHTML(one_comment:HTMLDivElement, report_c
     }
 
     // If The Comment Belongs To The Logged In User The Delete Option Will Be Shown
-    else {
+    if(comment.user.id === logged_in_user_id || logged_in_user_role === "developer" || logged_in_user_role === "admin") {
         // Delete Comment Button
         const delete_comment_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Comment Button
         delete_comment_button.classList.add("delete_comment_button") // Adds The Delete Comment Button
+        if(comment.user.id !== logged_in_user_id && (logged_in_user_role === "developer" || logged_in_user_role === "admin")) delete_comment_button.classList.add("red") // Adds The Red Class If The Logged In User Is Developer Or Admin
         delete_comment_button.setAttribute("popovertarget", `delete_comment_${comment.id}`) // Links The Popover
         delete_comment_button.style = `anchor-name: --delete_comment_button_${comment.id}` // Creates The Anchor
         delete_comment_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser

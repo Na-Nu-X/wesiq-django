@@ -232,10 +232,12 @@
                             <div class="right">
                                 <p class="comment"></p>
             
-                                <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
-                                    <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                                    <p class="likes_counter">{{ one_comment.likes }}</p>
-                                </button>
+                                <div class="likes_container">
+                                    <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">
+                                        <i class="fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                        <p class="likes_counter">{{ one_comment.likes }}</p>
+                                    </button>
+                                </div>
                             </div>
                         </div>
         
@@ -865,7 +867,7 @@
                         <div class="comment_forum hidden">
                             <div class="all_comments">
                                 {% for one_comment in post.root_comments %}
-                                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=post.nested_comments post_author=post.user %}
+                                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=post.nested_comments post_author=post.user role=logged_in_user.role %}
 
                                 {% endfor %}
                             </div>

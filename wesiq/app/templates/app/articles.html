@@ -10,8 +10,7 @@
 
 {% block content %}
     {% if not_found == False %}
-        <script src="{% static 'app/ts/dist/pages/articles/components/article_feed.js' %}" type="module"></script>
-        <script src="{% static 'app/ts/dist/pages/articles/components/rating.js' %}" type="module"></script>
+        <script src="{% static 'app/ts/dist/pages/articles/components/article_forum.js' %}" type="module"></script>
         <script src="{% static 'app/ts/dist/pages/articles/components/exercise_statistics.js' %}" type="module"></script>
         <script src="{% static 'app/ts/dist/pages/articles/components/article_content.js' %}" type="module"></script>
 
@@ -132,41 +131,46 @@
             {% endif %}
         </div>
 
-        <div class="rating">
-            <a href="{% url 'profile_url' article.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
-                <img 
-                    class="profile_picture skeleton_loading" 
-                    src="
-                        {% if article.user.profile_picture_name %}
-                            /../media/images/{{ article.user.id }}/{{ article.user.profile_picture_name }}
+        {% if request.session.logged_in_user_id %}
+            <script src="{% static 'app/ts/dist/pages/articles/components/rating.js' %}" type="module"></script>
 
-                        {% else %}
-                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                        
-                        {% endif %}
-                    "
-                    alt=""
-                >
-            </a>
+            <div class="rating">
+                <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                    <img 
+                        class="profile_picture skeleton_loading" 
+                        src="
+                            {% if logged_in_user.profile_picture_name %}
+                                /../media/images/{{ logged_in_user.id }}/{{ logged_in_user.profile_picture_name }}
 
-            {% for _ in "12345" %}
-                {% if forloop.counter <= article.given_rating %}
-                    <button type="button">
-                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                    </button>
+                            {% else %}
+                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                            
+                            {% endif %}
+                        "
+                        alt=""
+                    >
+                </a>
 
-                {% else %}
-                    <button type="button">
-                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                    </button>
-                
-                {% endif %}
-            {% endfor %}
+                {% for _ in "12345" %}
+                    {% if forloop.counter <= article.given_rating %}
+                        <button type="button">
+                            <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                        </button>
 
-            <input type="number" name="rating" value="{{ article.given_rating }}" min="0" max="5">
-        </div>
+                    {% else %}
+                        <button type="button">
+                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                        </button>
+                    
+                    {% endif %}
+                {% endfor %}
 
-        <div class="comment_forum ">
+                <input type="number" name="rating" value="{{ article.given_rating }}" min="0" max="5">
+            </div>
+        
+        {% endif %}
+
+        <div class="comment_forum" data-logged_in_user_role="{{ logged_in_user.role|default:'unauthorized' }}">
             <template class="one_comment_template">
                 <div class="one_comment">
                     <div class="comment_container">
@@ -260,7 +264,7 @@
 
             <div class="all_comments">
                 {% for one_comment in article.root_comments %}
-                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=article.nested_comments %}
+                    {% include "partials/comment.html" with one_comment=one_comment level=1 all_nested_comments=article.nested_comments role=logged_in_user.role %}
 
                 {% endfor %}
             </div>
