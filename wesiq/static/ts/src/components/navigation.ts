@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             event.preventDefault()
 
             window.scrollTo({
-                top: scroll_to.offsetTop - navigation_bar.offsetHeight,
+                top: scroll_to.getBoundingClientRect().top + window.scrollY - navigation_bar.offsetHeight,
                 behavior: "smooth"
             })
         })
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const scroll_contact:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_contact") as HTMLAnchorElement || null // Gets The Scroll Contact Button
     const contact:HTMLFormElement|null = document.querySelector(".contact_form") as HTMLFormElement || null // Gets The Contact Form
 
-    const scroll_reviews:HTMLDivElement|null = document.querySelector(".reviews_info") as HTMLDivElement || null // Gets The Scroll Reviews Button
+    const scroll_reviews:HTMLButtonElement|null = document.querySelector(".reviews_info") as HTMLButtonElement || null // Gets The Scroll Reviews Button
     const reviews:HTMLDivElement|null = document.querySelector(".reviews") as HTMLDivElement || null // Gets The Reviews Container
 
     const scroll_feed:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_feed") as HTMLAnchorElement || null // Gets The Scroll Feed Button

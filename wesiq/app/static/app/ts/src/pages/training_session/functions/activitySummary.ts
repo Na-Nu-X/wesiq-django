@@ -191,7 +191,7 @@ export function renderActivitySummary(elapsed_time:number, gained_xp:number):voi
 
     // Auto Scroll To Activity Summary
     window.scrollTo({
-        top: activity_summary.offsetTop,
+        top: 0,
         behavior: "smooth"
     })
 }
