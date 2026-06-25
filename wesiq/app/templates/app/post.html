@@ -358,7 +358,9 @@
                                             <span>{% translate "Nahlásiť" %}</span>
                                         </button>
 
-                                    {% else %}
+                                    {% endif %}
+
+                                    {% if request.session.logged_in_user_id == post.user.id %}
                                         <button 
                                             class="show_post_settings_button"
                                             popovertarget="post_settings"
@@ -367,9 +369,20 @@
                                             <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
                                             <span>{% translate "Upraviť" %}</span>
                                         </button>
+
+                                    {% endif %}
                                         
+                                    {% if request.session.logged_in_user_id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                         <button 
-                                            class="delete_post_button"
+                                            class="
+                                                delete_post_button
+
+                                                {% if request.session.logged_in_user_id != post.user.id and logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                                                    red
+
+                                                {% endif %}
+                                            "
+
                                             popovertarget="delete_post"
                                             style="anchor-name: --delete_post_button;"
                                         >
@@ -413,7 +426,9 @@
                                         </button>
                                     </div>
 
-                                {% else %}
+                                {% endif %}
+
+                                {% if request.session.logged_in_user_id == post.user.id %}
                                     <div 
                                         class="post_settings" 
                                         id="post_settings"
@@ -512,6 +527,9 @@
                                         </button>
                                     </div>
 
+                                {% endif %}
+
+                                {% if request.session.logged_in_user_id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                     <div 
                                         class="delete_post" 
                                         id="delete_post"

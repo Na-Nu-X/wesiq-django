@@ -202,10 +202,17 @@ def createPaymentIntent(request):
             return JsonResponse({"client_secret": intent.client_secret})
 
         except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=400)
+            return JsonResponse({
+                "success": False, 
+                "message": str(e)
+            }, status=400)
             
     captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
-    return JsonResponse({"success": False, "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")}, status=405)
+
+    return JsonResponse({
+        "success": False, 
+        "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")
+    }, status=405)
 
 @csrf_exempt
 def stripeWebhook(request):
@@ -272,13 +279,23 @@ def reportReview(request):
 
                 review.save() # Saves The Review
 
-            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "message": _("Nahlásenie bolo úspešne odoslané.")
+            }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odosielaní nahlásenia došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def deleteReview(request):
@@ -292,15 +309,28 @@ def deleteReview(request):
             if review:
                 review.delete() # Deletes The Review
 
-                return JsonResponse({"success": True, "message": _("Recenzia bola úspešne odstránená.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Recenzia bola úspešne odstránená.")
+                }, status=200)
 
-            return JsonResponse({"success": False, "message": _("Recenziu sa nepodarilo odstrániť.")}, status=400)
+            return JsonResponse({
+                "success": False, 
+                "message": _("Recenziu sa nepodarilo odstrániť.")
+            }, status=400)
 
-        return JsonResponse({"success": False, "message": _("Recenziu nie je možné odstrániť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Recenziu nie je možné odstrániť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odstraňovaní recenzie došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odstraňovaní recenzie došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def markPostAsSeen(request):
@@ -315,13 +345,23 @@ def markPostAsSeen(request):
                 post_id=post_id
             )
 
-            return JsonResponse({"success": True, "message": _('Príspevok bol úspešne označený za "už videný".')}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "message": _('Príspevok bol úspešne označený za "už videný".')
+            }, status=200)
 
-        return JsonResponse({"success": False, "message": _('Príspevok nie je možné označiť za "už videný" bez prihlásenia.')}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _('Príspevok nie je možné označiť za "už videný" bez prihlásenia.')
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _('Pri označovaní príspevku za "už videný" došlo k chybe.')}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _('Pri označovaní príspevku za "už videný" došlo k chybe.')
+        }, status=500)
 
 @require_POST
 def toggleFollow(request):
@@ -340,20 +380,33 @@ def toggleFollow(request):
                 logged_in_user.following.add(user_to_follow) # Adds The User To Following Users Of Logged In User
                 logged_in_user.save() # Updates The Logged In User
 
-                return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne pridané.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Sledovanie bolo úspešne pridané.")
+                }, status=200)
 
             # Unfollow
             else:
                 logged_in_user.following.remove(user_to_follow) # Removes The User From Following Users Of Logged In User
                 logged_in_user.save() # Updates The Logged In User
 
-                return JsonResponse({"success": True, "message": _("Sledovanie bolo úspešne odstránené.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Sledovanie bolo úspešne odstránené.")
+                }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri zmene sledovania došlo k chybe.")}, status=404)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri zmene sledovania došlo k chybe.")
+        }, status=404)
 
 @require_POST
 def togglePostLike(request):
@@ -372,20 +425,33 @@ def togglePostLike(request):
                 post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
                 Post.objects.filter(id=int(post_id)).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
 
-                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Označenie páči sa mi to bolo úspešne pridané.")
+                }, status=200)
 
             # Cancel Like
             else:
                 post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
                 Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
                 
-                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Označenie páči sa mi to bolo úspešne odstránené.")
+                }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def reportPost(request):
@@ -421,13 +487,23 @@ def reportPost(request):
 
                 post.save() # Saves The Updated Post
 
-            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "message": _("Nahlásenie bolo úspešne odoslané.")
+            }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odosielaní nahlásenia došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def editPostSettings(request):
@@ -444,15 +520,28 @@ def editPostSettings(request):
                 setattr(post, setting, action) # Updates The Given Column's Value
                 post.save() # Saves The Edited Post
 
-                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne upravený.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Príspevok bol úspešne upravený.")
+                }, status=200)
 
-            return JsonResponse({"success": False, "message": _("Príspevok sa nepodarilo upraviť.")}, status=400)
+            return JsonResponse({
+                "success": False, 
+                "message": _("Príspevok sa nepodarilo upraviť.")
+            }, status=400)
 
-        return JsonResponse({"success": False, "message": _("Príspevok nie je možné upraviť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Príspevok nie je možné upraviť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri úprave príspevku došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri úprave príspevku došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def deletePost(request):
@@ -495,15 +584,28 @@ def deletePost(request):
 
                 post.delete() # Deletes The Post
 
-                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne odstránený.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Príspevok bol úspešne odstránený.")
+                }, status=200)
 
-            return JsonResponse({"success": False, "message": _("Príspevok sa nepodarilo odstrániť.")}, status=400)
+            return JsonResponse({
+                "success": False, 
+                "message": _("Príspevok sa nepodarilo odstrániť.")
+            }, status=400)
 
-        return JsonResponse({"success": False, "message": _("Príspevok nie je možné odstrániť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Príspevok nie je možné odstrániť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odstraňovaní príspevku došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odstraňovaní príspevku došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def togglePostSave(request):
@@ -522,20 +624,33 @@ def togglePostSave(request):
                 logged_in_user.saved_posts.add(post) # Adds The Post To The User's Saved Posts
                 logged_in_user.save() # Saves The Logged In User
 
-                return JsonResponse({"success": True, "message": _("Príspevok bol úspešne uložený.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Príspevok bol úspešne uložený.")
+                }, status=200)
 
             # Unsave
             else:
                 logged_in_user.saved_posts.remove(post) # Removes The Post From The User's Saved Posts
                 logged_in_user.save() # Saves The Logged In User
                 
-                return JsonResponse({"success": True, "message": _("Príspevok bol odstránený zo zoznamu uložených.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Príspevok bol odstránený zo zoznamu uložených.")
+                }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Príspevok nie je možné uložiť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Príspevok nie je možné uložiť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri zmene uloženia príspevku došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri zmene uloženia príspevku došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def reportPostComment(request):
@@ -573,13 +688,23 @@ def reportPostComment(request):
 
                 comment.save() # Saves The Comment
 
-            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "message": _("Nahlásenie bolo úspešne odoslané.")
+            }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odosielaní nahlásenia došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def deletePostComment(request):
@@ -593,15 +718,28 @@ def deletePostComment(request):
             if comment:
                 comment.delete() # Deletes The Comment
 
-                return JsonResponse({"success": True, "message": _("Komentár bol úspešne odstránený.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Komentár bol úspešne odstránený.")
+                }, status=200)
 
-            return JsonResponse({"success": False, "message": _("Komentár sa nepodarilo odstrániť.")}, status=400)
+            return JsonResponse({
+                "success": False, 
+                "message": _("Komentár sa nepodarilo odstrániť.")
+            }, status=400)
 
-        return JsonResponse({"success": False, "message": _("Komentár nie je možné odstrániť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Komentár nie je možné odstrániť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri odstraňovaní komentáru došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri odstraňovaní komentáru došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def addComment(request):
@@ -637,16 +775,32 @@ def addComment(request):
                 "level": new_comment.level
             }
 
-            return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre príspevok bol úspešne pridaný.")}, status=201)
+            return JsonResponse({
+                "success": True, 
+                "logged_in_user": logged_in_user, 
+                "comment": comment, 
+                "message": _("Komentár pre príspevok bol úspešne pridaný.")
+            }, status=201)
 
-        return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Komentár nie je možné pridať bez prihlásenia.")
+        }, status=401)
 
     except ValidationError as e:
-        return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
+        # Returns The Error Message From Models
+        return JsonResponse({
+            "success": False, 
+            "message": str(e.message)
+        }, status=400)
 
     except Exception as e:
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri pridávaní komentáru došlo k chybe.")
+        }, status=500)
 
 @require_POST
 def togglePostCommentLike(request):
@@ -666,7 +820,10 @@ def togglePostCommentLike(request):
                 comment.likes = F("likes") + 1 # Increases The Likes Counter
                 comment.save() # Updates The Comment
 
-                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Označenie páči sa mi to bolo úspešne pridané.")
+                }, status=200)
 
             # Cancel Like
             else:
@@ -674,13 +831,23 @@ def togglePostCommentLike(request):
                 comment.likes = F("likes") - 1 # Decreases The Likes Counter
                 comment.save() # Updates The Comment
                 
-                return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Označenie páči sa mi to bolo úspešne odstránené.")
+                }, status=200)
 
-        return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
+        return JsonResponse({
+            "success": False, 
+            "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")
+        }, status=401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")
+        }, status=500)
 
 def homepageView(request):
     # Login Form
@@ -1190,13 +1357,23 @@ def homepageView(request):
                         review.status = "approved" # Sets The Review Status As Approved
                         review.save() # Saves The Updated Review
 
-                        return JsonResponse({"success": True, "message": _("Recenzia bola úspešne schválená správcom.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "message": _("Recenzia bola úspešne schválená správcom.")
+                        }, status=200)
 
-                    return JsonResponse({"success": False, "message": _("Recenziu môže schváliť len správca.")}, status=401)
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Recenziu môže schváliť len správca.")
+                    }, status=401)
 
                 except Exception as e:
                     captureError(f"An error occurred while approving the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pokuse o schválenie recenzie došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri pokuse o schválenie recenzie došlo k chybe.")
+                    }, status=500)
 
             # Reject Review
             if request.headers.get("X-Requested-Action") == "reject-review":
@@ -1209,13 +1386,23 @@ def homepageView(request):
                         review.rejection_time = timezone.now() # Updates The Rejection Time
                         review.save() # Saves The Updated Review
 
-                        return JsonResponse({"success": True, "message": _("Recenzia bola zamietnutá správcom.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "message": _("Recenzia bola zamietnutá správcom.")
+                        }, status=200)
 
-                    return JsonResponse({"success": False, "message": _("Recenziu môže zamietnuť len správca.")}, status=401)
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Recenziu môže zamietnuť len správca.")
+                    }, status=401)
 
                 except Exception as e:
                     captureError(f"An error occurred while rejecting the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pokuse o zamietnutie recenzie došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri pokuse o zamietnutie recenzie došlo k chybe.")
+                    }, status=500)
 
         # Automatically Set Values Into Contact Form When User Is Logged In
         filled_contact_form = contactForm(initial={
@@ -1872,13 +2059,23 @@ def blogThemeView(request, theme):
                         defaults={"rating": rating} # Rating Can Be Updated
                     )
 
-                    return JsonResponse({"success": True, "message": _("Hodnotenie bolo úspešne odoslané.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Hodnotenie bolo úspešne odoslané.")
+                    }, status=200)
 
-                return JsonResponse({"success": False, "message": _("Hodnotenie nie je možné odoslať bez prihlásenia.")}, status=401)
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Hodnotenie nie je možné odoslať bez prihlásenia.")
+                }, status=401)
 
             except Exception as e:
                 captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri pridávaní hodnotenia došlo k chybe.")}, status=500)
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri pridávaní hodnotenia došlo k chybe.")
+                }, status=500)
 
         # Report Article Comment
         if request.headers.get("X-Requested-Action") == "report-article-comment":
@@ -1916,13 +2113,23 @@ def blogThemeView(request, theme):
 
                         comment.save() # Saves The Comment
 
-                    return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Nahlásenie bolo úspešne odoslané.")
+                    }, status=200)
 
-                return JsonResponse({"success": False, "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")}, status=401)
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
+                }, status=401)
 
             except Exception as e:
                 captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri odosielaní nahlásenia došlo k chybe.")
+                }, status=500)
 
         # Add Article Comment
         if request.headers.get("X-Requested-Action") == "add-article-comment":
@@ -1958,16 +2165,32 @@ def blogThemeView(request, theme):
                         "level": new_comment.level
                     }
 
-                    return JsonResponse({"success": True, "logged_in_user": logged_in_user, "comment": comment, "message": _("Komentár pre článok bol úspešne pridaný.")}, status=201)
+                    return JsonResponse({
+                        "success": True, 
+                        "logged_in_user": logged_in_user, 
+                        "comment": comment, 
+                        "message": _("Komentár pre článok bol úspešne pridaný.")
+                    }, status=201)
 
-                return JsonResponse({"success": False, "message": _("Komentár nie je možné pridať bez prihlásenia.")}, status=401)
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Komentár nie je možné pridať bez prihlásenia.")
+                }, status=401)
 
             except ValidationError as e:
-                return JsonResponse({"success": False, "message": str(e.message)}, status=400) # Returns The Error Message From Models
+                # Returns The Error Message From Models
+                return JsonResponse({
+                    "success": False, 
+                    "message": str(e.message)
+                }, status=400)
 
             except Exception as e:
                 captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri pridávaní komentáru došlo k chybe.")}, status=500)
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri pridávaní komentáru došlo k chybe.")
+                }, status=500)
 
         # Toggle Article Comment Like
         if request.headers.get("X-Requested-Action") == "toggle-article-comment-like":
@@ -1987,7 +2210,10 @@ def blogThemeView(request, theme):
                         comment.likes = F("likes") + 1 # Increases The Likes Counter
                         comment.save() # Updates The Comment
 
-                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne pridané.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "message": _("Označenie páči sa mi to bolo úspešne pridané.")
+                        }, status=200)
 
                     # Cancel Like
                     else:
@@ -1995,13 +2221,23 @@ def blogThemeView(request, theme):
                         comment.likes = F("likes") - 1 # Decreases The Likes Counter
                         comment.save() # Updates The Comment
                         
-                        return JsonResponse({"success": True, "message": _("Označenie páči sa mi to bolo úspešne odstránené.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "message": _("Označenie páči sa mi to bolo úspešne odstránené.")
+                        }, status=200)
 
-                return JsonResponse({"success": False, "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")}, status=401)
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")
+                }, status=401)
 
             except Exception as e:
                 captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")}, status=500)
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")
+                }, status=500)
 
     logged_in_user_id = None # Default State When The User Isn't Logged In
     logged_in_user = None # Default State When The User Isn't Logged In
@@ -2023,15 +2259,28 @@ def blogThemeView(request, theme):
                         if comment:
                             comment.delete() # Deletes The Comment
 
-                            return JsonResponse({"success": True, "message": _("Komentár bol úspešne odstránený.")}, status=200)
+                            return JsonResponse({
+                                "success": True, 
+                                "message": _("Komentár bol úspešne odstránený.")
+                            }, status=200)
 
-                        return JsonResponse({"success": False, "message": _("Komentár sa nepodarilo odstrániť.")}, status=400)
+                        return JsonResponse({
+                            "success": False, 
+                            "message": _("Komentár sa nepodarilo odstrániť.")
+                        }, status=400)
 
-                    return JsonResponse({"success": False, "message": _("Komentár nie je možné odstrániť bez prihlásenia.")}, status=401)
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Komentár nie je možné odstrániť bez prihlásenia.")
+                    }, status=401)
 
                 except Exception as e:
                     captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní komentáru došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri odstraňovaní komentáru došlo k chybe.")
+                    }, status=500)
 
     not_found = True
 
@@ -2309,11 +2558,19 @@ def trainingSessionView(request):
 
                     Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
 
-                    return JsonResponse({"success": True, "xp_boost_expiration_time": xp_boost_expiration_time, "message": _("Navýšenie XP bolo úspešne uplatnené.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "xp_boost_expiration_time": xp_boost_expiration_time, 
+                        "message": _("Navýšenie XP bolo úspešne uplatnené.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri uplatňovaní navýšenia XP došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri uplatňovaní navýšenia XP došlo k chybe.")
+                    }, status=500)
 
             # Complete Official Task
             if request.headers.get("X-Requested-Action") == "complete-official-task":
@@ -2348,16 +2605,41 @@ def trainingSessionView(request):
                                 xp = F("xp") + task.xp
                             )
 
-                            return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": True, "gained_xp": task.xp, "message": _("Úloha bola úspešne dokončená.")}, status=200)
+                            return JsonResponse({
+                                "success": True, 
+                                "progress_percentage": 100, 
+                                "is_completed": True, 
+                                "first_completion": True, 
+                                "gained_xp": task.xp, 
+                                "message": _("Úloha bola úspešne dokončená.")
+                            }, status=200)
 
-                        return JsonResponse({"success": True, "progress_percentage": users_daily_official_task.progress_percentage, "is_completed": False, "first_completion": True, "gained_xp": task.xp, "message": _("Pokrok úlohy bol úspešne zaznamenaný.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "progress_percentage": users_daily_official_task.progress_percentage, 
+                            "is_completed": False, 
+                            "first_completion": True, 
+                            "gained_xp": task.xp, 
+                            "message": _("Pokrok úlohy bol úspešne zaznamenaný.")
+                        }, status=200)
 
                     else:
-                        return JsonResponse({"success": True, "progress_percentage": 100, "is_completed": True, "first_completion": False, "gained_xp": 0, "message": _("Úloha už bola dokončená.")}, status=200)
+                        return JsonResponse({
+                            "success": True, 
+                            "progress_percentage": 100, 
+                            "is_completed": True, 
+                            "first_completion": False, 
+                            "gained_xp": 0, 
+                            "message": _("Úloha už bola dokončená.")
+                        }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")
+                    }, status=500)
 
             # Toggle Complete Custom Task
             if request.headers.get("X-Requested-Action") == "add-custom-task":
@@ -2378,11 +2660,19 @@ def trainingSessionView(request):
                         "created_at": new_custom_task.created_at
                     }
 
-                    return JsonResponse({"success": True, "custom_task": custom_task, "message": _("Úloha bola úspešne pridaná.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "custom_task": custom_task, 
+                        "message": _("Úloha bola úspešne pridaná.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pridávaní úlohy došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri pridávaní úlohy došlo k chybe.")
+                    }, status=500)
 
             # Toggle Complete Custom Task
             if request.headers.get("X-Requested-Action") == "toggle-complete-custom-task":
@@ -2393,11 +2683,18 @@ def trainingSessionView(request):
                     task.is_completed = not task.is_completed # Inverts The Completion Status
                     task.save(update_fields=["is_completed"]) # Saves The Updated Task
 
-                    return JsonResponse({"success": True, "message": _("Stav úlohy bol úspešne zmenený.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Stav úlohy bol úspešne zmenený.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri zmene stavu úlohy došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri zmene stavu úlohy došlo k chybe.")
+                    }, status=500)
 
             # Delete Custom Task
             if request.headers.get("X-Requested-Action") == "delete-custom-task":
@@ -2407,11 +2704,18 @@ def trainingSessionView(request):
 
                     task.delete() # Deletes The User's Custom Task
 
-                    return JsonResponse({"success": True, "message": _("Úloha bola úspešne odstránená.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Úloha bola úspešne odstránená.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní úlohy došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri odstraňovaní úlohy došlo k chybe.")
+                    }, status=500)
 
             # Delete Completed Custom Tasks
             if request.headers.get("X-Requested-Action") == "delete-completed-custom-tasks":
@@ -2423,11 +2727,18 @@ def trainingSessionView(request):
                         user_id=logged_in_user_id
                     ).delete()
 
-                    return JsonResponse({"success": True, "message": _("Úlohy boli úspešne odstránené.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Úlohy boli úspešne odstránené.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri odstraňovaní úloh došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri odstraňovaní úloh došlo k chybe.")
+                    }, status=500)
 
             # Change Custom Tasks Order
             if request.headers.get("X-Requested-Action") == "change-custom-tasks-order":
@@ -2441,11 +2752,18 @@ def trainingSessionView(request):
                             user_id=logged_in_user_id
                         ).update(order=index)
 
-                    return JsonResponse({"success": True, "message": _("Poradie úloh bolo úspešne zmenené.")}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Poradie úloh bolo úspešne zmenené.")
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri pokuse o zmenu poradia úloh došlo k chybe.")}, status=500)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri pokuse o zmenu poradia úloh došlo k chybe.")
+                    }, status=500)
 
             # New Activity
             if request.headers.get("X-Requested-Action") == "new-activity":
@@ -2548,11 +2866,18 @@ def trainingSessionView(request):
 
                             new_badge.save() # Saves The New Badge
 
-                    return JsonResponse({"success": True, "message": _("Aktivita bola úspešne zaznamenaná.")}, status=201)
+                    return JsonResponse({
+                        "success": True, 
+                        "message": _("Aktivita bola úspešne zaznamenaná.")
+                    }, status=201)
 
                 except Exception as e:
                     captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri zaznamenávaní aktivity došlo k chybe.")}, status=404)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri zaznamenávaní aktivity došlo k chybe.")
+                    }, status=404)
 
         return render(request, "app/training_session.html", {
             "logged_in_user": {
@@ -2661,11 +2986,18 @@ def manageTrainingPlansView(request):
                     elif one_object["action"] == "delete_training_plan":
                         training_plan.filter(training_plan_key=one_object["training_plan_key"]).delete() # Deletes Exercises With Similar Training Plan Key
 
-                return JsonResponse({"success": True, "message": _("Zmeny v tréningovom pláne boli úspešne vykonané.")}, status=201) # Returns Success Response
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Zmeny v tréningovom pláne boli úspešne vykonané.")
+                }, status=201) # Returns Success Response
 
             except Exception as e:
                 captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                return JsonResponse({"success": False, "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")}, status=404)
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")
+                }, status=404)
         
         return render(request, "app/manage_training_plans.html", {
             "logged_in_user": {
@@ -2760,13 +3092,26 @@ def communityView(request):
                 })
 
             if logged_in_user:
-                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "logged_in_user_id": logged_in_user_id, 
+                    "users": loaded_users, 
+                    "message": _("Užívatelia boli úspešne načítaný.")
+                }, status=200)
 
-            return JsonResponse({"success": True, "users": loaded_users, "message": _("Užívatelia boli úspešne načítaný.")}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "users": loaded_users, 
+                "message": _("Užívatelia boli úspešne načítaný.")
+            }, status=200)
 
         except Exception as e:
             captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-            return JsonResponse({"success": False, "message": _("Pri načítavaní užívateľov došlo k chybe.")}, status=500)
+
+            return JsonResponse({
+                "success": False, 
+                "message": _("Pri načítavaní užívateľov došlo k chybe.")
+            }, status=500)
 
     # Search Users
     if request.headers.get("X-Requested-Action") == "search-users":
@@ -2822,13 +3167,26 @@ def communityView(request):
             ]
 
             if logged_in_user:
-                return JsonResponse({"success": True, "logged_in_user_id": logged_in_user_id, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
+                return JsonResponse({
+                    "success": True, 
+                    "logged_in_user_id": logged_in_user_id, 
+                    "users": users, 
+                    "message": _("Užívatelia boli úspešné nájdený.")
+                }, status=200)
 
-            return JsonResponse({"success": True, "users": users, "message": _("Užívatelia boli úspešné nájdený.")}, status=200)
+            return JsonResponse({
+                "success": True, 
+                "users": users, 
+                "message": _("Užívatelia boli úspešné nájdený.")
+            }, status=200)
 
         except Exception as e:
             captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-            return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov došlo k chybe.")}, status=404)
+
+            return JsonResponse({
+                "success": False, 
+                "message": _("Pri hľadaní užívateľov došlo k chybe.")
+            }, status=404)
 
     if request.method == "POST":
         # Toggle Post Like
@@ -2977,13 +3335,19 @@ def communityView(request):
                                     
                                     # Catches An Unsupported File
                                     if not (mime_type.startswith("image/") or is_video):
-                                        return JsonResponse({"success": False, "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                        return JsonResponse({
+                                            "success": False, 
+                                            "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}
+                                        }, status=400)
 
                                     max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE
 
                                     # Catches Too Large File
                                     if one_file.size > max_file_size:
-                                        return JsonResponse({"success": False, "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                        return JsonResponse({
+                                            "success": False, 
+                                            "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}
+                                        }, status=400)
 
                                     # Catches A Too Long Video
                                     if is_video:
@@ -3001,16 +3365,25 @@ def communityView(request):
                                             os.remove(temporary_path) # Deletes The Temporary File
 
                                             if duration > MAX_VIDEO_DURATION:
-                                                return JsonResponse({"success": False, "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                                return JsonResponse({
+                                                    "success": False, 
+                                                    "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}
+                                                }, status=400)
 
                                             elif duration < MIN_VIDEO_DURATION:
-                                                return JsonResponse({"success": False, "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                                return JsonResponse({
+                                                    "success": False, 
+                                                    "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}
+                                                }, status=400)
 
                                         except Exception:
                                             if os.path.exists(temporary_path): 
                                                 os.remove(temporary_path)
 
-                                            return JsonResponse({"success": False, "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}}, status=400)
+                                            return JsonResponse({
+                                                "success": False, 
+                                                "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}
+                                            }, status=400)
 
                                     file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False})
                                     order = file_settings["order"] # Gets The Order Of The Current File
@@ -3055,7 +3428,7 @@ def communityView(request):
                             return JsonResponse({
                                 "success": True,
                                 "compress_tasks": compress_tasks
-                            })
+                            }, status=200)
 
                         # Error
                         except Exception as e:
@@ -3111,11 +3484,19 @@ def communityView(request):
                         for one_user in users_for_tag
                     ]
 
-                    return JsonResponse({"success": True, "users": users_for_tag, "message": "Užívatelia pre označenie boli úspešne nájdený."}, status=200)
+                    return JsonResponse({
+                        "success": True, 
+                        "users": users_for_tag, 
+                        "message": "Užívatelia pre označenie boli úspešne nájdený."
+                    }, status=200)
 
                 except Exception as e:
                     captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                    return JsonResponse({"success": False, "message": _("Pri hľadaní užívateľov pre označenie došlo k chybe.")}, status=404)
+
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Pri hľadaní užívateľov pre označenie došlo k chybe.")
+                    }, status=404)
 
         return render(request, "app/community.html", {
             "logged_in_user": {
@@ -3235,7 +3616,12 @@ def loadPostsView(request):
 
     except Exception as e:
         captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-        return JsonResponse({"success": False, "has_next": False, "message": _("Pri hľadaní príspevkov došlo k chybe.")}, status=404)
+
+        return JsonResponse({
+            "success": False, 
+            "has_next": False, 
+            "message": _("Pri hľadaní príspevkov došlo k chybe.")
+        }, status=404)
 
     # Creates Valid Format Of Posts For JSON Response
     posts = [
@@ -3300,9 +3686,20 @@ def loadPostsView(request):
             "saved_posts": list(logged_in_user.saved_posts.values_list("id", flat=True))
         }
 
-        return JsonResponse({"success": True, "has_next": page_posts.has_next(), "logged_in_user": logged_in_user, "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
+        return JsonResponse({
+            "success": True, 
+            "has_next": page_posts.has_next(), 
+            "logged_in_user": logged_in_user, 
+            "posts": posts, 
+            "message": _("Príspevky boli úspešné nájdené.")
+        }, status=200)
 
-    return JsonResponse({"success": True, "has_next": page_posts.has_next(), "posts": posts, "message": _("Príspevky boli úspešné nájdené.")}, status=200)
+    return JsonResponse({
+        "success": True, 
+        "has_next": page_posts.has_next(), 
+        "posts": posts, 
+        "message": _("Príspevky boli úspešné nájdené.")
+    }, status=200)
 
 def loadPostCommentsView(request, post_id):
     page_number = request.GET.get("page", 1) # Gets The Current Page Number
@@ -3923,11 +4320,18 @@ def profileView(request, username):
 
                                 reported_user.save() # Saves The Updated User
 
-                            return JsonResponse({"success": True, "message": _("Nahlásenie bolo úspešne odoslané.")}, status=200)
+                            return JsonResponse({
+                                "success": True, 
+                                "message": _("Nahlásenie bolo úspešne odoslané.")
+                            }, status=200)
 
                         except Exception as e:
                             captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                            return JsonResponse({"success": False, "message": _("Pri odosielaní nahlásenia došlo k chybe.")}, status=500)
+
+                            return JsonResponse({
+                                "success": False, 
+                                "message": _("Pri odosielaní nahlásenia došlo k chybe.")
+                            }, status=500)
 
                     # Suspend User
                     if request.headers.get("X-Requested-Action") == "suspend-user":
@@ -3948,13 +4352,23 @@ def profileView(request, username):
                                     _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
                                 )
 
-                                return JsonResponse({"success": True, "message": _("Užívateľ bol obmedzený.")}, status=200)
+                                return JsonResponse({
+                                    "success": True, 
+                                    "message": _("Užívateľ bol obmedzený.")
+                                }, status=200)
 
-                            return JsonResponse({"success": False, "message": _("Užívateľa môže obmedziť len správca.")}, status=401)
+                            return JsonResponse({
+                                "success": False, 
+                                "message": _("Užívateľa môže obmedziť len správca.")
+                            }, status=401)
 
                         except Exception as e:
                             captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-                            return JsonResponse({"success": False, "message": _("Pri pokuse o obmedzenie užívateľa došlo k chybe.")}, status=500)
+                            
+                            return JsonResponse({
+                                "success": False, 
+                                "message": _("Pri pokuse o obmedzenie užívateľa došlo k chybe.")
+                            }, status=500)
 
                 return render(request, "app/profile.html", {
                     "logged_in_user": {
