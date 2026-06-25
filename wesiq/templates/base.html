@@ -126,9 +126,13 @@
             {% block search_bar %}{% endblock search_bar %}
 
             <div class="center">
-                <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
+                <div class="hero">
+                    <h1 class="heading"><a href="" target="_self">{% block heading %}{% endblock heading %}</a></h1>
 
-                {% block buttons %}{% endblock buttons %}
+                    {% block subheading %}{% endblock subheading %}
+                    {% block buttons %}{% endblock buttons %}
+                    {% block features %}{% endblock features %}
+                </div>
             </div>
         </div>
     </header>

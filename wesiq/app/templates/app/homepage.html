@@ -72,12 +72,38 @@
 
 {% block heading %}Wesiq{% endblock heading %}
 
+{% block subheading %}
+    <p class="subheading">{% translate "Váš digitálny svet fitness, komunity a znalostí" %}</p>
+{% endblock subheading %}
+
 {% block buttons %}
     <div class="buttons">
         <button class="login_button">{% translate "Prihlásiť" %}</button>
         <button class="registration_button">{% translate "Zaregistrovať" %}</button>
     </div>
 {% endblock buttons %}
+
+{% block features %}
+    <div class="features">
+        <a class="hero_feature_card" href="{% url 'training_session_url' %}" target="_self">
+            <i class="fa-solid fa-dumbbell"></i>
+            <span class="feature_title">{% translate "Aktivita" %}</span>
+            <span class="feature_desc">{% translate "Tréningové plány" %}</span>
+        </a>
+
+        <a class="hero_feature_card" href="{% url 'blog_url' %}" target="_self">
+            <i class="fa-solid fa-newspaper"></i>
+            <span class="feature_title">{% translate "Blog" %}</span>
+            <span class="feature_desc">{% translate "Články a tipy" %}</span>
+        </a>
+
+        <a class="hero_feature_card" href="{% url 'community_url' %}" target="_self">
+            <i class="fa-solid fa-users"></i>
+            <span class="feature_title">{% translate "Komunita" %}</span>
+            <span class="feature_desc">{% translate "Spojte sa s ostatnými" %}</span>
+        </a>
+    </div>
+{% endblock features %}
 
 {% block content %}
     <dialog class="login_form_dialog">
@@ -222,204 +248,221 @@
         </form>
     </dialog>
 
-    <div class="reviews">
-        <h2>{% translate "Čo si myslia ostatní?" %}</h2>
+    <section class="homepage_section reviews_section">
+        <div class="reviews">
+            <h2 class="section_title">{% translate "Čo si myslia ostatní?" %}</h2>
 
-        <div class="reviews_info_container">
-            <div class="graph">
-                {% for key, value in reviews_amount_by_stars.items %}
-                    <div class="one_column">
-                        <p class="rating"><span>{{ key }}</span><i class="fa-solid fa-star"></i></p> <!-- https://fontawesome.com/icons/star -->
+            <div class="reviews_info_container">
+                <div class="graph">
+                    {% for key, value in reviews_amount_by_stars.items %}
+                        <div class="one_column">
+                            <p class="rating"><span>{{ key }}</span><i class="fa-solid fa-star"></i></p> <!-- https://fontawesome.com/icons/star -->
 
-                        <div 
-                            class="tooltip" 
-                            data-tooltip="
-                                {% if value == 0 or value >= 5 %}
-                                    {{ value }} {% translate "recenzií" %}
+                            <div 
+                                class="tooltip" 
+                                data-tooltip="
+                                    {% if value == 0 or value >= 5 %}
+                                        {{ value }} {% translate "recenzií" %}
 
-                                {% elif value == 1 %}
-                                    {{ value }} {% translate "recenzia" %}
-                                
-                                {% elif value > 1 or value <= 4 %}
-                                    {{ value }} {% translate "recenzie" %}
-                                
-                                {% endif %}
-                            "
-                        >
-                            <div class="review_bar"></div>
+                                    {% elif value == 1 %}
+                                        {{ value }} {% translate "recenzia" %}
+                                    
+                                    {% elif value > 1 or value <= 4 %}
+                                        {{ value }} {% translate "recenzie" %}
+                                    
+                                    {% endif %}
+                                "
+                            >
+                                <div class="review_bar"></div>
+                            </div>
+
+                            <p class="counter" data-amount="{{ value }}">0</p>
                         </div>
+                    
+                    {% endfor %}
+                </div>
 
-                        <p class="counter" data-amount="{{ value }}">0</p>
+                <div class="average_rating">
+                    <div 
+                        class="tooltip" 
+                        data-tooltip="
+                            {% if total_reviews == 0 %}
+                                {% translate "Zatiaľ žiadne recenzie" %}
+
+                            {% else %}
+                                {% blocktranslate count amount=total_reviews %}
+                                    Na základe {{ amount }} recenzie
+
+                                {% plural %}
+                                    Na základe {{ amount }} recenzií
+
+                                {% endblocktranslate %}
+                            {% endif %}
+                        "
+                    >
+                        <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
+                    </div>
+
+                    <div class="stars">
+                        {% for index in "12345" %}
+                            <div 
+                                class="tooltip" 
+                                data-tooltip="
+                                    {% if total_reviews == 0 %}
+                                        {% translate "Zatiaľ žiadne recenzie" %}
+
+                                    {% else %}
+                                        {% blocktranslate count amount=total_reviews %}
+                                            Na základe {{ amount }} recenzie
+                                            
+                                        {% plural %}
+                                            Na základe {{ amount }} recenzií
+
+                                        {% endblocktranslate %}
+                                    {% endif %}
+                                "
+                            >
+                                <span class="star">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                        <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
+                                            <stop offset="0" stop-color="rgb(235, 185, 20)"></stop>
+                                            <stop offset="0%" stop-color="rgb(235, 185, 20)"></stop>
+                                            <stop offset="0%" stop-color="#cccccc"></stop>
+                                        </linearGradient>
+
+                                        <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke-linecap="round" stroke-linejoin="round"></polygon>
+                                    </svg>
+                                </span>
+                            </div>
+                            
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="found_reviews">
+                {% if reviews|length == 1 %}
+                    {% translate "Našla sa 1 recenzia." %}
+
+                {% elif reviews|length > 1 and reviews|length < 5 %}
+                    <p>
+                        {% blocktranslate with amount=reviews|length %}
+                            Našli sa <span>{{ amount }}</span> recenzie.
+                        {% endblocktranslate %}
+                    </p>
+
+                {% else %}
+                    <p>
+                        {% blocktranslate with amount=found_reviews %}
+                            Našlo sa <span>{{ amount }}</span> recenzií.
+                        {% endblocktranslate %}
+                    </p>
+                
+                {% endif %}
+            </div>
+
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="select_menus">
+                <div class="sort_select_menu">
+                    <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                    </button>
+
+                    <div class="select" tabindex="0">
+                        <span>{% translate "Najnovšie recenzie" %}</span>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+
+                    <div class="options_list" inert>
+                        <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest" tabindex="0"><i class="fa-regular fa-clock"></i><span>{% translate "Najnovšie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
+                        <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest" tabindex="0"><i class="fa-solid fa-clock-rotate-left"></i><span>{% translate "Najstaršie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
+                        <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best" tabindex="0"><i class="fa-solid fa-angles-up"></i><span>{% translate "Najlepšie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-up -->
+                        <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst" tabindex="0"><i class="fa-solid fa-angles-down"></i><span>{% translate "Najhoršie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-down -->
+                    </div>
+                </div>
+
+                <div class="rating_select_menu">
+                    <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
+                    </button>
+
+                    <div class="select" tabindex="0">
+                        <span>{% translate "Všetky kategórie" %}</span>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+
+                    <div class="options_list" inert>
+                        <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all" tabindex="0"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
+                        <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5" tabindex="0"><span aria-label="{% translate '5 hviezd' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                        <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4" tabindex="0"><span aria-label="{% translate '4 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                        <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3" tabindex="0"><span aria-label="{% translate '3 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                        <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2" tabindex="0"><span aria-label="{% translate '2 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                        <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1" tabindex="0"><span aria-label="{% translate '1 hviezda' %}"><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
+                    </div>
+                </div>
+            </div>
+
+            {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                {% if pending_reviews %}
+                    <div class="pending_reviews">
+                        {% for one_review in pending_reviews %}
+                            {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
+
+                        {% endfor %}
                     </div>
                 
+                {% endif %}
+            {% endif %}
+
+            <div class="all_reviews">
+                {% for one_review in page_reviews.object_list %}
+                    {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
+
                 {% endfor %}
-            </div>
 
-            <div class="average_rating">
-                <div 
-                    class="tooltip" 
-                    data-tooltip="
-                        {% if total_reviews == 0 %}
-                            {% translate "Zatiaľ žiadne recenzie" %}
-
-                        {% else %}
-                            {% blocktranslate count amount=total_reviews %}
-                                Na základe {{ amount }} recenzie
-
-                            {% plural %}
-                                Na základe {{ amount }} recenzií
-
-                            {% endblocktranslate %}
-                        {% endif %}
-                    "
-                >
-                    <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
-                </div>
-
-                <div class="stars">
-                    {% for index in "12345" %}
-                        <div 
-                            class="tooltip" 
-                            data-tooltip="
-                                {% if total_reviews == 0 %}
-                                    {% translate "Zatiaľ žiadne recenzie" %}
-
-                                {% else %}
-                                    {% blocktranslate count amount=total_reviews %}
-                                        Na základe {{ amount }} recenzie
-                                        
-                                    {% plural %}
-                                        Na základe {{ amount }} recenzií
-
-                                    {% endblocktranslate %}
-                                {% endif %}
-                            "
-                        >
-                            <span class="star">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
-                                    <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
-                                        <stop offset="0" stop-color="rgb(235, 185, 20)"></stop>
-                                        <stop offset="0%" stop-color="rgb(235, 185, 20)"></stop>
-                                        <stop offset="0%" stop-color="#cccccc"></stop>
-                                    </linearGradient>
-
-                                    <polygon points="8.94 0 11.05 6.49 17.88 6.49 12.35 10.51 14.46 17 8.94 12.99 3.41 17 5.52 10.51 0 6.49 6.83 6.49 8.94 0" fill="url(#float_star_{{ index }})" stroke-linecap="round" stroke-linejoin="round"></polygon>
-                                </svg>
-                            </span>
-                        </div>
-                        
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="found_reviews">
-            {% if reviews|length == 1 %}
-                {% translate "Našla sa 1 recenzia." %}
-
-            {% elif reviews|length > 1 and reviews|length < 5 %}
-                <p>
-                    {% blocktranslate with amount=reviews|length %}
-                        Našli sa <span>{{ amount }}</span> recenzie.
-                    {% endblocktranslate %}
-                </p>
-
-            {% else %}
-                <p>
-                    {% blocktranslate with amount=found_reviews %}
-                        Našlo sa <span>{{ amount }}</span> recenzií.
-                    {% endblocktranslate %}
-                </p>
-            
-            {% endif %}
-        </div>
-
-        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-        <div class="select_menus">
-            <div class="sort_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </button>
-
-                <div class="select" tabindex="0">
-                    <span>{% translate "Najnovšie recenzie" %}</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list" inert>
-                    <div class="option {% if request.GET.sort == "latest" %}selected{% endif %}" data-sort="latest" tabindex="0"><i class="fa-regular fa-clock"></i><span>{% translate "Najnovšie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock -->
-                    <div class="option {% if request.GET.sort == "oldest" %}selected{% endif %}" data-sort="oldest" tabindex="0"><i class="fa-solid fa-clock-rotate-left"></i><span>{% translate "Najstaršie recenzie" %}</span></div> <!-- https://fontawesome.com/icons/clock-rotate-left -->
-                    <div class="option {% if request.GET.sort == "best" %}selected{% endif %}" data-sort="best" tabindex="0"><i class="fa-solid fa-angles-up"></i><span>{% translate "Najlepšie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-up -->
-                    <div class="option {% if request.GET.sort == "worst" %}selected{% endif %}" data-sort="worst" tabindex="0"><i class="fa-solid fa-angles-down"></i><span>{% translate "Najhoršie hodnotenie" %}</span></div> <!-- https://fontawesome.com/icons/angles-down -->
-                </div>
-            </div>
-
-            <div class="rating_select_menu">
-                <button class="refresh" title="{% translate 'Obnoviť predvolené filtre' %}" aria-label="{% translate 'Obnoviť predvolené filtre' %}">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> <!-- https://fontawesome.com/icons/arrow-rotate-right -->
-                </button>
-
-                <div class="select" tabindex="0">
-                    <span>{% translate "Všetky kategórie" %}</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list" inert>
-                    <div class="option {% if request.GET.rating == "all" %}selected{% endif %}" data-rating="all" tabindex="0"><i class="fa-solid fa-star-half-stroke"></i><span>{% translate "Všetky recenzie" %}</span></div> <!-- https://fontawesome.com/icons/star-half-stroke -->
-                    <div class="option {% if request.GET.rating == "5" %}selected{% endif %}" data-rating="5" tabindex="0"><span aria-label="{% translate '5 hviezd' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "4" %}selected{% endif %}" data-rating="4" tabindex="0"><span aria-label="{% translate '4 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "3" %}selected{% endif %}" data-rating="3" tabindex="0"><span aria-label="{% translate '3 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "2" %}selected{% endif %}" data-rating="2" tabindex="0"><span aria-label="{% translate '2 hviezdy' %}"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                    <div class="option {% if request.GET.rating == "1" %}selected{% endif %}" data-rating="1" tabindex="0"><span aria-label="{% translate '1 hviezda' %}"><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span></div> <!-- https://fontawesome.com/icons/star -->
-                </div>
-            </div>
-        </div>
-
-        {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
-            {% if pending_reviews %}
-                <div class="pending_reviews">
-                    {% for one_review in pending_reviews %}
-                        {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
-
-                    {% endfor %}
-                </div>
-            
-            {% endif %}
-        {% endif %}
-
-        <div class="all_reviews">
-            {% for one_review in page_reviews.object_list %}
-                {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
-
-            {% endfor %}
-
-            {% if page_reviews|length == 0 %}
-                <p class="no_reviews">{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>
-            
-            {% endif %}
-        </div>
-
-        {% if page_reviews.has_next %}
-            <div class="load_reviews_buttons">
-                <button class="load_more_reviews" data-page="2">{% translate "Zobraziť viac" %}</button>
-            </div>
-
-        {% endif %}
-        
-        {% if my_review %}
-            <div class="my_review">
-                <h3>{% translate "Moje&nbsp;hodnotenie" %}</h3>
+                {% if page_reviews|length == 0 %}
+                    <p class="no_reviews">{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>
                 
-                <div class="one_review" data-review_id="{{ my_review.id }}">
-                    <div class="reviewer">
-                        {% if my_review.user.username %}
-                            <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                {% endif %}
+            </div>
+
+            {% if page_reviews.has_next %}
+                <div class="load_reviews_buttons">
+                    <button class="load_more_reviews" data-page="2">{% translate "Zobraziť viac" %}</button>
+                </div>
+
+            {% endif %}
+            
+            {% if my_review %}
+                <div class="my_review">
+                    <h3>{% translate "Moje&nbsp;hodnotenie" %}</h3>
+                    
+                    <div class="one_review" data-review_id="{{ my_review.id }}">
+                        <div class="reviewer">
+                            {% if my_review.user.username %}
+                                <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                    <img 
+                                        class="profile_picture skeleton_loading" 
+                                        src="
+                                            {% if my_review.user.profile_picture_name %}
+                                                /media/images/{{ my_review.user.id }}/{{ my_review.user.profile_picture_name }}
+                    
+                                            {% else %}
+                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                            
+                                            {% endif %}
+                                        "
+                                        alt=""
+                                    >
+                                </a>
+                    
+                            {% else %}
                                 <img 
                                     class="profile_picture skeleton_loading" 
                                     src="
                                         {% if my_review.user.profile_picture_name %}
                                             /media/images/{{ my_review.user.id }}/{{ my_review.user.profile_picture_name }}
-                
+                    
                                         {% else %}
                                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                         
@@ -427,188 +470,173 @@
                                     "
                                     alt=""
                                 >
-                            </a>
+                    
+                            {% endif %}
+                    
+                            <p class="username">
+                                {% if my_review.user == None %}
+                                    {% translate "Neexistujúci účet" %}
+                    
+                                {% else %}
+                                    <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ my_review.user.username }}</a>
+                    
+                                {% endif %}
+                                
+                                <span class="date">
+                                    - {{ my_review.creation_time|date:"d.m. Y" }}
+                                        
+                                    {% if my_review.last_edit != None %}
+                                        ({% translate "upravené" %})
+                    
+                                    {% endif %}
+                                </span>
+                            </p>
+                    
+                            <button 
+                                class="show_review_properties_button" 
+                                popovertarget="review_properties"
+                                style="anchor-name: --show_review_properties_button;"
+                                title="{% translate 'Viac...' %}"
+                                aria-label="{% translate 'Viac...' %}"
+                            >
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                            </button>
+                    
+                            <div 
+                                class="review_properties" 
+                                id="review_properties"
+                                popover
+                                style="position-anchor: --show_review_properties_button;"
+                            >
+                                <a class="edit_review" href="{% url 'edit_review_url' %}">
+                                    <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+                                    <span>{% translate "Upraviť" %}</span>
+                                </a>
                 
-                        {% else %}
-                            <img 
-                                class="profile_picture skeleton_loading" 
-                                src="
-                                    {% if my_review.user.profile_picture_name %}
-                                        /media/images/{{ my_review.user.id }}/{{ my_review.user.profile_picture_name }}
+                                <button 
+                                    class="delete_review_button"
+                                    popovertarget="delete_review"
+                                    style="anchor-name: --delete_review_button;"
+                                >
+                                    <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                    <span>{% translate "Vymazať" %}</span>
+                                </button>
+                    
+                                <button 
+                                    class="hide_review_properties_button" 
+                                    popovertarget="review_properties" 
+                                    popovertargetaction="hide"
+                                >
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zavrieť" %}</span>
+                                </button>
+                            </div>
+                    
+                            <div 
+                                class="delete_review" 
+                                id="delete_review"
+                                popover
+                                style="position-anchor: --delete_review_button;"
+                            >
+                                <p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
                 
+                                <button data-action="delete">
+                                    <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                    <span>{% translate "Vymazať" %}</span>
+                                </button>
+                
+                                <button 
+                                    popovertarget="delete_review"
+                                    popovertargetaction="hide"
+                                >
+                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                    <span>{% translate "Zrušiť" %}</span>
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="review">
+                            <div class="rating">
+                                {% for _ in "12345" %}
+                                    {% if forloop.counter <= my_review.rating %}
+                                        <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                    
                                     {% else %}
-                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
                                     
                                     {% endif %}
-                                "
-                                alt=""
-                            >
-                
-                        {% endif %}
-                
-                        <p class="username">
-                            {% if my_review.user == None %}
-                                {% translate "Neexistujúci účet" %}
-                
-                            {% else %}
-                                <a href="{% url 'profile_url' my_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ my_review.user.username }}</a>
-                
-                            {% endif %}
+                                {% endfor %}
+                            </div>
+                    
+                            {% if my_review.review %}
+                                <p>{{ my_review.review }}</p>
                             
-                            <span class="date">
-                                - {{ my_review.creation_time|date:"d.m. Y" }}
-                                    
-                                {% if my_review.last_edit != None %}
-                                    ({% translate "upravené" %})
-                
-                                {% endif %}
-                            </span>
-                        </p>
-                
-                        <button 
-                            class="show_review_properties_button" 
-                            popovertarget="review_properties"
-                            style="anchor-name: --show_review_properties_button;"
-                            title="{% translate 'Viac...' %}"
-                            aria-label="{% translate 'Viac...' %}"
-                        >
-                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                        </button>
-                
-                        <div 
-                            class="review_properties" 
-                            id="review_properties"
-                            popover
-                            style="position-anchor: --show_review_properties_button;"
-                        >
-                            <a class="edit_review" href="{% url 'edit_review_url' %}">
-                                <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
-                                <span>{% translate "Upraviť" %}</span>
-                            </a>
-            
-                            <button 
-                                class="delete_review_button"
-                                popovertarget="delete_review"
-                                style="anchor-name: --delete_review_button;"
-                            >
-                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                <span>{% translate "Vymazať" %}</span>
-                            </button>
-                
-                            <button 
-                                class="hide_review_properties_button" 
-                                popovertarget="review_properties" 
-                                popovertargetaction="hide"
-                            >
-                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                <span>{% translate "Zavrieť" %}</span>
-                            </button>
+                            {% endif %}
                         </div>
-                
-                        <div 
-                            class="delete_review" 
-                            id="delete_review"
-                            popover
-                            style="position-anchor: --delete_review_button;"
-                        >
-                            <p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
-            
-                            <button data-action="delete">
-                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                <span>{% translate "Vymazať" %}</span>
-                            </button>
-            
-                            <button 
-                                popovertarget="delete_review"
-                                popovertargetaction="hide"
-                            >
-                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                <span>{% translate "Zrušiť" %}</span>
-                            </button>
-                        </div>
-                    </div>
-                
-                    <div class="review">
-                        <div class="rating">
-                            {% for _ in "12345" %}
-                                {% if forloop.counter <= my_review.rating %}
-                                    <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                
-                                {% else %}
-                                    <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                                
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                
-                        {% if my_review.review %}
-                            <p>{{ my_review.review }}</p>
-                        
-                        {% endif %}
                     </div>
                 </div>
-            </div>
 
-        {% else %}
-            <div class="write_review_form_container">
-                <!-- Google reCAPTCHA V3 -->
-                <script>
-                    grecaptcha.ready(function() {
-                        // Write Review Form
-
-                        const write_review_form = document.querySelector(".write_review_form")
-                        if(write_review_form) {
-                            write_review_form.addEventListener("submit", function(event) {
-                                event.preventDefault()
-                                grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "write_review_form"}).then(function(token) {
-                                    document.getElementById("write_review_form_recaptcha").value = token
-                                    write_review_form.submit()
-                                })
-                            })
-                        }
-                    })
-                </script>
-
-                <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
-
-                <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
-                    {% csrf_token %}
-
-                    <div class="rating">
-                        {% for _ in "12345" %}
-                            <button type="button">
-                                <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                            </button>
-                            
-                        {% endfor %}
-
-                        {{ review_form.rating }}
-                    </div>
-
-                    <div class="review_container">
-                        {{ review_form.review }}
-
-                        <div class="icons">
-                            <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
-                                <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                            </button>
-                        </div>
-
-                        <div class="emoji_picker_container hidden">
-                            <emoji-picker></emoji-picker>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
-                    <input type="submit" value="{% translate 'Uverejniť' %}">
-
+            {% else %}
+                <div class="write_review_form_container">
                     <!-- Google reCAPTCHA V3 -->
-                    <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
-                </form>
-            </div>
+                    <script>
+                        grecaptcha.ready(function() {
+                            // Write Review Form
 
-        {% endif %}
-    </div>
+                            const write_review_form = document.querySelector(".write_review_form")
+                            if(write_review_form) {
+                                write_review_form.addEventListener("submit", function(event) {
+                                    event.preventDefault()
+                                    grecaptcha.execute("6Lfwh7osAAAAAExnZsXUSNJrACg7WX0guO88lCw1", {action: "write_review_form"}).then(function(token) {
+                                        document.getElementById("write_review_form_recaptcha").value = token
+                                        write_review_form.submit()
+                                    })
+                                })
+                            }
+                        })
+                    </script>
+
+                    <script src="{% static 'app/ts/dist/components/reviews.js' %}" type="module"></script>
+
+                    <form class="write_review_form" action="{% url 'homepage_url' %}" method="POST">
+                        {% csrf_token %}
+
+                        <div class="rating">
+                            {% for _ in "12345" %}
+                                <button type="button">
+                                    <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                                </button>
+                                
+                            {% endfor %}
+
+                            {{ review_form.rating }}
+                        </div>
+
+                        <div class="review_container">
+                            {{ review_form.review }}
+
+                            <div class="icons">
+                                <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
+                                    <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                                </button>
+                            </div>
+
+                            <div class="emoji_picker_container hidden">
+                                <emoji-picker></emoji-picker>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="write_review_form_submit" value="write_review_form_submit">
+                        <input type="submit" value="{% translate 'Uverejniť' %}">
+
+                        <!-- Google reCAPTCHA V3 -->
+                        <input type="hidden" name="g-recaptcha-response" id="write_review_form_recaptcha">
+                    </form>
+                </div>
+
+            {% endif %}
+        </div>
+    </section>
 
     <!-- Google reCAPTCHA V3 -->
     <script>
@@ -628,10 +656,11 @@
         })
     </script>
     
+    <section class="homepage_section contact_section">
     <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <h2>{% translate "Kontaktujte nás" %}</h2>
+        <h2 class="section_title">{% translate "Kontaktujte nás" %}</h2>
 
         {{ contact_form.first_name }}
         {{ contact_form.last_name }}
@@ -676,7 +705,9 @@
         <!-- Google reCAPTCHA V3 -->
         <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
     </form>
+    </section>
 
+    <section class="homepage_section support_section">
     <form class="credit_card_form">
         <div class="credit_card">
             <div class="front">
@@ -721,6 +752,7 @@
             <button class="donate_button" type="button" data-amount="500">5€</button>
         </div>
     </form>
+    </section>
 {% endblock content %}
 
 {% block script %}

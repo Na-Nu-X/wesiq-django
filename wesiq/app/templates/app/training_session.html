@@ -41,234 +41,451 @@
 {% endblock banner %}
 
 {% block content %}
-    <div class="activity">
-        <div class="record_activity">
-            <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
+    <div class="training_page">
+        <header class="training_page_header">
+            <h1 class="page_title">{% translate "Tréning" %}</h1>
+            <p class="page_subtitle">{% translate "Sledujte aktivitu, plánujte tréningy a plňte výzvy" %}</p>
+        </header>
 
-            <div class="buttons">
-                <button class="play"><i class="fa-solid fa-play"></i></button> <!-- https://fontawesome.com/icons/play -->
-                {% comment %} <a class="play"><i class="fa-solid fa-pause"></i></a> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
-                <button class="stop"><i class="fa-solid fa-stop"></i></button> <!-- https://fontawesome.com/icons/stop -->
-            </div>
-        </div>
+        <section class="training_section activity_section">
+            <div class="activity">
+                <div class="record_activity">
+                    <h3 class="timer"><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h3>
 
-        {% if training_plan|length == 0 %}
-            {% if not request.session.logged_in_user_id %}
-                <p class="no_logged_in">
-                    {% translate "Zdá sa, že nie ste prihlásený." %}<br>
-                    {% translate "Bez prihlásenia nie je možné ukladať vašu aktivitu." %}<br>
-                    <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
-                </p>
-
-            {% else %}
-                <p class="no_training_plan">
-                    {% translate "Zatiaľ nemáte žiaden tréningový plán." %}<br>
-                    <a href="{% url 'manage_training_plans_url' %}" title="{% translate 'Moje tréningové plány' %}" target="_self">{% translate "Vytvorte si prvý." %}</a>
-                </p>
-
-            {% endif %}
-
-            <script src="{% static 'app/ts/dist/pages/training_session/components/basic_training_session.js' %}" type="module"></script>
-
-        {% elif training_plan|length > 0 %}
-            <template class="exercise_template">
-                <div class="exercise" inert>
-                    <div class="left">
-                        <h3 class="title"></h3>
-                        
-                        <p class="reps">1x</p>
-                        <p class="sets"><span class="current">1</span>/<span class="total">1</span></p>
-                    </div>
-
-                    <button class="next_exercise_button">
-                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                    </button>
-                </div>
-            </template>
-        
-            <template class="warm_up_template">
-                <div class="exercise warm_up" data-unit="seconds" inert>
-                    <h3 class="title">Warm Up</h3>
-                    
-                    <div class="warm_up_timer">
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                class="progress"
-                            />
-                        </svg>
-                        
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                class="progress_background"
-                            />
-                        </svg>
-    
-                        <p class="countdown">5:00</p>
-                    </div>
-
-                    <div class="skip_warm_up_button">
-                        <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                    <div class="buttons">
+                        <button class="play"><i class="fa-solid fa-play"></i></button> <!-- https://fontawesome.com/icons/play -->
+                        {% comment %} <a class="play"><i class="fa-solid fa-pause"></i></a> <!-- https://fontawesome.com/icons/pause --> {% endcomment %}
+                        <button class="stop"><i class="fa-solid fa-stop"></i></button> <!-- https://fontawesome.com/icons/stop -->
                     </div>
                 </div>
-            </template>
 
-            <div class="training_plan_container">
-                {% for one_exercise in training_plan %}
-                    <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
+                {% if training_plan|length == 0 %}
+                    {% if not request.session.logged_in_user_id %}
+                        <p class="no_logged_in">
+                            {% translate "Zdá sa, že nie ste prihlásený." %}<br>
+                            {% translate "Bez prihlásenia nie je možné ukladať vašu aktivitu." %}<br>
+                            <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
+                        </p>
+
+                    {% else %}
+                        <p class="no_training_plan">
+                            {% translate "Zatiaľ nemáte žiaden tréningový plán." %}<br>
+                            <a href="{% url 'manage_training_plans_url' %}" title="{% translate 'Moje tréningové plány' %}" target="_self">{% translate "Vytvorte si prvý." %}</a>
+                        </p>
+
+                    {% endif %}
+
+                    <script src="{% static 'app/ts/dist/pages/training_session/components/basic_training_session.js' %}" type="module"></script>
+
+                {% elif training_plan|length > 0 %}
+                    <template class="exercise_template">
+                        <div class="exercise" inert>
+                            <div class="left">
+                                <h3 class="title"></h3>
+                                
+                                <p class="reps">1x</p>
+                                <p class="sets"><span class="current">1</span>/<span class="total">1</span></p>
+                            </div>
+
+                            <button class="next_exercise_button">
+                                <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                            </button>
+                        </div>
+                    </template>
                 
-                {% endfor %}
+                    <template class="warm_up_template">
+                        <div class="exercise warm_up" data-unit="seconds" inert>
+                            <h3 class="title">Warm Up</h3>
+                            
+                            <div class="warm_up_timer">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle
+                                        cx="50"
+                                        cy="50"
+                                        r="40"
+                                        class="progress"
+                                    />
+                                </svg>
+                                
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle
+                                        cx="50"
+                                        cy="50"
+                                        r="40"
+                                        class="progress_background"
+                                    />
+                                </svg>
+            
+                                <p class="countdown">5:00</p>
+                            </div>
 
-                <div class="training_plan">
-                    <div class="start_training active">
-                        <div class="left">
-                            <p>{% translate "Tréningový plán" %}</p>
-                            <h3>{% translate "Začať tréning" %}</h3>
-
-                            <p class="title"></p>
+                            <div class="skip_warm_up_button">
+                                <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                            </div>
                         </div>
+                    </template>
+
+                    <div class="training_plan_container">
+                        {% for one_exercise in training_plan %}
+                            <div class="one_exercise_data" data-training_plan_key="{{ one_exercise.training_plan_key }}" data-day="{{ one_exercise.day }}" data-type="{{ one_exercise.type }}" data-exercise="{{ one_exercise.exercise }}" data-periods="{{ one_exercise.periods }}" data-unit="{{ one_exercise.unit }}" data-order="{{ one_exercise.order }}"></div>
                         
-                        <button class="start_training_button">
-                            <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
-                        </button>
+                        {% endfor %}
+
+                        <div class="training_plan">
+                            <div class="start_training active">
+                                <div class="left">
+                                    <p>{% translate "Tréningový plán" %}</p>
+                                    <h3>{% translate "Začať tréning" %}</h3>
+
+                                    <p class="title"></p>
+                                </div>
+                                
+                                <button class="start_training_button">
+                                    <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
+                                </button>
+                            </div>
+
+                            <div class="finish_training" inert>
+                                <div class="left">
+                                    <p>{% translate "Tréningový plán" %}</p>
+                                    <h3>{% translate "Dokončiť tréning" %}</h3>
+
+                                    <p class="title"></p>
+                                </div>
+
+                                <button class="finish_training_button">
+                                    <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
+                                </button>
+                            </div>
+
+                            <div class="break" inert>
+                                <button class="add_time">
+                                    {% comment %} <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half --> {% endcomment %}
+                                    <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
+                                    <p class="add_time_message">+30s</p>
+                                </button>
+
+                                <div class="break_timer">
+                                    <svg width="100" height="100" viewBox="0 0 100 100">
+                                        <circle
+                                            cx="50"
+                                            cy="50"
+                                            r="40"
+                                            class="progress"
+                                        />
+                                    </svg>
+
+                                    <svg width="100" height="100" viewBox="0 0 100 100">
+                                        <circle
+                                            cx="50"
+                                            cy="50"
+                                            r="40"
+                                            class="progress_background"
+                                        />
+                                    </svg>
+
+                                    <p><span class="minutes"></span>:<span class="seconds"></span></p>
+                                </div>
+
+                                <button class="skip_break_button">
+                                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                </button>
+                            </div>
+
+                            <p class="current_activity_info" data-is_xp_boost_available={{ is_xp_boost_available }} data-xp_boost_expiration_time={{ xp_boost_expiration_time }}>
+                                <span>
+                                    {% if is_xp_boost_available %}
+                                        {% translate "Je dostupné navýšenie XP" %}
+
+                                    {% else %}
+                                        {% translate "Žiadne aktívne navýšenie XP" %}
+
+                                    {% endif %}
+                                </span>
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="finish_training" inert>
-                        <div class="left">
-                            <p>{% translate "Tréningový plán" %}</p>
-                            <h3>{% translate "Dokončiť tréning" %}</h3>
+                    <script src="{% static 'app/ts/dist/pages/training_session/components/training_session.js' %}" type="module"></script>
+                    <script src="{% static 'app/ts/dist/pages/training_session/components/todo.js' %}" type="module"></script>
 
-                            <p class="title"></p>
+                {% endif %}
+
+                <div class="previous_activity">
+                    <div class="top">
+                        <div class="average_activity_time_container">
+                            <p>
+                                <span class="title"><i class="fa-regular fa-clock"></i> {% translate "priemer&nbsp;/ 7&nbsp;dní" %}</span> <!-- https://fontawesome.com/icons/clock -->
+
+                                {% if average_activity_time %}
+                                    <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
+
+                                {% else %}
+                                    <span class="average_activity_time" data-average_activity_time="0">0</span>
+
+                                {% endif %}
+                            </p>
+                        </div> <!-- https://fontawesome.com/icons/clock -->
+
+                        <div class="activities_amount_container">
+                            <p>
+                                <span class="title"><i class="fa-regular fa-calendar"></i> {% translate "počet&nbsp;/ 7&nbsp;dní" %}</span>
+                                
+                                {% if activities_amount %}
+                                    <span class="activities_amount">{{ activities_amount }}</span>
+                                    
+                                {% else %}
+                                    <span class="activities_amount">0</span>
+                                
+                                {% endif %}
+                            </p>
+                        </div> <!-- https://fontawesome.com/icons/calendar -->
+                    </div>
+
+                    <div class="bottom">
+                        <div class="latest_activity_container">
+                            <p>
+                                <i class="fa-solid fa-list"></i>
+
+                                {% if latest_activity %}
+                                    <span>{{ latest_activity.elapsed_time|format_time }}</span>
+                                    <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
+                                    <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
+
+                                {% else %}
+                                    <span class="no_latest_activity">{% translate "posledná aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
+
+                                {% endif %}
+                            </p>
+                        </div> <!-- https://fontawesome.com/icons/list -->
+                        
+                        <div class="longest_activity_container">
+                            <p>
+                                <i class="fa-solid fa-medal"></i>
+
+                                {% if longest_activity %}
+                                    <span>{{ longest_activity.elapsed_time|format_time }}</span>
+                                    <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
+                                    <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
+
+                                {% else %}
+                                    <span class="no_longest_activity">{% translate "najdlhšia aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
+
+                                {% endif %}
+                            </p>
+                        </div> <!-- https://fontawesome.com/icons/medal -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="training_section tasks_section">
+            <div class="todo">
+                <audio class="success_sound" src="{% static 'audio/success.mp3' %}" type="audio/mpeg"></audio> <!-- https://pixabay.com/ -->
+
+                <div class="official_tasks">
+                    <h3 class="section_title">{% translate "Dnešné&nbsp;výzvy" %}</h3>
+                    
+                    {% if request.session.logged_in_user_id %}
+                        <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
+
+                        <div class="tasks">
+                            {% for one_task in official_tasks %}
+                                <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}" data-progress_percentage="{{ one_task.progress_percentage|unlocalize }}">
+                                    <div 
+                                        class="
+                                            checkbox 
+
+                                            {% if one_task.is_completed %}
+                                                checked
+                                            
+                                            {% endif %}
+                                        "
+                                    >
+                                    </div>
+
+                                    <p class="title">
+                                        {% if one_task.data == "30_minutes_activity" %}
+                                            {% translate "Zaznamenaj 30 minút aktivity." %}
+                                
+                                        {% elif one_task.data == "1_hour_activity" %}
+                                            {% translate "Zaznamenaj 1h aktivity." %}
+
+                                        {% elif one_task.data == "2_hours_activity" %}
+                                            {% translate "Zaznamenaj 2h aktivity." %}
+
+                                        {% elif one_task.data == "3_hours_activity" %}
+                                            {% translate "Zaznamenaj 3h aktivity." %}
+
+                                        {% elif one_task.data == "beat_average_activity_time" %}
+                                            {% translate "Prekonaj týždenný priemer času aktivity." %}
+
+                                        {% elif one_task.data == "complete_training_plan_activity" %}
+                                            {% translate "Dokonči aktivitu podľa tréningového plánu." %}
+
+                                        {% elif one_task.data == "2_activities" %}
+                                            {% translate "Zaznamenaj 2 aktivity." %}
+
+                                        {% elif one_task.data == "complete_all_official_tasks" %}
+                                            {% translate "Splň všetky dnešné výzvy." %}
+
+                                        {% elif one_task.data == "add_custom_task" %}
+                                            {% translate "Pridaj vlastnú úlohu." %}
+                                        
+                                        {% endif %}
+                                    </p>
+
+                                    <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
+                                </div>
+                            
+                            {% endfor %}
                         </div>
 
-                        <button class="finish_training_button">
-                            <i class="fa-solid fa-stop"></i> <!-- https://fontawesome.com/icons/stop -->
-                        </button>
+                    {% else %}
+                        <p class="no_logged_in">
+                            {% translate "Pre prístup k denným výzvam sa musíte" %}
+                            <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť." %}</a>
+                        </p>
+                    
+                    {% endif %}
+                </div>
+
+                <div class="custom_tasks">
+                    <h3 class="section_title">{% translate "Moje&nbsp;úlohy" %}</h3>
+
+                    <div class="info">
+                        <button class="delete_completed">{% translate "Vymazať dokončené" %}</button>
+                        <p class="tasks_amount"><span class="remaining">0</span> / <span class="total">0</span></p>
                     </div>
 
-                    <div class="break" inert>
-                        <button class="add_time">
-                            {% comment %} <i class="fa-solid fa-hourglass-half"></i> <!-- https://fontawesome.com/icons/hourglass-half --> {% endcomment %}
-                            <i class="fa-solid fa-plus"></i> <!-- https://fontawesome.com/icons/plus -->
-                            <p class="add_time_message">+30s</p>
-                        </button>
+                    <div class="tasks">
+                        <template class="custom_task_template">
+                            <div class="task" data-task_id="" draggable="true" tabindex="0">
+                                <div class="checkbox"></div>
+                                <label class="title" for=""></label>
+                                <p class="date"></p>
 
-                        <div class="break_timer">
-                            <svg width="100" height="100" viewBox="0 0 100 100">
-                                <circle
-                                    cx="50"
-                                    cy="50"
-                                    r="40"
-                                    class="progress"
-                                />
-                            </svg>
+                                <input 
+                                    type="checkbox" 
+                                    id=""
+                                >
 
-                            <svg width="100" height="100" viewBox="0 0 100 100">
-                                <circle
-                                    cx="50"
-                                    cy="50"
-                                    r="40"
-                                    class="progress_background"
-                                />
-                            </svg>
+                                <button 
+                                    class="show_custom_task_properties_button" 
+                                    popovertarget=""
+                                    style=""
+                                    title="{% translate 'Viac...' %}"
+                                    aria-label="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
 
-                            <p><span class="minutes"></span>:<span class="seconds"></span></p>
+                                <div 
+                                    class="custom_task_properties" 
+                                    id=""
+                                    popover
+                                    style=""
+                                >
+                                    <button data-action="delete">
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span>{% translate "Vymazať" %}</span>
+                                    </button>
+
+                                    <button 
+                                        class="hide_custom_task_properties_button" 
+                                        popovertarget=""
+                                        popovertargetaction="hide"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Zavrieť" %}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="add_task_container">
+                            <input class="new_task" type="text" placeholder="{% translate 'Pridať úlohu' %}" aria-label="{% translate 'Pridať úlohu' %}">
+                            <button class="add_task"><i class="fa-solid fa-plus"></i></button>
                         </div>
 
-                        <button class="skip_break_button">
-                            <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
-                        </button>
-                    </div>
+                        {% for one_task in custom_tasks %}
+                            <div class="task" data-task_id={{ one_task.id }} draggable="true" tabindex="0">
+                                <div class="checkbox"></div>
+                                <label class="title" for="custom_task_{{ one_task.id }}">{{ one_task.title }}</label>
+                                <p class="date">{{ one_task.created_at|date:"d.m." }}</p>
 
-                    <p class="current_activity_info" data-is_xp_boost_available={{ is_xp_boost_available }} data-xp_boost_expiration_time={{ xp_boost_expiration_time }}>
-                        <span>
-                            {% if is_xp_boost_available %}
-                                {% translate "Je dostupné navýšenie XP" %}
+                                <input 
+                                    type="checkbox" 
+                                    id="custom_task_{{ one_task.id }}"
+
+                                    {% if one_task.is_completed %}
+                                        checked
+                                    
+                                    {% endif %}
+                                >
+
+                                <button 
+                                    class="show_custom_task_properties_button" 
+                                    popovertarget="custom_task_properties_{{ one_task.id }}"
+                                    style="anchor-name: --show_custom_task_properties_button_{{ one_task.id }};"
+                                    title="{% translate 'Viac...' %}"
+                                    aria-label="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
+
+                                <div 
+                                    class="custom_task_properties" 
+                                    id="custom_task_properties_{{ one_task.id }}"
+                                    popover
+                                    style="position-anchor: --show_custom_task_properties_button_{{ one_task.id }};"
+                                >
+                                    <button data-action="delete">
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span>{% translate "Vymazať" %}</span>
+                                    </button>
+
+                                    <button 
+                                        class="hide_custom_task_properties_button" 
+                                        popovertarget="custom_task_properties_{{ one_task.id }}"
+                                        popovertargetaction="hide"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Zavrieť" %}</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="training_section history_section">
+            <h2 class="section_title">{% translate "História aktivít" %}</h2>
+
+            <div class="activity_history">
+                {% for one_activity in activity_history %}
+                    <div class="one_activity" tabindex="0">
+                        <p class="training_plan_title"><i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
+                            {% if one_activity.type %}
+                                {{ one_activity.type }}
 
                             {% else %}
-                                {% translate "Žiadne aktívne navýšenie XP" %}
+                                {% translate "Aktivita" %}
 
                             {% endif %}
-                        </span>
-                    </p>
-                </div>
-            </div>
+                        </p>
 
-            <script src="{% static 'app/ts/dist/pages/training_session/components/training_session.js' %}" type="module"></script>
-            <script src="{% static 'app/ts/dist/pages/training_session/components/todo.js' %}" type="module"></script>
-
-        {% endif %}
-
-        <div class="previous_activity">
-            <div class="top">
-                <div class="average_activity_time_container">
-                    <p>
-                        <span class="title"><i class="fa-regular fa-clock"></i> {% translate "priemer&nbsp;/ 7&nbsp;dní" %}</span> <!-- https://fontawesome.com/icons/clock -->
-
-                        {% if average_activity_time %}
-                            <span class="average_activity_time" data-average_activity_time="{{ average_activity_time }}">{{ average_activity_time_formatted }}</span>
-
-                        {% else %}
-                            <span class="average_activity_time" data-average_activity_time="0">0</span>
-
-                        {% endif %}
-                    </p>
-                </div> <!-- https://fontawesome.com/icons/clock -->
-
-                <div class="activities_amount_container">
-                    <p>
-                        <span class="title"><i class="fa-regular fa-calendar"></i> {% translate "počet&nbsp;/ 7&nbsp;dní" %}</span>
-                        
-                        {% if activities_amount %}
-                            <span class="activities_amount">{{ activities_amount }}</span>
-                            
-                        {% else %}
-                            <span class="activities_amount">0</span>
-                        
-                        {% endif %}
-                    </p>
-                </div> <!-- https://fontawesome.com/icons/calendar -->
-            </div>
-
-            <div class="bottom">
-                <div class="latest_activity_container">
-                    <p>
-                        <i class="fa-solid fa-list"></i>
-
-                        {% if latest_activity %}
-                            <span>{{ latest_activity.elapsed_time|format_time }}</span>
-                            <span class="xp"> {{ latest_activity.gained_xp }}XP</span>
-                            <span> {{ latest_activity.end_time|date:"d.m. Y" }}</span>
-
-                        {% else %}
-                            <span class="no_latest_activity">{% translate "posledná aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
-
-                        {% endif %}
-                    </p>
-                </div> <!-- https://fontawesome.com/icons/list -->
+                        <p>{{ one_activity.elapsed_time|format_time }}</p>
+                        <p>{{ one_activity.gained_xp }}XP</p>
+                        <p>{{ one_activity.end_time|date:"d.m." }}</p>
+                    </div>
                 
-                <div class="longest_activity_container">
-                    <p>
-                        <i class="fa-solid fa-medal"></i>
-
-                        {% if longest_activity %}
-                            <span>{{ longest_activity.elapsed_time|format_time }}</span>
-                            <span class="xp"> {{ longest_activity.gained_xp }}XP</span>
-                            <span> {{ longest_activity.end_time|date:"d.m. Y" }}</span>
-
-                        {% else %}
-                            <span class="no_longest_activity">{% translate "najdlhšia aktivita" %}: </span><span class="none">{% translate "žiadna" %}</span>
-
-                        {% endif %}
-                    </p>
-                </div> <!-- https://fontawesome.com/icons/medal -->
+                {% endfor %}
             </div>
-        </div>
+        </section>
     </div>
 
     <div class="activity_summary">
@@ -282,208 +499,6 @@
 
         <p class="training_plan_summary"></p>
         <div class="training_plan_summary_chart"><canvas>{% translate "Graf sa nepodarilo načítať." %}</canvas></div>
-    </div>
-
-    <div class="todo">
-        <audio class="success_sound" src="{% static 'audio/success.mp3' %}" type="audio/mpeg"></audio> <!-- https://pixabay.com/ -->
-
-        <div class="official_tasks">
-            <h3>{% translate "Dnešné&nbsp;výzvy" %}</h3>
-            
-            {% if request.session.logged_in_user_id %}
-                <p class="remaining_hours"><i class="fa-regular fa-clock"></i> {% blocktranslate %}Ostáva <span>{{ official_tasks_remaining_hours }}</span> hodín.{% endblocktranslate %}</p> <!-- https://fontawesome.com/icons/clock -->
-
-                <div class="tasks">
-                    {% for one_task in official_tasks %}
-                        <div class="task" data-task="{{ one_task.data }}" data-xp="{{ one_task.xp }}" data-progress_percentage="{{ one_task.progress_percentage|unlocalize }}">
-                            <div 
-                                class="
-                                    checkbox 
-
-                                    {% if one_task.is_completed %}
-                                        checked
-                                    
-                                    {% endif %}
-                                "
-                            >
-                            </div>
-
-                            <p class="title">
-                                {% if one_task.data == "30_minutes_activity" %}
-                                    {% translate "Zaznamenaj 30 minút aktivity." %}
-                        
-                                {% elif one_task.data == "1_hour_activity" %}
-                                    {% translate "Zaznamenaj 1h aktivity." %}
-
-                                {% elif one_task.data == "2_hours_activity" %}
-                                    {% translate "Zaznamenaj 2h aktivity." %}
-
-                                {% elif one_task.data == "3_hours_activity" %}
-                                    {% translate "Zaznamenaj 3h aktivity." %}
-
-                                {% elif one_task.data == "beat_average_activity_time" %}
-                                    {% translate "Prekonaj týždenný priemer času aktivity." %}
-
-                                {% elif one_task.data == "complete_training_plan_activity" %}
-                                    {% translate "Dokonči aktivitu podľa tréningového plánu." %}
-
-                                {% elif one_task.data == "2_activities" %}
-                                    {% translate "Zaznamenaj 2 aktivity." %}
-
-                                {% elif one_task.data == "complete_all_official_tasks" %}
-                                    {% translate "Splň všetky dnešné výzvy." %}
-
-                                {% elif one_task.data == "add_custom_task" %}
-                                    {% translate "Pridaj vlastnú úlohu." %}
-                                
-                                {% endif %}
-                            </p>
-
-                            <p class="xp"><span>{{ one_task.xp }}</span><span>XP</span></p>
-                        </div>
-                    
-                    {% endfor %}
-                </div>
-
-            {% else %}
-                <p class="no_logged_in">
-                    {% translate "Pre prístup k denným výzvam sa musíte" %}
-                    <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť." %}</a>
-                </p>
-            
-            {% endif %}
-        </div>
-
-        <div class="custom_tasks">
-            <h3>{% translate "Moje&nbsp;úlohy" %}</h3>
-
-            <div class="info">
-                <button class="delete_completed">{% translate "Vymazať dokončené" %}</button>
-                <p class="tasks_amount"><span class="remaining">0</span> / <span class="total">0</span></p>
-            </div>
-
-            <div class="tasks">
-                <template class="custom_task_template">
-                    <div class="task" data-task_id="" draggable="true" tabindex="0">
-                        <div class="checkbox"></div>
-                        <label class="title" for=""></label>
-                        <p class="date"></p>
-
-                        <input 
-                            type="checkbox" 
-                            id=""
-                        >
-
-                        <button 
-                            class="show_custom_task_properties_button" 
-                            popovertarget=""
-                            style=""
-                            title="{% translate 'Viac...' %}"
-                            aria-label="{% translate 'Viac...' %}"
-                        >
-                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                        </button>
-
-                        <div 
-                            class="custom_task_properties" 
-                            id=""
-                            popover
-                            style=""
-                        >
-                            <button data-action="delete">
-                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                <span>{% translate "Vymazať" %}</span>
-                            </button>
-
-                            <button 
-                                class="hide_custom_task_properties_button" 
-                                popovertarget=""
-                                popovertargetaction="hide"
-                            >
-                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                <span>{% translate "Zavrieť" %}</span>
-                            </button>
-                        </div>
-                    </div>
-                </template>
-
-                <div class="add_task_container">
-                    <input class="new_task" type="text" placeholder="{% translate 'Pridať úlohu' %}" aria-label="{% translate 'Pridať úlohu' %}">
-                    <button class="add_task"><i class="fa-solid fa-plus"></i></button>
-                </div>
-
-                {% for one_task in custom_tasks %}
-                    <div class="task" data-task_id={{ one_task.id }} draggable="true" tabindex="0">
-                        <div class="checkbox"></div>
-                        <label class="title" for="custom_task_{{ one_task.id }}">{{ one_task.title }}</label>
-                        <p class="date">{{ one_task.created_at|date:"d.m." }}</p>
-
-                        <input 
-                            type="checkbox" 
-                            id="custom_task_{{ one_task.id }}"
-
-                            {% if one_task.is_completed %}
-                                checked
-                            
-                            {% endif %}
-                        >
-
-                        <button 
-                            class="show_custom_task_properties_button" 
-                            popovertarget="custom_task_properties_{{ one_task.id }}"
-                            style="anchor-name: --show_custom_task_properties_button_{{ one_task.id }};"
-                            title="{% translate 'Viac...' %}"
-                            aria-label="{% translate 'Viac...' %}"
-                        >
-                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                        </button>
-
-                        <div 
-                            class="custom_task_properties" 
-                            id="custom_task_properties_{{ one_task.id }}"
-                            popover
-                            style="position-anchor: --show_custom_task_properties_button_{{ one_task.id }};"
-                        >
-                            <button data-action="delete">
-                                <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                <span>{% translate "Vymazať" %}</span>
-                            </button>
-
-                            <button 
-                                class="hide_custom_task_properties_button" 
-                                popovertarget="custom_task_properties_{{ one_task.id }}"
-                                popovertargetaction="hide"
-                            >
-                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                <span>{% translate "Zavrieť" %}</span>
-                            </button>
-                        </div>
-                    </div>
-
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div class="activity_history">
-        {% for one_activity in activity_history %}
-            <div class="one_activity" tabindex="0">
-                <p class="training_plan_title"><i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
-                    {% if one_activity.type %}
-                        {{ one_activity.type }}
-
-                    {% else %}
-                        {% translate "Aktivita" %}
-
-                    {% endif %}
-                </p>
-
-                <p>{{ one_activity.elapsed_time|format_time }}</p>
-                <p>{{ one_activity.gained_xp }}XP</p>
-                <p>{{ one_activity.end_time|date:"d.m." }}</p>
-            </div>
-        
-        {% endfor %}
     </div>
 {% endblock content %}
 

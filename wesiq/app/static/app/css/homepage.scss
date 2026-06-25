@@ -5,6 +5,13 @@
  General Styles
 ***************/
 
+// Homepage Palette
+
+$homepage-surface: rgba(8, 12, 28, 0.65);
+$homepage-surface-border: rgba(75, 75, 250, 0.22);
+$homepage-surface-hover: rgba(75, 75, 250, 0.14);
+$homepage-glow: rgba(75, 75, 250, 0.35);
+
 // Grecaptcha Badge
 
 .grecaptcha-badge {
@@ -17,6 +24,8 @@
 
 header {
     min-height: 100vh;
+    position: relative;
+    overflow: hidden;
 
     // Banner
 
@@ -24,16 +33,28 @@ header {
         // Reviews Informations
 
         .reviews_info {
-            all: unset;
             display: flex;
             align-items: center;
             gap: 5px;
             width: max-content;
+            padding: 5px 15px;
+            background: $homepage-surface;
+            border: 1px solid $homepage-surface-border;
+            border-radius: $big-border-radius;
+            backdrop-filter: blur(10px);
             cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 5px 20px $homepage-glow;
+                transform: translateY(-1px);
+            }
 
             p {
                 display: inline-block;
                 color: $secondary-color;
+                font-weight: semibold;
             }
 
             .fa-star {
@@ -57,22 +78,35 @@ header {
 
     .header_container {
         min-height: 100vh;
-        padding: 125px + 20px 20px 0px;
+        padding: 125px + 20px 20px 60px;
+
+        background:
+            radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.65) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($blue-color, 0.85) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($blue-color, 0.9) 0%, transparent 55%);
 
         &::before {
-            @include circle_decoration($top: -150px, $left: -150px, $width: 400px, $height: 400px);
+            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px, $color: transparentize($blue-color, 0.9));
         }
 
         &::after {
-            @include circle_decoration($top: 150px, $right: -150px, $width: 300px, $height: 300px);
+            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px, $color: transparentize($blue-color, 0.9));
             overflow: hidden;
         }
 
         .center {
             @include flex_center($direction: column);
+            gap: 25px;
             position: relative;
-            gap: 20px;
             height: calc(100vh - 125px - 20px - 40px);
+        }
+
+        .hero {
+            @include flex_center($direction: column);
+            gap: 25px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0px auto;
         }
 
         // Search Bar
@@ -82,10 +116,25 @@ header {
             max-width: 500px;
             width: 100%;
             margin: 0px auto;
+            animation: fadeIn 1s ease-out;
 
             .search_bar_container {
                 @include search_bar;
                 z-index: 100;
+
+                .search_bar {
+                    height: 40px;
+                    background: $homepage-surface;
+                    border-radius: $big-border-radius;
+                    border-color: $homepage-surface-border;
+                    backdrop-filter: blur(10px);
+
+                    &:hover,
+                    &:focus-visible {
+                        border-color: transparentize($blue-color, 0.25);
+                        box-shadow: 0 5px 25px transparentize($blue-color, 0.85);
+                    }
+                }
             }
 
             .search_result_container {
@@ -179,31 +228,41 @@ header {
         .heading {
             position: relative;
             text-align: center;
-
-            &::before {
-                content: "beta";
-                position: absolute;
-                top: -2px;
-                left: 0px;
-                color: transparentize($blue-color, 0.5);
-            }
     
             a {
+                line-height: 1;
                 text-decoration: none;
-                text-shadow: 0px 0px 5px $main-color;
-                color: transparentize($blue-color, 0.5);
-                animation: fadeIn 2s ease-out;
-                transition: letter-spacing 0.3s ease;
+                background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                filter: drop-shadow(0 0 40px transparentize($blue-color, 0.5));
+                transition: letter-spacing 0.3s ease, filter 0.3s ease;
+                animation: fadeIn 2s ease-out, heroGlow 4s ease-in-out infinite alternate;
     
                 font: {
                     family: $heading-font;
-                    size: 4em;
+                    size: clamp(2.8em, 8vw, 4.5em);
                 }
     
                 &:hover,
                 &:active {
-                    letter-spacing: 0.5px;
+                    letter-spacing: 2px;
+                    filter: drop-shadow(0 0 60px transparentize($blue-color, 0.25));
                 }
+            }
+        }
+
+        .subheading {
+            max-width: 500px;
+            margin: 0px;
+            text-align: center;
+            color: transparentize($secondary-color, 0.25);
+            animation: fadeIn 1.5s ease-out 0.2s both;
+
+            font: {
+                size: clamp(0.95em, 2.5vw, 1.15em);
+                weight: 300;
             }
         }
 
@@ -211,22 +270,103 @@ header {
 
         .buttons {
             display: flex;
-            gap: 20px;
-            max-width: 500px;
+            gap: 25px;
+            max-width: 450px;
             width: 100%;
-            animation: fadeInScale 1s ease-out forwards;
+            margin-top: 10px;
+            animation: fadeInScale 1s ease-out 0.5s both;
             
             .login_button,
             .registration_button {
-                @include blue_button;
-                color: transparentize($secondary-color, 0.2);
+                @include blue_button($width: 100%);
+                letter-spacing: 0.25px;
             }
 
             .login_button {
+                color: transparentize($secondary-color, 0.15);
+                background: transparentize($main-color, 0.85);
+                backdrop-filter: blur(5px);
+
+                &:hover,
+                &:focus-visible {
+                    background: $homepage-surface-hover;
+                }
+            }
+
+            .registration_button {
                 @include glow_animated_border;
-                // background-color: transparentize($main-color, 0.8);
+                color: $secondary-color;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
+                border-color: transparentize($blue-color, 0.2);
+
+                &:hover,
+                &:focus-visible {
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                }
             }
         }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 550px;
+            animation: fadeInScale 1s ease-out 0.5s both;
+
+            .hero_feature_card {
+                @include flex_center($direction: column);
+                gap: 5px;
+                padding: 20px 10px;
+                text-decoration: none;
+                background: $homepage-surface;
+                border: 1px solid $homepage-surface-border;
+                border-radius: $medium-border-radius;
+                backdrop-filter: blur(10px);
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+                &:hover,
+                &:focus-visible {
+                    transform: translateY(-5px);
+                    background: $homepage-surface-hover;
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.75);
+                }
+
+                i {
+                    font-size: 1.5em;
+                    color: $blue-color;
+                    transition: transform 0.3s ease;
+                }
+
+                &:hover i {
+                    transform: scale(1.1);
+                }
+
+                .feature_title {
+                    color: $secondary-color;
+                    font-weight: semibold;
+                    font-size: 0.9em;
+                }
+
+                .feature_desc {
+                    color: darken($secondary-color, 45%);
+                    font-size: 0.75em;
+                    text-align: center;
+                    line-height: 1.2;
+                }
+            }
+        }
+    }
+}
+
+@keyframes heroGlow {
+    0% {
+        filter: drop-shadow(0 0 30px transparentize($blue-color, 0.6));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 50px transparentize($blue-color, 0.4));
     }
 }
 
@@ -237,8 +377,58 @@ header {
 .content {
     max-width: $main-width;
     margin: 0px auto 20px;
-    padding-top: 20px;
+    padding-top: 40px;
     text-align: justify;
+
+    // Section panels
+
+    .homepage_section {
+        position: relative;
+        margin: 0px auto 50px;
+        padding: 50px 40px;
+        background: $homepage-surface;
+        border: 1px solid $homepage-surface-border;
+        border-radius: $medium-border-radius;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, $blue-color, transparent);
+            border-radius: 2px;
+        }
+
+        &.reviews_section {
+            max-width: $main-width;
+            padding: 50px 30px;
+        }
+
+        &.contact_section,
+        &.support_section {
+            max-width: 580px;
+            padding: 50px 40px 40px;
+        }
+    }
+
+    .section_title {
+        margin-bottom: 36px;
+        text-align: center;
+        background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        font: {
+            family: $article-heading-font;
+            size: clamp(1.8em, 4vw, 2.5em);
+        }
+    }
 
     // Login Form Dialog & Registration Form Dialog
 
@@ -439,7 +629,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: left 0.3s ease;
 
@@ -470,7 +660,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 20px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: right 0.3s ease;
 
@@ -592,7 +782,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: left 0.3s ease;
 
@@ -673,7 +863,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: left 0.3s ease;
 
@@ -697,7 +887,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 20px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: right 0.3s ease;
 
@@ -723,7 +913,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 1px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: right 0.3s ease;
 
@@ -752,7 +942,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: left 0.3s ease;
 
@@ -782,7 +972,7 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 1px;
-                    padding-bottom: 16px;
+                    padding-bottom: 15px;
                     padding-top: 19px;
                     transition: right 0.3s ease;
 
@@ -811,10 +1001,6 @@ header {
     // Reviews
 
     .reviews {
-        h2 {
-            font-family: $article-heading-font;
-        }
-
         .reviews_info_container {
             display: flex;
             flex-direction: column;
@@ -822,10 +1008,11 @@ header {
             align-items: center;
             gap: 1.5px; // Visually The Gap Is 10px
             max-width: $main-width;
-            margin: 10px 0px;
-            padding: 10px 0px;
-            background: radial-gradient(circle, transparentize($blue-color, 0.9) 0%, transparent 100%);
-            border-radius: $small-border-radius;
+            margin: 10px 0px 25px;
+            padding: 25px 30px;
+            background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
+            border: 1px solid $homepage-surface-border;
+            border-radius: $medium-border-radius;
 
             .graph {
                 max-width: 500px;
@@ -1052,14 +1239,22 @@ header {
                 position: relative;
                 opacity: 0;
                 max-width: 100%;
-                padding: 10px;
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $small-border-radius;
-                box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
+                padding: 15px;
+                background: transparentize($main-color, 0.65);
+                border: 1px solid $homepage-surface-border;
+                border-radius: $medium-border-radius;
+                box-shadow: 0 5px 20px transparentize($main-color, 0.6);
                 overflow: hidden;
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &::before {
-                    @include circle_decoration($top: 0px, $left: -80px, $width: 200px, $height: 200px, $color: transparentize($main-color, 0.8));
+                    @include circle_decoration($top: -40px, $left: -80px, $width: 200px, $height: 200px, $color: transparentize($blue-color, 0.90));
+                }
+
+                &:hover {
+                    transform: translateY(-2px);
+                    border-color: transparentize($blue-color, 0.5);
+                    box-shadow: 0 8px 28px transparentize($blue-color, 0.85);
                 }
 
                 &.animate {
@@ -1182,17 +1377,25 @@ header {
 
         .load_reviews_buttons {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             gap: 20px;
-            margin-top: 10px;
+            margin-top: 25px;
 
             .load_more_reviews,
             .hide_loaded_reviews {
                 all: unset;
+                padding: 10px 25px;
+                color: $secondary-color;
+                background: $homepage-surface-hover;
+                border: 1px solid $homepage-surface-border;
+                border-radius: $big-border-radius;
+                transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
     
                 &:hover,
                 &:focus-visible {
-                    text-decoration: underline;
+                    border-color: transparentize($blue-color, 0.25);
+                    background: transparentize($blue-color, 0.8);
+                    transform: translateY(-2px);
                     cursor: pointer;
                 }
             }
@@ -1201,10 +1404,11 @@ header {
         .write_review_form_container {
             max-width: $main-width;
             margin-top: 20px;
-            margin-bottom: 40px;
-            padding: 10px 0px;
-            background: radial-gradient(circle, transparentize($blue-color, 0.9) 0%, transparent 100%);
-            border-radius: $small-border-radius;
+            margin-bottom: 20px;
+            padding: 25px;
+            background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
+            border: 1px solid $homepage-surface-border;
+            border-radius: $medium-border-radius;
 
             .write_review_form {
                 max-width: 500px;
@@ -1313,14 +1517,18 @@ header {
 
     .contact_form { 
         @include animated_border;
-        max-width: 500px;
+        max-width: 100%;
         margin: 0px auto;
-        padding: 30px 50px 50px;
+        padding: 0px;
         text-align: center;
         border-radius: $medium-border-radius;
+        background: transparent;
+        border: none;
+        box-shadow: none;
 
-        h2 {
-            margin-bottom: 30px;
+        &::before,
+        &::after {
+            display: none;
         }
         
         input[type="text"], input[type="email"] {
@@ -1499,8 +1707,8 @@ header {
     // Credit Card
 
     .credit_card_form {
-        max-width: 500px;
-        margin: 50px auto 0px;
+        max-width: 100%;
+        margin: 0px auto;
         text-align: center;
 
         .credit_card {
@@ -1517,9 +1725,10 @@ header {
                 width: 85.6mm; // ISO / IEC 7810
                 aspect-ratio: 1.586 / 1; // ISO / IEC 7810
                 padding: 10px 15px;
-                background-color: lighten($main-color, 5%);
-                border: 1px solid transparentize($blue-color, 0.5);
+                background: linear-gradient(135deg, lighten($main-color, 10%) 0%, lighten($main-color, 5%) 50%, transparentize($blue-color, 0.90) 100%);
+                border: 1px solid $homepage-surface-border;
                 border-radius: $medium-border-radius;
+                box-shadow: 0 10px 40px transparentize($main-color, 0.5);
 
                 .group {
                     display: flex;
@@ -1712,6 +1921,8 @@ header {
 @media (max-width: 500px) {
     header {
         .header_container {
+            padding-bottom: 40px;
+
             .buttons {
                 flex-direction: column;
                 align-items: center;
@@ -1721,6 +1932,22 @@ header {
                 .registration_button {
                     width: 100%;
                 }
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                max-width: 280px;
+            }
+        }
+    }
+
+    .content {
+        .homepage_section {
+            padding: 30px 20px;
+            margin-bottom: 40px;
+
+            &.reviews_section {
+                padding: 30px 15px;
             }
         }
     }
