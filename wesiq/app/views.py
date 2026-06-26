@@ -3502,7 +3502,8 @@ def communityView(request):
             "logged_in_user": {
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
-                "private_account": logged_in_user.private_account
+                "private_account": logged_in_user.private_account,
+                "data_saving_mode": logged_in_user.data_saving_mode
             },
 
             "upload_post_form": uploadPostForm,
@@ -3992,7 +3993,8 @@ def postView(request, post_id):
                 "logged_in_user": {
                     "username": logged_in_user.username,
                     "role": logged_in_user.role,
-                    "profile_picture_name": logged_in_user.profile_picture_name
+                    "profile_picture_name": logged_in_user.profile_picture_name,
+                    "data_saving_mode": logged_in_user.data_saving_mode
                 },
 
                 "post": post
@@ -4007,7 +4009,6 @@ def postView(request, post_id):
         return render(request, "app/post.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
-                "role": logged_in_user.role,
                 "profile_picture_name": logged_in_user.profile_picture_name
             }
         })
@@ -4149,7 +4150,11 @@ def profileView(request, username):
 
                                         logged_in_user.last_edit = timezone.now()
 
+                                    data_saving_mode = edit_account_form.cleaned_data["data_saving_mode"] # Gets The Data Saving Mode Hidden Checkbox Value
                                     private_account = edit_account_form.cleaned_data["private_account"] # Gets The Private Account Hidden Checkbox Value
+
+                                    if logged_in_user.data_saving_mode != data_saving_mode:
+                                        logged_in_user.data_saving_mode = data_saving_mode
 
                                     if logged_in_user.private_account != private_account:
                                         logged_in_user.private_account = private_account
@@ -4256,6 +4261,7 @@ def profileView(request, username):
                     "last_name": logged_in_user.last_name,
                     "email_address": logged_in_user.email_address,
                     "phone_number": logged_in_user.phone_number,
+                    "data_saving_mode": logged_in_user.data_saving_mode,
                     "private_account": logged_in_user.private_account
                 })
 
@@ -4313,8 +4319,8 @@ def profileView(request, username):
                                         sendMail(
                                             reported_user,
                                             _("Odstavenie účtu"), # Subject
-                                            _("oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # Text Content
-                                            _('oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # HTML Content
+                                            _("oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # Text Content
+                                            _('oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # HTML Content
                                             _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
                                         )
 

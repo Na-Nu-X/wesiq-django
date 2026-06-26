@@ -164,6 +164,14 @@
                                 popover
                                 style="position-anchor: --show_account_properties_button;"
                             >
+                                <div class="data_saving_mode_container">
+                                    <i class="fa-solid fa-signal"></i> <!-- https://fontawesome.com/icons/signal -->
+                                    <span>{% translate "Šetrenie dát" %}</span>
+
+                                    {{ edit_account_form.data_saving_mode }}
+                                    <label for="data_saving_mode" tabindex="0"></label>
+                                </div>
+
                                 <div class="private_account_container">
                                     {% if not user.private_account %}
                                         <i class="fa-solid fa-lock-open"></i> <!-- https://fontawesome.com/icons/lock-open -->

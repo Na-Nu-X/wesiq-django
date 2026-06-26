@@ -217,7 +217,7 @@ function generateButtons(index:number, all_media:NodeListOf<HTMLDivElement>):voi
 export function initializeChangeVideoQuality(video:HTMLVideoElement, video_src:string, video_container:HTMLDivElement):void {
     // HLS Format
     if(Hls.isSupported()) {
-        const hls = new Hls()
+        const hls:any = new Hls()
 
         hls.loadSource(video_src)
         hls.attachMedia(video)

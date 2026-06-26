@@ -220,11 +220,29 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Toggle Private Account
+    // Toggle Data Saving Mode
 
     // Variables
 
     const account_properties:HTMLDivElement = edit_account_form.querySelector(".header .account_properties") as HTMLDivElement // Gets The Account Properties Popover Menu
+    const data_saving_mode_container:HTMLDivElement = account_properties.querySelector(".data_saving_mode_container") as HTMLDivElement // Gets The Data Saving Mode Container
+    const data_saving_mode_checkbox:HTMLInputElement = data_saving_mode_container.querySelector("#data_saving_mode") as HTMLInputElement // Gets The Data Saving Mode Checkbox
+    const data_saving_mode_label:HTMLLabelElement = data_saving_mode_container.querySelector("label") as HTMLLabelElement // Gets The Data Saving Mode Label
+
+    // Global Event Delegations
+
+    // Data Saving Mode Label Keydown Functionality
+    data_saving_mode_label.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            console.log(data_saving_mode_checkbox)
+            data_saving_mode_checkbox.click() // Checks / Unchecks The Data Saving Mode Checkbox
+        }
+    })
+
+    // Toggle Private Account
+
+    // Variables
+
     const private_account_container:HTMLDivElement = account_properties.querySelector(".private_account_container") as HTMLDivElement // Gets The Private Account Container
     const private_account_checkbox:HTMLInputElement = private_account_container.querySelector("#private_account") as HTMLInputElement // Gets The Private Account Checkbox
     const private_account_label:HTMLLabelElement = private_account_container.querySelector("label") as HTMLLabelElement // Gets The Private Account Label

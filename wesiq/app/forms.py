@@ -322,6 +322,11 @@ class editAccountForm(forms.Form):
         required=False,
     )
 
+    data_saving_mode = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"id": "data_saving_mode"}),
+        required=False,
+    )
+
     private_account = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={"id": "private_account"}),
         required=False,

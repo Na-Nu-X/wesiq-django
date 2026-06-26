@@ -602,12 +602,21 @@
                                                 class="video" 
                                                 src=""
                                                 poster="{{ one_post_media.thumbnail.url }}" 
-                                                preload="metadata" 
-                                                autoplay 
+                                                
+                                                {% if not logged_in_user.data_saving_mode %}
+                                                    preload="metadata" 
+                                                    autoplay 
+
+                                                {% else %}
+                                                    preload="none"
+                                                
+                                                {% endif %}
+
                                                 loop 
                                                 muted
                                                 data-user_id="{{ post.user.id }}"
                                                 data-media_id="{{ one_post_media.id }}"
+                                                data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}"
                                             >
                                                 {% blocktranslate with username=post.user.username %}
                                                     Príspevok užívateľa {{ username }}
@@ -616,9 +625,36 @@
 
                                             <div class="controls">
                                                 <div class="buttons">
-                                                    <button class="play_pause" title="{% translate 'Pozastaviť...' %}" aria-label="{% translate 'Pozastaviť...' %}">
-                                                        <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
-                                                        {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
+                                                    <button 
+                                                        class="play_pause" 
+
+                                                        title="
+                                                            {% if not logged_in_user.data_saving_mode %}
+                                                                {% translate 'Pozastaviť...' %}
+
+                                                            {% else %}
+                                                                {% translate 'Prehrať...' %}
+
+                                                            {% endif %}
+                                                        " 
+
+                                                        aria-label="
+                                                            {% if not logged_in_user.data_saving_mode %}
+                                                                {% translate 'Pozastaviť...' %}
+
+                                                            {% else %}
+                                                                {% translate 'Prehrať...' %}
+
+                                                            {% endif %}
+                                                        "
+                                                    >
+                                                        {% if not logged_in_user.data_saving_mode %}
+                                                            <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
+
+                                                        {% else %}
+                                                            <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play -->
+
+                                                        {% endif %}
                                                     </button>
 
                                                     <button class="step_back" title="{% translate 'O 5 sekúnd späť...' %}" aria-label="{% translate 'O 5 sekúnd späť...' %}">

@@ -225,6 +225,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
             .account_properties {
                 @include properties_menu;
 
+                .data_saving_mode_container,
                 .private_account_container,
                 .delete_profile_picture_container,
                 .delete_account_container {
