@@ -501,6 +501,25 @@
                         .video_speed {
                             @include properties_menu;
                         }
+
+                        .video_quality,
+                        .video_speed {
+                            button {
+                                &.active {
+                                    background-color: transparentize($blue-color, 0.9);
+                                    cursor: pointer;
+
+                                    i {
+                                        visibility: visible;
+                                        opacity: 1;
+                                    }
+
+                                    span {
+                                        letter-spacing: 0.5px;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     .scrubber_hitbox {

@@ -59,6 +59,7 @@ class Users(models.Model):
     suspension_time = models.DateTimeField(verbose_name="Suspension Time", null=True, blank=True)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
+    data_saving_mode = models.BooleanField(verbose_name="Data Saving Mode", default=False, null=False)
 
     @property
     def total_received_likes(self):

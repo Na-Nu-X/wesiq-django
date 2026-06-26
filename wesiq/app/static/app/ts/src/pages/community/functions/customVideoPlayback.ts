@@ -5,10 +5,13 @@ import { getFormattedTime } from "../../../utils/timer.js"
 // Function For Play Or Pause The Video
 export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator:HTMLDivElement, video:HTMLVideoElement):void {
     const is_playing:boolean = !video.paused && !video.ended && video.readyState > 2
+    const play_pause:HTMLButtonElement = play_pause_icon.closest(".play_pause") as HTMLButtonElement // Gets The Play Pause Button
 
     // Play
     if(!is_playing) {
-        play_pause_icon.classList.replace("fa-play", "fa-pause"); // Shows The Pause Icon
+        play_pause_icon.classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
+        play_pause.title = gettext("Pozastaviť...")
+        play_pause.ariaLabel = gettext("Pozastaviť...")
 
         const video_play_pause_indicator_icon:HTMLElement = play_pause_indicator.querySelector("i") as HTMLElement // Gets The Video Play / Pause Indicator Icon
 
@@ -29,6 +32,8 @@ export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator
     // Pause
     else {
         play_pause_icon.classList.replace("fa-pause", "fa-play"); // Shows The Play Icon
+        play_pause.title = gettext("Prehrať...")
+        play_pause.ariaLabel = gettext("Prehrať...")
 
         const video_play_pause_icon:HTMLElement = play_pause_indicator.querySelector("i") as HTMLElement // Gets The Video Play Pause Icon
 
@@ -151,7 +156,8 @@ export function changeVideoQuality(quality:number, hls:any, button:HTMLButtonEle
         const level_index: number = hls.levels.findIndex((level: any) => Math.abs(level.height - quality) <= 4) // Finds The Index Of The Selected Video Quality With Some Toleration From FFmpeg Compression (For Example: 720p Can Be Between 718p And 722p)
         
         if(level_index !== -1) {
-            hls.currentLevel = level_index
+            hls.currentLevel = level_index // Changes The Quality Of New Loaded Segments
+            hls.startLevel = level_index // Changes The Quality When Stream Restarts
         }
         
         else {

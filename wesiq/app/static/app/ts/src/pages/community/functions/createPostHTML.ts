@@ -1,10 +1,13 @@
+declare const Hls:any
+
 import {
     playPauseVideo,
     setVideoDuration,
     updateVideoTimer,
     updateBufferingBar,
     showVideoLoader,
-    hideVideoLoader
+    hideVideoLoader,
+    changeVideoQuality
 } from "./customVideoPlayback.js"
 
 import { 
@@ -233,9 +236,44 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
             const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
+            const data_saving_mode:boolean = video.dataset["data_saving_mode"] === "True" ? true : false // Gets The Value If The User Has Data Saving Mode Enabled
 
-            video.poster = `/../media/${one_post_media.thumbnail}` // Sets The Thumbnail Path
+            // Sets The Thumbnail Path
+            setTimeout(function():void {
+                video.setAttribute("poster", `/../media/${one_post_media.thumbnail}`)
+            }, 0)
+
             initializeChangeVideoQuality(video, video_src, video_container) // Initializes The Change Video Quality Buttons
+
+            // If The Data Saving Mode Is Enabled (Sets The Video Quality To 480p By Default)
+            if(data_saving_mode) {
+                // HLS Format
+                if(Hls.isSupported()) {
+                    const hls:any = new Hls({
+                        autoStartLoad: false // Disables Video Preload
+                    })
+
+                    hls.loadSource(video_src)
+                    hls.attachMedia(video)
+
+                    // Only Starts Downloading A Video If The User Manually First Time Plays It
+                    video.addEventListener("play", function():void {
+                        hls.startLoad()
+                    }, { once: true })
+                    
+                    // If The Video Is Ready
+                    hls.on(Hls.Events.MANIFEST_PARSED, function():void {
+                        const video_quality:HTMLDivElement = video_container.querySelector(".controls .buttons .video_quality") as HTMLDivElement // Gets The Video Quality Menu
+                        const all_quality_buttons:NodeListOf<HTMLButtonElement> = video_quality.querySelectorAll<HTMLButtonElement>(".quality_button") // Gets All Quality Buttons
+                        const quality_480p_button:HTMLButtonElement = video_quality.querySelector(".quality_480p") as HTMLButtonElement // Gets The Quality 480p Button
+
+                        changeVideoQuality(480, hls, quality_480p_button, all_quality_buttons) // Changes The Video Quality
+                    })
+                }
+
+                else if(video.canPlayType("application/x-mpegURL")) video.src = video_src // Fallback For Safari (Mac / iOS), Which Support HLS Format Without An Additional Library
+            }
+
             video.append(interpolate(gettext('Príspevok užívateľa %s'), [post_data.user.username])) // Sets The Alternative Text For The Video
 
             one_post_container.appendChild(video_container) // Appends The Video Container To The One Post Container
