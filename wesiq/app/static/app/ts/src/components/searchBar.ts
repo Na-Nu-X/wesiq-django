@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     function hideSearchResult():void {
         // Sets Search Bar Styles
         search_bar.style.border = "1px solid rgb(75, 75, 250, 0.5)"
-        search_bar.style.borderRadius = "5px"
+        search_bar.style.borderRadius = "25px"
 
         // Sets Search Result Container Styles
         search_result_container.style.border = "none"

@@ -54,7 +54,8 @@ export interface searchedPost {
         id:number,
         file:string,
         thumbnail:string,
-        is_video:boolean
+        is_video:boolean,
+        is_muted:boolean
     }[],
 
     views:number,
@@ -167,7 +168,8 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         id:number,
         file:string,
         thumbnail:string,
-        is_video:boolean
+        is_video:boolean,
+        is_muted:boolean
     }) {
         const one_post_template:HTMLTemplateElement = feed.querySelector(".one_post_template") as HTMLTemplateElement // Gets The One Post Template
         const one_post_template_clone:DocumentFragment = one_post_template.content.cloneNode(true) as DocumentFragment // Clones The One Post Template Content
@@ -190,14 +192,30 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             const video_container_template:HTMLTemplateElement = feed.querySelector(".video_container_template") as HTMLTemplateElement // Gets The Video Container Template
             const video_container_template_clone:DocumentFragment = video_container_template.content.cloneNode(true) as DocumentFragment // Clones The Video Container Template Content
             const video_container:HTMLDivElement = video_container_template_clone.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
+            const controls:HTMLDivElement = video_container.querySelector(".controls") as HTMLDivElement // Gets The Video Controls Container
+            const buttons:HTMLDivElement = controls.querySelector(".buttons") as HTMLDivElement // Gets The Buttons Container
+
+            // Creates The Muted Video Indicator If The Video Doesn't Have A Sound
+            if(one_post_media.is_muted) {
+                const volume_container:HTMLDivElement = buttons.querySelector(".volume_container") as HTMLDivElement // Gets The Volume Container
+    
+                const muted:HTMLDivElement = document.createElement("div") // Creates The Muted Container
+                muted.classList.add("muted") // Adds The Muted Class
+                muted.title = gettext("Video nemá zvuk")
+                muted.ariaLabel = gettext("Video nemá zvuk")
+                muted.innerHTML = "<i class='fa-solid fa-volume-xmark'></i>" // https://fontawesome.com/icons/volume-xmark
+    
+                volume_container.innerHTML = "" // Removes The Previous Content Of The Volume Container
+                volume_container.appendChild(muted) // Appends The Muted Container To The Volume Container
+            }
 
             // Show Video Settings Button
-            const show_video_settings_button:HTMLButtonElement = video_container.querySelector(".controls .buttons .show_video_settings_button") as HTMLButtonElement // Gets The Show Settings Button
+            const show_video_settings_button:HTMLButtonElement = buttons.querySelector(".show_video_settings_button") as HTMLButtonElement // Gets The Show Settings Button
             show_video_settings_button.setAttribute("popovertarget", `video_settings_${post_data.id}`) // Links The Popover
             show_video_settings_button.style = `anchor-name: --show_video_settings_button_${post_data.id}` // Creates The Anchor
 
             // Video Settings Menu
-            const video_settings:HTMLDivElement = video_container.querySelector(".controls .buttons .video_settings") as HTMLDivElement // Gets The Video Settings Menu
+            const video_settings:HTMLDivElement = buttons.querySelector(".video_settings") as HTMLDivElement // Gets The Video Settings Menu
             video_settings.id = `video_settings_${post_data.id}` // Sets The ID
             video_settings.style = `position-anchor: --show_video_settings_button_${post_data.id}` // Links The Anchor
 
@@ -415,11 +433,13 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
         if(one_video) {
             const video_container:HTMLDivElement = one_video.closest(".video_container") as HTMLDivElement // Gets The Video Container
-            const total_time:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .total") as HTMLSpanElement // Gets The Elapsed Timer
-            const elapsed_timer:HTMLSpanElement = video_container.querySelector(".controls .buttons .timer .elapsed") as HTMLSpanElement // Gets The Elapsed Timer
-            const scrubber_hitbox:HTMLDivElement = video_container.querySelector(".controls .scrubber_hitbox") as HTMLDivElement // Gets The Scrubber Hitbox
+            const controls:HTMLDivElement = video_container.querySelector(".controls") as HTMLDivElement // Gets The Video Controls Container
+            const buttons:HTMLDivElement = video_container.querySelector(".buttons") as HTMLDivElement // Gets The Buttons Container
+            const total_time:HTMLSpanElement = buttons.querySelector(".timer .total") as HTMLSpanElement // Gets The Elapsed Timer
+            const elapsed_timer:HTMLSpanElement = buttons.querySelector(".timer .elapsed") as HTMLSpanElement // Gets The Elapsed Timer
+            const scrubber_hitbox:HTMLDivElement = controls.querySelector(".scrubber_hitbox") as HTMLDivElement // Gets The Scrubber Hitbox
             const scrubber:HTMLDivElement = scrubber_hitbox.querySelector(".scrubber") as HTMLDivElement // Gets The Scrubber
-            const buffering_bar:HTMLDivElement = video_container.querySelector(".controls .scrubber .buffering_bar") as HTMLDivElement // Gets The Buffering Bar
+            const buffering_bar:HTMLDivElement = controls.querySelector(".scrubber .buffering_bar") as HTMLDivElement // Gets The Buffering Bar
             const one_post:HTMLDivElement = one_video.closest(".one_post") as HTMLDivElement // Gets The One Post Container
             const loading:HTMLDivElement = one_post?.querySelector(".loading") as HTMLDivElement // Gets The Loading
             let is_hovered_scrubber:boolean = false // Checks If The Scrubber Is Hovered
