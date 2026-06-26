@@ -1344,6 +1344,21 @@ header {
                                             display: block;
                                         }
                                     }
+
+                                    .muted {
+                                        width: 22.5px;
+                                        transition: transform 0.3s ease;
+        
+                                        &:hover {
+                                            transform: scale(1.1);
+                                            cursor: pointer;
+                                        }
+        
+                                        i {
+                                            display: block;
+                                            color: darken($secondary-color, 40%);
+                                        }
+                                    }
                                 }
         
                                 .show_video_settings_button,

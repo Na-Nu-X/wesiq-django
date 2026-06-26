@@ -668,13 +668,21 @@
                                                     <p class="timer"><span class="elapsed">0:00</span><span>/</span><span class="total">0:00</span></p>
                                                     
                                                     <div class="volume_container">
-                                                        <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
+                                                        {% if not one_post_media.is_muted %}
+                                                            <input type="range" class="volume" min="0" max="1" step="0.01" value="0">
 
-                                                        <button class="mute_unmute" title="{% translate 'Hlasitosť...' %}" aria-label="{% translate 'Hlasitosť...' %}">
-                                                            <i class="fa-solid fa-volume-xmark"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
-                                                            {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
-                                                            {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
-                                                        </button>
+                                                            <button class="mute_unmute" title="{% translate 'Hlasitosť...' %}" aria-label="{% translate 'Hlasitosť...' %}">
+                                                                <i class="fa-solid fa-volume-xmark"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
+                                                                {% comment %} <i class="fa-solid fa-volume-low"></i> <!-- https://fontawesome.com/icons/volume-low --> {% endcomment %}
+                                                                {% comment %} <i class="fa-solid fa-volume-high"></i> <!-- https://fontawesome.com/icons/volume-high --> {% endcomment %}
+                                                            </button>
+
+                                                        {% else %}
+                                                            <div class="muted" title="{% translate 'Video nemá zvuk' %}" aria-label="{% translate 'Video nemá zvuk' %}">
+                                                                <i class="fa-solid fa-volume-xmark"></i> <!-- https://fontawesome.com/icons/volume-xmark -->
+                                                            </div>
+                                                        
+                                                        {% endif %}
                                                     </div>
 
                                                     <button 
