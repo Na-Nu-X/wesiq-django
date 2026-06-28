@@ -1,10 +1,26 @@
 {% load static %}
 {% load i18n %}
 
-<div class="one_review" data-review_id="{{ one_review.id }}">
-	<div class="reviewer">
-		{% if one_review.user.username %}
-			<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+{% for one_review in reviews %}
+	<div class="one_review" data-review_id="{{ one_review.id }}">
+		<div class="reviewer">
+			{% if one_review.user.username %}
+				<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+					<img 
+						class="profile_picture skeleton_loading" 
+						src="
+							{% if one_review.user.profile_picture_name %}
+								/media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
+
+							{% else %}
+								{% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+							
+							{% endif %}
+						"
+					>
+				</a>
+
+			{% else %}
 				<img 
 					class="profile_picture skeleton_loading" 
 					src="
@@ -16,191 +32,178 @@
 						
 						{% endif %}
 					"
+					alt=""
 				>
-			</a>
-
-		{% else %}
-			<img 
-				class="profile_picture skeleton_loading" 
-				src="
-					{% if one_review.user.profile_picture_name %}
-						/media/images/{{ one_review.user.id }}/{{ one_review.user.profile_picture_name }}
-
-					{% else %}
-						{% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-					
-					{% endif %}
-				"
-				alt=""
-			>
-
-		{% endif %}
-
-		<p class="username">
-			{% if one_review.user == None %}
-				{% translate "Neexistujúci účet" %}
-
-			{% else %}
-				<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ one_review.user.username }}</a>
 
 			{% endif %}
-			
-			<span class="date">
-				- {{ one_review.creation_time|date:"d.m. Y" }}
-					
-				{% if one_review.last_edit != None %}
-					({% translate "upravené" %})
+
+			<p class="username">
+				{% if one_review.user == None %}
+					{% translate "Neexistujúci účet" %}
+
+				{% else %}
+					<a href="{% url 'profile_url' one_review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">{{ one_review.user.username }}</a>
 
 				{% endif %}
-			</span>
-		</p>
+				
+				<span class="date">
+					- {{ one_review.creation_time|date:"d.m. Y" }}
+						
+					{% if one_review.last_edit != None %}
+						({% translate "upravené" %})
 
-		{% if request.session.logged_in_user_id and one_review.status != "pending" %}
-			<button 
-				class="show_review_properties_button" 
-				popovertarget="review_properties_{{ one_review.id }}"
-				style="anchor-name: --show_review_properties_button_{{ one_review.id }};"
-				title="{% translate 'Viac...' %}"
-				aria-label="{% translate 'Viac...' %}"
-			>
-				<i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-			</button>
+					{% endif %}
+				</span>
+			</p>
 
-			<div 
-				class="review_properties" 
-				id="review_properties_{{ one_review.id }}"
-				popover
-				style="position-anchor: --show_review_properties_button_{{ one_review.id }};"
-			>
-				{% if not request.session.logged_in_user_id == one_review.user.id %}
+			{% if request.session.logged_in_user_id and one_review.status != "pending" %}
+				<button 
+					class="show_review_properties_button" 
+					popovertarget="review_properties_{{ one_review.id }}"
+					style="anchor-name: --show_review_properties_button_{{ one_review.id }};"
+					title="{% translate 'Viac...' %}"
+					aria-label="{% translate 'Viac...' %}"
+				>
+					<i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+				</button>
+
+				<div 
+					class="review_properties" 
+					id="review_properties_{{ one_review.id }}"
+					popover
+					style="position-anchor: --show_review_properties_button_{{ one_review.id }};"
+				>
+					{% if not request.session.logged_in_user_id == one_review.user.id %}
+						<button 
+							class="show_report_review_button" 
+							popovertarget="report_review_{{ one_review.id }}"
+							style="anchor-name: --show_report_review_button_{{ one_review.id }};"
+						>
+							<i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+							<span>{% translate "Nahlásiť" %}</span>
+						</button>
+
+					{% endif %}
+
+					{% if request.session.logged_in_user_id == one_review.user.id %}
+						<a class="edit_review" href="{% url 'edit_review_url' %}">
+							<i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
+							<span>{% translate "Upraviť" %}</span>
+						</a>
+
+					{% endif %}
+
+					{% if request.session.logged_in_user_id == one_review.user.id or role == "developer" or role == "admin" %}
+						<button 
+							class="
+								delete_review_button
+
+								{% if request.session.logged_in_user_id != one_review.user.id and role == "developer" or role == "admin" %}
+									red
+
+								{% endif %}
+							"
+
+							popovertarget="delete_review_{{ one_review.id }}"
+							style="anchor-name: --delete_review_button_{{ one_review.id }};"
+						>
+							<i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+							<span>{% translate "Vymazať" %}</span>
+						</button>
+
+					{% endif %}
+
 					<button 
-						class="show_report_review_button" 
-						popovertarget="report_review_{{ one_review.id }}"
-						style="anchor-name: --show_report_review_button_{{ one_review.id }};"
+						class="hide_review_properties_button" 
+						popovertarget="review_properties_{{ one_review.id }}" 
+						popovertargetaction="hide"
 					>
-						<i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
-						<span>{% translate "Nahlásiť" %}</span>
+						<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+						<span>{% translate "Zavrieť" %}</span>
 					</button>
+				</div>
 
-				{% endif %}
+				{% if not request.session.logged_in_user_id == one_review.user.id %}
+					<div 
+						class="report_review" 
+						id="report_review_{{ one_review.id }}"
+						popover
+						style="position-anchor: --show_report_review_button_{{ one_review.id }};"
+					>
+						<button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+						<button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+						<button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+						<button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+						<button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+						<button data-reason="other"><span>{% translate "Iné" %}</span></button>
 
-				{% if request.session.logged_in_user_id == one_review.user.id %}
-					<a class="edit_review" href="{% url 'edit_review_url' %}">
-						<i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
-						<span>{% translate "Upraviť" %}</span>
-					</a>
+						<button 
+							class="back_report_review_button"
+							popovertarget="report_review_{{ one_review.id }}"
+							popovertargetaction="hide"
+						>
+							<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+							<span>{% translate "Späť" %}</span>
+						</button>
+					</div>
 
 				{% endif %}
 
 				{% if request.session.logged_in_user_id == one_review.user.id or role == "developer" or role == "admin" %}
-					<button 
-						class="
-							delete_review_button
-
-							{% if request.session.logged_in_user_id != one_review.user.id and role == "developer" or role == "admin" %}
-							 	red
-
-							{% endif %}
-						"
-
-						popovertarget="delete_review_{{ one_review.id }}"
-						style="anchor-name: --delete_review_button_{{ one_review.id }};"
+					<div 
+						class="delete_review" 
+						id="delete_review_{{ one_review.id }}"
+						popover
+						style="position-anchor: --delete_review_button_{{ one_review.id }};"
 					>
-						<i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-						<span>{% translate "Vymazať" %}</span>
-					</button>
+						<p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
+
+						<button data-action="delete">
+							<i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+							<span>{% translate "Vymazať" %}</span>
+						</button>
+
+						<button 
+							popovertarget="delete_review_{{ one_review.id }}"
+							popovertargetaction="hide"
+						>
+							<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+							<span>{% translate "Zrušiť" %}</span>
+						</button>
+					</div>
 
 				{% endif %}
 
-				<button 
-					class="hide_review_properties_button" 
-					popovertarget="review_properties_{{ one_review.id }}" 
-					popovertargetaction="hide"
-				>
-					<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-					<span>{% translate "Zavrieť" %}</span>
-				</button>
-			</div>
-
-			{% if not request.session.logged_in_user_id == one_review.user.id %}
-				<div 
-					class="report_review" 
-					id="report_review_{{ one_review.id }}"
-					popover
-					style="position-anchor: --show_report_review_button_{{ one_review.id }};"
-				>
-					<button data-reason="spam"><span>{% translate "Spam" %}</span></button>
-					<button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
-					<button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
-					<button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
-					<button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
-					<button data-reason="other"><span>{% translate "Iné" %}</span></button>
-
-					<button 
-						class="back_report_review_button"
-						popovertarget="report_review_{{ one_review.id }}"
-						popovertargetaction="hide"
-					>
-						<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-						<span>{% translate "Späť" %}</span>
+				{% elif one_review.status == "pending" %}
+					<button class="approve_review" title="{% translate 'Schváliť' %}" aria-label="{% translate 'Schváliť' %}">
+						<i class="fa-solid fa-check"></i> <!-- https://fontawesome.com/icons/check -->
 					</button>
-				</div>
+					
+					<button class="reject_review" title="{% translate 'Zamietnuť' %}" aria-label="{% translate 'Zamietnuť' %}">
+						<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+					</button>
 
 			{% endif %}
-
-			{% if request.session.logged_in_user_id == one_review.user.id or role == "developer" or role == "admin" %}
-				<div 
-					class="delete_review" 
-					id="delete_review_{{ one_review.id }}"
-					popover
-					style="position-anchor: --delete_review_button_{{ one_review.id }};"
-				>
-					<p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
-
-					<button data-action="delete">
-						<i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-						<span>{% translate "Vymazať" %}</span>
-					</button>
-
-					<button 
-						popovertarget="delete_review_{{ one_review.id }}"
-						popovertargetaction="hide"
-					>
-						<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-						<span>{% translate "Zrušiť" %}</span>
-					</button>
-				</div>
-
-			{% endif %}
-
-			{% elif one_review.status == "pending" %}
-				<button class="approve_review" title="{% translate 'Schváliť' %}" aria-label="{% translate 'Schváliť' %}">
-					<i class="fa-solid fa-check"></i> <!-- https://fontawesome.com/icons/check -->
-				</button>
-				
-				<button class="reject_review" title="{% translate 'Zamietnuť' %}" aria-label="{% translate 'Zamietnuť' %}">
-					<i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-				</button>
-
-		{% endif %}
-	</div>
-
-	<div class="review">
-		<div class="rating">
-			{% for _ in "12345" %}
-				{% if forloop.counter <= one_review.rating %}
-					<i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-
-				{% else %}
-					<i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-				
-				{% endif %}
-			{% endfor %}
 		</div>
 
-		{% if one_review.review %}
-			<p>{{ one_review.review }}</p>
-		
-		{% endif %}
+		<div class="review">
+			<div class="rating">
+				{% for _ in "12345" %}
+					{% if forloop.counter <= one_review.rating %}
+						<i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+
+					{% else %}
+						<i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+					
+					{% endif %}
+				{% endfor %}
+			</div>
+
+			{% if one_review.review %}
+				<p>{{ one_review.review }}</p>
+			
+			{% endif %}
+		</div>
 	</div>
-</div>
+
+{% endfor %}

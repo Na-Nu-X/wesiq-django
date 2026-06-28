@@ -30,5 +30,5 @@ node_modules/
 .env
 
 # Run Scripts
-local_run_dev.bat
-docker_run_dev.bat
+run_dev.bat
+run_dev.sh

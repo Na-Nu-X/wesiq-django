@@ -56,7 +56,10 @@ export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivEl
         })
 
         no_already_rendered_post_comments_data.forEach(function(one_comment:comment):void {
-            if(all_comment_containers.length >= 5 && !show_more.classList.contains("hidden")) all_comments.insertBefore(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id, logged_in_user_role), show_more) // Appends The Comment To The All Comments Container To The Bottom Position
+            const data_saving_mode:boolean = post_container.dataset["data_saving_mode"] === "True" ? true : false // Gets The Value If The User Has Data Saving Mode Enabled
+            const MAX_LOADED_COMMENTS:number = data_saving_mode ? 3 : 10 // Gets The Maximum Amount Of Loaded Comments
+
+            if(all_comment_containers.length >= MAX_LOADED_COMMENTS && !show_more.classList.contains("hidden")) all_comments.insertBefore(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id, logged_in_user_role), show_more) // Appends The Comment To The All Comments Container To The Bottom Position
             else all_comments.prepend(createCommentHTML(feed, all_comments, one_comment, post_container, logged_in_user_id, logged_in_user_role)) // Appends The Comment To The All Comments Container To The Top Position
         })
 
