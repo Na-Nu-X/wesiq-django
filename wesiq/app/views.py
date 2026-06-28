@@ -850,6 +850,13 @@ def togglePostCommentLike(request):
         }, status=500)
 
 def homepageView(request):
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
     # Login Form
     if request.method == "POST" and request.POST.get("login_form_submit"):
         usage = get_usage(request, key="ip", rate="3/m", method="POST", increment=True, group="homepage_login")
@@ -1020,7 +1027,7 @@ def homepageView(request):
                         new_user.save()
 
                         # Deletes Previous User ID Session If Was Logged In
-                        if "logged_in_user_id" in request.session:
+                        if logged_in_user:
                             del request.session["logged_in_user_id"]
 
                         messages.add_message(request, messages.SUCCESS, _("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": registration_form.cleaned_data["email_address"]})
@@ -1126,7 +1133,7 @@ def homepageView(request):
         print("Getting Reviews Data From The Redis Cache.") # Test Print
 
     page_number = request.GET.get("reviews-page", 1) # Gets The Current Page Number
-    paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
+    paginator = Paginator(reviews, 2) if logged_in_user and logged_in_user.data_saving_mode else Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page (2 When The Logged In User Has Data Saving Mode Enabled)
     page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
 
     # Info About Reviews
@@ -1258,12 +1265,13 @@ def homepageView(request):
             # reviews = reviews.filter(rating=int(rating)).order_by("rating") # Queryset
 
     # Resets The Reviews Paginator
-    paginator = Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page
+    paginator = Paginator(reviews, 2) if logged_in_user and logged_in_user.data_saving_mode else Paginator(reviews, 5) # Divides The Reviews By Maximum 5 Per Page (2 When The Logged In User Has Data Saving Mode Enabled)
     page_reviews = paginator.get_page(page_number) # Gets Only The Reviews For The Selected Page
 
     # Load Reviews
     if request.headers.get("X-Requested-Action") == "load-reviews":
-        reviews_html = render_to_string("partials/reviews.html", {"reviews": page_reviews.object_list}, request=request) # Generates HTML For Reviews
+        print(reviews[2].creation_time)
+        reviews_html = render_to_string("partials/reviews.html", {"reviews": page_reviews.object_list, "role": logged_in_user.role}, request=request) # Generates HTML For Reviews
         
         return JsonResponse({
             "success": True,
@@ -1281,10 +1289,7 @@ def homepageView(request):
         return deleteReview(request)
 
     # Checks If User Is Logged In
-    if "logged_in_user_id" in request.session:
-        logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
-        
+    if logged_in_user:
         my_review = Reviews.objects.filter(user_id=logged_in_user_id).first() # Gets Logged In User's Review If Has Already Written Any
         pending_reviews = Reviews.objects.filter(status="pending") if logged_in_user.role == "developer" or logged_in_user.role == "admin" else None # Gets The Pending Reviews If The Logged In User Is Developer Or Admin
 
@@ -3610,7 +3615,7 @@ def loadPostsView(request):
             "-created_at"
         ).distinct()
 
-    paginator = Paginator(posts_query, 5) # Divides The Posts By Maximum 5 Per Page
+    paginator = Paginator(posts_query, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts_query, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
 
     try:
         page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
@@ -3703,6 +3708,13 @@ def loadPostsView(request):
     }, status=200)
 
 def loadPostCommentsView(request, post_id):
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
     page_number = request.GET.get("page", 1) # Gets The Current Page Number
 
     try:
@@ -3721,7 +3733,7 @@ def loadPostCommentsView(request, post_id):
             "creation_time"
         )
 
-        paginator = Paginator(post_root_comments_query, 5) # Divides The Root Comments By Maximum 5 Per Page
+        paginator = Paginator(post_root_comments_query, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(post_root_comments_query, 10) # Divides The Root Comments By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
         page_post_root_comments = paginator.page(page_number) # Gets Only The Root Comments For The Selected Page
 
         post_root_comments_ids = [comment.id for comment in page_post_root_comments] # Gets All Post Root Comments IDs

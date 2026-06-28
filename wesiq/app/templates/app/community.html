@@ -164,7 +164,7 @@
     
     <div class="feed">
         <template class="post_container_template">
-            <div class="post_container" tabindex="-1" data-logged_in_user_role="unauthorized">
+            <div class="post_container" tabindex="-1" data-logged_in_user_role="unauthorized" data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}">
                 <div class="header">
                     <div class="left">
                         <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
@@ -271,7 +271,7 @@
                     <span>+5</span><i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
                 </div>
 
-                <video 
+                <video
                     class="video" 
                     src="" 
                     poster="" 
@@ -287,7 +287,7 @@
 
                     loop 
                     muted 
-                    data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}">
+                >
                 </video>
 
                 <div class="controls">

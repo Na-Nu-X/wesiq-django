@@ -405,20 +405,14 @@
             {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                 {% if pending_reviews %}
                     <div class="pending_reviews">
-                        {% for one_review in pending_reviews %}
-                            {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
-
-                        {% endfor %}
+                        {% include "partials/reviews.html" with reviews=pending_reviews role=logged_in_user.role %}
                     </div>
                 
                 {% endif %}
             {% endif %}
 
             <div class="all_reviews">
-                {% for one_review in page_reviews.object_list %}
-                    {% include "partials/reviews.html" with one_review=one_review role=logged_in_user.role %}
-
-                {% endfor %}
+                {% include "partials/reviews.html" with reviews=page_reviews.object_list role=logged_in_user.role %}
 
                 {% if page_reviews|length == 0 %}
                     <p class="no_reviews">{% translate "Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;recenzie." %}</p>

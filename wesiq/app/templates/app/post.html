@@ -276,7 +276,7 @@
                     </div>
                 </template>
 
-                <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}">
+                <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}" data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}">
                     <div class="header">
                         <div class="left">
                             <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
@@ -616,7 +616,6 @@
                                                 muted
                                                 data-user_id="{{ post.user.id }}"
                                                 data-media_id="{{ one_post_media.id }}"
-                                                data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}"
                                             >
                                                 {% blocktranslate with username=post.user.username %}
                                                     Príspevok užívateľa {{ username }}

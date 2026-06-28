@@ -45,7 +45,7 @@ pip install -r .\wesiq\requirements.txt
 #### 7. Run the Development Batch Script
 
 - Start the asset compilation and background processes using the provided batch script.
-`.\docker_run_dev.bat`
+`.\run_dev.bat`
 
 #### 8. Database Connection Troubleshooting (Optional)
 
@@ -89,10 +89,10 @@ pip install -r wesiq/requirements.txt
 #### 6. Run the Development Shell Script
 
 - Start the asset compilation and background processes using the provided shell script.
-`./docker_run_dev.sh`
+`./run_dev.sh`
 
 - If you need execution permission, change the file permissions.
-`chmod +x docker_run_dev.sh`
+`chmod +x run_dev.sh`
 
 #### 7. Database Connection Troubleshooting (Optional)
 
