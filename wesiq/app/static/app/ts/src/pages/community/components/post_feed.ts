@@ -163,8 +163,9 @@ document.addEventListener("DOMContentLoaded", function():void {
                 const comment:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
                 const all_comments:HTMLDivElement = post_container.querySelector(".comment_forum .all_comments") as HTMLDivElement // Gets All Comments Container
                 const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
+                const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (post_container.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
 
-                if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id, comments_counter) // Adds Comment To The Post
+                if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id, comments_counter, logged_in_user_role) // Adds Comment To The Post
             }
 
             // Toggle Reply On Comment

@@ -17,7 +17,7 @@ export interface addCommentResponse {
 }
 
 // Function For Add Comment
-export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement):Promise<void> {
+export async function addComment(post_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, feed:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
     try {
         const comment_input:HTMLDivElement = write_comment_form.querySelector(".comment") as HTMLDivElement // Gets The Comment Input
 
@@ -66,7 +66,7 @@ export async function addComment(post_id:number, write_comment_form:HTMLDivEleme
         comment_author_username.textContent = add_comment_response.comment.user.username // Sets The Comment Author Username Text
 
         // Comment Properties
-        createCommentPropertiesHTML(one_comment_container, report_container, add_comment_response.comment, add_comment_response.logged_in_user.logged_in_user_id) // Creates The Comment Properties HTML
+        createCommentPropertiesHTML(one_comment_container, report_container, add_comment_response.comment, add_comment_response.logged_in_user.logged_in_user_id, logged_in_user_role) // Creates The Comment Properties HTML
 
         // Comment
         const comment:HTMLParagraphElement = one_comment_container.querySelector(".comment_container .right .comment") as HTMLParagraphElement // Gets The Comment Paragraph
