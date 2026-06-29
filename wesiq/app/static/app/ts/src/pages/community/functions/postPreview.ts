@@ -77,6 +77,11 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             post.appendChild(post_loading_progress) // Appends The Loading Progress To The Post
             posts_preview.appendChild(post) // Appends The Post To The Post Preview
 
+            const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
+            const post_index:number = [...all_posts].indexOf(post) // Gets The Post Index
+
+            if(all_posts[post_index]) all_posts[post_index].dataset["order"] = String(post_index) // Stores The Order Of The Post
+
             const file_reader:FileReader = new FileReader() // Reads The Content of The File
 
             file_reader.addEventListener("load", function():void {
@@ -114,23 +119,70 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
                     element.controls = false // Disables The Controls
                     element.muted = true // Mutes The Video
 
+                    // Video Settings
+                    const video_settings:HTMLDivElement = document.createElement("div") // Creates The Video Settings Container
+                    video_settings.classList.add("video_settings") // Adds The Video Settings Class
+                    post.appendChild(video_settings) // Appends The Video Settings To The Post
+
+                    // Toggle Mute Label
                     const toggle_mute_label:HTMLLabelElement = document.createElement("label") as HTMLLabelElement // Creates The Toggle Mute Label
                     toggle_mute_label.classList.add("toggle_mute_label") // Adds The Toggle Mute Label Class
                     toggle_mute_label.htmlFor = `toggle_mute_checkbox_${index}`
                     toggle_mute_label.title = gettext("Vypnúť zvuk")
                     toggle_mute_label.ariaLabel = gettext("Vypnúť zvuk")
                     toggle_mute_label.innerHTML = "<i class='fa-solid fa-volume-high'></i>" // https://fontawesome.com/icons/volume-high
-                    post.appendChild(toggle_mute_label) // Appends The Toggle Mute Label To The Post
+                    video_settings.appendChild(toggle_mute_label) // Appends The Toggle Mute Label To The Video Settings Container
 
+                    // Toggle Mute Checkbox
                     const toggle_mute_checkbox:HTMLInputElement = document.createElement("input") as HTMLInputElement // Creates The Toggle Mute Checkbox
                     toggle_mute_checkbox.classList.add("toggle_mute_checkbox") // Adds The Toggle Mute Checkbox Class
                     toggle_mute_checkbox.id = `toggle_mute_checkbox_${index}`
                     toggle_mute_checkbox.type = "checkbox"
-                    post.appendChild(toggle_mute_checkbox) // Appends The Toggle Mute Checkbox To The Post
+                    video_settings.appendChild(toggle_mute_checkbox) // Appends The Toggle Mute Checkbox To The Video Settings Container
 
                     // Toggle Mute Checkbox Click Functionality
                     toggle_mute_checkbox.addEventListener("click", function():void {
                         toggleMuteVideo(post, this, toggle_mute_label.querySelector("i") as HTMLElement) // Toggles Mute / Unmute Of Video
+                    })
+
+                    // Select Thumbnail Label
+                    const select_thumbnail:HTMLLabelElement = document.createElement("label") as HTMLLabelElement // Creates The Select Thumbnail Label
+                    select_thumbnail.classList.add("select_thumbnail_label") // Adds The Select Thumbnail Label Class
+                    select_thumbnail.htmlFor = `select_thumbnail_${index}` // Links The Select Thumbnail Input
+                    select_thumbnail.title = gettext("Vybrať náhľad")
+                    select_thumbnail.ariaLabel = gettext("Vybrať náhľad")
+                    select_thumbnail.innerHTML = "<i class='fa-regular fa-image'></i>" // https://fontawesome.com/icons/image
+                    video_settings.appendChild(select_thumbnail) // Appends The Select Thumbnail Label To The Video Settings Container
+
+                    const select_thumbnail_input:HTMLInputElement = document.createElement("input") as HTMLInputElement // Creates The Select Thumbnail Input
+                    select_thumbnail_input.classList.add("select_thumbnail_input") // Adds The Select Thumbnail Input Class
+                    select_thumbnail_input.type = "file"
+                    select_thumbnail_input.name = `select_thumbnail` // Adds The Name
+                    select_thumbnail_input.id = `select_thumbnail_${index}` // Adds The ID
+                    select_thumbnail_input.accept = "image/*"
+                    video_settings.appendChild(select_thumbnail_input) // Appends The Select Thumbnail Input To The Video Settings Container 
+
+                    // Select Thumbnail Input Change Functionality
+                    select_thumbnail_input.addEventListener("change", function():void {
+                        const thumbnail_file:File|null = this.files?.[0] || null // Gets The Thumbnail File
+
+                        if(!thumbnail_file) return
+
+                        const thumbnail_file_reader:FileReader = new FileReader() // Reads The Content of The File
+
+                        thumbnail_file_reader.addEventListener("load", function():void {
+                            const file_data:string = thumbnail_file_reader.result as string // Gets The File Data
+
+                            if(!file_data) return
+
+                            if(element) {
+                                (element as HTMLVideoElement).poster = file_data // Sets The Video Poster Image
+                            }
+
+                            post.dataset["thumbnail_filename"] = thumbnail_file.name // Stores The Thumbnail's Filename
+                        })
+
+                        thumbnail_file_reader.readAsDataURL(thumbnail_file) // Renders The Preview
                     })
 
                     // Checks The Video Size
@@ -214,11 +266,6 @@ function renderPostPreview(posts_preview:HTMLDivElement, select_posts:HTMLInputE
             }
 
             file_reader.readAsDataURL(one_file) // Renders The Preview
-
-            const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
-            const post_index:number = [...all_posts].indexOf(post) // Gets The Post Index
-
-            if(all_posts[post_index]) all_posts[post_index].dataset["order"] = String(post_index) // Stores The Order Of The Post
         }
     })
 }
