@@ -50,6 +50,8 @@ from django.template.loader import render_to_string
 from django.db import transaction
 from celery import current_app
 from itertools import chain
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -3272,6 +3274,9 @@ def communityView(request):
                     upload_post_form = uploadPostForm(request.POST) # Gets The Upload Post Form
                     files = request.FILES.getlist("select_posts") # Gets Files From the POST
 
+                    thumbnail_files = request.FILES.getlist("select_thumbnail") # Gets Thumbnail Files From the POST
+                    thumbnail_files_dict = {one_file.name: one_file for one_file in thumbnail_files} # Converts The Thumbnail Files To The Dictionary Format
+
                     # Saves Only if The Form is Valid And Includes at Least One File
                     if upload_post_form.is_valid() and files:
                         media_data = json.loads(request.POST.get("media_data", "[]")) # Gets The Media Data
@@ -3280,7 +3285,8 @@ def communityView(request):
                         media_data_dict = {
                             one_item["filename"]: {
                                 "order": int(one_item["order"]), 
-                                "is_muted": bool(one_item["is_muted"])
+                                "is_muted": bool(one_item["is_muted"]),
+                                "thumbnail_filename": str(one_item["thumbnail_filename"])
                             }
 
                             for one_item in media_data if one_item["filename"]
@@ -3390,9 +3396,11 @@ def communityView(request):
                                                 "message": _("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name}
                                             }, status=400)
 
-                                    file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False})
+                                    file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False, "thumbnail_filename": ""})
                                     order = file_settings["order"] # Gets The Order Of The Current File
                                     is_muted = file_settings["is_muted"] # Gets The Value Of If The Current File Is Muted
+                                    thumbnail_filename = file_settings["thumbnail_filename"] # Gets The Video Thumbnail's Filename
+                                    thumbnail_file = thumbnail_files_dict.get(thumbnail_filename) # Gets The Thumbnail File
                                     
                                     # Saves The New Post Media
                                     new_post_media = PostMedia.objects.create(
@@ -3407,7 +3415,16 @@ def communityView(request):
 
                                     # Video
                                     if is_video:
-                                        compress_video_task = compressVideo.delay(new_post_media.id)
+                                        custom_thumbnail_path = None # Stores The Custom Thumbnail Path
+
+                                        if thumbnail_file:
+                                            thumb_temp_path = f"temp/thumb_{new_post_media.id}"
+                                            custom_thumbnail_path = default_storage.save(thumb_temp_path, ContentFile(thumbnail_file.read())) # Gets The Custom Thumbnail Path
+
+                                        compress_video_task = compressVideo.delay(
+                                            post_media_id=new_post_media.id, 
+                                            custom_thumbnail_path=custom_thumbnail_path
+                                        )
 
                                         compress_tasks.append({
                                             "task_id": compress_video_task.id,

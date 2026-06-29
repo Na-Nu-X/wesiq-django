@@ -126,7 +126,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const media_data:{
             filename:string,
             order:string,
-            is_muted:boolean
+            is_muted:boolean,
+            thumbnail_filename:string
         }[] = []
 
         // Maps The Posts And Saves Their Order And Is Muted Value
@@ -134,7 +135,8 @@ document.addEventListener("DOMContentLoaded", function():void {
             media_data.push({
                 filename: one_post.dataset["filename"] || "",
                 order: one_post.dataset["order"] || "",
-                is_muted: one_post.dataset["is_muted"] === "true" ? true : false || false
+                is_muted: one_post.dataset["is_muted"] === "true" ? true : false || false,
+                thumbnail_filename: one_post.dataset["thumbnail_filename"] || ""
             })
         })
 
@@ -142,6 +144,266 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         uploadPost(upload_post_form_submit, form_data) // Uploads The Post
     })
+
+    // Select Posts Change Functionality
+    select_posts.addEventListener("change", function():void {
+        if(!this.files) return
+        
+        const new_files = [...this.files] // Gets New Selected Files
+
+        posts_preview_state.current_files = [...posts_preview_state.current_files, ...new_files] // Updates An Array of Current Files
+        syncFiles(this, posts_preview) // Synchronizes Files
+    })
+
+    // Posts Preview Drag & Drop Functionalities (Drag Files From Local Storage)
+    posts_preview.addEventListener("dragover", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+
+        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
+
+        if(!is_reorder) {
+            this.classList.add("drag_active") // Adds Drag Animation Only When Moving a File From Local Storage
+            posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.style.pointerEvents = "none") // Allows File Drop To All Posts
+        }
+    })
+
+    posts_preview.addEventListener("dragleave", function():void {
+        this.classList.remove("drag_active") // Removes Drag Animation
+    })
+
+    posts_preview.addEventListener("drop", function(event:DragEvent):void {
+        event.preventDefault() // Prevents Default Behaviour
+
+        this.classList.remove("drag_active") // Removes Drag Animation
+
+        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
+        const has_files:boolean|undefined = event.dataTransfer?.files && event.dataTransfer.files.length > 0 // Checks If There Are Any Dragged Files
+
+        // Adds Dragged File Only When Moving at Least One File From Local Storage
+        if(!is_reorder && has_files) {
+            const new_files = Array.from(event.dataTransfer!.files) // Gets New Dragged Files
+            posts_preview_state.current_files.push(...new_files) // Updates An Array of Current Files
+            syncFiles(select_posts, this) // Synchronizes Files
+        }
+    })
+
+    add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+    emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+
+    // Add Emoji Icon Click Functionality
+    add_emoji.addEventListener("click", function(event:PointerEvent):void {
+        event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+        emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+    })
+
+    // Picker Emoji Click Functionality
+    picker.addEventListener("emoji-click", function(event:Event):void {
+        if(description.innerText.length >= MAX_DESCRIPTION_LENGTH) return
+
+        const custom_event:CustomEvent<{
+            unicode:string
+        }> = event as CustomEvent<{ unicode: string }>
+    
+        const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
+        const selection:Selection|null = window.getSelection()
+        const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && description.contains(selection.anchorNode)
+
+        if(!isInsideEditable) focusAtEnd(description)
+
+        const active_selection:Selection|null = window.getSelection()
+
+        if(active_selection && active_selection.rangeCount > 0) {
+            const range:Range = active_selection.getRangeAt(0)
+        
+            range.deleteContents() // Deletes The Selected Text
+
+            // Inserts The Emoji To The Text
+            const text_node:Text = document.createTextNode(emoji)
+            range.insertNode(text_node)
+
+            // Sets The Cursor Position Behind The Inserted Emoji
+            range.setStartAfter(text_node)
+            range.setEndAfter(text_node)
+            
+            // Updates The Cursor
+            active_selection.removeAllRanges()
+            active_selection.addRange(range)
+        }
+    })
+
+    // Tag User Click Functionality
+    tag_user.addEventListener("click", function():void {
+        // Checks For The Maximum Input Length
+        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+
+            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing (If There Isn't Already)
+
+            const at:tag = {
+                position: {
+                    tag_start_index: description.innerText.length - 1,
+                    tag_end_index: description.innerText.length - 1
+                }
+            }
+
+            storeAtSignPosition(at) // Stores The At Sign Position
+            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+            focusAtEnd(description) // Adds Focus To The Description
+
+            description_input.value = description.textContent.trim() // Sets The Description Input Value
+        }
+    })
+
+    // Paste Functionality (Syncs Tagged Users And Hashtags From Pasted Plain Text)
+    description.addEventListener("paste", async function(event:ClipboardEvent):Promise<void> {
+        is_syncing_description_paste = true
+
+        await handleDescriptionPaste(
+            event,
+            description,
+            description_input,
+            tagged_users_container,
+            tagged_users,
+            added_hashtags_input,
+            MAX_DESCRIPTION_LENGTH
+        )
+
+        previous_description_length = description.innerText.length
+
+        requestAnimationFrame(function():void {
+            is_syncing_description_paste = false
+        })
+    })
+
+    // Searches For Users For Tag If There Is At Sign In The Description
+    description.addEventListener("input", async function():Promise<void> {
+        if(is_syncing_description_paste) return
+
+        if(this.innerText.length > MAX_DESCRIPTION_LENGTH) {
+            const cursor_position:number = getCursorPosition(this) ?? MAX_DESCRIPTION_LENGTH
+            const truncated_text:string = this.innerText.slice(0, MAX_DESCRIPTION_LENGTH)
+
+            is_syncing_description_paste = true
+
+            await syncDescriptionFromText(
+                this,
+                description_input,
+                tagged_users_container,
+                tagged_users,
+                added_hashtags_input,
+                MAX_DESCRIPTION_LENGTH,
+                Math.min(cursor_position, MAX_DESCRIPTION_LENGTH),
+                truncated_text
+            )
+
+            previous_description_length = this.innerText.length
+
+            requestAnimationFrame(function():void {
+                is_syncing_description_paste = false
+            })
+
+            return
+        }
+
+        description_input.value = this.textContent.trim() // Sets The Description Input Value
+
+        const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
+        const is_text_deletion:boolean = previous_description_length > this.innerText.length // Checks If The Text Was Deleted
+
+        // Text Deletion (Selection, Cut, Backspace, Etc.) — Syncs State With Actual Text Content
+        if(is_text_deletion) {
+            pruneDescriptionMetadata(
+                this,
+                description_input,
+                tagged_users_container,
+                tagged_users,
+                added_hashtags_input,
+                cursor_position
+            )
+        }
+
+        else {
+            // Tag Users
+
+            const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
+            const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
+            const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
+
+            // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
+            if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
+            else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+
+            checkTagsPositions(this, cursor_position, previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
+
+            // Add Hashtags
+
+            checkHashtags(this, added_hashtags_input)
+            checkHashtagsPositions(this, cursor_position, previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
+        }
+
+        previous_description_length = this.innerText.length // Updates The Previous Description Length
+    })
+
+    // Add Hashtag Click Functionality
+    add_hashtag.addEventListener("click", function():void {
+        // Checks For The Maximum Input Length
+        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
+            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
+    
+            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "#" : description.innerHTML += " #" // Adds Hashtag Sign At The End With Additional Spacing (If There Isn't Already)
+
+            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
+            focusAtEnd(description) // Adds Focus To The Description
+
+            description_input.value = description.textContent.trim() // Sets The Description Input Value
+        }
+    })
+
+    // Location Input Functionality
+    location_input.addEventListener("input", function():void {
+        clearTimeout(debounce_timeout) // Clears The Debounce Timeout
+
+        const searched_location = location_input.value // Gets The Searched Location
+
+        if(searched_location.length < 3) {
+            const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll<HTMLDivElement>(".place") // Gets All Places
+
+            if(location_results.querySelectorAll(".place").length > 0) {
+                all_places.forEach(function(one_place:HTMLDivElement):void {
+                    one_place.remove() // Removes The Place From The DOM
+                })
+            }
+
+            location_loading.classList.add("hidden") // Hides The Loader
+            location_results.classList.add("hidden") // Hides The Location Results
+            return
+        }
+
+        location_loading.classList.remove("hidden") // Shows The Loader
+
+        // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
+        debounce_timeout = window.setTimeout(function():void {
+            getLocation(searched_location, location_results, location_input, latitude, longitude)
+        }, 1000)
+    })
+
+    // Location Focus Functionality
+    location_input.addEventListener("focus", function():void {
+        if(location_results.querySelectorAll(".place").length > 0) location_results.classList.remove("hidden") // Shows The Location Results (If There Are Any)
+    })
+
+    // Location Blur Functionality
+    location_input.addEventListener("blur", function(event:FocusEvent):void {
+        if(
+            !(event.relatedTarget as HTMLDivElement).classList.contains("place") && 
+            !(event.relatedTarget as HTMLDivElement).classList.contains("location_results") &&
+            !location_results.classList.contains("hidden")
+        ) {
+            location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
+        }
+    })
+
+    // Global Event Delegations
 
     // Select Posts Container Keydown Functionality
     select_posts_container.addEventListener("keydown", function(event:KeyboardEvent):void {
@@ -273,119 +535,10 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Select Posts Change Functionality
-    select_posts.addEventListener("change", function():void {
-        if(!this.files) return
-        
-        const new_files = [...this.files] // Gets New Selected Files
-
-        posts_preview_state.current_files = [...posts_preview_state.current_files, ...new_files] // Updates An Array of Current Files
-        syncFiles(this, posts_preview) // Synchronizes Files
-    })
-
-    // Posts Preview Drag & Drop Functionalities (Drag Files From Local Storage)
-    posts_preview.addEventListener("dragover", function(event:DragEvent):void {
-        event.preventDefault() // Prevents Default Behaviour
-
-        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
-
-        if(!is_reorder) {
-            this.classList.add("drag_active") // Adds Drag Animation Only When Moving a File From Local Storage
-            posts_preview.querySelectorAll<HTMLDivElement>(".post").forEach(one_post => one_post.style.pointerEvents = "none") // Allows File Drop To All Posts
-        }
-    })
-
-    posts_preview.addEventListener("dragleave", function():void {
-        this.classList.remove("drag_active") // Removes Drag Animation
-    })
-
-    posts_preview.addEventListener("drop", function(event:DragEvent):void {
-        event.preventDefault() // Prevents Default Behaviour
-
-        this.classList.remove("drag_active") // Removes Drag Animation
-
-        const is_reorder:boolean|undefined = event.dataTransfer?.types.includes("sourceindex") // Checks If The Dragged File Is Only From Reordering Their Positions
-        const has_files:boolean|undefined = event.dataTransfer?.files && event.dataTransfer.files.length > 0 // Checks If There Are Any Dragged Files
-
-        // Adds Dragged File Only When Moving at Least One File From Local Storage
-        if(!is_reorder && has_files) {
-            const new_files = Array.from(event.dataTransfer!.files) // Gets New Dragged Files
-            posts_preview_state.current_files.push(...new_files) // Updates An Array of Current Files
-            syncFiles(select_posts, this) // Synchronizes Files
-        }
-    })
-
-    add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
-    emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
-
-    // Add Emoji Icon Click Functionality
-    add_emoji.addEventListener("click", function(event:PointerEvent):void {
-        event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
-        emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
-    })
-
     // Add Emoji Icon Keydown Functionality
     add_emoji.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "Enter") {
             emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
-        }
-    })
-
-    // Picker Emoji Click Functionality
-    picker.addEventListener("emoji-click", function(event:Event):void {
-        if(description.innerText.length >= MAX_DESCRIPTION_LENGTH) return
-
-        const custom_event:CustomEvent<{
-            unicode:string
-        }> = event as CustomEvent<{ unicode: string }>
-    
-        const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
-        const selection:Selection|null = window.getSelection()
-        const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && description.contains(selection.anchorNode)
-
-        if(!isInsideEditable) focusAtEnd(description)
-
-        const active_selection:Selection|null = window.getSelection()
-
-        if(active_selection && active_selection.rangeCount > 0) {
-            const range:Range = active_selection.getRangeAt(0)
-        
-            range.deleteContents() // Deletes The Selected Text
-
-            // Inserts The Emoji To The Text
-            const text_node:Text = document.createTextNode(emoji)
-            range.insertNode(text_node)
-
-            // Sets The Cursor Position Behind The Inserted Emoji
-            range.setStartAfter(text_node)
-            range.setEndAfter(text_node)
-            
-            // Updates The Cursor
-            active_selection.removeAllRanges()
-            active_selection.addRange(range)
-        }
-    })
-
-    // Tag User Click Functionality
-    tag_user.addEventListener("click", function():void {
-        // Checks For The Maximum Input Length
-        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
-            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
-
-            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "@" : description.innerHTML += " @" // Adds At Sign At The End With Additional Spacing (If There Isn't Already)
-
-            const at:tag = {
-                position: {
-                    tag_start_index: description.innerText.length - 1,
-                    tag_end_index: description.innerText.length - 1
-                }
-            }
-
-            storeAtSignPosition(at) // Stores The At Sign Position
-            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
-            focusAtEnd(description) // Adds Focus To The Description
-
-            description_input.value = description.textContent.trim() // Sets The Description Input Value
         }
     })
 
@@ -412,96 +565,6 @@ document.addEventListener("DOMContentLoaded", function():void {
                 description_input.value = description.textContent.trim() // Sets The Description Input Value
             }
         }
-    })
-
-    // Paste Functionality (Syncs Tagged Users And Hashtags From Pasted Plain Text)
-    description.addEventListener("paste", async function(event:ClipboardEvent):Promise<void> {
-        is_syncing_description_paste = true
-
-        await handleDescriptionPaste(
-            event,
-            description,
-            description_input,
-            tagged_users_container,
-            tagged_users,
-            added_hashtags_input,
-            MAX_DESCRIPTION_LENGTH
-        )
-
-        previous_description_length = description.innerText.length
-
-        requestAnimationFrame(function():void {
-            is_syncing_description_paste = false
-        })
-    })
-
-    // Searches For Users For Tag If There Is At Sign In The Description
-    description.addEventListener("input", async function():Promise<void> {
-        if(is_syncing_description_paste) return
-
-        if(this.innerText.length > MAX_DESCRIPTION_LENGTH) {
-            const cursor_position:number = getCursorPosition(this) ?? MAX_DESCRIPTION_LENGTH
-            const truncated_text:string = this.innerText.slice(0, MAX_DESCRIPTION_LENGTH)
-
-            is_syncing_description_paste = true
-
-            await syncDescriptionFromText(
-                this,
-                description_input,
-                tagged_users_container,
-                tagged_users,
-                added_hashtags_input,
-                MAX_DESCRIPTION_LENGTH,
-                Math.min(cursor_position, MAX_DESCRIPTION_LENGTH),
-                truncated_text
-            )
-
-            previous_description_length = this.innerText.length
-
-            requestAnimationFrame(function():void {
-                is_syncing_description_paste = false
-            })
-
-            return
-        }
-
-        description_input.value = this.textContent.trim() // Sets The Description Input Value
-
-        const cursor_position:number = getCursorPosition(this) ?? this.innerText.length // Gets The Cursor Position
-        const is_text_deletion:boolean = previous_description_length > this.innerText.length // Checks If The Text Was Deleted
-
-        // Text Deletion (Selection, Cut, Backspace, Etc.) — Syncs State With Actual Text Content
-        if(is_text_deletion) {
-            pruneDescriptionMetadata(
-                this,
-                description_input,
-                tagged_users_container,
-                tagged_users,
-                added_hashtags_input,
-                cursor_position
-            )
-        }
-
-        else {
-            // Tag Users
-
-            const nearest_at_before_cursor:number = this.innerText.lastIndexOf("@", Math.max(cursor_position - 1, 0)) // Gets The Nearest At Sign Before Cursor
-            const text_between_at_and_cursor:string = nearest_at_before_cursor !== -1 ? this.innerText.slice(nearest_at_before_cursor + 1, cursor_position) : "" // Gets The Text Between The At Sign And The Cursor
-            const is_typing_tag_at_cursor:boolean = nearest_at_before_cursor !== -1 && !text_between_at_and_cursor.includes(" ") // Checks If Is Typing Tag At The Cursor
-
-            // Starts Getting Users For Tag Only If Cursor Is In Active Tag Area Or The User Already Starts Tagging
-            if(is_typing_tag_at_cursor || tag_user_state.tagged_user) getUsersForTag(this, users_for_tag_container) // Gets Users For Tag
-            else hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
-
-            checkTagsPositions(this, cursor_position, previous_description_length, tagged_users_container, tagged_users) // Checks The Position Of Tags (If There Is Any)
-
-            // Add Hashtags
-
-            checkHashtags(this, added_hashtags_input)
-            checkHashtagsPositions(this, cursor_position, previous_description_length, added_hashtags_input) // Checks The Position Of Hashtags (If There Is Any)
-        }
-
-        previous_description_length = this.innerText.length // Updates The Previous Description Length
     })
 
     // Users For Tag Container Click Functionalities
@@ -586,21 +649,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Add Hashtag Click Functionality
-    add_hashtag.addEventListener("click", function():void {
-        // Checks For The Maximum Input Length
-        if(description.innerText.length < MAX_DESCRIPTION_LENGTH - 1) {
-            const previous_character:string|null = description.innerText[description.innerText.length - 1] || null // Gets The Last Entered Character (Null If There Hasn't Been Any Yet)
-    
-            previous_character?.charCodeAt(0) === 160 || previous_character === " " || previous_character === null ? description.innerHTML += "#" : description.innerHTML += " #" // Adds Hashtag Sign At The End With Additional Spacing (If There Isn't Already)
-
-            hideUsersForTag(users_for_tag_container) // Hides Users For Tag Container
-            focusAtEnd(description) // Adds Focus To The Description
-
-            description_input.value = description.textContent.trim() // Sets The Description Input Value
-        }
-    })
-
     // Add Hashtag Keydown Functionality
     add_hashtag.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "Enter") {
@@ -615,50 +663,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 description_input.value = description.textContent.trim() // Sets The Description Input Value
             }
-        }
-    })
-
-    // Location Input Functionality
-    location_input.addEventListener("input", function():void {
-        clearTimeout(debounce_timeout) // Clears The Debounce Timeout
-
-        const searched_location = location_input.value // Gets The Searched Location
-
-        if(searched_location.length < 3) {
-            const all_places:NodeListOf<HTMLDivElement> = location_results.querySelectorAll<HTMLDivElement>(".place") // Gets All Places
-
-            if(location_results.querySelectorAll(".place").length > 0) {
-                all_places.forEach(function(one_place:HTMLDivElement):void {
-                    one_place.remove() // Removes The Place From The DOM
-                })
-            }
-
-            location_loading.classList.add("hidden") // Hides The Loader
-            location_results.classList.add("hidden") // Hides The Location Results
-            return
-        }
-
-        location_loading.classList.remove("hidden") // Shows The Loader
-
-        // Gets Location After 1000 MS Delay (Because of The Nominatim Usage Policy - 1 Request per Second)
-        debounce_timeout = window.setTimeout(function():void {
-            getLocation(searched_location, location_results, location_input, latitude, longitude)
-        }, 1000)
-    })
-
-    // Location Focus Functionality
-    location_input.addEventListener("focus", function():void {
-        if(location_results.querySelectorAll(".place").length > 0) location_results.classList.remove("hidden") // Shows The Location Results (If There Are Any)
-    })
-
-    // Location Blur Functionality
-    location_input.addEventListener("blur", function(event:FocusEvent):void {
-        if(
-            !(event.relatedTarget as HTMLDivElement).classList.contains("place") && 
-            !(event.relatedTarget as HTMLDivElement).classList.contains("location_results") &&
-            !location_results.classList.contains("hidden")
-        ) {
-            location_results.classList.add("hidden") // Hides The Location Results And Prevents Hiding The Places Before Selection (If The User Clicks On The Place In The Location Results In Order To Select)
         }
     })
 

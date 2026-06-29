@@ -15,6 +15,7 @@ from django.db.models.functions import TruncDate
 from django.core.files.base import ContentFile
 from PIL import Image
 from django.core.files import File
+from django.core.files.storage import default_storage
 
 # Functions
 
@@ -737,7 +738,7 @@ def compressImage(self, post_media_id):
         raise Exception(message)
 
 @shared_task(bind=True)
-def compressVideo(self, post_media_id):
+def compressVideo(self, post_media_id, custom_thumbnail_path=None):
     try:
         media_object = PostMedia.objects.get(id=post_media_id)
         
@@ -751,29 +752,42 @@ def compressVideo(self, post_media_id):
 
         # Thumbnail Generation
 
-        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{post_media_id}.jpg")
-        os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
+        # Custom Thumbnail
+        if custom_thumbnail_path and default_storage.exists(custom_thumbnail_path):
+            try:
+                with default_storage.open(custom_thumbnail_path, "rb") as f:
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
+                
+                default_storage.delete(custom_thumbnail_path) # Deletes Temporary Thumbnail Path From The Default Storage
+                
+            except Exception as e:
+                custom_thumbnail_path = None # Fallback For Default Auto-Generated Thumbnail
 
-        # Gets The Frame From The First Second Of The Video
-        thumb_command = [
-            "ffmpeg", "-y", "-ss", "00:00:01", "-i", input_path,
-            "-vframes", "1", "-q:v", "2", thumb_temp_path
-        ]
+        # Auto-Generated Thumbnail
+        if not custom_thumbnail_path:
+            thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{post_media_id}.jpg")
+            os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
 
-        try:
-            subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # Gets The Frame From The First Second Of The Video
+            thumb_command = [
+                "ffmpeg", "-y", "-ss", "00:00:01", "-i", input_path,
+                "-vframes", "1", "-q:v", "2", thumb_temp_path
+            ]
 
-            with open(thumb_temp_path, "rb") as f:
-                media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
+            try:
+                subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        except subprocess.CalledProcessError:
-            message = "Video Is Shorter Than 1 Second."
-            raise Exception(message)
+                with open(thumb_temp_path, "rb") as f:
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
 
-        finally:
-            # Removes Temporary Thumbnail Image File From Disk
-            if os.path.exists(thumb_temp_path):
-                os.remove(thumb_temp_path)
+            except subprocess.CalledProcessError:
+                message = "Video Is Shorter Than 1 Second."
+                raise Exception(message)
+
+            finally:
+                # Removes Temporary Thumbnail Image File From Disk
+                if os.path.exists(thumb_temp_path):
+                    os.remove(thumb_temp_path)
 
         # Progress Calculation
 
