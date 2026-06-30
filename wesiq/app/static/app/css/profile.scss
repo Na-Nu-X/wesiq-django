@@ -728,9 +728,102 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                         }
                     }
                 }
+
+                .show_follow_requests {
+                    all: unset;
+                    position: relative;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.1);
+                        cursor: pointer;       
+                    }
+
+                    .follow_requests_amount {
+                        position: absolute;
+                        top: -5px;
+                        right: -8px;
+                        line-height: 1;
+                        color: $blue-color;
+                    }
+
+                    .fa-bell {
+                        font-size: 1.5em;
+                        color: $blue-color;
+                    }
+                }
+
+                .follow_requests_dialog {
+                    @include position_center($position: fixed);
+                    margin: 0;
+                    padding: 0;
+                    background: transparent;
+                    border: none;
+
+                    &::backdrop {
+                        background-color: transparentize($main-color, 0.8);
+                        backdrop-filter: blur(2px);
+                    }
+
+                    .all_follow_requests {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        padding: 10px;
+                        background-color: transparentize($main-color, 0.8);
+                        backdrop-filter: blur(5px);
+                        border: 2px solid $secondary-color;
+                        border-radius: $medium-border-radius;
+
+                        .follow_requests_info {
+                            color: $secondary-color;
+                            text-align: center;
+                        }
+                        
+                        .one_follow_request {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+            
+                            a {
+                                .profile_picture {
+                                    @include profile_picture($width: 38px, $height: 38px);
+                                    display: block;
+                                    transition: transform 0.3s ease;
+            
+                                    &:hover {
+                                        transform: scale(1.05);
+                                    }
+                                }
+                            }
+
+                            .username {
+                                @include crop_text;
+                                width: 250px;
+                                color: $secondary-color;
+                            }
+            
+                            .approve,
+                            .reject {
+                                all: unset;
+            
+                                i {
+                                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                                    display: block;
+                                    font-size: 1.2em;
+                                }
+                            }
+            
+                            .approve {
+                                margin-left: auto;
+                            }
+                        }
+                    }
+                }
                 
                 .follow_button {
                     height: 40px;
+                    line-height: 1;
                     padding: 10px 20px;
                     text-align: center;
                     background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));

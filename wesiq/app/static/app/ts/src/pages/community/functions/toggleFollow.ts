@@ -14,6 +14,8 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
             return
         }
 
+        console.log(toggle_follow_response.message)
+
         if(user_to_follow_id) {
             if(icon) {
                 // Follow
@@ -50,7 +52,7 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
                     if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
                     if(followers) followers.textContent = String(parseInt(followers.textContent) + 1) // Increases The Followers Counter
                 }
-    
+
                 // Unfollow
                 else if(follow_button.dataset["action"]?.trim() === "unfollow") {
                     follow_button.textContent = "Začať sledovať"
@@ -59,11 +61,23 @@ export async function toggleFollow(icon:HTMLElement|null, follow_button:HTMLButt
                     if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
                     if(followers) followers.textContent = String(parseInt(followers.textContent) - 1) // Decreases The Followers Counter
                 }
+
+                // Send Follow Request
+                else if(follow_button.dataset["action"]?.trim() === "send_follow_request") {
+                    follow_button.textContent = "Zrušiť žiadosť"
+                    follow_button.dataset["action"] = "cancel_follow_request"
+                }
+
+                // Cancel Follow Request
+                else if(follow_button.dataset["action"]?.trim() === "cancel_follow_request") {
+                    follow_button.textContent = "Začať sledovať"
+                    follow_button.dataset["action"] = "send_follow_request"
+                }
             }
         }
     }
 
     catch {
-        displayMessage(gettext("Pri pridávaní sledovania došlo k chybe."), "error") // Displays The Error Message
+        displayMessage(gettext("Pri zmene sledovania došlo k chybe."), "error") // Displays The Error Message
     }
 }
