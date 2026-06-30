@@ -10,13 +10,13 @@ from django.utils.translation import gettext as _
 from urllib.parse import urlparse
 
 class Users(models.Model):
-    role_choices = [
+    ROLE_CHOICES = [
         ("developer", "developer"),
         ("admin", "admin"),
         ("user", "user")
     ]
 
-    account_status_choices = [
+    ACCOUNT_STATUS_CHOICES = [
         ("unverified", "unverified"),
         ("OK", "OK"),
         ("suspended", "suspended"),
@@ -30,13 +30,22 @@ class Users(models.Model):
         blank=True
     )
 
+    following = models.ManyToManyField(
+        "self", 
+        through="FollowRelation",
+        verbose_name="Following", 
+        related_name="followers",
+        symmetrical=False, 
+        blank=True
+    )
+
     first_name = models.CharField(verbose_name="First Name", max_length=20, null=True, blank=True)
     last_name = models.CharField(verbose_name="Last Name", max_length=50, null=True, blank=True)
     username = models.CharField(verbose_name="Username", max_length=20, null=False)
     email_address = models.CharField(verbose_name="E-mail Address", max_length=50)
     phone_number = models.CharField(verbose_name="Phone Number", max_length=50, null=True)
     password = models.CharField(verbose_name="Password", max_length=255)
-    role = models.CharField(verbose_name="Role", choices=role_choices, default="user", max_length=20)
+    role = models.CharField(verbose_name="Role", choices=ROLE_CHOICES, default="user", max_length=20)
     profile_picture_name = models.CharField(verbose_name="Profile Picture File", max_length=50, null=True, blank=True)
     language = models.CharField(verbose_name="Language Code", max_length=10, default="en", null=False, blank=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
@@ -45,7 +54,6 @@ class Users(models.Model):
     password_reset_code = models.CharField(verbose_name="Password Reset Code", max_length=6, null=True, blank=True)
     google_id = models.CharField(verbose_name="Google ID", max_length=255, null=True, blank=True)
     friend_code = models.CharField(verbose_name="Friend Code", max_length=6, null=False)
-    following = models.ManyToManyField('self', verbose_name="Following", related_name="followers", symmetrical=False, blank=True)
     saved_posts = models.ManyToManyField("Post", verbose_name="Saved Posts", related_name="saved_posts", blank=True)
     bio = models.TextField(verbose_name="Bio", max_length=100, null=True, blank=True)
     xp = models.PositiveIntegerField(verbose_name="Total XP", default=0, null=False)
@@ -55,7 +63,7 @@ class Users(models.Model):
     max_activity_streak = models.PositiveIntegerField(verbose_name="Max Activity Streak", default=0, null=False)
     last_activity_streak_increase_time = models.DateTimeField(verbose_name="Last Activity Streak Increase Time", auto_now_add=False, null=True, blank=True)
     private_account = models.BooleanField(verbose_name="Private Account", default=False, null=False)
-    account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=account_status_choices, default="unverified", null=False)
+    account_status = models.CharField(verbose_name="Account Status", max_length=20, choices=ACCOUNT_STATUS_CHOICES, default="unverified", null=False)
     suspension_time = models.DateTimeField(verbose_name="Suspension Time", null=True, blank=True)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now_add=False, null=True, blank=True)
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
@@ -119,6 +127,32 @@ class Users(models.Model):
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
 
+class FollowRelation(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "pending"),
+        ("accepted", "accepted")
+    ]
+
+    from_user = models.ForeignKey(
+        "Users", 
+        related_name="following_relations", 
+        on_delete=models.CASCADE,
+        null=False
+    )
+
+    to_user = models.ForeignKey(
+        "Users", 
+        related_name="follower_relations", 
+        on_delete=models.CASCADE,
+        null=False
+    )
+    
+    status = models.CharField(verbose_name="Status", max_length=10, choices=STATUS_CHOICES, default="accepted", null=False)
+    created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
+
+    class Meta:
+        unique_together = ("from_user", "to_user")
+
 class SpecialBadges(models.Model):
     user = models.ForeignKey(
         Users,
@@ -155,7 +189,7 @@ class UserDailyOfficialTasks(models.Model):
         unique_together = ("task", "user")
 
 class UsersReport(models.Model):
-    report_reason_choices = [
+    REPORT_REASON_CHOICES = [
         ("spam", "spam"),
         ("harassment", "harassment"),
         ("hate_speech", "hate speech"),
@@ -180,7 +214,7 @@ class UsersReport(models.Model):
         related_name="reports_sent"
     )
 
-    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=REPORT_REASON_CHOICES, default="other", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:
@@ -203,7 +237,7 @@ class Activity(models.Model):
     training_plan_summary = models.JSONField(verbose_name="Training Plan Summary", default=list, null=True, blank=True)
 
 class Reviews(models.Model):
-    status_choices = [
+    STATUS_CHOICES = [
         ("pending", "pending"),
         ("approved", "approved"),
         ("denied", "denied"),
@@ -228,14 +262,14 @@ class Reviews(models.Model):
     
     rating = models.PositiveIntegerField(verbose_name="Rating", default=0, null=False)
     review = models.TextField(verbose_name="Review", max_length=200, null=True)
-    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="pending")
+    status = models.CharField(verbose_name="Status", choices=STATUS_CHOICES, max_length=20, default="pending")
     rejection_time = models.DateTimeField(verbose_name="Rejection Time", null=True, blank=True)
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     last_edit = models.DateTimeField(verbose_name="Last Edit Time", null=True, blank=True)
     creation_time = models.DateTimeField(verbose_name="Creation Time", auto_now_add=True, null=False)
 
 class ReviewReport(models.Model):
-    report_reason_choices = [
+    REPORT_REASON_CHOICES = [
         ("spam", "spam"),
         ("harassment", "harassment"),
         ("hate_speech", "hate speech"),
@@ -258,7 +292,7 @@ class ReviewReport(models.Model):
         null=False,
     )
 
-    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=REPORT_REASON_CHOICES, default="other", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:
@@ -318,7 +352,7 @@ class ArticleRating(models.Model):
         unique_together = ("article", "user")
 
 class ArticleForum(models.Model):
-    status_choices = [
+    STATUS_CHOICES = [
         ("OK", "OK"),
         ("hidden", "hidden")
     ]
@@ -362,7 +396,7 @@ class ArticleForum(models.Model):
         related_name="replies",
     )
 
-    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
+    status = models.CharField(verbose_name="Status", choices=STATUS_CHOICES, max_length=20, default="OK")
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     level = models.PositiveIntegerField(default=1)
 
@@ -381,7 +415,7 @@ class ArticleForum(models.Model):
         super().save(*args, **kwargs)
 
 class ArticleForumReport(models.Model):
-    report_reason_choices = [
+    REPORT_REASON_CHOICES = [
         ("spam", "spam"),
         ("harassment", "harassment"),
         ("hate_speech", "hate speech"),
@@ -404,14 +438,14 @@ class ArticleForumReport(models.Model):
         null=False,
     )
 
-    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=REPORT_REASON_CHOICES, default="other", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:
         unique_together = ("articleforum", "user")
 
 class TrainingPlan(models.Model):
-    unit_choices = [
+    UNIT_CHOICES = [
         ("reps", "reps"),
         ("seconds", "seconds"),
         ("steps", "steps"),
@@ -430,18 +464,18 @@ class TrainingPlan(models.Model):
     type = models.CharField(verbose_name="Type", max_length=50, null=True)
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
     periods = ArrayField(models.PositiveIntegerField(verbose_name="Reps"), default=list, null=False) # The Length Of The Array Represents Sets And The Amount Of Reps Represents The Values (0 = To Failute / Max. Reps)
-    unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
+    unit = models.CharField(verbose_name="Unit", max_length=20, choices=UNIT_CHOICES, default="reps", null=False)
     order = models.PositiveIntegerField(verbose_name="Order", default=0, null=False)
 
 class Exercises(models.Model):
-    unit_choices = [
+    UNIT_CHOICES = [
         ("reps", "reps"),
         ("seconds", "seconds"),
         ("steps", "steps"),
     ]
 
     exercise = models.CharField(verbose_name="Exercise", max_length=50, null=False)
-    unit = models.CharField(verbose_name="Unit", max_length=20, choices=unit_choices, default="reps", null=False)
+    unit = models.CharField(verbose_name="Unit", max_length=20, choices=UNIT_CHOICES, default="reps", null=False)
     categories = ArrayField(models.CharField(verbose_name="Categories", max_length=50), default=list, null=False)
     requires_weight = models.BooleanField(verbose_name="Requires Weight", default=False, null=False)
     image_filename = models.CharField(verbose_name="Image Filename", max_length=50, null=True, blank=True)
@@ -465,7 +499,7 @@ class CustomTasks(models.Model):
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
 class Transactions(models.Model):
-    status_choices = [
+    STATUS_CHOICES = [
         ("pending", "pending"),
         ("succeeded", "succeeded"),
         ("failed", "failed")
@@ -482,7 +516,7 @@ class Transactions(models.Model):
     stripe_intent_id = models.CharField(verbose_name="Stripe ID", max_length=255, unique=True, null=False)
     cardholder_name = models.CharField(verbose_name="Cardholder Name", max_length=50, null=False)
     amount = models.DecimalField(verbose_name="Amount (€)", max_digits=10, decimal_places=2, default=0, null=False) # In €
-    status = models.CharField(verbose_name="Status", max_length=20, choices=status_choices, default="pending", null=False)
+    status = models.CharField(verbose_name="Status", max_length=20, choices=STATUS_CHOICES, default="pending", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     def __str__(self):
@@ -555,7 +589,7 @@ class Post(models.Model):
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
 
 class PostReport(models.Model):
-    report_reason_choices = [
+    REPORT_REASON_CHOICES = [
         ("spam", "spam"),
         ("harassment", "harassment"),
         ("hate_speech", "hate speech"),
@@ -578,7 +612,7 @@ class PostReport(models.Model):
         null=False,
     )
 
-    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=REPORT_REASON_CHOICES, default="other", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:
@@ -630,7 +664,7 @@ class SeenPost(models.Model):
         unique_together = ("user", "post")
 
 class PostForum(models.Model):
-    status_choices = [
+    STATUS_CHOICES = [
         ("OK", "OK"),
         ("hidden", "hidden")
     ]
@@ -674,7 +708,7 @@ class PostForum(models.Model):
         related_name="replies",
     )
 
-    status = models.CharField(verbose_name="Status", choices=status_choices, max_length=20, default="OK")
+    status = models.CharField(verbose_name="Status", choices=STATUS_CHOICES, max_length=20, default="OK")
     reports = models.PositiveIntegerField(verbose_name="Reports", default=0, null=False)
     level = models.PositiveIntegerField(default=1)
 
@@ -693,7 +727,7 @@ class PostForum(models.Model):
         super().save(*args, **kwargs)
 
 class PostForumReport(models.Model):
-    report_reason_choices = [
+    REPORT_REASON_CHOICES = [
         ("spam", "spam"),
         ("harassment", "harassment"),
         ("hate_speech", "hate speech"),
@@ -716,7 +750,7 @@ class PostForumReport(models.Model):
         null=False,
     )
 
-    reason = models.CharField(verbose_name="Reason", max_length=50, choices=report_reason_choices, default="other", null=False)
+    reason = models.CharField(verbose_name="Reason", max_length=50, choices=REPORT_REASON_CHOICES, default="other", null=False)
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True, null=False)
 
     class Meta:

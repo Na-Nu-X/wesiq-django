@@ -406,32 +406,88 @@
                         <div class="follow_container">
                             <div class="statistics">
                                 <div class="followers">
-                                    <p class="amount">{{ user.followers.count }}</p>
+                                    <p class="amount">{{ followers.count|default:0 }}</p>
                                     <p class="label">{% translate "sledujú" %}</p>
                                 </div>
             
                                 <div class="following">
-                                    <p class="amount">{{ user.following.count }}</p>
+                                    <p class="amount">{{ following.count|default:0 }}</p>
                                     <p class="label">{% translate "sleduje" %}</p>
                                 </div>
                             </div>
+
+                            {% if logged_in_user and logged_in_user.private_account and logged_in_user.follow_requests.count > 0 %}
+                                <script src="{% static 'app/ts/dist/pages/profile/components/follow_requests.js' %}" type="module"></script>
+
+                                <button class="show_follow_requests">
+                                    <span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>
+                                    <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
+                                </button>
+
+                                <dialog class="follow_requests_dialog">
+                                    <div class="all_follow_requests">
+                                        <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p>
+    
+                                        {% for one_follow_request in logged_in_user.follow_requests %}
+                                            <div class="one_follow_request" data-id="{{ one_follow_request.id }}">
+                                                <a href="{% url 'profile_url' one_follow_request.from_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                                    <img 
+                                                        class="profile_picture skeleton_loading" 
+                                                        src="
+                                                            {% if one_follow_request.from_user.profile_picture_name %}
+                                                                /../media/images/{{ one_follow_request.from_user.id }}/{{ one_follow_request.from_user.profile_picture_name }}
+                    
+                                                            {% else %}
+                                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                            
+                                                            {% endif %}
+                                                        "
+                                                        alt=""
+                                                    >
+                                                </a>
+    
+                                                <p class="username">{{ one_follow_request.from_user.username }}</p>
+    
+                                                <button class="approve" title="{% translate 'Schváliť' %}" aria-label="{% translate 'Schváliť' %}">
+                                                    <i class="fa-solid fa-check"></i> <!-- https://fontawesome.com/icons/check -->
+                                                </button>
+                                                
+                                                <button class="reject" title="{% translate 'Zamietnuť' %}" aria-label="{% translate 'Zamietnuť' %}">
+                                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                </button>
+                                            </div>
+                                        
+                                        {% endfor %}
+                                    </div>
+                                </dialog>
+                            
+                            {% endif %}
 
                             {% if not request.session.logged_in_user_id == user.id and request.session.logged_in_user_id %}
                                 <button 
                                     class="follow_button"
                                     data-id="{{ user.id }}"
                                     data-action="
-                                        {% if not user.has_follow %}
+                                        {% if not user.has_follow and not user.has_pending_follow_request and not user.private_account %}
                                             follow
 
-                                        {% else %}
+                                        {% elif user.has_follow %}
                                             unfollow
+
+                                        {% elif not user.has_pending_follow_request and user.private_account %}
+                                            send_follow_request
+
+                                        {% elif user.has_pending_follow_request %}
+                                            cancel_follow_request
                                         
                                         {% endif %}
                                     "
                                 >
-                                    {% if not user.has_follow %}
+                                    {% if not user.has_follow and not user.has_pending_follow_request %}
                                         {% translate "Začať sledovať" %}
+
+                                    {% elif user.has_pending_follow_request %}
+                                        {% translate "Zrušiť žiadosť" %}
 
                                     {% else %}
                                         {% translate "Prestať sledovať" %}

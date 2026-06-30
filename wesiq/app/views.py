@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks, UsersReport
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks, UsersReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -375,26 +375,39 @@ def toggleFollow(request):
             user_to_follow_id = json.loads(request.body)
             user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
 
-            has_follow = logged_in_user.following.filter(id=user_to_follow_id).exists() # Checks If The Logged In User Is Already Following The User
+            # Checks If The Logged In User Is Already Following The User
+            follow_relation = FollowRelation.objects.filter(
+                from_user=logged_in_user, 
+                to_user=user_to_follow
+            ).first()
 
             # Follow
-            if not has_follow:
-                logged_in_user.following.add(user_to_follow) # Adds The User To Following Users Of Logged In User
-                logged_in_user.save() # Updates The Logged In User
+            if not follow_relation:
+                status = "pending" if user_to_follow.private_account else "accepted" # Defines The Status (Pending If The User's Account Is Private)
+
+                # Creates The New Follow Relation Between 2 Users
+                FollowRelation.objects.create(
+                    from_user=logged_in_user,
+                    to_user=user_to_follow,
+                    status=status
+                )
+
+                message = _("Žiadosť o sledovanie bola odoslaná.") if status == "pending" else _("Sledovanie bolo úspešne pridané.")
 
                 return JsonResponse({
                     "success": True, 
-                    "message": _("Sledovanie bolo úspešne pridané.")
+                    "message": message
                 }, status=200)
 
             # Unfollow
             else:
-                logged_in_user.following.remove(user_to_follow) # Removes The User From Following Users Of Logged In User
-                logged_in_user.save() # Updates The Logged In User
+                message = _("Žiadosť o sledovanie bola zrušená.") if follow_relation.status == "pending" else _("Sledovanie bolo úspešne odstránené.")
+
+                follow_relation.delete() # Removes The Relation Between 2 Users
 
                 return JsonResponse({
                     "success": True, 
-                    "message": _("Sledovanie bolo úspešne odstránené.")
+                    "message": message
                 }, status=200)
 
         return JsonResponse({
@@ -4065,12 +4078,34 @@ def profileView(request, username):
         ).annotate(
             # Creates The Has Follow Column (True If The Logged In User Is Following The User)
             has_follow=Exists(
-                Users.objects.filter(
-                    id=OuterRef("pk"), 
-                    followers=logged_in_user_id
+                FollowRelation.objects.filter(
+                    from_user=logged_in_user_id,
+                    to_user=OuterRef("pk"),
+                    status="accepted"
+                )
+            ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+            # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+            has_pending_follow_request=Exists(
+                FollowRelation.objects.filter(
+                    from_user=logged_in_user_id,
+                    to_user=OuterRef("pk"),
+                    status="pending"
                 )
             ) if logged_in_user else Value(False, output_field=BooleanField())
         ).first()
+
+        # Gets All Followers With All Related Data
+        followers = FollowRelation.objects.filter(
+            to_user=user, 
+            status="accepted"
+        ).select_related("from_user")
+
+        # Gets All Following Users With All Related Data
+        following = FollowRelation.objects.filter(
+            from_user=user, 
+            status="accepted"
+        ).select_related("to_user")
 
         today = timezone.now().date() # Determines Today's Date
 
@@ -4090,9 +4125,10 @@ def profileView(request, username):
                 queryset=Users.objects.annotate(
                     # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                     has_follow=Exists(
-                        Users.objects.filter(
-                            id=OuterRef("pk"), 
-                            followers=logged_in_user_id
+                        FollowRelation.objects.filter(
+                            from_user=logged_in_user_id,
+                            to_user=OuterRef("pk"),
+                            status="accepted"
                         )
                     ) if logged_in_user else Value(False, output_field=BooleanField())
                 )
@@ -4123,6 +4159,64 @@ def profileView(request, username):
                 ).distinct()
 
                 if request.method == "POST":
+                    # If Logged In User Has Private Account
+                    if logged_in_user.private_account:
+                        # Approve Follow Request
+                        if request.headers.get("X-Requested-Action") == "approve-follow-request":
+                            try:
+                                follow_request_id = json.loads(request.body) # Gets The Follow Request ID
+
+                                # Gets The Follow Request
+                                follow_request = FollowRelation.objects.filter(
+                                    id=follow_request_id,
+                                    to_user=logged_in_user, 
+                                    status="pending"
+                                ).first()
+
+                                follow_request.status = "accepted" # Accepts The Follow Request
+
+                                follow_request.save() # Saves The Updated Follow Request
+
+                                return JsonResponse({
+                                    "success": True, 
+                                    "message": _("Žiadosť o sledovanie bola úspešne potvrdená.")
+                                }, status=200)
+
+                            except Exception as e:
+                                captureError(f"An error occurred while accepting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+                                return JsonResponse({
+                                    "success": False, 
+                                    "message": _("Pri potvrdení žiadosti o sledovanie došlo k chybe.")
+                                }, status=500)
+
+                        # Reject Follow Request
+                        if request.headers.get("X-Requested-Action") == "reject-follow-request":
+                            try:
+                                follow_request_id = json.loads(request.body) # Gets The Follow Request ID
+
+                                # Gets The Follow Request
+                                follow_request = FollowRelation.objects.filter(
+                                    id=follow_request_id,
+                                    to_user=logged_in_user, 
+                                    status="pending"
+                                ).first()
+
+                                follow_request.delete() # Removes The Follow Request
+
+                                return JsonResponse({
+                                    "success": True, 
+                                    "message": _("Žiadosť o sledovanie bola zamietnutá.")
+                                }, status=200)
+
+                            except Exception as e:
+                                captureError(f"An error occurred while rejecting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+                                return JsonResponse({
+                                    "success": False, 
+                                    "message": _("Pri zamietnutí žiadosti o sledovanie došlo k chybe.")
+                                }, status=500)
+
                     # Edit Account Form
                     if request.POST.get("edit_account_form_submit"):
                         edit_account_form = editAccountForm(request.POST, request.FILES) # Gets The Edit Account Form
@@ -4284,6 +4378,13 @@ def profileView(request, username):
                     # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
                     return response
 
+                if logged_in_user.private_account:
+                    # Gets All Follow Requests With All Related Data
+                    follow_requests = FollowRelation.objects.filter(
+                        to_user=logged_in_user, 
+                        status="pending"
+                    ).select_related("from_user")
+
                 filled_edit_account_form = editAccountForm(initial={
                     "bio": logged_in_user.bio,
                     "first_name": logged_in_user.first_name,
@@ -4301,10 +4402,14 @@ def profileView(request, username):
                         "email_address": logged_in_user.email_address,
                         "profile_picture_name": logged_in_user.profile_picture_name,
                         "friend_code": logged_in_user.friend_code,
-                        "bio_links": logged_in_user.bio_links
+                        "bio_links": logged_in_user.bio_links,
+                        "private_account": logged_in_user.private_account,
+                        "follow_requests": follow_requests if logged_in_user.private_account else None
                     },
 
                     "user": user,
+                    "followers": followers,
+                    "following": following,
                     "edit_account_form": filled_edit_account_form,
                     "bio_links_form": bioLinksForm,
                     "posts": posts,
@@ -4413,11 +4518,15 @@ def profileView(request, username):
                     },
 
                     "user": user,
+                    "followers": followers,
+                    "following": following,
                     "posts": posts
                 })
         
         return render(request, "app/profile.html", {
             "user": user,
+            "followers": followers,
+            "following": following,
             "posts": posts
         })
 

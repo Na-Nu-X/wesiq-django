@@ -1685,6 +1685,82 @@ To ensure strict data protection and empower users with total control over their
 
 - **Per-Post Toggles**: Authors can manually dictate the audience for each individual upload. By accessing the custom post popover settings menu (Section 3.52), users can seamlessly toggle the specific post's visibility on or off for the general public, allowing a mixed feed of public and follower-only content under a single public profile.
 
+### 4.25. Inline Moderation Engine and Object-Level Admin Controls
+
+To maintain platform integrity, ensure community safety, and prevent the proliferation of unauthorized or explicit content, the application integrates an advanced inline moderation framework. This system injects high-privilege administrative actions directly into the standard contextual popover menus based on the user's role.
+
+#### 4.25.1 Role-Based Menu Augmentation
+
+- **Privileged Viewport Modification**: The system automatically evaluates the authentication token and role flags (e.g., is_staff or is_superuser) of the logged-in session. If the user is identified as an administrator or developer, the frontend dynamically injects specialized management utilities into the standard "three-dot" popover menus.
+
+Direct Content Management: Without navigating away to a separate backend dashboard, an administrator can instantly execute destructive or corrective actions in real-time, such as deleting any user's post, purging non-compliant reviews, or executing immediate account suspensions directly from the viewport.
+
+#### 4.25.2 Two-Step Review Verification Pipeline
+
+- **Manual Moderation Gate**: To guarantee quality control and prevent spam or malicious text, the platform enforces a strict evaluation workflow for user-submitted feedback. Newly created reviews enter a pending state and are hidden from the general public.
+
+- **Approval / Rejection Actions**: Admins are granted dedicated interface buttons to either approve the review (making it instantly visible across the platform and updating the product's aggregate rating) or reject it, which triggers secure deletion from the database.
+
+#### 4.25.3 User-Driven Reporting Architecture
+
+- **Distributed Moderation Assistance**: Features enabling standard users to report non-compliant objects (profiles, posts, and reviews) act as a continuous telemetry stream for the administrative team.
+
+- **Automated vs. Manual Resolution**: The backend is engineered to track report thresholds, opening up future pathways for automated content flagging or temporary suspension algorithms based on cumulative user reports. However, the system fundamentally prioritizes immediate human oversight, ensuring that an administrator can bypass automated queues and manually purge content or suspend offending profiles with a single click.
+
+### 4.26. Network Optimization and Data Saving Engine
+
+To accommodate users operating under restrictive cellular data caps or within areas of low network bandwidth, the platform incorporates a system-wide Data Saving Mode. This module systematically scales down media quality and throttles aggressive data fetching pipelines to minimize network payload volumes.
+
+#### 4.26.1 Global Activation and State Management
+
+- **User-Controlled Toggle**: The feature is accessible as a persistent switch within the User Account Settings on the profile page. Once altered, the preference state is synchronized with the backend session or user profile model to enforce conditional layout rendering.
+
+- **Feed Optimization**: When active, the optimization engine primarily intercepts the main post feed lifecycle during scrolling events, where data consumption is naturally at its peak due to rich media aggregation.
+
+#### 4.26.2 Adaptive Video Streaming and Preloading Constraints
+
+- **Suppressed Preloading**: The platform suppresses all automatic background buffer preloading for video assets. Videos remain in a paused, static thumbnail state and do not transfer data streams until the user issues an explicit, manual click event on the play interface.
+
+- **Low-Resolution Baseline**: Upon activation, video playbacks default strictly to a low-bandwidth 480p resolution pipeline. To preserve user autonomy, this baseline restriction can be manually overridden via the video player's quality selector interface on a per-video basis.
+
+#### 4.26.3 Dynamic Pagination Throttling
+
+- **Reduced Batch Payloads**: The system directly manipulates the chunk sizes utilized by the backend Django Pagination system (Section 3.53).
+
+- **Adaptive Object Limits**: When Data Saving Mode is registered as active, the volume of database objects serialized and dispatched per asynchronous fetch request is scaled down (e.g., reducing the baseline feed chunk from 5 items to a tighter threshold). This effectively limits unnecessary DOM overhead and saves significant downstream mobile data.
+
+### 4.27. Video Audio Stripping and Control Disabling
+
+To provide content creators with precise control over their uploads, the platform includes an option to completely strip audio tracks from video files during the creation process. This guarantees that videos intended to be silent do not process or transmit empty audio streams.
+
+#### 4.27.1 Pre-Upload Audio Disabling
+
+- **Creator Control**: Within the post-creation wizard, users are presented with a dedicated configuration toggle allowing them to disable the audio track for each uploaded video asset individually.
+
+- **Asynchronous Processing Pipeline**: Once submitted, the media payload is pushed to the background architecture. An asynchronous Celery worker intercepts the file and utilizes FFmpeg to permanently strip the audio stream container from the video file. This structural compression permanently modifies the asset at the server level before it is finalized and published.
+
+#### 4.27.2 Reactive Client-Side Media Controls
+
+- **Dynamic Audio Control Stripping**: For posts where the author chose to disable sound, the frontend media player adapts dynamically.
+
+- **Disabled Volume Interfaces**: Within the custom video playback controls in the feed, all volume sliders, mute buttons, and audio configurations are completely disabled or hidden. This provides immediate visual confirmation to the viewing user that the media asset possesses no native audio stream, preventing unnecessary troubleshooting interactions with device volume keys.
+
+### 4.28. Dynamic HTML5 Canvas Ambient Backgrounds
+
+To elevate the visual identity and aesthetic appeal of the platform without compromising runtime interface performance, the application implements a sophisticated ambient background system driven by native HTML5 technology.
+
+#### 4.28.1 High-Performance Graphic Rendering
+
+- **Bitmap Isolation**: Instead of utilizing heavy, complex CSS layout configurations or anchoring a massive volume of individual DOM elements to achieve movement—which would trigger continuous, expensive page reflows—the background effect is completely isolated within a single HTML5 ```<canvas>``` element.
+
+- **Low-Overhead Animation Loops**: The canvas relies on optimized client-side animation routines (such as highly efficient requestAnimationFrame loops via TypeScript). This ensures that subtle, ambient visual elements (e.g., fluid particle networks or soft gradient shifts) flow smoothly at a consistent frame rate across various device configurations.
+
+#### 4.28.2 Non-Intrusive Layout Layering
+
+- **Z-Index Layering and Opacity**: The canvas component is explicitly layered directly behind the active UI viewport using calculated CSS positioning (position: fixed; z-index: -1;).
+
+- **Visual Hierarchy Preservation**: The animation sequences are tuned to a gentle, low-contrast opacity threshold. This design guarantee ensures that the dynamic backdrop remains strictly decorative, never competing with or distracting from foreground text readability or interactive components.
+
 ## 5. Security
 
 ### 5.1. Authentication Audit Logging (login.log)
