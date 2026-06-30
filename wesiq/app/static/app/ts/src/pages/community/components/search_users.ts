@@ -86,15 +86,11 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
     // All Users Container Click Functionalities
     all_users_container.addEventListener("click", function(event:PointerEvent):void {
         // Toggle Follow
-        if(
-            (event.target as HTMLElement).classList.contains("fa-user-plus") ||
-            (event.target as HTMLElement).classList.contains("fa-user-minus")
-        ) {
+        if((event.target as HTMLElement).closest(".follow_button")) {
             event.preventDefault() // Prevents Redirect To The User's Profile
-
-            const icon:HTMLElement = event.target as HTMLElement // Gets The Follow / Unfollow Icon
+            const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
             const clicked_user_id:number|null = Number(((event.target as HTMLElement).closest(".one_user") as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
-            toggleFollow(icon, null, clicked_user_id)
+            toggleFollow(follow_button, clicked_user_id)
         }
 
         // Store User To The Searched Users History 
@@ -115,10 +111,9 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             // Toggle Follow
             if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
                 event.preventDefault() // Prevents Redirect To The User's Profile
-
-                const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Follow / Unfollow Icon
+                const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
                 const clicked_user_id:number|null = Number(((event.target as HTMLElement).closest(".one_user") as HTMLDivElement).dataset["id"]) || null // Gets Clicked User ID
-                toggleFollow(icon, null, clicked_user_id)
+                toggleFollow(follow_button, clicked_user_id)
             }
         }
     })

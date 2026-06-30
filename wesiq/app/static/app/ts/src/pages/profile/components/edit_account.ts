@@ -234,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Data Saving Mode Label Keydown Functionality
     data_saving_mode_label.addEventListener("keydown", function(event:KeyboardEvent):void {
         if(event.key === "Enter") {
-            console.log(data_saving_mode_checkbox)
             data_saving_mode_checkbox.click() // Checks / Unchecks The Data Saving Mode Checkbox
         }
     })

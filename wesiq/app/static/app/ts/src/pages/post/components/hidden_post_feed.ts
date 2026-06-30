@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
                 const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
-                toggleFollow(null, follow_button, clicked_user_id)
+                toggleFollow(follow_button, clicked_user_id)
             }
 
             // Share Post

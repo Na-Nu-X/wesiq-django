@@ -3052,11 +3052,35 @@ def communityView(request):
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                 has_follow=Exists(
-                    Users.objects.filter(
-                        id=OuterRef("pk"), 
-                        followers=logged_in_user_id
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="pending"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).prefetch_related(
+                # Gets All Followers With All Related Data
+                Prefetch(
+                    "follower_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                    to_attr="accepted_followers"
+                ),
+                
+                # Gets All Following Users With All Related Data
+                Prefetch(
+                    "following_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                    to_attr="accepted_following"
+                )
             )
 
             loaded_users_from_history_list = list(loaded_users_from_history) # Converts The Loaded Users From History To List
@@ -3074,11 +3098,35 @@ def communityView(request):
                 ).annotate(
                     # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                     has_follow=Exists(
-                        Users.objects.filter(
-                            id=OuterRef("pk"),
-                            followers=logged_in_user_id
+                        FollowRelation.objects.filter(
+                            from_user=logged_in_user_id,
+                            to_user=OuterRef("pk"),
+                            status="accepted"
+                        )
+                    ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                    # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                    has_pending_follow_request=Exists(
+                        FollowRelation.objects.filter(
+                            from_user=logged_in_user_id,
+                            to_user=OuterRef("pk"),
+                            status="pending"
                         )
                     ) if logged_in_user else Value(False, output_field=BooleanField())
+                ).prefetch_related(
+                    # Gets All Followers With All Related Data
+                    Prefetch(
+                        "follower_relations",
+                        queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                        to_attr="accepted_followers"
+                    ),
+                    
+                    # Gets All Following Users With All Related Data
+                    Prefetch(
+                        "following_relations",
+                        queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                        to_attr="accepted_following"
+                    )
                 ).exclude(
                     id__in=loaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
                 ).order_by(
@@ -3107,8 +3155,10 @@ def communityView(request):
                     "username": one_user.username,
                     "profile_picture_name": one_user.profile_picture_name,
                     "friend_code": one_user.friend_code,
-                    "followers": one_user.followers.count(),
-                    "has_follow": one_user.has_follow
+                    "private_account": one_user.private_account,
+                    "followers": len(one_user.accepted_followers),
+                    "has_follow": one_user.has_follow,
+                    "has_pending_follow_request": one_user.has_pending_follow_request
                 })
 
             if logged_in_user:
@@ -3159,7 +3209,39 @@ def communityView(request):
                     When(id__in=logged_in_user.following.values_list("id", flat=True), then=True),
                     default=False,
                     output_field=BooleanField()
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="pending"
+                    )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).prefetch_related(
+                # Gets All Followers With All Related Data
+                Prefetch(
+                    "follower_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                    to_attr="accepted_followers"
+                ),
+                
+                # Gets All Following Users With All Related Data
+                Prefetch(
+                    "following_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                    to_attr="accepted_following"
+                )
             ).order_by(
                 "-is_followed",
                 "-creation_time"
@@ -3180,7 +3262,10 @@ def communityView(request):
                     "username": one_user.username,
                     "profile_picture_name": one_user.profile_picture_name, 
                     "friend_code": one_user.friend_code,
-                    "followers": list(one_user.followers.values_list("id", flat=True))
+                    "private_account": one_user.private_account,
+                    "followers": len(one_user.accepted_followers),
+                    "has_follow": one_user.has_follow,
+                    "has_pending_follow_request": one_user.has_pending_follow_request
                 }
 
                 for one_user in users
@@ -3244,6 +3329,20 @@ def communityView(request):
         ).select_related(
             "user"
         ).prefetch_related(
+            # Gets All Followers With All Related Data
+            Prefetch(
+                "user__follower_relations",
+                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                to_attr="accepted_followers"
+            ),
+            
+            # Gets All Following Users With All Related Data
+            Prefetch(
+                "user__following_relations",
+                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                to_attr="accepted_following"
+            ),
+
             "tagged_users",
 
             Prefetch(
@@ -3566,6 +3665,20 @@ def loadPostsView(request):
     posts_query = Post.objects.select_related(
         "user"
     ).prefetch_related(
+        # Gets All Followers With All Related Data
+        Prefetch(
+            "user__follower_relations",
+            queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+            to_attr="accepted_followers"
+        ),
+        
+        # Gets All Following Users With All Related Data
+        Prefetch(
+            "user__following_relations",
+            queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+            to_attr="accepted_following"
+        ),
+
         "tagged_users", 
         
         Prefetch(
@@ -3668,8 +3781,8 @@ def loadPostsView(request):
                 "last_name": one_post.user.last_name,
                 "username": one_post.user.username,
                 "profile_picture_name": one_post.user.profile_picture_name,
-                "following": list(one_post.user.following.values_list("id", flat=True)),
-                "followers": list(one_post.user.followers.values_list("id", flat=True)),
+                "following": [one_relation.from_user_id for one_relation in one_post.user.accepted_following],
+                "followers": [one_relation.from_user_id for one_relation in one_post.user.accepted_followers],
                 "private_account": one_post.user.private_account
             },
 
@@ -3960,11 +4073,26 @@ def postView(request, post_id):
             queryset=Users.objects.annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                 has_follow=Exists(
-                    Users.objects.filter(
-                        id=OuterRef("pk"), 
-                        followers=logged_in_user_id
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="accepted"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).prefetch_related(
+                # Gets All Followers With All Related Data
+                Prefetch(
+                    "follower_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                    to_attr="accepted_followers"
+                ),
+                
+                # Gets All Following Users With All Related Data
+                Prefetch(
+                    "following_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                    to_attr="accepted_following"
+                )
             )
         ),
         
