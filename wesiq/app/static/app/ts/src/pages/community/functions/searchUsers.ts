@@ -8,8 +8,10 @@ interface loadedUser {
     username:string,
     profile_picture_name:string,
     friend_code:string,
+    private_account:boolean,
     followers:number,
-    has_follow:boolean
+    has_follow:boolean,
+    has_pending_follow_request:boolean
 }
 
 interface firstLoadedUsersResponse {
@@ -26,7 +28,10 @@ interface searchedUser {
     username:string,
     profile_picture_name:string,
     friend_code:string,
-    followers:number[]
+    private_account:boolean,
+    followers:number,
+    has_follow:boolean,
+    has_pending_follow_request:boolean
 }
 
 interface searchedUsersResponse {
@@ -49,7 +54,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
             return
         }
 
-        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data, first_loaded_users_response.logged_in_user_id))) // Creates The HTML For Every Loaded User
+        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data))) // Creates The HTML For Every Loaded User
     }
 
     catch {
@@ -58,7 +63,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
 }
 
 // Function For Create Loaded User HTML
-function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser, logged_in_user_id?:number):HTMLAnchorElement {
+function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser):HTMLAnchorElement {
     const one_user_template_clone:DocumentFragment = one_user_template.content.cloneNode(true) as DocumentFragment // Clones The One User Template Content
     
     // One User Link
@@ -88,10 +93,15 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
 
     // Follow Button
     const follow_button:HTMLButtonElement = one_user.querySelector(".follow_button") as HTMLButtonElement // Gets The Follow Button
-    const follow_icon:HTMLElement = follow_button.querySelector("i") as HTMLElement // Gets The Follow Icon
 
-    if(logged_in_user_id) user_data.has_follow ? follow_icon.classList.add("fa-user-minus") : follow_icon.classList.add("fa-user-plus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
-    else follow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
+    if(!user_data.has_follow && !user_data.has_pending_follow_request && !user_data.private_account) follow_button.dataset["action"] = "follow"
+    else if(user_data.has_follow) follow_button.dataset["action"] = "unfollow"
+    else if(!user_data.has_pending_follow_request && user_data.private_account) follow_button.dataset["action"] = "send_follow_request"
+    else if(user_data.has_pending_follow_request) follow_button.dataset["action"] = "cancel_follow_request"
+
+    if(!user_data.has_follow && !user_data.has_pending_follow_request) follow_button.textContent = gettext("Začať sledovať")
+    else if(user_data.has_pending_follow_request) follow_button.textContent = gettext("Zrušiť žiadosť")
+    else follow_button.textContent = gettext("Prestať sledovať")
 
     return one_user // Returns The One User Link
 }
@@ -112,7 +122,7 @@ export async function getSearchedUsers(searched_text:string, all_users_container
 
             // Renders Users
             search_bar_response.users.forEach(function(one_user_data:searchedUser) {
-                renderUsers(one_user_data, all_users_container, search_bar_response.logged_in_user_id)
+                renderUsers(one_user_data, all_users_container)
             })
         }
     }
@@ -127,14 +137,14 @@ export async function getSearchedUsers(searched_text:string, all_users_container
 }
 
 // Function For Render Users From The POST Response
-function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement, logged_in_user_id?:number):void {
+function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement):void {
     const one_user:HTMLAnchorElement = document.createElement("a") // Creates One User Container
     const profile_picture:HTMLImageElement = document.createElement("img") // Creates Profile Picture Image
     const username:HTMLParagraphElement = document.createElement("p") // Creates The Username Paragraph
     const full_name:HTMLParagraphElement = document.createElement("p") // Creates Full Name Paragraph
+    const followers_container:HTMLDivElement = document.createElement("div") as HTMLDivElement // Creates The Followers Container
     const followers:HTMLParagraphElement = document.createElement("p") // Creates Followers Paragraph
     const follow_button:HTMLButtonElement = document.createElement("button") // Creates The Follow Button
-    const follow_icon:HTMLElement = document.createElement("i") // Creates Follow Icon
 
     one_user.classList.add("one_user") // Adds One User Class
     one_user.href = interpolate(gettext("/sk/profil/%s"), [user_data.username]) // Sets The Link To The User's Profile
@@ -160,17 +170,30 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement,
     full_name.textContent = `${user_data.first_name} ${user_data.last_name}` // Sets First Name And Last Name
     one_user.appendChild(full_name) // Appends The Full Name To The One User Container
 
+    followers_container.classList.add("followers_container") // Adds The Followers Container Class
+    followers_container.title = gettext("Počet sledovateľov...")
+    followers_container.ariaLabel = gettext("Počet sledovateľov...")
+    one_user.appendChild(followers_container) // Appends The Followers Container To The One User Container
+
+    if(!user_data.has_follow && !user_data.has_pending_follow_request && !user_data.private_account) follow_button.dataset["action"] = "follow"
+    else if(user_data.has_follow) follow_button.dataset["action"] = "unfollow"
+    else if(!user_data.has_pending_follow_request && user_data.private_account) follow_button.dataset["action"] = "send_follow_request"
+    else if(user_data.has_pending_follow_request) follow_button.dataset["action"] = "cancel_follow_request"
+
+    if(!user_data.has_follow && !user_data.has_pending_follow_request) follow_button.textContent = gettext("Začať sledovať")
+    else if(user_data.has_pending_follow_request) follow_button.textContent = gettext("Zrušiť žiadosť")
+    else follow_button.textContent = gettext("Prestať sledovať")
+
     followers.classList.add("followers") // Adds Followers Class
-    followers.textContent = `${user_data.followers.length}` // Sets Followers Amount
-    one_user.appendChild(followers) // Appends The Followers To The One User Container
+    followers.textContent = String(user_data.followers) // Sets Followers Amount
+    followers_container.appendChild(followers) // Appends The Followers To The Followers Container
+
+    followers_container.innerHTML += "<i class='fa-solid fa-user'></i>" // https://fontawesome.com/icons/user
 
     follow_button.classList.add("follow_button") // Adds The Follow Button Class
+    follow_button.dataset["action"] = "follow"
+    follow_button.textContent = gettext("Začať sledovať")
     one_user.appendChild(follow_button) // Appends The Follow Button To The One User Container
-    
-    follow_icon.classList.add("fa-solid")
-    if(logged_in_user_id) !user_data.followers.includes(logged_in_user_id) ? follow_icon.classList.add("fa-user-plus") : follow_icon.classList.add("fa-user-minus") // https://fontawesome.com/icons/user-plus https://fontawesome.com/icons/user-minus
-    else follow_icon.classList.add("fa-user") // https://fontawesome.com/icons/user
-    follow_button.appendChild(follow_icon) // Appends The Follow Icon To The Follow Button
 }
 
 // Function For Reset Searched Users (Displays The Initial State)

@@ -37,7 +37,7 @@
                                 <p class="username">{{ post.user.username }}</p>
 
                                 <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                    <p class="followers">{{ post.user.followers.all|length }}</p>
+                                    <p class="followers">{{ post.user.accepted_followers|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
                                 
@@ -127,7 +127,7 @@
                                 <p class="username">{{ post.user.username }}</p>
 
                                 <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                    <p class="followers">{{ post.user.followers.all|length }}</p>
+                                    <p class="followers">{{ post.user.accepted_followers|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
                                 
@@ -301,7 +301,7 @@
                                 <p class="username">{{ post.user.username }}</p>
 
                                 <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                    <p class="followers">{{ post.user.followers.all|length }}</p>
+                                    <p class="followers">{{ post.user.accepted_followers|length }}</p>
 
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
 
@@ -988,7 +988,7 @@
                             <p class="username">{% translate "Neexistujúci účet" %}</p>
 
                             <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                <p class="followers">{{ post.user.followers.all|length }}</p>
+                                <p class="followers">0</p>
                                 <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                             </div>
                         </div>

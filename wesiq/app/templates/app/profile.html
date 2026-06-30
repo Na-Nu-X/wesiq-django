@@ -754,24 +754,24 @@
 
                                 {% endif %}
 
-                                {% if not user.followers.all|length == 0 %}
+                                {% if not followers.count == 0 %}
                                     <div 
                                         class="
                                             badge followers
                                             
-                                            {% if user.followers.all|length < 5 %}
+                                            {% if followers.count < 5 %}
                                                 blue
 
-                                            {% elif user.followers.all|length <= 10 %}
+                                            {% elif followers.count <= 10 %}
                                                 green
 
-                                            {% elif user.followers.all|length <= 25 %}
+                                            {% elif followers.count <= 25 %}
                                                 yellow
 
-                                            {% elif user.followers.all|length <= 50 %}
+                                            {% elif followers.count <= 50 %}
                                                 orange
 
-                                            {% elif user.followers.all|length <= 100 %}
+                                            {% elif followers.count <= 100 %}
                                                 red
 
                                             {% else %}
@@ -786,19 +786,19 @@
                                         <i class="fa-brands fa-bluesky"></i> <!-- https://fontawesome.com/icons/bluesky -->
 
                                         <p>
-                                            {% if user.followers.all|length < 5 %}
+                                            {% if followers.count < 5 %}
                                                 1
             
-                                            {% elif user.followers.all|length <= 10 %}
+                                            {% elif followers.count <= 10 %}
                                                 5
             
-                                            {% elif user.followers.all|length <= 25 %}
+                                            {% elif followers.count <= 25 %}
                                                 10
             
-                                            {% elif user.followers.all|length <= 50 %}
+                                            {% elif followers.count <= 50 %}
                                                 25
             
-                                            {% elif user.followers.all|length <= 100 %}
+                                            {% elif followers.count <= 100 %}
                                                 50
             
                                             {% else %}

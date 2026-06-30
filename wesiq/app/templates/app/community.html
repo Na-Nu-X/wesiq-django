@@ -146,11 +146,16 @@
                     <img class="profile_picture" src="" alt="">
                     <p class="username"></p>
                     <p class="full_name"></p>
-                    <p class="followers"></p>
-                    
-                    <button class="follow_button">
-                        <i class="fa-solid"></i> <!-- https://fontawesome.com/icons/user-plus --> <!-- https://fontawesome.com/icons/user-minus -->
-                    </button>
+
+                    <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
+                        <p class="followers"></p>
+                        <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                    </div>
+
+                    <button 
+                        class="follow_button"
+                        data-action=""
+                    ></button>
                 </a>
             </template>
 
@@ -669,7 +674,7 @@
                                 <p class="username">{{ one_post.user.username }}</p>
 
                                 <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                    <p class="followers">{{ one_post.user.followers.all|length }}</p>
+                                    <p class="followers">{{ one_post.user.accepted_followers|length }}</p>
                                     <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                                 </div>
 

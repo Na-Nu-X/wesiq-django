@@ -671,15 +671,34 @@ header {
                         font-style: italic
                     }
 
-                    .follow_button {
-                        all: unset;
+                    .followers_container {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
 
-                        .fa-user,
-                        .fa-user-plus,
-                        .fa-user-minus {
-                            @include icon;
-                            display: block;
-                            padding: 11.5px 0px;
+                        .followers {
+                            color: darken($secondary-color, 40%);
+                        }
+    
+                        .fa-user {
+                            color: darken($secondary-color, 40%);
+                        }
+                    }
+
+                    .follow_button {
+                        padding: 5px 10px;
+                        text-align: center;
+                        background-color: transparent;
+                        color: $secondary-color;
+                        border: 1px solid transparentize($blue-color, 0.5);
+                        border-radius: $big-border-radius;
+                        outline: none;
+                        transition: border-color 0.3s ease;
+
+                        &:hover,
+                        &:focus-visible {
+                            border-color: $blue-color;
+                            cursor: pointer;
                         }
                     }
                 }

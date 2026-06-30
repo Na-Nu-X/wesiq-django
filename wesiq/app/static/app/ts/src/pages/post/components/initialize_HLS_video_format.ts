@@ -17,8 +17,6 @@ all_media.forEach(function(one_post:HTMLDivElement) {
         const media_id:number|null = Number(video.dataset["media_id"]) || null // Gets The Media ID
         const data_saving_mode:boolean = post_container.dataset["data_saving_mode"] === "True" ? true : false // Gets The Value If The User Has Data Saving Mode Enabled
 
-        console.log(data_saving_mode)
-
         if(user_id && media_id) {
             const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [user_id, media_id, "index.m3u8"], false) // Sets The File Path
             initializeChangeVideoQuality(video, video_src, video_container) // Initializes The Change Video Quality Buttons
