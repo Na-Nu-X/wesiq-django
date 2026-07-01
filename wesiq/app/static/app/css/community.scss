@@ -1835,25 +1835,23 @@ header {
                 .watch_time_container {
                     display: flex;
                     flex-direction: row;
-                    gap: 5px;
                     align-items: center;
                     width: 50%;
 
                     .duration_bar,
                     .watch_time_bar {
-                        position: relative;
                         height: 5px;
                         border-radius: $small-border-radius;
                         transition: width 1s ease;
                     }
-    
+
                     .duration_bar {
                         --width: 0;
 
                         width: calc(var(--width) * 1%);
                         background-color: #8EFA00;
                     }
-    
+
                     .watch_time_bar {
                         --width: 0;
 
@@ -1866,6 +1864,9 @@ header {
                         line-height: 1;
                         color: darken($secondary-color, 40%);
                         font-size: 0.9em;
+                        white-space: nowrap;
+                        min-width: 100px;
+                        text-align: right; 
                     }
                 }
             }

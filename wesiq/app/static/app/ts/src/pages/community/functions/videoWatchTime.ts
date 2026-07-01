@@ -32,7 +32,7 @@ async function recordVideoWatchTime(post_media_id:number, watch_time:number):Pro
 }
 
 // Function For Initialize Show Video Metrics Button
-export function initializeShowVideoMetrics(one_post_container:HTMLDivElement):void {
+export function initializeShowVideoMetricsButton(one_post_container:HTMLDivElement):void {
     const post_container:HTMLDivElement = one_post_container.closest(".post_container") as HTMLDivElement // Gets The Post Container
     const video_container:HTMLDivElement|null = one_post_container.querySelector(".video_container") as HTMLDivElement || null // Gets The Video Container If Is Available
     const logged_in_user_id:number|null = Number(post_container.dataset["logged_in_user_id"]) || null // Gets The Logged In User ID If Is Available
@@ -48,7 +48,7 @@ export function initializeShowVideoMetrics(one_post_container:HTMLDivElement):vo
                 const society:HTMLDivElement = post_container.querySelector(".society") as HTMLDivElement // Gets The Society Container
                 const save:HTMLButtonElement = society.querySelector(".save") as HTMLButtonElement // Gets The Save Button
 
-                society.insertBefore(generateShowVideoMetrics(), save) // Appends The Show Video Metrics Button To The Society
+                society.insertBefore(generateShowVideoMetricsButton(), save) // Appends The Show Video Metrics Button To The Society
             }
         }
 
@@ -61,7 +61,7 @@ export function initializeShowVideoMetrics(one_post_container:HTMLDivElement):vo
 }
 
 // Function For Generate Show Video Metrics Button
-export function generateShowVideoMetrics():HTMLButtonElement {
+export function generateShowVideoMetricsButton():HTMLButtonElement {
     const show_video_metrics:HTMLButtonElement = document.createElement("button") // Creates The Show Video Metrics Button
     show_video_metrics.classList.add("show_video_metrics") // Adds The Show Video Metrics Class
     show_video_metrics.title = gettext("Štatistiky...")
@@ -71,90 +71,102 @@ export function generateShowVideoMetrics():HTMLButtonElement {
     return show_video_metrics
 }
 
-// Function For Show The Video Metrics
-export function showVideoMetrics(post_container:HTMLDivElement):void {
+// Function For Initialize Show Video Metrics
+export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
     const one_post_container:HTMLDivElement = post_container.querySelector(".media .one_post.active") as HTMLDivElement // Gets The One Post Container
     const video_container:HTMLDivElement = one_post_container.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
     const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
-    const post_media_id:number|null = Number(one_post_container.dataset["post_media_id"]) || null // Gets The Post Media ID
-    const user_id:number|null = Number(post_container.dataset["user_id"]) || null // Gets The User ID If Is Available
-    const video_src:string = interpolate(gettext("/api/stream-video/%s/%s/%s"), [user_id, post_media_id, "index.m3u8"], false) // Sets The File Path
-    
     const average_watch_time:number|null = Number(video_container.dataset["average_watch_time"]) || null // Gets The Average Watch Time
     const video_views:number|null = Number(video_container.dataset["video_views"]) || null // Gets The Video Views
-    let video_duration:number = 0 // Stores The Video Duration
 
-    // HLS Format
-    if(Hls.isSupported()) {
-        const hls: any = new Hls()
+    // If Metadata Of The Video Are Loaded
+    if(video.duration) {
+        if(average_watch_time && video_views) showVideoMetrics(post_container, average_watch_time, video_views, video.duration) // Shows The Video Metrics Container
+    }
+
+    // If Metadata Of The Video Aren't Loaded Yet
+    else {
+        const post_media_id:number|null = Number(one_post_container.dataset["post_media_id"]) || null // Gets The Post Media ID
+        const user_id:number|null = Number(post_container.dataset["user_id"]) || null // Gets The User ID If Is Available
+        const video_src:string = interpolate(gettext("/api/stream-video/%s/%s/%s"), [user_id, post_media_id, "index.m3u8"], false) // Sets The File Path
+        let video_duration:number = 0 // Stores The Video Duration
     
-        hls.loadSource(video_src)
-        hls.attachMedia(video)
-    
-        const onLevelLoaded = function(event:any, data:any):void {
-            if(data.details && data.details.totalduration) {
-                video_duration = data.details.totalduration // Updates Stored Video Duration Value
-                
-                if(average_watch_time && video_views) {
-                    const comment_forum:HTMLDivElement = post_container.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
-                    const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
-
-                    // Generates New Video Metrics Container
-                    if(!video_metrics) {
-                        post_container.insertBefore(createVideoMetricsHTML(video_views, video_duration, average_watch_time), comment_forum) // Appends The Video Metrics Container To The Post Container
-
-                        const video_metrics:HTMLDivElement = post_container.querySelector(".video_metrics") as HTMLDivElement // Gets The Video Metrics Container
-                        const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
-                        const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
-
-                        // If The Video Metrics Container Is Visible
-                        if(!video_metrics.classList.contains("hidden")) {
-                            duration_bar.style.setProperty("--width", "0")
-                            watch_time_bar.style.setProperty("--width", "0")
-
-                            window.setTimeout(function():void {
-                                duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
-                                watch_time_bar.style.setProperty("--width", String((average_watch_time / video_duration) * 100)) // Sets The Calculated Watch Time Width
-                            }, 10)
-                        }
-
-                        // If The Video Metrics Container Is Hidden
-                        else {
-                            duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
-                            watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
-                        }
-                    }
-
-                    else {
-                        const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
-                        const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
-
-                        video_metrics.classList.toggle("hidden") // Shows Or Hides The Video Metrics Container
-
-                        // If The Video Metrics Container Is Visible
-                        if(!video_metrics.classList.contains("hidden")) {
-                            duration_bar.style.setProperty("--width", "0")
-                            watch_time_bar.style.setProperty("--width", "0")
-
-                            window.setTimeout(function():void {
-                                duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
-                                watch_time_bar.style.setProperty("--width", String((average_watch_time / video_duration) * 100)) // Sets The Calculated Watch Time Width
-                            }, 10)
-                        }
-
-                        // If The Video Metrics Container Is Hidden
-                        else {
-                            duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
-                            watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
-                        }
-                    }
-
+        // HLS Format
+        if(Hls.isSupported()) {
+            const hls: any = new Hls()
+        
+            hls.loadSource(video_src)
+            hls.attachMedia(video)
+            
+            // Preloads The Video Duration Value And Shows The Video Metrics Container
+            const onLevelLoaded = function(event:any, data:any):void {
+                if(data.details && data.details.totalduration) {
+                    video_duration = data.details.totalduration // Updates Stored Video Duration Value
+                    if(average_watch_time && video_views) showVideoMetrics(post_container, average_watch_time, video_views, video_duration) // Shows The Video Metrics Container
                     hls.off(Hls.Events.LEVEL_LOADED, onLevelLoaded) // Stops The HLS Event
                 }
             }
+        
+            hls.on(Hls.Events.LEVEL_LOADED, onLevelLoaded) // Calls The HLS Event
         }
-    
-        hls.on(Hls.Events.LEVEL_LOADED, onLevelLoaded) // Calls The HLS Event
+    }
+}
+
+// Function For Show The Video Metrics
+function showVideoMetrics(post_container:HTMLDivElement, average_watch_time:number, video_views:number, video_duration:number):void {
+    if(average_watch_time && video_views) {
+        const comment_forum:HTMLDivElement = post_container.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
+        const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
+
+        // Generates New Video Metrics Container
+        if(!video_metrics) {
+            post_container.insertBefore(createVideoMetricsHTML(video_views, video_duration, average_watch_time), comment_forum) // Appends The Video Metrics Container To The Post Container
+
+            const video_metrics:HTMLDivElement = post_container.querySelector(".video_metrics") as HTMLDivElement // Gets The Video Metrics Container
+            const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
+            const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
+
+            // If The Video Metrics Container Is Visible
+            if(!video_metrics.classList.contains("hidden")) {
+                duration_bar.style.setProperty("--width", "0")
+                watch_time_bar.style.setProperty("--width", "0")
+
+                window.setTimeout(function():void {
+                    duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
+                    watch_time_bar.style.setProperty("--width", String(100)) // Sets The Calculated Watch Time Width
+                }, 10)
+            }
+
+            // If The Video Metrics Container Is Hidden
+            else {
+                duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
+                watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
+            }
+        }
+
+        else {
+            const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
+            const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
+
+            video_metrics.classList.toggle("hidden") // Shows Or Hides The Video Metrics Container
+
+            // If The Video Metrics Container Is Visible
+            if(!video_metrics.classList.contains("hidden")) {
+                duration_bar.style.setProperty("--width", "0")
+                watch_time_bar.style.setProperty("--width", "0")
+
+                window.setTimeout(function():void {
+                    duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
+                    watch_time_bar.style.setProperty("--width", String(100)) // Sets The Calculated Watch Time Width
+                }, 10)
+            }
+
+            // If The Video Metrics Container Is Hidden
+            else {
+                duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
+                watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
+            }
+        }
     }
 }
 

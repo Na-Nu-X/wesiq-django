@@ -3684,12 +3684,12 @@ def loadPostsView(request):
         Prefetch(
             "media",
             queryset=PostMedia.objects.annotate(
-                unique_viewers_amount=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+                unique_video_views=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
             ).annotate(
                 # Calculates The Average Watch Time Per 1 Viewer
                 average_watch_time_per_viewer=Case(
-                    When(unique_viewers_amount=0, then=Value(0.0)),
-                    default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_viewers_amount"), FloatField()),
+                    When(unique_video_views=0, then=Value(0.0)),
+                    default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
                     output_field=FloatField()
                 )
             ).order_by("order")
@@ -3837,7 +3837,7 @@ def loadPostsView(request):
                     "is_video": one_media.is_video,
                     "is_muted": one_media.is_muted,
                     "average_watch_time": one_media.average_watch_time_per_viewer if one_media.is_video and logged_in_user_id == one_post.user.id else None,
-                    "video_views": one_media.unique_viewers_amount if one_media.is_video and logged_in_user_id == one_post.user.id else None
+                    "video_views": one_media.unique_video_views if one_media.is_video and logged_in_user_id == one_post.user.id else None
                 }
 
                 for one_media in one_post.media.all()
@@ -4121,7 +4121,16 @@ def postView(request, post_id):
         
         Prefetch(
             "media",
-            queryset=PostMedia.objects.order_by("order")
+            queryset=PostMedia.objects.annotate(
+                unique_video_views=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+            ).annotate(
+                # Calculates The Average Watch Time Per 1 Viewer
+                average_watch_time_per_viewer=Case(
+                    When(unique_video_views=0, then=Value(0.0)),
+                    default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
+                    output_field=FloatField()
+                )
+            ).order_by("order")
         ),
 
         Prefetch(
@@ -4184,6 +4193,7 @@ def postView(request, post_id):
         if logged_in_user:
             return render(request, "app/post.html", {
                 "logged_in_user": {
+                    "id": logged_in_user.id,
                     "username": logged_in_user.username,
                     "role": logged_in_user.role,
                     "profile_picture_name": logged_in_user.profile_picture_name,

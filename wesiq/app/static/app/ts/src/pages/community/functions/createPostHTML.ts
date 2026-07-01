@@ -19,7 +19,7 @@ import {
 import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import { getFormattedTime } from "../../../utils/timer.js"
 import { loadComments } from "./comments.js"
-import { generateShowVideoMetrics } from "./videoWatchTime.js"
+import { generateShowVideoMetricsButton } from "./videoWatchTime.js"
 
 import type { loggedInUser } from "./posts.js"
 
@@ -384,7 +384,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     if(logged_in_user && post_data.user.id === logged_in_user.id) {
         post_data.media.forEach(function(one_post_media:Media, index:number) {
             if(one_post_media.is_video && index === 0) {
-                if(one_post_media.average_watch_time && one_post_media.video_views) society.insertBefore(generateShowVideoMetrics(), save) // Appends The Show Video Metrics Button To The Society
+                if(one_post_media.average_watch_time && one_post_media.video_views) society.insertBefore(generateShowVideoMetricsButton(), save) // Appends The Show Video Metrics Button To The Society
             }
         })
     }
