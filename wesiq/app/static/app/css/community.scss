@@ -665,9 +665,15 @@ header {
                     .profile_picture {
                         @include profile_picture;
                     }
+
+                    .username {
+                        @include crop_text;
+                        max-width: 150px;
+                    }
                     
                     .full_name {
-                        flex-grow: 1;
+                        @include crop_text;
+                        max-width: 150px;
                         font-style: italic
                     }
 
@@ -675,6 +681,7 @@ header {
                         display: flex;
                         align-items: center;
                         gap: 5px;
+                        margin-left: auto;
 
                         .followers {
                             color: darken($secondary-color, 40%);
