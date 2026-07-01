@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, PostForum, SeenPost, PostReport, PostForumReport, BioLinks, UsersReport
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -52,6 +52,7 @@ from celery import current_app
 from itertools import chain
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.db.models.functions import Coalesce
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -4629,7 +4630,7 @@ def profileView(request, username):
                             return JsonResponse({
                                 "success": False, 
                                 "message": _("Užívateľa môže obmedziť len správca.")
-                            }, status=401)
+                            }, status=400)
 
                         except Exception as e:
                             captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -4660,3 +4661,51 @@ def profileView(request, username):
         })
 
     return HttpResponse("Nenašiel sa žiaden užívateľ.")
+
+@require_POST
+def updateVideoWatchTime(request):
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+        post_media_id = request.POST.get("post_media_id") # Gets The Post Media ID
+        watch_time = request.POST.get("watch_time") # Gets The Watch Time
+
+        if not post_media_id or not watch_time:
+            return JsonResponse({
+                "success": False, 
+                "message": _("Nepodarilo sa získať potrebné dáta pre zaznamenanie času pozerania videa.")
+            }, status=400)
+
+        try:
+            # Updates The Total Watch Time Of The Video
+            PostMedia.objects.filter(id=post_media_id).update(
+                total_watch_time=Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
+            )
+
+            # Adds The User's First Video View
+            VideoView.objects.get_or_create(
+                post_media_id=post_media_id,
+                user=logged_in_user
+            )
+
+            return JsonResponse({
+                "success": True, 
+                "message": _("Celkový čas pozerania videa bol úspešne zaznamenaný.")
+            }, status=200)
+
+        except Exception as e:
+            captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+            return JsonResponse({
+                "success": False, 
+                "message": _("Pri zaznamenávaní času pozerania videa došlo k chybe.")
+            }, status=500)
+
+    return JsonResponse({
+        "success": False, 
+        "message": _("Celkový čas pozerania nie je možné zaznamenať bez prihlásenia.")
+    }, status=401)

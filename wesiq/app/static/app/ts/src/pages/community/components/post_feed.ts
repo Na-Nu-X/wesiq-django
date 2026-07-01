@@ -37,6 +37,7 @@ import {
     changePost
 } from "../functions/customVideoPlayback.js"
 
+import { initializeRecordVideoWatchTime } from "../functions/videoWatchTime.js"
 import { focusAtEnd } from "../functions/customTextarea.js"
 import { toggleFollow } from "../functions/toggleFollow.js"
 import { comment_input_state } from "../state.js"
@@ -44,7 +45,7 @@ import { loadComments } from "../functions/comments.js"
 
 "use strict"
 
-document.addEventListener("DOMContentLoaded", function():void {
+document.addEventListener("DOMContentLoaded", async function():Promise<void> {
     // Post Feed
 
     // Variables
@@ -635,8 +636,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     seenPostObserver(feed) // Initializes The Post Observation
 
-    // Infinite Feed Scroll
     if(feed_report) {
+        // Infinite Feed Scroll
         const infinite_feed_scroll_observer:IntersectionObserver = new IntersectionObserver(function(entries:IntersectionObserverEntry[]):void {
             if(entries[0] && entries[0].isIntersecting) {
                 loadPosts(feed, feed_report) // Loads The Posts
@@ -647,7 +648,31 @@ document.addEventListener("DOMContentLoaded", function():void {
             threshold: 0.1
         })
         
-        loadPosts(feed, feed_report) // Loads The Posts
+        await loadPosts(feed, feed_report) // Loads The Posts
         infinite_feed_scroll_observer.observe(feed_report) // Starts The Observation
+
+        // Record Video Watch Time
+        const all_video_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll(".video_container") // Gets All Video Containers
+
+        all_video_containers.forEach(function(one_video_container:HTMLDivElement):void {
+            const one_post_container:HTMLDivElement = one_video_container.closest(".one_post") as HTMLDivElement // Gets The One Post Container
+            const post_media_id:number|null = Number(one_post_container.dataset["post_media_id"]) || null // Gets The Post Media ID
+            const video:HTMLVideoElement = one_video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
+
+            if(post_media_id) {
+                let start_time:number = 0 // Stores The Start Time Of The Video
+                let total_watch_time:number = 0 // Stores The Total Watch Time Of The Video
+
+                video.addEventListener("play", () => start_time = Date.now()) // Sets The Start Time
+
+                video.addEventListener("pause", function():void {
+                    initializeRecordVideoWatchTime(post_media_id, start_time, total_watch_time) // Initializes Record Video Watch Time
+                })
+
+                video.addEventListener("ended", function():void {
+                    initializeRecordVideoWatchTime(post_media_id, start_time, total_watch_time) // Initializes Record Video Watch Time
+                })
+            }
+        })
     }
 })

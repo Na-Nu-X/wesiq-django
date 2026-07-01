@@ -175,6 +175,8 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
         const one_post_template_clone:DocumentFragment = one_post_template.content.cloneNode(true) as DocumentFragment // Clones The One Post Template Content
         const one_post_container:HTMLDivElement = one_post_template_clone.querySelector(".one_post") as HTMLDivElement // Gets The One Post Container
 
+        one_post_container.dataset["post_media_id"] = String(one_post_media.id) // Stores The Post Media ID To The One Post Container
+
         // Image
         if(!one_post_media.is_video) {
             const image:HTMLImageElement = document.createElement("img") // Creates The Image
@@ -253,7 +255,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
-            const video_src:string = interpolate(gettext("/sk/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
+            const video_src:string = interpolate(gettext("/api/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
             const data_saving_mode:boolean = post_container.dataset["data_saving_mode"] === "True" ? true : false // Gets The Value If The User Has Data Saving Mode Enabled
 
             // Sets The Thumbnail Path

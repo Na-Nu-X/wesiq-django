@@ -631,6 +631,7 @@ class PostMedia(models.Model):
     thumbnail = models.ImageField(upload_to=getPostUploadPath, null=True, blank=True)
     is_video = models.BooleanField(verbose_name="Is Video", default=False, null=False)
     is_muted = models.BooleanField(verbose_name="Is Muted Video", default=False, null=False)
+    total_watch_time = models.FloatField(verbose_name="Total Watch Time", help_text="Total Video Watch Time In Seconds.", null=True, blank=True)
     is_processed = models.BooleanField(verbose_name="Is Processed", default=False, null=False)
     original_filename = models.CharField(verbose_name="Original Filename", max_length=255, null=True, blank=True)
     original_size = models.BigIntegerField(verbose_name="Original Size", null=True, blank=True)
@@ -662,6 +663,27 @@ class SeenPost(models.Model):
 
     class Meta:
         unique_together = ("user", "post")
+
+class VideoView(models.Model):
+    post_media = models.ForeignKey(
+        PostMedia, 
+        verbose_name="Post Media",
+        on_delete=models.CASCADE, 
+        related_name="video_views",
+        null=False
+    )
+
+    user = models.ForeignKey(
+        Users,
+        verbose_name="User",
+        on_delete=models.CASCADE,
+        null=False
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("post_media", "user")
 
 class PostForum(models.Model):
     STATUS_CHOICES = [
