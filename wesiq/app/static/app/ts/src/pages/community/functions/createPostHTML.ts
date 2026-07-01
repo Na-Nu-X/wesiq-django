@@ -19,6 +19,7 @@ import {
 import { getFormattedDate } from "../../../utils/getFormattedDate.js"
 import { getFormattedTime } from "../../../utils/timer.js"
 import { loadComments } from "./comments.js"
+import { generateShowVideoMetrics } from "./videoWatchTime.js"
 
 import type { loggedInUser } from "./posts.js"
 
@@ -49,15 +50,7 @@ export interface searchedPost {
     likes:number,
     likes_from_users:number[],
     created_at:string,
-
-    media:{
-        id:number,
-        file:string,
-        thumbnail:string,
-        is_video:boolean,
-        is_muted:boolean
-    }[],
-
+    media:Media[],
     views:number,
     comments_amount:number,
 }
@@ -71,6 +64,16 @@ interface User {
     following:number[],
     followers:number[],
     private_account:boolean
+}
+
+interface Media {
+    id:number,
+    file:string,
+    thumbnail:string,
+    is_video:boolean,
+    is_muted:boolean,
+    average_watch_time:number|null,
+    video_views:number|null
 }
 
 // Function For Create Post HTML Structure
@@ -164,17 +167,12 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     // Media
     const media:HTMLDivElement = post_container_template_clone.querySelector(".media") as HTMLDivElement // Gets The Media Container
 
-    post_data.media.forEach(function(one_post_media:{
-        id:number,
-        file:string,
-        thumbnail:string,
-        is_video:boolean,
-        is_muted:boolean
-    }) {
+    post_data.media.forEach(function(one_post_media:Media, index:number) {
         const one_post_template:HTMLTemplateElement = feed.querySelector(".one_post_template") as HTMLTemplateElement // Gets The One Post Template
         const one_post_template_clone:DocumentFragment = one_post_template.content.cloneNode(true) as DocumentFragment // Clones The One Post Template Content
         const one_post_container:HTMLDivElement = one_post_template_clone.querySelector(".one_post") as HTMLDivElement // Gets The One Post Container
 
+        if(index === 0) one_post_container.classList.add("active") // Adds The Active Class For The First One Post Container
         one_post_container.dataset["post_media_id"] = String(one_post_media.id) // Stores The Post Media ID To The One Post Container
 
         // Image
@@ -196,6 +194,12 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             const video_container:HTMLDivElement = video_container_template_clone.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
             const controls:HTMLDivElement = video_container.querySelector(".controls") as HTMLDivElement // Gets The Video Controls Container
             const buttons:HTMLDivElement = controls.querySelector(".buttons") as HTMLDivElement // Gets The Buttons Container
+
+            // Video Metrics
+            if(logged_in_user && logged_in_user.id === post_data.user.id) {
+                video_container.dataset["average_watch_time"] = String(one_post_media.average_watch_time) // Stores The Average Watch Time To The Video Container
+                video_container.dataset["video_views"] = String(one_post_media.video_views) // Stores The Video Views To The Video Container
+            }
 
             // Creates The Muted Video Indicator If The Video Doesn't Have A Sound
             if(one_post_media.is_muted) {
@@ -375,6 +379,15 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
     // Save
     const save:HTMLDivElement = society.querySelector(".save") as HTMLDivElement // Gets The Save Container
     const save_icon:HTMLElement = save.querySelector(".fa-bookmark") as HTMLElement // Gets The Save Icon
+
+    // Show Video Metrics Button
+    if(logged_in_user && post_data.user.id === logged_in_user.id) {
+        post_data.media.forEach(function(one_post_media:Media, index:number) {
+            if(one_post_media.is_video && index === 0) {
+                if(one_post_media.average_watch_time && one_post_media.video_views) society.insertBefore(generateShowVideoMetrics(), save) // Appends The Show Video Metrics Button To The Society
+            }
+        })
+    }
 
     // https://fontawesome.com/icons/bookmark
     if(logged_in_user && logged_in_user.saved_posts.includes(post_data.id)) {

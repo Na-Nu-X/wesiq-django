@@ -37,7 +37,12 @@ import {
     changePost
 } from "../functions/customVideoPlayback.js"
 
-import { initializeRecordVideoWatchTime } from "../functions/videoWatchTime.js"
+import { 
+    initializeRecordVideoWatchTime, 
+    initializeShowVideoMetrics,
+    showVideoMetrics
+} from "../functions/videoWatchTime.js"
+
 import { focusAtEnd } from "../functions/customTextarea.js"
 import { toggleFollow } from "../functions/toggleFollow.js"
 import { comment_input_state } from "../state.js"
@@ -89,6 +94,14 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
                 if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+            }
+
+            // Show Video Metrics
+            if((event.target as HTMLButtonElement).classList.contains("show_video_metrics")) {
+                const show_video_metrics:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Show Video Metrics Button
+                const post_container:HTMLDivElement = show_video_metrics.closest(".post_container") as HTMLDivElement // Gets The Post Container
+
+                showVideoMetrics(post_container) // Shows The Video Metrics
             }
 
             // Save Post
@@ -241,8 +254,11 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const media_container:HTMLDivElement = clicked_bar.closest(".media") as HTMLDivElement // Gets The Media Container
             const post_bars:HTMLDivElement = clicked_bar.parentElement as HTMLDivElement // Gets The Post Bars Container
             const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
+            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
+            const one_post_container:HTMLDivElement = all_media[clicked_bar_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
+            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Previous Post
@@ -253,10 +269,12 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const previous:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Previous Button
             const media_container:HTMLDivElement = previous.closest(".media") as HTMLDivElement // Gets The Media Container
             const post_bars:HTMLDivElement = ((previous.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
             const post_index:number = [...all_media].indexOf(previous.parentElement as HTMLDivElement) - 1 // Gets The Previous Post Index
+            const one_post_container:HTMLDivElement = all_media[post_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(post_index, media_container, post_bars) // Changes The Post
+            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Next Post
@@ -267,10 +285,12 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const next:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Next Button
             const media_container:HTMLDivElement = next.closest(".media") as HTMLDivElement // Gets The Media Container
             const post_bars:HTMLDivElement = ((next.parentElement as HTMLDivElement).parentElement as HTMLDivElement).querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
-            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Posts
+            const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
             const post_index:number = [...all_media].indexOf(next.parentElement as HTMLDivElement) + 1 // Gets The Next Post Index
+            const one_post_container:HTMLDivElement = all_media[post_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(post_index, media_container, post_bars) // Changes The Post
+            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Play / Pause Video
@@ -457,13 +477,21 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 // Previous Post
                 if(event.key === "ArrowLeft") {
                     const post_index:number = Number(media_container.dataset["active_index"]) - 1 // Gets The Previous Post Index
+                    const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
+                    const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
+
                     changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
+                    if(one_post_container) initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
                 }
 
                 // Next Post
                 else if(event.key === "ArrowRight") {
                     const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
+                    const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
+                    const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
+
                     changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
+                    if(one_post_container) initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
                 }
             }
         }
@@ -565,8 +593,11 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const media_container:HTMLDivElement = clicked_bar.closest(".media") as HTMLDivElement // Gets The Media Container
                 const post_bars:HTMLDivElement = clicked_bar.parentElement as HTMLDivElement // Gets The Post Bars Container
                 const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
+                const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
+                const one_post_container:HTMLDivElement = all_media[clicked_bar_index] as HTMLDivElement // Gets The Shown One Post Container
 
                 changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
+                initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
             }
         }
     })
