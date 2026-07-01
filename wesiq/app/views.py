@@ -3634,6 +3634,7 @@ def communityView(request):
 
         return render(request, "app/community.html", {
             "logged_in_user": {
+                "id": logged_in_user.id,
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
                 "private_account": logged_in_user.private_account,

@@ -42,7 +42,7 @@ interface searchedUsersResponse {
 }
 
 // Function For Load The First Users For The Search Users Container
-export async function loadFirstUsers(all_users_container:HTMLDivElement, one_user_template:HTMLTemplateElement):Promise<void> {
+export async function loadFirstUsers(all_users_container:HTMLDivElement, one_user_template:HTMLTemplateElement, logged_in_user_id:number|null):Promise<void> {
     let searched_users_history:string[] = JSON.parse(localStorage.getItem("searched_users_history") || "[]") as string[] // Gets The Searched Users History From The Local Storage
 
     try {
@@ -54,7 +54,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
             return
         }
 
-        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data))) // Creates The HTML For Every Loaded User
+        first_loaded_users_response.users.forEach(one_user_data => all_users_container.appendChild(createLoadedUserHTML(one_user_template, one_user_data, logged_in_user_id))) // Creates The HTML For Every Loaded User
     }
 
     catch {
@@ -63,7 +63,7 @@ export async function loadFirstUsers(all_users_container:HTMLDivElement, one_use
 }
 
 // Function For Create Loaded User HTML
-function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser):HTMLAnchorElement {
+function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:loadedUser, logged_in_user_id:number|null):HTMLAnchorElement {
     const one_user_template_clone:DocumentFragment = one_user_template.content.cloneNode(true) as DocumentFragment // Clones The One User Template Content
     
     // One User Link
@@ -94,14 +94,18 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
     // Follow Button
     const follow_button:HTMLButtonElement = one_user.querySelector(".follow_button") as HTMLButtonElement // Gets The Follow Button
 
-    if(!user_data.has_follow && !user_data.has_pending_follow_request && !user_data.private_account) follow_button.dataset["action"] = "follow"
-    else if(user_data.has_follow) follow_button.dataset["action"] = "unfollow"
-    else if(!user_data.has_pending_follow_request && user_data.private_account) follow_button.dataset["action"] = "send_follow_request"
-    else if(user_data.has_pending_follow_request) follow_button.dataset["action"] = "cancel_follow_request"
+    if(logged_in_user_id && logged_in_user_id !== user_data.id) {
+        if(!user_data.has_follow && !user_data.has_pending_follow_request && !user_data.private_account) follow_button.dataset["action"] = "follow"
+        else if(user_data.has_follow) follow_button.dataset["action"] = "unfollow"
+        else if(!user_data.has_pending_follow_request && user_data.private_account) follow_button.dataset["action"] = "send_follow_request"
+        else if(user_data.has_pending_follow_request) follow_button.dataset["action"] = "cancel_follow_request"
+    
+        if(!user_data.has_follow && !user_data.has_pending_follow_request) follow_button.textContent = gettext("Začať sledovať")
+        else if(user_data.has_pending_follow_request) follow_button.textContent = gettext("Zrušiť žiadosť")
+        else follow_button.textContent = gettext("Prestať sledovať")
+    }
 
-    if(!user_data.has_follow && !user_data.has_pending_follow_request) follow_button.textContent = gettext("Začať sledovať")
-    else if(user_data.has_pending_follow_request) follow_button.textContent = gettext("Zrušiť žiadosť")
-    else follow_button.textContent = gettext("Prestať sledovať")
+    else follow_button.remove() // Removes The Follow Button From The DOM
 
     return one_user // Returns The One User Link
 }

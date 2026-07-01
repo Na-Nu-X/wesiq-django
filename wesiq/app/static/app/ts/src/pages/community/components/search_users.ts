@@ -21,8 +21,9 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
     const search_result_container:HTMLDivElement = document.querySelector(".search_result_container") as HTMLDivElement // Gets The Search Result Container
     const one_user_template:HTMLTemplateElement = search_result_container.querySelector(".one_user_template") as HTMLTemplateElement // Gets The One User Template
     const all_users_container:HTMLDivElement = search_result_container.querySelector(".all_users") as HTMLDivElement // Gets The All Users Container
+    const logged_in_user_id:number|null = Number(all_users_container.dataset["logged_in_user_id"]) || null // Gets The Logged In User ID
 
-    await loadFirstUsers(all_users_container, one_user_template) // Loads The First Users For The Search Users Container
+    await loadFirstUsers(all_users_container, one_user_template, logged_in_user_id) // Loads The First Users For The Search Users Container
     let all_users:NodeListOf<HTMLAnchorElement> = all_users_container.querySelectorAll<HTMLAnchorElement>(".one_user") // Gets All Users
     const first_users:NodeListOf<HTMLAnchorElement> = all_users // Stores First Loaded Users
 
