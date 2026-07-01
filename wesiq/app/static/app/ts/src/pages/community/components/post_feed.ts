@@ -39,8 +39,8 @@ import {
 
 import { 
     initializeRecordVideoWatchTime, 
-    initializeShowVideoMetrics,
-    showVideoMetrics
+    initializeShowVideoMetricsButton,
+    initializeShowVideoMetrics
 } from "../functions/videoWatchTime.js"
 
 import { focusAtEnd } from "../functions/customTextarea.js"
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const show_video_metrics:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Show Video Metrics Button
                 const post_container:HTMLDivElement = show_video_metrics.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                showVideoMetrics(post_container) // Shows The Video Metrics
+                initializeShowVideoMetrics(post_container) // Shows The Video Metrics
             }
 
             // Save Post
@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const one_post_container:HTMLDivElement = all_media[clicked_bar_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
-            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+            initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Previous Post
@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const one_post_container:HTMLDivElement = all_media[post_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(post_index, media_container, post_bars) // Changes The Post
-            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+            initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Next Post
@@ -290,7 +290,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const one_post_container:HTMLDivElement = all_media[post_index] as HTMLDivElement // Gets The Shown One Post Container
 
             changePost(post_index, media_container, post_bars) // Changes The Post
-            initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+            initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
         }
 
         // Play / Pause Video
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
 
                     changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
-                    if(one_post_container) initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+                    if(one_post_container) initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
                 }
 
                 // Next Post
@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
 
                     changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
-                    if(one_post_container) initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+                    if(one_post_container) initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
                 }
             }
         }
@@ -597,7 +597,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const one_post_container:HTMLDivElement = all_media[clicked_bar_index] as HTMLDivElement // Gets The Shown One Post Container
 
                 changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
-                initializeShowVideoMetrics(one_post_container) // Initializes Show Video Metrics Button
+                initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
             }
         }
     })
@@ -706,4 +706,28 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             }
         })
     }
+
+    // Record Video Watch Time
+    const all_video_containers:NodeListOf<HTMLDivElement> = feed.querySelectorAll(".video_container") // Gets All Video Containers
+
+    all_video_containers.forEach(function(one_video_container:HTMLDivElement):void {
+        const one_post_container:HTMLDivElement = one_video_container.closest(".one_post") as HTMLDivElement // Gets The One Post Container
+        const post_media_id:number|null = Number(one_post_container.dataset["post_media_id"]) || null // Gets The Post Media ID
+        const video:HTMLVideoElement = one_video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
+
+        if(post_media_id) {
+            let start_time:number = 0 // Stores The Start Time Of The Video
+            let total_watch_time:number = 0 // Stores The Total Watch Time Of The Video
+
+            video.addEventListener("play", () => start_time = Date.now()) // Sets The Start Time
+
+            video.addEventListener("pause", function():void {
+                initializeRecordVideoWatchTime(post_media_id, start_time, total_watch_time) // Initializes Record Video Watch Time
+            })
+
+            video.addEventListener("ended", function():void {
+                initializeRecordVideoWatchTime(post_media_id, start_time, total_watch_time) // Initializes Record Video Watch Time
+            })
+        }
+    })
 })

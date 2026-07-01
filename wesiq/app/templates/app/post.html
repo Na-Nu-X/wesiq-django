@@ -10,7 +10,7 @@
 
 {% block content %}
     {% if post %}
-        {% if not post.public_visibility and request.session.logged_in_user_id != post.user.id and not post.user.has_follow %}
+        {% if not post.public_visibility and logged_in_user.id != post.user.id and not post.user.has_follow %}
             <div class="feed">
                 <div class="post_container" data-post_id="{{ post.id }}">
                     <div class="header">
@@ -100,7 +100,7 @@
                 <script src="{% static 'app/ts/dist/pages/post/components/hidden_post_feed.js' %}" type="module"></script>
             </div>
 
-        {% elif post.user.private_account and request.session.logged_in_user_id != post.user.id and not post.user.has_follow %}
+        {% elif post.user.private_account and logged_in_user.id != post.user.id and not post.user.has_follow %}
             <div class="feed">
                 <div class="post_container" data-post_id="{{ post.id }}">
                     <div class="header">
@@ -276,7 +276,14 @@
                     </div>
                 </template>
 
-                <div class="post_container" tabindex="-1" data-post_id="{{ post.id }}" data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}">
+                <div 
+                    class="post_container" 
+                    tabindex="-1" 
+                    data-post_id="{{ post.id }}" 
+                    data-user_id="{{ post.user.id }}" 
+                    data-logged_in_user_id="{{ logged_in_user.id }}" 
+                    data-data_saving_mode="{{ logged_in_user.data_saving_mode|default:False }}"
+                >
                     <div class="header">
                         <div class="left">
                             <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
@@ -307,7 +314,7 @@
 
                                 </div>
                                 
-                                {% if not request.session.logged_in_user_id == post.user_id and request.session.logged_in_user_id %}
+                                {% if not logged_in_user.id == post.user_id and logged_in_user.id %}
                                     <button 
                                         class="follow_button"
                                         data-id="{{ post.user_id }}"
@@ -348,7 +355,7 @@
                                     popover
                                     style="position-anchor: --show_post_properties_button;"
                                 >
-                                    {% if not request.session.logged_in_user_id == post.user.id %}
+                                    {% if not logged_in_user.id == post.user.id %}
                                         <button 
                                             class="show_report_post_button" 
                                             popovertarget="report_post"
@@ -360,7 +367,7 @@
 
                                     {% endif %}
 
-                                    {% if request.session.logged_in_user_id == post.user.id %}
+                                    {% if logged_in_user.id == post.user.id %}
                                         <button 
                                             class="show_post_settings_button"
                                             popovertarget="post_settings"
@@ -372,12 +379,12 @@
 
                                     {% endif %}
                                         
-                                    {% if request.session.logged_in_user_id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                                    {% if logged_in_user.id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                         <button 
                                             class="
                                                 delete_post_button
 
-                                                {% if request.session.logged_in_user_id != post.user.id and logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                                                {% if logged_in_user.id != post.user.id and logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                                     red
 
                                                 {% endif %}
@@ -402,7 +409,7 @@
                                     </button>
                                 </div>
 
-                                {% if not request.session.logged_in_user_id == post.user.id %}
+                                {% if not logged_in_user.id == post.user.id %}
                                     <div 
                                         class="report report_post" 
                                         id="report_post"
@@ -428,7 +435,7 @@
 
                                 {% endif %}
 
-                                {% if request.session.logged_in_user_id == post.user.id %}
+                                {% if logged_in_user.id == post.user.id %}
                                     <div 
                                         class="post_settings" 
                                         id="post_settings"
@@ -529,7 +536,7 @@
 
                                 {% endif %}
 
-                                {% if request.session.logged_in_user_id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
+                                {% if logged_in_user.id == post.user.id or logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                     <div 
                                         class="delete_post" 
                                         id="delete_post"
@@ -574,7 +581,18 @@
                     <div class="media" data-active_index="0">
                         {% for one_post_media in post.media.all %}
                             {% if post.id == one_post_media.post.id %}
-                                <div class="one_post">
+                                <div 
+                                    class="
+                                        one_post
+
+                                        {% if forloop.counter == 1 %}
+                                            active 
+                                        
+                                        {% endif %}
+                                    "
+
+                                    data-post_media_id="{{ one_post_media.id }}"
+                                >
                                     <div class="loading hidden">
                                         <p>{% translate "Načítavam..." %}</p>
                                     </div>
@@ -584,7 +602,7 @@
                                     </button>
 
                                     {% if one_post_media.is_video == True %}
-                                        <div class="video_container">
+                                        <div class="video_container" data-average_watch_time="{{ one_post_media.average_watch_time_per_viewer }}" data-video_views="{{ one_post_media.unique_video_views }}">
                                             <div class="play_pause_indicator hidden">
                                                 <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
                                                 {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
@@ -871,7 +889,7 @@
                                 "
                             ></i> <!-- https://fontawesome.com/icons/heart -->
 
-                            {% if post.hide_likes and post.user.id != request.session.logged_in_user_id %}
+                            {% if post.hide_likes and post.user.id != logged_in_user.id %}
                                 <p class="hidden_likes_counter">{% translate "Skryté" %}</p>
                             
                             {% else %}
@@ -900,6 +918,14 @@
                             <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
                             <p class="views_counter">{{ post.views }}</p>
                         </div>
+
+                        {% if logged_in_user and post.user.id == logged_in_user.id %}
+                            {% comment %} if(logged_in_user && post_data.user.id === logged_in_user.id) { {% endcomment %}
+                            <button class="show_video_metrics" title="{% translate 'Štatistiky...' %}" aria-label="{% translate 'Štatistiky...' %}">
+                                <i class="fa-solid fa-chart-simple"></i> <!-- https://fontawesome.com/icons/chart-simple -->
+                            </button>
+                        
+                        {% endif %}
 
                         <button class="save" title="{% translate 'Uložiť...' %}" aria-label="{% translate 'Uložiť...' %}">
                             <i 
@@ -940,7 +966,7 @@
                                     class="profile_picture" 
                                     src="
                                         {% if logged_in_user.profile_picture_name %}
-                                            /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
+                                            /../media/images/{{ logged_in_user.id }}/{{ logged_in_user.profile_picture_name }}
                 
                                         {% else %}
                                             {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -975,7 +1001,7 @@
         {% endif %}
     {% else %}
         <div class="feed">
-            <div class="post_container" data-post_id="{{ post.id }}" data-user_id="{{ post.user.id }}">
+            <div class="post_container">
                 <div class="header">
                     <div class="left">
                         <a href="#" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
