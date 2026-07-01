@@ -254,7 +254,7 @@ export function changePost(post_index:number, media_container:HTMLDivElement, po
 
         all_media.forEach(function(one_post:HTMLDivElement, index:number):void {
             if(index !== post_index) {
-                one_post.style.display = "none"
+                one_post.classList.remove("active") // Removes The Active Class
 
                 const all_bars:NodeListOf<HTMLDivElement> = post_bars.querySelectorAll<HTMLDivElement>(".bar") // Gets All Bars
 
@@ -263,7 +263,7 @@ export function changePost(post_index:number, media_container:HTMLDivElement, po
             }
 
             else {
-                one_post.style.display = "block"
+                one_post.classList.add("active") // Adds The Active Class
             }
         })
     }

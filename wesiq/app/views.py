@@ -18,10 +18,9 @@ from django.db.models import Q
 import math
 from django.http import JsonResponse
 from django.db.models import Sum
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, Mod, Cast, Coalesce
 import json
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
-from django.db.models.functions import Mod
 from django.utils.translation import gettext as _
 from django.utils import translation
 from django.urls import translate_url
@@ -44,7 +43,7 @@ from django.http import Http404
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
-from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count, Subquery
+from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count, Subquery, FloatField
 from django.http import FileResponse
 from django.template.loader import render_to_string
 from django.db import transaction
@@ -52,7 +51,6 @@ from celery import current_app
 from itertools import chain
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from django.db.models.functions import Coalesce
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -3682,11 +3680,20 @@ def loadPostsView(request):
         ),
 
         "tagged_users", 
-        
+
         Prefetch(
             "media",
-            queryset=PostMedia.objects.order_by("order")
-        ),
+            queryset=PostMedia.objects.annotate(
+                unique_viewers_amount=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+            ).annotate(
+                # Calculates The Average Watch Time Per 1 Viewer
+                average_watch_time_per_viewer=Case(
+                    When(unique_viewers_amount=0, then=Value(0.0)),
+                    default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_viewers_amount"), FloatField()),
+                    output_field=FloatField()
+                )
+            ).order_by("order")
+        )
     ).exclude(
         media__is_processed=False
     ).annotate(
@@ -3821,7 +3828,21 @@ def loadPostsView(request):
             "likes": one_post.likes,
             "likes_from_users": list(one_post.likes_from_users.values_list("id", flat=True)),
             "created_at": one_post.created_at.isoformat(),
-            "media": list(one_post.media.values("id", "file", "thumbnail", "is_video", "is_muted")),
+
+            "media": [
+                {
+                    "id": one_media.id,
+                    "file": one_media.file.name if one_media.file else None,
+                    "thumbnail": one_media.thumbnail.name if one_media.thumbnail else None,
+                    "is_video": one_media.is_video,
+                    "is_muted": one_media.is_muted,
+                    "average_watch_time": one_media.average_watch_time_per_viewer if one_media.is_video and logged_in_user_id == one_post.user.id else None,
+                    "video_views": one_media.unique_viewers_amount if one_media.is_video and logged_in_user_id == one_post.user.id else None
+                }
+
+                for one_media in one_post.media.all()
+            ],
+
             "views": one_post.views,
             "comments_amount": one_post.comments_amount
         }
