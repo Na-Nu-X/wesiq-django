@@ -3728,12 +3728,26 @@ def loadPostsView(request):
     ).distinct()
 
     if logged_in_user:
+        # Gets All Logged In User's Accepted Following Users IDs
+        accepted_following_ids = FollowRelation.objects.filter(
+            from_user_id=logged_in_user_id, 
+            status="accepted"
+        ).values("to_user_id")
+
         posts_query = posts_query.exclude(
             # Hides Posts Which Aren't For Public And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
-            (Q(public_visibility=False) & ~Q(user_id=logged_in_user_id) & ~Q(user__followers=logged_in_user_id)) |
+            (
+                Q(public_visibility=False) & 
+                ~Q(user_id=logged_in_user_id) & 
+                ~Q(user_id__in=accepted_following_ids)
+            ) |
 
             # Hides Posts From Authors Which Accounts Are Private And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
-            (Q(user__private_account=True) & ~Q(user_id=logged_in_user_id) & ~Q(user__followers=logged_in_user_id))
+            (
+                Q(user__private_account=True) & 
+                ~Q(user_id=logged_in_user_id) & 
+                ~Q(user_id__in=accepted_following_ids)
+            )
         )
 
     else:

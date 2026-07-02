@@ -76,12 +76,12 @@ export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
     const one_post_container:HTMLDivElement = post_container.querySelector(".media .one_post.active") as HTMLDivElement // Gets The One Post Container
     const video_container:HTMLDivElement = one_post_container.querySelector(".video_container") as HTMLDivElement // Gets The Video Container
     const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
-    const average_watch_time:number|null = Number(video_container.dataset["average_watch_time"]) || null // Gets The Average Watch Time
-    const video_views:number|null = Number(video_container.dataset["video_views"]) || null // Gets The Video Views
+    const average_watch_time:number|null = isNaN(Number(video_container.dataset["average_watch_time"])) ? null : Number(video_container.dataset["average_watch_time"]) // Gets The Average Watch Time
+    const video_views:number|null = isNaN(Number(video_container.dataset["video_views"])) ? null : Number(video_container.dataset["video_views"]) // Gets The Video Views
 
     // If Metadata Of The Video Are Loaded
     if(video.duration) {
-        if(average_watch_time && video_views) showVideoMetrics(post_container, average_watch_time, video_views, video.duration) // Shows The Video Metrics Container
+        if(average_watch_time !== null && video_views !== null) showVideoMetrics(post_container, average_watch_time, video_views, video.duration) // Shows The Video Metrics Container
     }
 
     // If Metadata Of The Video Aren't Loaded Yet
@@ -102,7 +102,7 @@ export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
             const onLevelLoaded = function(event:any, data:any):void {
                 if(data.details && data.details.totalduration) {
                     video_duration = data.details.totalduration // Updates Stored Video Duration Value
-                    if(average_watch_time && video_views) showVideoMetrics(post_container, average_watch_time, video_views, video_duration) // Shows The Video Metrics Container
+                    if(average_watch_time !== null && video_views !== null) showVideoMetrics(post_container, average_watch_time, video_views, video_duration) // Shows The Video Metrics Container
                     hls.off(Hls.Events.LEVEL_LOADED, onLevelLoaded) // Stops The HLS Event
                 }
             }
@@ -114,7 +114,7 @@ export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
 
 // Function For Show The Video Metrics
 function showVideoMetrics(post_container:HTMLDivElement, average_watch_time:number, video_views:number, video_duration:number):void {
-    if(average_watch_time && video_views) {
+    if(average_watch_time !== null && video_views !== null) {
         const comment_forum:HTMLDivElement = post_container.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
         const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
 
@@ -124,47 +124,68 @@ function showVideoMetrics(post_container:HTMLDivElement, average_watch_time:numb
 
             const video_metrics:HTMLDivElement = post_container.querySelector(".video_metrics") as HTMLDivElement // Gets The Video Metrics Container
             const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
+            const duration_label:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_label") as HTMLDivElement // Gets The Duration Label
             const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
+            const watch_time_label:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_label") as HTMLDivElement // Gets The Watch Time Label
 
             // If The Video Metrics Container Is Visible
             if(!video_metrics.classList.contains("hidden")) {
                 duration_bar.style.setProperty("--width", "0")
+                duration_label.style.setProperty("--right", "0")
                 watch_time_bar.style.setProperty("--width", "0")
+                watch_time_label.style.setProperty("--right", "0")
 
                 window.setTimeout(function():void {
-                    duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
-                    watch_time_bar.style.setProperty("--width", String(100)) // Sets The Calculated Watch Time Width
+                    // Sets The Calculated Duration And Watch Time Width
+                    duration_bar.style.setProperty("--width", String(100))
+                    duration_label.style.setProperty("--right", String(100))
+                    watch_time_bar.style.setProperty("--width", String(average_watch_time / video_duration * 100))
+                    watch_time_label.style.setProperty("--right", String(average_watch_time / video_duration * 100))
                 }, 10)
             }
 
             // If The Video Metrics Container Is Hidden
             else {
-                duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
-                watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
+                // Sets The Duration And Watch Time Width Back To 0
+                duration_bar.style.setProperty("--width", String(0))
+                duration_label.style.setProperty("--right", String(0))
+                watch_time_bar.style.setProperty("--width", String(0)) 
+                watch_time_label.style.setProperty("--right", String(0))
             }
         }
 
         else {
             const duration_bar:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_bar") as HTMLDivElement // Gets The Duration Bar
+            const duration_label:HTMLDivElement = video_metrics.querySelector(".duration_container .duration_label") as HTMLDivElement // Gets The Duration Label
             const watch_time_bar:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_bar") as HTMLDivElement // Gets The Watch Time Bar
+            const watch_time_label:HTMLDivElement = video_metrics.querySelector(".watch_time_container .watch_time_label") as HTMLDivElement // Gets The Watch Time Label
 
             video_metrics.classList.toggle("hidden") // Shows Or Hides The Video Metrics Container
 
             // If The Video Metrics Container Is Visible
             if(!video_metrics.classList.contains("hidden")) {
-                duration_bar.style.setProperty("--width", "0")
-                watch_time_bar.style.setProperty("--width", "0")
+                // Sets The Duration And Watch Time Width Back To 0
+                duration_bar.style.setProperty("--width", String(0))
+                duration_label.style.setProperty("--right", String(0))
+                watch_time_bar.style.setProperty("--width", String(0)) 
+                watch_time_label.style.setProperty("--right", String(0))
 
                 window.setTimeout(function():void {
-                    duration_bar.style.setProperty("--width", String(100)) // Sets The Duration Width
-                    watch_time_bar.style.setProperty("--width", String(100)) // Sets The Calculated Watch Time Width
+                    // Sets The Calculated Duration And Watch Time Width
+                    duration_bar.style.setProperty("--width", String(100))
+                    duration_label.style.setProperty("--right", String(100))
+                    watch_time_bar.style.setProperty("--width", String(average_watch_time / video_duration * 100))
+                    watch_time_label.style.setProperty("--right", String(average_watch_time / video_duration * 100))
                 }, 10)
             }
 
             // If The Video Metrics Container Is Hidden
             else {
-                duration_bar.style.setProperty("--width", String(0)) // Sets The Duration Width Back To 0
-                watch_time_bar.style.setProperty("--width", String(0)) // Sets The Watch Time Width Back To 0
+                // Sets The Duration And Watch Time Width Back To 0
+                duration_bar.style.setProperty("--width", String(0))
+                duration_label.style.setProperty("--right", String(0))
+                watch_time_bar.style.setProperty("--width", String(0)) 
+                watch_time_label.style.setProperty("--right", String(0))
             }
         }
     }
