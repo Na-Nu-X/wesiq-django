@@ -10,7 +10,120 @@
 
 {% block content %}
     {% if post %}
-        {% if not post.public_visibility and logged_in_user.id != post.user.id and not post.user.has_follow %}
+        {% if post.user.private_account and logged_in_user.id != post.user.id and not post.user.has_follow %}
+            <div class="feed">
+                <div class="post_container" data-post_id="{{ post.id }}">
+                    <div class="header">
+                        <div class="left">
+                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if post.user.profile_picture_name %}
+                                            /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
+
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                    alt=""
+                                >
+                            </a>
+                        </div>
+                        
+                        <div class="right">
+                            <div class="top">
+                                <p class="username">{{ post.user.username }}</p>
+
+                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
+                                    <p class="followers">{{ post.user.accepted_followers|length }}</p>
+                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                </div>
+                                
+                                <button 
+                                    class="follow_button"
+                                    data-id="{{ post.user.id }}"
+                                    data-action="
+                                        {% if not post.user.has_follow and not post.user.has_pending_follow_request and not post.user.private_account %}
+                                            follow
+
+                                        {% elif post.user.has_follow %}
+                                            unfollow
+
+                                        {% elif not post.user.has_pending_follow_request and post.user.private_account %}
+                                            send_follow_request
+
+                                        {% elif post.user.has_pending_follow_request %}
+                                            cancel_follow_request
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                                    {% if not post.user.has_follow and not post.user.has_pending_follow_request %}
+                                        {% translate "Začať sledovať" %}
+
+                                    {% elif post.user.has_pending_follow_request %}
+                                        {% translate "Zrušiť žiadosť" %}
+
+                                    {% else %}
+                                        {% translate "Prestať sledovať" %}
+                                    
+                                    {% endif %}
+                                </button>
+                            </div>
+
+                            <div class="bottom">
+                                {% if post.location %}
+                                    {% if post.coordinates %}
+                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" aria-label="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
+
+                                    {% else %}
+                                        <p class="location">{{ post.location }}</p>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="private_account_notice">
+                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                        <p>{% translate "Účet autora príspevku je súkromný." %}</p>
+                    </div>
+
+                    <div class="society">
+                        <div class="likes">
+                            <i class="fa-heart fa-regular"></i> <!-- https://fontawesome.com/icons/heart -->
+                            <p class="likes_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="comments">
+                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                            <p class="comments_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
+                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
+                        </div>
+
+                        <div class="views">
+                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
+                            <p class="views_counter" style="filter: blur(5px);">123</p>
+                        </div>
+
+                        <div class="save">
+                            <i class="fa-bookmark fa-regular"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                        </div>
+                    </div>
+                </div>
+
+                <script src="{% static 'app/ts/dist/pages/post/components/hidden_post_feed.js' %}" type="module"></script>
+            </div>
+
+        {% elif not post.public_visibility and logged_in_user.id != post.user.id and not post.user.has_follow %}
             <div class="feed">
                 <div class="post_container" data-post_id="{{ post.id }}">
                     <div class="header">
@@ -69,96 +182,6 @@
                     <div class="private_post_notice">
                         <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
                         <p>{% translate "Príspevok je viditeľný iba pre sledovateľov." %}</p>
-                    </div>
-
-                    <div class="society">
-                        <div class="likes">
-                            <i class="fa-heart fa-regular"></i> <!-- https://fontawesome.com/icons/heart -->
-                            <p class="likes_counter" style="filter: blur(5px);">123</p>
-                        </div>
-
-                        <div class="comments">
-                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                            <p class="comments_counter" style="filter: blur(5px);">123</p>
-                        </div>
-
-                        <div class="share" data-author="{{ post.user.username }}" title="{% translate 'Zdielať...' %}" aria-label="{% translate 'Zdielať...' %}">
-                            <i class="fa-solid fa-share-nodes"></i> <!-- https://fontawesome.com/icons/share-nodes -->
-                        </div>
-
-                        <div class="views">
-                            <i class="fa-regular fa-eye"></i> <!-- https://fontawesome.com/icons/eye -->
-                            <p class="views_counter" style="filter: blur(5px);">123</p>
-                        </div>
-
-                        <div class="save">
-                            <i class="fa-bookmark fa-regular"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                        </div>
-                    </div>
-                </div>
-
-                <script src="{% static 'app/ts/dist/pages/post/components/hidden_post_feed.js' %}" type="module"></script>
-            </div>
-
-        {% elif post.user.private_account and logged_in_user.id != post.user.id and not post.user.has_follow %}
-            <div class="feed">
-                <div class="post_container" data-post_id="{{ post.id }}">
-                    <div class="header">
-                        <div class="left">
-                            <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
-                                <img 
-                                    class="profile_picture skeleton_loading" 
-                                    src="
-                                        {% if post.user.profile_picture_name %}
-                                            /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
-
-                                        {% else %}
-                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                        
-                                        {% endif %}
-                                    "
-                                    alt=""
-                                >
-                            </a>
-                        </div>
-                        
-                        <div class="right">
-                            <div class="top">
-                                <p class="username">{{ post.user.username }}</p>
-
-                                <div class="followers_container" title="{% translate 'Počet sledovateľov...' %}" aria-label="{% translate 'Počet sledovateľov...' %}">
-                                    <p class="followers">{{ post.user.accepted_followers|length }}</p>
-                                    <i class="fa-solid fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                                </div>
-                                
-                                <button 
-                                    class="follow_button"
-                                    data-id="{{ post.user_id }}"
-                                    data-action="follow"
-                                >
-                                    {% translate "Začať sledovať" %}
-                                </button>
-                            </div>
-
-                            <div class="bottom">
-                                {% if post.location %}
-                                    {% if post.coordinates %}
-                                        <a class="location" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" title="{% translate 'Otvoriť mapy' %}" aria-label="{% translate 'Otvoriť mapy' %}" target="_blank">{{ post.location|safe }}</a>
-
-                                    {% else %}
-                                        <p class="location">{{ post.location }}</p>
-
-                                    {% endif %}
-                                {% endif %}
-
-                                <p class="created_at">{{ post.created_at|date:"d.m. Y" }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="private_account_notice">
-                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
-                        <p>{% translate "Účet autora príspevku je súkromný." %}</p>
                     </div>
 
                     <div class="society">

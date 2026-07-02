@@ -3781,7 +3781,7 @@ def loadPostsView(request):
             "-created_at"
         ).distinct()
 
-    paginator = Paginator(posts_query, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts_query, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
+    paginator = Paginator(posts_query, 5) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts_query, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
 
     try:
         page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
@@ -4114,6 +4114,15 @@ def postView(request, post_id):
                         from_user=logged_in_user_id,
                         to_user=OuterRef("pk"),
                         status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="pending"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
             ).prefetch_related(
@@ -4455,7 +4464,17 @@ def profileView(request, username):
                                         logged_in_user.data_saving_mode = data_saving_mode
 
                                     if logged_in_user.private_account != private_account:
-                                        logged_in_user.private_account = private_account
+                                        was_private = logged_in_user.private_account # Checks If The Account Was Private Before Change
+
+                                        logged_in_user.private_account = private_account # Switch The Account To Private Or Public
+
+                                        # If The Account Was Private And Now Is Public
+                                        if was_private and not private_account:
+                                            # Updates All Follow Requests From Pending To Accepted
+                                            FollowRelation.objects.filter(
+                                                to_user=logged_in_user,
+                                                status="pending"
+                                            ).update(status="accepted")
 
                                     if logged_in_user.bio != edit_account_form.cleaned_data["bio"] and edit_account_form.cleaned_data["bio"] != "":
                                         logged_in_user.bio = edit_account_form.cleaned_data["bio"]
@@ -4726,21 +4745,34 @@ def updateVideoWatchTime(request):
             }, status=400)
 
         try:
-            # Updates The Total Watch Time Of The Video
-            PostMedia.objects.filter(id=post_media_id).update(
-                total_watch_time=Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
-            )
+            # Gets The Video Author's ID
+            author_id = PostMedia.objects.filter(id=post_media_id).values_list(
+                "post__user_id", flat=True
+            ).first()
 
-            # Adds The User's First Video View
-            VideoView.objects.get_or_create(
-                post_media_id=post_media_id,
-                user=logged_in_user
-            )
+            # If The Video Doesn't Belong To The Logged In User
+            if(author_id != logged_in_user_id):
+                # Updates The Total Watch Time Of The Video
+                PostMedia.objects.filter(id=post_media_id).update(
+                    total_watch_time=Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
+                )
 
-            return JsonResponse({
-                "success": True, 
-                "message": _("Celkový čas pozerania videa bol úspešne zaznamenaný.")
-            }, status=200)
+                # Adds The User's First Video View
+                VideoView.objects.get_or_create(
+                    post_media_id=post_media_id,
+                    user=logged_in_user
+                )
+
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Celkový čas pozerania videa bol úspešne zaznamenaný.")
+                }, status=200)
+
+            else:
+                return JsonResponse({
+                    "success": True, 
+                    "message": _("Celkový čas pozerania videa nie je možné navýšiť vlastnému príspevku.")
+                }, status=200)
 
         except Exception as e:
             captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
