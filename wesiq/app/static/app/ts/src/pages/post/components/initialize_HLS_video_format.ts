@@ -23,6 +23,8 @@ all_media.forEach(function(one_post:HTMLDivElement) {
 
             // If The Data Saving Mode Is Enabled (Sets The Video Quality To 480p By Default)
             if(data_saving_mode) {
+                (video_container.querySelector(".play_pause_indicator") as HTMLDivElement).classList.remove("hidden") // Shows The Play Pause Indicator
+                
                 // HLS Format
                 if(Hls.isSupported()) {
                     const hls:any = new Hls({
