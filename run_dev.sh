@@ -5,10 +5,10 @@ cd ./wesiq/
 # Docker
 gnome-terminal -- bash -c "docker compose up -d; exec bash"
 
-# NPM watch
+# NPM Watch
 gnome-terminal -- bash -c "npm run watch; exec bash"
 
-# SASS watch
+# SASS Watch
 gnome-terminal -- bash -c "npx sass --watch .:.; exec bash"
 
 # Ngrok

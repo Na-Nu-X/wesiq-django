@@ -195,11 +195,11 @@ select,
     z-index: 3000;
 
     &.success {
-        color: $success-color;
+        color: $green-color;
     }
 
     &.error {
-        color: $error-color;
+        color: $red-color;
     }
 }
 
@@ -323,7 +323,7 @@ header {
                     top: -8px;
                     right: -16px;
                     font-weight: bold;
-                    color: $error-color;
+                    color: $red-color;
                 }
 
                 .fa-bell {

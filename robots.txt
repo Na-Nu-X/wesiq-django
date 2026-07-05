@@ -1,0 +1,18 @@
+User-agent: *
+
+Disallow: /accounts/
+Disallow: /i18n/
+Disallow: /jsi18n/
+Disallow: /rosetta/
+Disallow: /api/
+
+Disallow: /*/prihlasenie/
+Disallow: /*/registracia/
+Disallow: /*/obnova-hesla/
+Disallow: /*/odhlasenie/
+
+Disallow: /*/change-language/
+Disallow: /*/create-payment-intent/
+Disallow: /*/stripe/
+
+Sitemap: https://wesiq.com/sitemap.xml
