@@ -23,7 +23,7 @@ class ProfileSitemap(Sitemap):
     alternates = True
 
     def items(self):
-        return Users.objects.filter(private_account=False)
+        return Users.objects.filter(private_account=False, account_status="OK")
 
 # Map For All Post Pages + Translated Versions
 class PostSitemap(Sitemap):

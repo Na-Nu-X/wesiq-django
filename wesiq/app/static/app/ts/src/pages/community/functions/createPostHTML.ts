@@ -259,7 +259,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
             // Video
             const video:HTMLVideoElement = video_container.querySelector(".video") as HTMLVideoElement // Gets The Video
-            const video_src:string = interpolate(gettext("/api/stream-video/%s/%s/%s"), [post_data.user.id, one_post_media.id, "index.m3u8"], false) // Sets The File Path
+            const video_src:string = `/api/stream-video/${post_data.user.id}/${one_post_media.id}/index.m3u8` // Sets The File Path
             const data_saving_mode:boolean = post_container.dataset["data_saving_mode"] === "True" ? true : false // Gets The Value If The User Has Data Saving Mode Enabled
 
             // Sets The Thumbnail Path
