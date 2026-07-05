@@ -75,6 +75,10 @@ INSTALLED_APPS = [
     'django_user_agents',
 
     'django_cleanup.apps.CleanupConfig', # Cleanup Temporary Media
+
+    # Sitemap
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
@@ -196,7 +200,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -304,3 +307,5 @@ PASSWORD_HASHERS = [
 ]
 
 DOMAIN_URL = os.environ.get('DOMAIN_URL') # Stores The Domain URL
+
+SITE_ID = 1

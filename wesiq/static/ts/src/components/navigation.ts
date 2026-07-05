@@ -1,11 +1,17 @@
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
+    // Navigation
+
+    //Variables
+
     const navigation_bar:HTMLElement = document.querySelector(".navigation_bar") as HTMLElement // Gets The Navigation Bar
-    const navigation_bar_items:NodeListOf<HTMLLIElement> = document.querySelectorAll<HTMLLIElement>(".navigation_bar ul li")
+    const navigation_bar_items:NodeListOf<HTMLLIElement> = navigation_bar.querySelectorAll<HTMLLIElement>(".navigation_bar ul li") // Gets All Navigation Bar Items
     const hamburger:HTMLElement = navigation_bar.querySelector(".hamburger") as HTMLElement // Gets The Hamburger Icon
 
     const SCREEN_HEIGHT:number = window.innerHeight - navigation_bar.offsetHeight // Gets The Screen Height (Without Navigation Bar)
+
+    // Events
 
     // Window Scroll Functionality (Disappearing Navigation Bar)
     window.addEventListener("scroll", function():void {
@@ -19,8 +25,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     navigation_bar.addEventListener("mouseout", function():void {
         if(window.scrollY >= SCREEN_HEIGHT) this.style.opacity = "0" // Hides The Navigation Bar
     })
-
-    // Change Appearance Of The Navigation Bar
 
     // Window Resize Functionalities
     window.addEventListener("resize", function():void {
@@ -51,16 +55,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Auto Scroll Buttons
 
-    function autoScrollButtons(button:HTMLElement, scroll_to:HTMLElement):void {
-        button.addEventListener("click", function(event:PointerEvent):void {
-            event.preventDefault()
-
-            window.scrollTo({
-                top: scroll_to.getBoundingClientRect().top + window.scrollY - navigation_bar.offsetHeight,
-                behavior: "smooth"
-            })
-        })
-    }
+    // Variables
 
     const scroll_contact:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_contact") as HTMLAnchorElement || null // Gets The Scroll Contact Button
     const contact:HTMLFormElement|null = document.querySelector(".contact_form") as HTMLFormElement || null // Gets The Contact Form
@@ -71,14 +66,35 @@ document.addEventListener("DOMContentLoaded", function():void {
     const scroll_feed:HTMLAnchorElement|null = navigation_bar.querySelector(".scroll_feed") as HTMLAnchorElement || null // Gets The Scroll Feed Button
     const feed:HTMLDivElement|null = document.querySelector(".feed") as HTMLDivElement || null // Gets The Feed Container
 
-    if(scroll_contact && contact) autoScrollButtons(scroll_contact, contact)
-    if(scroll_reviews && reviews) autoScrollButtons(scroll_reviews, reviews)
-    if(scroll_feed && feed) autoScrollButtons(scroll_feed, feed)
+    // Functions
+
+    // Function For Initialize The Scroll
+    function initializeScroll(button:HTMLElement, scroll_to:HTMLElement):void {
+        // Button Click Functionality
+        button.addEventListener("click", function(event:PointerEvent):void {
+            event.preventDefault()
+
+            window.scrollTo({
+                top: scroll_to.getBoundingClientRect().top + window.scrollY - navigation_bar.offsetHeight,
+                behavior: "smooth"
+            })
+        })
+    }
+
+    // Initialization
+
+    if(scroll_contact && contact) initializeScroll(scroll_contact, contact) // Initializes The Scroll
+    if(scroll_reviews && reviews) initializeScroll(scroll_reviews, reviews) // Initializes The Scroll
+    if(scroll_feed && feed) initializeScroll(scroll_feed, feed) // Initializes The Scroll
 
     // Skip Link
+
+    // Variables
 
     const skip_link:HTMLAnchorElement = document.querySelector(".skip_link") as HTMLAnchorElement
     const content:HTMLElement = document.querySelector(".content") as HTMLElement
 
-    if(skip_link && content) autoScrollButtons(skip_link, content)
+    // Initialization
+
+    if(skip_link && content) initializeScroll(skip_link, content) // Initializes The Scroll
 })

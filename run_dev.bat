@@ -5,10 +5,10 @@ cd .\wesiq\
 :: Docker
 start cmd /k "docker compose up -d"
 
-:: NPM watch
+:: NPM Watch
 start cmd /k "npm run watch"
 
-:: SASS watch
+:: SASS Watch
 start cmd /k "npx sass --watch .:."
 
 :: Ngrok

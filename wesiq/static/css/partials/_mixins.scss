@@ -419,11 +419,11 @@
     font-size: 0.9em;
 
     &.success {
-        color: $success-color;
+        color: $green-color;
     }
 
     &.error {
-        color: $error-color;
+        color: $red-color;
     }
 }
 
@@ -650,7 +650,7 @@
         transition: background-color 0.3s ease;
 
         &.red {
-            color: $error-color;
+            color: $red-color;
         }
 
         &:hover,
@@ -744,11 +744,11 @@
         display: none;
     
         &:checked + label {
-            background-color: transparentize($success-color, 0.8);
+            background-color: transparentize($green-color, 0.8);
     
             &::before {
                 left: 22px;
-                background-color: $success-color;
+                background-color: $green-color;
             }
         }
     }
@@ -759,7 +759,7 @@
         height: 20px;
         margin-left: auto;
         padding: 2px;
-        background-color: transparentize($error-color, 0.8);
+        background-color: transparentize($red-color, 0.8);
         border-radius: 10px;
         cursor: pointer;
     
@@ -771,7 +771,7 @@
             transform: translateY(-50%);
             width: 16px;
             height: 16px;
-            background-color: $error-color;
+            background-color: $red-color;
             border-radius: 50%;
             transition: left 0.3s ease, background-color 0.3s ease;
         }
@@ -823,7 +823,7 @@
 
 @mixin focus {
     &:focus-visible {
-        outline: 2px solid $error-color !important;
+        outline: 2px solid $red-color !important;
         outline-offset: 2px !important;
     }
 }

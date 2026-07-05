@@ -604,8 +604,8 @@
 
                             &:before {
                                 width: 100%;
-                                background-color: $success-color;
-                                box-shadow: 0px 0px 10px $success-color;
+                                background-color: $green-color;
+                                box-shadow: 0px 0px 10px $green-color;
                             }
                         }
                     }
@@ -808,7 +808,7 @@
 
 @keyframes barDrag {
     0% {
-        background-color: $success-color;
+        background-color: $green-color;
     }
 
     100% {
@@ -822,7 +822,7 @@
     }
 
     100% {
-        color: $error-color;
+        color: $red-color;
     }
 }
 
@@ -832,7 +832,7 @@
     }
 
     100% {
-        border-bottom: 1px solid $error-color;
+        border-bottom: 1px solid $red-color;
     }
 }
 

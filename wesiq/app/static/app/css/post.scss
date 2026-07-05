@@ -27,7 +27,7 @@
 
         .left {
             &:has(a:focus-visible) {
-                outline: 2px solid $error-color !important;
+                outline: 2px solid $red-color !important;
                 outline-offset: 2px !important;
             }
 
@@ -656,7 +656,7 @@
 
                 .fa-heart {
                     display: block;
-                    color: $error-color;
+                    color: $red-color;
                 }
 
                 .likes_counter {
@@ -680,7 +680,7 @@
                 left: 10px;
                 display: block;
                 font-size: 1.2em;
-                color: $error-color;
+                color: $red-color;
                 pointer-events: none;
                 user-select: none;
                 animation: flyFadeOut 1s ease-out forwards;
@@ -755,14 +755,14 @@
                 color: darken($secondary-color, 40%);
 
                 &:hover {
-                    color: $error-color !important;
+                    color: $red-color !important;
                     cursor: pointer;
                     transition: color 0.3s ease;
                 }
             }
 
             .fa-solid {
-                color: $error-color;
+                color: $red-color;
             }
 
             .likes_counter,
@@ -919,11 +919,11 @@
         }
 
         .hashtag {
-            background-color: transparentize($success-color, 0.9);
-            color: $success-color;
+            background-color: transparentize($green-color, 0.9);
+            color: $green-color;
 
             &:hover {
-                background-color: transparentize($success-color, 0.8);
+                background-color: transparentize($green-color, 0.8);
             }
         }
     }
@@ -1121,14 +1121,14 @@
                                     color: darken($secondary-color, 40%);
             
                                     &:hover {
-                                        color: $error-color !important;
+                                        color: $red-color !important;
                                         cursor: pointer;
                                         transition: color 0.3s ease;
                                     }
                                 }
             
                                 .fa-solid {
-                                    color: $error-color;
+                                    color: $red-color;
                                 }
             
                                 .likes_counter {
@@ -1174,14 +1174,14 @@
                             color: darken($secondary-color, 40%);
     
                             &:hover {
-                                color: $error-color !important;
+                                color: $red-color !important;
                                 cursor: pointer;
                                 transition: color 0.3s ease;
                             }
                         }
     
                         .fa-solid {
-                            color: $error-color;
+                            color: $red-color;
                         }
     
                         .likes_counter {
@@ -1336,8 +1336,8 @@
                 }
 
                 .hashtag {
-                    background-color: transparentize($success-color, 0.9);
-                    color: $success-color;
+                    background-color: transparentize($green-color, 0.9);
+                    color: $green-color;
                 }
             }
 

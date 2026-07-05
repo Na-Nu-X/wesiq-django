@@ -6,10 +6,19 @@ from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import JavaScriptCatalog
 import os
 from app import views
+from django.contrib.sitemaps.views import sitemap
+from app.sitemaps import StaticSitemap, ProfileSitemap, PostSitemap
+
+sitemaps = {
+    'static': StaticSitemap,
+    'profiles': ProfileSitemap,
+    'posts': PostSitemap,
+}
 
 urlpatterns = [
     path(os.environ.get('ADMIN_URL'), admin.site.urls), # Admin Page
     path('accounts/', include('allauth.urls')), # Google OAuth 2.0
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('i18n/', include('django.conf.urls.i18n')), # Translation
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript_catalog_url'), # JS Translation
     path('rosetta/', include('rosetta.urls')), # Rosetta (Language Admin Site)

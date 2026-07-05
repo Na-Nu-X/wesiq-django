@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 from urllib.parse import urlparse
+from django.urls import reverse
 
 class Users(models.Model):
     ROLE_CHOICES = [
@@ -282,6 +283,9 @@ class Users(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
+
+    def get_absolute_url(self):
+        return reverse("profile_url", kwargs={"username": self.username})
 
 class FollowRelation(models.Model):
     STATUS_CHOICES = [
@@ -1213,6 +1217,9 @@ class Post(models.Model):
         default=0, 
         null=False
     )
+
+    def get_absolute_url(self):
+        return reverse("post_url", kwargs={"post_id": self.id})
 
 class PostReport(models.Model):
     REPORT_REASON_CHOICES = [

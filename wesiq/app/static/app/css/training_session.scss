@@ -824,7 +824,7 @@ $training-glow: rgba(75, 75, 250, 0.35);
                 &:has(.checkbox.checked) {
                     --progress: 100;
                     --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: transparentize($success-color, 0.8);
+                    border-color: transparentize($green-color, 0.8);
                 }
 
                 .checkbox {
@@ -850,7 +850,7 @@ $training-glow: rgba(75, 75, 250, 0.35);
                     }
 
                     &.checked {
-                        outline: 1px solid darken($success-color, 10%);
+                        outline: 1px solid darken($green-color, 10%);
 
                         &::before {
                             transform: scale(1.5);
@@ -865,7 +865,7 @@ $training-glow: rgba(75, 75, 250, 0.35);
                     user-select: none;
                     width: 4ch;
                     padding-left: 15px;
-                    color: $success-color;
+                    color: $green-color;
                     border-left: 1px solid $training-surface-border;
                     
                     span {
@@ -969,10 +969,10 @@ $training-glow: rgba(75, 75, 250, 0.35);
                 &:has(input[type="checkbox"]:checked) {
                     --progress: 100;
                     --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: transparentize($success-color, 0.8);
+                    border-color: transparentize($green-color, 0.8);
 
                     .checkbox {
-                        outline: 1px solid darken($success-color, 10%);
+                        outline: 1px solid darken($green-color, 10%);
 
                         &::before {
                             transform: scale(1.5);
