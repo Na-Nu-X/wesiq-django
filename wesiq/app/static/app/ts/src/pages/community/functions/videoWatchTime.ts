@@ -88,7 +88,7 @@ export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
     else {
         const post_media_id:number|null = Number(one_post_container.dataset["post_media_id"]) || null // Gets The Post Media ID
         const user_id:number|null = Number(post_container.dataset["user_id"]) || null // Gets The User ID If Is Available
-        const video_src:string = interpolate(gettext("/api/stream-video/%s/%s/%s"), [user_id, post_media_id, "index.m3u8"], false) // Sets The File Path
+        const video_src:string = `/api/stream-video/${user_id}/${post_media_id}/index.m3u8` // Sets The File Path
         let video_duration:number = 0 // Stores The Video Duration
     
         // HLS Format
