@@ -256,11 +256,15 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const clicked_bar_index:number = [...post_bars.querySelectorAll<HTMLDivElement>(".bar")].indexOf(clicked_bar) // Gets The Clicked Bar Index
             const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
             const one_post_container:HTMLDivElement = all_media[clicked_bar_index] as HTMLDivElement // Gets The Shown One Post Container
-            const video_metrics:HTMLDivElement|null = (clicked_bar.closest(".post_container") as HTMLDivElement).querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
+            const post_container:HTMLDivElement|null = clicked_bar.closest(".post_container") as HTMLDivElement || null // Gets The Post Container If Is Available
 
-            if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
             changePost(clicked_bar_index, media_container, post_bars) // Changes The Post
-            initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+
+            if(post_container) {
+                const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
+                if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
+                initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+            }
         }
 
         // Previous Post

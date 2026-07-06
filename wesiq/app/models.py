@@ -1331,6 +1331,20 @@ class PostMedia(models.Model):
         null=False
     )
 
+    sprite_sheet = models.ImageField(
+        verbose_name="Sprite Sheet",
+        upload_to=getPostUploadPath,
+        null=True,
+        blank=True
+    )
+    
+    vtt_file = models.FileField(
+        verbose_name="VTT File Map",
+        upload_to=getPostUploadPath,
+        null=True,
+        blank=True
+    )
+
     @property
     def filename(self):
         return os.path.basename(self.file.name)

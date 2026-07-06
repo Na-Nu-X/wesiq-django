@@ -3851,7 +3851,9 @@ def loadPostsView(request):
                     "is_video": one_media.is_video,
                     "is_muted": one_media.is_muted,
                     "average_watch_time": one_media.average_watch_time_per_viewer if one_media.is_video and logged_in_user_id == one_post.user.id else None,
-                    "video_views": one_media.unique_video_views if one_media.is_video and logged_in_user_id == one_post.user.id else None
+                    "video_views": one_media.unique_video_views if one_media.is_video and logged_in_user_id == one_post.user.id else None,
+                    "sprite_sheet": one_media.sprite_sheet.name if one_media.sprite_sheet else None,
+                    "vtt_file": one_media.vtt_file.name if one_media.vtt_file else None
                 }
 
                 for one_media in one_post.media.all()

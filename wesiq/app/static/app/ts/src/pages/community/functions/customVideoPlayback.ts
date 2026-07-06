@@ -2,6 +2,8 @@ declare const Hls: any
 
 import { getFormattedTime } from "../../../utils/timer.js"
 
+import type { vtt } from "../components/custom_video_playback.js"
+
 // Function For Play Or Pause The Video
 export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator:HTMLDivElement, video:HTMLVideoElement):void {
     const is_playing:boolean = !video.paused && !video.ended && video.readyState > 2
@@ -266,5 +268,43 @@ export function changePost(post_index:number, media_container:HTMLDivElement, po
                 one_post.classList.add("active") // Adds The Active Class
             }
         })
+    }
+}
+
+// Function For Load The VTT File Data
+export async function loadVttData(vtt_url:string, vtt_video_previews:vtt[]):Promise<void> {
+    const response:Response = await fetch(`/media/${vtt_url}`) // Gets The VTT File
+    const text:string = await response.text() // Gets The Text Content Of The VTT File
+    const regex:RegExp = /(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\s+(.+)#xywh=(\d+),(\d+),(\d+),(\d+)/g;
+    let match
+
+    while((match = regex.exec(text)) !== null) {
+        // Stores The Data Of VTT Video Preview To All VTT Video Previews
+        vtt_video_previews.push({
+            start: parseVttTime(match[1] as string),
+            end: parseVttTime(match[2] as string),
+            image: match[3] as string,
+            x: parseInt(match[4] as string),
+            y: parseInt(match[5] as string),
+            w: parseInt(match[6] as string),
+            h: parseInt(match[7] as string)
+        })
+    }
+}
+
+// Function For Parse The VTT Time
+function parseVttTime(time:string):number {
+    const parts:string[] = time.split(':')
+    const seconds_parts:string[] = (parts[2] as string).split('.')
+
+    return parseInt(parts[0] as string) * 3600 + parseInt(parts[1] as string) * 60 + parseInt(seconds_parts[0] as string) + parseFloat('0.' + seconds_parts[1] as string)
+}
+
+// Function For Initialize The Video Preview
+export function initializeVideoPreview(time:number, vtt_video_previews:vtt[], sprite_sheet:string):void {
+    const current_video_preview = vtt_video_previews.find(one_vtt_video_preview => time >= one_vtt_video_preview.start && time <= one_vtt_video_preview.end) // Gets The Current Video Preview
+
+    if(current_video_preview) {
+        console.log(current_video_preview)
     }
 }

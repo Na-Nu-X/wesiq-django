@@ -73,7 +73,9 @@ interface Media {
     is_video:boolean,
     is_muted:boolean,
     average_watch_time:number|null,
-    video_views:number|null
+    video_views:number|null,
+    sprite_sheet:string|null,
+    vtt_file:string|null
 }
 
 // Function For Create Post HTML Structure
@@ -199,6 +201,8 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             if(logged_in_user && logged_in_user.id === post_data.user.id) {
                 video_container.dataset["average_watch_time"] = String(one_post_media.average_watch_time) // Stores The Average Watch Time To The Video Container
                 video_container.dataset["video_views"] = String(one_post_media.video_views) // Stores The Video Views To The Video Container
+                if(one_post_media.sprite_sheet) video_container.dataset["sprite_sheet"] = one_post_media.sprite_sheet // Stores The Sprite Sheet Path To The Video Container
+                if(one_post_media.vtt_file) video_container.dataset["vtt_file"] = one_post_media.vtt_file // Stores The VTT File Path To The Video Container
             }
 
             // Creates The Muted Video Indicator If The Video Doesn't Have A Sound
