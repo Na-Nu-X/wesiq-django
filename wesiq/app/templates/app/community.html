@@ -849,7 +849,18 @@
                     <div class="media" data-active_index="0">
                         {% for one_post_media in one_post.media.all %}
                             {% if one_post.id == one_post_media.post.id %}
-                                <div class="one_post" data-post_media_id="{{ one_post_media.id }}">
+                                <div 
+                                    class="
+                                        one_post
+
+                                        {% if forloop.counter == 1 %}
+                                            active 
+                                        
+                                        {% endif %}
+                                    "
+
+                                    data-post_media_id="{{ one_post_media.id }}"
+                                >
                                     <div class="upload_progress" data-progress="0%"></div>
 
                                     <button class="previous hidden">

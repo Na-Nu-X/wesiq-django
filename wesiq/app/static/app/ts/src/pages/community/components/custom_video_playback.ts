@@ -4,10 +4,22 @@ import {
     updateVideoTimer,
     updateBufferingBar,
     showVideoLoader,
-    hideVideoLoader
+    hideVideoLoader,
+    loadVttData,
+    initializeVideoPreview
 } from "../functions/customVideoPlayback.js"
 
 import { getFormattedTime } from "../../../utils/timer.js"
+
+export interface vtt {
+    start:number,
+    end:number,
+    image:string,
+    x:number,
+    y:number,
+    w:number,
+    h:number
+}
 
 "use strict"
 
@@ -74,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
 
         // Scrubber Hitbox Mouse Move Functionality
-        scrubber_hitbox.addEventListener("mousemove", function(event:MouseEvent):void {
+        scrubber_hitbox.addEventListener("mousemove", async function(event:MouseEvent):Promise<void> {
             const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
             const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
             const hovered_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Hovered Scrubber Position
@@ -84,6 +96,18 @@ document.addEventListener("DOMContentLoaded", function():void {
             is_hovered_scrubber = true // Marks The Scrubber As Hovered
             scrubber.style.setProperty("--progress", `${scrubber_progress}%`) // Shows The Progress In Scrubber
             elapsed_time.textContent = `${getFormattedTime("minutes", hovered_video_time)}:${getFormattedTime("seconds", hovered_video_time, true)}` // Sets The Elapsed Timer
+
+            // Video Scrubber Preview
+
+            const sprite_sheet:string|null = video_container.dataset["sprite_sheet"] || null // Gets The Sprite Sheet Path
+            const vtt_file:string|null = video_container.dataset["vtt_file"] || null // Gets The VTT File Path
+            
+            let vtt_video_previews:vtt[] = [] // Stores The VTT Video Previews
+
+            if(vtt_file && sprite_sheet) {
+                await loadVttData(vtt_file, vtt_video_previews) // Loads The VTT File Data
+                initializeVideoPreview(hovered_video_time, vtt_video_previews, sprite_sheet) // Initializes The Video Preview
+            }
         })
 
         // Scrubber Hitbox Mouse Out Functionality

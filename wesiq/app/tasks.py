@@ -2,7 +2,7 @@ from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
 from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia
-import os, shutil, io, subprocess, math, random, json, re
+import os, shutil, io, subprocess, math, random, json, re, datetime
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import translation
@@ -15,7 +15,7 @@ from django.db.models.functions import TruncDate
 from django.core.files.base import ContentFile
 from PIL import Image
 from django.core.files import File
-from django.core.files.storage import default_storage
+from django.core.files.storage import default_storage 
 
 # Functions
 
@@ -756,7 +756,9 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
         if custom_thumbnail_path and default_storage.exists(custom_thumbnail_path):
             try:
                 with default_storage.open(custom_thumbnail_path, "rb") as f:
-                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=False)
+
+                PostMedia.objects.filter(id=post_media_id).update(thumbnail=media_object.thumbnail.name)
                 
                 default_storage.delete(custom_thumbnail_path) # Deletes Temporary Thumbnail Path From The Default Storage
                 
@@ -778,7 +780,9 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
                 subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                 with open(thumb_temp_path, "rb") as f:
-                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=True)
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=False)
+
+                PostMedia.objects.filter(id=post_media_id).update(thumbnail=media_object.thumbnail.name)
 
             except subprocess.CalledProcessError:
                 message = "Video Is Shorter Than 1 Second."
@@ -794,6 +798,79 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
         duration_cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path]
         duration_result = subprocess.run(duration_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         total_duration = float(duration_result.stdout.decode().strip())
+
+        # Video Scrubber Preview Images Generation
+
+        interval = 5  # Sets Video Scrubber Preview Interval For Every 5 Seconds
+        scrubber_preview_width, scrubber_preview_height = 160, 90  # Sets Video Scrubber Preview Resolution
+        columns = 5 # Sets Video Scrubber Preview Columns
+
+        total_frames = max(1, math.ceil(total_duration / interval)) # Calculates Total Frames Of Video Scrubber Preview Images
+        rows = math.ceil(total_frames / columns) # Gets Video Scrubber Preview Rows
+
+        sprite_filename = f"sprite_{post_media_id}.jpg" # Sets Video Scrubber Preview JPG Filename
+        vtt_filename = f"sprite_{post_media_id}.vtt" # Sets Video Scrubber Preview VTT Filename
+
+        sprite_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", sprite_filename) # Sets The Sprite Temporary Path
+        vtt_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", vtt_filename) # Sets The VTT Temporary Path
+
+        os.makedirs(os.path.dirname(sprite_temp_path), exist_ok=True)
+
+        # Gets The Sprite Grid Of Video Scrubber Preview Images
+        sprite_command = [
+            "ffmpeg", "-y", "-i", input_path,
+            "-vf", f"fps=1/{interval},scale={scrubber_preview_width}:{scrubber_preview_height},tile={columns}x{rows}",
+            sprite_temp_path
+        ]
+
+        try:
+            subprocess.run(sprite_command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+            # Generates The Web VTT Map (Time On X, Y Coordinates)
+            def format_vtt_time(seconds):
+                delta = datetime.timedelta(seconds=seconds)
+                hours, remainder = divmod(delta.seconds, 3600)
+                minutes, secs = divmod(remainder, 60)
+                milliseconds = delta.microseconds // 1000
+
+                return f"{hours:02d}:{minutes:02d}:{secs:02d}.{milliseconds:03d}"
+
+            with open(vtt_temp_path, "w") as vtt:
+                vtt.write("WEBVTT\n\n")
+
+                for i in range(total_frames):
+                    start_time = i * interval
+                    end_time = min((i + 1) * interval, total_duration)
+                    
+                    # Calculates Coordinates In Grid
+                    col = i % columns
+                    row = i // columns
+                    x = col * scrubber_preview_width
+                    y = row * scrubber_preview_height
+                    
+                    vtt.write(f"{format_vtt_time(start_time)} --> {format_vtt_time(end_time)}\n")
+                    vtt.write(f"{sprite_filename}#xywh={x},{y},{scrubber_preview_width},{scrubber_preview_height}\n\n")
+
+            with open(sprite_temp_path, "rb") as f:
+                media_object.sprite_sheet.save(sprite_filename, ContentFile(f.read()), save=False)
+
+            with open(vtt_temp_path, "rb") as f:
+                media_object.vtt_file.save(vtt_filename, ContentFile(f.read()), save=False)
+
+        # except subprocess.CalledProcessError as e:
+        #     pass
+
+        except Exception as e:
+            print(f"Scrubber generation failed for post {post_media_id}: {e}")
+
+        finally:
+            # Removes Sprite File From Disk
+            if os.path.exists(sprite_temp_path): 
+                os.remove(sprite_temp_path)
+            
+            # Removes VTT File From Disk
+            if os.path.exists(vtt_temp_path): 
+                os.remove(vtt_temp_path)
 
         # Video Compression And HLS Video Format Conversion
 

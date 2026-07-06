@@ -625,7 +625,12 @@
                                     </button>
 
                                     {% if one_post_media.is_video == True %}
-                                        <div class="video_container" data-average_watch_time="{{ one_post_media.average_watch_time_per_viewer }}" data-video_views="{{ one_post_media.unique_video_views }}">
+                                        <div class="video_container" 
+                                            data-average_watch_time="{{ one_post_media.average_watch_time_per_viewer }}" 
+                                            data-video_views="{{ one_post_media.unique_video_views }}"
+                                            data-sprite_sheet="{{ one_post_media.sprite_sheet.name }}"
+                                            data-vtt_file="{{ one_post_media.vtt_file.name }}"
+                                        >
                                             <div class="play_pause_indicator hidden">
                                                 <i class="fa-solid fa-pause"></i> <!-- https://fontawesome.com/icons/pause -->
                                                 {% comment %} <i class="fa-solid fa-play"></i> <!-- https://fontawesome.com/icons/play --> {% endcomment %}
