@@ -626,7 +626,7 @@
 
                                     {% if one_post_media.is_video == True %}
                                         <div class="video_container" 
-                                            data-average_watch_time="{{ one_post_media.average_watch_time_per_viewer }}" 
+                                            data-average_watch_time="{{ one_post_media.average_watch_time_per_viewer|default:0 }}" 
                                             data-video_views="{{ one_post_media.unique_video_views }}"
                                             data-sprite_sheet="{{ one_post_media.sprite_sheet.name }}"
                                             data-vtt_file="{{ one_post_media.vtt_file.name }}"
@@ -900,6 +900,8 @@
                         <div class="particles"></div>
                         <div class="post_bars"></div>
                     </div>
+
+                    <div class="video_scrubber_preview"></div>
 
                     <div class="society">
                         <button class="likes" title="{% translate 'Páči sa mi...' %}" aria-label="{% translate 'Páči sa mi...' %}">

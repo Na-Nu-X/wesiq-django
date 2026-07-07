@@ -3,6 +3,7 @@ declare const Hls: any
 import { getFormattedTime } from "../../../utils/timer.js"
 
 import type { vtt } from "../components/custom_video_playback.js"
+import { posts_preview_state } from "../state.js"
 
 // Function For Play Or Pause The Video
 export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator:HTMLDivElement, video:HTMLVideoElement):void {
@@ -301,10 +302,19 @@ function parseVttTime(time:string):number {
 }
 
 // Function For Initialize The Video Preview
-export function initializeVideoPreview(time:number, vtt_video_previews:vtt[], sprite_sheet:string):void {
-    const current_video_preview = vtt_video_previews.find(one_vtt_video_preview => time >= one_vtt_video_preview.start && time <= one_vtt_video_preview.end) // Gets The Current Video Preview
+export function initializeVideoPreview(time:number, vtt_video_previews:vtt[], sprite_sheet:string, video_scrubber_preview:HTMLDivElement, hovered_scrubber_position:number, scrubber_rect:DOMRect, post_container:HTMLDivElement):void {
+    const current_video_preview:vtt|null = vtt_video_previews.find(one_vtt_video_preview => time >= one_vtt_video_preview.start && time <= one_vtt_video_preview.end) || null // Gets The Current Video Preview
+    const post_container_rect:DOMRect = post_container.getBoundingClientRect() // Gets The Post Container Rect
 
+    // Shows The Video Scrubber Preview
     if(current_video_preview) {
-        console.log(current_video_preview)
+        const height:number = video_scrubber_preview.offsetHeight || 90 // Gets The Video Scrubber Preview Height
+        const gap:number = 2.5 + 10 + 10 // Sets The Video Scrubber Preview Gap
+
+        video_scrubber_preview.style.display = "block"
+        video_scrubber_preview.style.top = `${(scrubber_rect.top - post_container_rect.top) - height - gap}px`
+        video_scrubber_preview.style.left = `${hovered_scrubber_position + 10 + 2.5 + 20}px`
+        video_scrubber_preview.style.backgroundImage = `url("/media/${sprite_sheet}")`
+        video_scrubber_preview.style.backgroundPosition = `-${current_video_preview.x}px -${current_video_preview.y}px`
     }
 }

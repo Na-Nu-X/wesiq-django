@@ -7,7 +7,9 @@ import {
     updateBufferingBar,
     showVideoLoader,
     hideVideoLoader,
-    changeVideoQuality
+    changeVideoQuality,
+    loadVttData,
+    initializeVideoPreview
 } from "./customVideoPlayback.js"
 
 import { 
@@ -22,6 +24,7 @@ import { loadComments } from "./comments.js"
 import { generateShowVideoMetricsButton } from "./videoWatchTime.js"
 
 import type { loggedInUser } from "./posts.js"
+import type { vtt } from "../components/custom_video_playback.js"
 
 export interface searchedPost {
     user:User,
@@ -528,8 +531,8 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
             })
 
             // Scrubber Hitbox Mouse Move Functionalities
-            scrubber_hitbox.addEventListener("mousemove", function(event:MouseEvent):void {
-                const scrubber_rect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
+            scrubber_hitbox.addEventListener("mousemove", async function(event:MouseEvent):Promise<void> {
+                const scrubber_rect:DOMRect = scrubber_hitbox.getBoundingClientRect() // Gets The Scrubber Rect
                 const scrubber_width:number = scrubber_hitbox.offsetWidth // Gets The Scrubber Width
                 const hovered_scrubber_position:number = event.clientX - scrubber_rect.left // Gets Current Hovered Scrubber Position
                 const scrubber_progress:number = Math.min(Math.max((hovered_scrubber_position / scrubber_width) * 100, 0), 100) // Calculates The Current Scrubber Progress
@@ -538,13 +541,29 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
                 is_hovered_scrubber = true
                 scrubber.style.setProperty("--progress", `${scrubber_progress}%`) // Shows The Progress In Scrubber
                 elapsed_timer.textContent = `${getFormattedTime("minutes", hovered_video_time)}:${getFormattedTime("seconds", hovered_video_time, true)}` // Sets The Elapsed Timer
+
+                // Video Scrubber Preview
+
+                const video_scrubber_preview:HTMLDivElement = post_container.querySelector(".video_scrubber_preview") as HTMLDivElement // Gets The Video Scrubber Preview Container
+                const sprite_sheet:string|null = video_container.dataset["sprite_sheet"] || null // Gets The Sprite Sheet Path
+                const vtt_file:string|null = video_container.dataset["vtt_file"] || null // Gets The VTT File Path
+                
+                let vtt_video_previews:vtt[] = [] // Stores The VTT Video Previews
+
+                if(vtt_file && sprite_sheet) {
+                    await loadVttData(vtt_file, vtt_video_previews) // Loads The VTT File Data
+                    initializeVideoPreview(hovered_video_time, vtt_video_previews, sprite_sheet, video_scrubber_preview, hovered_scrubber_position, scrubber_rect, post_container) // Initializes The Video Preview
+                }
             })
 
             // Scrubber Hitbox Mouse Out Functionalities
             scrubber_hitbox.addEventListener("mouseout", function():void {
+                const video_scrubber_preview:HTMLDivElement = post_container.querySelector(".video_scrubber_preview") as HTMLDivElement // Gets The Video Scrubber Preview Container
+
                 is_hovered_scrubber = false
                 scrubber.style.setProperty("--progress", previous_scrubber_progress) // Shows The Progress In Scrubber
                 elapsed_timer.textContent = `${getFormattedTime("minutes", previous_elapsed_time)}:${getFormattedTime("seconds", previous_elapsed_time, true)}` // Sets The Elapsed Timer
+                video_scrubber_preview.style.display = "none" // Hides The Video Scrubber Preview
             })
 
             // Scrubber Hitbox Click Functionalities
