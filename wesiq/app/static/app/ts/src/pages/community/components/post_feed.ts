@@ -489,11 +489,15 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const post_index:number = Number(media_container.dataset["active_index"]) - 1 // Gets The Previous Post Index
                     const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
                     const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
-                    const video_metrics:HTMLDivElement|null = (one_post_container.closest(".post_container") as HTMLDivElement).querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
 
-                    if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
-                    changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
-                    if(one_post_container) initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+                    if(one_post_container) {
+                        const post_container:HTMLDivElement = one_post_container.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                        const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
+
+                        changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Previous Post)
+                        if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
+                        initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+                    }
                 }
 
                 // Next Post
@@ -501,11 +505,15 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const post_index:number = Number(media_container.dataset["active_index"]) + 1 // Gets The Next Post Index
                     const all_media:NodeListOf<HTMLDivElement> = media_container.querySelectorAll<HTMLDivElement>(".one_post") // Gets All Media From The Post
                     const one_post_container:HTMLDivElement|null = all_media[post_index] as HTMLDivElement || null // Gets The Shown One Post Container If Is Available
-                    const video_metrics:HTMLDivElement|null = (one_post_container.closest(".post_container") as HTMLDivElement).querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
 
-                    if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
-                    changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
-                    if(one_post_container) initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+                    if(one_post_container) {
+                        const post_container:HTMLDivElement = one_post_container.closest(".post_container") as HTMLDivElement // Gets The Post Container
+                        const video_metrics:HTMLDivElement|null = post_container.querySelector(".video_metrics") as HTMLDivElement || null // Gets The Video Metrics Container If Is Available
+
+                        changePost(post_index, media_container, post_bars) // Changes The Post (Shows The Next Post)
+                        if(video_metrics) video_metrics.remove() // Removes Video Metrics Container Of The Previous Post From The DOM
+                        initializeShowVideoMetricsButton(one_post_container) // Initializes Show Video Metrics Button
+                    }
                 }
             }
         }

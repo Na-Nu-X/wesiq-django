@@ -1607,6 +1607,31 @@ header {
                 }
             }
 
+            .video_scrubber_preview {
+                position: absolute;
+                transform: translateX(-50%);
+                display: none;
+                width: 160px;
+                height: 90px;
+                border: 1px solid darken($secondary-color, 20%);
+                border-radius: $small-border-radius;
+                opacity: 0.9;
+                z-index: 200;
+        
+                &::before {
+                    content: "";
+                    position: absolute;
+                    bottom: -18px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0;
+                    height: 0;
+                    border-top: 10px solid darken($secondary-color, 20%);
+                    border-left: 10px solid transparent;
+                    border-right: 10px solid transparent;
+                }
+            }
+
             .society {
                 display: flex;
                 align-items: center;
