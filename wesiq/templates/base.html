@@ -92,7 +92,7 @@
                     </div> {% endcomment %}
 
                     <div class="account">
-                        <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" target="_self">
+                        <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" aria-label="{% translate 'Môj účet' %}" target="_self">
                             <img 
                                 class="profile_picture skeleton_loading" 
                                 src="

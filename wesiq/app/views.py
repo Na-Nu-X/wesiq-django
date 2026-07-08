@@ -4244,6 +4244,13 @@ def postView(request, post_id):
     return render(request, "app/post.html")
 
 def profileView(request, username):
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
     is_found = False # Stores The Information If The User Was Found
 
     if request.method == "POST":
@@ -4254,13 +4261,6 @@ def profileView(request, username):
     # Checks If The Profile With Searched Username Exists
     if Users.objects.filter(username=username).exists():
         is_found = True # Stores The Information That The User Was Found
-
-        logged_in_user_id = None # Default State When The User Isn't Logged In
-        logged_in_user = None # Default State When The User Isn't Logged In
-
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
         # Gets The User By Username
         user = Users.objects.filter(
@@ -4735,8 +4735,55 @@ def profileView(request, username):
             "posts": posts
         })
 
-    # return HttpResponse("Nenašiel sa žiaden užívateľ.")
+    if logged_in_user:
+        return render(request, "app/profile.html", {
+            "is_found": is_found,
+
+            "logged_in_user": {
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            }
+        })
+
     return render(request, "app/profile.html", {
+        "is_found": is_found
+    })
+
+def chatView(request, username):
+    is_found = False # Stores The Information If The User Was Found
+
+    # Checks If The Profile With Searched Username Exists
+    if Users.objects.filter(username=username).exists():
+        is_found = True # Stores The Information That The User Was Found
+
+        logged_in_user_id = None # Default State When The User Isn't Logged In
+        logged_in_user = None # Default State When The User Isn't Logged In
+
+        if "logged_in_user_id" in request.session:
+            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+       
+        recipient = Users.objects.filter(username=username).first() # Gets The User By Username (Recipient)
+
+        if logged_in_user:
+            return render(request, "app/chat.html", {
+                "is_found": is_found,
+
+                "logged_in_user": {
+                    "id": logged_in_user.id,
+                    "username": logged_in_user.username,
+                    "profile_picture_name": logged_in_user.profile_picture_name
+                },
+
+                "recipient": recipient,
+            })
+
+        return render(request, "app/chat.html", {
+            "is_found": is_found,
+            "recipient": recipient
+        })
+
+    return render(request, "app/chat.html", {
         "is_found": is_found
     })
 
