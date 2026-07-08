@@ -4244,6 +4244,8 @@ def postView(request, post_id):
     return render(request, "app/post.html")
 
 def profileView(request, username):
+    is_found = False # Stores The Information If The User Was Found
+
     if request.method == "POST":
         # Toggle Follow
         if request.headers.get("X-Requested-Action") == "toggle-follow":
@@ -4251,6 +4253,8 @@ def profileView(request, username):
 
     # Checks If The Profile With Searched Username Exists
     if Users.objects.filter(username=username).exists():
+        is_found = True # Stores The Information That The User Was Found
+
         logged_in_user_id = None # Default State When The User Isn't Logged In
         logged_in_user = None # Default State When The User Isn't Logged In
 
@@ -4592,6 +4596,8 @@ def profileView(request, username):
                 })
 
                 return render(request, "app/profile.html", {
+                    "is_found": is_found,
+
                     "logged_in_user": {
                         "id": logged_in_user.id,
                         "username": logged_in_user.username,
@@ -4707,6 +4713,8 @@ def profileView(request, username):
                             }, status=500)
 
                 return render(request, "app/profile.html", {
+                    "is_found": is_found,
+
                     "logged_in_user": {
                         "username": logged_in_user.username,
                         "role": logged_in_user.role,
@@ -4720,13 +4728,17 @@ def profileView(request, username):
                 })
         
         return render(request, "app/profile.html", {
+            "is_found": is_found,
             "user": user,
             "followers": followers,
             "following": following,
             "posts": posts
         })
 
-    return HttpResponse("Nenašiel sa žiaden užívateľ.")
+    # return HttpResponse("Nenašiel sa žiaden užívateľ.")
+    return render(request, "app/profile.html", {
+        "is_found": is_found
+    })
 
 @require_POST
 def updateVideoWatchTime(request):

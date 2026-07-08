@@ -9,1034 +9,1106 @@
 {% endblock style %}
 
 {% block content %}
-    <div class="profile_page">
-        <div class="profile_container" data-user_id="{{ user.id }}">
-            <div class="options_container">
-                <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+    {% if is_found %}
+        <div class="profile_page">
+            <div class="profile_container" data-user_id="{{ user.id }}">
+                <div class="options_container">
+                    <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-                {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                    <button class="toggle_settings"><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
+                    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                        <button class="toggle_settings"><i class="fa-solid fa-gear"></i></button> <!-- https://fontawesome.com/icons/gear -->
 
-                {% else %}
-                    <button 
-                        class="show_account_properties_button" 
-                        popovertarget="account_properties"
-                        style="anchor-name: --show_account_properties_button;"
-                        title="{% translate 'Viac...' %}"
-                        aria-label="{% translate 'Viac...' %}"
-                    >
-                        <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                    </button>
-
-                    <div 
-                        class="account_properties" 
-                        id="account_properties"
-                        popover
-                        style="position-anchor: --show_account_properties_button;"
-                    >
-                        {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
-                            <button 
-                                class="show_suspend_account_button red" 
-                                popovertarget="suspend_account"
-                                style="anchor-name: --show_suspend_account_button;"
-                            >
-                                <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
-                                <span>{% translate "Obmedziť" %}</span>
-                            </button>
-
-                            <div 
-                                class="suspend_account" 
-                                id="suspend_account"
-                                popover
-                                style="position-anchor: --show_suspend_account_button;"
-                            >
-                                <p>{% translate "Naozaj chcete obmedziť tento účet?" %}</p>
-
-                                <button data-action="suspend">
-                                    <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
-                                    <span class="red">{% translate "Obmedziť" %}</span>
-                                </button>
-
-                                <button 
-                                    class="back_suspend_account_button"
-                                    popovertarget="suspend_account"
-                                    popovertargetaction="hide"
-                                >
-                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                    <span>{% translate "Späť" %}</span>
-                                </button>
-                            </div>
-                        
-                        {% endif %}
-
+                    {% else %}
                         <button 
-                            class="show_report_profile_button" 
-                            popovertarget="report_profile"
-                            style="anchor-name: --show_report_profile_button;"
-                        >
-                            <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
-                            <span>{% translate "Nahlásiť" %}</span>
-                        </button>
-
-                        <button 
-                            class="hide_account_properties_button" 
+                            class="show_account_properties_button" 
                             popovertarget="account_properties"
-                            popovertargetaction="hide"
+                            style="anchor-name: --show_account_properties_button;"
+                            title="{% translate 'Viac...' %}"
+                            aria-label="{% translate 'Viac...' %}"
                         >
-                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                            <span>{% translate "Zavrieť" %}</span>
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
                         </button>
-                    </div>
 
-                    <div 
-                        class="report report_profile" 
-                        id="report_profile"
-                        popover
-                        style="position-anchor: --show_report_profile_button;"
-                    >
-                        <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
-                        <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
-                        <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
-                        <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
-                        <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
-                        <button data-reason="other"><span>{% translate "Iné" %}</span></button>
-
-                        <button 
-                            class="back_report_profile_button"
-                            popovertarget="report_profile"
-                            popovertargetaction="hide"
+                        <div 
+                            class="account_properties" 
+                            id="account_properties"
+                            popover
+                            style="position-anchor: --show_account_properties_button;"
                         >
-                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                            <span>{% translate "Späť" %}</span>
-                        </button>
-                    </div>
-
-                {% endif %}
-            </div>
-
-            <div class="profile_content">
-                {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
-                    <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
-
-                    <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data" inert>
-                        {% csrf_token %}
-
-                        <div class="header">
-                            <div class="info">
-                                <label for="select_profile_picture">
-                                    <img 
-                                        class="profile_picture" 
-                                        src="
-                                            {% if logged_in_user.profile_picture_name %}
-                                                /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
-            
-                                            {% else %}
-                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                            
-                                            {% endif %}
-                                        "
-                                        alt=""
-                                        title="{% translate 'Nahrať obrázok' %}"
-                                        aria-label="{% translate 'Nahrať obrázok' %}"
-                                    >
-                                </label>
-            
-                                <p class="username">{{ logged_in_user.username }}</p>
-                            </div>
-
-                            {{ edit_account_form.select_profile_picture }}
-                            
-                            <button 
-                                class="show_account_properties_button" 
-                                type="button"
-                                popovertarget="account_properties"
-                                style="anchor-name: --show_account_properties_button;"
-                                title="{% translate 'Viac...' %}"
-                                aria-label="{% translate 'Viac...' %}"
-                            >
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
-                            </button>
-
-                            <div 
-                                class="account_properties" 
-                                id="account_properties"
-                                popover
-                                style="position-anchor: --show_account_properties_button;"
-                            >
-                                <div class="data_saving_mode_container">
-                                    <i class="fa-solid fa-signal"></i> <!-- https://fontawesome.com/icons/signal -->
-                                    <span>{% translate "Šetrenie dát" %}</span>
-
-                                    {{ edit_account_form.data_saving_mode }}
-                                    <label for="data_saving_mode" tabindex="0"></label>
-                                </div>
-
-                                <div class="private_account_container">
-                                    {% if not user.private_account %}
-                                        <i class="fa-solid fa-lock-open"></i> <!-- https://fontawesome.com/icons/lock-open -->
-                                        
-                                    {% else %}
-                                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
-                                    
-                                    {% endif %}
-
-                                    <span>{% translate "Súkromný účet" %}</span>
-
-                                    {{ edit_account_form.private_account }}
-                                    <label for="private_account" tabindex="0"></label>
-                                </div>
-
-                                <div class="delete_profile_picture_container">
-                                    <i class="fa-solid fa-trash-can"></i> <!-- https://fontawesome.com/icons/trash-can -->
-                                    <span>{% translate "Odstrániť profilový obrázok" %}</span>
-
-                                    {{ edit_account_form.delete_profile_picture }}
-                                    <label for="delete_profile_picture" tabindex="0"></label>
-                                </div>
-
-                                <div class="delete_account_container">
-                                    <i class="fa-solid fa-user-minus"></i> <!-- https://fontawesome.com/icons/user-minus -->
-                                    <span>{% translate "Odstrániť účet" %}</span>
-
-                                    {{ edit_account_form.delete_account }}
-                                    <label for="delete_account" tabindex="0"></label>
-                                </div>
-
+                            {% if logged_in_user.role == "developer" or logged_in_user.role == "admin" %}
                                 <button 
-                                    class="hide_account_properties_button" 
-                                    type="button"
-                                    popovertarget="account_properties"
-                                    popovertargetaction="hide"
+                                    class="show_suspend_account_button red" 
+                                    popovertarget="suspend_account"
+                                    style="anchor-name: --show_suspend_account_button;"
                                 >
-                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                    <span>{% translate "Zavrieť" %}</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <p class="friend_code">Friend Code - <span>{{ logged_in_user.friend_code }}</span></p>
-
-                        <div class="bio_container">
-                            {{ edit_account_form.bio }}
-
-                            <input class="bio_links" type="hidden" name="bio_links" value="[]">
-            
-                            <div class="icons">
-                                <button 
-                                    class="show_add_link_form_button" 
-                                    type="button"
-                                    popovertarget="add_link_form"
-                                    style="anchor-name: --show_add_link_form_button;"
-                                    title="{% translate 'Pridať odkaz' %}"
-                                    aria-label="{% translate 'Pridať odkaz' %}"
-                                >
-                                    <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+                                    <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                                    <span>{% translate "Obmedziť" %}</span>
                                 </button>
 
                                 <div 
-                                    class="add_link_form" 
-                                    id="add_link_form"
+                                    class="suspend_account" 
+                                    id="suspend_account"
                                     popover
-                                    style="position-anchor: --show_add_link_form_button;"
+                                    style="position-anchor: --show_suspend_account_button;"
                                 >
-                                    <div class="form">
-                                        <input class="url" type="text" placeholder="https://example.com">
-                                        <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button> <!-- https://fontawesome.com/icons/plus -->
+                                    <p>{% translate "Naozaj chcete obmedziť tento účet?" %}</p>
+
+                                    <button data-action="suspend">
+                                        <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
+                                        <span class="red">{% translate "Obmedziť" %}</span>
+                                    </button>
+
+                                    <button 
+                                        class="back_suspend_account_button"
+                                        popovertarget="suspend_account"
+                                        popovertargetaction="hide"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                        <span>{% translate "Späť" %}</span>
+                                    </button>
+                                </div>
+                            
+                            {% endif %}
+
+                            <button 
+                                class="show_report_profile_button" 
+                                popovertarget="report_profile"
+                                style="anchor-name: --show_report_profile_button;"
+                            >
+                                <i class="fa-regular fa-flag"></i> {% comment %} https://fontawesome.com/icons/flag {% endcomment %}
+                                <span>{% translate "Nahlásiť" %}</span>
+                            </button>
+
+                            <button 
+                                class="hide_account_properties_button" 
+                                popovertarget="account_properties"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
+
+                        <div 
+                            class="report report_profile" 
+                            id="report_profile"
+                            popover
+                            style="position-anchor: --show_report_profile_button;"
+                        >
+                            <button data-reason="spam"><span>{% translate "Spam" %}</span></button>
+                            <button data-reason="harassment"><span>{% translate "Obťažovanie" %}</span></button>
+                            <button data-reason="hate_speech"><span>{% translate "Nenávistné prejavy" %}</span></button>
+                            <button data-reason="misinformation"><span>{% translate "Dezinformácie" %}</span></button>
+                            <button data-reason="explicit_content"><span>{% translate "Explicitný obsah" %}</span></button>
+                            <button data-reason="other"><span>{% translate "Iné" %}</span></button>
+
+                            <button 
+                                class="back_report_profile_button"
+                                popovertarget="report_profile"
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Späť" %}</span>
+                            </button>
+                        </div>
+
+                    {% endif %}
+                </div>
+
+                <div class="profile_content">
+                    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                        <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
+                        <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
+
+                        <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data" inert>
+                            {% csrf_token %}
+
+                            <div class="header">
+                                <div class="info">
+                                    <label for="select_profile_picture">
+                                        <img 
+                                            class="profile_picture" 
+                                            src="
+                                                {% if logged_in_user.profile_picture_name %}
+                                                    /media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}
+                
+                                                {% else %}
+                                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                
+                                                {% endif %}
+                                            "
+                                            alt=""
+                                            title="{% translate 'Nahrať obrázok' %}"
+                                            aria-label="{% translate 'Nahrať obrázok' %}"
+                                        >
+                                    </label>
+                
+                                    <p class="username">{{ logged_in_user.username }}</p>
+                                </div>
+
+                                {{ edit_account_form.select_profile_picture }}
+                                
+                                <button 
+                                    class="show_account_properties_button" 
+                                    type="button"
+                                    popovertarget="account_properties"
+                                    style="anchor-name: --show_account_properties_button;"
+                                    title="{% translate 'Viac...' %}"
+                                    aria-label="{% translate 'Viac...' %}"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                </button>
+
+                                <div 
+                                    class="account_properties" 
+                                    id="account_properties"
+                                    popover
+                                    style="position-anchor: --show_account_properties_button;"
+                                >
+                                    <div class="data_saving_mode_container">
+                                        <i class="fa-solid fa-signal"></i> <!-- https://fontawesome.com/icons/signal -->
+                                        <span>{% translate "Šetrenie dát" %}</span>
+
+                                        {{ edit_account_form.data_saving_mode }}
+                                        <label for="data_saving_mode" tabindex="0"></label>
+                                    </div>
+
+                                    <div class="private_account_container">
+                                        {% if not user.private_account %}
+                                            <i class="fa-solid fa-lock-open"></i> <!-- https://fontawesome.com/icons/lock-open -->
+                                            
+                                        {% else %}
+                                            <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                        
+                                        {% endif %}
+
+                                        <span>{% translate "Súkromný účet" %}</span>
+
+                                        {{ edit_account_form.private_account }}
+                                        <label for="private_account" tabindex="0"></label>
+                                    </div>
+
+                                    <div class="delete_profile_picture_container">
+                                        <i class="fa-solid fa-trash-can"></i> <!-- https://fontawesome.com/icons/trash-can -->
+                                        <span>{% translate "Odstrániť profilový obrázok" %}</span>
+
+                                        {{ edit_account_form.delete_profile_picture }}
+                                        <label for="delete_profile_picture" tabindex="0"></label>
+                                    </div>
+
+                                    <div class="delete_account_container">
+                                        <i class="fa-solid fa-user-minus"></i> <!-- https://fontawesome.com/icons/user-minus -->
+                                        <span>{% translate "Odstrániť účet" %}</span>
+
+                                        {{ edit_account_form.delete_account }}
+                                        <label for="delete_account" tabindex="0"></label>
                                     </div>
 
                                     <button 
-                                        class="hide_add_link_form_button" 
+                                        class="hide_account_properties_button" 
                                         type="button"
-                                        popovertarget="add_link_form"
+                                        popovertarget="account_properties"
                                         popovertargetaction="hide"
                                     >
                                         <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
                                         <span>{% translate "Zavrieť" %}</span>
                                     </button>
                                 </div>
-
-                                <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
-                                    <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                                </button>
-                            </div>
-            
-                            <div class="emoji_picker_container hidden">
-                                <emoji-picker></emoji-picker>
-                            </div>
-                        </div>
-
-                        <div class="added_links_container">
-                            {% for one_bio_link in logged_in_user.bio_links.all %}
-                                <div class="link">
-                                    <a href="{{ one_bio_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
-                                        {% if "instagram.com" in one_bio_link.url %}
-                                            <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
-
-                                        {% elif "facebook.com" in one_bio_link.url %}
-                                            <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
-
-                                        {% elif "youtube.com" in one_bio_link.url %}
-                                            <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
-
-                                        {% else %}
-                                            <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
-
-                                        {% endif %}
-
-                                        {{ one_bio_link.domain }}
-                                    </a>
-
-                                    <button class="remove_link" type="button" title="{% translate 'Odstrániť odkaz' %}"><i class="fa-solid fa-xmark"></i></button> <!-- https://fontawesome.com/icons/xmark -->
-                                </div>
-                            
-                            {% endfor %}
-                        </div>
-
-                        <div class="inputs">
-                            <div class="first_name_container">
-                                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                                {{ edit_account_form.first_name }}
-                            </div>
-                            
-                            <div class="last_name_container">
-                                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
-                                {{ edit_account_form.last_name }}
-                            </div>
-                            
-                            <div class="email_address_container">
-                                <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
-                                {{ edit_account_form.email_address }}
                             </div>
 
-                            <div class="phone_number_container">
-                                <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
-                                {{ edit_account_form.phone_number }}
-                                <img class="flag" src="" alt="">
-                            </div>
-                        </div>
+                            <p class="friend_code">Friend Code - <span>{{ logged_in_user.friend_code }}</span></p>
 
-                        <p class="form_report" style="bottom: 98px;"></p>
-                        <input class="edit_account_form_submit" type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
+                            <div class="bio_container">
+                                {{ edit_account_form.bio }}
 
-                        <div class="form_questions">
-                            <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
-                        </div>
-                    </form>
-
-                {% else %}
-                    <script src="{% static 'app/ts/dist/pages/profile/components/profile.js' %}" type="module"></script>
-
-                {% endif %}
+                                <input class="bio_links" type="hidden" name="bio_links" value="[]">
                 
-                <div class="profile">
-                    <div class="header">
-                        <div class="top">
-                            <div class="info">
-                                <img 
-                                    class="profile_picture" 
-                                    src="
-                                        {% if user.profile_picture_name %}
-                                            /media/images/{{ user.id }}/{{ user.profile_picture_name }}
-                    
-                                        {% else %}
-                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                        
-                                        {% endif %}
-                                    "
-                                    alt=""
-                                >
-                    
-                                <div class="name">
-                                    <p class="username">{{ user.username }}</p>
+                                <div class="icons">
+                                    <button 
+                                        class="show_add_link_form_button" 
+                                        type="button"
+                                        popovertarget="add_link_form"
+                                        style="anchor-name: --show_add_link_form_button;"
+                                        title="{% translate 'Pridať odkaz' %}"
+                                        aria-label="{% translate 'Pridať odkaz' %}"
+                                    >
+                                        <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+                                    </button>
 
-                                    {% if user.first_name and user.last_name %}
-                                        <p class="full_name">{{ user.first_name }} {{ user.last_name }}</p>
-                                    
-                                    {% endif %}
-                                </div>
-                            </div>
-            
-                            <p class="
-                                    streak
+                                    <div 
+                                        class="add_link_form" 
+                                        id="add_link_form"
+                                        popover
+                                        style="position-anchor: --show_add_link_form_button;"
+                                    >
+                                        <div class="form">
+                                            <input class="url" type="text" placeholder="https://example.com">
+                                            <button class="add_link" type="button"><i class="fa-solid fa-plus"></i></button> <!-- https://fontawesome.com/icons/plus -->
+                                        </div>
 
-                                    {% if user.has_already_increased_activity_streak %}
-                                        increased
-                                    
-                                    {% endif %}
-                                "
-                            >
-                                <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
-                                <span>{{ user.activity_streak }}</span>
-                            </p>
-                        </div>
-            
-                        <div class="bottom">
-                            {% if user.bio %}
-                                <div class="bio_container">
-                                    <p class="bio">{{ user.bio }}</p>
-
-                                    <div class="links">
-                                        {% for one_link in user.bio_links.all %}
-                                            <a href="{{ one_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
-                                                {% if "instagram.com" in one_link.url %}
-                                                    <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
-
-                                                {% elif "facebook.com" in one_link.url %}
-                                                    <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
-
-                                                {% elif "youtube.com" in one_link.url %}
-                                                    <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
-
-                                                {% else %}
-                                                    <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
-
-                                                {% endif %}
-                                            </a>
-
-                                        {% endfor %}
+                                        <button 
+                                            class="hide_add_link_form_button" 
+                                            type="button"
+                                            popovertarget="add_link_form"
+                                            popovertargetaction="hide"
+                                        >
+                                            <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                            <span>{% translate "Zavrieť" %}</span>
+                                        </button>
                                     </div>
-                                </div>
-                            
-                            {% endif %}
-                        </div>
-                    </div>
 
-                    <div class="middle">
-                        <div class="follow_container">
-                            <div class="statistics">
-                                <div class="followers">
-                                    <p class="amount">{{ followers.count|default:0 }}</p>
-                                    <p class="label">{% translate "sledujú" %}</p>
+                                    <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
+                                        <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                                    </button>
                                 </div>
-            
-                                <div class="following">
-                                    <p class="amount">{{ following.count|default:0 }}</p>
-                                    <p class="label">{% translate "sleduje" %}</p>
+                
+                                <div class="emoji_picker_container hidden">
+                                    <emoji-picker></emoji-picker>
                                 </div>
                             </div>
 
-                            {% if logged_in_user and logged_in_user.private_account and logged_in_user.follow_requests.count > 0 %}
-                                <script src="{% static 'app/ts/dist/pages/profile/components/follow_requests.js' %}" type="module"></script>
+                            <div class="added_links_container">
+                                {% for one_bio_link in logged_in_user.bio_links.all %}
+                                    <div class="link">
+                                        <a href="{{ one_bio_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
+                                            {% if "instagram.com" in one_bio_link.url %}
+                                                <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
 
-                                <button class="show_follow_requests">
-                                    <span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>
-                                    <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
-                                </button>
+                                            {% elif "facebook.com" in one_bio_link.url %}
+                                                <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
 
-                                <dialog class="follow_requests_dialog">
-                                    <div class="all_follow_requests">
-                                        <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p>
-    
-                                        {% for one_follow_request in logged_in_user.follow_requests %}
-                                            <div class="one_follow_request" data-id="{{ one_follow_request.id }}">
-                                                <a href="{% url 'profile_url' one_follow_request.from_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
-                                                    <img 
-                                                        class="profile_picture skeleton_loading" 
-                                                        src="
-                                                            {% if one_follow_request.from_user.profile_picture_name %}
-                                                                /../media/images/{{ one_follow_request.from_user.id }}/{{ one_follow_request.from_user.profile_picture_name }}
-                    
-                                                            {% else %}
-                                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                                                            
-                                                            {% endif %}
-                                                        "
-                                                        alt=""
-                                                    >
-                                                </a>
-    
-                                                <p class="username">{{ one_follow_request.from_user.username }}</p>
-    
-                                                <button class="approve" title="{% translate 'Schváliť' %}" aria-label="{% translate 'Schváliť' %}">
-                                                    <i class="fa-solid fa-check"></i> <!-- https://fontawesome.com/icons/check -->
-                                                </button>
-                                                
-                                                <button class="reject" title="{% translate 'Zamietnuť' %}" aria-label="{% translate 'Zamietnuť' %}">
-                                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                                </button>
-                                            </div>
-                                        
-                                        {% endfor %}
-                                    </div>
-                                </dialog>
-                            
-                            {% endif %}
-
-                            {% if not request.session.logged_in_user_id == user.id and request.session.logged_in_user_id %}
-                                <button 
-                                    class="follow_button"
-                                    data-id="{{ user.id }}"
-                                    data-action="
-                                        {% if not user.has_follow and not user.has_pending_follow_request and not user.private_account %}
-                                            follow
-
-                                        {% elif user.has_follow %}
-                                            unfollow
-
-                                        {% elif not user.has_pending_follow_request and user.private_account %}
-                                            send_follow_request
-
-                                        {% elif user.has_pending_follow_request %}
-                                            cancel_follow_request
-                                        
-                                        {% endif %}
-                                    "
-                                >
-                                    {% if not user.has_follow and not user.has_pending_follow_request %}
-                                        {% translate "Začať sledovať" %}
-
-                                    {% elif user.has_pending_follow_request %}
-                                        {% translate "Zrušiť žiadosť" %}
-
-                                    {% else %}
-                                        {% translate "Prestať sledovať" %}
-                                    
-                                    {% endif %}
-                                </button>
-                            
-                            {% endif %}
-                        </div>
-                        
-                        <div class="badges_container">
-                            <div class="previous">
-                                <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
-                            </div>
-
-                            <div class="badges">
-                                {% if user.role == "developer" %}
-                                    <div class="badge developer" title="{% translate 'Vývojár' %}" aria-label="{% translate 'Vývojár' %}">
-                                        <i class="fa-solid fa-code"></i> <!-- https://fontawesome.com/icons/code -->
-                                    </div>
-
-                                {% endif %}
-
-                                {% if not user.total_transactions_amount == 0 %}
-                                    <div 
-                                        class="
-                                            badge donations
-                                            
-                                            {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
-                                                blue
-            
-                                            {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
-                                                green
-            
-                                            {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
-                                                yellow
-            
-                                            {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
-                                                orange
-            
-                                            {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
-                                                red
-            
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-            
-                                        title="{% translate 'Prispievateľ' %}"
-                                        aria-label="{% translate 'Prispievateľ' %}"
-                                    >   
-                                        <i class="fa-solid fa-dollar-sign"></i> <!-- https://fontawesome.com/icons/dollar-sign -->
-
-                                        <p>
-                                            {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
-                                                1€
-            
-                                            {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
-                                                2€
-            
-                                            {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
-                                                5€
-            
-                                            {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
-                                                10€
-            
-                                            {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
-                                                50€
-            
-                                            {% else %}
-                                                100+€
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-
-                                <div 
-                                    class="
-                                        badge level
-                                        
-                                        {% if user.level <= 10 %}
-                                            blue
-
-                                        {% elif user.level <= 25 %}
-                                            green
-
-                                        {% elif user.level <= 50 %}
-                                            yellow
-
-                                        {% elif user.level <= 75 %}
-                                            orange
-
-                                        {% elif user.level <= 100 %}
-                                            red
-
-                                        {% else %}
-                                            purple
-                                        
-                                        {% endif %}
-                                    "
-
-                                    title="{% translate 'Level' %}"
-                                    aria-label="{% translate 'Level' %}"
-                                >   
-                                    <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
-                                    <p>{{ user.level }}</p>
-                                </div>
-
-                                {% if not user.xp == 0 %}
-                                    <div 
-                                        class="
-                                            badge xp
-                                            
-                                            {% if user.xp < 1000 %}
-                                                blue
-
-                                            {% elif user.xp <= 5000 %}
-                                                green
-
-                                            {% elif user.xp <= 10000 %}
-                                                yellow
-
-                                            {% elif user.xp <= 50000 %}
-                                                orange
-
-                                            {% elif user.xp <= 100000 %}
-                                                red
+                                            {% elif "youtube.com" in one_bio_link.url %}
+                                                <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
 
                                             {% else %}
-                                                purple
-                                            
+                                                <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+
                                             {% endif %}
-                                        "
 
-                                        title="{% translate 'Získané XP' %}"
-                                        aria-label="{% translate 'Získané XP' %}"
-                                    >
-                                        <i class="fa-solid fa-bolt"></i> <!-- https://fontawesome.com/icons/bolt -->
-                                        
-                                        <p>
-                                            {% if user.xp < 1000 %}
-                                                &lt;1000<span>XP</span>
-            
-                                            {% elif user.xp <= 5000 %}
-                                                1K<span>XP</span>
-            
-                                            {% elif user.xp <= 10000 %}
-                                                5K<span>XP</span>
-            
-                                            {% elif user.xp <= 50000 %}
-                                                10K<span>XP</span>
-            
-                                            {% elif user.xp <= 100000 %}
-                                                50K<span>XP</span>
-            
-                                            {% else %}
-                                                100K+<span>XP</span>
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
+                                            {{ one_bio_link.domain }}
+                                        </a>
 
-                                {% endif %}
-
-                                {% if not user.max_activity_streak == 0 %}
-                                    <div class="badge max_activity_streak" title="{% translate 'Najdlhšia rada aktivity' %}" aria-label="{% translate 'Najdlhšia rada aktivity' %}">
-                                        <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
-                                        <p>{{ user.max_activity_streak }}</p>
-                                    </div>
-
-                                {% endif %}
-                                
-                                {% if not user.years_since_registration == 0 %}
-                                    <div 
-                                        class="
-                                            badge years_since_registration
-                                            
-                                            {% if user.years_since_registration == 1 %}
-                                                blue
-
-                                            {% elif user.years_since_registration == 2 %}
-                                                green
-
-                                            {% elif user.years_since_registration == 3 %}
-                                                yellow
-
-                                            {% elif user.years_since_registration == 4 %}
-                                                orange
-
-                                            {% elif user.years_since_registration == 5 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Roky od registrácie' %}"
-                                        aria-label="{% translate 'Roky od registrácie' %}"
-                                    >   
-                                        <i class="fa-solid fa-cake-candles"></i> <!-- https://fontawesome.com/icons/cake-candles -->
-                                        <p>{{ user.years_since_registration }}</p>
-                                    </div>
-
-                                {% endif %}
-
-                                {% if not user.total_activities == 0 %}
-                                    <div 
-                                        class="
-                                            badge total_activities
-                                            
-                                            {% if user.total_activities < 10 %}
-                                                blue
-
-                                            {% elif user.total_activities <= 50 %}
-                                                green
-
-                                            {% elif user.total_activities <= 100 %}
-                                                yellow
-
-                                            {% elif user.total_activities <= 250 %}
-                                                orange
-
-                                            {% elif user.total_activities <= 500 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Zaznamenané aktivity' %}"
-                                        aria-label="{% translate 'Zaznamenané aktivity' %}"
-                                    >
-                                        <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
-
-                                        <p>
-                                            {% if user.total_activities < 10 %}
-                                                1
-            
-                                            {% elif user.total_activities <= 50 %}
-                                                10
-            
-                                            {% elif user.total_activities <= 100 %}
-                                                50
-            
-                                            {% elif user.total_activities <= 250 %}
-                                                100
-            
-                                            {% elif user.total_activities <= 500 %}
-                                                250
-            
-                                            {% else %}
-                                                500+
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-
-                                {% if not followers.count == 0 %}
-                                    <div 
-                                        class="
-                                            badge followers
-                                            
-                                            {% if followers.count < 5 %}
-                                                blue
-
-                                            {% elif followers.count <= 10 %}
-                                                green
-
-                                            {% elif followers.count <= 25 %}
-                                                yellow
-
-                                            {% elif followers.count <= 50 %}
-                                                orange
-
-                                            {% elif followers.count <= 100 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Počet sledovateľov' %}"
-                                        aria-label="{% translate 'Počet sledovateľov' %}"
-                                    >
-                                        <i class="fa-brands fa-bluesky"></i> <!-- https://fontawesome.com/icons/bluesky -->
-
-                                        <p>
-                                            {% if followers.count < 5 %}
-                                                1
-            
-                                            {% elif followers.count <= 10 %}
-                                                5
-            
-                                            {% elif followers.count <= 25 %}
-                                                10
-            
-                                            {% elif followers.count <= 50 %}
-                                                25
-            
-                                            {% elif followers.count <= 100 %}
-                                                50
-            
-                                            {% else %}
-                                                100+
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-
-                                {% if not user.posts.all|length == 0 %}
-                                    <div 
-                                        class="
-                                            badge posts
-                                            
-                                            {% if user.posts.all|length < 5 %}
-                                                blue
-
-                                            {% elif user.posts.all|length <= 10 %}
-                                                green
-
-                                            {% elif user.posts.all|length <= 25 %}
-                                                yellow
-
-                                            {% elif user.posts.all|length <= 50 %}
-                                                orange
-
-                                            {% elif user.posts.all|length <= 100 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Počet príspevkov' %}"
-                                        aria-label="{% translate 'Počet príspevkov' %}"
-                                    >
-                                        <i class="fa-solid fa-camera"></i> <!-- https://fontawesome.com/icons/camera -->
-
-                                        <p>
-                                            {% if user.posts.all|length < 5 %}
-                                                1
-            
-                                            {% elif user.posts.all|length <= 10 %}
-                                                5
-            
-                                            {% elif user.posts.all|length <= 25 %}
-                                                10
-            
-                                            {% elif user.posts.all|length <= 50 %}
-                                                25
-            
-                                            {% elif user.posts.all|length <= 100 %}
-                                                50
-            
-                                            {% else %}
-                                                100+
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-                                
-                                {% if not user.total_received_likes == 0 %}
-                                    <div 
-                                        class="
-                                            badge received_likes
-                                            
-                                            {% if user.total_received_likes < 5 %}
-                                                blue
-
-                                            {% elif user.total_received_likes <= 10 %}
-                                                green
-
-                                            {% elif user.total_received_likes <= 25 %}
-                                                yellow
-
-                                            {% elif user.total_received_likes <= 50 %}
-                                                orange
-
-                                            {% elif user.total_received_likes <= 100 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Získané lajky' %}"
-                                        aria-label="{% translate 'Získané lajky' %}"
-                                    >
-                                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                                        
-                                        <p>
-                                            {% if user.total_received_likes < 5 %}
-                                                1
-
-                                            {% elif user.total_received_likes <= 10 %}
-                                                5
-
-                                            {% elif user.total_received_likes <= 25 %}
-                                                10
-
-                                            {% elif user.total_received_likes <= 50 %}
-                                                25
-
-                                            {% elif user.total_received_likes <= 100 %}
-                                                50
-
-                                            {% else %}
-                                                100+
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-                                
-                                {% if not user.post_comments.all|length == 0 %}
-                                    <div 
-                                        class="
-                                            badge written_comments
-                                            
-                                            {% if user.post_comments.all|length < 5 %}
-                                                blue
-
-                                            {% elif user.post_comments.all|length <= 10 %}
-                                                green
-
-                                            {% elif user.post_comments.all|length <= 25 %}
-                                                yellow
-
-                                            {% elif user.post_comments.all|length <= 50 %}
-                                                orange
-
-                                            {% elif user.post_comments.all|length <= 100 %}
-                                                red
-
-                                            {% else %}
-                                                purple
-                                            
-                                            {% endif %}
-                                        "
-
-                                        title="{% translate 'Napísané komentáre' %}"
-                                        aria-label="{% translate 'Napísané komentáre' %}"
-                                    >
-                                        <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
-                                        
-                                        <p>
-                                            {% if user.post_comments.all|length < 5 %}
-                                                1
-
-                                            {% elif user.post_comments.all|length <= 10 %}
-                                                5
-
-                                            {% elif user.post_comments.all|length <= 25 %}
-                                                10
-
-                                            {% elif user.post_comments.all|length <= 50 %}
-                                                25
-
-                                            {% elif user.post_comments.all|length <= 100 %}
-                                                50
-
-                                            {% else %}
-                                                100+
-                                            
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                {% endif %}
-
-                                {% for one_badge in user.badges.all %}
-                                    <div class="badge {{ one_badge.data }}" title="{{ one_badge.title }}">
-                                        {% if one_badge.data == "no_day_off_week" %}
-                                            <i class="fa-regular fa-calendar-check"></i> <!-- https://fontawesome.com/icons/calendar-check -->
-                                            <p>7</p>
-
-                                        {% endif %}
-
-                                        {% if one_badge.data == "xmas_activity" %}
-                                            <i class="fa-solid fa-gift"></i> <!-- https://fontawesome.com/icons/gift -->
-
-                                        {% endif %}
-
-                                        {% if one_badge.data == "new_year_new_goals" %}
-                                            <i class="fa-solid fa-champagne-glasses"></i> <!-- https://fontawesome.com/icons/champagne-glasses -->
-
-                                        {% endif %}
+                                        <button class="remove_link" type="button" title="{% translate 'Odstrániť odkaz' %}"><i class="fa-solid fa-xmark"></i></button> <!-- https://fontawesome.com/icons/xmark -->
                                     </div>
                                 
                                 {% endfor %}
                             </div>
 
-                            <div class="next">
-                                <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                            <div class="inputs">
+                                <div class="first_name_container">
+                                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                    {{ edit_account_form.first_name }}
+                                </div>
+                                
+                                <div class="last_name_container">
+                                    <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                                    {{ edit_account_form.last_name }}
+                                </div>
+                                
+                                <div class="email_address_container">
+                                    <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                                    {{ edit_account_form.email_address }}
+                                </div>
+
+                                <div class="phone_number_container">
+                                    <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                                    {{ edit_account_form.phone_number }}
+                                    <img class="flag" src="" alt="">
+                                </div>
+                            </div>
+
+                            <p class="form_report" style="bottom: 98px;"></p>
+                            <input class="edit_account_form_submit" type="submit" name="edit_account_form_submit" value="{% translate 'Uložiť zmeny' %}">
+
+                            <div class="form_questions">
+                                <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" data-email_address="{{ logged_in_user.email_address }}" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
+                            </div>
+                        </form>
+
+                    {% else %}
+                        <script src="{% static 'app/ts/dist/pages/profile/components/profile.js' %}" type="module"></script>
+
+                    {% endif %}
+                    
+                    <div class="profile">
+                        <div class="header">
+                            <div class="top">
+                                <div class="info">
+                                    <img 
+                                        class="profile_picture" 
+                                        src="
+                                            {% if user.profile_picture_name %}
+                                                /media/images/{{ user.id }}/{{ user.profile_picture_name }}
+                        
+                                            {% else %}
+                                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                            
+                                            {% endif %}
+                                        "
+                                        alt=""
+                                    >
+                        
+                                    <div class="name">
+                                        <p class="username">{{ user.username }}</p>
+
+                                        {% if user.first_name and user.last_name %}
+                                            <p class="full_name">{{ user.first_name }} {{ user.last_name }}</p>
+                                        
+                                        {% endif %}
+                                    </div>
+                                </div>
+                
+                                <p class="
+                                        streak
+
+                                        {% if user.has_already_increased_activity_streak %}
+                                            increased
+                                        
+                                        {% endif %}
+                                    "
+                                >
+                                    <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
+                                    <span>{{ user.activity_streak }}</span>
+                                </p>
+                            </div>
+                
+                            <div class="bottom">
+                                {% if user.bio %}
+                                    <div class="bio_container">
+                                        <p class="bio">{{ user.bio }}</p>
+
+                                        <div class="links">
+                                            {% for one_link in user.bio_links.all %}
+                                                <a href="{{ one_link.url }}" title="{% translate 'Otvoriť odkaz' %}" aria-label="{% translate 'Otvoriť odkaz' %}" target="_blank" rel="noopener noreferrer">
+                                                    {% if "instagram.com" in one_link.url %}
+                                                        <i class="fa-brands fa-instagram"></i> <!-- https://fontawesome.com/icons/brands/solid/instagram -->
+
+                                                    {% elif "facebook.com" in one_link.url %}
+                                                        <i class="fa-brands fa-facebook"></i> <!-- https://fontawesome.com/icons/brands/solid/facebook -->
+
+                                                    {% elif "youtube.com" in one_link.url %}
+                                                        <i class="fa-brands fa-youtube"></i> <!-- https://fontawesome.com/icons/brands/solid/youtube -->
+
+                                                    {% else %}
+                                                        <i class="fa-solid fa-link"></i> <!-- https://fontawesome.com/icons/link -->
+
+                                                    {% endif %}
+                                                </a>
+
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                
+                                {% endif %}
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bottom">
-                        {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                            <div class="grid_select">
-                                <button class="all_posts_icon active">
-                                    <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
-                                </button>
-                                
-                                <button class="saved_posts_icon">
-                                    <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
-                                </button>
-                            </div>
+                        <div class="middle">
+                            <div class="follow_container">
+                                <div class="statistics">
+                                    <div class="followers">
+                                        <p class="amount">{{ followers.count|default:0 }}</p>
+                                        <p class="label">{% translate "sledujú" %}</p>
+                                    </div>
+                
+                                    <div class="following">
+                                        <p class="amount">{{ following.count|default:0 }}</p>
+                                        <p class="label">{% translate "sleduje" %}</p>
+                                    </div>
+                                </div>
 
-                        {% endif %}
+                                {% if logged_in_user and logged_in_user.private_account and logged_in_user.follow_requests.count > 0 %}
+                                    <script src="{% static 'app/ts/dist/pages/profile/components/follow_requests.js' %}" type="module"></script>
 
-                        {% if user.private_account and request.session.logged_in_user_id != user.id and not user.has_follow %}
-                            <div class="private_account_notice">
-                                <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
-                                <p>{% translate "Tento účet je súkromný." %}</p>
-                            </div>
+                                    <button class="show_follow_requests">
+                                        <span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>
+                                        <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
+                                    </button>
+
+                                    <dialog class="follow_requests_dialog">
+                                        <div class="all_follow_requests">
+                                            <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p>
+        
+                                            {% for one_follow_request in logged_in_user.follow_requests %}
+                                                <div class="one_follow_request" data-id="{{ one_follow_request.id }}">
+                                                    <a href="{% url 'profile_url' one_follow_request.from_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                                        <img 
+                                                            class="profile_picture skeleton_loading" 
+                                                            src="
+                                                                {% if one_follow_request.from_user.profile_picture_name %}
+                                                                    /../media/images/{{ one_follow_request.from_user.id }}/{{ one_follow_request.from_user.profile_picture_name }}
                         
-                        {% else %}
-                            <div class="posts_container">
-                                {% if posts|length > 0 %}
-                                    <div class="posts">
-                                        {% for one_post in posts %}
-                                            {% if not one_post.public_visibility and request.session.logged_in_user_id != one_post.user.id and not one_post.user.has_follow %}
-                                                <div class="private_post_notice">
-                                                    <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                                                {% else %}
+                                                                    {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                                
+                                                                {% endif %}
+                                                            "
+                                                            alt=""
+                                                        >
+                                                    </a>
+        
+                                                    <p class="username">{{ one_follow_request.from_user.username }}</p>
+        
+                                                    <button class="approve" title="{% translate 'Schváliť' %}" aria-label="{% translate 'Schváliť' %}">
+                                                        <i class="fa-solid fa-check"></i> <!-- https://fontawesome.com/icons/check -->
+                                                    </button>
+                                                    
+                                                    <button class="reject" title="{% translate 'Zamietnuť' %}" aria-label="{% translate 'Zamietnuť' %}">
+                                                        <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                                    </button>
                                                 </div>
+                                            
+                                            {% endfor %}
+                                        </div>
+                                    </dialog>
+                                
+                                {% endif %}
+
+                                {% if not request.session.logged_in_user_id == user.id and request.session.logged_in_user_id %}
+                                    <button 
+                                        class="follow_button"
+                                        data-id="{{ user.id }}"
+                                        data-action="
+                                            {% if not user.has_follow and not user.has_pending_follow_request and not user.private_account %}
+                                                follow
+
+                                            {% elif user.has_follow %}
+                                                unfollow
+
+                                            {% elif not user.has_pending_follow_request and user.private_account %}
+                                                send_follow_request
+
+                                            {% elif user.has_pending_follow_request %}
+                                                cancel_follow_request
+                                            
+                                            {% endif %}
+                                        "
+                                    >
+                                        {% if not user.has_follow and not user.has_pending_follow_request %}
+                                            {% translate "Začať sledovať" %}
+
+                                        {% elif user.has_pending_follow_request %}
+                                            {% translate "Zrušiť žiadosť" %}
+
+                                        {% else %}
+                                            {% translate "Prestať sledovať" %}
+                                        
+                                        {% endif %}
+                                    </button>
+                                
+                                {% endif %}
+                            </div>
+                            
+                            <div class="badges_container">
+                                <div class="previous">
+                                    <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                                </div>
+
+                                <div class="badges">
+                                    {% if user.role == "developer" %}
+                                        <div class="badge developer" title="{% translate 'Vývojár' %}" aria-label="{% translate 'Vývojár' %}">
+                                            <i class="fa-solid fa-code"></i> <!-- https://fontawesome.com/icons/code -->
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if not user.total_transactions_amount == 0 %}
+                                        <div 
+                                            class="
+                                                badge donations
+                                                
+                                                {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
+                                                    blue
+                
+                                                {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
+                                                    green
+                
+                                                {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
+                                                    yellow
+                
+                                                {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
+                                                    orange
+                
+                                                {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
+                                                    red
+                
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+                
+                                            title="{% translate 'Prispievateľ' %}"
+                                            aria-label="{% translate 'Prispievateľ' %}"
+                                        >   
+                                            <i class="fa-solid fa-dollar-sign"></i> <!-- https://fontawesome.com/icons/dollar-sign -->
+
+                                            <p>
+                                                {% if user.total_transactions_amount >= 1 and user.total_transactions_amount < 2 %}
+                                                    1€
+                
+                                                {% elif user.total_transactions_amount >= 2 and user.total_transactions_amount < 5 %}
+                                                    2€
+                
+                                                {% elif user.total_transactions_amount >= 5 and user.total_transactions_amount < 10 %}
+                                                    5€
+                
+                                                {% elif user.total_transactions_amount >= 10 and user.total_transactions_amount < 50 %}
+                                                    10€
+                
+                                                {% elif user.total_transactions_amount >= 50 and user.total_transactions_amount < 100 %}
+                                                    50€
+                
+                                                {% else %}
+                                                    100+€
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div 
+                                        class="
+                                            badge level
+                                            
+                                            {% if user.level <= 10 %}
+                                                blue
+
+                                            {% elif user.level <= 25 %}
+                                                green
+
+                                            {% elif user.level <= 50 %}
+                                                yellow
+
+                                            {% elif user.level <= 75 %}
+                                                orange
+
+                                            {% elif user.level <= 100 %}
+                                                red
 
                                             {% else %}
+                                                purple
+                                            
+                                            {% endif %}
+                                        "
+
+                                        title="{% translate 'Level' %}"
+                                        aria-label="{% translate 'Level' %}"
+                                    >   
+                                        <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
+                                        <p>{{ user.level }}</p>
+                                    </div>
+
+                                    {% if not user.xp == 0 %}
+                                        <div 
+                                            class="
+                                                badge xp
+                                                
+                                                {% if user.xp < 1000 %}
+                                                    blue
+
+                                                {% elif user.xp <= 5000 %}
+                                                    green
+
+                                                {% elif user.xp <= 10000 %}
+                                                    yellow
+
+                                                {% elif user.xp <= 50000 %}
+                                                    orange
+
+                                                {% elif user.xp <= 100000 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Získané XP' %}"
+                                            aria-label="{% translate 'Získané XP' %}"
+                                        >
+                                            <i class="fa-solid fa-bolt"></i> <!-- https://fontawesome.com/icons/bolt -->
+                                            
+                                            <p>
+                                                {% if user.xp < 1000 %}
+                                                    &lt;1000<span>XP</span>
+                
+                                                {% elif user.xp <= 5000 %}
+                                                    1K<span>XP</span>
+                
+                                                {% elif user.xp <= 10000 %}
+                                                    5K<span>XP</span>
+                
+                                                {% elif user.xp <= 50000 %}
+                                                    10K<span>XP</span>
+                
+                                                {% elif user.xp <= 100000 %}
+                                                    50K<span>XP</span>
+                
+                                                {% else %}
+                                                    100K+<span>XP</span>
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if not user.max_activity_streak == 0 %}
+                                        <div class="badge max_activity_streak" title="{% translate 'Najdlhšia rada aktivity' %}" aria-label="{% translate 'Najdlhšia rada aktivity' %}">
+                                            <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
+                                            <p>{{ user.max_activity_streak }}</p>
+                                        </div>
+
+                                    {% endif %}
+                                    
+                                    {% if not user.years_since_registration == 0 %}
+                                        <div 
+                                            class="
+                                                badge years_since_registration
+                                                
+                                                {% if user.years_since_registration == 1 %}
+                                                    blue
+
+                                                {% elif user.years_since_registration == 2 %}
+                                                    green
+
+                                                {% elif user.years_since_registration == 3 %}
+                                                    yellow
+
+                                                {% elif user.years_since_registration == 4 %}
+                                                    orange
+
+                                                {% elif user.years_since_registration == 5 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Roky od registrácie' %}"
+                                            aria-label="{% translate 'Roky od registrácie' %}"
+                                        >   
+                                            <i class="fa-solid fa-cake-candles"></i> <!-- https://fontawesome.com/icons/cake-candles -->
+                                            <p>{{ user.years_since_registration }}</p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if not user.total_activities == 0 %}
+                                        <div 
+                                            class="
+                                                badge total_activities
+                                                
+                                                {% if user.total_activities < 10 %}
+                                                    blue
+
+                                                {% elif user.total_activities <= 50 %}
+                                                    green
+
+                                                {% elif user.total_activities <= 100 %}
+                                                    yellow
+
+                                                {% elif user.total_activities <= 250 %}
+                                                    orange
+
+                                                {% elif user.total_activities <= 500 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Zaznamenané aktivity' %}"
+                                            aria-label="{% translate 'Zaznamenané aktivity' %}"
+                                        >
+                                            <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+
+                                            <p>
+                                                {% if user.total_activities < 10 %}
+                                                    1
+                
+                                                {% elif user.total_activities <= 50 %}
+                                                    10
+                
+                                                {% elif user.total_activities <= 100 %}
+                                                    50
+                
+                                                {% elif user.total_activities <= 250 %}
+                                                    100
+                
+                                                {% elif user.total_activities <= 500 %}
+                                                    250
+                
+                                                {% else %}
+                                                    500+
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if not followers.count == 0 %}
+                                        <div 
+                                            class="
+                                                badge followers
+                                                
+                                                {% if followers.count < 5 %}
+                                                    blue
+
+                                                {% elif followers.count <= 10 %}
+                                                    green
+
+                                                {% elif followers.count <= 25 %}
+                                                    yellow
+
+                                                {% elif followers.count <= 50 %}
+                                                    orange
+
+                                                {% elif followers.count <= 100 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Počet sledovateľov' %}"
+                                            aria-label="{% translate 'Počet sledovateľov' %}"
+                                        >
+                                            <i class="fa-brands fa-bluesky"></i> <!-- https://fontawesome.com/icons/bluesky -->
+
+                                            <p>
+                                                {% if followers.count < 5 %}
+                                                    1
+                
+                                                {% elif followers.count <= 10 %}
+                                                    5
+                
+                                                {% elif followers.count <= 25 %}
+                                                    10
+                
+                                                {% elif followers.count <= 50 %}
+                                                    25
+                
+                                                {% elif followers.count <= 100 %}
+                                                    50
+                
+                                                {% else %}
+                                                    100+
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if not user.posts.all|length == 0 %}
+                                        <div 
+                                            class="
+                                                badge posts
+                                                
+                                                {% if user.posts.all|length < 5 %}
+                                                    blue
+
+                                                {% elif user.posts.all|length <= 10 %}
+                                                    green
+
+                                                {% elif user.posts.all|length <= 25 %}
+                                                    yellow
+
+                                                {% elif user.posts.all|length <= 50 %}
+                                                    orange
+
+                                                {% elif user.posts.all|length <= 100 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Počet príspevkov' %}"
+                                            aria-label="{% translate 'Počet príspevkov' %}"
+                                        >
+                                            <i class="fa-solid fa-camera"></i> <!-- https://fontawesome.com/icons/camera -->
+
+                                            <p>
+                                                {% if user.posts.all|length < 5 %}
+                                                    1
+                
+                                                {% elif user.posts.all|length <= 10 %}
+                                                    5
+                
+                                                {% elif user.posts.all|length <= 25 %}
+                                                    10
+                
+                                                {% elif user.posts.all|length <= 50 %}
+                                                    25
+                
+                                                {% elif user.posts.all|length <= 100 %}
+                                                    50
+                
+                                                {% else %}
+                                                    100+
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+                                    
+                                    {% if not user.total_received_likes == 0 %}
+                                        <div 
+                                            class="
+                                                badge received_likes
+                                                
+                                                {% if user.total_received_likes < 5 %}
+                                                    blue
+
+                                                {% elif user.total_received_likes <= 10 %}
+                                                    green
+
+                                                {% elif user.total_received_likes <= 25 %}
+                                                    yellow
+
+                                                {% elif user.total_received_likes <= 50 %}
+                                                    orange
+
+                                                {% elif user.total_received_likes <= 100 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Získané lajky' %}"
+                                            aria-label="{% translate 'Získané lajky' %}"
+                                        >
+                                            <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                                            
+                                            <p>
+                                                {% if user.total_received_likes < 5 %}
+                                                    1
+
+                                                {% elif user.total_received_likes <= 10 %}
+                                                    5
+
+                                                {% elif user.total_received_likes <= 25 %}
+                                                    10
+
+                                                {% elif user.total_received_likes <= 50 %}
+                                                    25
+
+                                                {% elif user.total_received_likes <= 100 %}
+                                                    50
+
+                                                {% else %}
+                                                    100+
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+                                    
+                                    {% if not user.post_comments.all|length == 0 %}
+                                        <div 
+                                            class="
+                                                badge written_comments
+                                                
+                                                {% if user.post_comments.all|length < 5 %}
+                                                    blue
+
+                                                {% elif user.post_comments.all|length <= 10 %}
+                                                    green
+
+                                                {% elif user.post_comments.all|length <= 25 %}
+                                                    yellow
+
+                                                {% elif user.post_comments.all|length <= 50 %}
+                                                    orange
+
+                                                {% elif user.post_comments.all|length <= 100 %}
+                                                    red
+
+                                                {% else %}
+                                                    purple
+                                                
+                                                {% endif %}
+                                            "
+
+                                            title="{% translate 'Napísané komentáre' %}"
+                                            aria-label="{% translate 'Napísané komentáre' %}"
+                                        >
+                                            <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
+                                            
+                                            <p>
+                                                {% if user.post_comments.all|length < 5 %}
+                                                    1
+
+                                                {% elif user.post_comments.all|length <= 10 %}
+                                                    5
+
+                                                {% elif user.post_comments.all|length <= 25 %}
+                                                    10
+
+                                                {% elif user.post_comments.all|length <= 50 %}
+                                                    25
+
+                                                {% elif user.post_comments.all|length <= 100 %}
+                                                    50
+
+                                                {% else %}
+                                                    100+
+                                                
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% for one_badge in user.badges.all %}
+                                        <div class="badge {{ one_badge.data }}" title="{{ one_badge.title }}">
+                                            {% if one_badge.data == "no_day_off_week" %}
+                                                <i class="fa-regular fa-calendar-check"></i> <!-- https://fontawesome.com/icons/calendar-check -->
+                                                <p>7</p>
+
+                                            {% endif %}
+
+                                            {% if one_badge.data == "xmas_activity" %}
+                                                <i class="fa-solid fa-gift"></i> <!-- https://fontawesome.com/icons/gift -->
+
+                                            {% endif %}
+
+                                            {% if one_badge.data == "new_year_new_goals" %}
+                                                <i class="fa-solid fa-champagne-glasses"></i> <!-- https://fontawesome.com/icons/champagne-glasses -->
+
+                                            {% endif %}
+                                        </div>
+                                    
+                                    {% endfor %}
+                                </div>
+
+                                <div class="next">
+                                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bottom">
+                            {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                                <div class="grid_select">
+                                    <button class="all_posts_icon active">
+                                        <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/buffer -->
+                                    </button>
+                                    
+                                    <button class="saved_posts_icon">
+                                        <i class="fa-regular fa-bookmark"></i> <!-- https://fontawesome.com/icons/bookmark -->
+                                    </button>
+                                </div>
+
+                            {% endif %}
+
+                            {% if user.private_account and request.session.logged_in_user_id != user.id and not user.has_follow %}
+                                <div class="private_account_notice">
+                                    <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                    <p>{% translate "Tento účet je súkromný." %}</p>
+                                </div>
+                            
+                            {% else %}
+                                <div class="posts_container">
+                                    {% if posts|length > 0 %}
+                                        <div class="posts">
+                                            {% for one_post in posts %}
+                                                {% if not one_post.public_visibility and request.session.logged_in_user_id != one_post.user.id and not one_post.user.has_follow %}
+                                                    <div class="private_post_notice">
+                                                        <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                                    </div>
+
+                                                {% else %}
+                                                    <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                                        {% if one_post.media.first.is_video == True %}
+                                                            <img 
+                                                                class="thumbnail"
+                                                                src="{{ one_post.media.first.thumbnail.url }}" 
+                                                                alt="
+                                                                    {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                                        Príspevok užívateľa {{ username }}
+                                                                    {% endblocktranslate %}
+                                                                "
+                                                            >
+                                                    
+                                                        {% else %}
+                                                            <img 
+                                                                class="image"
+                                                                src="/../media/{{ one_post.media.first.file }}" 
+                                                                alt="
+                                                                    {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
+                                                                        Príspevok užívateľa {{ username }}
+                                                                    {% endblocktranslate %}
+                                                                "
+                                                                data-post_id="{{ one_post.id }}"
+                                                            >
+                                                        
+                                                        {% endif %}
+
+                                                        <div class="post_info">
+                                                            {% if not one_post.public_visibility or not one_post.allow_comments or one_post.hide_likes %}
+                                                                <div class="settings">
+                                                                    {% if not one_post.public_visibility %}
+                                                                        <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+                    
+                                                                    {% endif %}
+                    
+                                                                    {% if not one_post.allow_comments %}
+                                                                        <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
+                    
+                                                                    {% endif %}
+                    
+                                                                    {% if one_post.hide_likes %}
+                                                                        <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
+                    
+                                                                    {% endif %}
+                                                                </div>
+
+                                                            {% endif %}
+
+                                                            {% if one_post.media.all|length > 1 %}
+                                                                <div class="multiple_posts">
+                                                                    <span>{{ one_post.media.all|length }}</span>
+                                                                    <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
+                                                                </div>
+                                                            
+                                                            {% endif %}
+                                                        </div>
+                                                    </a>
+
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+
+                                    {% else %}
+                                        <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
+                    
+                                    {% endif %}
+                                </div>
+
+                                <div class="saved_posts_container hidden" inert>
+                                    {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                                        <div class="saved_posts">
+                                            {% for one_post in saved_posts %}
                                                 <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
                                                     {% if one_post.media.first.is_video == True %}
                                                         <img 
@@ -1063,103 +1135,116 @@
                                                     
                                                     {% endif %}
 
-                                                    <div class="post_info">
-                                                        {% if not one_post.public_visibility or not one_post.allow_comments or one_post.hide_likes %}
-                                                            <div class="settings">
-                                                                {% if not one_post.public_visibility %}
-                                                                    <i class="fa-solid fa-eye-low-vision"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
-                
-                                                                {% endif %}
-                
-                                                                {% if not one_post.allow_comments %}
-                                                                    <i class="fa-solid fa-comment-slash"></i> <!-- https://fontawesome.com/icons/comment-slash -->
-                
-                                                                {% endif %}
-                
-                                                                {% if one_post.hide_likes %}
-                                                                    <i class="fa-regular fa-heart"></i> <!-- https://fontawesome.com/icons/heart -->
-                
-                                                                {% endif %}
-                                                            </div>
-
-                                                        {% endif %}
-
-                                                        {% if one_post.media.all|length > 1 %}
+                                                    {% if one_post.media.all|length > 1 %}
+                                                        <div class="post_info">
                                                             <div class="multiple_posts">
                                                                 <span>{{ one_post.media.all|length }}</span>
                                                                 <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
                                                             </div>
-                                                        
-                                                        {% endif %}
-                                                    </div>
+                                                        </div>
+                                                    
+                                                    {% endif %}
                                                 </a>
 
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
+                                            {% endfor %}
+                                        </div>
+                                
 
-                                {% else %}
-                                    <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
-                
-                                {% endif %}
-                            </div>
+                                    {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                                        <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
 
-                            <div class="saved_posts_container hidden" inert>
-                                {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                                    <div class="saved_posts">
-                                        {% for one_post in saved_posts %}
-                                            <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
-                                                {% if one_post.media.first.is_video == True %}
-                                                    <img 
-                                                        class="thumbnail"
-                                                        src="{{ one_post.media.first.thumbnail.url }}" 
-                                                        alt="
-                                                            {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                                Príspevok užívateľa {{ username }}
-                                                            {% endblocktranslate %}
-                                                        "
-                                                    >
-                                            
-                                                {% else %}
-                                                    <img 
-                                                        class="image"
-                                                        src="/../media/{{ one_post.media.first.file }}" 
-                                                        alt="
-                                                            {% blocktranslate with first_name=one_post.user.first_name last_name=one_post.user.last_name %}
-                                                                Príspevok užívateľa {{ username }}
-                                                            {% endblocktranslate %}
-                                                        "
-                                                        data-post_id="{{ one_post.id }}"
-                                                    >
-                                                
-                                                {% endif %}
-
-                                                {% if one_post.media.all|length > 1 %}
-                                                    <div class="post_info">
-                                                        <div class="multiple_posts">
-                                                            <span>{{ one_post.media.all|length }}</span>
-                                                            <i class="fa-brands fa-buffer"></i> <!-- https://fontawesome.com/icons/brands/solid/buffer -->
-                                                        </div>
-                                                    </div>
-                                                
-                                                {% endif %}
-                                            </a>
-
-                                        {% endfor %}
-                                    </div>
-                            
-
-                                {% elif saved_posts|length == 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
-                                    <p class="no_saved_posts">{% translate "Žiadne uložené príspevky." %}</p>
-
-                                {% endif %}
-                            </div>
-                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+    {% else %}
+        <div class="profile_page not_found">
+            <div class="profile_container">
+                <div class="options_container">
+                    <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+                </div>
+
+                <div class="profile_content">
+                    <div class="profile">
+                        <div class="header">
+                            <div class="top">
+                                <div class="info">
+                                    <img 
+                                        class="profile_picture" 
+                                        src="{% static 'images/profile_picture.png' %}" {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        alt=""
+                                    >
+                        
+                                    <div class="name">
+                                        <p class="username">{% translate "Neexistujúci účet" %}</p>
+                                    </div>
+                                </div>
+                
+                                <p class="streak">
+                                    <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
+                                    <span>0</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="middle">
+                            <div class="follow_container">
+                                <div class="statistics">
+                                    <div class="followers">
+                                        <p class="amount">0</p>
+                                        <p class="label">{% translate "sledujú" %}</p>
+                                    </div>
+                
+                                    <div class="following">
+                                        <p class="amount">0</p>
+                                        <p class="label">{% translate "sleduje" %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="badges_container">
+                                <div class="previous">
+                                    <i class="fa-solid fa-angle-left"></i> <!-- https://fontawesome.com/icons/angle-left -->
+                                </div>
+
+                                <div class="badges">
+                                    <div class="badge level blue" title="{% translate 'Level' %}" aria-label="{% translate 'Level' %}">   
+                                        <i class="fa-solid fa-arrow-trend-up"></i> <!-- https://fontawesome.com/icons/arrow-trend-up -->
+                                        <p>1</p>
+                                    </div>
+                                </div>
+
+                                <div class="next">
+                                    <i class="fa-solid fa-angle-right"></i> <!-- https://fontawesome.com/icons/angle-right -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bottom">
+                            {% if user.private_account and request.session.logged_in_user_id != user.id and not user.has_follow %}
+                                <div class="private_account_notice">
+                                    <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
+                                    <p>{% translate "Tento účet je súkromný." %}</p>
+                                </div>
+                            
+                            {% else %}
+                                <div class="posts_container">
+                                    <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
+                                </div>
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    {% endif %}
 {% endblock content %}
 
 {% block script %}

@@ -17,6 +17,16 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     margin: 0px auto;
     padding-bottom: 40px;
 
+    &.not_found {
+        .profile_container .profile_content .profile .bottom {
+            padding-top: 0px;
+
+            .posts_container .no_posts {
+                margin-top: 0px;
+            }
+        }
+    }
+
     .profile_container {
         @include animated_border;
         position: relative;
