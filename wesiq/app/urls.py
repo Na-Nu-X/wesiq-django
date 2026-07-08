@@ -16,6 +16,7 @@ urlpatterns = [
     path(_('moje-treningove-plany/'), views.manageTrainingPlansView, name='manage_training_plans_url'),
     path(_('komunita/'), views.communityView, name='community_url'),
     path(_('prispevok/<str:post_id>'), views.postView, name='post_url'),
+    path(_('chat/<str:username>'), views.chatView, name='chat_url'),
     path('blog/', views.blogView, name='blog_url'),
     path('blog/<str:theme>', views.blogThemeView, name='blog_theme_url'),
     

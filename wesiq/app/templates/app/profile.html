@@ -498,6 +498,15 @@
                                 
                                 {% endif %}
                             </div>
+
+                            {% if user.has_follow %}
+                                <div class="message_container">
+                                    <button class="message" title="{% translate 'Napísať správu' %}" aria-label="{% translate 'Napísať správu' %}">
+                                        <i class="fa-regular fa-comment-dots"></i> <!-- https://fontawesome.com/icons/comment-dots -->
+                                    </button> 
+                                </div>
+
+                            {% endif %}
                             
                             <div class="badges_container">
                                 <div class="previous">

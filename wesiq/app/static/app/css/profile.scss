@@ -1,7 +1,7 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
-// Profile page palette
+// Profile Page Palette
 
 $profile-surface: rgba(8, 12, 28, 0.65);
 $profile-surface-border: rgba(75, 75, 250, 0.22);
@@ -850,6 +850,28 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                         box-shadow: 0 5px 20px $profile-glow;
                         transform: translateY(-2px);
                         cursor: pointer;
+                    }
+                }
+            }
+
+            .message_container {
+                margin-bottom: 25px;
+                padding: 15px 20px;
+                text-align: right;
+                background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
+                border: 1px solid $profile-surface-border;
+                border-radius: $medium-border-radius;
+
+                .message {
+                    all: unset;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+
+                    .fa-comment-dots {
+                        font-size: 1.5em;
+                        color: $blue-color;
                     }
                 }
             }
