@@ -4763,7 +4763,7 @@ def chatView(request, username):
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
             logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
        
-        recipient = Users.objects.filter(username=username).first() # Gets The User By Username (Recipient)
+        receiver = Users.objects.filter(username=username).first() # Gets The User By Username (Receiver)
 
         if logged_in_user:
             return render(request, "app/chat.html", {
@@ -4775,12 +4775,12 @@ def chatView(request, username):
                     "profile_picture_name": logged_in_user.profile_picture_name
                 },
 
-                "recipient": recipient,
+                "receiver": receiver,
             })
 
         return render(request, "app/chat.html", {
             "is_found": is_found,
-            "recipient": recipient
+            "receiver": receiver
         })
 
     return render(request, "app/chat.html", {
