@@ -16,6 +16,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         self.receiver = await self.get_user_by_username(self.receiver_username) # Gets The Receiver
 
+        # Closes The Connection
+        if not self.receiver:
+            await self.close()
+            return
+
         sorted_ids = sorted([self.sender.id, self.receiver.id]) # Sorts IDs Of Users
 
         self.room_group_name = f"chat_{sorted_ids[0]}_{sorted_ids[1]}" # Creates The Room Group Name
@@ -39,25 +44,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Receive The Message
     async def receive(self, text_data):
         json_data = json.loads(text_data) # Gets The JSON Data
-        message = json_data["message"] # Gets The Message
 
-        await self.save_message(message) # Saves The Message
+        action = json_data.get("action", "chat_message") # Gets The Action
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
+        # Chat Message Action
+        if action == "chat_message":
+            message = json_data["message"] # Gets The Message
 
-            {
-                "type": "chat_message",
-                "message": message,
-                "sender": self.sender.username
-            }
-        )
+            await self.save_message(message) # Saves The Message
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "chat_message",
+                    "message": message,
+                    "sender_username": self.sender.username,
+                    "sender_id": self.sender.id,
+                    "sender_profile_picture_name": self.sender.profile_picture_name
+                }
+            )
+
+        # Mark As Read Action
+        elif action == "mark_as_read":
+            await self.mark_messages_as_read() 
 
     # Function For Chat The Message
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["message"],
-            "sender": event["sender"]
+            "sender_username": event["sender_username"],
+            "sender_id": event["sender_id"],
+            "sender_profile_picture_name": event["sender_profile_picture_name"]
         }))
 
     # Function For Get The Logged In User
@@ -92,14 +110,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, content):
         try:
-            receiver = Users.objects.get(username=self.receiver_username) # Gets The Receiver
-
             # Creates The New Chat (Saves The New Message)
             Chat.objects.create(
                 sender=self.sender,
-                receiver=receiver,
+                receiver=self.receiver,
                 content=content
             )
 
         except Users.DoesNotExist:
             pass
+
+    # Function For Mark Messages As Read
+    @database_sync_to_async
+    def mark_messages_as_read(self):
+        # Marks Every Message As Read
+        Chat.objects.filter(
+            sender=self.receiver,
+            receiver=self.sender,
+            is_read=False
+        ).update(is_read=True)

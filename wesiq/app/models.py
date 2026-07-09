@@ -1596,3 +1596,43 @@ class Chat(models.Model):
         default=False, 
         null=False
     )
+
+    @property
+    def formatted_time(self):
+        now = timezone.now() # Gets The Current Time
+        diff = now - self.created_at
+
+        # Today
+        if diff.days == 0:
+            # Less Than 60 Seconds
+            if diff.seconds < 60:
+                return _("teraz")
+            
+            # Less Than 1 Hour
+            elif diff.seconds < 3600:
+                minutes = diff.seconds // 60
+
+                # 1 Minute
+                if minutes == 1:
+                    return _("pred minútou")
+
+                # Some Minutes
+                return f"pred {minutes} minútami"
+            
+            else:
+                hours = diff.seconds // 3600
+
+                # 1 Hour
+                if hours == 1:
+                    return "pred hodinou"
+
+                # Some Hours
+                return f"pred {hours} hodinami"
+
+        # Yesterday
+        elif diff.days == 1:
+            return f"včera o {self.created_at.strftime('%H:%M')}"
+
+        # 2 Days Ago And Older
+        else:
+            return self.created_at.strftime("%d.%m.%Y %H:%M")
