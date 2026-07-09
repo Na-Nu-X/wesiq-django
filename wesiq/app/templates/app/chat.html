@@ -12,13 +12,13 @@
     {% if is_found %}
         <div class="chat">
             <div class="top">
-                <div class="recipient">
-                    <a href="{% url 'profile_url' recipient.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}" target="_self">
+                <div class="receiver">
+                    <a href="{% url 'profile_url' receiver.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}" target="_self">
                         <img 
                             class="profile_picture skeleton_loading" 
                             src="
-                                {% if recipient.profile_picture_name %}
-                                    /../media/images/{{ recipient.id }}/{{ recipient.profile_picture_name }}
+                                {% if receiver.profile_picture_name %}
+                                    /../media/images/{{ receiver.id }}/{{ receiver.profile_picture_name }}
 
                                 {% else %}
                                     {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -30,10 +30,10 @@
                     </a>
         
                     <div class="name">
-                        <p class="username">{{ recipient.username }}</p>
+                        <p class="username">{{ receiver.username }}</p>
 
-                        {% if recipient.first_name and recipient.last_name %}
-                            <p class="full_name">{{ recipient.first_name }} {{ recipient.last_name }}</p>
+                        {% if receiver.first_name and receiver.last_name %}
+                            <p class="full_name">{{ receiver.first_name }} {{ receiver.last_name }}</p>
                         
                         {% endif %}
                     </div>
@@ -42,12 +42,12 @@
 
             <div class="middle">
                 <div class="all_messages">
-                    <div class="one_message recipient">
+                    <div class="one_message receiver">
                         <img 
                             class="profile_picture" 
                             src="
-                                {% if recipient.profile_picture_name %}
-                                    /../media/images/{{ recipient.id }}/{{ recipient.profile_picture_name }}
+                                {% if receiver.profile_picture_name %}
+                                    /../media/images/{{ receiver.id }}/{{ receiver.profile_picture_name }}
         
                                 {% else %}
                                     {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
@@ -120,5 +120,5 @@
 {% endblock content %}
 
 {% block script %}
-    {% comment %} <script src="{% static 'app/ts/dist/pages/blog.js' %}" type="module"></script> {% endcomment %}
+    <script src="{% static 'app/ts/dist/pages/chat/components/chat.js' %}" type="module"></script>
 {% endblock script %}

@@ -50,6 +50,8 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') # ALLOWED_HOSTS
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'app',
 
     'django.contrib.admin',
@@ -116,7 +118,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+# Channels
+ASGI_APPLICATION = 'core.asgi.application'
+# WSGI_APPLICATION = 'core.wsgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 
 # Database

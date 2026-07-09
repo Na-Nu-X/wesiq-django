@@ -39,7 +39,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     .top {
         margin-bottom: 30px;
 
-        .recipient {
+        .receiver {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -82,7 +82,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 align-items: center;
                 gap: 10px;
 
-                &.recipient {
+                &.receiver {
                     justify-content: right;
                     text-align: right
                 }

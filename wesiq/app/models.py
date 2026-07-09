@@ -1559,3 +1559,40 @@ class BioLinks(models.Model):
         url = urlparse(self.url) # Gets The URL
         domain = url.netloc.replace("www.", "") # Gets The Domain
         return domain # Returns The URL Domain
+
+class Chat(models.Model):
+    sender = models.ForeignKey(
+        Users,
+        verbose_name="Sender",
+        on_delete=models.SET_NULL,
+        related_name="sent_messages",
+        null=True,
+        blank=True
+    )
+
+    receiver = models.ForeignKey(
+        Users,
+        verbose_name="Receiver",
+        on_delete=models.SET_NULL, 
+        related_name="received_messages",
+        null=True,
+        blank=True
+    )
+
+    content = models.TextField(
+        verbose_name="Content", 
+        max_length=250, 
+        null=False
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name="Created At", 
+        auto_now_add=True, 
+        null=False
+    )
+
+    is_read = models.BooleanField(
+        verbose_name="Is Read", 
+        default=False, 
+        null=False
+    )
