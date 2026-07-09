@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from urllib3 import HTTPResponse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport, Chat
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -51,6 +52,7 @@ from celery import current_app
 from itertools import chain
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.http import Http404
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
  
@@ -4750,25 +4752,33 @@ def profileView(request, username):
     })
 
 def chatView(request, username):
-    is_found = False # Stores The Information If The User Was Found
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+    logged_in_user = None # Default State When The User Isn't Logged In
 
-    # Checks If The Profile With Searched Username Exists
-    if Users.objects.filter(username=username).exists():
-        is_found = True # Stores The Information That The User Was Found
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User (Sender)
 
-        logged_in_user_id = None # Default State When The User Isn't Logged In
-        logged_in_user = None # Default State When The User Isn't Logged In
+        # Checks If The Profile With Searched Username Exists
+        if Users.objects.filter(username=username).exists():
+            receiver = Users.objects.filter(username=username).first() # Gets The User By Username (Receiver)
 
-        if "logged_in_user_id" in request.session:
-            logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
-       
-        receiver = Users.objects.filter(username=username).first() # Gets The User By Username (Receiver)
+            # Gets All Sender's And Receiver's Chats
+            chats = Chat.objects.filter(
+                Q(sender=logged_in_user) & Q(receiver=receiver) | 
+                Q(sender=receiver)
+            ).annotate(
+                # Creates The Is Sender Column (True If The Logged In User Is The Sender)
+                is_sender=Case(
+                    When(sender=logged_in_user, then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            ).order_by(
+                "-created_at"
+            )
 
-        if logged_in_user:
             return render(request, "app/chat.html", {
-                "is_found": is_found,
-
                 "logged_in_user": {
                     "id": logged_in_user.id,
                     "username": logged_in_user.username,
@@ -4776,16 +4786,12 @@ def chatView(request, username):
                 },
 
                 "receiver": receiver,
+                "chats": chats
             })
 
-        return render(request, "app/chat.html", {
-            "is_found": is_found,
-            "receiver": receiver
-        })
+        raise Http404("Užívateľ sa nenašiel.")
 
-    return render(request, "app/chat.html", {
-        "is_found": is_found
-    })
+    raise Http404("Nie si prihlásený.")
 
 @require_POST
 def updateVideoWatchTime(request):

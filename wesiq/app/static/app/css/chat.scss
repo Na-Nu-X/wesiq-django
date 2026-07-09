@@ -37,7 +37,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     }
 
     .top {
-        margin-bottom: 30px;
+        margin-bottom: 30px - 12px - 5px;
 
         .receiver {
             display: flex;
@@ -73,18 +73,59 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         margin-bottom: 30px;
 
         .all_messages {
+            @include scrollbar;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex-direction: column-reverse;
+            gap: 50px;
+            max-height: 400px;
+            padding-top: 12px + 5px;
+            padding-bottom: 12px + 5px;
 
             .one_message {
+                position: relative;
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                max-width: 80%;
+                width: fit-content;
+                padding: 10px;
+                background-color: transparentize($secondary-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.9);
+
+                &::before {
+                    content: attr(data-time);
+                    position: absolute;
+                    bottom: -12px - 5px;
+                    line-height: 1;
+                    color: darken($secondary-color, 40%);
+                    font-size: 0.8em;
+                    white-space: nowrap;
+                }
 
                 &.receiver {
-                    justify-content: right;
-                    text-align: right
+                    flex-direction: row-reverse;
+                    justify-content: flex-start;
+                    margin: 0px 20px 0px auto;
+                    text-align: right;
+                    border-radius: $big-border-radius $big-border-radius $small-border-radius $big-border-radius;
+
+                    &::before {
+                        right: 0px;
+                    }
+                }
+
+                &.sender {
+                    margin: 0px auto 0px 20px;
+                    border-radius: $big-border-radius $big-border-radius $big-border-radius $small-border-radius;
+
+                    &::before {
+                        left: 0px;
+                    }
+
+                    .fa-check-double {
+                        margin-left: auto;
+                        color: transparentize($blue-color, 0.5);
+                    }
                 }
  
                 .profile_picture {
