@@ -45,19 +45,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         json_data = json.loads(text_data) # Gets The JSON Data
 
-        action = json_data.get("action", "chat_message") # Gets The Action
+        action = json_data.get("action", "new") # Gets The Action
 
-        # Chat Message Action
-        if action == "chat_message":
+        # New Message Action
+        if action == "new":
             message = json_data["message"] # Gets The Message
 
             await self.save_message(message) # Saves The Message
 
+            # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
                 self.room_group_name,
 
                 {
-                    "type": "chat_message",
+                    "type": "new",
                     "message": message,
                     "sender_username": self.sender.username,
                     "sender_id": self.sender.id,
@@ -65,17 +66,49 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        # Edit Message Action
+        if action == "edit":
+            chat_id = json_data["chat_id"] # Gets The Chat ID
+            message = json_data["message"] # Gets The Message
+
+            await self.edit_message(chat_id, message) # Edits The Message
+
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "edit",
+                    "chat_id": chat_id,
+                    "message": message
+                }
+            )
+
         # Mark As Read Action
         elif action == "mark_as_read":
             await self.mark_messages_as_read() 
 
-    # Function For Chat The Message
-    async def chat_message(self, event):
+        elif action == "delete":
+            chat_id = json_data["chat_id"] # Gets The Chat ID
+
+            await self.delete_message(chat_id) # Deletes The Message
+
+    # Function For Send Data Of The New Message To The Front-End
+    async def new(self, event):
         await self.send(text_data=json.dumps({
+            "action": "new",
             "message": event["message"],
             "sender_username": event["sender_username"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
+        }))
+
+    # Function For Send Data Of The Edited Message To The Front-End
+    async def edit(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "edit",
+            "chat_id": event["chat_id"],
+            "message": event["message"]
         }))
 
     # Function For Get The Logged In User
@@ -106,19 +139,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
             except Users.DoesNotExist:
                 return None
 
-    # Function For Save The Message
+    # Function For Save The New Message
     @database_sync_to_async
     def save_message(self, content):
-        try:
-            # Creates The New Chat (Saves The New Message)
-            Chat.objects.create(
-                sender=self.sender,
-                receiver=self.receiver,
-                content=content
-            )
+        # Saves The New Message
+        Chat.objects.create(
+            sender=self.sender,
+            receiver=self.receiver,
+            content=content
+        )
 
-        except Users.DoesNotExist:
-            pass
+    # Function For Edit The Message
+    @database_sync_to_async
+    def edit_message(self, id, content):
+        # Edits The Message
+        Chat.objects.filter(
+            id=id,
+            sender=self.sender
+        ).update(
+            content=content,
+            is_edited=True
+        )
 
     # Function For Mark Messages As Read
     @database_sync_to_async
@@ -129,3 +170,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver=self.sender,
             is_read=False
         ).update(is_read=True)
+
+    # Function For Delete The Message
+    @database_sync_to_async
+    def delete_message(self, id):
+        # Deletes The Message
+        Chat.objects.filter(
+            id=id,
+            sender=self.sender
+        ).delete()

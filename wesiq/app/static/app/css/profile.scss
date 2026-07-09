@@ -862,15 +862,19 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 border: 1px solid $profile-surface-border;
                 border-radius: $medium-border-radius;
 
-                .message {
-                    all: unset;
+                a {
+                    display: inline-block;
+                    text-decoration: none;
+                    transition: transform 0.3s ease;
 
                     &:hover {
                         cursor: pointer;
+                        transform: translateY(-2px);
                     }
 
                     .fa-comment-dots {
-                        font-size: 1.5em;
+                        display: block;
+                        font-size: 2em;
                         color: $blue-color;
                     }
                 }

@@ -1597,6 +1597,12 @@ class Chat(models.Model):
         null=False
     )
 
+    is_edited = models.BooleanField(
+        verbose_name="Is Edited", 
+        default=False, 
+        null=False
+    )
+
     @property
     def formatted_time(self):
         now = timezone.now() # Gets The Current Time
