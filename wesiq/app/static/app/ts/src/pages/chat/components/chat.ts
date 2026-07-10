@@ -5,8 +5,9 @@ interface ChatMessage {
     action:"new"|"edit"|"delete"|"add_reaction"|"remove_reaction",
     chat_id?:number,
     message?:string,
+    formatted_time?:string,
     sender_id?:number,
-    sender_username?:string,
+    emoji_sender_username?:string,
     sender_profile_picture_name?:string,
     emoji?:string
 }
@@ -62,18 +63,68 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(data.action === "new") {
             const chat_id:number = data.chat_id as number // Gets The Chat ID
             const message_content:string = data.message as string // Gets The Message Content
+            const formatted_time:string = data.formatted_time as string // Gets The Formatted Time
             const sender_id:number = data.sender_id as number // Gets The Sender's ID
-            const sender_username:string = data.sender_username as string // Gets The Sender's Username
             const sender_profile_picture_name:string = data.sender_profile_picture_name as string // Gets The Sender's Profile Picture Name
     
             const one_message_template_clone:DocumentFragment = one_message_template.content.cloneNode(true) as DocumentFragment // Clones The One Message Template Content
-            const one_message:HTMLDivElement = one_message_template_clone.querySelector(".one_message") as HTMLDivElement // Creates The One Message Container
-            const profile_picture:HTMLImageElement = one_message.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture
             
+            // One Message Container
+            const one_message:HTMLDivElement = one_message_template_clone.querySelector(".one_message") as HTMLDivElement // Creates The One Message Container
             one_message.dataset["chat_id"] = String(chat_id) // Stores The Chat ID
+            one_message.dataset["time"] = formatted_time // Shows The Formatted Time
             logged_in_user_id && logged_in_user_id === sender_id ? one_message.classList.add("sender") : one_message.classList.add("receiver") // Adds The Sender Or The Receiver Class
+            
+            // Profile Picture
+            const profile_picture:HTMLImageElement = one_message.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture
             profile_picture.src = sender_profile_picture_name ? `/../media/images/${sender_id}/${sender_profile_picture_name}` : "/../static/images/profile_picture.png"; // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
+            
+            // Message Content
             (one_message.querySelector("p") as HTMLParagraphElement).textContent = message_content // Shows The Message Content
+            
+            // Show Message Properties Button
+            const show_message_properties_button:HTMLButtonElement = one_message.querySelector(".show_message_properties_button") as HTMLButtonElement // Gets The Show Message Properties Button
+            show_message_properties_button.setAttribute("popovertarget", `message_properties_${chat_id}`) // Links The Popover
+            show_message_properties_button.style = `anchor-name: --show_message_properties_button_${chat_id}` // Creates The Anchor
+            
+            // Message Properties
+            const message_properties:HTMLDivElement = one_message.querySelector(".message_properties") as HTMLDivElement // Gets The Message Properties Container
+            message_properties.id = `message_properties_${chat_id}` // Sets The ID
+            message_properties.style = `position-anchor: --show_message_properties_button_${chat_id}` // Links The Anchor
+
+            // Add Reaction Button
+            const add_reaction_button:HTMLButtonElement = message_properties.querySelector(".add_reaction_button") as HTMLButtonElement // Gets The Add Reaction Button
+            add_reaction_button.setAttribute("popovertarget", `add_reaction_${chat_id}`) // Links The Popover
+            add_reaction_button.style = `anchor-name: --add_reaction_button_${chat_id}` // Creates The Anchor
+
+            // Add Reaction Container
+            const add_reaction:HTMLDivElement = message_properties.querySelector(".add_reaction") as HTMLDivElement // Gets The Add Reaction Container
+            add_reaction.id = `add_reaction_${chat_id}` // Sets The ID
+            add_reaction.style = `position-anchor: --add_reaction_button_${chat_id}` // Links The Anchor
+
+            // Hide Message Properties Button
+            const hide_message_properties_button:HTMLButtonElement = message_properties.querySelector(".hide_message_properties_button") as HTMLButtonElement // Gets The Hide Message Properties Button
+            hide_message_properties_button.setAttribute("popovertarget", `message_properties_${chat_id}`) // Links The Popover
+
+            // If The Message Belongs To The Logged In User
+            if(logged_in_user_id && logged_in_user_id === sender_id) {
+                // Edit Message Button
+                const edit_message_button:HTMLButtonElement = document.createElement("button") // Creates The Edit Message Button
+                edit_message_button.classList.add("edit_message_button") // Adds The Edit Message Button Class
+                edit_message_button.setAttribute("popovertarget", `message_properties_${chat_id}`) // Links The Popover
+                edit_message_button.popoverTargetAction = "hide" // Sets The Hide Action
+                edit_message_button.innerHTML = "<i class='fa-solid fa-pen'></i>" // https://fontawesome.com/icons/pen
+                edit_message_button.innerHTML += `<span>${gettext("Upraviť")}</span>`
+                message_properties.insertBefore(edit_message_button, hide_message_properties_button) // Appends The Edit Message Button To The Message Properties Menu
+    
+                // Delete Message Button
+                const delete_message_button:HTMLButtonElement = document.createElement("button") // Creates The Delete Message Button
+                delete_message_button.classList.add("delete_message_button") // Adds The Edit Delete Message Button Class
+                delete_message_button.innerHTML = "<i class='fa-solid fa-eraser'></i>" // https://fontawesome.com/icons/eraser
+                delete_message_button.innerHTML += `<span>${gettext("Vymazať")}</span>`
+                message_properties.insertBefore(delete_message_button, hide_message_properties_button) // Appends The Delete Message Button To The Message Properties Menu
+            }
+
             all_messages.prepend(one_message) // Appends The One Message Container To The All Messages Container
     
             // Auto Scrolls To The Bottom
@@ -119,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         else if(data.action === "add_reaction") {
             const chat_id:number = data.chat_id as number // Gets The Chat ID
             const emoji:string = data.emoji as string // Gets The Emoji
+            const emoji_sender_username:string = data.emoji_sender_username as string // Gets The Sender's Username 
 
             const one_message:HTMLDivElement|null = [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].find((one_message) => one_message.dataset["chat_id"] === String(chat_id)) || null // Gets The One Message Container
 
@@ -137,6 +189,8 @@ document.addEventListener("DOMContentLoaded", function():void {
                 else {
                     const one_reaction:HTMLDivElement = document.createElement("div") // Creates The One Reaction Container
                     one_reaction.classList.add("one_reaction") // Adds The One Reaction Class
+                    one_reaction.title = interpolate(gettext("Reakciu pridal: %s"), [emoji_sender_username])
+                    one_reaction.ariaLabel = interpolate(gettext("Reakciu pridal: %s"), [emoji_sender_username])
                     one_reaction.textContent = emoji // Sets The Emoji
                     
                     if(reactions.children.length >= 3) {
@@ -161,6 +215,13 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 if(reaction_to_remove) reaction_to_remove.remove() // Removes The Reaction From The DOM
             }
+        }
+
+        // Marks Message As Read
+        else if(data.action === "mark_as_read") {
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+
+            console.log(chat_id)
         }
     }
 

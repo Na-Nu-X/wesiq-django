@@ -1650,21 +1650,21 @@ class Chat(models.Model):
                     return _("pred minútou")
 
                 # Some Minutes
-                return f"pred {minutes} minútami"
+                return _("pred %(minutes)s minútami" % {"minutes": minutes})
             
             else:
                 hours = created_ago.seconds // 3600
 
                 # 1 Hour
                 if hours == 1:
-                    return "pred hodinou"
+                    return _("pred hodinou")
 
                 # Some Hours
-                return f"pred {hours} hodinami"
+                return _("pred %(hours)s hodinami" % {"hours": hours})
 
         # Yesterday
         elif created_ago.days == 1:
-            return f"včera o {self.created_at.strftime('%H:%M')}"
+            return _("včera o %(time)s" % {"time": self.created_at.strftime('%H:%M')})
 
         # 2 Days Ago And Older
         else:

@@ -52,7 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if action == "new":
             message = json_data["message"] # Gets The Message
 
-            new_chat_id = await self.save_message(message) # Saves The Message
+            new_chat = await self.save_message(message) # Saves The Message
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -60,10 +60,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 {
                     "type": "new", # Calls The Function "New"
-                    "chat_id": new_chat_id, # Stores The Chat ID To The Event
+                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                    "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "message": message, # Stores The Message To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
-                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
             )
@@ -107,7 +107,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat_id = json_data["chat_id"] # Gets The Chat ID
             emoji = json_data["emoji"] # Gets The Emoji
 
-            await self.add_reaction_to_message(chat_id, emoji) # Adds The Reaction To Message
+            new_reaction = await self.add_reaction_to_message(chat_id, emoji) # Adds The Reaction To Message
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -116,7 +116,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "add_reaction", # Calls The Function "Add Reaction"
                     "chat_id": chat_id, # Stores The Chat ID To The Event
-                    "emoji": emoji # Stores The Emoji To The Event
+                    "emoji": emoji, # Stores The Emoji To The Event
+                    "emoji_sender_username": new_reaction.user.username # Stores The Emoji Sender's Username To The Event
                 }
             )
 
@@ -147,9 +148,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "action": "new",
             "chat_id": event["chat_id"],
+            "formatted_time": event["formatted_time"],
             "message": event["message"],
             "sender_id": event["sender_id"],
-            "sender_username": event["sender_username"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
         }))
 
@@ -173,7 +174,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "action": "add_reaction",
             "chat_id": event["chat_id"],
-            "emoji": event["emoji"]
+            "emoji": event["emoji"],
+            "emoji_sender_username": event["emoji_sender_username"]
         }))
 
     # Function For Send Data Of The Removed Message Reaction To The Front-End
@@ -182,6 +184,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "action": "remove_reaction",
             "chat_id": event["chat_id"],
             "emoji": event["emoji"]
+        }))
+
+    # Function For Send Data Of The Read Message To The Front-End
+    async def mark_as_read(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "mark_as_read"
         }))
 
     # Function For Get The Logged In User
@@ -222,28 +230,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
             content=content
         )
 
-        return new_chat.id # Returns The ID Of The New Chat
+        return new_chat # Returns The New Chat
 
     # Function For Edit The Message
     @database_sync_to_async
     def edit_message(self, id, content):
-        # Edits The Message
-        Chat.objects.filter(
-            id=id,
-            sender=self.sender
-        ).update(
-            content=content,
-            is_edited=True
-        )
+        message_for_edit = Chat.objects.filter(id=id, sender=self.sender).first() # Gets The Message For Edit
+
+        if not message_for_edit.is_older_than_15_minutes:
+            # Edits The Message
+            Chat.objects.filter(
+                id=id,
+                sender=self.sender
+            ).update(
+                content=content,
+                is_edited=True
+            )
 
     # Function For Delete The Message
     @database_sync_to_async
     def delete_message(self, id):
-        # Deletes The Message
-        Chat.objects.filter(
-            id=id,
-            sender=self.sender
-        ).delete()
+        message_for_deletion = Chat.objects.filter(id=id, sender=self.sender).first() # Gets The Message For Deletion
+
+        if not message_for_deletion.is_older_than_1_day:
+            message_for_deletion.delete() # Deletes The Message
 
     # Function For Add The Reaction To Message
     @database_sync_to_async
@@ -262,11 +272,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 user_reactions.first().delete() # Deletes The Oldest Reaction
 
             # Creates The New Reaction
-            MessageReaction.objects.create(
+            new_reaction = MessageReaction.objects.create(
                 chat_id=chat_id,
                 user=self.sender,
                 emoji=emoji
             )
+
+            return new_reaction # Returns The New Reaction
 
     # Function For Remove The Reaction From Message
     @database_sync_to_async
