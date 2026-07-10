@@ -61,8 +61,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "new", # Calls The Function "New"
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
-                    "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "message": message, # Stores The Message To The Event
+                    "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
@@ -141,15 +141,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Mark As Read Message Action
         elif action == "mark_as_read":
-            await self.mark_messages_as_read() 
+            await self.mark_messages_as_read() # Mark Messages As Read
 
     # Function For Send Data Of The New Message To The Front-End
     async def new(self, event):
         await self.send(text_data=json.dumps({
             "action": "new",
             "chat_id": event["chat_id"],
-            "formatted_time": event["formatted_time"],
             "message": event["message"],
+            "formatted_time": event["formatted_time"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
         }))
@@ -184,12 +184,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "action": "remove_reaction",
             "chat_id": event["chat_id"],
             "emoji": event["emoji"]
-        }))
-
-    # Function For Send Data Of The Read Message To The Front-End
-    async def mark_as_read(self, event):
-        await self.send(text_data=json.dumps({
-            "action": "mark_as_read"
         }))
 
     # Function For Get The Logged In User

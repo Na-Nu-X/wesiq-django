@@ -501,9 +501,11 @@
 
                             {% if user.has_follow %}
                                 <div class="message_container">
+                                    <p class="unread_messages">{{ unread_messages_amount }}</p>
+
                                     <a href="{% url 'chat_url' user.username %}" title="{% translate 'Napísať správu' %}" aria-label="{% translate 'Napísať správu' %}" target="_self">
                                         <i class="fa-regular fa-comment-dots"></i> <!-- https://fontawesome.com/icons/comment-dots -->
-                                    </a> 
+                                    </a>
                                 </div>
 
                             {% endif %}
@@ -1109,7 +1111,16 @@
                                         </div>
 
                                     {% else %}
-                                        <p class="no_posts">{% translate "Zatiaľ žiadne príspevky." %}</p>
+                                        <p 
+                                            class="no_posts"
+
+                                            {% if not logged_in_user.id == user.id %}
+                                                style="margin-top: 0px;"
+
+                                            {% endif %}
+                                        >
+                                            {% translate "Zatiaľ žiadne príspevky." %}
+                                        </p>
                     
                                     {% endif %}
                                 </div>

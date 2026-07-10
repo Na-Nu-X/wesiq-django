@@ -216,13 +216,6 @@ document.addEventListener("DOMContentLoaded", function():void {
                 if(reaction_to_remove) reaction_to_remove.remove() // Removes The Reaction From The DOM
             }
         }
-
-        // Marks Message As Read
-        else if(data.action === "mark_as_read") {
-            const chat_id:number = data.chat_id as number // Gets The Chat ID
-
-            console.log(chat_id)
-        }
     }
 
     // Interrupted Connection
