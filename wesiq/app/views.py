@@ -4621,6 +4621,13 @@ def profileView(request, username):
                 })
 
             else:
+                # Gets The Unread Messages Amount
+                unread_messages_amount = Chat.objects.filter(
+                    sender=user,
+                    receiver=logged_in_user,
+                    is_read=False
+                ).count()
+
                 if request.method == "POST":
                     # Report User
                     if request.headers.get("X-Requested-Action") == "report-user":
@@ -4726,6 +4733,7 @@ def profileView(request, username):
                     "user": user,
                     "followers": followers,
                     "following": following,
+                    "unread_messages_amount": unread_messages_amount,
                     "posts": posts
                 })
         

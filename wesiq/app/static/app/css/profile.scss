@@ -855,12 +855,20 @@ $profile-glow: rgba(75, 75, 250, 0.35);
             }
 
             .message_container {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: right;
                 margin-bottom: 25px;
                 padding: 15px 20px;
-                text-align: right;
                 background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
                 border: 1px solid $profile-surface-border;
                 border-radius: $medium-border-radius;
+
+                .unread_messages {
+                    font-size: 1.2em;
+                    color: transparentize($secondary-color, 0.4);
+                }
 
                 a {
                     display: inline-block;
