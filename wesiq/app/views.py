@@ -4774,6 +4774,8 @@ def chatView(request, username):
                     default=False,
                     output_field=BooleanField()
                 )
+            ).prefetch_related(
+                "message_reactions__user"
             ).order_by(
                 "-created_at"
             )

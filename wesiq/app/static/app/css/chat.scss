@@ -125,6 +125,11 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     &::before {
                         right: 0px;
                     }
+
+                    .reactions {
+                        left: -10px;
+                        transform: translate(-100%, -50%);
+                    }
                 }
 
                 &.sender {
@@ -139,6 +144,12 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                         margin-left: auto;
                         color: transparentize($blue-color, 0.5);
                     }
+
+                    .reactions {
+                        right: -10px;
+                        transform: translate(100%, -50%);
+                        flex-direction: row-reverse;
+                    }
                 }
  
                 .profile_picture {
@@ -149,14 +160,43 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     }
                 }
 
+                .reactions {
+                    position: absolute;
+                    top: 50%;
+                    display: flex;
+                    gap: 5px;
+                    opacity: 0.8;
+
+                    .one_reaction {
+                        font-size: 0.8em;
+                    }
+                }
+
                 // Post Properties
 
                 .show_message_properties_button {
                     @include show_properties_button;
                 }
 
-                .message_properties {
+                .message_properties,
+                .add_reaction {
                     @include properties_menu;
+                }
+
+                .add_reaction {
+                    grid-template-columns: repeat(4, 1fr);
+                    min-width: calc(30px * 4);
+                    padding: 0px;
+
+                    &:popover-open {
+                        display: grid;
+                    }
+
+                    button {
+                        width: 30px;
+                        height: 30px;
+                        padding: 0px;
+                    }
                 }
             }
         }
@@ -246,6 +286,8 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     
             .emoji_picker_container {
                 @include emoji_picker_container;
+                top: auto;
+                bottom: 100%;
             }
     
             .send {

@@ -1,10 +1,20 @@
 import { displayMessage } from "../../../utils/displayMessage.js"
-import { focusAtEnd } from "../../community/functions/customTextarea.js"
+import { focusAtEnd, getCursorPosition } from "../../community/functions/customTextarea.js"
+
+interface ChatMessage {
+    action:"new"|"edit"|"delete"|"add_reaction"|"remove_reaction",
+    chat_id?:number,
+    message?:string,
+    sender_id?:number,
+    sender_username?:string,
+    sender_profile_picture_name?:string,
+    emoji?:string
+}
 
 "use strict"
 
 document.addEventListener("DOMContentLoaded", function():void {
-    // Chat
+    // Chat Socket
 
     // Variables
 
@@ -15,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     const write_message:HTMLDivElement = chat.querySelector(".bottom .write_message") as HTMLDivElement // Gets The Write Message Container
     const new_message:HTMLDivElement = write_message.querySelector(".new_message") as HTMLDivElement // Gets The New Message Custom Input
-    const send:HTMLButtonElement = write_message.querySelector(".send") as HTMLButtonElement // Gets The Send Button
 
     const current_url:string = window.location.pathname // Gets The Current URL
     const url_parts:string[] = current_url.split('/') // Splits The URL
@@ -40,26 +49,28 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Events
 
-    // Succeeded Open Of Socket
+    // Succeeded Open Of Chat Socket
     chat_socket.onopen = function():void {
         markMessagesAsRead() // Marks Messages As Read
     }
 
-    // Response From Server
+    // Response From The Server (The DOM Changes Will Be Visible To Every User In Chat)
     chat_socket.onmessage = function(event:MessageEvent<any>):void {
-        const data:any = JSON.parse(event.data) // Gets The Data
+        const data:ChatMessage = JSON.parse(event.data) // Gets The Data
 
         // New Message
         if(data.action === "new") {
-            const message_content:any = data.message // Gets The Message Content
-            const sender_id:any = data.sender_id // Gets The Sender's ID
-            const sender_username:any = data.sender_username // Gets The Sender's Username
-            const sender_profile_picture_name:any = data.sender_profile_picture_name // Gets The Sender's Profile Picture Name
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+            const message_content:string = data.message as string // Gets The Message Content
+            const sender_id:number = data.sender_id as number // Gets The Sender's ID
+            const sender_username:string = data.sender_username as string // Gets The Sender's Username
+            const sender_profile_picture_name:string = data.sender_profile_picture_name as string // Gets The Sender's Profile Picture Name
     
             const one_message_template_clone:DocumentFragment = one_message_template.content.cloneNode(true) as DocumentFragment // Clones The One Message Template Content
             const one_message:HTMLDivElement = one_message_template_clone.querySelector(".one_message") as HTMLDivElement // Creates The One Message Container
             const profile_picture:HTMLImageElement = one_message.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture
             
+            one_message.dataset["chat_id"] = String(chat_id) // Stores The Chat ID
             logged_in_user_id && logged_in_user_id === sender_id ? one_message.classList.add("sender") : one_message.classList.add("receiver") // Adds The Sender Or The Receiver Class
             profile_picture.src = sender_profile_picture_name ? `/../media/images/${sender_id}/${sender_profile_picture_name}` : "/../static/images/profile_picture.png"; // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
             (one_message.querySelector("p") as HTMLParagraphElement).textContent = message_content // Shows The Message Content
@@ -79,27 +90,236 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         // Edited Message
         else if(data.action === "edit") {
-            const chat_id:any = data.chat_id // Gets The Chat ID
-            const message_content:any = data.message // Gets The Message Content
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+            const message_content:string = data.message as string // Gets The Message Content
 
             const edited_message:HTMLDivElement|null = [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].find((one_message) => one_message.dataset["chat_id"] === String(chat_id)) || null // Gets The Edited Message Container
 
             if(edited_message) {
                 edited_message.classList.remove("edit"); // Removes The Edit Class
                 (edited_message.querySelector("p") as HTMLParagraphElement).textContent = message_content // Shows The Message Content
-                if(!(edited_message.dataset["time"] as string).includes(gettext("(upravené)"))) (edited_message.dataset["time"] as string) = edited_message.dataset["time"] as string + gettext(" (upravené)") // Shows The Edited Label
+                if(edited_message.dataset["time"] && !(edited_message.dataset["time"]).includes(gettext("(upravené)"))) (edited_message.dataset["time"] as string) = edited_message.dataset["time"] as string + gettext(" (upravené)") // Shows The Edited Label
 
                 write_message.dataset["action"] = "new" // Sets The Edit Action To The Write Message Container
                 new_message.dataset["placeholder"] = gettext("Napísať správu") // Sets The Placeholder
                 new_message.textContent = "" // Deletes The Text From The New Message Custom Input
             }
         }
+
+        // Delete Message
+        else if(data.action === "delete") {
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+
+            const deleted_message:HTMLDivElement|null = [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].find((one_message) => one_message.dataset["chat_id"] === String(chat_id)) || null // Gets The Edited Message Container
+
+            if(deleted_message) deleted_message.classList.add("deleted") // Adds The Deleted Class
+        }
+
+        // Add Message Reaction
+        else if(data.action === "add_reaction") {
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+            const emoji:string = data.emoji as string // Gets The Emoji
+
+            const one_message:HTMLDivElement|null = [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].find((one_message) => one_message.dataset["chat_id"] === String(chat_id)) || null // Gets The One Message Container
+
+            if(one_message) {
+                const reactions:HTMLDivElement = one_message.querySelector(".reactions") as HTMLDivElement // Gets The Reactions Container
+                const is_existing_reaction:boolean = [...reactions.querySelectorAll<HTMLDivElement>(".one_reaction")].some(one_reaction => one_reaction.textContent.trim() === emoji) // Checks If The Reaction Has Been Already Added
+    
+                // Removes The Reaction
+                if(is_existing_reaction) {
+                    const reaction_to_remove:HTMLDivElement|null = [...reactions.querySelectorAll<HTMLDivElement>(".one_reaction")].find(one_reaction => one_reaction.textContent.trim() === emoji) || null // Gets The Reaction To Remove
+    
+                    if(reaction_to_remove) reaction_to_remove.remove() // Removes The Reaction From The DOM
+                }
+    
+                // Adds The Reaction
+                else {
+                    const one_reaction:HTMLDivElement = document.createElement("div") // Creates The One Reaction Container
+                    one_reaction.classList.add("one_reaction") // Adds The One Reaction Class
+                    one_reaction.textContent = emoji // Sets The Emoji
+                    
+                    if(reactions.children.length >= 3) {
+                        (reactions.firstElementChild as HTMLDivElement).remove() // Removes The Last Reaction From The DOM
+                    }
+    
+                    reactions.appendChild(one_reaction) // Appends The One Reaction Container To The Reactions Container
+                }
+            }
+        }
+
+        // Remove Message Reaction
+        else if(data.action === "remove_reaction") {
+            const chat_id:number = data.chat_id as number // Gets The Chat ID
+            const emoji:string = data.emoji as string // Gets The Emoji
+
+            const one_message:HTMLDivElement|null = [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].find((one_message) => one_message.dataset["chat_id"] === String(chat_id)) || null // Gets The One Message Container
+
+            if(one_message) {
+                const reactions:HTMLDivElement = one_message.querySelector(".reactions") as HTMLDivElement // Gets The Reactions Container
+                const reaction_to_remove:HTMLDivElement|null = [...reactions.querySelectorAll<HTMLDivElement>(".one_reaction")].find(one_reaction => one_reaction.textContent.trim() === emoji) || null // Gets The Reaction To Remove
+
+                if(reaction_to_remove) reaction_to_remove.remove() // Removes The Reaction From The DOM
+            }
+        }
     }
 
     // Interrupted Connection
     chat_socket.onclose = function():void {
-        displayMessage(gettext("Chat sa neočakávane prerušil."), "error") // Displays The Error Message
+        displayMessage(gettext("Spojenie sa neočakávane prerušilo."), "error") // Displays The Error Message
     }
+
+    // Global Event Delegations 
+
+    // All Messages Container Click Functionalities (The DOM Changes Will Only Be Visible To The User Who Made The Change)
+    all_messages.addEventListener("click", function(event:PointerEvent):void {
+        // Add Reaction
+        if(((event.target as HTMLButtonElement).parentElement as HTMLDivElement).classList.contains("add_reaction")) {
+            const clicked_emoji:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Clicked Emoji Button
+            const one_message:HTMLDivElement = (event.target as HTMLButtonElement).closest(".one_message") as HTMLDivElement // Gets The One Message Container
+            const reactions:HTMLDivElement = one_message.querySelector(".reactions") as HTMLDivElement // Gets The Reactions Container
+
+            const hex_code:number|null = Number(clicked_emoji.dataset["hex_code"]) || null // Gets The Hex Code Of The Emoji
+
+            if(hex_code) {
+                const emoji:string = String.fromCodePoint(hex_code) // Gets The Emoji
+                const chat_id:number|null = Number(one_message.dataset["chat_id"]) || null // Gets The Chat ID
+
+                // Adds Or Removes The Reaction
+                if(chat_id) {
+                    const is_existing_reaction:boolean = [...reactions.querySelectorAll<HTMLDivElement>(".one_reaction")].some(one_reaction => one_reaction.textContent.trim() === emoji) // Checks If The Reaction Has Been Already Added
+
+                    // Removes The Reaction
+                    if(is_existing_reaction) {
+                        const reaction_to_remove:HTMLDivElement|null = [...reactions.querySelectorAll<HTMLDivElement>(".one_reaction")].find(one_reaction => one_reaction.textContent.trim() === emoji) || null // Gets The Reaction To Remove
+
+                        if(reaction_to_remove) {
+                            chat_socket.send(JSON.stringify({
+                                "action": "remove_reaction",
+                                "chat_id": chat_id,
+                                "emoji": emoji
+                            }))
+
+                            // reaction_to_remove.remove() // Removes The Reaction From The DOM
+                        }
+                    }
+
+                    // Adds The Reaction
+                    else {
+                        chat_socket.send(JSON.stringify({
+                            "action": "add_reaction",
+                            "chat_id": chat_id,
+                            "emoji": emoji
+                        }))
+
+                        // const one_reaction:HTMLDivElement = document.createElement("div") // Creates The One Reaction Container
+                        // one_reaction.classList.add("one_reaction") // Adds The One Reaction Class
+                        // one_reaction.textContent = emoji // Sets The Emoji
+                        
+                        // if(reactions.children.length >= 3) {
+                        //     (reactions.firstElementChild as HTMLDivElement).remove() // Removes The Last Reaction From The DOM
+                        // }
+
+                        // reactions.appendChild(one_reaction) // Appends The One Reaction Container To The Reactions Container
+                    }
+                }
+            }
+            
+        }
+
+        // Edit Message
+        if((event.target as HTMLButtonElement).classList.contains("edit_message_button")) {
+            const one_message:HTMLDivElement = (event.target as HTMLButtonElement).closest(".one_message") as HTMLDivElement // Gets The One Message Container
+
+            all_messages.querySelectorAll<HTMLDivElement>(".one_message").forEach((one_message) => one_message.classList.remove("edit")) // Removes Edit Class From All One Message Containers
+            one_message.classList.add("edit") // Adds The Edit Class
+            write_message.dataset["action"] = "edit" // Sets The Edit Action To The Write Message Container
+            new_message.dataset["placeholder"] = gettext("Upraviť správu") // Sets The Placeholder
+            new_message.textContent = (one_message.querySelector("p") as HTMLParagraphElement).textContent // Sets The Value
+            focusAtEnd(new_message) // Adds Focus To The New Message Custom Input
+        }
+
+        // Delete Message
+        else if((event.target as HTMLButtonElement).classList.contains("delete_message_button")) {
+            const one_message:HTMLDivElement = (event.target as HTMLButtonElement).closest(".one_message") as HTMLDivElement // Gets The One Message Container
+            const chat_id:number|null = Number(one_message.dataset["chat_id"]) || null // Gets The Chat ID
+
+            // Deletes The Message
+            if(chat_id) {
+                chat_socket.send(JSON.stringify({
+                    "action": "delete",
+                    "chat_id": chat_id
+                }))
+
+                one_message.classList.add("deleted") // Adds The Deleted Class
+            }
+        }
+    })
+
+    // Write Message
+
+    // Variables
+
+    const MAX_MESSAGE_LENGTH:number = 250 // Defines The Maximum Message Length
+    const add_emoji:HTMLElement = write_message.querySelector(".add_emoji") as HTMLElement // Gets The Add Emoji Icon
+    const emoji_picker_container:HTMLDivElement = write_message.querySelector(".emoji_picker_container") as HTMLDivElement // Gets The Emoji Picker Container
+    const picker:Element = emoji_picker_container.querySelector("emoji-picker") as Element // Gets The Emoji Picker
+    const send:HTMLButtonElement = write_message.querySelector(".send") as HTMLButtonElement // Gets The Send Button
+
+    // Events
+
+    add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+    // emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+
+    // Add Emoji Icon Click Functionality
+    add_emoji.addEventListener("click", function(event:PointerEvent):void {
+        event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+        emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+    })
+
+    // Add Emoji Icon Keydown Functionality
+    add_emoji.addEventListener("keydown", function(event:KeyboardEvent):void {
+        if(event.key === "Enter") {
+            event.preventDefault() // Prevents Default Behaviour
+            event.stopPropagation() // Prevents The Closing Of The Emoji Picker Container
+            emoji_picker_container.classList.toggle("hidden") // Shows Or Hides The Emoji Picker Container
+        }
+    })
+
+    // Picker Emoji Click Functionality
+    picker.addEventListener("emoji-click", function(event:Event):void {
+        if(new_message.innerText.length >= MAX_MESSAGE_LENGTH) return
+
+        const custom_event:CustomEvent<{
+            unicode:string
+        }> = event as CustomEvent<{ unicode: string }>
+    
+        const emoji:string = custom_event.detail.unicode // Gets The Clicked Emoji
+        const selection:Selection|null = window.getSelection()
+        const isInsideEditable:boolean|null = selection && selection.rangeCount > 0 && new_message.contains(selection.anchorNode)
+
+        if(!isInsideEditable) focusAtEnd(new_message)
+
+        const active_selection:Selection|null = window.getSelection()
+
+        if(active_selection && active_selection.rangeCount > 0) {
+            const range:Range = active_selection.getRangeAt(0)
+        
+            range.deleteContents() // Deletes The Selected Text
+
+            // Inserts The Emoji To The Text
+            const text_node:Text = document.createTextNode(emoji)
+            range.insertNode(text_node)
+
+            // Sets The Cursor Position Behind The Inserted Emoji
+            range.setStartAfter(text_node)
+            range.setEndAfter(text_node)
+            
+            // Updates The Cursor
+            active_selection.removeAllRanges()
+            active_selection.addRange(range)
+        }
+    })
 
     // Send Button Click Functionality
     send.addEventListener("click", function():void {
@@ -135,36 +355,53 @@ document.addEventListener("DOMContentLoaded", function():void {
         }
     })
 
-    // Global Event Delegations 
+    // New Message Custom Input Paste Functionality
+    new_message.addEventListener("paste", async function(event:ClipboardEvent):Promise<void> {
+        event.preventDefault() // Prevents Default Behaviour
 
-    // All Messages Container Click Functionalities
-    all_messages.addEventListener("click", function(event:PointerEvent):void {
-        // Edit Message
-        if((event.target as HTMLButtonElement).classList.contains("edit_message_button")) {
-            const one_message:HTMLButtonElement = (event.target as HTMLButtonElement).closest(".one_message") as HTMLButtonElement // Gets The One Message Container
+        const pasted_text:string = event.clipboardData?.getData("text/plain") ?? "" // Gets The Pasted Text
 
-            all_messages.querySelectorAll<HTMLDivElement>(".one_message").forEach((one_message) => one_message.classList.remove("edit")) // Removes Edit Class From All One Message Containers
-            one_message.classList.add("edit") // Adds The Edit Class
-            write_message.dataset["action"] = "edit" // Sets The Edit Action To The Write Message Container
-            new_message.dataset["placeholder"] = gettext("Upraviť správu") // Sets The Placeholder
-            new_message.textContent = (one_message.querySelector("p") as HTMLParagraphElement).textContent // Sets The Value
-            focusAtEnd(new_message) // Adds Focus To The New Message Custom Input
+        if(!pasted_text) return // Do Nothing If There Isn't Any Pasted Text
+
+        const cursor_position:number = getCursorPosition(new_message) ?? new_message.innerText.length // Gets The Cursor Position
+        const text_before_cursor:string = new_message.innerText.slice(0, cursor_position) // Gets The Text Before The Cursor
+        const text_after_cursor:string = new_message.innerText.slice(cursor_position) // Gets The Text After The Cursor
+        let new_text:string = text_before_cursor + pasted_text + text_after_cursor // Gets The New Text
+        let is_truncated:boolean = false
+
+        if(new_text.length > MAX_MESSAGE_LENGTH) {
+            new_text = new_text.slice(0, MAX_MESSAGE_LENGTH) // Sets The New Text
+            is_truncated = true
         }
 
-        // Delete Message
-        else if((event.target as HTMLButtonElement).classList.contains("delete_message_button")) {
-            const one_message:HTMLButtonElement = (event.target as HTMLButtonElement).closest(".one_message") as HTMLButtonElement // Gets The One Message Container
-            const chat_id:number|null = Number(one_message.dataset["chat_id"]) || null // Gets The Chat ID
+        new_message.innerText = new_text // Updates The New Message Custom Input
 
-            // Deletes The Message
-            if(chat_id) {
-                chat_socket.send(JSON.stringify({
-                    "action": "delete",
-                    "chat_id": chat_id
-                }))
+        if(is_truncated) {
+            focusAtEnd(new_message)
+        }
+    })
 
-                one_message.classList.add("deleted") // Adds The Deleted Class To The One Message Container
-            }
+    // New Message Input Functionality
+    new_message.addEventListener("input", async function():Promise<void> {
+        if(this.innerText.length > MAX_MESSAGE_LENGTH) {
+            let new_text:string = new_message.innerText.slice(0, MAX_MESSAGE_LENGTH) // Gets The New Text
+
+            new_message.innerText = new_text // Updates The New Message Custom Input
+            focusAtEnd(new_message)
+        }
+    })
+
+    // Global Event Delegations
+
+    // Document Click Functionality
+    document.addEventListener("click", function(event:PointerEvent):void {
+        // When The User Clicks Outside The Emoji Picker Container
+        if(
+            !(event.target as HTMLDivElement).classList.contains("emoji_picker_container") &&
+            !(event.target as HTMLDivElement).closest(".emoji_picker_container")
+        ) {
+            emoji_picker_container.classList.add("hidden") // Hides The Emoji Picker Container
+            return
         }
     })
 })

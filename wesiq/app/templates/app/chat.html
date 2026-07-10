@@ -93,23 +93,96 @@
 
                         {% endif %}
 
-                        {% if one_chat.is_sender %}
+                        <div class="reactions">
+                            {% for reaction in one_chat.message_reactions.all %}
+                                <div class="one_reaction" title="{% translate 'Reakciu pridal:' %} {{ reaction.user.username }}" aria-label="{% translate 'Reakciu pridal:' %} {{ reaction.user.username }}">
+                                    {{ reaction.emoji }}
+                                </div>
+
+                            {% endfor %}
+                        </div>
+
+                        <button 
+                            class="show_message_properties_button" 
+                            popovertarget="message_properties_{{ one_chat.id }}"
+                            style="anchor-name: --show_message_properties_button_{{ one_chat.id }};"
+                            title="{% translate 'Viac...' %}"
+                            aria-label="{% translate 'Viac...' %}"
+                        >
+                            <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                        </button>
+
+                        <div 
+                            class="message_properties" 
+                            id="message_properties_{{ one_chat.id }}"
+                            popover
+                            style="position-anchor: --show_message_properties_button_{{ one_chat.id }};"
+                        >
                             <button 
-                                class="show_message_properties_button" 
-                                popovertarget="message_properties_{{ one_chat.id }}"
-                                style="anchor-name: --show_message_properties_button_{{ one_chat.id }};"
-                                title="{% translate 'Viac...' %}"
-                                aria-label="{% translate 'Viac...' %}"
+                                class="add_reaction_button"
+                                popovertarget="add_reaction_{{ one_chat.id }}" 
+                                style="anchor-name: --add_reaction_button_{{ one_chat.id }};"
                             >
-                                <i class="fa-solid fa-ellipsis-vertical"></i> <!-- https://fontawesome.com/icons/ellipsis-vertical -->
+                                <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
+                                <span>{% translate "Reakcia" %}</span>
                             </button>
 
                             <div 
-                                class="message_properties" 
-                                id="message_properties_{{ one_chat.id }}"
+                                class="add_reaction" 
+                                id="add_reaction_{{ one_chat.id }}"
                                 popover
-                                style="position-anchor: --show_message_properties_button_{{ one_chat.id }};"
+                                style="position-anchor: --add_reaction_button_{{ one_chat.id }};"
                             >
+                                <button data-hex_code="0x1F600">
+                                    <span>&#128512;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F602">
+                                    <span>&#128514;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F923">
+                                    <span>&#129315;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F92F">
+                                    <span>&#129327;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F60D">
+                                    <span>&#128525;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F44D">
+                                    <span>&#128077;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F44E">
+                                    <span>&#128078;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F4AA">
+                                    <span>&#128170;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F64C">
+                                    <span>&#128588;</span>
+                                </button>
+                                
+                                <button data-hex_code="0x1F44F">
+                                    <span>&#128079;</span>
+                                </button>
+
+                                <button data-hex_code="0x1F91D">
+                                    <span>&#129309;</span>
+                                </button>
+
+                                <button data-hex_code="0x1F64F">
+                                    <span>&#128591;</span>
+                                </button>
+                            </div>
+
+                            {% if one_chat.is_sender and not one_chat.is_older_than_15_minutes %}
                                 <button 
                                     class="edit_message_button"
                                     popovertarget="message_properties_{{ one_chat.id }}" 
@@ -118,23 +191,26 @@
                                     <i class="fa-solid fa-pen"></i> <!-- https://fontawesome.com/icons/pen -->
                                     <span>{% translate "Upraviť" %}</span>
                                 </button>
+                            
+                            {% endif %}
 
+                            {% if one_chat.is_sender and not one_chat.is_older_than_1_day %}
                                 <button class="delete_message_button">
                                     <i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->
                                     <span>{% translate "Vymazať" %}</span>
                                 </button>
+                            
+                            {% endif %}
 
-                                <button 
-                                    class="hide_message_properties_button" 
-                                    popovertarget="message_properties_{{ one_chat.id }}" 
-                                    popovertargetaction="hide"
-                                >
-                                    <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
-                                    <span>{% translate "Zavrieť" %}</span>
-                                </button>
-                            </div>
-
-                        {% endif %}
+                            <button 
+                                class="hide_message_properties_button" 
+                                popovertarget="message_properties_{{ one_chat.id }}" 
+                                popovertargetaction="hide"
+                            >
+                                <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
+                                <span>{% translate "Zavrieť" %}</span>
+                            </button>
+                        </div>
                     </div>
             
                 {% endfor %}
