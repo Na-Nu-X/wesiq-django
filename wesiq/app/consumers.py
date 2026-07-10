@@ -1,7 +1,8 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Chat
+from .models import Users, Chat, MessageReaction
+from django.db import transaction
 
 class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Connect
@@ -41,33 +42,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.channel_name
             )
 
-    # Function For Receive The Message
+    # Function For Receive The Events
     async def receive(self, text_data):
-        json_data = json.loads(text_data) # Gets The JSON Data
+        json_data = json.loads(text_data) # Gets The Received JSON Data
 
-        action = json_data.get("action", "new") # Gets The Action
+        action = json_data.get("action", "new") # Gets The Action (New By Default)
 
         # New Message Action
         if action == "new":
             message = json_data["message"] # Gets The Message
 
-            await self.save_message(message) # Saves The Message
+            new_chat_id = await self.save_message(message) # Saves The Message
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
                 self.room_group_name,
 
                 {
-                    "type": "new",
-                    "message": message,
-                    "sender_username": self.sender.username,
-                    "sender_id": self.sender.id,
-                    "sender_profile_picture_name": self.sender.profile_picture_name
+                    "type": "new", # Calls The Function "New"
+                    "chat_id": new_chat_id, # Stores The Chat ID To The Event
+                    "message": message, # Stores The Message To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
             )
 
         # Edit Message Action
-        if action == "edit":
+        elif action == "edit":
             chat_id = json_data["chat_id"] # Gets The Chat ID
             message = json_data["message"] # Gets The Message
 
@@ -78,28 +80,76 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
 
                 {
-                    "type": "edit",
-                    "chat_id": chat_id,
-                    "message": message
+                    "type": "edit", # Calls The Function "Edit"
+                    "chat_id": chat_id, # Stores The Chat ID To The Event
+                    "message": message # Stores The Message To The Event
                 }
             )
 
-        # Mark As Read Action
-        elif action == "mark_as_read":
-            await self.mark_messages_as_read() 
-
+        # Delete Message Action
         elif action == "delete":
             chat_id = json_data["chat_id"] # Gets The Chat ID
 
             await self.delete_message(chat_id) # Deletes The Message
 
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "delete", # Calls The Function "Delete"
+                    "chat_id": chat_id # Stores The Chat ID To The Event
+                }
+            )
+
+        # Adds The Message Reaction Action
+        elif action == "add_reaction":
+            chat_id = json_data["chat_id"] # Gets The Chat ID
+            emoji = json_data["emoji"] # Gets The Emoji
+
+            await self.add_reaction_to_message(chat_id, emoji) # Adds The Reaction To Message
+
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "add_reaction", # Calls The Function "Add Reaction"
+                    "chat_id": chat_id, # Stores The Chat ID To The Event
+                    "emoji": emoji # Stores The Emoji To The Event
+                }
+            )
+
+        # Removes The Message Reaction Action
+        elif action == "remove_reaction":
+            chat_id = json_data["chat_id"] # Gets The Chat ID
+            emoji = json_data["emoji"] # Gets The Emoji
+
+            await self.remove_reaction_from_message(chat_id, emoji) # Removes The Reaction From Message
+
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "remove_reaction", # Calls The Function "Remove Reaction"
+                    "chat_id": chat_id, # Stores The Chat ID To The Event
+                    "emoji": emoji # Stores The Emoji To The Event
+                }
+            )
+
+        # Mark As Read Message Action
+        elif action == "mark_as_read":
+            await self.mark_messages_as_read() 
+
     # Function For Send Data Of The New Message To The Front-End
     async def new(self, event):
         await self.send(text_data=json.dumps({
             "action": "new",
+            "chat_id": event["chat_id"],
             "message": event["message"],
-            "sender_username": event["sender_username"],
             "sender_id": event["sender_id"],
+            "sender_username": event["sender_username"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
         }))
 
@@ -109,6 +159,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "action": "edit",
             "chat_id": event["chat_id"],
             "message": event["message"]
+        }))
+
+    # Function For Send Data Of The Deleted Message To The Front-End
+    async def delete(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "delete",
+            "chat_id": event["chat_id"]
+        }))
+
+    # Function For Send Data Of The Added Message Reaction To The Front-End
+    async def add_reaction(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "add_reaction",
+            "chat_id": event["chat_id"],
+            "emoji": event["emoji"]
+        }))
+
+    # Function For Send Data Of The Removed Message Reaction To The Front-End
+    async def remove_reaction(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "remove_reaction",
+            "chat_id": event["chat_id"],
+            "emoji": event["emoji"]
         }))
 
     # Function For Get The Logged In User
@@ -143,11 +216,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, content):
         # Saves The New Message
-        Chat.objects.create(
+        new_chat = Chat.objects.create(
             sender=self.sender,
             receiver=self.receiver,
             content=content
         )
+
+        return new_chat.id # Returns The ID Of The New Chat
 
     # Function For Edit The Message
     @database_sync_to_async
@@ -161,16 +236,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             is_edited=True
         )
 
-    # Function For Mark Messages As Read
-    @database_sync_to_async
-    def mark_messages_as_read(self):
-        # Marks Every Message As Read
-        Chat.objects.filter(
-            sender=self.receiver,
-            receiver=self.sender,
-            is_read=False
-        ).update(is_read=True)
-
     # Function For Delete The Message
     @database_sync_to_async
     def delete_message(self, id):
@@ -179,3 +244,46 @@ class ChatConsumer(AsyncWebsocketConsumer):
             id=id,
             sender=self.sender
         ).delete()
+
+    # Function For Add The Reaction To Message
+    @database_sync_to_async
+    def add_reaction_to_message(self, chat_id, emoji):
+        with transaction.atomic():
+            # Gets All Of The Logged In User's Reactions To The Message
+            user_reactions = MessageReaction.objects.filter(
+                chat_id=chat_id,
+                user=self.sender
+            ).order_by(
+                "created_at"
+            )
+
+            # If The User Has Already Added Maximum Of 3 Reactions
+            if user_reactions.count() >= 3:
+                user_reactions.first().delete() # Deletes The Oldest Reaction
+
+            # Creates The New Reaction
+            MessageReaction.objects.create(
+                chat_id=chat_id,
+                user=self.sender,
+                emoji=emoji
+            )
+
+    # Function For Remove The Reaction From Message
+    @database_sync_to_async
+    def remove_reaction_from_message(self, chat_id, emoji):
+        # Removes The Reaction
+        MessageReaction.objects.filter(
+            chat_id=chat_id,
+            user=self.sender,
+            emoji=emoji
+        ).delete()
+
+    # Function For Mark Messages As Read
+    @database_sync_to_async
+    def mark_messages_as_read(self):
+        # Marks Every Unread Message As Read
+        Chat.objects.filter(
+            sender=self.receiver,
+            receiver=self.sender,
+            is_read=False
+        ).update(is_read=True)

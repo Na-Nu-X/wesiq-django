@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     const tagged_users_container:HTMLDivElement = upload_post_form.querySelector(".tagged_users_container") as HTMLDivElement // Gets The Tagged Users Container
     const tagged_users:HTMLInputElement = upload_post_form.querySelector(".tagged_users") as HTMLInputElement // Gets The Hidden Input Of Tagged Users
 
-    const MAX_DESCRIPTION_LENGTH:number = 500 // Sets The Max Description Length
+    const MAX_DESCRIPTION_LENGTH:number = 500 // Defines The Maximum Description Length
 
     let previous_description_length:number = description.innerText.length // Stores The Length Of The Previous Written Description To Check Whether The Last Operation Was A Write Or An Erase
     let is_syncing_description_paste:boolean = false // Prevents Input Handler From Running During Paste Sync
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     })
 
     add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
-    emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+    // emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
 
     // Add Emoji Icon Click Functionality
     add_emoji.addEventListener("click", function(event:PointerEvent):void {

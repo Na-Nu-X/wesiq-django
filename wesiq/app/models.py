@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import ArrayField
 from pathlib import Path
@@ -9,6 +10,7 @@ from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 from urllib.parse import urlparse
 from django.urls import reverse
+from datetime import timedelta
 
 class Users(models.Model):
     ROLE_CHOICES = [
@@ -1603,20 +1605,45 @@ class Chat(models.Model):
         null=False
     )
 
+    reacted_users = models.ManyToManyField(
+        "Users",
+        through="MessageReaction",
+        verbose_name="Reactions", 
+        related_name="reacted_messages",
+        null=True,
+        blank=True
+    )
+
+    @property
+    def is_older_than_15_minutes(self):
+        now = timezone.now() # Gets The Current Time
+        created_ago = now - self.created_at # Gets The Created Ago Time
+        _15_minutes = timedelta(minutes=15) # Determines 15 Minutes
+
+        return created_ago > _15_minutes # Returns True If The Message Is Older Than 15 Minutes
+
+    @property
+    def is_older_than_1_day(self):
+        now = timezone.now() # Gets The Current Time
+        created_ago = now - self.created_at # Gets The Created Ago Time
+        _1_day = timedelta(days=1) # Determines 1 Day
+
+        return created_ago > _1_day # Returns True If The Message Is Older Than 1 Day
+
     @property
     def formatted_time(self):
         now = timezone.now() # Gets The Current Time
-        diff = now - self.created_at
+        created_ago = now - self.created_at # Gets The Created Ago Time
 
         # Today
-        if diff.days == 0:
+        if created_ago.days == 0:
             # Less Than 60 Seconds
-            if diff.seconds < 60:
+            if created_ago.seconds < 60:
                 return _("teraz")
             
             # Less Than 1 Hour
-            elif diff.seconds < 3600:
-                minutes = diff.seconds // 60
+            elif created_ago.seconds < 3600:
+                minutes = created_ago.seconds // 60
 
                 # 1 Minute
                 if minutes == 1:
@@ -1626,7 +1653,7 @@ class Chat(models.Model):
                 return f"pred {minutes} minútami"
             
             else:
-                hours = diff.seconds // 3600
+                hours = created_ago.seconds // 3600
 
                 # 1 Hour
                 if hours == 1:
@@ -1636,9 +1663,41 @@ class Chat(models.Model):
                 return f"pred {hours} hodinami"
 
         # Yesterday
-        elif diff.days == 1:
+        elif created_ago.days == 1:
             return f"včera o {self.created_at.strftime('%H:%M')}"
 
         # 2 Days Ago And Older
         else:
             return self.created_at.strftime("%d.%m.%Y %H:%M")
+
+class MessageReaction(models.Model):
+    chat = models.ForeignKey(
+        Chat, 
+        verbose_name="Chat",
+        on_delete=models.CASCADE, 
+        related_name="message_reactions",
+        null=False
+    )
+
+    user = models.ForeignKey(
+        Users, 
+        verbose_name="User",
+        on_delete=models.CASCADE, 
+        related_name="user_reactions",
+        null=False
+    )
+    
+    emoji = models.CharField(
+        verbose_name="Emoji",
+        max_length=10,
+        null=False
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name="Created At", 
+        auto_now_add=True, 
+        null=False
+    )
+
+    def __str__(self):
+        return f"{self.user.username} has reacted {self.emoji} to message {self.chat.id}"

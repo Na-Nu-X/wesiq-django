@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Events
 
     add_emoji.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
-    emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
+    // emoji_picker_container.addEventListener("mousedown", event => event.preventDefault()) // Prevents Default Behaviour
 
     // Add Emoji Icon Click Functionality
     add_emoji.addEventListener("click", function(event:PointerEvent):void {
