@@ -4556,6 +4556,31 @@ def profileView(request, username):
                             captureError(f"Changes could not be made while editing account.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                         return HttpResponseRedirect(reverse("profile_url", kwargs={"username": user.username}))
+
+                    # Remove Follower
+                    if request.headers.get("X-Requested-Action") == "remove-follower":
+                        try:
+                            removed_follower_id = json.loads(request.body) # Gets The Removed Follower ID
+                            removed_follower = Users.objects.get(id=removed_follower_id) # Gets The Removed Follower
+
+                            # Removes The Follower
+                            FollowRelation.objects.filter(
+                                from_user=removed_follower,
+                                to_user=logged_in_user
+                            ).delete()
+
+                            return JsonResponse({
+                                "success": True, 
+                                "message": _("Sledovateľ bol odstránený.")
+                            }, status=200)
+
+                        except Exception as e:
+                            captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+                            return JsonResponse({
+                                "success": False, 
+                                "message": _("Pri odstraňovaní sledovateľa došlo k chybe.")
+                            }, status=404)
                 
                 if request.GET.get("password-reset"):
                     code = generateCode() # Generates Random 6-Digit Code

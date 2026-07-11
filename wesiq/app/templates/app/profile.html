@@ -118,7 +118,10 @@
                 <div class="profile_content">
                     {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                         <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script> <!-- Emoji Picker Element Library -->
+
                         <script src="{% static 'app/ts/dist/pages/profile/components/edit_account.js' %}" type="module"></script>
+                        <script src="{% static 'app/ts/dist/pages/profile/components/followers.js' %}" type="module"></script>
+                        <script src="{% static 'app/ts/dist/pages/profile/components/following.js' %}" type="module"></script>
 
                         <form class="edit_account_form hidden" action="{% url 'profile_url' logged_in_user.username %}" method="POST" enctype="multipart/form-data" inert>
                             {% csrf_token %}
@@ -410,10 +413,128 @@
                                         <p class="amount">{{ followers.count|default:0 }}</p>
                                         <p class="label">{% translate "sledujú" %}</p>
                                     </div>
+
+                                    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                                        <dialog 
+                                            class="
+                                                followers_dialog
+
+                                                {% if following.count == 0 %}
+                                                    no_followers
+
+                                                {% endif %}
+                                            "
+                                        >
+                                            <p class="followers_info">
+                                                {% if followers.count > 0 %}
+                                                    {% translate "Všetci sledovatelia" %} (<span class="followers_amount">{{ followers.count|default:0 }}</span>):
+                                                
+                                                {% else %}
+                                                    {% translate "Žiadny sledovatelia" %}
+                                                
+                                                {% endif %}
+                                            </p>
+
+                                            <div class="all_followers">
+                                                {% for one_follower in followers %}
+                                                    <div class="one_follower" data-id="{{ one_follower.id }}">
+                                                        <a href="{% url 'profile_url' one_follower.from_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                                            <img 
+                                                                class="profile_picture skeleton_loading" 
+                                                                src="
+                                                                    {% if one_follower.from_user.profile_picture_name %}
+                                                                        /../media/images/{{ one_follower.from_user.id }}/{{ one_follower.from_user.profile_picture_name }}
+                            
+                                                                    {% else %}
+                                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                                    
+                                                                    {% endif %}
+                                                                "
+                                                                alt=""
+                                                            >
+                                                        </a>
+            
+                                                        <p class="username">{{ one_follower.from_user.username }}</p>
+
+                                                        <button 
+                                                            class="remove_follower"
+                                                            data-id="{{ one_follower.from_user.id }}"
+                                                        >
+                                                            {% translate "Odstrániť" %}
+                                                        </button>
+                                                    </div>
+                                                
+                                                {% endfor %}
+                                            </div>
+                                        </dialog>
+
+                                    {% endif %}
                 
                                     <div class="following">
                                         <p class="amount">{{ following.count|default:0 }}</p>
                                         <p class="label">{% translate "sleduje" %}</p>
+                                    </div>
+
+                                    {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
+                                        <dialog 
+                                            class="
+                                                following_dialog
+
+                                                {% if following.count == 0 %}
+                                                    no_followings
+    
+                                                {% endif %}
+                                            "
+                                        >
+                                            <p class="followings_info">
+                                                {% if following.count > 0 %}
+                                                    {% translate "Všetci sledujúci" %} (<span class="followings_amount">{{ following.count|default:0 }}</span>):
+                                                
+                                                {% else %}
+                                                    {% translate "Žiadny sledujúci" %}
+                                                
+                                                {% endif %}
+                                            </p>
+
+                                            <div class="all_followings">
+                                                {% for one_following in following %}
+                                                    <div class="one_following" data-id="{{ one_following.id }}">
+                                                        <a href="{% url 'profile_url' one_following.to_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                                            <img 
+                                                                class="profile_picture skeleton_loading" 
+                                                                src="
+                                                                    {% if one_following.to_user.profile_picture_name %}
+                                                                        /../media/images/{{ one_following.to_user.id }}/{{ one_following.to_user.profile_picture_name }}
+                            
+                                                                    {% else %}
+                                                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                                                    
+                                                                    {% endif %}
+                                                                "
+                                                                alt=""
+                                                            >
+                                                        </a>
+            
+                                                        <p class="username">{{ one_following.to_user.username }}</p>
+
+                                                        <button 
+                                                            class="follow_button"
+                                                            data-id="{{ one_following.to_user.id }}"
+                                                            data-action="unfollow"
+                                                        >
+                                                            {% translate "Prestať sledovať" %}
+                                                        </button>
+                                                    </div>
+                                                
+                                                {% endfor %}
+                                            </div>
+                                        </dialog>
+                                    
+                                    {% endif %}
+
+                                    <div class="posts">
+                                        <p class="amount">{{ user.posts.all.count|default:0 }}</p>
+                                        <p class="label">{% translate "príspevky" %}</p>
                                     </div>
                                 </div>
 
@@ -426,9 +547,9 @@
                                     </button>
 
                                     <dialog class="follow_requests_dialog">
+                                        <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p>
+
                                         <div class="all_follow_requests">
-                                            <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p>
-        
                                             {% for one_follow_request in logged_in_user.follow_requests %}
                                                 <div class="one_follow_request" data-id="{{ one_follow_request.id }}">
                                                     <a href="{% url 'profile_url' one_follow_request.from_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">

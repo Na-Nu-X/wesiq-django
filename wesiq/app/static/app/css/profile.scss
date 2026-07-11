@@ -713,7 +713,8 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     gap: 30px;
 
                     .followers,
-                    .following {
+                    .following,
+                    .posts {
                         text-align: center;
                         transition: transform 0.2s ease;
 
@@ -736,6 +737,11 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                             font-size: 0.75em;
                             letter-spacing: 0.5px;
                         }
+                    }
+
+                    .followers,
+                    .following {
+                        cursor: pointer;
                     }
                 }
 
@@ -763,33 +769,57 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     }
                 }
 
+                .statistics .followers_dialog,
+                .statistics .following_dialog,
                 .follow_requests_dialog {
                     @include position_center($position: fixed);
                     margin: 0;
-                    padding: 0;
-                    background: transparent;
-                    border: none;
+                    padding: 10px;
+                    background-color: transparentize($main-color, 0.8);
+                    backdrop-filter: blur(5px);
+                    border: 2px solid $secondary-color;
+                    border-radius: $medium-border-radius;
+                    outline: none;
 
                     &::backdrop {
                         background-color: transparentize($main-color, 0.8);
                         backdrop-filter: blur(2px);
                     }
 
+                    &.no_followers,
+                    &.no_followings,
+                    &.no_requests {
+                        border: none;
+
+                        .followers_info,
+                        .followings_info,
+                        .follow_requests_info {
+                            margin: 20px 20px 0px;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .followers_info,
+                    .followings_info,
+                    .follow_requests_info {
+                        margin-bottom: 10px;
+                        color: $secondary-color;
+                        text-align: center;
+                    }
+
+                    .all_followers,
+                    .all_followings,
                     .all_follow_requests {
+                        @include scrollbar;
                         display: flex;
                         flex-direction: column;
                         gap: 10px;
+                        max-height: 300px;
                         padding: 10px;
-                        background-color: transparentize($main-color, 0.8);
-                        backdrop-filter: blur(5px);
-                        border: 2px solid $secondary-color;
-                        border-radius: $medium-border-radius;
-
-                        .follow_requests_info {
-                            color: $secondary-color;
-                            text-align: center;
-                        }
+                        outline: none;
                         
+                        .one_follower,
+                        .one_following,
                         .one_follow_request {
                             display: flex;
                             align-items: center;
@@ -828,10 +858,22 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                                 margin-left: auto;
                             }
                         }
+
+                        .one_follower,
+                        .one_follow_request {
+                            transition: display 0.3s ease allow-discrete, transform 0.3s ease, opacity 0.3s ease;
+
+                            &.hidden {
+                                display: none;
+                                transform: translateX(-100%);
+                                opacity: 0;
+                            }
+                        }
                     }
                 }
                 
-                .follow_button {
+                .follow_button,
+                .remove_follower {
                     height: 40px;
                     line-height: 1;
                     padding: 10px 20px;
