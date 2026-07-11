@@ -17,9 +17,9 @@ export async function toggleFollow(follow_button:HTMLButtonElement, user_to_foll
         if(user_to_follow_id) {
             const followers_counter:HTMLParagraphElement|null = (follow_button.parentElement as HTMLDivElement).querySelector(".followers_container .followers") as HTMLParagraphElement || null // Gets The Followers Counter If Is Available
 
-            const follow_container:HTMLDivElement|null = follow_button.closest(".follow_container") as HTMLDivElement || null // Gets The Follow Container
-            let followers:HTMLParagraphElement|null = null
-            if(follow_container) followers = follow_container.querySelector(".followers .amount") as HTMLParagraphElement || null // Gets The Followers Paragraph
+            // const follow_container:HTMLDivElement|null = follow_button.closest(".follow_container") as HTMLDivElement || null // Gets The Follow Container
+            // let followers:HTMLParagraphElement|null = null
+            // if(follow_container) followers = follow_container.querySelector(".followers .amount") as HTMLParagraphElement || null // Gets The Followers Paragraph
 
             // Follow
             if(follow_button.dataset["action"]?.trim() === "follow") {
@@ -27,7 +27,7 @@ export async function toggleFollow(follow_button:HTMLButtonElement, user_to_foll
                 follow_button.dataset["action"] = "unfollow"
 
                 if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) + 1) // Increases The Followers Counter
-                if(followers) followers.textContent = String(parseInt(followers.textContent) + 1) // Increases The Followers Counter
+                // if(followers) followers.textContent = String(parseInt(followers.textContent) + 1) // Increases The Followers Counter
             }
 
             // Unfollow
@@ -36,7 +36,7 @@ export async function toggleFollow(follow_button:HTMLButtonElement, user_to_foll
                 follow_button.dataset["action"] = "follow"
 
                 if(followers_counter) followers_counter.textContent = String(parseInt(followers_counter.textContent) - 1) // Decreases The Followers Counter
-                if(followers) followers.textContent = String(parseInt(followers.textContent) - 1) // Decreases The Followers Counter
+                // if(followers) followers.textContent = String(parseInt(followers.textContent) - 1) // Decreases The Followers Counter
             }
 
             // Send Follow Request

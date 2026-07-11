@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // All Follow Requests Click Functionalities
     all_follow_requests.addEventListener("click", async function(event:PointerEvent):Promise<void> {
-        const follow_requests_info:HTMLParagraphElement = all_follow_requests.querySelector(".follow_requests_info") as HTMLParagraphElement // Gets The Follow Requests Info Paragraph
+        const follow_requests_info:HTMLParagraphElement = follow_requests_dialog.querySelector(".follow_requests_info") as HTMLParagraphElement // Gets The Follow Requests Info Paragraph
         const follow_requests_amount:HTMLSpanElement = follow_requests_info.querySelector(".follow_requests_amount") as HTMLSpanElement // Gets The Follow Requests Amount
         const follow_requests_amount_notification:HTMLSpanElement = show_follow_requests.querySelector(".follow_requests_amount") as HTMLSpanElement // Gets The Follow Requests Amount
 
@@ -55,9 +55,17 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(follow_request_id) {
                 await approveFollowRequest(follow_request_id) // Approves The Follow Request
 
-                one_follow_request.remove() // Removes The One Follow Request Container From The DOM
-                follow_requests_amount.textContent = Number(follow_requests_amount.textContent) - 1 !== 0 ? String(Number(follow_requests_amount.textContent) - 1) : follow_requests_info.textContent = gettext("Žiadne žiadosti o sledovanie") // Updates The Follow Requests Info Paragraph
+                one_follow_request.classList.add("hidden") // Hides The One Follow Request Container
                 follow_requests_amount_notification.textContent = String(Number(follow_requests_amount_notification.textContent) - 1) // Updates The Follow Requests Amount
+
+                if(Number(follow_requests_amount.textContent) - 1 !== 0) {
+                    follow_requests_amount.textContent = String(Number(follow_requests_amount.textContent) - 1) // Updates The Follow Requests Info Paragraph
+                }
+
+                else {
+                    follow_requests_dialog.classList.add("no_requests") // Adds The No Requests Class
+                    follow_requests_amount.textContent = follow_requests_info.textContent = gettext("Žiadne žiadosti o sledovanie") // Updates The Follow Requests Info Paragraph
+                }
             }
         }
 
@@ -69,9 +77,17 @@ document.addEventListener("DOMContentLoaded", function():void {
             if(follow_request_id) {
                 await rejectFollowRequest(follow_request_id) // Rejects The Follow Request
 
-                one_follow_request.remove() // Removes The One Follow Request Container From The DOM
-                follow_requests_amount.textContent = Number(follow_requests_amount.textContent) - 1 !== 0 ? String(Number(follow_requests_amount.textContent) - 1) : follow_requests_info.textContent = gettext("Žiadne žiadosti o sledovanie") // Updates The Follow Requests Info Paragraph
+                one_follow_request.classList.add("hidden") // Hides The One Follow Request Container
                 follow_requests_amount_notification.textContent = String(Number(follow_requests_amount_notification.textContent) - 1) // Updates The Follow Requests Amount
+
+                if(Number(follow_requests_amount.textContent) - 1 !== 0) {
+                    follow_requests_amount.textContent = String(Number(follow_requests_amount.textContent) - 1) // Updates The Follow Requests Info Paragraph
+                }
+
+                else {
+                    follow_requests_dialog.classList.add("no_requests") // Adds The No Requests Class
+                    follow_requests_amount.textContent = follow_requests_info.textContent = gettext("Žiadne žiadosti o sledovanie") // Updates The Follow Requests Info Paragraph
+                }
             }
         }
     })
