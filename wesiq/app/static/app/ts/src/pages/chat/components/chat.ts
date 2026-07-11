@@ -455,7 +455,21 @@ document.addEventListener("DOMContentLoaded", function():void {
             !(event.target as HTMLDivElement).closest(".emoji_picker_container")
         ) {
             emoji_picker_container.classList.add("hidden") // Hides The Emoji Picker Container
-            return
+            
+        }
+
+        // Cancel Edit
+        if(
+            !(event.target as HTMLDivElement).classList.contains("one_message") &&
+            !(event.target as HTMLDivElement).classList.contains("edit_message_button") &&
+            [...all_messages.querySelectorAll<HTMLDivElement>(".one_message")].some(one_message => one_message.classList.contains("edit"))
+        ) {
+
+            console.log(event.target)
+            all_messages.querySelectorAll<HTMLDivElement>(".one_message").forEach((one_message) => one_message.classList.remove("edit")) // Removes Edit Class From All One Message Containers
+            write_message.dataset["action"] = "new" // Sets The Edit Action To The Write Message Container
+            new_message.dataset["placeholder"] = gettext("Napísať správu") // Sets The Placeholder
+            new_message.textContent = "" // Deletes The Text From The New Message Custom Input
         }
     })
 })

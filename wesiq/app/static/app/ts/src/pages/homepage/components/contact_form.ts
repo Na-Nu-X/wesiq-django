@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             // Shows Current Selected Option From List Without Icon
             if(this.dataset["subject"] === sessionStorage.getItem("subject")) {
                 (subject_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent;
-                (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
+                (subject_select_menu.querySelector("input") as HTMLInputElement).value = this.dataset["subject"]
 
                 this.classList.add("selected") // Adds Selected Class To Selected Option
             }
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function():void {
                 // Shows Current Selected Option From List Without Icon
                 if(this.dataset["subject"] === sessionStorage.getItem("subject")) {
                     (subject_select.querySelector("span") as HTMLSpanElement).textContent = (this.querySelector("span") as HTMLSpanElement).textContent;
-                    (subject_select_menu.querySelector("input") as HTMLInputElement).value = (this.querySelector("span") as HTMLSpanElement).textContent
+                    (subject_select_menu.querySelector("input") as HTMLInputElement).value = this.dataset["subject"]
 
                     this.classList.add("selected") // Adds Selected Class To Selected Option
                 }
