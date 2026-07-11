@@ -1761,6 +1761,145 @@ To elevate the visual identity and aesthetic appeal of the platform without comp
 
 - **Visual Hierarchy Preservation**: The animation sequences are tuned to a gentle, low-contrast opacity threshold. This design guarantee ensures that the dynamic backdrop remains strictly decorative, never competing with or distracting from foreground text readability or interactive components.
 
+### 4.29. Custom Video Thumbnail Architecture
+
+To provide content creators with complete visual control over their media presentation, the platform features a flexible thumbnail selection engine integrated directly into the video upload pipeline.
+
+#### 4.29.1 User-Defined Thumbnail Selection
+
+- **Upload Wizard Integration**: During the post-creation process, users are equipped with a dedicated interface to manually upload and assign a custom thumbnail image for each individual video asset.
+
+- **Persistent Storage & Mapping**: Once a custom thumbnail is submitted, the image asset is automatically processed and securely written to the platform's file system. Simultaneously, the backend architecture registers the precise relational metadata within the database, permanently linking the custom image file to its parent video object.
+
+#### 4.29.2 Automated Fallback Extraction
+
+- **Zero-Configuration Default**: To ensure a frictionless user experience for creators who bypass manual customization, the backend implements a highly reliable fallback mechanism.
+
+- **First-Frame Generation**: If a video payload is submitted without a designated custom thumbnail, the server's media processing pipeline (utilizing FFmpeg) automatically extracts a frame from the very first second of the clip. This extracted frame is instantly configured as the default visual placeholder for the video across the entire platform.
+
+### 4.30. Video Watch Time Metrics and Creator Analytics
+
+To empower content creators with actionable data regarding audience engagement, the platform features an integrated analytics module specific to video assets.
+
+#### 4.30.1 Exclusive Creator Interface
+
+- **Author-Only Access**: Analytical metrics are strictly classified. The structural data and the corresponding UI toggle buttons are dynamically generated and rendered solely when the authenticated viewer is the verified author of the post.
+
+- **On-Demand Visibility**: To maintain a clean, uncluttered visual hierarchy within the feed, the analytics overlay is hidden by default. Creators can seamlessly reveal or collapse the statistical panel via a dedicated toggle button integrated into their administrative UI.
+
+#### 4.30.2 Telemetry and Metric Integrity
+
+- **Comprehensive Engagement Tracking**: The backend meticulously records aggregated watch time statistics and provides a direct comparative visualization against the video's absolute duration. Furthermore, it tracks the exact volume of unique user views.
+
+- **Anti-Inflation Protocols**: To guarantee absolute data accuracy and prevent artificial metric inflation, the tracking engine enforces a strict validation rule. Watch time and view events are exclusively registered and committed to the database only when the consumer is a distinct user other than the post's creator.
+
+### 4.31. Search Engine Optimization (SEO) and Automated Indexing Infrastructure
+
+To maximize organic discoverability, ensure high visibility across global search engines, and streamline the indexing efficiency of the platform, the architecture incorporates a dedicated Search Engine Optimization (SEO) engine.
+
+#### 4.31.1 Crawler Guidance and Crawl Budget Optimization
+
+- **Deterministic Bot Routing**: The application root deploys a structured robots.txt configuration file. This file serves as the primary directive interface for search engine crawlers (such as Googlebot), defining explicit boundaries between accessible public content and restricted administrative or session-specific endpoints.
+
+- **Crawl Budget Preservation**: By explicitly preventing bots from wasting resources on heavy backend pipelines, the system optimizes its crawl budget, forcing search engines to focus entirely on high-value, content-rich public subpages.
+
+#### 4.31.2 Automated Multi-Tiered Sitemap Generation
+
+The application utilizes the native **Django Sitemap Framework** to dynamically generate and maintain a comprehensive structure of the web directory. The sitemap infrastructure is split into two scalable layers:
+
+- **Static Page Mapping**: Automatically catalogs core structural marketing pages that possess fixed paths, including the Homepage, Blog repository, and public Community hubs.
+
+- **Dynamic Object-Level Mapping**: To ensure rapid indexing of newly generated user content, the framework dynamically hooks into the database. It programmatically generates real-time sitemap nodes for every newly published public post page and every public user profile page, tracking creation and modification timestamps automatically.
+
+#### 4.31.3 Internationalization (i18n) and Multi-Country Visibility
+
+- **Localized Alternative Routing**: To support global user adoption, the sitemap generation engine is tightly coupled with the platform's translation layers.
+
+- **Cross-Language Indexing**: The system injects precise mapping definitions for localized alternatives of identical endpoints (for example, mapping /en/homepage as the direct English counterpart to the Slovak /sk/domov). This structure serves as a native implementation of hreflang signaling, allowing search engines to contextually deliver the correct language variant based on the geolocation and language preferences of the searching end-user, drastically reducing duplicate content penalties.
+
+### 4.32. Advanced Video Scrubbar Previews and VTT Thumbnail Mapping
+
+To replicate industry-standard video streaming interactions and maximize navigational efficiency, the platform incorporates an advanced timeline preview engine. This subsystem allows users to visually inspect chronological checkpoints of a video layout in real-time before jumping to a specific timestamp.
+
+#### 4.32.1 Automated VTT Asset Pipeline
+
+- **Asynchronous Frame Ingestion**: During the initial video upload and processing lifecycle, an automated backend pipeline is triggered. The server processes the video file through **FFmpeg** to extract low-resolution, highly compressed frame captures at deterministic intervals (e.g., one frame per second).
+
+- **WebVTT Schema Mapping**: These serialized image assets are mapped into a standardized WebVTT (.vtt) configuration file. This manifest cleanly binds specific video time vectors (timestamps) to their corresponding image filenames or spatial coordinates within a combined image sprite layout, minimizing redundant HTTP server requests.
+
+#### 4.32.2 Interactive Timeline Hover Interception
+
+- **High-Precision Position Computation**: On the client side, custom video progress bars are equipped with reactive pointer event listeners. When a user hovers over the scrubbar timeline, a client-side TypeScript script continuously captures the cursor's precise horizontal X-coordinate.
+
+- **Temporal Ratio Translation**: The script computes the cursor's exact percentage relative to the total width of the progress bar bounding box. This ratio is instantly multiplied against the absolute duration of the active media element to determine the precise hovered time position.
+
+#### 4.32.3 Dynamic Tooltip Render Management
+
+- **Real-Time Node Injection**: Armed with the calculated timestamp, the client-side engine queries the pre-loaded WebVTT map to isolate the exact matching image frame.
+
+- **Contextual Anchor Overlays**: The application renders a floating preview container directly above the timeline indicator. This tooltip dynamically tracks the horizontal path of the user's cursor, instantaneously refreshing the embedded low-quality frame thumbnail to provide immediate, frictionless visual confirmation of what is included at that exact millisecond of the clip.
+
+### 4.33. Real-Time Communication and Messaging Architecture
+
+To foster community interaction and enable instantaneous user-to-user networking, the platform incorporates a full-duplex Live Chat framework. This module bypasses traditional HTTP request-response cycles, utilizing persistent connections to achieve zero-latency message distribution and state synchronization.
+
+#### 4.33.1 Asynchronous WebSocket Pipeline and Pub/Sub Layer
+
+- **Persistent Event-Driven Layer**: Real-time bi-directional data flow is orchestrated through asynchronous WebSockets, managed natively on the backend via Django Channels.
+
+- **Redis Memory Broker**: To facilitate message routing across multiple server worker processes, the system integrates Redis as a high-performance, in-memory Channel Layer.
+
+- **Atomic Processing Pipeline**: Every transactional message sent by a user follows a strict architectural sequence:
+
+    1. The payload is intercepted by an active client WebSocket connection.
+
+    1. The backend asynchronously processes and validates the event wrapper.
+
+    1. The message state is permanently committed to the persistent database.
+
+    1. The validated payload is instantly broadcasted via the Redis Pub/Sub framework to all interconnected nodes inside the targeted active chatroom (simultaneously reaching both the sender and receiver sessions).
+
+#### 4.33.2 Dynamic UI Generation and Live Reactions
+
+- **Reactive Frontend Injection**: Upon receiving a successfully routed message event from the backend channel, client-side TypeScript (JS) event loops capture the payload. The DOM is mutated programmatically to instantly render the message bubble in the viewport without full-page re-hydration.
+
+- **Live Emoji Telemetry**: Users can issue instantaneous metadata feedback in the form of emoji reactions. These micro-interactions are dispatched as structured WebSocket frames, processed by the backend state managers, and immediately broadcasted to synchronize the reaction counts across all open viewports in the chatroom.
+
+#### 4.33.3 Temporal Message Mutation Guardrails
+
+To preserve conversational integrity, prevent historical rewriting, and mitigate database abuse, the application enforces rigid temporal boundaries on data modification. Authors possess exclusive permissions to mutate or redact their own messages, subject to strict server-validated time windows:
+
+| Layer Action | Permitted Timeline | Operational Guardrail |
+| - | - | - |
+| Message Content Editing | Within 15 minutes of absolute creation. | Permits instantaneous typo corrections while preventing retrospective manipulation of conversation context. |
+| Message Complete Deletion  | Within 24 hours of absolute creation. | Empowers user privacy and content control, after which the database state is locked for archive stability. |
+
+### 4.34. Inbound Follow Request Protocols and Privacy Triage
+
+To complement the global private account states, the platform incorporates a structured relational verification pipeline. When a profile is restricted, the standard instant-follow mechanic is intercepted and converted into a pending authorization request.
+
+#### 4.34.1 Interception and Pending State Routing
+
+- **Conditional Action Hijacking**: When a user initiates a follow action directed at an account flagged as Private, the backend blocks immediate state mutation within the followers database matrix.
+
+- **Asynchronous Request Registration**: Instead of establishing an active relationship, the system instantiates a temporary record inside a pending follow requests table. The requesting user's status is set to "Pending," and the target user is notified without exposing any restricted profile content or feed data to the applicant.
+
+#### 4.34.2 Centralized Management Hub
+
+- **Profile-Embedded Dashboard**: A dedicated, secure notification interface is injected exclusively into the profile page view of the account owner. This panel aggregates all incoming pending requests into a clean, scannable list.
+
+- **Identity Contextualization**: Each item in the request stream displays the applicant's basic identity markers (avatar, name, and username), allowing the account owner to quickly audit the applicant's profile before making a decision.
+
+#### 4.34.3 Triage Options and Relationship Settlement
+
+The account owner is empowered with three explicit operational pathways to manage incoming data traffic:
+
+- **Approve**: Clicking the confirmation element updates the database record via an asynchronous request. The pending state is torn down, the applicant is officially moved into the active followers list, and they are granted immediate access to the author's feed, grids, and private metrics.
+
+- **Reject**: Selecting the rejection element purges the pending row from the database entirely. The applicant remains unverified and blocked from accessing private data, while the UI instantly clears the item from the owner's viewport with a smooth CSS transition.
+
+- **Ignore**: The user can choose to leave the request in an unsettled state. The application maintains the pending row in the database, ensuring the applicant cannot send duplicate requests, while allowing the profile owner to clear their active attention queue without issuing an explicit rejection.
+
 ## 5. Security
 
 ### 5.1. Authentication Audit Logging (login.log)

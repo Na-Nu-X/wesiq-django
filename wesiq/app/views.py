@@ -1090,8 +1090,22 @@ def homepageView(request):
 
             if contact_form.is_valid():
                 try:
+                    subject_text = _("Otázka")
+                    
+                    if contact_form.cleaned_data["subject"] == "question":
+                        subject_text = _("Otázka")
+
+                    elif contact_form.cleaned_data["subject"] == "account_issue":
+                        subject_text = _("Problém s účtom")
+
+                    elif contact_form.cleaned_data["subject"] == "bug":
+                        subject_text = _("Nahlásenie chyby")
+
+                    elif contact_form.cleaned_data["subject"] == "suggestion":
+                        subject_text = _("Návrh na zlepšenie")
+
                     # Send Mail
-                    subject = f"Wesiq - {contact_form.cleaned_data["subject"]}"
+                    subject = f"Wesiq - {subject_text}"
                     text_content = f"{contact_form.cleaned_data["first_name"]} {contact_form.cleaned_data["last_name"]} - {contact_form.cleaned_data["email_address"]}\n\n{contact_form.cleaned_data["message"]}"
                     sender = contact_form.cleaned_data["email_address"]
                     receiver = [settings.EMAIL_HOST_USER]
