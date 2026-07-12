@@ -161,7 +161,9 @@
         transparent,
         $blue-color
     ),
-    $thickness: 2px) {
+    
+    $thickness: 2px
+    ) {
     position: relative;
 
     &::before,

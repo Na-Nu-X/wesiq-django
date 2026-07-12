@@ -651,102 +651,134 @@
     </script>
     
     <section class="homepage_section contact_section">
-    <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+        <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <h2 class="section_title">{% translate "Kontaktujte nás" %}</h2>
+            <h2 class="section_title">{% translate "Kontaktujte nás" %}</h2>
 
-        {{ contact_form.first_name }}
-        {{ contact_form.last_name }}
-        {{ contact_form.email_address }}
+            {{ contact_form.first_name }}
+            {{ contact_form.last_name }}
+            {{ contact_form.email_address }}
 
-        <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-        <div class="subject_select_menu">
-            <input type="hidden" name="subject" value="question">
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="subject_select_menu">
+                <input type="hidden" name="subject" value="question">
 
-            <div class="select" tabindex="0">
-                <span>{% translate "Otázka" %}</span>
-                <i class="fas fa-angle-down"></i>
+                <div class="select" tabindex="0">
+                    <span>{% translate "Otázka" %}</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list" inert>
+                    <div class="option" data-subject="question" tabindex="0"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
+                    <div class="option" data-subject="account_issue" tabindex="0"><i class="fa-regular fa-user"></i><span>{% translate "Problém s účtom" %}</span></div> <!-- https://fontawesome.com/icons/user -->
+                    <div class="option" data-subject="bug" tabindex="0"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
+                    <div class="option" data-subject="suggestion" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+                </div>
             </div>
 
-            <div class="options_list" inert>
-                <div class="option" data-subject="question" tabindex="0"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
-                <div class="option" data-subject="account_issue" tabindex="0"><i class="fa-regular fa-user"></i><span>{% translate "Problém s účtom" %}</span></div> <!-- https://fontawesome.com/icons/user -->
-                <div class="option" data-subject="bug" tabindex="0"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
-                <div class="option" data-subject="suggestion" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+            <div class="message_container">
+                {{ contact_form.message }}
+
+                <div class="attachment">
+                    <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
+                    
+                    <label for="select_attachment" tabindex="0">
+                        <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}" title="{% translate 'Vybrať prílohu' %}" aria-label="{% translate 'Vybrať prílohu' %}">
+                            <i class="fa-solid fa-paperclip"></i> <!-- https://fontawesome.com/icons/paperclip -->
+                        </div>
+                    </label>
+                    
+                    {{ contact_form.select_attachment }}
+                </div>
             </div>
-        </div>
 
-        <div class="message_container">
-            {{ contact_form.message }}
+            <p class="form_report" style="bottom: 110px;"></p>
+            <input type="hidden" name="contact_form_submit" value="contact_form_submit">
+            <input type="submit" value="{% translate 'Odoslať správu' %}">
 
-            <div class="attachment">
-                <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
-                
-                <label for="select_attachment" tabindex="0">
-                    <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}" title="{% translate 'Vybrať prílohu' %}" aria-label="{% translate 'Vybrať prílohu' %}">
-                        <i class="fa-solid fa-paperclip"></i> <!-- https://fontawesome.com/icons/paperclip -->
-                    </div>
-                </label>
-                
-                {{ contact_form.select_attachment }}
-            </div>
-        </div>
-
-        <p class="form_report" style="bottom: 110px;"></p>
-        <input type="hidden" name="contact_form_submit" value="contact_form_submit">
-        <input type="submit" value="{% translate 'Odoslať správu' %}">
-
-        <!-- Google reCAPTCHA V3 -->
-        <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
-    </form>
+            <!-- Google reCAPTCHA V3 -->
+            <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
+        </form>
     </section>
 
     <section class="homepage_section support_section">
-    <form class="credit_card_form">
-        <div class="credit_card">
-            <div class="front">
-                <div class="top">
-                    <div class="title">{% translate "Podporte nás" %}</div>
-                    <img class="logo" src="{% static 'images/visa.svg' %}" alt="">
-                </div>
-
-                <p class="error_report"></p>
-
-                <div class="bottom">
-                    <div class="group">
-                        <label>{% translate "Číslo karty" %}</label>
-                        <div class="card_number"></div>
+        <form class="credit_card_form">
+            <div class="credit_card">
+                <div class="front">
+                    <div class="top">
+                        <div class="title">{% translate "Podporte nás" %}</div>
+                        <img class="logo" src="{% static 'images/visa.svg' %}" alt="">
                     </div>
 
-                    <div class="row">
-                        <div class="group cardholder_name_group">
-                            <label for="cardholder_name">{% translate "Držiteľ karty" %}</label>
-                            <input class="cardholder_name" type="text" id="cardholder_name" placeholder="Carl Johnson" required>
-                        </div>
+                    <p class="error_report"></p>
 
+                    <div class="bottom">
                         <div class="group">
-                            <label>{% translate "Platnosť" %}</label>
-                            <div class="card_expiry"></div>
+                            <label>{% translate "Číslo karty" %}</label>
+                            <div class="card_number"></div>
                         </div>
+
+                        <div class="row">
+                            <div class="group cardholder_name_group">
+                                <label for="cardholder_name">{% translate "Držiteľ karty" %}</label>
+                                <input class="cardholder_name" type="text" id="cardholder_name" placeholder="Your name" required>
+                            </div>
+
+                            <div class="group">
+                                <label>{% translate "Platnosť" %}</label>
+                                <div class="card_expiry"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="back">
+                    <div class="group">
+                        <label>{% translate "CVC" %}</label>
+                        <div class="card_cvc"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="back">
-                <div class="group">
-                    <label>{% translate "CVC" %}</label>
-                    <div class="card_cvc"></div>
-                </div>
+            <div class="donation_buttons">
+                <button class="donate_button" type="button" data-amount="100">1€</button>
+                <button class="donate_button" type="button" data-amount="200">2€</button>
+                <button class="donate_button" type="button" data-amount="500">5€</button>
             </div>
-        </div>
+        </form>
 
-        <div class="donation_buttons">
-            <button class="donate_button" type="button" data-amount="100">1€</button>
-            <button class="donate_button" type="button" data-amount="200">2€</button>
-            <button class="donate_button" type="button" data-amount="500">5€</button>
+        <div class="subscription_plans">
+            <article class="basic">
+                <h3 class="title">{% translate "Základné predplatné" %}</h3>
+                <p class="description">{% translate "Vážime si Vašu podporu, ktorá nám pomáha držať aplikáciu pri živote." %}</p>
+                <p class="price">0,99<span>€</span></p>
+
+                <ul class="checks">
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Odznak na profile!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Obrázky až do 10MB!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 50MB!" %}</p></li>
+                </ul>
+
+                <button class="subscribe">{% translate "Predplatiť" %}</button>
+            </article>
+
+            <article class="premium">
+                <h3 class="title">{% translate "Prémiové predplatné" %}</h3>
+                <p class="description">{% translate "Pre náročných používateľov, ktorí chcú z aplikácie vyťažiť absolútne maximum." %}</p>
+                <p class="price">2,99<span>€</span></p>
+
+                <ul class="checks">
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Odznak na profile!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Obrázky až do 10MB!" %}</p></li>
+                    <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 100MB!" %}</p></li>
+                </ul>
+
+                <button class="subscribe">{% translate "Predplatiť" %}</button>
+            </article>
         </div>
-    </form>
     </section>
 {% endblock content %}
 
@@ -768,6 +800,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Donation
+
             const stripe = Stripe("{{ publishable_key }}")
             const elements = stripe.elements()
 
@@ -857,6 +891,10 @@
                     }
                 })
             })
+
+            // Subscription
+
+            
         })
     </script>
 {% endblock script %}

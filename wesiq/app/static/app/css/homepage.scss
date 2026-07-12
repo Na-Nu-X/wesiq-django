@@ -414,6 +414,10 @@ header {
             max-width: 580px;
             padding: 50px 40px 40px;
         }
+
+        &.support_section {
+            max-width: 850px;
+        }
     }
 
     .section_title {
@@ -1853,6 +1857,168 @@ header {
                 margin-top: 15px;
                 color: transparentize($secondary-color, 0.2);
                 font-size: 1.2em;
+            }
+        }
+    }
+
+    .subscription_plans {
+        display: flex;
+        gap: 40px;
+        margin-top: 50px;
+
+        .basic,
+        .premium {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid $homepage-surface-border;
+            border-radius: $medium-border-radius;
+
+            .title {
+                text-align: center;
+                font-size: 1.2em;
+            }
+
+            .description {
+                font-size: 0.9em;
+                text-align: center;
+            }
+
+            .price {
+                margin-bottom: 30px;
+                font-size: 2em;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .price {
+                margin-bottom: 30px;
+                font-size: 2.5em;
+                font-weight: bold;
+                text-align: center;
+            
+                span {
+                    font-size: 0.5em;
+                    font-weight: normal;
+                    vertical-align: super;
+                    margin-left: 2px;
+                }
+            }
+
+            .checks {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+
+                .check {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    line-height: 1;
+                    list-style-type: none;
+                    font-size: 0.9em;
+                    text-align: left;
+
+                    &:has(.checkbox.checked) {
+                        --progress: 100;
+                        --progress-color: rgba(82, 207, 32, 0.1);
+                        border-color: transparentize($green-color, 0.8);
+                    }
+    
+                    .checkbox {
+                        position: relative;
+                        display: block;
+                        flex-shrink: 0;
+                        width: 15px;
+                        height: 15px;
+                        border-radius: 2px;
+                        outline: 1px solid darken($secondary-color, 40%);
+                        background: transparentize($main-color, 0.5);
+    
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            width: inherit;
+                            height: inherit;
+                            background-image: url("../../../../static/images/check.png"); // https://www.flaticon.com/free-icon/check_16750043
+                            background-size: contain;
+                            transform: scale(0);
+                            opacity: 0;
+                            transition: transform 0.2s ease, opacity 0.2s ease;
+                        }
+    
+                        &.checked {
+                            outline: 1px solid darken($green-color, 10%);
+    
+                            &::before {
+                                transform: scale(1.5);
+                                opacity: 1;
+                                transition: transform 0.3s ease, opacity 0.3s ease;
+                            }
+                        }
+                    }
+
+                    p {
+                        flex-grow: 1;
+                        margin-right: 22.95px + 10px;
+                        text-align: center;
+                    }
+                }
+            }
+
+            .subscribe {
+                @include blue_button($width: 100%, $border-radius: $medium-border-radius);
+                letter-spacing: 0.25px;
+
+                &:hover {
+                    transform: scale(1);
+                }
+            }
+        }
+
+        .basic {
+            background-color: transparentize($homepage-surface-border, 0.9);
+            transition: transform 0.3s ease;
+        
+            &:hover {
+                transform: translateY(-5px);
+            }
+
+            .subscribe {
+                color: transparentize($secondary-color, 0.15);
+                background: transparentize($main-color, 0.85);
+                backdrop-filter: blur(5px);
+
+                &:hover,
+                &:focus-visible {
+                    background: $homepage-surface-hover;
+                }
+            }
+        }
+        
+        .premium {
+            @include animated_border;
+            background-color: transparentize($main-color, 0.95);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px transparentize($main-color, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+            &:hover {
+                transform: scale(1.05) translateY(-5px);
+                box-shadow: 0 15px 35px transparentize($main-color, 0.7);
+            }
+
+            .subscribe {
+                @include glow_animated_border;
+                color: $secondary-color;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
+                border-color: transparentize($blue-color, 0.2);
+
+                &:hover,
+                &:focus-visible {
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                }
             }
         }
     }
