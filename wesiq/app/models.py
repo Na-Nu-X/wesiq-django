@@ -1169,7 +1169,7 @@ class Transactions(models.Model):
         verbose_name="Cardholder Name", 
         help_text="Cardholder's name.",
         max_length=50, 
-        null=False
+        null=True
     )
 
     # In €
@@ -1198,8 +1198,73 @@ class Transactions(models.Model):
         null=False
     )
 
+    title = models.CharField(
+        verbose_name="Title", 
+        help_text="Title of the payment.",
+        max_length=20, 
+        null=True
+    )
+
     def __str__(self):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
+
+class Subscription(models.Model):
+    PLAN_CHOICES = [
+        ("free", _("Zadarmo")),
+        ("basic", _("Základné")),
+        ("premium", _("Prémiové"))
+    ]
+
+    user = models.OneToOneField(
+        Users, 
+        verbose_name="User",
+        help_text="The user who activated the subscription.", 
+        on_delete=models.CASCADE, 
+        related_name="subscription",
+        null=False
+    )
+    
+    stripe_subscription_id = models.CharField(
+        verbose_name="Stripe Subscription ID",
+        help_text="ID of the Stripe subscription.", 
+        max_length=255, 
+        unique=True,
+        null=True, 
+        blank=True
+    )
+
+    plan = models.CharField(
+        verbose_name="Plan",
+        help_text="Activated subscription plan.", 
+        max_length=20, 
+        choices=PLAN_CHOICES, 
+        default="free",
+        null=False
+    )
+
+    is_active = models.BooleanField(
+        verbose_name="Is Active", 
+        help_text="Stores the information if the subscription is still active.", 
+        default=False, 
+        null=False
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name="Created At", 
+        help_text="Time the subscription was added.", 
+        auto_now_add=True, 
+        null=False
+    )
+
+    updated_at = models.DateTimeField(
+        verbose_name="Created At", 
+        help_text="Time the subscription was updated.", 
+        auto_now=True,
+        null=False
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.get_plan_display()} ({'Aktívne' if self.is_active else 'Neaktívne'})"
 
 def getPostUploadPath(instance, filename):
     # HLS Vide Files

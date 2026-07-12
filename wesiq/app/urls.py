@@ -22,7 +22,9 @@ urlpatterns = [
     
     path('change-language/', views.changeLanguage, name='change_language_url'),
     path(_('platba-uspesna/'), views.successDonation, name='success_donation_url'),
+    path(_('platba-predplatneho-uspesna/'), views.successSubscription, name='success_subscription_url'),
     # path(_('platba-zrusena/'), views.cancelDonation, name='cancel_donation_url'),
     path('create-payment-intent/', views.createPaymentIntent, name='create_payment_intent_url'),
+    path('create-subscription-intent/', views.createSubscriptionIntent, name='create_subscription_intent_url'),
     path('stripe/webhook/', views.stripeWebhook, name='stripe_webhook_url')
 ]
