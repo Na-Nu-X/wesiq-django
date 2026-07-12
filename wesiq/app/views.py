@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from urllib3 import HTTPResponse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport, Chat
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport, Chat, Subscription
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -178,9 +178,9 @@ def successDonation(request):
 def createPaymentIntent(request):
     if request.method == "POST":
         try:
-            data = json.loads(request.body)
-            amount = int(data.get("amount"))
-            name = data.get("name", "Anonymous")
+            data = json.loads(request.body) # Gets The Data
+            amount = int(data.get("amount")) # Gets The Amount
+            name = data.get("name", "Anonymous") # Gets The Name
 
             logged_in_user_id = request.session.get("logged_in_user_id") if "logged_in_user_id" in request.session else None
 
@@ -194,20 +194,26 @@ def createPaymentIntent(request):
                 },
             )
 
+            # Creates The Transaction
             Transactions.objects.create(
                 user_id=logged_in_user_id,
                 stripe_intent_id=intent.id,
                 cardholder_name=name,
                 amount=amount / 100,
                 status="pending",
+                title="Donation"
             )
 
-            return JsonResponse({"client_secret": intent.client_secret})
+            return JsonResponse({
+                "client_secret": intent.client_secret
+            }, status=200)
 
         except Exception as e:
+            captureError(f"An error occurred while processing the payment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
             return JsonResponse({
                 "success": False, 
-                "message": str(e)
+                "message": _("Pri spracovávaní platby došlo k chybe.")
             }, status=400)
             
     captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
@@ -216,6 +222,83 @@ def createPaymentIntent(request):
         "success": False, 
         "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")
     }, status=405)
+
+def successSubscription(request):
+    messages.add_message(request, messages.SUCCESS, _("Ďakujeme za kúpu predplatného!"))
+
+    return redirect("homepage_url")
+
+def createSubscriptionIntent(request):
+    logged_in_user_id = None # Default State When The User Isn't Logged In
+
+    if "logged_in_user_id" in request.session:
+        logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+
+        if request.method == "POST":
+            try:
+                data = json.loads(request.body) # Gets The Data
+                plan = data.get("plan") # Gets The Subscription Plan
+
+                # Maps The Pricing Of The Subscription Plans
+                price_ids = {
+                    "basic": "price_1TsOhGQyU0Zy3VSn6pKcNAuz",
+                    "premium": "price_1TsOhdQyU0Zy3VSnXZl2X1iO",
+                }
+
+                selected_price_id = price_ids.get(plan) # Gets The ID Of The Selected Subscription Plan
+
+                if not selected_price_id:
+                    return JsonResponse({
+                        "success": False, 
+                        "message": _("Zvolený neplatný plán predplatného.")
+                    }, status=400)
+
+                intent = stripe.checkout.Session.create(
+                    payment_method_types=["card"],
+
+                    line_items=[
+                        {
+                            "price": selected_price_id,
+                            "quantity": 1,
+                        },
+                    ],
+
+                    mode="subscription",
+                    
+                    success_url=request.build_absolute_uri(reverse("success_subscription_url")),
+                    cancel_url=request.build_absolute_uri(reverse("homepage_url")),
+
+                    metadata={
+                        "plan": plan,
+                        "user_id": logged_in_user_id
+                    }
+                )
+
+                return JsonResponse({
+                    "url": intent.url
+                }, status=200)
+
+            except Exception as e:
+                captureError(f"An error occurred while processing the payment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri spracovávaní platby došlo k chybe.")
+                }, status=400)
+                
+        captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+        return JsonResponse({
+            "success": False, 
+            "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")
+        }, status=405)
+
+    captureError(f"Subscription can only be made when user is logged in.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+    return JsonResponse({
+        "success": False, 
+        "message": _("Platbu nie je možné vykonať bez prihlásenia.")
+    }, status=401)
 
 @csrf_exempt
 def stripeWebhook(request):
@@ -232,24 +315,73 @@ def stripeWebhook(request):
     except stripe.error.SignatureVerificationError:
         return HttpResponse(status=400)
 
+    # Donation
     if event["type"] == "payment_intent.succeeded":
         payment_intent = event["data"]["object"]
-        stripe_id = payment_intent.id
 
-        metadata = payment_intent.metadata
-        user_id = metadata["user_id"] if "user_id" in metadata else None
+        stripe_id = payment_intent.id # Gets The Stripe ID
+        metadata = payment_intent.metadata # Gets The Metadata
+        user_id = metadata["user_id"] if "user_id" in metadata else None # Gets The User ID If Is Available
 
         try:
-            payment = Transactions.objects.get(stripe_intent_id=stripe_id)
-
-            payment.status = "succeeded"
+            payment = Transactions.objects.get(stripe_intent_id=stripe_id) # Gets The Transaction
+            payment.status = "succeeded" # Updates The Payment Status
 
             if user_id:
                 payment.user_id = int(user_id)
 
-            payment.save()
+            payment.save() # Saves The Updated Transaction
 
         except Transactions.DoesNotExist:
+            pass
+
+    # Subscription
+    if event["type"] == "checkout.session.completed":
+        subscription_intent = event["data"]["object"]
+
+        if subscription_intent.mode == "subscription":
+            try:
+                metadata = subscription_intent.metadata # Gets The Metadata
+                stripe_subscription_id = subscription_intent.subscription # Gets The Stripe Subscription ID
+                user_id = metadata["user_id"] # Gets The User ID
+                user = Users.objects.get(id=int(user_id)) # Gets The User
+                plan = metadata["plan"] # Gets The Plan (Basic / Premium)
+
+                subscription, created = Subscription.objects.get_or_create(user=user) # Updates Or Creates The Subscription
+                subscription.stripe_subscription_id = stripe_subscription_id
+                subscription.plan = plan
+                subscription.is_active = True
+                subscription.save() # Saves The New Subscription
+
+                # Creates The Transaction
+                Transactions.objects.create(
+                    user_id=int(user_id),
+                    stripe_intent_id=stripe_subscription_id,
+                    amount=subscription_intent.amount_total / 100,
+                    status="succeeded",
+                    title="Subscription"
+                )
+                
+            except Exception as e:
+                captureError(f"An error occurred while activating the subscription.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+                return JsonResponse({
+                    "success": False, 
+                    "message": _("Pri aktivácii predplatného došlo k chybe.")
+                }, status=500)
+
+    # Subscription Cancellation
+    if event["type"] == "customer.subscription.deleted":
+        subscription_intent = event["data"]["object"]
+        stripe_subscription_id = subscription_intent.id # Gets The Stripe Subscription ID
+
+        try:
+            subscription = Subscription.objects.get(stripe_subscription_id=stripe_subscription_id) # Gets The Subscription
+            subscription.is_active = False
+            subscription.plan = "free"
+            subscription.save() # Saves The Updated Subscription
+
+        except Subscription.DoesNotExist:
             pass
 
     return HttpResponse(status=200)

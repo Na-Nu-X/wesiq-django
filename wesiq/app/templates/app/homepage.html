@@ -761,7 +761,7 @@
                     <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 50MB!" %}</p></li>
                 </ul>
 
-                <button class="subscribe">{% translate "Predplatiť" %}</button>
+                <button class="subscribe" data-plan="basic">{% translate "Predplatiť" %}</button>
             </article>
 
             <article class="premium">
@@ -776,7 +776,7 @@
                     <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 100MB!" %}</p></li>
                 </ul>
 
-                <button class="subscribe">{% translate "Predplatiť" %}</button>
+                <button class="subscribe" data-plan="premium">{% translate "Predplatiť" %}</button>
             </article>
         </div>
     </section>
@@ -885,7 +885,7 @@
                         }
                     }
                     
-                    catch(e) {
+                    catch {
                         error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
                         donate_buttons.forEach(b => b.disabled = false) // Enables All Buttons
                     }
@@ -894,7 +894,48 @@
 
             // Subscription
 
+            const subscription_plans = document.querySelector(".subscription_plans") // Gets Subscription Plans Container
+            const subscribe_buttons = subscription_plans.querySelectorAll(".subscribe") // Gets All Subscribe Buttons
+
+            subscribe_buttons.forEach(function(one_button) {
+                one_button.addEventListener("click", async function() {
+                    const plan = this.dataset.plan // Gets The Subscription Plan
+                    if(!plan) return
+
+                    subscribe_buttons.forEach(b => b.disabled = true) // Disables All Buttons
             
+                    try {
+                        const response = await fetch("{% url 'create_subscription_intent_url' %}", {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+
+                            body: JSON.stringify({ 
+                                plan: plan
+                            })
+                        })
+
+                        const data = await response.json()
+
+                        if(data.url) {
+                            window.location.href = data.url
+                        } 
+                        
+                        else {
+                            error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
+                            subscribe_buttons.forEach(b => b.disabled = false) // Enables All Buttons
+                        }
+                    } 
+                    
+                    catch {
+                        error_report.textContent = gettext("Nastala chyba. Skúste znovu.") // Shows Error Message
+                        subscribe_buttons.forEach(b => b.disabled = false) // Enables All Buttons
+                    }
+                })
+            })
         })
     </script>
 {% endblock script %}
