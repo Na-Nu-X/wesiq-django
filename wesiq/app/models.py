@@ -11,6 +11,8 @@ from django.utils.translation import gettext as _
 from urllib.parse import urlparse
 from django.urls import reverse
 from datetime import timedelta
+from datetime import datetime, timezone
+import stripe
 
 class Users(models.Model):
     ROLE_CHOICES = [
@@ -1262,6 +1264,51 @@ class Subscription(models.Model):
         auto_now=True,
         null=False
     )
+
+    @property
+    def remaining_time(self):
+        if not self.stripe_subscription_id or not self.is_active:
+            return _("Žiadne aktívne predplatné")
+
+        try:
+            stripe_subscription = stripe.Subscription.retrieve(self.stripe_subscription_id) # Gets The Stripe Subscription
+            subscription_dict = stripe_subscription.to_dict() # Converts The Stripe Subscription Data Into The Dictionary Format
+
+            items = subscription_dict.get("items", {}).get("data", [])
+
+            if not items:
+                return _("Nepodarilo sa načítať dáta.")
+
+            end_time = items[0].get("current_period_end") # Gets The End Time
+
+            if not end_time:
+                return _("Nepodarilo sa načítať dáta.")
+
+            end_date = datetime.fromtimestamp(end_time, tz=timezone.utc) # Gets The End Date
+            now = datetime.now(timezone.utc) # Gets The Current Time
+
+            remaining_time = end_date - now # Calculates The Remaining Time
+
+            remaining_seconds = int(remaining_time.total_seconds()) # Calculates The Remaining Seconds
+
+            if remaining_seconds <= 0:
+                return _("Predplatné vypršalo.")
+
+            remaining_days = remaining_seconds // 86400 # Calculates The Remaining Days
+
+            if remaining_days > 0:
+                return _("Ostáva %(remaining_days)s dní.") % {
+                    "remaining_days": remaining_days
+                }
+
+            remaining_hours = remaining_seconds // 3600 # Calculates The Remaining Hours
+
+            return _("Ostáva %(remaining_hours)s hodín.") % {
+                "remaining_hours": remaining_hours
+            }
+
+        except Exception:
+            return _("Nepodarilo sa načítať dáta.")
 
     def __str__(self):
         return f"{self.user.username} - {self.get_plan_display()} ({'Aktívne' if self.is_active else 'Neaktívne'})"

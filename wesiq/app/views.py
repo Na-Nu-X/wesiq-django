@@ -1003,7 +1003,7 @@ def homepageView(request):
 
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+        logged_in_user = Users.objects.select_related("subscription").get(id=logged_in_user_id) # Gets The Logged In User
 
     # Login Form
     if request.method == "POST" and request.POST.get("login_form_submit"):
@@ -1578,12 +1578,25 @@ def homepageView(request):
             "email_address": logged_in_user.email_address,
         })
 
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active,
+                "created_at": logged_in_user.subscription.created_at,
+                "updated_at": logged_in_user.subscription.updated_at,
+                "remaining_time": logged_in_user.subscription.remaining_time
+            }
+
         # Renders Homepage With Filled Contact Form, User Data And Reviews
         return render(request, "app/homepage.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
                 "role": logged_in_user.role,
-                "profile_picture_name": logged_in_user.profile_picture_name
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "subscription": subscription
             },
 
             "login_form": loginForm,

@@ -2022,6 +2022,43 @@ header {
             }
         }
     }
+
+    .current_subscription_plan {
+        .cancel_subscription_dialog {
+            &::backdrop {
+                background-color: transparentize($main-color, 0.8);
+                backdrop-filter: blur(2px);
+            }
+    
+            .cancel_container {
+                @include position_center($position: fixed);
+                max-width: 500px;
+                width: 100%;
+                padding: 30px 50px 50px;
+                text-align: center;
+                background-color: transparentize($main-color, 0.8);
+                color: $secondary-color;
+                backdrop-filter: blur(5px);
+                border: 2px solid $secondary-color;
+                border-radius: $medium-border-radius;
+                overflow: hidden;
+
+                h2 {
+                    margin-bottom: 30px;
+                    color: $secondary-color;
+                    animation: fadeInScale 0.3s ease-out;
+                }
+
+                .back {
+                    @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                }
+
+                p {
+                    margin-bottom: 30px;
+                }
+            }
+        }
+    }
 }
 
 /**************
