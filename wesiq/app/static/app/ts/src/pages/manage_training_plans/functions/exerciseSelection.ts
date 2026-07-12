@@ -12,7 +12,12 @@ export function searchBar(search_bar:HTMLInputElement, selection_exercises:NodeL
 
     // Filters Exercises by Searched Bar Value (Returns Not Corresponding Exercises)
     const filtered_selection_exercises:HTMLDivElement[] = [...not_used_selection_exercises].filter(function(one_exercise:HTMLDivElement):boolean {
-        return !(one_exercise.querySelector(".name") as HTMLParagraphElement).textContent.toLocaleLowerCase().includes(search_bar.value.toLocaleLowerCase())
+        const categories:string[] = one_exercise.dataset["categories"] ? JSON.parse(one_exercise.dataset["categories"].replace(/'/g, '"') || "[]") || [] : [] // Gets The Exercise Categories
+
+        return (
+            !(one_exercise.querySelector(".name") as HTMLParagraphElement).textContent.toLowerCase().trim().includes(search_bar.value.toLowerCase().trim()) &&
+            !categories.some(category => category.toLowerCase().trim().includes(search_bar.value.toLowerCase().trim()))
+        )
     })
 
     // Hides Filtered Exercises Except Of Custom Exercise And Warm Up In The Exercise Selection

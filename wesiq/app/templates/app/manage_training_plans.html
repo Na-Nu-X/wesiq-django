@@ -262,7 +262,15 @@
                 </div>
 
                 {% for one_exercise in exercises %}
-                    <div class="exercise" draggable="true" tabindex="0" data-unit="{{ one_exercise.unit }}" data-weight="0" data-requires_weight="{{ one_exercise.requires_weight }}">
+                    <div 
+                        class="exercise" 
+                        draggable="true" 
+                        tabindex="0" 
+                        data-unit="{{ one_exercise.unit }}" 
+                        data-weight="0" 
+                        data-requires_weight="{{ one_exercise.requires_weight }}"
+                        data-categories="{{ one_exercise.categories }}"
+                    >
                         {% if one_exercise.image_filename %}
                             <img src="{% static 'images/exercises/' %}{{ one_exercise.image_filename }}" alt="">
                         
