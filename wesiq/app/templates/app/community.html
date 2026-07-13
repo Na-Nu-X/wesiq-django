@@ -26,7 +26,7 @@
 {% endblock banner %}
 
 {% block content %}
-    <dialog class="upload_post_form_dialog">
+    <dialog class="upload_post_form_dialog" data-subscription_plan="{{ logged_in_user.subscription.plan|default:'free' }}">
         <form class="upload_post_form" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
@@ -120,7 +120,7 @@
                 </div>
             </div>
 
-            <p class="form_report error" style="bottom: 125px;"></p>
+            <p class="form_report error" style="bottom: 115px;"></p>
             <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">
             <input class="upload_post_form_submit" type="submit" value="{% translate 'Uverejniť príspevok' %}">
 

@@ -1,3 +1,6 @@
+const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
+const subscription_plan:string = upload_post_form_dialog.dataset["subscription_plan"] || "free" // Gets The Subscription Plan
+
 export interface tag {
     tagged_user?:string, // Stores The Tagged User Only If The At Sign Represents The Tag And Isn't Just An Ordinary Symbol
 
@@ -16,6 +19,22 @@ export interface hashtag {
     }
 }
 
+let max_image_size:number = subscription_plan === "free" ? 2 * 1000 * 1000 : 10 * 1000 * 1000 // 2MB For No Subscribers, 10MB For Subscribers
+let max_video_size:number = 25 * 1000 * 1000 // 25MB For No Subscribers
+let max_video_duration:number = 60 // 1 Minute For No Subscribers
+
+// Subscribers With Basic Plan
+if(subscription_plan === "basic") {
+    max_video_size = 50 * 1000 * 1000 // 50MB
+    max_video_duration = 2 * 60 // 2 Minutes
+}
+
+// Subscribers With Premium Plan
+else if(subscription_plan === "premium") {
+    max_video_size = 100 * 1000 * 1000 // 100MB
+    max_video_duration = 3 * 60 // 3 Minutes
+}
+
 export const posts_preview_state:{
     current_files:File[],
     MAX_IMAGE_SIZE:number,
@@ -24,9 +43,9 @@ export const posts_preview_state:{
     MIN_VIDEO_DURATION:number
 } = {
     current_files: [], // Stores Current Selected Files
-    MAX_IMAGE_SIZE: 10 * 1000 * 1000, // 10MB
-    MAX_VIDEO_SIZE: 1000 * 1000 * 500, // 500MB
-    MAX_VIDEO_DURATION: 60 * 20, // 20 Minutes
+    MAX_IMAGE_SIZE: max_image_size, // 2MB For No Subscribers, 10MB For Subscribers
+    MAX_VIDEO_SIZE: 100 * 1000 * 1000, // 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+    MAX_VIDEO_DURATION: 60 * 60, // 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
     MIN_VIDEO_DURATION: 1 // 1 Second
 }
 

@@ -122,6 +122,8 @@ document.addEventListener("DOMContentLoaded", function():void {
         const posts_preview:HTMLDivElement = this.querySelector(".posts_preview") as HTMLDivElement // Gets The Post Preview Container
         const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
 
+        const form_report:HTMLParagraphElement = upload_post_form.querySelector(".form_report") as HTMLParagraphElement // Gets The Form Report Paragraph
+
         // Stores The Data Of Every Media
         const media_data:{
             filename:string,
@@ -142,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         form_data.append("media_data", JSON.stringify(media_data)) // Appends The Media Order To The Form Data
 
-        uploadPost(upload_post_form_submit, form_data) // Uploads The Post
+        uploadPost(upload_post_form_submit, form_data, form_report) // Uploads The Post
     })
 
     // Select Posts Change Functionality

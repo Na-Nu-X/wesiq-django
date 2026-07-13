@@ -6,7 +6,8 @@ export interface compressTask {
 
 export interface uploadPostResponse {
     success:boolean,
-    compress_tasks:compressTask[]
+    compress_tasks:compressTask[],
+    message?:string
 }
 
 export interface uploadProgressResponse {

@@ -3511,6 +3511,14 @@ def communityView(request):
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
         logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
 
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan
+            }
+
         # Gets The User's Currently Processed Post With All Related Data
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
@@ -3631,11 +3639,27 @@ def communityView(request):
 
                             new_post.tagged_users.set(tagged_users)
 
-                            MAX_IMAGE_SIZE = 10 * 1000 * 1000 # 10MB
-                            MAX_VIDEO_SIZE = 1000 * 1000 * 500 # 500MB
-                            MAX_VIDEO_DURATION = 60 * 20 # 20 Minutes
-                            MIN_VIDEO_DURATION = 1 # 1 Second
+                            subscription_plan = subscription.get("plan", "free") if subscription else "free"
 
+                            max_image_size = 2 * 1000 * 1000 if subscription_plan == "free" else 10 * 1000 * 1000 # 2MB For No Subscribers, 10MB For Subscribers
+                            max_video_size = 25 * 1000 * 1000 # 25MB For No Subscribers
+                            max_video_duration = 60 # 1 Minute For No Subscribers
+
+                            # Subscribers With Basic Plan
+                            if subscription_plan == "basic":
+                                max_video_size = 50 * 1000 * 1000 # 50MB
+                                max_video_duration = 2 * 60 # 2 Minutes
+
+                            # Subscribers With Premium Plan
+                            elif subscription_plan == "premium":
+                                max_video_size = 100 * 1000 * 1000 # 100MB
+                                max_video_duration = 3 * 60 # 3 Minutes
+
+                            MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
+                            MAX_VIDEO_SIZE = 100 * 1000 * 1000 # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+                            MAX_VIDEO_DURATION = 60 * 60 # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+                            MIN_VIDEO_DURATION = 1 # 1 Second
+                            
                             compress_tasks = [] # Stores All Compress Tasks
 
                             for one_file in files:
@@ -3647,6 +3671,8 @@ def communityView(request):
                                     
                                     # Catches An Unsupported File
                                     if not (mime_type.startswith("image/") or is_video):
+                                        new_post.delete() # Deletes The New Post
+
                                         return JsonResponse({
                                             "success": False, 
                                             "message": _("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name}
@@ -3656,6 +3682,8 @@ def communityView(request):
 
                                     # Catches Too Large File
                                     if one_file.size > max_file_size:
+                                        new_post.delete() # Deletes The New Post
+
                                         return JsonResponse({
                                             "success": False, 
                                             "message": _("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name}
@@ -3677,12 +3705,16 @@ def communityView(request):
                                             os.remove(temporary_path) # Deletes The Temporary File
 
                                             if duration > MAX_VIDEO_DURATION:
+                                                new_post.delete() # Deletes The New Post
+
                                                 return JsonResponse({
                                                     "success": False, 
                                                     "message": _("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name}
                                                 }, status=400)
 
                                             elif duration < MIN_VIDEO_DURATION:
+                                                new_post.delete() # Deletes The New Post
+
                                                 return JsonResponse({
                                                     "success": False, 
                                                     "message": _("Video je príliš krátke:\n%(file)s") % {"file": one_file.name}
@@ -3723,6 +3755,7 @@ def communityView(request):
                                             custom_thumbnail_path = default_storage.save(thumb_temp_path, ContentFile(thumbnail_file.read())) # Gets The Custom Thumbnail Path
 
                                         compress_video_task = compressVideo.delay(
+                                            logged_in_user_id,
                                             post_media_id=new_post_media.id, 
                                             custom_thumbnail_path=custom_thumbnail_path
                                         )
@@ -3735,7 +3768,7 @@ def communityView(request):
                                     
                                     # Image
                                     elif not is_video:
-                                        compress_image_task = compressImage.delay(new_post_media.id)
+                                        compress_image_task = compressImage.delay(new_post_media.id, logged_in_user_id)
 
                                         compress_tasks.append({
                                             "task_id": compress_image_task.id,
@@ -3744,7 +3777,7 @@ def communityView(request):
                                         })
 
                                 except Exception:
-                                    # new_post.delete()
+                                    new_post.delete() # Deletes The New Post
                                     messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
                                     return redirect("community_url")
 
@@ -3827,7 +3860,8 @@ def communityView(request):
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
                 "private_account": logged_in_user.private_account,
-                "data_saving_mode": logged_in_user.data_saving_mode
+                "data_saving_mode": logged_in_user.data_saving_mode,
+                "subscription": subscription
             },
 
             "upload_post_form": uploadPostForm,

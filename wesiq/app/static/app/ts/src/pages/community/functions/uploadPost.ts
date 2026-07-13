@@ -10,7 +10,7 @@ import { sendPOST } from "../../../services/sendPOST.js"
 import type { uploadProgressResponse } from "../functions/processingPosts.js"
 
 // Function For Upload The Post
-export async function uploadPost(submit_button:HTMLInputElement, form_data:FormData):Promise<void> {
+export async function uploadPost(submit_button:HTMLInputElement, form_data:FormData, form_report:HTMLParagraphElement):Promise<void> {
     submit_button.disabled = true // Disables The Upload Post Form Submit Button
     submit_button.value = gettext("Overuje sa...")
 
@@ -75,6 +75,7 @@ export async function uploadPost(submit_button:HTMLInputElement, form_data:FormD
         
         // Error
         else {
+            if(upload_post_response.message) form_report.textContent = upload_post_response.message
             submit_button.value = gettext("Skúste znovu") // Shows The Error Message
             submit_button.disabled = false // Enables The Upload Post Form Submit Button
         }
