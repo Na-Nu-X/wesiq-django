@@ -763,10 +763,13 @@
                     <p class="price">0,99<span>€ / {% translate "mesiac" %}</span></p>
 
                     <ul class="checks">
-                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
+                        {% comment %} <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li> {% endcomment %}
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Odznak na profile!" %}</p></li>
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Obrázky až do 10MB!" %}</p></li>
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 50MB!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "2 minúty dlhé videá!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Lepšia kvalita obrázkov!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Lepšia kvalita videí!" %}</p></li>
                     </ul>
 
                     <button class="subscribe" data-plan="basic">{% translate "Predplatiť" %}</button>
@@ -778,10 +781,13 @@
                     <p class="price">2,99<span>€ / {% translate "mesiac" %}</span></p>
 
                     <ul class="checks">
-                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
+                        {% comment %} <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li> {% endcomment %}
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Odznak na profile!" %}</p></li>
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Obrázky až do 10MB!" %}</p></li>
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Videá až do 100MB!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "3 minúty dlhé videá!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Najlepšia kvalita obrázkov!" %}</p></li>
+                        <li class="check"><div class="checkbox checked"></div><p>{% translate "Najlepšia kvalita videí!" %}</p></li>
                     </ul>
 
                     <button class="subscribe" data-plan="premium">{% translate "Predplatiť" %}</button>
@@ -838,10 +844,8 @@
             </script>
 
         {% else %}
-            <script src="{% static 'app/ts/dist/pages/homepage/components/subscription.js' %}" type="module"></script>
-
             <div class="current_subscription_plan">
-                <h2 class="section_title">{% translate "Moje predplatné" %}</h2>
+                <h2>{% translate "Moje predplatné" %}</h2>
 
                 <p>
                     {% if logged_in_user.subscription.plan == "basic" %}
@@ -854,7 +858,13 @@
                 </p>
 
                 {% if not logged_in_user.subscription.is_cancelled %}
-                    <p><i class="fa-regular fa-clock"></i> {{ logged_in_user.subscription.remaining_time }} {% translate "do ďalšej fakturácie." %}</p>
+                    <script src="{% static 'app/ts/dist/pages/homepage/components/subscription.js' %}" type="module"></script>
+
+                    <p class="remaining_time">
+                        <i class="fa-regular fa-clock"></i> 
+                        {{ logged_in_user.subscription.remaining_time }} 
+                        {% translate "do ďalšej fakturácie." %}
+                    </p>
 
                     <button class="cancel_subscription">{% translate "Ukončiť predplatné" %}</button>
 
@@ -874,7 +884,13 @@
                     </dialog>
 
                 {% else %}
-                    <p><i class="fa-regular fa-clock"></i> {{ logged_in_user.subscription.remaining_time }} {% translate "do konca predplatného." %}</p>
+                    <p>{% translate "Vaše predplatné bolo zrušené." %}</p>
+            
+                    <p class="remaining_time">
+                        <i class="fa-regular fa-clock"></i> 
+                        {{ logged_in_user.subscription.remaining_time }} 
+                        {% translate "do konca predplatného." %}
+                    </p>
                 
                 {% endif %}
             </div>

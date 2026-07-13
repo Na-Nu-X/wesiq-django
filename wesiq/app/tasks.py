@@ -676,7 +676,7 @@ def resetActivityStreak():
     return message
 
 @shared_task(bind=True)
-def compressImage(self, post_media_id):
+def compressImage(self, post_media_id, logged_in_user_id):
     try:
         self.update_state(state="PROGRESS", meta={"percentage": 10}) # 10%
 
@@ -704,10 +704,30 @@ def compressImage(self, post_media_id):
             # Converts The Image To RGB Format
             if image.mode in ("RGBA", "P"):
                 image = image.convert("RGB")
+
+            # Image Quality
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            subscription = None
+
+            if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+                # Gets The Subscription Data If Are Available
+                subscription = {
+                    "plan": logged_in_user.subscription.plan
+                }
+
+            subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+            quality = 40 # 40% For No Subscribers
+
+            if subscription_plan == "basic":
+                quality = 70 # 70% For Subscribers With Basic Plan
+
+            elif subscription_plan == "premium":
+                quality = 90 # 90% For Subscribers With Premium Plan
             
             # Stores To Memory
             buffer = io.BytesIO()
-            image.save(buffer, format="JPEG", quality=70, optimize=True, progressive=True) # Compresses The Image
+            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
 
             compressed_size = buffer.tell() # Gets The Compressed Size
             
@@ -738,7 +758,7 @@ def compressImage(self, post_media_id):
         raise Exception(message)
 
 @shared_task(bind=True)
-def compressVideo(self, post_media_id, custom_thumbnail_path=None):
+def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=None):
     try:
         media_object = PostMedia.objects.get(id=post_media_id)
         
@@ -880,6 +900,41 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
         segment_pattern = os.path.join(temp_hls_path, "v%v_segment_%03d.ts")
         variant_playlist_pattern = os.path.join(temp_hls_path, "v%v_index.m3u8")
 
+        # Video Quality
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan
+            }
+
+        subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+        crf_480 = "34" # 34 CRF Quality Of 480p Video Segment For No Subscribers
+        crf_720 = "32" # 32 CRF Quality Of 720p Video Segment For No Subscribers
+        crf_1080 = "30" # 30 CRF Quality Of 1080p Video Segment For No Subscribers
+        audio_bitrate = "96k" # 96k Video's Audio Bitrate For No Subscribers
+
+        if subscription_plan == "basic":
+            crf_480 = "28" # 28 CRF Quality Of 480p Video Segment For Subscribers With Basic Plan
+            crf_720 = "26" # 26 CRF Quality Of 720p Video Segment For Subscribers With Basic Plan
+            crf_1080 = "24" # 24 CRF Quality Of 1080p Video Segment For Subscribers With Basic Plan
+            audio_bitrate = "128k" # 128k Video's Audio Bitrate For Subscribers With Basic Plan
+
+        elif subscription_plan == "premium":
+            crf_480 = "23" # 23 CRF Quality Of 480p Video Segment For Subscribers With Premium Plan
+            crf_720 = "21" # 21 CRF Quality Of 720p Video Segment For Subscribers With Premium Plan
+            crf_1080 = "19" # 19 CRF Quality Of 1080p Video Segment For Subscribers With Premium Plan
+            audio_bitrate = "192k" # 192k Video's Audio Bitrate For Subscribers With Premium Plan
+
+        print("---------------")
+        print(crf_480)
+        print(crf_720)
+        print(crf_1080)
+        print(audio_bitrate)
+
         # HLS Settings Command
         hls_settings = [
             # HLS Multi-Variant Settings
@@ -903,13 +958,13 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
                 "-an",
                 
                 # 480p (Stream v:0 a a:0)
-                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
+                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", crf_480, "-preset", "fast",
                 
                 # 720p (Stream v:1 a a:1)
-                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
+                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", crf_720, "-preset", "fast",
                 
                 # 1080p (Stream v:2 a a:2)
-                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
+                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", crf_1080, "-preset", "fast",
                 
                 "-var_stream_map", "v:0 v:1 v:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
                 "-master_pl_name", "index.m3u8", # Main Map File For Segments
@@ -926,16 +981,16 @@ def compressVideo(self, post_media_id, custom_thumbnail_path=None):
                 "-map", "0:a?", "-map", "0:a?", "-map", "0:a?", 
                 
                 # 480p (Stream v:0 a a:0)
-                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", "28", "-preset", "fast",
-                "-c:a:0", "aac", "-b:a:0", "128k",
+                "-filter:v:0", "scale=w=-2:h=480", "-c:v:0", "libx264", "-crf:v:0", crf_480, "-preset", "fast",
+                "-c:a:0", "aac", "-b:a:0", audio_bitrate,
                 
                 # 720p (Stream v:1 a a:1)
-                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", "26", "-preset", "fast",
-                "-c:a:1", "aac", "-b:a:1", "128k",
+                "-filter:v:1", "scale=w=-2:h=720", "-c:v:1", "libx264", "-crf:v:1", crf_720, "-preset", "fast",
+                "-c:a:1", "aac", "-b:a:1", audio_bitrate,
                 
                 # 1080p (Stream v:2 a a:2)
-                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", "23", "-preset", "fast",
-                "-c:a:2", "aac", "-b:a:2", "128k",
+                "-filter:v:2", "scale=w=-2:h=1080", "-c:v:2", "libx264", "-crf:v:2", crf_1080, "-preset", "fast",
+                "-c:a:2", "aac", "-b:a:2", audio_bitrate,
                 
                 "-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2", # Maps The Video Variants: v:0 With a:0, v:1 With a:1 etc.
                 "-master_pl_name", "index.m3u8", # Main Map File For Segments
