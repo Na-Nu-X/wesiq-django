@@ -94,7 +94,16 @@
                     <div class="account">
                         <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" aria-label="{% translate 'Môj účet' %}" target="_self">
                             <img 
-                                class="profile_picture skeleton_loading" 
+                                class="
+                                    profile_picture 
+                                    skeleton_loading
+
+                                    {% if logged_in_user.subscription and logged_in_user.subscription.is_active %}
+                                        subscriber 
+                                    
+                                    {% endif %}
+                                " 
+
                                 src="
                                     {% if logged_in_user.profile_picture_name %}
                                         /../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}

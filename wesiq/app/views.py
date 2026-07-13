@@ -917,7 +917,11 @@ def addComment(request):
                 "user": {
                     "id": new_comment.user.id,
                     "username": new_comment.user.username,
-                    "profile_picture_name": new_comment.user.profile_picture_name
+                    "profile_picture_name": new_comment.user.profile_picture_name,
+
+                    "subscription": {
+                        "is_active": new_comment.user.subscription.is_active
+                    } if hasattr(new_comment.user, "subscription") and new_comment.user.subscription else None
                 },
 
                 "creation_time": new_comment.creation_time,
@@ -1599,13 +1603,6 @@ def homepageView(request):
                         "message": _("Pri pokuse o zamietnutie recenzie došlo k chybe.")
                     }, status=500)
 
-        # Automatically Set Values Into Contact Form When User Is Logged In
-        filled_contact_form = contactForm(initial={
-            "first_name": logged_in_user.first_name,
-            "last_name": logged_in_user.last_name,
-            "email_address": logged_in_user.email_address,
-        })
-
         subscription = None
 
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription:
@@ -1618,6 +1615,13 @@ def homepageView(request):
                 "updated_at": logged_in_user.subscription.updated_at,
                 "remaining_time": logged_in_user.subscription.remaining_time
             }
+
+        # Automatically Set Values Into Contact Form When User Is Logged In
+        filled_contact_form = contactForm(initial={
+            "first_name": logged_in_user.first_name,
+            "last_name": logged_in_user.last_name,
+            "email_address": logged_in_user.email_address,
+        })
 
         # Renders Homepage With Filled Contact Form, User Data And Reviews
         return render(request, "app/homepage.html", {
@@ -2231,11 +2235,21 @@ def blogView(request):
         # Get Logged In User From DB
         logged_in_user = Users.objects.get(id=logged_in_user_id)
 
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
+
         # Renders Blog Page With User Data And Articles
         return render(request, "app/blog.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "subscription": subscription
             },
 
             "articles": articles,
@@ -2553,13 +2567,23 @@ def blogThemeView(request, theme):
         article.visitors += 1
         article.save()
 
+    subscription = None
+
+    if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+        # Gets The Subscription Data If Are Available
+        subscription = {
+            "plan": logged_in_user.subscription.plan,
+            "is_active": logged_in_user.subscription.is_active
+        }
+
     if logged_in_user:
         response = render(request, "app/articles.html", {
             "logged_in_user": {
                 "id": logged_in_user.id,
                 "username": logged_in_user.username,
                 "role": logged_in_user.role,
-                "profile_picture_name": logged_in_user.profile_picture_name
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "subscription": subscription
             },
 
             "article": article,
@@ -3088,11 +3112,21 @@ def trainingSessionView(request):
                         "message": _("Pri zaznamenávaní aktivity došlo k chybe.")
                     }, status=404)
 
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
+
         return render(request, "app/training_session.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
                 "profile_picture_name": logged_in_user.profile_picture_name,
-                "xp_boost_expiration_time": logged_in_user.xp_boost_expiration_time.isoformat()
+                "xp_boost_expiration_time": logged_in_user.xp_boost_expiration_time.isoformat(),
+                "subscription": subscription
             },
 
             "latest_activity": latest_activity,
@@ -3207,11 +3241,21 @@ def manageTrainingPlansView(request):
                     "success": False, 
                     "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")
                 }, status=404)
+
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
         
         return render(request, "app/manage_training_plans.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "subscription": subscription
             },
 
             "exercises": exercises,
@@ -3238,6 +3282,8 @@ def communityView(request):
             loaded_users_from_history = Users.objects.filter(
                 username__in=searched_users_history,
                 account_status="OK"
+            ).select_related(
+                "subscription"
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                 has_follow=Exists(
@@ -3284,6 +3330,8 @@ def communityView(request):
                 # Gets The Missing Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
                 missing_users = Users.objects.filter(
                     account_status="OK"
+                ).select_related(
+                    "subscription"
                 ).annotate(
                     # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                     has_follow=Exists(
@@ -3337,6 +3385,13 @@ def communityView(request):
             loaded_users = []
 
             for one_user in users:
+                subscription = None
+
+                if hasattr(one_user, "subscription") and one_user.subscription:
+                    subscription = {
+                        "is_active": one_user.subscription.is_active
+                    }
+
                 loaded_users.append({
                     "id": one_user.id,
                     "first_name": one_user.first_name,
@@ -3347,7 +3402,8 @@ def communityView(request):
                     "private_account": one_user.private_account,
                     "followers": len(one_user.accepted_followers),
                     "has_follow": one_user.has_follow,
-                    "has_pending_follow_request": one_user.has_pending_follow_request
+                    "has_pending_follow_request": one_user.has_pending_follow_request,
+                    "subscription": subscription
                 })
 
             if logged_in_user:
@@ -3392,6 +3448,8 @@ def communityView(request):
                     Q(username__icontains=searched_text) | 
                     Q(friend_code__contains=searched_text)
                 )
+            ).select_related(
+                "subscription"
             ).annotate(
                 # Creates Is Followed Column (True If The User Is Following The User)
                 is_followed=Case(
@@ -3454,7 +3512,11 @@ def communityView(request):
                     "private_account": one_user.private_account,
                     "followers": len(one_user.accepted_followers),
                     "has_follow": one_user.has_follow,
-                    "has_pending_follow_request": one_user.has_pending_follow_request
+                    "has_pending_follow_request": one_user.has_pending_follow_request,
+
+                    "subscription": {
+                        "is_active": one_user.subscription.is_active
+                    } if hasattr(one_user, "subscription") and one_user.subscription else None
                 }
 
                 for one_user in users
@@ -3516,7 +3578,8 @@ def communityView(request):
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
             # Gets The Subscription Data If Are Available
             subscription = {
-                "plan": logged_in_user.subscription.plan
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
             }
 
         # Gets The User's Currently Processed Post With All Related Data
@@ -3656,8 +3719,8 @@ def communityView(request):
                                 max_video_duration = 3 * 60 # 3 Minutes
 
                             MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
-                            MAX_VIDEO_SIZE = 100 * 1000 * 1000 # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
-                            MAX_VIDEO_DURATION = 60 * 60 # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+                            MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+                            MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
                             MIN_VIDEO_DURATION = 1 # 1 Second
                             
                             compress_tasks = [] # Stores All Compress Tasks
@@ -3887,7 +3950,7 @@ def loadPostsView(request):
     thirty_days_ago = timezone.now() - timedelta(days=30)
 
     posts_query = Post.objects.select_related(
-        "user"
+        "user__subscription"
     ).prefetch_related(
         # Gets All Followers With All Related Data
         Prefetch(
@@ -4030,7 +4093,11 @@ def loadPostsView(request):
                 "profile_picture_name": one_post.user.profile_picture_name,
                 "following": [one_relation.from_user_id for one_relation in one_post.user.accepted_following],
                 "followers": [one_relation.from_user_id for one_relation in one_post.user.accepted_followers],
-                "private_account": one_post.user.private_account
+                "private_account": one_post.user.private_account,
+
+                "subscription": {
+                    "is_active": one_post.user.subscription.is_active
+                } if hasattr(one_post.user, "subscription") and one_post.user.subscription else None
             },
 
             "id": one_post.id,
@@ -4131,7 +4198,7 @@ def loadPostCommentsView(request, post_id):
         ).exclude(
             status="hidden"
         ).select_related(
-            "user"
+            "user__subscription"
         ).prefetch_related(
             "likes_from_users",
             "reports_from_users"
@@ -4154,7 +4221,7 @@ def loadPostCommentsView(request, post_id):
         ).exclude(
             status="hidden"
         ).select_related(
-            "user"
+            "user__subscription"
         ).prefetch_related(
             "likes_from_users",
             "reports_from_users"
@@ -4185,7 +4252,11 @@ def loadPostCommentsView(request, post_id):
                 "first_name": one_comment.user.first_name,
                 "last_name": one_comment.user.last_name,
                 "username": one_comment.user.username,
-                "profile_picture_name": one_comment.user.profile_picture_name
+                "profile_picture_name": one_comment.user.profile_picture_name,
+
+                "subscription": {
+                    "is_active": one_comment.user.subscription.is_active
+                } if hasattr(one_comment.user, "subscription") and one_comment.user.subscription else None
             },
 
             "comment": one_comment.comment,
@@ -4309,6 +4380,8 @@ def postView(request, post_id):
     # Gets The Post With All Related Data
     post = Post.objects.filter(
         id=post_id
+    ).select_related(
+        "user__subscription"
     ).annotate(
         views=Count("seen_by_instances", distinct=True),
 
@@ -4440,13 +4513,23 @@ def postView(request, post_id):
             post.longitude = str(post.coordinates.x).replace(",", ".")
 
         if logged_in_user:
+            subscription = None
+
+            if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+                # Gets The Subscription Data If Are Available
+                subscription = {
+                    "plan": logged_in_user.subscription.plan,
+                    "is_active": logged_in_user.subscription.is_active
+                }
+
             return render(request, "app/post.html", {
                 "logged_in_user": {
                     "id": logged_in_user.id,
                     "username": logged_in_user.username,
                     "role": logged_in_user.role,
                     "profile_picture_name": logged_in_user.profile_picture_name,
-                    "data_saving_mode": logged_in_user.data_saving_mode
+                    "data_saving_mode": logged_in_user.data_saving_mode,
+                    "subscription": subscription
                 },
 
                 "post": post
@@ -4458,10 +4541,20 @@ def postView(request, post_id):
             })
 
     if logged_in_user:
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
+
         return render(request, "app/post.html", {
             "logged_in_user": {
                 "username": logged_in_user.username,
-                "profile_picture_name": logged_in_user.profile_picture_name
+                "profile_picture_name": logged_in_user.profile_picture_name,
+                "subscription": subscription
             }
         })
 
@@ -4834,6 +4927,15 @@ def profileView(request, username):
                         status="pending"
                     ).select_related("from_user")
 
+                subscription = None
+
+                if hasattr(logged_in_user, "subscription") and logged_in_user.subscription:
+                    # Gets The Subscription Data If Are Available
+                    subscription = {
+                        "plan": logged_in_user.subscription.plan,
+                        "is_active": logged_in_user.subscription.is_active
+                    }
+
                 filled_edit_account_form = editAccountForm(initial={
                     "bio": logged_in_user.bio,
                     "first_name": logged_in_user.first_name,
@@ -4855,7 +4957,8 @@ def profileView(request, username):
                         "friend_code": logged_in_user.friend_code,
                         "bio_links": logged_in_user.bio_links,
                         "private_account": logged_in_user.private_account,
-                        "follow_requests": follow_requests if logged_in_user.private_account else None
+                        "follow_requests": follow_requests if logged_in_user.private_account else None,
+                        "subscription": subscription
                     },
 
                     "user": user,

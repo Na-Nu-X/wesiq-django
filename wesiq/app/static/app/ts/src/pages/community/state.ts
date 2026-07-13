@@ -1,5 +1,5 @@
-const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
-const subscription_plan:string = upload_post_form_dialog.dataset["subscription_plan"] || "free" // Gets The Subscription Plan
+const upload_post_form_dialog:HTMLDialogElement|null = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement || null // Gets The Upload Post Form Dialog If Is Available
+const subscription_plan:string = upload_post_form_dialog ? upload_post_form_dialog.dataset["subscription_plan"] || "free" : "free" // Gets The Subscription Plan
 
 export interface tag {
     tagged_user?:string, // Stores The Tagged User Only If The At Sign Represents The Tag And Isn't Just An Ordinary Symbol
@@ -44,8 +44,8 @@ export const posts_preview_state:{
 } = {
     current_files: [], // Stores Current Selected Files
     MAX_IMAGE_SIZE: max_image_size, // 2MB For No Subscribers, 10MB For Subscribers
-    MAX_VIDEO_SIZE: 100 * 1000 * 1000, // 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
-    MAX_VIDEO_DURATION: 60 * 60, // 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+    MAX_VIDEO_SIZE: max_video_size, // 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+    MAX_VIDEO_DURATION: max_video_duration, // 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
     MIN_VIDEO_DURATION: 1 // 1 Second
 }
 

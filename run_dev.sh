@@ -25,3 +25,4 @@ gnome-terminal -- bash -c "npx sass --watch .:.; exec bash"
 # docker compose logs -f web
 # docker exec -it wesiq_web python manage.py makemigrations
 # docker exec -it wesiq_web python manage.py migrate
+# docker compose restart

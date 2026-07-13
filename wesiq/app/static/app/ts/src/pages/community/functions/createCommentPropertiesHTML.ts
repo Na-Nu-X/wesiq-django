@@ -4,7 +4,11 @@ export interface comment {
     user:{
         id:number,
         username:string,
-        profile_picture_name:string|null
+        profile_picture_name:string|null,
+
+        subscription?:{
+            is_active:boolean
+        }
     },
 
     comment:string,
