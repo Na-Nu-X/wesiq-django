@@ -702,7 +702,14 @@
         </form>
     </section>
 
-    <section class="homepage_section support_section">
+    <section 
+        class="homepage_section support_section"
+
+        {% if logged_in_user.subscription.is_active %}
+            style="max-width: 580px;"
+
+        {% endif %}
+    >
         <form class="credit_card_form">
             <div class="credit_card">
                 <div class="front">
@@ -753,7 +760,7 @@
                 <article class="basic">
                     <h3 class="title">{% translate "Základné predplatné" %}</h3>
                     <p class="description">{% translate "Vážime si Vašu podporu, ktorá nám pomáha držať aplikáciu pri živote." %}</p>
-                    <p class="price">0,99<span>€</span></p>
+                    <p class="price">0,99<span>€ / {% translate "mesiac" %}</span></p>
 
                     <ul class="checks">
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
@@ -768,7 +775,7 @@
                 <article class="premium">
                     <h3 class="title">{% translate "Prémiové predplatné" %}</h3>
                     <p class="description">{% translate "Pre náročných používateľov, ktorí chcú z aplikácie vyťažiť absolútne maximum." %}</p>
-                    <p class="price">2,99<span>€</span></p>
+                    <p class="price">2,99<span>€ / {% translate "mesiac" %}</span></p>
 
                     <ul class="checks">
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Úplne bez reklám!" %}</p></li>
@@ -834,6 +841,8 @@
             <script src="{% static 'app/ts/dist/pages/homepage/components/subscription.js' %}" type="module"></script>
 
             <div class="current_subscription_plan">
+                <h2 class="section_title">{% translate "Moje predplatné" %}</h2>
+
                 <p>
                     {% if logged_in_user.subscription.plan == "basic" %}
                         {% translate "Základné predplatné" %} 0,99€
@@ -844,21 +853,30 @@
                     {% endif %}
                 </p>
 
-                <p><i class="fa-regular fa-clock"></i> {{ logged_in_user.subscription.remaining_time }}</p>
+                {% if not logged_in_user.subscription.is_cancelled %}
+                    <p><i class="fa-regular fa-clock"></i> {{ logged_in_user.subscription.remaining_time }} {% translate "do ďalšej fakturácie." %}</p>
 
-                <button class="cancel_subscription">{% translate "Ukončiť predplatné" %}</button>
+                    <button class="cancel_subscription">{% translate "Ukončiť predplatné" %}</button>
 
-                <dialog class="cancel_subscription_dialog">
-                    <div class="cancel_container">
-                        <h2>{% translate "Ukončiť predplatné" %}</h2>
-                        {% comment %} <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left --> {% endcomment %}
+                    <dialog class="cancel_subscription_dialog">
+                        <form class="cancel_subscription_form" action="{% url 'homepage_url' %}" method="POST">
+                            {% csrf_token %}
 
-                        <p>{% translate "Naozaj si praješ ukončiť predplatné? Tvoje aktuálne predplatné sa ukončí hneď po vypršaní, ešte si ho uži." %}</p>
-    
-                        <button class="yes">{% translate "Zrušiť" %}</button>
-                        <button class="no">{% translate "Ostať" %}</button>
-                    </div>
-                </dialog>
+                            <h2>{% translate "Ukončiť predplatné" %}</h2>
+
+                            <p>{% translate "Naozaj si praješ ukončiť predplatné? Tvoje aktuálne predplatné sa ukončí hneď po vypršaní, ešte si ho uži." %}</p>
+
+                            <div class="buttons">
+                                <button class="no" type="button">{% translate "Ostať" %}</button>
+                                <input class="yes" type="submit" name="cancel_subscription_submit" value="{% translate 'Ukončiť' %}">
+                            </div>
+                        </form>
+                    </dialog>
+
+                {% else %}
+                    <p><i class="fa-regular fa-clock"></i> {{ logged_in_user.subscription.remaining_time }} {% translate "do konca predplatného." %}</p>
+                
+                {% endif %}
             </div>
             
         {% endif %}

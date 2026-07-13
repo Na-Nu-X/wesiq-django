@@ -1887,22 +1887,21 @@ header {
 
             .price {
                 margin-bottom: 30px;
-                font-size: 2em;
-                font-weight: bold;
-                text-align: center;
-            }
-
-            .price {
-                margin-bottom: 30px;
+                font-family: $article-heading-font;
                 font-size: 2.5em;
                 font-weight: bold;
                 text-align: center;
+                background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             
                 span {
+                    margin-left: 2px;
+                    font-family: inherit;
                     font-size: 0.5em;
                     font-weight: normal;
                     vertical-align: super;
-                    margin-left: 2px;
                 }
             }
 
@@ -2024,13 +2023,21 @@ header {
     }
 
     .current_subscription_plan {
+        margin-top: 50px;
+        text-align: center;
+
+        .cancel_subscription {
+            @include blue_button;
+            margin-top: 40px;
+        }
+
         .cancel_subscription_dialog {
             &::backdrop {
                 background-color: transparentize($main-color, 0.8);
                 backdrop-filter: blur(2px);
             }
     
-            .cancel_container {
+            .cancel_subscription_form {
                 @include position_center($position: fixed);
                 max-width: 500px;
                 width: 100%;
@@ -2049,12 +2056,46 @@ header {
                     animation: fadeInScale 0.3s ease-out;
                 }
 
-                .back {
-                    @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                }
-
                 p {
                     margin-bottom: 30px;
+                }
+
+                // Buttons
+
+                .buttons {
+                    display: flex;
+                    gap: 25px;
+                    width: 100%;
+                    animation: fadeInScale 1s ease-out 0.5s both;
+                    
+                    .no,
+                    .yes {
+                        @include blue_button($width: 100%);
+                        letter-spacing: 0.25px;
+                    }
+
+                    .no {
+                        color: transparentize($secondary-color, 0.15);
+                        background: transparentize($main-color, 0.85);
+                        backdrop-filter: blur(5px);
+
+                        &:hover,
+                        &:focus-visible {
+                            background: $homepage-surface-hover;
+                        }
+                    }
+
+                    .yes {
+                        @include glow_animated_border;
+                        color: $secondary-color;
+                        background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
+                        border-color: transparentize($blue-color, 0.2);
+
+                        &:hover,
+                        &:focus-visible {
+                            background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                        }
+                    }
                 }
             }
         }
