@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from urllib.parse import urlparse
 from django.urls import reverse
 from datetime import timedelta
-from datetime import datetime, timezone
+from datetime import datetime, timezone as datetime_timezone
 import stripe
 
 class Users(models.Model):
@@ -1291,8 +1291,8 @@ class Subscription(models.Model):
             if not end_time:
                 return _("Nepodarilo sa načítať dáta.")
 
-            end_date = datetime.fromtimestamp(end_time, tz=timezone.utc) # Gets The End Date
-            now = datetime.now(timezone.utc) # Gets The Current Time
+            end_date = datetime.fromtimestamp(end_time, tz=datetime_timezone.utc) # Gets The End Date
+            now = datetime.now(datetime_timezone.utc) # Gets The Current Time
 
             remaining_time = end_date - now # Calculates The Remaining Time
 

@@ -27,6 +27,7 @@ export function createCommentHTML(feed:HTMLDivElement, all_comments:HTMLDivEleme
 
     // Comment Author Profile Picture
     const comment_author_profile_picture:HTMLImageElement = comment_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Comment Author Profile Picture 
+    if(one_visible_comment.user.subscription && one_visible_comment.user.subscription.is_active) comment_author_profile_picture.classList.add("subscriber") // Adds The Subscriber Class
     comment_author_profile_picture.src = one_visible_comment.user.profile_picture_name ? `/../media/images/${one_visible_comment.user.id}/${one_visible_comment.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     comment_author_profile_picture.alt = ""
 

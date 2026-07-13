@@ -338,7 +338,15 @@
                             <div class="top">
                                 <div class="info">
                                     <img 
-                                        class="profile_picture" 
+                                        class="
+                                            profile_picture
+
+                                            {% if logged_in_user.subscription and logged_in_user.subscription.is_active %}
+                                                subscriber 
+                                            
+                                            {% endif %}
+                                        " 
+                                        
                                         src="
                                             {% if user.profile_picture_name %}
                                                 /media/images/{{ user.id }}/{{ user.profile_picture_name }}
@@ -640,6 +648,35 @@
                                     {% if user.role == "developer" %}
                                         <div class="badge developer" title="{% translate 'Vývojár' %}" aria-label="{% translate 'Vývojár' %}">
                                             <i class="fa-solid fa-code"></i> <!-- https://fontawesome.com/icons/code -->
+                                        </div>
+
+                                    {% endif %}
+
+                                    {% if logged_in_user.subscription.is_active %}
+                                        <div 
+                                            class="badge subscriber" 
+
+                                            title="
+                                                {% if logged_in_user.subscription.plan == "basic" %}
+                                                    {% translate 'Základný predplatiteľ' %}
+
+                                                {% elif logged_in_user.subscription.plan == "premium" %}
+                                                    {% translate 'Prémiový predplatiteľ' %}
+                                                 
+                                                {% endif %}
+                                            " 
+                                            
+                                            aria-label="
+                                                {% if logged_in_user.subscription.plan == "basic" %}
+                                                    {% translate 'Základný predplatiteľ' %}
+
+                                                {% elif logged_in_user.subscription.plan == "premium" %}
+                                                    {% translate 'Prémiový predplatiteľ' %}
+                                                 
+                                                {% endif %}
+                                            "
+                                        >
+                                            <i class="fa-solid fa-crown"></i> <!-- https://fontawesome.com/icons/crown -->
                                         </div>
 
                                     {% endif %}

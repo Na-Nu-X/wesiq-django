@@ -11,7 +11,11 @@ interface loadedUser {
     private_account:boolean,
     followers:number,
     has_follow:boolean,
-    has_pending_follow_request:boolean
+    has_pending_follow_request:boolean,
+
+    subscription?:{
+        is_active:boolean
+    }
 }
 
 interface firstLoadedUsersResponse {
@@ -21,17 +25,8 @@ interface firstLoadedUsersResponse {
     message: string
 }
 
-interface searchedUser {
-    id:number,
-    first_name:string,
-    last_name:string,
-    username:string,
-    profile_picture_name:string,
-    friend_code:string,
-    private_account:boolean,
-    followers:number,
-    has_follow:boolean,
-    has_pending_follow_request:boolean
+interface searchedUser extends loadedUser {
+    
 }
 
 interface searchedUsersResponse {
@@ -76,6 +71,7 @@ function createLoadedUserHTML(one_user_template:HTMLTemplateElement, user_data:l
 
     // Profile Picture
     const profile_picture:HTMLImageElement = one_user.querySelector(".profile_picture") as HTMLImageElement // Gets The Profile Picture 
+    if(user_data.subscription && user_data.subscription.is_active) profile_picture.classList.add("subscriber") // Adds The Subscriber Class
     profile_picture.src = user_data.profile_picture_name ? `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     profile_picture.alt = ""
 
@@ -162,6 +158,7 @@ function renderUsers(user_data:searchedUser, all_users_container:HTMLDivElement)
     all_users_container.appendChild(one_user) // Appends One User To The All Users Container
 
     profile_picture.classList.add("profile_picture") // Adds Profile Picture Class
+    if(user_data.subscription && user_data.subscription.is_active) profile_picture.classList.add("subscriber") // Adds The Subscriber Class
     user_data.profile_picture_name ? profile_picture.src = `/../media/images/${user_data.id}/${user_data.profile_picture_name}` : profile_picture.src = "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     profile_picture.alt = ""
     one_user.appendChild(profile_picture) // Appends The Profile Picture To The One User Container

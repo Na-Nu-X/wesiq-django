@@ -17,7 +17,15 @@
                         <div class="left">
                             <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
-                                    class="profile_picture skeleton_loading" 
+                                    class="
+                                        profile_picture skeleton_loading
+
+                                        {% if post.user.subscription and post.user.subscription.is_active %}
+                                            subscriber 
+                                        
+                                        {% endif %}
+                                    " 
+
                                     src="
                                         {% if post.user.profile_picture_name %}
                                             /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
@@ -130,7 +138,15 @@
                         <div class="left">
                             <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
-                                    class="profile_picture skeleton_loading" 
+                                    class="
+                                        profile_picture skeleton_loading
+
+                                        {% if post.user.subscription and post.user.subscription.is_active %}
+                                            subscriber 
+                                        
+                                        {% endif %}
+                                    " 
+
                                     src="
                                         {% if post.user.profile_picture_name %}
                                             /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}
@@ -311,7 +327,15 @@
                         <div class="left">
                             <a href="{% url 'profile_url' post.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                                 <img 
-                                    class="profile_picture skeleton_loading" 
+                                    class="
+                                        profile_picture skeleton_loading
+
+                                        {% if post.user.subscription and post.user.subscription.is_active %}
+                                            subscriber 
+                                        
+                                        {% endif %}
+                                    " 
+
                                     src="
                                         {% if post.user.profile_picture_name %}
                                             /../media/images/{{ post.user.id }}/{{ post.user.profile_picture_name }}

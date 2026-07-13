@@ -194,12 +194,11 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 gap: 15px;
 
                 .profile_picture {
-                    @include profile_picture($width: 55px, $height: 55px);
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-            
+                    @include profile_picture($width: 64px, $height: 64px);
+                    transition: transform 0.3s ease;
+
                     &:hover {
                         transform: scale(1.05);
-                        box-shadow: 0 0 0 3px transparentize($blue-color, 0.25), 0 5px 30px $profile-glow;
                     }
                 }
 
@@ -587,11 +586,10 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     
                     .profile_picture {
                         @include profile_picture($width: 64px, $height: 64px);
-                        transition: transform 0.3s ease, box-shadow 0.3s ease;
-                
+                        transition: transform 0.3s ease;
+
                         &:hover {
                             transform: scale(1.05);
-                            box-shadow: 0 0 0 3px transparentize($blue-color, 0.25), 0 5px 30px $profile-glow;
                         }
                     }
                     
@@ -679,6 +677,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                             background: $profile-surface-hover;
                             border: 1px solid $profile-surface-border;
                             border-radius: 50%;
+                            text-decoration: none;
                             transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
                             &:hover {
@@ -933,7 +932,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
             .badges_container {
                 position: relative;
                 margin-bottom: 30px;
-                padding: 15px 40px;
+                padding: 15px 30px;
                 background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
                 border: 1px solid $profile-surface-border;
                 border-radius: $medium-border-radius;
@@ -975,7 +974,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     gap: 10px;
                     flex: 1;
                     width: 100%;
-                    padding: 10px 0px 10px;
+                    padding: 10px;
                     scroll-behavior: smooth;
     
                     .badge {
@@ -1032,7 +1031,8 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                             box-shadow: 0 0 8px transparentize($orange-rarity, 0.5);
                         }
                     
-                        &.red {
+                        &.red,
+                        &.developer {
                             background-color: transparentize($red-rarity, 0.85);
                             color: $red-rarity;
                             border-color: transparentize($red-rarity, 0.7);
@@ -1044,13 +1044,6 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                             color: $purple-rarity;
                             border-color: transparentize($purple-rarity, 0.7);
                             box-shadow: 0 0 8px transparentize($purple-rarity, 0.5);
-                        }
-
-                        &.developer {
-                            background-color: transparentize($red-rarity, 0.85);
-                            color: $red-rarity;
-                            border-color: transparentize($red-rarity, 0.7);
-                            box-shadow: 0 0 8px transparentize($red-rarity, 0.5);
                         }
 
                         &.xp {
@@ -1066,6 +1059,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                             }
                         }
 
+                        &.subscriber,
                         &.max_activity_streak,
                         &.no_day_off_week {
                             background-color: transparentize($article-color, 0.85);

@@ -18,7 +18,15 @@
         <div class="user">
             <a href="{% url 'profile_url' one_comment.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
                 <img 
-					class="profile_picture" 
+					class="
+						profile_picture
+
+						{% if one_comment.user.subscription and one_comment.user.subscription.is_active %}
+							subscriber 
+						
+						{% endif %}
+					"
+
 					src="
 						{% if one_comment.user.profile_picture_name %}
 							/../media/images/{{ one_comment.user_id }}/{{ one_comment.user.profile_picture_name }}

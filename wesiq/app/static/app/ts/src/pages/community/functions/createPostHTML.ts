@@ -66,7 +66,11 @@ interface User {
     profile_picture_name:string|null,
     following:number[],
     followers:number[],
-    private_account:boolean
+    private_account:boolean,
+
+    subscription?:{
+        is_active:boolean
+    }
 }
 
 interface Media {
@@ -111,6 +115,7 @@ export function createPostHTML(post_data:searchedPost, feed:HTMLDivElement, logg
 
     // Post Author Profile Picture
     const post_author_profile_picture:HTMLImageElement = post_author_profile_picture_link.querySelector(".profile_picture") as HTMLImageElement // Gets The Post Author Profile Picture 
+    if(post_data.user.subscription && post_data.user.subscription.is_active) post_author_profile_picture.classList.add("subscriber") // Adds The Subscriber Class
     post_author_profile_picture.src = post_data.user.profile_picture_name ? `/../media/images/${post_data.user.id}/${post_data.user.profile_picture_name}` : "/../static/images/profile_picture.png" // Sets Profile Picture - https://www.flaticon.com/free-icon/user_3177440
     post_author_profile_picture.alt = ""
 

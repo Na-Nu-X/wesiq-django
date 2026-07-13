@@ -346,6 +346,12 @@
     border: 1px solid $secondary-color;
     border-radius: 50%;
     cursor: pointer;
+
+    &.subscriber {
+        background-color: transparentize($article-color, 0.85);
+        border-color: transparentize($article-color, 0.5);
+        box-shadow: 0 0 8px transparentize($article-color, 0.5);
+    }
 }
 
 // Form Input
