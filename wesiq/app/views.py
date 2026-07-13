@@ -351,6 +351,7 @@ def stripeWebhook(request):
                 subscription.stripe_subscription_id = stripe_subscription_id
                 subscription.plan = plan
                 subscription.is_active = True
+                subscription.is_cancelled = False
                 subscription.save() # Saves The New Subscription
 
                 # Creates The Transaction
@@ -1514,6 +1515,33 @@ def homepageView(request):
 
                 return HttpResponseRedirect(reverse("homepage_url"))
 
+            # Cancel Subscription Form
+            if request.POST.get("cancel_subscription_submit"):
+                subscription = getattr(logged_in_user, "subscription", None) # Gets The Current Subscription
+                
+                if subscription and subscription.stripe_subscription_id:
+                    try:
+                        # Cancels Subscription Billing At The End Of The Billing Period
+                        stripe.Subscription.modify(
+                            subscription.stripe_subscription_id,
+                            cancel_at_period_end=True
+                        )
+
+                        # Updates The Subscription
+                        subscription = Subscription.objects.filter(
+                            stripe_subscription_id=subscription.stripe_subscription_id
+                        ).update(
+                            is_cancelled=True
+                        )
+                        
+                        messages.add_message(request, messages.SUCCESS, _("Predplatné bude ukončené po skončení"))
+                    
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR, _("Predplatné sa nepodarilo zrušiť"))
+                        captureError(f"The subscription could not be cancelled.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+                else:
+                    messages.add_message(request, messages.ERROR, _("Nenašlo sa žiadne aktívne predplatné"))
+
             # Approve Review
             if request.headers.get("X-Requested-Action") == "approve-review":
                 try:
@@ -1585,6 +1613,7 @@ def homepageView(request):
             subscription = {
                 "plan": logged_in_user.subscription.plan,
                 "is_active": logged_in_user.subscription.is_active,
+                "is_cancelled": logged_in_user.subscription.is_cancelled,
                 "created_at": logged_in_user.subscription.created_at,
                 "updated_at": logged_in_user.subscription.updated_at,
                 "remaining_time": logged_in_user.subscription.remaining_time

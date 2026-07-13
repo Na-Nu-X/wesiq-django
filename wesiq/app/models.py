@@ -1251,6 +1251,13 @@ class Subscription(models.Model):
         null=False
     )
 
+    is_cancelled = models.BooleanField(
+        verbose_name="Is Cancelled", 
+        help_text="Stores the information if the subscription is cancelled. The subscription will end at the end of the billing period.", 
+        default=False, 
+        null=False
+    )
+
     created_at = models.DateTimeField(
         verbose_name="Created At", 
         help_text="Time the subscription was added.", 
@@ -1297,13 +1304,13 @@ class Subscription(models.Model):
             remaining_days = remaining_seconds // 86400 # Calculates The Remaining Days
 
             if remaining_days > 0:
-                return _("Ostáva %(remaining_days)s dní.") % {
+                return _("Ostáva %(remaining_days)s dní") % {
                     "remaining_days": remaining_days
                 }
 
             remaining_hours = remaining_seconds // 3600 # Calculates The Remaining Hours
 
-            return _("Ostáva %(remaining_hours)s hodín.") % {
+            return _("Ostáva %(remaining_hours)s hodín") % {
                 "remaining_hours": remaining_hours
             }
 
