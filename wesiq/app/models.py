@@ -305,6 +305,11 @@ class Users(models.Model):
 
         return years_since_registration # Returns The Amount Of Years Since Registration
 
+    class Meta:
+        verbose_name = _("Užívateľ")
+        verbose_name_plural = _("Užívatelia")
+        ordering = ["creation_time"]
+
     def __str__(self):
         return f"{self.role}: {self.first_name} {self.last_name}"
 
@@ -350,7 +355,11 @@ class FollowRelation(models.Model):
     )
 
     class Meta:
+        verbose_name = _("Vzťah užívateľov")
         unique_together = ("from_user", "to_user")
+
+    def __str__(self):
+        return _("From %(from_user)s to %(to_user)s.") % {"from_user": self.from_user, "to_user": self.to_user}
 
 class SpecialBadges(models.Model):
     user = models.ForeignKey(
@@ -382,6 +391,13 @@ class SpecialBadges(models.Model):
         auto_now_add=True, 
         null=False
     )
+
+    class Meta:
+        verbose_name = _("Špeciálny odznak")
+        verbose_name_plural = _("Špeciálne odznaky")
+
+    def __str__(self):
+        return _('%(first_name)s %(last_name)s získal "%(title)s" v %(obtained_in)s.') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.title, "obtained_in": self.obtained_in}
 
 class UserDailyOfficialTasks(models.Model):
     task = models.ForeignKey(
@@ -426,6 +442,15 @@ class UserDailyOfficialTasks(models.Model):
 
     class Meta:
         unique_together = ("task", "user")
+        verbose_name = _("Denná oficiálna úloha užívateľa")
+        verbose_name_plural = _("Denné oficiálne úlohy užívateľov")
+
+    def __str__(self):
+        if self.is_completed:
+            return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s".') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title}
+
+        else:
+            return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s" na %(progress_percentage)s%.') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title, "progress_percentage": self.progress_percentage}
 
 class UsersReport(models.Model):
     REPORT_REASON_CHOICES = [
@@ -473,6 +498,11 @@ class UsersReport(models.Model):
 
     class Meta:
         unique_together = ("reported_user", "reporting_user")
+        verbose_name = _("Nahlásenie užívateľa")
+        verbose_name_plural = _("Nahlásenia užívateľov")
+
+    def __str__(self):
+        return _("Užívateľ %(reporting_user_first_name)s %(reporting_user_last_name)s nahlásil užívateľa %(reported_user_first_name)s %(reported_user_last_name)s.") % {"reported_user_first_name": self.reported_user.first_name, "reported_user_last_name": self.reported_user.last_name, "reporting_user_first_name": self.reporting_user.first_name, "reporting_user_last_name": self.reporting_user.last_name}
     
 class Activity(models.Model):
     user = models.ForeignKey(
@@ -526,6 +556,13 @@ class Activity(models.Model):
         null=True, 
         blank=True
     )
+
+    class Meta:
+        verbose_name = _("Aktivita")
+        verbose_name_plural = _("Aktivity")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s zaznamenal %(elapsed_time)s sekúnd aktívneho času.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "elapsed_time": self.elapsed_time}
 
 class Reviews(models.Model):
     STATUS_CHOICES = [
@@ -603,6 +640,17 @@ class Reviews(models.Model):
         null=False
     )
 
+    class Meta:
+        verbose_name = _("Recenzia")
+        verbose_name_plural = _("Recenzie")
+
+    def __str__(self):
+        if(self.rating > 1):
+            return _("Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s hviezdičkami.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "rating": self.rating}
+
+        else:
+            return _("Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s hviezdičkou.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "rating": self.rating}
+
 class ReviewReport(models.Model):
     REPORT_REASON_CHOICES = [
         ("spam", "spam"),
@@ -647,6 +695,11 @@ class ReviewReport(models.Model):
 
     class Meta:
         unique_together = ("review", "user")
+        verbose_name = _("Nahlásená recenzia")
+        verbose_name_plural = _("Nahlásené recenzie")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s nahlásil recenziu od %(reviewer_first_name)s %(reviewer_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "reviewer_first_name": self.review.user.first_name, "reviewer_last_name": self.review.user.last_name}
 
 class Articles(models.Model):
     user = models.ForeignKey(
@@ -774,6 +827,13 @@ class Articles(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
 
+    class Meta:
+        verbose_name = _("Článok")
+        verbose_name_plural = _("Články")
+
+    def __str__(self):
+        return self.title
+
 class ArticleRating(models.Model):
     article = models.ForeignKey(
         Articles,
@@ -803,10 +863,15 @@ class ArticleRating(models.Model):
         help_text="Time the article rating was submitted.", 
         auto_now_add=True, 
         null=False
-    )
+    ) 
 
     class Meta:
         unique_together = ("article", "user")
+        verbose_name = _("Recenzia článku")
+        verbose_name_plural = _("Recenzie článkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s pridal recenziu pre článok: %(article_title)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "article_title": self.article.title}
 
 class ArticleForum(models.Model):
     STATUS_CHOICES = [
@@ -918,6 +983,13 @@ class ArticleForum(models.Model):
             
         super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = _("Komentár článku")
+        verbose_name_plural = _("Komentáre článkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s pridal komentár pre článok: %(article_title)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "article_title": self.article.title}
+
 class ArticleForumReport(models.Model):
     REPORT_REASON_CHOICES = [
         ("spam", "spam"),
@@ -962,6 +1034,11 @@ class ArticleForumReport(models.Model):
 
     class Meta:
         unique_together = ("articleforum", "user")
+        verbose_name = _("Nahlásenie komentáru článku")
+        verbose_name_plural = _("Nahlásenia komentárov článkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s nahlásil komentár od %(reported_first_name)s %(reported_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "reported_first_name": self.articleforum.user.first_name, "reported_last_name": self.articleforum.user.last_name}
 
 class TrainingPlan(models.Model):
     UNIT_CHOICES = [
@@ -1035,6 +1112,13 @@ class TrainingPlan(models.Model):
         null=False
     )
 
+    class Meta:
+        verbose_name = _("Tréningový plán")
+        verbose_name_plural = _("Tréningové plány")
+
+    def __str__(self):
+        return _("Tréningový plán užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
+
 class Exercises(models.Model):
     UNIT_CHOICES = [
         ("reps", "reps"),
@@ -1084,6 +1168,13 @@ class Exercises(models.Model):
         blank=True
     )
 
+    class Meta:
+        verbose_name = _("Cvik")
+        verbose_name_plural = _("Cviky")
+
+    def __str__(self):
+        return self.exercise
+
 class OfficialTasks(models.Model):
     title = models.CharField(
         verbose_name="Title", 
@@ -1105,6 +1196,13 @@ class OfficialTasks(models.Model):
         default=0, 
         null=False
     )
+
+    class Meta:
+        verbose_name = _("Oficiálna úloha")
+        verbose_name_plural = _("Oficiálne úlohy")
+
+    def __str__(self):
+        return _("Oficiálna úloha za %(xp)s XP.") % {"xp": self.xp}
 
 class CustomTasks(models.Model):
     user = models.ForeignKey(
@@ -1142,6 +1240,13 @@ class CustomTasks(models.Model):
         auto_now_add=True, 
         null=False
     )
+
+    class Meta:
+        verbose_name = _("Vlastná úloha")
+        verbose_name_plural = _("Vlastné úlohy")
+
+    def __str__(self):
+        return _("Vlastná úloha užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
 class Transactions(models.Model):
     STATUS_CHOICES = [
@@ -1206,6 +1311,10 @@ class Transactions(models.Model):
         max_length=20, 
         null=True
     )
+
+    class Meta:
+        verbose_name = _("Transakcia")
+        verbose_name_plural = _("Transakcie")
 
     def __str__(self):
         return f"{self.cardholder_name} - {self.amount}€ ({self.status})"
@@ -1317,8 +1426,15 @@ class Subscription(models.Model):
         except Exception:
             return _("Nepodarilo sa načítať dáta.")
 
+    class Meta:
+        verbose_name = _("Predplatné")
+
     def __str__(self):
-        return f"{self.user.username} - {self.get_plan_display()} ({'Aktívne' if self.is_active else 'Neaktívne'})"
+        if self.is_active:
+            return _("Užívateľ %(first_name)s %(last_name)s má aktívne predplatné.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
+
+        else:
+            return _("Užívateľ %(first_name)s %(last_name)s nemá aktívne predplatné.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
 def getPostUploadPath(instance, filename):
     # HLS Vide Files
@@ -1478,6 +1594,13 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse("post_url", kwargs={"post_id": self.id})
 
+    class Meta:
+        verbose_name = _("Príspevok")
+        verbose_name_plural = _("Príspevky")
+
+    def __str__(self):
+        return _("Príspevok užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
+
 class PostReport(models.Model):
     REPORT_REASON_CHOICES = [
         ("spam", "spam"),
@@ -1522,6 +1645,11 @@ class PostReport(models.Model):
 
     class Meta:
         unique_together = ("post", "user")
+        verbose_name = _("Príspevok")
+        verbose_name_plural = _("Príspevky")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s nahlásil príspevok užívateľa %(reported_first_name)s %(reported_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "reported_first_name": self.post.user.first_name, "reported_last_name": self.post.user.last_name}
 
 class PostMedia(models.Model):
     post = models.ForeignKey(
@@ -1624,6 +1752,13 @@ class PostMedia(models.Model):
     def filename(self):
         return os.path.basename(self.file.name)
 
+    class Meta:
+        verbose_name = _("Médium príspevku")
+        verbose_name_plural = _("Média príspevkov")
+
+    def __str__(self):
+        return _("Médium príspevku od %(first_name)s %(last_name)s.") % {"first_name": self.post.user.first_name, "last_name": self.post.user.last_name}
+
 class SeenPost(models.Model):
     user = models.ForeignKey(
         Users,
@@ -1653,6 +1788,11 @@ class SeenPost(models.Model):
 
     class Meta:
         unique_together = ("user", "post")
+        verbose_name = _("Označený videný príspevok")
+        verbose_name_plural = _("Označenia videných príspevkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s videl príspevok od %(post_user_first_name)s %(post_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "post_user_first_name": self.post.user.first_name, "post_user_last_name": self.post.user.last_name}
 
 class VideoView(models.Model):
     post_media = models.ForeignKey(
@@ -1681,6 +1821,11 @@ class VideoView(models.Model):
 
     class Meta:
         unique_together = ("post_media", "user")
+        verbose_name = _("Označené videné video")
+        verbose_name_plural = _("Označenia videných videií")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s videl video príspevku od %(post_user_first_name)s %(post_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "post_user_first_name": self.post_media.post.user.first_name, "post_user_last_name": self.post_media.post.user.last_name}
 
 class PostForum(models.Model):
     STATUS_CHOICES = [
@@ -1792,6 +1937,13 @@ class PostForum(models.Model):
             
         super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = _("Komentár príspevku")
+        verbose_name_plural = _("Komentáre príspevkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s pridal komentár k príspevku od %(post_user_first_name)s %(post_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "post_user_first_name": self.post.user.first_name, "post_user_last_name": self.post.user.last_name}
+
 class PostForumReport(models.Model):
     REPORT_REASON_CHOICES = [
         ("spam", "spam"),
@@ -1836,6 +1988,11 @@ class PostForumReport(models.Model):
 
     class Meta:
         unique_together = ("postforum", "user")
+        verbose_name = _("Nahlásenie komentáru príspevku")
+        verbose_name_plural = _("Nahlásenia komentárov príspevkov")
+
+    def __str__(self):
+        return _("Užívateľ %(first_name)s %(last_name)s nahlásil komentár od %(reported_first_name)s %(reported_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "reported_first_name": self.postforum.user.first_name, "reported_last_name": self.postforum.user.last_name}
 
 class BioLinks(models.Model):
     user = models.ForeignKey(
@@ -1861,6 +2018,13 @@ class BioLinks(models.Model):
         url = urlparse(self.url) # Gets The URL
         domain = url.netloc.replace("www.", "") # Gets The Domain
         return domain # Returns The URL Domain
+
+    class Meta:
+        verbose_name = _("Bio odkaz")
+        verbose_name_plural = _("Bio odkazy")
+
+    def __str__(self):
+        return _("Odkaz užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
 class Chat(models.Model):
     sender = models.ForeignKey(
@@ -1977,6 +2141,13 @@ class Chat(models.Model):
         else:
             return self.created_at.strftime("%d.%m.%Y %H:%M")
 
+    class Meta:
+        verbose_name = _("Správa")
+        verbose_name_plural = _("Správy")
+
+    def __str__(self):
+        return _("Správa od %(sender_first_name)s %(sender_first_name)s pre %(receiver_first_name)s %(receiver_last_name)s.") % {"sender_first_name": self.sender.first_name, "sender_last_name": self.sender.last_name, "receiver_first_name": self.receiver.first_name, "receiver_last_name": self.receiver.last_name}
+
 class MessageReaction(models.Model):
     chat = models.ForeignKey(
         Chat, 
@@ -2012,3 +2183,10 @@ class MessageReaction(models.Model):
 
     def __str__(self):
         return f"{self.user.username} has reacted {self.emoji} to message {self.chat.id}"
+
+    class Meta:
+        verbose_name = _("Správa")
+        verbose_name_plural = _("Správy")
+
+    def __str__(self):
+        return _("Reakcia od %(first_name)s %(last_name)s na správu od %(chat_user_first_name)s %(chat_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "chat_user_first_name": self.chat.user.first_name, "chat_user_last_name": self.chat.user.last_name}

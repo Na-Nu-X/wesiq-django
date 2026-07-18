@@ -1,8 +1,11 @@
 from django.urls import path
 from . import views
 from django.utils.translation import gettext_lazy as _
+import os
+from django.contrib import admin
 
 urlpatterns = [
+    path(os.environ.get('ADMIN_URL'), admin.site.urls), # Admin Page
     path('', views.homepageView, name='homepage_url'),
     path(_('domov/'), views.homepageView),
     path(_('prihlasenie/'), views.loginView, name='login_url'),

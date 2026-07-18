@@ -50,6 +50,11 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') # ALLOWED_HOSTS
 # Application definition
 
 INSTALLED_APPS = [
+    # Unfold Admin Page
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+
     'daphne',
 
     'app',
@@ -322,3 +327,20 @@ PASSWORD_HASHERS = [
 DOMAIN_URL = os.environ.get('DOMAIN_URL') # Stores The Domain URL
 
 SITE_ID = 1
+
+# Unfold Admin Page
+UNFOLD = {
+    "SITE_TITLE": "Reštaurácia Admin",
+    "SITE_HEADER": "Správa reštaurácie",
+    "SITE_URL": "/",
+    
+    "COLORS": {
+        "primary": {
+            "50": "250 245 255",
+            "100": "243 232 255",
+            "500": "168 85 247",
+            "600": "147 51 234",
+            "700": "126 34 206"
+        }
+    }
+}

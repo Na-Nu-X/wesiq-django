@@ -1,10 +1,8 @@
-from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import JavaScriptCatalog
-import os
 from app import views
 from django.contrib.sitemaps.views import sitemap
 from app.sitemaps import StaticSitemap, ProfileSitemap, PostSitemap
@@ -16,7 +14,6 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path(os.environ.get('ADMIN_URL'), admin.site.urls), # Admin Page
     path('accounts/', include('allauth.urls')), # Google OAuth 2.0
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('i18n/', include('django.conf.urls.i18n')), # Translation
