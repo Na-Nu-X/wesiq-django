@@ -5,25 +5,42 @@
  Main Styles
 ************/
 
+// Post Page Palette (aliases of shared glass tokens)
+
+$post-surface: $surface;
+$post-surface-border: $surface-border;
+$post-surface-hover: $surface-hover;
+$post-glow: $surface-glow;
+
 .post_container {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    gap: 14px;
     max-width: 600px;
     width: 100%;
     margin: 0px auto;
-    padding: 20px;
-    background-color: transparentize($secondary-color, 0.95);
-    border-radius: $medium-border-radius;
+    @include glass_panel($padding: 22px 24px 24px, $blur: 12px);
     outline: none;
+    overflow: visible;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &::before {
+        @include glass_accent_bar($width: 72px, $height: 2px);
+    }
+
+    &:hover {
+        border-color: transparentize($blue-color, 0.3);
+        box-shadow: 0 14px 36px transparentize($blue-color, 0.78);
+    }
 
     .header {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         width: 100%;
+        padding-bottom: 4px;
 
         .left {
             &:has(a:focus-visible) {
@@ -77,18 +94,21 @@
                 }
 
                 .follow_button {
-                    padding: 5px 10px;
+                    padding: 6px 14px;
                     text-align: center;
-                    background-color: transparent;
+                    background: transparentize($blue-color, 0.85);
                     color: $secondary-color;
-                    border: 1px solid transparentize($blue-color, 0.5);
+                    border: 1px solid $post-surface-border;
                     border-radius: $big-border-radius;
                     outline: none;
-                    transition: border-color 0.3s ease;
+                    font-size: 0.9em;
+                    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 
                     &:hover,
                     &:focus-visible {
-                        border-color: $blue-color;
+                        border-color: transparentize($blue-color, 0.25);
+                        background: transparentize($blue-color, 0.7);
+                        box-shadow: 0 4px 14px $post-glow;
                         cursor: pointer;
                     }
                 }
@@ -167,7 +187,10 @@
         display: flex;
         justify-content: center;
         width: 100%;
+        border-radius: $big-border-radius;
         overflow: hidden;
+        border: 1px solid transparentize($blue-color, 0.88);
+        box-shadow: 0 4px 18px transparentize($main-color, 0.55);
 
         &:has(.one_post .video_container:hover) .post_bars {
             visibility: hidden;
@@ -764,25 +787,28 @@
     .society {
         display: flex;
         align-items: center;
-        gap: 20px;
-        margin-top: 10px;
+        gap: 18px;
+        margin-top: 6px;
+        padding: 8px 4px 2px;
+        border-top: 1px solid $post-surface-border;
 
         .likes {
             all: unset;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             height: 20px;
 
             .fa-heart {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
+                transition: color 0.25s ease, transform 0.25s ease;
 
                 &:hover {
                     color: $red-color !important;
+                    transform: scale(1.08);
                     cursor: pointer;
-                    transition: color 0.3s ease;
                 }
             }
 
@@ -793,11 +819,11 @@
             .likes_counter,
             .hidden_likes_counter {
                 display: inline-block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
             }
 
             .likes_counter {
-                font-size: 1.2em;
+                font-size: 1.15em;
             }
 
             .hidden_likes_counter {
@@ -809,28 +835,29 @@
             all: unset;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
 
             .fa-comment {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
+                transition: color 0.25s ease, transform 0.25s ease;
 
                 &:hover {
-                    color: darken($secondary-color, 20%);
+                    color: $blue-color;
+                    transform: scale(1.08);
                     cursor: pointer;
-                    transition: color 0.3s ease;
                 }
             }
 
             .comments_counter,
             .hidden_comments_counter {
                 display: inline-block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
             }
 
             .comments_counter {
-                font-size: 1.2em;
+                font-size: 1.15em;
             }
 
             .hidden_comments_counter {
@@ -842,14 +869,15 @@
             all: unset;
 
             .fa-share-nodes {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
+                transition: color 0.25s ease, transform 0.25s ease;
 
                 &:hover {
-                    color: darken($secondary-color, 20%);
+                    color: $blue-color;
+                    transform: scale(1.08);
                     cursor: pointer;
-                    transition: color 0.3s ease;
                 }
             }
         }
@@ -857,26 +885,26 @@
         .views {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             height: 20px;
             margin-left: auto;
 
             .fa-eye {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
+                transition: color 0.25s ease;
 
                 &:hover {
-                    color: darken($secondary-color, 20%);
+                    color: darken($secondary-color, 15%);
                     cursor: pointer;
-                    transition: color 0.3s ease;
                 }
             }
 
             .views_counter {
                 display: inline-block;
-                color: darken($secondary-color, 40%);
-                font-size: 1.2em;
+                color: darken($secondary-color, 35%);
+                font-size: 1.15em;
             }
         }
 
@@ -887,17 +915,19 @@
                 cursor: pointer;
 
                 .fa-chart-simple {
-                    color: darken($secondary-color, 20%);
+                    color: $blue-color;
                     cursor: pointer;
-                    transition: color 0.3s ease;
+                    transition: color 0.25s ease, transform 0.25s ease;
+                    transform: scale(1.08);
                 }
             }
 
             .fa-chart-simple {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
                 pointer-events: none;
+                transition: color 0.25s ease, transform 0.25s ease;
             }
         }
 
@@ -905,21 +935,24 @@
             all: unset;
             
             .fa-bookmark {
-                font-size: 1.5em;
+                font-size: 1.45em;
                 display: block;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
+                transition: color 0.25s ease, transform 0.25s ease;
 
                 &:hover {
-                    color: darken($secondary-color, 20%);
+                    color: $article-color;
+                    transform: scale(1.08);
                     cursor: pointer;
-                    transition: color 0.3s ease;
                 }
             }
         }
     }
 
     .description {
-        margin-top: 10px;
+        margin-top: 4px;
+        line-height: 1.5;
+        color: transparentize($secondary-color, 0.08);
 
         .tag,
         .hashtag {
@@ -930,7 +963,7 @@
             border-radius: $small-border-radius;
             font-size: 0.8em;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
         .tag {
@@ -939,7 +972,8 @@
             color: $blue-color;
 
             &:hover {
-                background-color: transparentize($blue-color, 0.7);
+                background-color: transparentize($blue-color, 0.65);
+                transform: translateY(-1px);
             }
         }
 
@@ -948,7 +982,8 @@
             color: $green-color;
 
             &:hover {
-                background-color: transparentize($green-color, 0.8);
+                background-color: transparentize($green-color, 0.75);
+                transform: translateY(-1px);
             }
         }
     }
@@ -1035,6 +1070,10 @@
     }
 
     .comment_forum {
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: 1px solid $post-surface-border;
+
         &.hidden {
             display: none;
             opacity: 0;
@@ -1321,6 +1360,7 @@
 
         .write_comment_form {
             position: relative;
+            margin-top: 8px;
 
             .comment {
                 width: 100%;
@@ -1331,16 +1371,23 @@
                 padding-bottom: 12px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background-color: lighten($main-color, 20%);
+                background: transparentize($main-color, 0.45);
                 color: $secondary-color;
+                border: 1px solid $post-surface-border;
                 border-radius: $big-border-radius;
                 outline: none;
-                transition: padding 0.3s ease;
+                transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:empty::before {
                     content: attr(data-placeholder);
                     color: darken($secondary-color, 40%);
                     cursor: text;
+                }
+
+                &:hover,
+                &:focus {
+                    border-color: transparentize($blue-color, 0.35);
+                    box-shadow: 0 4px 18px transparentize($blue-color, 0.88);
                 }
                 
                 .tag,
@@ -1388,14 +1435,14 @@
                     cursor: pointer;
                     
                     .fa-face-surprise {
-                        color: darken($secondary-color, 20%);
+                        color: $blue-color;
                         transition: color 0.3s ease;
                     }
                 }
 
                 .fa-face-surprise {
                     display: block;
-                    color: darken($secondary-color, 40%);
+                    color: darken($secondary-color, 35%);
                     pointer-events: none;
                 }
             }
@@ -1412,12 +1459,12 @@
                 transform: translateY(-50%) scale(1);
                 width: 30px;
                 height: 30px;
-                color: darken($secondary-color, 40%);
+                color: darken($secondary-color, 35%);
                 transition: transform 0.3s ease, color 0.3s ease;
 
                 &:hover {
                     transform: translateY(-50%) scale(1.1);
-                    color: darken($secondary-color, 20%);
+                    color: $blue-color;
                     cursor: pointer;
                 }
 

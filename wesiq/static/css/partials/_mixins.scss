@@ -24,7 +24,7 @@
     width: $size;
     height: $size;
     font-size: $size;
-    color: darken($secondary-color, 20%);
+    color: $text-muted;
     border-radius: 50%;
     transition: opacity 1s ease, visibility 1s ease;
     animation: preloaderSpin 1s infinite linear;
@@ -96,6 +96,52 @@
     }
 }
 
+// Glass Panel
+
+@mixin glass_panel($padding: 20px, $radius: $medium-border-radius, $blur: 12px) {
+    padding: $padding;
+    background: $surface;
+    border: 1px solid $surface-border;
+    border-radius: $radius;
+    backdrop-filter: blur($blur);
+    box-shadow:
+        0 12px 36px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(91, 140, 255, 0.06) inset;
+}
+
+@mixin glass_accent_bar($width: 80px, $height: 3px) {
+    content: "";
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: $width;
+    height: $height;
+    background: linear-gradient(90deg, transparent, $blue-soft, $blue-color, $blue-soft, transparent);
+    border-radius: 2px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@mixin glass_icon_button($size: 40px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $size;
+    height: $size;
+    background: $surface-hover;
+    border: 1px solid $surface-border;
+    border-radius: 50%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(91, 140, 255, 0.28);
+        border-color: transparentize($blue-color, 0.25);
+        box-shadow: 0 6px 18px $surface-glow;
+    }
+}
+
 // Blue Button
 
 @mixin blue_button($width: 90%, $border-radius: $big-border-radius) {
@@ -105,14 +151,15 @@
     text-align: center;
     background-color: transparent;
     color: $secondary-color;
-    border: 1px solid transparentize($blue-color, 0.5);
+    border: 1px solid transparentize($blue-color, 0.35);
     border-radius: $border-radius;
     outline: none;
-    transition: border-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
     &:hover,
     &:focus-visible {
         border-color: $blue-color;
+        box-shadow: 0 6px 20px transparentize($blue-color, 0.65);
         transform: scale(1.05);
         letter-spacing: 0.5px;
         cursor: pointer;
@@ -124,6 +171,8 @@
 @mixin animated_border($colors: conic-gradient(
         from var(--angle), 
         $blue-color,
+        transparent,
+        $blue-soft,
         transparent,
         $blue-color
     ),
@@ -158,6 +207,8 @@
     $colors: conic-gradient(
         from var(--angle), 
         $blue-color,
+        transparent,
+        $blue-soft,
         transparent,
         $blue-color
     ),
@@ -247,22 +298,23 @@
     width: 100%;
     cursor: pointer;
 
-    .select {
+            .select {
         display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
         height: 40px;
         padding: 0px 8.5px;
-        color: darken($secondary-color, 20%);
-        background-color: transparentize($main-color, 0.8);
-        border: 1px solid transparentize($blue-color, 0.5);
+        color: $text-muted;
+        background-color: $surface-inset;
+        border: 1px solid $surface-border;
         border-radius: $small-border-radius;
-        transition: border 0.3s ease;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
 
         &:hover,
         &:focus-visible {
             border-color: $blue-color !important;
+            box-shadow: 0 4px 14px transparentize($blue-color, 0.8);
 
             .fa-angle-down,
             .fa-angle-up {
@@ -298,7 +350,7 @@
         border-radius: $small-border-radius;
         overflow-y: $scrollbar;
         transition: height 0.3s ease;
-        z-index: 100;
+        z-index: 500;
 
         &::-webkit-scrollbar {
             width: 3px;
@@ -356,7 +408,7 @@
 
 // Form Input
 
-@mixin form_input($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin form_input($color: transparentize($blue-color, 0.4), $hover_color: $blue-color) {
     position: relative;
     width: 90%;
     height: 50px;
@@ -376,16 +428,16 @@
     }
 
     &::placeholder {
-        color: darken($secondary-color, 40%);
+        color: $text-subtle;
     }
 
     &:-webkit-autofill {
-        -webkit-text-fill-color: rgb(255, 255, 255);
+        -webkit-text-fill-color: $secondary-color;
         transition: width 0.3s ease, background-color 9999s ease;
 
         &:hover,
         &:focus {
-            -webkit-text-fill-color: rgb(255, 255, 255);
+            -webkit-text-fill-color: $secondary-color;
             transition: width 0.3s ease, background-color 9999s ease;
         }
     }
@@ -393,7 +445,7 @@
 
 // Form Textarea
 
-@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.4), $hover_color: $blue-color) {
     width: $width;
     min-height: 100px;
     field-sizing: content;
@@ -414,7 +466,7 @@
     }
 
     &::placeholder {
-        color: darken($secondary-color, 40%);
+        color: $text-subtle;
     }
 }
 
@@ -437,7 +489,7 @@
 
 // Form Back
 
-@mixin form_back($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin form_back($color: transparentize($blue-color, 0.35), $hover_color: $blue-color) {
     position: absolute;
     top: 42.5px;
     left: 50px;
@@ -457,7 +509,7 @@
 
 // Icons
 
-@mixin icon($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin icon($color: transparentize($blue-color, 0.35), $hover_color: $blue-color) {
     color: $color;
     transition: top 0.3s ease, right 0.3s ease, bottom 0.3s ease, left 0.3s ease;
 
@@ -575,7 +627,7 @@
 
         .fa-xmark {
             font-size: 20px;
-            color: transparentize($blue-color, 0.5);
+            color: transparentize($blue-color, 0.35);
         }
     }
 
@@ -583,24 +635,25 @@
         width: 100%;
         height: 40px;
         padding: 0px 40px;
-        background-color: transparentize($main-color, 0.9);
+        background-color: $surface-inset;
         color: $secondary-color;
         border: none;
-        border: 1px solid transparentize($blue-color, 0.5);
+        border: 1px solid $surface-border;
         border-radius: $small-border-radius;
         text-align: center;
         outline: none;
         font-size: 1.2em;
-        transition: border 0.3s ease;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
         z-index: 50;
 
         &:hover,
         &:focus-visible {
-            border-color: $blue-color !important;
+            border-color: transparentize($blue-color, 0.2) !important;
+            box-shadow: 0 4px 18px transparentize($blue-color, 0.75);
         }
 
         &::placeholder {
-            color: darken($secondary-color, 20%);
+            color: $text-subtle;
         }
     }
 
@@ -615,7 +668,7 @@
     all: unset;
 
     i {
-        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+        @include icon($color: $text-subtle, $hover_color: $text-muted);
         display: block;
         font-size: 1.2em;
     }
@@ -633,10 +686,11 @@
     margin-right: 10px;
     text-align: center;
     color: $secondary-color;
-    background-color: transparentize($main-color, 0.8);
-    backdrop-filter: blur(5px);
-    border: 1px solid transparentize($blue-color, 0.5);
+    background: $surface-elevated;
+    backdrop-filter: blur(12px);
+    border: 1px solid $surface-border;
     border-radius: $small-border-radius;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
 
     &:popover-open {
         display: flex;
@@ -730,17 +784,17 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: darken($secondary-color, 40%);
+        background-color: transparentize($blue-color, 0.45);
         border-radius: 2.5px;
 
         &:hover {
-            background-color: darken($secondary-color, 20%);
+            background-color: transparentize($blue-color, 0.2);
             cursor: pointer;
         }
     }
 
     &::-webkit-scrollbar-track {
-        background-color: lighten($main-color, 20%);
+        background-color: $surface-inset;
         border-radius: 2.5px;
     }
 }
