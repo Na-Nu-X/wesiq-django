@@ -1,6 +1,45 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
+// Manage Training Plans Palette (aliases of shared glass tokens)
+
+$plans-surface: $surface;
+$plans-surface-border: $surface-border;
+$plans-surface-hover: $surface-hover;
+$plans-glow: $surface-glow;
+
+/**************
+ Header Styles
+**************/
+
+.banner {
+    .training_session {
+        a {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 15px;
+            text-decoration: none;
+            color: $secondary-color;
+            background: $plans-surface;
+            border: 1px solid $plans-surface-border;
+            border-radius: $big-border-radius;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+
+            &:hover,
+            &:focus-visible {
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 5px 20px $plans-glow;
+                transform: translateY(-1px);
+            }
+        }
+    }
+}
+
+/************
+ Main Styles
+************/
+
 .no_logged_in {
     @include flex_center;
     position: fixed;
@@ -8,17 +47,27 @@
     left: 0px;
     width: 100%;
     height: calc(100vh);
-    backdrop-filter: blur(2px);
-    background-color: transparentize($main-color, 0.5);
+    backdrop-filter: blur(4px);
+    background-color: transparentize($main-color, 0.45);
     z-index: 500;
 
     p {
+        max-width: 420px;
+        padding: 28px 32px;
         text-align: center;
+        background: $plans-surface;
+        border: 1px solid $plans-surface-border;
+        border-radius: $medium-border-radius;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+        color: transparentize($secondary-color, 0.1);
+        line-height: 1.6;
 
         a {
-            color: $secondary-color;
+            color: $blue-color;
             text-decoration: none;
             font-style: italic;
+            font-weight: 500;
 
             &:hover,
             &:active,
@@ -34,9 +83,13 @@
     top: 50%;
     left: 0px;
     transform: translateY(-50%);
-    padding: 15px;
-    background-color: transparentize($main-color, 0.2);
-    border-radius: 0px $big-border-radius $big-border-radius 0px;
+    padding: 18px 14px;
+    background: $plans-surface;
+    border: 1px solid $plans-surface-border;
+    border-left: none;
+    border-radius: 0px $medium-border-radius $medium-border-radius 0px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px transparentize($main-color, 0.55);
     z-index: 2000;
 
     ul {
@@ -50,15 +103,18 @@
 
             a {
                 @include flex_center;
-                width: 40px;
-                height: 40px;
-                border: 1px solid $blue-color;
+                width: 42px;
+                height: 42px;
+                background: $plans-surface-hover;
+                border: 1px solid $plans-surface-border;
                 border-radius: 50%;
                 text-decoration: none;
-                transition: transform 0.2s ease, background-color 0.2s ease;
+                transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
                 &.active {
-                    background-color: $blue-color;
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.55));
+                    border-color: transparentize($blue-color, 0.2);
+                    box-shadow: 0 4px 16px $plans-glow;
 
                     i {
                         color: $secondary-color;
@@ -67,8 +123,10 @@
 
                 &:hover,
                 &:focus-visible {
-                    transform: scale(1.1);
-                    background-color: $blue-color;
+                    transform: scale(1.08);
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.55));
+                    border-color: transparentize($blue-color, 0.2);
+                    box-shadow: 0 4px 16px $plans-glow;
 
                     i {
                         color: $secondary-color;
@@ -77,7 +135,7 @@
 
                 i {
                     color: $blue-color;
-                    font-size: 1.2em;
+                    font-size: 1.15em;
                     transition: color 0.2s ease;
                 }
             }
@@ -86,7 +144,15 @@
                 pointer-events: none;
                 position: absolute;
                 transform: translateX(calc(-100% + 55px));
+                padding: 4px 10px;
                 opacity: 0;
+                color: $secondary-color;
+                background: $plans-surface;
+                border: 1px solid $plans-surface-border;
+                border-radius: $small-border-radius;
+                backdrop-filter: blur(8px);
+                font-size: 0.85em;
+                white-space: nowrap;
                 transition: transform 0.2s ease, opacity 0.2s ease;
 
                 &.show {
@@ -103,16 +169,29 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    gap: 20px;
-    padding: 0px 10px;
+    gap: 28px;
+    max-width: $main-width;
+    margin: 0px auto;
+    padding: 0px 20px 40px;
 
     .top {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        max-width: 500px;
+        max-width: 520px;
         width: 100%;
         min-height: calc(100vh - 125px);
+        padding: 28px 26px;
+        background: $plans-surface;
+        border: 1px solid $plans-surface-border;
+        border-radius: $medium-border-radius;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+        position: relative;
+
+        &::before {
+            @include glass_accent_bar;
+        }
 
         // New Training Plan, Edit Training Plan
 
@@ -127,8 +206,9 @@
             .additional_info {
                 display: flex;
                 justify-content: space-between;
+                gap: 10px;
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 14px;
 
                 .title {
                     @include form_input;
@@ -196,8 +276,12 @@
                         text-align: left;
                         padding: 0px 15px;
                         color: $secondary-color;
-                        background-color: transparentize($main-color, 0.2);
-                        border-radius: 0px 0px 5px 5px;
+                        background: $plans-surface;
+                        border: 1px solid $plans-surface-border;
+                        border-top: none;
+                        border-radius: 0px 0px $small-border-radius $small-border-radius;
+                        backdrop-filter: blur(10px);
+                        box-shadow: 0 8px 24px transparentize($main-color, 0.55);
                         overflow: hidden;
                         transition: height 0.3s ease;
                         z-index: 200;
@@ -208,8 +292,8 @@
 
                         .option {
                             @include crop_text;
-                            padding: 5px 0px;
-                            transition: color 0.3s ease;
+                            padding: 6px 0px;
+                            transition: color 0.3s ease, background-color 0.3s ease;
 
                             &:hover,
                             &:focus-visible,
@@ -242,8 +326,11 @@
                 flex-direction: column;
                 width: 100%;
                 height: 250px;
-                border-radius: $small-border-radius;
+                background: linear-gradient(160deg, transparentize($main-color, 0.85) 0%, transparentize($blue-color, 0.95) 100%);
+                border: 1px solid $plans-surface-border;
+                border-radius: $medium-border-radius;
                 overflow: hidden;
+                box-shadow: 0 10px 30px transparentize($main-color, 0.6);
 
                 &.animate {
                     animation: trainingPlanDrag 1s infinite alternate;
@@ -253,6 +340,7 @@
                     @include flex_center($direction: column);
                     gap: 10px;
                     height: 100%;
+                    color: transparentize($secondary-color, 0.25);
                     z-index: 100;
 
                     &:not(.active) {
@@ -264,12 +352,14 @@
 
                         .fa-compress {
                             transform: scale(1.1);
+                            color: $blue-color;
                         }
                     }
 
                     .fa-compress {
                         font-size: 2.5em;
-                        transition: transform 0.3s ease;
+                        color: transparentize($blue-color, 0.25);
+                        transition: transform 0.3s ease, color 0.3s ease;
 
                         &.error_animation {
                             animation: trainingPlanError 0.2s linear 3;
@@ -284,7 +374,7 @@
                     justify-content: flex-start;
                     width: 100%;
                     height: 230px;
-                    padding: 10px;
+                    padding: 12px 14px;
                     transition: transform 0.5s ease;
                     cursor: move;
                     z-index: 100;
@@ -315,6 +405,10 @@
                         font-family: $article-heading-font;
                         font-size: 2em;
                         text-align: center;
+                        background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.15) 100%);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
                     }
 
                     .labels {
@@ -340,7 +434,7 @@
 
                                 &:hover {
                                     .fa-angle-down {
-                                        color: $article-color;
+                                        color: $blue-color;
                                     }
                                 }
 
@@ -364,8 +458,10 @@
                                 text-align: left;
                                 padding: 0px 15px;
                                 color: $secondary-color;
-                                background-color: transparentize($main-color, 0.2);
-                                border-radius: 0px 0px 5px 5px;
+                                background: $plans-surface;
+                                border: 1px solid $plans-surface-border;
+                                border-radius: $small-border-radius;
+                                backdrop-filter: blur(10px);
                                 overflow: hidden;
                                 transition: height 0.3s ease;
                                 z-index: 100;
@@ -382,7 +478,7 @@
                                     &:hover,
                                     &:focus-visible,
                                     &.selected {
-                                        color: $article-color !important;
+                                        color: $blue-color !important;
                                     }
 
                                     &:focus-visible {
@@ -392,7 +488,7 @@
                                     i {
                                         width: 1em;
                                         margin-right: 10px;
-                                        color: $article-color;
+                                        color: $blue-color;
                                     }
                                 }
                             }
@@ -406,6 +502,7 @@
                             width: 100%;
                             text-align: center;
                             line-height: 15px;
+                            color: transparentize($secondary-color, 0.2);
                         }
                     }
 
@@ -415,6 +512,14 @@
                         height: 40px;
                         margin-bottom: 10px;
                         flex-shrink: 0;
+                        background: $plans-surface-hover;
+                        border-color: $plans-surface-border;
+
+                        &:hover,
+                        &:focus-visible {
+                            border-color: transparentize($blue-color, 0.25);
+                            background: transparentize($blue-color, 0.75);
+                        }
                     }
 
                     .periods_container {
@@ -428,8 +533,8 @@
                             width: 100%;
                             display: flex;
                             justify-content: space-between;
-                            gap: 5px;
-                            margin-top: 5px;
+                            gap: 8px;
+                            margin-top: 6px;
 
                             &:first-child {
                                 margin-top: 0px;
@@ -439,8 +544,16 @@
                             .sets_container {
                                 display: flex;
                                 width: 100%;
-                                border: 1px solid transparentize($blue-color, 0.5);
+                                background: transparentize($main-color, 0.55);
+                                border: 1px solid $plans-surface-border;
                                 border-radius: calc(35px / 2);
+                                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+                                &:hover,
+                                &:focus-within {
+                                    border-color: transparentize($blue-color, 0.35);
+                                    box-shadow: 0 4px 14px transparentize($blue-color, 0.85);
+                                }
 
                                 .decrease_reps,
                                 .increase_reps,
@@ -452,6 +565,11 @@
                                     border: none;
                                     outline: none;
                                     cursor: pointer;
+                                    transition: color 0.2s ease;
+
+                                    &:hover {
+                                        color: $blue-color;
+                                    }
 
                                     i {
                                         pointer-events: none;
@@ -519,6 +637,14 @@
                         .subtract_time {
                             @include blue_button($width: 50px);
                             position: relative;
+                            background: $plans-surface-hover;
+                            border-color: $plans-surface-border;
+
+                            &:hover,
+                            &:focus-visible {
+                                border-color: transparentize($blue-color, 0.25);
+                                box-shadow: 0 4px 14px $plans-glow;
+                            }
 
                             .fa-plus,
                             .fa-minus {
@@ -556,6 +682,7 @@
                                 @include position_center;
                                 font-family: $timer-font;
                                 font-size: 1.2em;
+                                text-shadow: 0 0 20px $plans-glow;
                             }
                         }
                     }
@@ -567,15 +694,16 @@
                     flex-direction: row;
                     justify-content: space-between;
                     gap: 10px;
-                    margin: 0px 10px 10px;
+                    margin: 0px 12px 12px;
                     z-index: 100;
 
                     .bar {
                         position: relative;
                         width: 100%;
                         height: 10px;
-                        border: 1px solid transparentize($secondary-color, 0.8);
+                        border: 1px solid $plans-surface-border;
                         border-radius: calc(10px / 2);
+                        background: transparentize($main-color, 0.6);
                         
                         &.animate:not(&.active) {
                             animation: barDrag 1s infinite alternate;
@@ -614,14 +742,24 @@
 
             .save {
                 @include blue_button($width: 100%);
-                border-color: $blue-color;
+                margin-top: 4px;
                 line-height: 15px;
+                color: $secondary-color;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
+                border-color: transparentize($blue-color, 0.2);
+                box-shadow: 0 6px 20px transparentize($blue-color, 0.7);
+
+                &:hover,
+                &:focus-visible {
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                    box-shadow: 0 8px 28px transparentize($blue-color, 0.55);
+                }
             }
         }
 
         .new_training_plan {
             .save {
-                margin-top: 10px;
+                margin-top: 14px;
             }
         }
 
@@ -638,20 +776,22 @@
                 justify-content: space-between;
                 gap: 10px;
                 width: 100%;
-                margin: 10px 0px;
+                margin: 12px 0px;
 
                 .bar {
                     width: 100%;
                     height: 10px;
-                    border: 1px solid transparentize($blue-color, 0.5);
+                    background: transparentize($main-color, 0.6);
+                    border: 1px solid $plans-surface-border;
                     border-radius: calc(10px / 2);
-                    transition: background-color 0.3s ease;
+                    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
                     &.active,
                     &:hover {
                         cursor: pointer;
                         background-color: $blue-color;
-                        box-shadow: 0px 0px 10px $blue-color;
+                        border-color: transparentize($blue-color, 0.2);
+                        box-shadow: 0px 0px 12px $plans-glow;
                     }
                 }
             }
@@ -661,10 +801,19 @@
                 flex-direction: row;
                 gap: 10px;
                 width: 100%;
-                margin-top: 10px;
+                margin-top: 12px;
 
                 .delete {
                     @include blue_button($width: 100%);
+                    background: transparentize($red-color, 0.88);
+                    border-color: transparentize($red-color, 0.45);
+
+                    &:hover,
+                    &:focus-visible {
+                        border-color: $red-color;
+                        background: transparentize($red-color, 0.75);
+                        box-shadow: 0 4px 16px transparentize($red-color, 0.65);
+                    }
                 }
             }
         }
@@ -674,25 +823,51 @@
 
     .exercise_selection {
         @include flex_center($direction: column);
-        max-width: calc(500px + 10px);
+        max-width: calc(520px + 10px);
         width: 100%;
         min-height: 500px;
+        padding: 28px 24px;
+        background: $plans-surface;
+        border: 1px solid $plans-surface-border;
+        border-radius: $medium-border-radius;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+        position: relative;
+
+        &::before {
+            @include glass_accent_bar;
+        }
     
         .search_bar_menu {
             @include search_bar;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+
+            .search_bar {
+                height: 44px;
+                background: $plans-surface;
+                border-radius: $big-border-radius;
+                border-color: $plans-surface-border;
+                backdrop-filter: blur(10px);
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:hover,
+                &:focus-visible {
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 5px 25px transparentize($blue-color, 0.85);
+                }
+            }
         }
     
         .exercises {
             @include scrollbar;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
+            gap: 12px;
             width: 100%;
             max-height: 440px;
             margin: 0px auto;
-            padding: 5px;
+            padding: 6px;
             text-align: center;
     
             .custom_exercise,
@@ -707,7 +882,13 @@
                 .fa-plus,
                 .fa-dumbbell {
                     font-size: 2.5em;
-                    transition: filter 0.3s ease;
+                    color: $blue-color;
+                    transition: filter 0.3s ease, transform 0.3s ease;
+                }
+
+                &:hover .fa-plus,
+                &:hover .fa-dumbbell {
+                    transform: scale(1.08);
                 }
             }
     
@@ -717,12 +898,13 @@
                 position: relative;
                 aspect-ratio: 1 / 1;
                 padding: 10px;
-                background-color: transparentize($secondary-color, 0.95);
-                box-shadow: 0px 0px 5px 0px $blue-color;
-                border: 1px solid $blue-color;
-                border-radius: $small-border-radius;
+                background: $plans-surface;
+                border: 1px solid $plans-surface-border;
+                border-radius: $medium-border-radius;
+                backdrop-filter: blur(8px);
+                box-shadow: 0 4px 16px transparentize($main-color, 0.6);
                 cursor: move;
-                transition: border 0.3s ease;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
     
                 &.hidden {
                     display: none !important;
@@ -730,7 +912,10 @@
     
                 &:hover, 
                 &:focus-visible {
-                    border-color: lighten($blue-color, 2%);
+                    border-color: transparentize($blue-color, 0.25);
+                    background: $plans-surface-hover;
+                    box-shadow: 0 8px 24px transparentize($blue-color, 0.75);
+                    transform: translateY(-2px);
                     outline: none;
     
                     .name {
@@ -750,6 +935,11 @@
                             border: none;
                             outline: none;
                             cursor: pointer;
+                            transition: color 0.2s ease;
+
+                            &:hover {
+                                color: $blue-color;
+                            }
                             
                             i {
                                 pointer-events: none;
@@ -760,6 +950,7 @@
                         .weight {
                             font-size: 2em;
                             cursor: default;
+                            color: $secondary-color;
     
                             span {
                                 font-size: inherit;
@@ -777,6 +968,9 @@
     
                 .name {
                     transition: filter 0.3s ease;
+                    color: transparentize($secondary-color, 0.08);
+                    font-size: 0.9em;
+                    line-height: 1.2;
                 }
                 
                 .weight_selection {
@@ -801,7 +995,7 @@
 
 @keyframes trainingPlanDrag {
     100% {
-        background-color: transparentize($secondary-color, 0.85);
+        background-color: transparentize($blue-color, 0.88);
         filter: blur(1px);
     }
 }
@@ -843,9 +1037,11 @@
 @media (width <= 1060px) {
     .first_section {
         flex-direction: column;
+        padding-bottom: 32px;
 
         .top {
             justify-content: center;
+            max-width: 800px;
         }
 
         .exercise_selection {
@@ -860,8 +1056,12 @@
 
 @media (width <= 400px) {
     .first_section {
+        padding: 0px 12px 28px;
+        gap: 18px;
+
         .top {
             justify-content: flex-start;
+            padding: 20px 16px;
 
             .new_training_plan,
             .edit_training_plan {
@@ -882,6 +1082,10 @@
                     }
                 }
             }
+        }
+
+        .exercise_selection {
+            padding: 20px 14px;
         }
     }
 }

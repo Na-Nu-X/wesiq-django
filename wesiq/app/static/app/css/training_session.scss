@@ -1,12 +1,12 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
-// Training page palette
+// Training page palette (aliases of shared glass tokens)
 
-$training-surface: rgba(8, 12, 28, 0.65);
-$training-surface-border: rgba(75, 75, 250, 0.22);
-$training-surface-hover: rgba(75, 75, 250, 0.14);
-$training-glow: rgba(75, 75, 250, 0.35);
+$training-surface: $surface;
+$training-surface-border: $surface-border;
+$training-surface-hover: $surface-hover;
+$training-glow: $surface-glow;
 
 /**************
  Header Styles
@@ -93,24 +93,11 @@ $training-glow: rgba(75, 75, 250, 0.35);
     .training_section {
         position: relative;
         margin: 0px auto 40px;
-        padding: 35px 30px;
-        background: $training-surface;
-        border: 1px solid $training-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+        @include glass_panel($padding: 35px 30px, $blur: 10px);
         overflow: visible;
 
         &::before {
-            content: "";
-            position: absolute;
-            top: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, $blue-color, transparent);
-            border-radius: 2px;
+            @include glass_accent_bar;
         }
 
         &.activity_section {

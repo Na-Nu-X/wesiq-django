@@ -30,13 +30,17 @@ body {
     }
 
     background: {
-        image: radial-gradient(circle, transparentize($main-color, 0.2) 50%, transparentize($main-color, 0.4) 100%), url("../images/background.jpeg");
+        image:
+            radial-gradient(ellipse 100% 80% at 50% -20%, transparentize($blue-color, 0.78) 0%, transparent 55%),
+            radial-gradient(circle at 50% 40%, transparentize($main-color, 0.12) 35%, transparentize($main-color, 0.28) 100%),
+            url("../images/background.jpeg");
         position: center center;
         size: cover;
         attachment: fixed;
         repeat: no-repeat;
     }
 
+    color: $text-primary;
     overflow-x: hidden;
 }
 
@@ -289,7 +293,9 @@ header {
         width: 100%;
         height: calc(125px - 67px);
         padding: 0px 10px;
-        background-color: transparentize($secondary-color, 0.95);
+        background: rgba(8, 14, 32, 0.72);
+        border-bottom: 1px solid $surface-border;
+        backdrop-filter: blur(12px);
         z-index: 1000;
 
         .left {

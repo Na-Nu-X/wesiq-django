@@ -1,12 +1,12 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
-// Profile Page Palette
+// Profile Page Palette (aliases of shared glass tokens)
 
-$profile-surface: rgba(8, 12, 28, 0.65);
-$profile-surface-border: rgba(75, 75, 250, 0.22);
-$profile-surface-hover: rgba(75, 75, 250, 0.14);
-$profile-glow: rgba(75, 75, 250, 0.35);
+$profile-surface: $surface;
+$profile-surface-border: $surface-border;
+$profile-surface-hover: $surface-hover;
+$profile-glow: $surface-glow;
 
 /************
  Main Styles
@@ -29,28 +29,14 @@ $profile-glow: rgba(75, 75, 250, 0.35);
 
     .profile_container {
         @include animated_border;
+        @include glass_panel($padding: 30px 35px 40px, $blur: 10px);
         position: relative;
         max-width: 100%;
         margin: 0px auto;
-        padding: 30px 35px 40px;
-        background: $profile-surface;
-        border: 1px solid $profile-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
         overflow: visible;
 
         &::after {
-            content: "";
-            position: absolute;
-            top: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, $blue-color, transparent);
-            border-radius: 2px;
-            z-index: 10;
+            @include glass_accent_bar;
         }
     }
 }
@@ -81,59 +67,42 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         padding-bottom: 15px;
         border-bottom: 1px solid $profile-surface-border;
 
-        .back .fa-chevron-left,
-        .toggle_settings .fa-gear,
-        .show_account_properties_button i {
-            display: block;
-            font-size: 1.6em;
-            color: darken($secondary-color, 35%);
-            transition: color 0.3s ease, transform 0.3s ease;
-            z-index: 100;
-    
-            &:hover {
-                color: $blue-color;
-                transform: scale(1.1);
-                cursor: pointer;
-            }
-        }
-
         .back {
+            all: unset;
+            @include glass_icon_button;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: $profile-surface-hover;
-            border: 1px solid $profile-surface-border;
-            border-radius: 50%;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+
+            .fa-chevron-left {
+                display: block;
+                font-size: 1.2em;
+                color: darken($secondary-color, 35%);
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
 
             &:hover {
-                border-color: transparentize($blue-color, 0.4);
-                box-shadow: 0 5px 15px $profile-glow;
-
                 .fa-chevron-left {
                     color: $blue-color;
+                    transform: scale(1.1);
                 }
             }
         }
 
         .toggle_settings {
             all: unset;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: $profile-surface-hover;
-            border: 1px solid $profile-surface-border;
-            border-radius: 50%;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            @include glass_icon_button;
+            cursor: pointer;
 
-            &:hover {
-                border-color: transparentize($blue-color, 0.4);
-                box-shadow: 0 5px 15px $profile-glow;
+            .fa-gear {
+                display: block;
+                font-size: 1.2em;
+                color: darken($secondary-color, 35%);
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
+
+            &:hover .fa-gear {
+                color: $blue-color;
+                transform: scale(1.1);
             }
         }
 
@@ -141,6 +110,12 @@ $profile-glow: rgba(75, 75, 250, 0.35);
 
         .show_account_properties_button {
             @include show_properties_button;
+            @include glass_icon_button;
+            cursor: pointer;
+
+            i {
+                font-size: 1.2em;
+            }
         }
 
         .account_properties,

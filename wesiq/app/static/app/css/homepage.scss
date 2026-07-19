@@ -5,13 +5,6 @@
  General Styles
 ***************/
 
-// Homepage Palette
-
-$homepage-surface: rgba(8, 12, 28, 0.65);
-$homepage-surface-border: rgba(75, 75, 250, 0.22);
-$homepage-surface-hover: rgba(75, 75, 250, 0.14);
-$homepage-glow: rgba(75, 75, 250, 0.35);
-
 // Grecaptcha Badge
 
 .grecaptcha-badge {
@@ -38,16 +31,15 @@ header {
             gap: 5px;
             width: max-content;
             padding: 5px 15px;
-            background: $homepage-surface;
-            border: 1px solid $homepage-surface-border;
+            background: $surface;
+            border: 1px solid $surface-border;
             border-radius: $big-border-radius;
             backdrop-filter: blur(10px);
             cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            transition: border-color 0.3s ease, transform 0.3s ease;
 
             &:hover {
                 border-color: transparentize($blue-color, 0.25);
-                box-shadow: 0 5px 20px $homepage-glow;
                 transform: translateY(-1px);
             }
 
@@ -81,16 +73,16 @@ header {
         padding: 125px + 20px 20px 60px;
 
         background:
-            radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.65) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($blue-color, 0.85) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($blue-color, 0.9) 0%, transparent 55%);
+            radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.55) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($blue-soft, 0.8) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($blue-strong, 0.9) 0%, transparent 55%);
 
         &::before {
-            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px, $color: transparentize($blue-color, 0.9));
+            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px, $color: transparentize($blue-color, 0.95));
         }
 
         &::after {
-            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px, $color: transparentize($blue-color, 0.9));
+            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px, $color: transparentize($blue-color, 0.95));
             overflow: hidden;
         }
 
@@ -124,9 +116,9 @@ header {
 
                 .search_bar {
                     height: 40px;
-                    background: $homepage-surface;
+                    background: $surface;
                     border-radius: $big-border-radius;
-                    border-color: $homepage-surface-border;
+                    border-color: $surface-border;
                     backdrop-filter: blur(10px);
 
                     &:hover,
@@ -289,19 +281,19 @@ header {
 
                 &:hover,
                 &:focus-visible {
-                    background: $homepage-surface-hover;
+                    background: $surface-hover;
                 }
             }
 
             .registration_button {
                 @include glow_animated_border;
                 color: $secondary-color;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
-                border-color: transparentize($blue-color, 0.2);
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($blue-strong, 0.55));
+                border-color: transparentize($blue-color, 0.15);
 
                 &:hover,
                 &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($blue-strong, 0.45));
                 }
             }
         }
@@ -319,8 +311,8 @@ header {
                 gap: 5px;
                 padding: 20px 10px;
                 text-decoration: none;
-                background: $homepage-surface;
-                border: 1px solid $homepage-surface-border;
+                background: $surface;
+                border: 1px solid $surface-border;
                 border-radius: $medium-border-radius;
                 backdrop-filter: blur(10px);
                 transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
@@ -328,7 +320,7 @@ header {
                 &:hover,
                 &:focus-visible {
                     transform: translateY(-5px);
-                    background: $homepage-surface-hover;
+                    background: $surface-hover;
                     border-color: transparentize($blue-color, 0.25);
                     box-shadow: 0 10px 30px transparentize($blue-color, 0.75);
                 }
@@ -385,23 +377,10 @@ header {
     .homepage_section {
         position: relative;
         margin: 0px auto 50px;
-        padding: 50px 40px;
-        background: $homepage-surface;
-        border: 1px solid $homepage-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+        @include glass_panel($padding: 50px 40px, $blur: 10px);
 
         &::before {
-            content: "";
-            position: absolute;
-            top: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, $blue-color, transparent);
-            border-radius: 2px;
+            @include glass_accent_bar;
         }
 
         &.reviews_section {
@@ -1015,7 +994,7 @@ header {
             margin: 10px 0px 25px;
             padding: 25px 30px;
             background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $homepage-surface-border;
+            border: 1px solid $surface-border;
             border-radius: $medium-border-radius;
 
             .graph {
@@ -1245,7 +1224,7 @@ header {
                 max-width: 100%;
                 padding: 15px;
                 background: transparentize($main-color, 0.65);
-                border: 1px solid $homepage-surface-border;
+                border: 1px solid $surface-border;
                 border-radius: $medium-border-radius;
                 box-shadow: 0 5px 20px transparentize($main-color, 0.6);
                 overflow: hidden;
@@ -1390,8 +1369,8 @@ header {
                 all: unset;
                 padding: 10px 25px;
                 color: $secondary-color;
-                background: $homepage-surface-hover;
-                border: 1px solid $homepage-surface-border;
+                background: $surface-hover;
+                border: 1px solid $surface-border;
                 border-radius: $big-border-radius;
                 transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
     
@@ -1411,7 +1390,7 @@ header {
             margin-bottom: 20px;
             padding: 25px;
             background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $homepage-surface-border;
+            border: 1px solid $surface-border;
             border-radius: $medium-border-radius;
 
             .write_review_form {
@@ -1730,7 +1709,7 @@ header {
                 aspect-ratio: 1.586 / 1; // ISO / IEC 7810
                 padding: 10px 15px;
                 background: linear-gradient(135deg, lighten($main-color, 10%) 0%, lighten($main-color, 5%) 50%, transparentize($blue-color, 0.90) 100%);
-                border: 1px solid $homepage-surface-border;
+                border: 1px solid $surface-border;
                 border-radius: $medium-border-radius;
                 box-shadow: 0 10px 40px transparentize($main-color, 0.5);
 
@@ -1854,6 +1833,8 @@ header {
             .donate_button {
                 @include blue_button($width: 100%);
                 @include glow_animated_border;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($blue-strong, 0.55));
+                border-color: transparentize($blue-color, 0.15);
                 margin-top: 15px;
                 color: transparentize($secondary-color, 0.2);
                 font-size: 1.2em;
@@ -1872,7 +1853,7 @@ header {
             flex-direction: column;
             gap: 20px;
             padding: 20px;
-            border: 1px solid $homepage-surface-border;
+            border: 1px solid $surface-border;
             border-radius: $medium-border-radius;
 
             .title {
@@ -1977,7 +1958,7 @@ header {
         }
 
         .basic {
-            background-color: transparentize($homepage-surface-border, 0.9);
+            background-color: transparentize($surface-border, 0.9);
             transition: transform 0.3s ease;
         
             &:hover {
@@ -1991,7 +1972,7 @@ header {
 
                 &:hover,
                 &:focus-visible {
-                    background: $homepage-surface-hover;
+                    background: $surface-hover;
                 }
             }
         }
@@ -2090,7 +2071,7 @@ header {
 
                         &:hover,
                         &:focus-visible {
-                            background: $homepage-surface-hover;
+                            background: $surface-hover;
                         }
                     }
 
