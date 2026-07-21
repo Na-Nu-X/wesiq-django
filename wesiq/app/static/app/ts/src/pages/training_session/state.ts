@@ -2,7 +2,7 @@ import { getRemainingSecondsFromDate } from "./functions/getRemainingSecondsFrom
 
 import type { Chart as ChartType } from "chart.js" // Chart JS
 
-const GLOBAL_SPEED:number = 0.01 // 1 Default (Lower = Faster)
+const GLOBAL_SPEED:number = 1 // 1 Default (Lower = Faster)
 
 const training_plan:HTMLDivElement|null = document.querySelector(".activity .training_plan_container .training_plan") as HTMLDivElement || null // Gets The Training Plan
 let xp_boost_expiration_time:number = 0 // Sets The Default XP Boost Expiration Time

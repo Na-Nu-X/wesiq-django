@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction
+from .models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ContactMessage
 
 @admin.register(Users)
 class UsersAdmin(ModelAdmin):
@@ -760,6 +760,33 @@ class MessageReactionAdmin(ModelAdmin):
 
     search_fields = [
         "emoji"
+    ]
+
+    list_editable = []
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(ModelAdmin):
+    list_display = [
+        "id",
+        "first_name", 
+        "last_name", 
+        "email_address",
+        "subject",
+        "message",
+        "attachment",
+        "creation_time"
+    ]
+
+    list_filter = [
+        "email_address", 
+        "subject",
+        "creation_time"
+    ]
+
+    search_fields = [
+        "first_name",
+        "last_name",
+        "email_address"
     ]
 
     list_editable = []

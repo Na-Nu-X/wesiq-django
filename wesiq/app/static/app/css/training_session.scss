@@ -159,12 +159,12 @@ $training-glow: $surface-glow;
                 font-variant-numeric: tabular-nums;
                 display: inline-block;
                 width: 80px;
-                margin-left: 5px;
+                margin-right: 5px;
                 font-family: inherit;
                 font-size: inherit;
 
-                &:nth-child(1) {
-                    margin-left: 0px;
+                &:last-child {
+                    margin-right: 0px;
                 }
             }
         }
