@@ -313,7 +313,7 @@ export function initializeVideoPreview(time:number, vtt_video_previews:vtt[], sp
 
         video_scrubber_preview.style.display = "block"
         video_scrubber_preview.style.top = `${(scrubber_rect.top - post_container_rect.top) - height - gap}px`
-        video_scrubber_preview.style.left = `${hovered_scrubber_position + 10 + 2.5 + 20}px`
+        video_scrubber_preview.style.left = `${hovered_scrubber_position + 10 + 2.5 + 20 + 5}px`
         video_scrubber_preview.style.backgroundImage = `url("/media/${sprite_sheet}")`
         video_scrubber_preview.style.backgroundPosition = `-${current_video_preview.x}px -${current_video_preview.y}px`
     }

@@ -23,6 +23,91 @@
     <button class="upload_post" title="{% translate 'Uverejniť príspevok' %}" aria-label="{% translate 'Uverejniť príspevok' %}">
         <i class="fa-solid fa-photo-film"></i> <!-- https://fontawesome.com/icons/photo-film -->
     </button>
+
+    {% if logged_in_user %}
+        <script src="{% static 'app/ts/dist/pages/community/components/notifications.js' %}" type="module"></script>
+
+        <button class="notifications" title="{% translate 'Notifikácie' %}" aria-label="{% translate 'Notifikácie' %}">
+            <span class="label">
+                {% if logged_in_user.unread_messages_amount <= 9 %}
+                    {{ logged_in_user.unread_messages_amount|default:0 }}
+
+                {% else %}
+                    9+
+                
+                {% endif %}
+            </span>
+
+            <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
+        </button>
+
+        <dialog 
+            class="
+                notifications_dialog
+
+                {% if logged_in_user.unread_messages_amount == 0 %}
+                    no_messages
+
+                {% endif %}
+            "
+        >
+            <p class="messages_info">
+                {% if logged_in_user.unread_messages_amount > 0 %}
+                    {% translate "Všetky správy" %} (<span class="unread_messages_amount">{{ logged_in_user.unread_messages_amount|default:0 }}</span>):
+                
+                {% else %}
+                    {% translate "Žiadne správy" %}
+                
+                {% endif %}
+            </p>
+
+            <div class="all_messages">
+                {% regroup logged_in_user.unread_chats by sender as all_senders %}
+
+                {% for one_sender in all_senders %}
+                    {% with one_message=one_sender.list.0 %}
+                        <div class="one_message" data-id="{{ one_message.sender.id }}">
+                            <a href="{% url 'profile_url' one_message.sender.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                                <img 
+                                    class="profile_picture skeleton_loading" 
+                                    src="
+                                        {% if one_message.sender.profile_picture_name %}
+                                            /../media/images/{{ one_message.sender.id }}/{{ one_message.sender.profile_picture_name }}
+
+                                        {% else %}
+                                            {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                        
+                                        {% endif %}
+                                    "
+                                    alt=""
+                                >
+                            </a>
+
+                            <p class="username">{{ one_message.sender.username }}</p>
+
+                            <div class="message_container">
+                                <p class="unread_messages">
+                                    {% if one_sender.list|length <= 9 %}
+                                        {{ one_sender.list|length|default:0 }}
+
+                                    {% else %}
+                                        9+
+                                    
+                                    {% endif %}
+                                </p>
+
+                                <a class="chat" href="{% url 'chat_url' one_message.sender.username %}" title="{% translate 'Zobraziť správy' %}" aria-label="{% translate 'Zobraziť správy' %}" target="_self">
+                                    <i class="fa-regular fa-comment-dots"></i> <!-- https://fontawesome.com/icons/comment-dots -->
+                                </a>
+                            </div>
+                        </div>
+                
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </dialog>
+
+    {% endif %}
 {% endblock banner %}
 
 {% block content %}

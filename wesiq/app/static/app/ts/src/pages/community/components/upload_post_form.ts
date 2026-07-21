@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // Variables
 
-    const upload_post_button:HTMLElement = document.querySelector(".upload_post") as HTMLButtonElement // Gets The Upload Post Button
+    const upload_post_button:HTMLButtonElement = document.querySelector(".upload_post") as HTMLButtonElement // Gets The Upload Post Button
     const upload_post_form_dialog:HTMLDialogElement = document.querySelector(".upload_post_form_dialog") as HTMLDialogElement // Gets The Upload Post Form Dialog
     const upload_post_form:HTMLFormElement = upload_post_form_dialog.querySelector(".upload_post_form") as HTMLFormElement // Gets The Upload Post Form
 

@@ -971,6 +971,10 @@ $profile-glow: $surface-glow;
                             position: absolute;
                             font-size: 1.2em;
                             font-weight: bold;
+
+                            span {
+                                text-align: center;
+                            }
                         }
 
                         i {

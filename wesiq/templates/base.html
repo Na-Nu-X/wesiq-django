@@ -86,11 +86,6 @@
             
             <div class="right">
                 {% if request.session.logged_in_user_id and logged_in_user.username %}
-                    {% comment %} <div class="notifications">
-                        <p class="label">9+</p>
-                        <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
-                    </div> {% endcomment %}
-
                     <div class="account">
                         <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Môj účet' %}" aria-label="{% translate 'Môj účet' %}" target="_self">
                             <img 
