@@ -85,7 +85,7 @@ INSTALLED_APPS = [
 
     # Sitemap
     'django.contrib.sites',
-    'django.contrib.sitemaps',
+    'django.contrib.sitemaps'
 ]
 
 MIDDLEWARE = [
@@ -220,8 +220,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-# ACCOUNT_LOGIN_METHODS = {'email'}
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_METHODS = {'email'}
 
 ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'sysadmin', 'root', 'api', 'security', 'webmaster', 'profile', 'post', 'inbox', 'help', 'accounts', 'support']
 

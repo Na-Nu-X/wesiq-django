@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from urllib3 import HTTPResponse
 from .forms import contactForm, reviewForm, loginForm, passwordResetForm, registrationForm, editAccountForm, writeArticleForm, writeCommentForm, uploadPostForm, bioLinksForm
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport, Chat, Subscription
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, Activity, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Post, PostMedia, SeenPost, VideoView, PostForum, PostReport, PostForumReport, BioLinks, UsersReport, Chat, Subscription, ContactMessage
 from django.contrib.auth import logout
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
@@ -1163,7 +1163,7 @@ def homepageView(request):
                         username = "@" + registration_form.cleaned_data["username"].lstrip("@") # Formats The Username (Adds The At Sign At The Beginning)
                         phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
                         verification_code = generateCode() # Generates Random 6-Digit Code
-                        friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
+                        # friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
                         new_user = Users(
                             first_name = registration_form.cleaned_data["first_name"],
@@ -1174,7 +1174,7 @@ def homepageView(request):
                             password = make_password(registration_form.cleaned_data["password"]),
                             language = request.POST.get("language"),
                             verification_code = verification_code,
-                            friend_code = friend_code
+                            # friend_code = friend_code
                         )
 
                         new_user.save()
@@ -1227,19 +1227,34 @@ def homepageView(request):
 
             if contact_form.is_valid():
                 try:
+                    first_name = contact_form.cleaned_data["first_name"] # Gets The First Name
+                    last_name = contact_form.cleaned_data["last_name"] # Gets The Last Name
+                    email_address = contact_form.cleaned_data["email_address"] # Gets The E-mail Address
+                    subject = contact_form.cleaned_data["subject"] # Gets The Subject
+                    message = contact_form.cleaned_data["message"] # Gets The Message
+
                     subject_text = _("Otázka")
                     
-                    if contact_form.cleaned_data["subject"] == "question":
+                    if subject == "question":
                         subject_text = _("Otázka")
 
-                    elif contact_form.cleaned_data["subject"] == "account_issue":
+                    elif subject == "account_issue":
                         subject_text = _("Problém s účtom")
 
-                    elif contact_form.cleaned_data["subject"] == "bug":
+                    elif subject == "bug":
                         subject_text = _("Nahlásenie chyby")
 
-                    elif contact_form.cleaned_data["subject"] == "suggestion":
+                    elif subject == "suggestion":
                         subject_text = _("Návrh na zlepšenie")
+
+                    # Creates The New Message
+                    new_message = ContactMessage.objects.create(
+                        first_name=first_name,
+                        last_name=last_name,
+                        email_address=email_address,
+                        subject=subject,
+                        message=message
+                    )
 
                     # Send Mail
                     subject = f"Wesiq - {subject_text}"
@@ -1257,12 +1272,11 @@ def homepageView(request):
                     mail_message.attach_alternative(html_content, "text/html")
 
                     attachment_file = request.FILES.get("select_attachment")
+
                     if attachment_file and attachment_file != None: # Checks If Is Any Attachment Selected
                         if attachment_file.size < 25000000:
+                            new_message.attachment = attachment_file.name # Stores The Attachment Filename
                             mail_message.attach(attachment_file.name, attachment_file.read(), attachment_file.content_type)
-
-                            mail_message.send()
-
                             messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
 
                         else:
@@ -1270,9 +1284,10 @@ def homepageView(request):
                             captureError(f"The attachment is too large.\n\t- URL: {request.build_absolute_uri()}\n\t- Attachment Size: {attachment_file.size},\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
                     else: # Sends Mail Without An Attachment
-                        mail_message.send()
-
                         messages.add_message(request, messages.SUCCESS, _("Správa bola odoslaná"))
+
+                    mail_message.send()
+                    new_message.save() # Saves The New Message
 
                 # Error
                 except Exception as e:
@@ -1940,7 +1955,7 @@ def registrationView(request):
 
                     else:
                         verification_code = generateCode() # Generates Random 6-Digit Code
-                        friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
+                        # friend_code = generateCode(letters=True) # Generates Random 6-Digit Code With Numbers And Letters
 
                         phone_number = "".join(registration_form.cleaned_data["phone_number"].split()) # Gets Phone Number With No White Spaces
 
@@ -1953,7 +1968,7 @@ def registrationView(request):
                             password = make_password(registration_form.cleaned_data["password"]),
                             language = request.POST.get("language"),
                             verification_code = verification_code,
-                            friend_code = friend_code
+                            # friend_code = friend_code
                         )
 
                         new_user.save()

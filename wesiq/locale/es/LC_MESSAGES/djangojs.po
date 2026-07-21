@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-05 14:49+0000\n"
+"POT-Creation-Date: 2026-07-20 20:06+0000\n"
 "PO-Revision-Date: 2026-07-05 15:14+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
@@ -176,7 +177,7 @@ msgid "Zdieľať príspevok"
 msgstr "Comparte la publicación"
 
 #: app/static/app/ts/src/components/searchBar.ts:35
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:85
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:86
 msgid "Uverejniť príspevok"
 msgstr "Publicar una publicación"
 
@@ -190,11 +191,11 @@ msgstr "Se produjo un error al agregar una reseña."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:43
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:24
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:103
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:112
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:54
 #: app/static/app/ts/src/pages/community/functions/posts.ts:169
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:71
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:154
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:66
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:150
 #, javascript-format
 msgid "/sk/profil/%s"
 msgstr "/es/perfil/%s"
@@ -203,47 +204,47 @@ msgstr "/es/perfil/%s"
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:45
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:25
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:26
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:104
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:105
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:113
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:114
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:55
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:56
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:155
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:156
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:151
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:152
 msgid "Zobraziť užívateľa"
 msgstr "Mostrar usuario"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:81
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:184
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:92
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:195
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:93
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:196
 msgid "Napísať komentár"
 msgstr "Escribe un comentario"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:111
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:112
-#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:95
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:96
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:122
+#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:97
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:123
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:124
 msgid "Odpovedať..."
 msgstr "Respuesta..."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:133
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:134
-#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:116
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:117
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:144
+#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:118
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:145
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:146
 msgid "Zobraziť odpovede..."
 msgstr "Mostrar respuestas..."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:144
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:155
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:156
 msgid "Pri odosielaní komentáru došlo k chybe."
 msgstr "Hubo un error al enviar tu comentario."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:173
-#: app/static/app/ts/src/pages/community/functions/postForum.ts:184
+#: app/static/app/ts/src/pages/community/functions/postForum.ts:185
 #, javascript-format
 msgid "Odpoveď užívateľovi %s"
 msgstr "Responder al usuario %s"
@@ -264,6 +265,50 @@ msgstr "Se produjo un error al cambiar la etiqueta similar."
 msgid "Pri odosielaní nahlásenia došlo k chybe."
 msgstr "Hubo un error al enviar el informe."
 
+#: app/static/app/ts/src/pages/chat/components/chat.ts:117
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:639
+msgid "Upraviť"
+msgstr "Editar"
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:124
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:66
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:86
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:724
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:744
+msgid "Vymazať"
+msgstr "Borrar"
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:152
+msgid "(upravené)"
+msgstr ""
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:152
+msgid " (upravené)"
+msgstr ""
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:155
+#: app/static/app/ts/src/pages/chat/components/chat.ts:471
+#, fuzzy
+#| msgid "Napísať komentár"
+msgid "Napísať správu"
+msgstr "Escribe un comentario"
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:192
+#: app/static/app/ts/src/pages/chat/components/chat.ts:193
+#, javascript-format
+msgid "Reakciu pridal: %s"
+msgstr ""
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:223
+msgid "Spojenie sa neočakávane prerušilo."
+msgstr ""
+
+#: app/static/app/ts/src/pages/chat/components/chat.ts:291
+#, fuzzy
+#| msgid "Upraviť"
+msgid "Upraviť správu"
+msgstr "Editar"
+
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:34
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:73
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:96
@@ -273,140 +318,121 @@ msgstr "Hubo un error al enviar el informe."
 msgid "Načítavam..."
 msgstr "Cargando..."
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:424
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:425
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:444
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:445
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:426
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:427
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:446
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:447
 msgid "Vypnúť viditeľnosť len pre sledovateľov"
 msgstr "Desactivar la visibilidad solo para seguidores"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:431
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:432
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:451
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:452
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:433
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:434
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:453
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:454
 msgid "Zapnúť viditeľnosť len pre sledovateľov"
 msgstr "Activar la visibilidad solo para seguidores"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:465
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:466
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:485
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:486
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:467
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:468
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:487
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:488
 msgid "Zapnúť komentáre"
 msgstr "Activar comentarios"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:472
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:473
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:492
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:493
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:474
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:475
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:494
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:495
 msgid "Vypnúť komentáre"
 msgstr "Desactivar comentarios"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:505
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:506
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:525
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:526
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:507
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:508
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:527
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:528
 msgid "Zobraziť počet označení páči sa mi to"
 msgstr "Mostrar me gusta"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:512
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:513
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:532
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:533
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:514
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:515
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:534
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:535
 msgid "Skryť počet označení páči sa mi to"
 msgstr "Ocultar número de Me gusta"
 
-#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:56
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:57
+#: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:58
 msgid "Autorovi príspevku sa páči komentár."
 msgstr "Al autor de la publicación le gusta el comentario."
 
-#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:39
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:589
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:43
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:617
 msgid "Nahlásiť"
 msgstr "Informe"
 
-#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:62
-#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:82
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:696
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:716
-msgid "Vymazať"
-msgstr "Borrar"
-
-#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:75
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:709
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:79
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:737
 msgid "Naozaj chcete vymazať Váš komentár?"
 msgstr "¿Estás seguro de que quieres eliminar tu comentario?"
 
-#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:90
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:724
+#: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:94
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:752
 msgid "Zrušiť"
 msgstr "Cancelar"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:130
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:103
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:187
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:199
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:140
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:99
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:184
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:196
 msgid "Začať sledovať"
 msgstr "Empezar a mirar"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:130
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:105
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:189
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:140
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:101
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:186
 msgid "Prestať sledovať"
 msgstr "Dejar de seguir"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:146
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:156
 msgid "Otvoriť mapy"
 msgstr "Abrir mapas"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:184
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:303
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:194
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:315
 #, javascript-format
 msgid "Príspevok užívateľa %s"
 msgstr "Contribución del usuario %s"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:210
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:211
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:222
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:223
 msgid "Video nemá zvuk"
 msgstr "El video no tiene sonido"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:262
-#: app/static/app/ts/src/pages/community/functions/videoWatchTime.ts:91
-#: app/static/app/ts/src/pages/post/components/initialize_HLS_video_format.ts:21
-#, javascript-format
-#| msgid "/sk/stream-video/%s/%s/%s"
-msgid "/api/stream-video/%s/%s/%s"
-msgstr "/api/stream-video/%s/%s/%s"
-
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:333
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:345
 msgid "Skryté"
 msgstr "Oculto"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:360
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:372
 msgid "Vypnuté"
 msgstr "Apagado"
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:367
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:368
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:379
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:380
 msgid "Zdielať..."
 msgstr "Compartir..."
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:372
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:373
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:384
+#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:385
 msgid "Počet videní..."
 msgstr "Número de visitas..."
 
-#: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:611
-msgid "Upraviť"
-msgstr "Editar"
-
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:13
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:14
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:16
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:17
 msgid "Pozastaviť..."
 msgstr "Pausar..."
 
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:35
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:36
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:38
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:39
 msgid "Prehrať..."
 msgstr "Reproducir..."
 
@@ -475,34 +501,32 @@ msgstr "Has visto todas las publicaciones."
 msgid "Nenašli sa žiadne príspevky."
 msgstr "No se encontraron publicaciones."
 
-#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:31
-#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:55
-#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:60
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:32
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:56
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:61
 msgid "Pri spracovávaní príspevku došlo k chybe!"
 msgstr "¡Ocurrió un error al procesar la publicación!"
 
-#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:70
+#: app/static/app/ts/src/pages/community/functions/processingPosts.ts:71
 msgid "Príspevok bol úspešne pridaný."
 msgstr "La publicación se ha agregado correctamente."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:61
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:56
 msgid "Pri načítavaní užívateľov došlo k chybe."
 msgstr "Se produjo un error al cargar usuarios."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:104
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:188
-#| msgid "Zrušiť"
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:100
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:185
 msgid "Zrušiť žiadosť"
 msgstr "Cancelar solicitud"
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:135
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:131
 #: app/static/app/ts/src/pages/community/functions/tagUsers.ts:57
 msgid "Pri hľadaní užívateľov došlo k chybe."
 msgstr "Se produjo un error al buscar usuarios."
 
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:178
-#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:179
-#| msgid "Počet videní..."
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:175
+#: app/static/app/ts/src/pages/community/functions/searchUsers.ts:176
 msgid "Počet sledovateľov..."
 msgstr "Número de seguidores..."
 
@@ -516,7 +540,6 @@ msgid "Odstrániť zmienku"
 msgstr "Quitar mención"
 
 #: app/static/app/ts/src/pages/community/functions/toggleFollow.ts:57
-#| msgid "Pri pridávaní sledovania došlo k chybe."
 msgid "Pri zmene sledovania došlo k chybe."
 msgstr "Se produjo un error al cambiar lo siguiente."
 
@@ -536,7 +559,7 @@ msgstr "Error de procesamiento"
 msgid "Chyba spojenia"
 msgstr "Error de conexión"
 
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:78
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:79
 msgid "Skúste znovu"
 msgstr "Intentar otra vez"
 
@@ -636,9 +659,16 @@ msgstr "Quitar enlace"
 msgid "Váš úcet bude odstránený"
 msgstr "Tu cuenta será eliminada"
 
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:59
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:73
+#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:67
+#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:89
+#: app/static/app/ts/src/pages/profile/components/followers.ts:56
 msgid "Žiadne žiadosti o sledovanie"
+msgstr "No hay solicitudes de seguimiento"
+
+#: app/static/app/ts/src/pages/profile/components/followers.ts:64
+#, fuzzy
+#| msgid "Žiadne žiadosti o sledovanie"
+msgid "Žiadny sledovatelia"
 msgstr "No hay solicitudes de seguimiento"
 
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
@@ -646,14 +676,18 @@ msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
 msgstr "Se produjo un error al intentar restringir al usuario."
 
 #: app/static/app/ts/src/pages/profile/functions/followRequests.ts:19
-#| msgid "Pri pridávaní sledovania došlo k chybe."
 msgid "Pri potvrdení žiadosti o sledovanie došlo k chybe."
 msgstr "Se produjo un error al aceptar la siguiente solicitud."
 
 #: app/static/app/ts/src/pages/profile/functions/followRequests.ts:36
-#| msgid "Pri pridávaní sledovania došlo k chybe."
 msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
 msgstr "Se produjo un error al rechazar la siguiente solicitud."
+
+#: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
+#, fuzzy
+#| msgid "Pri odstraňovaní úloh došlo k chybe."
+msgid "Pri odstraňovaní sledovateľa došlo k chybe."
+msgstr "Se produjo un error al eliminar tareas."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
@@ -682,8 +716,7 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "El tiempo de actividad actual fue un %s%% mayor que el promedio de los "
 "últimos 7 días"
@@ -749,6 +782,11 @@ msgstr "Mostrar contraseña"
 #: app/static/app/ts/src/utils/password.ts:59
 msgid "Zadajte váš e-mail"
 msgstr "Introduce tu correo electrónico"
+
+#, javascript-format
+#~| msgid "/sk/stream-video/%s/%s/%s"
+#~ msgid "/api/stream-video/%s/%s/%s"
+#~ msgstr "/api/stream-video/%s/%s/%s"
 
 #~ msgid "Pri pridávaní označenia páči sa mi to došlo k chybe."
 #~ msgstr "Se produjo un error al agregar un me gusta."
