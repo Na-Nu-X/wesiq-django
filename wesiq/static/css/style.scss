@@ -319,32 +319,6 @@ header {
             gap: 20px;
             width: 100%;
 
-            // Notifications
-
-            .notifications {
-                position: relative;
-                transition: transform 0.2s ease;
-
-                &:hover {
-                    transform: scale(1.1);
-                    cursor: pointer;
-                }
-
-                .label {
-                    position: absolute;
-                    top: -8px;
-                    right: -16px;
-                    font-weight: bold;
-                    color: $red-color;
-                }
-
-                .fa-bell {
-                    font-size: 1.2em;
-                    opacity: 0.8;
-                    color: $secondary-color;
-                }
-            }
-
             // User's Account
 
             .account {

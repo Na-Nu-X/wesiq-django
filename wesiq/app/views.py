@@ -3597,6 +3597,14 @@ def communityView(request):
                 "is_active": logged_in_user.subscription.is_active
             }
 
+        # Gets The Unread Chats
+        unread_chats = Chat.objects.filter(
+            receiver=logged_in_user,
+            is_read=False
+        ).select_related("sender")
+
+        unread_messages_amount = unread_chats.count() # Gets The Unread Messages Amount
+
         # Gets The User's Currently Processed Post With All Related Data
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
@@ -3939,7 +3947,9 @@ def communityView(request):
                 "profile_picture_name": logged_in_user.profile_picture_name,
                 "private_account": logged_in_user.private_account,
                 "data_saving_mode": logged_in_user.data_saving_mode,
-                "subscription": subscription
+                "subscription": subscription,
+                "unread_chats": unread_chats,
+                "unread_messages_amount": unread_messages_amount
             },
 
             "upload_post_form": uploadPostForm,
