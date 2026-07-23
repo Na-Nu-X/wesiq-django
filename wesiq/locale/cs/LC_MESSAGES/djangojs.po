@@ -9,15 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-20 20:06+0000\n"
-"PO-Revision-Date: 2026-07-05 14:59+0000\n"
+"PO-Revision-Date: 2026-07-23 18:52+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
-"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
@@ -280,34 +279,32 @@ msgstr "Vymazat"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid "(upravené)"
-msgstr ""
+msgstr "(upraveno)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid " (upravené)"
-msgstr ""
+msgstr "(upraveno)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:155
 #: app/static/app/ts/src/pages/chat/components/chat.ts:471
-#, fuzzy
 #| msgid "Napísať komentár"
 msgid "Napísať správu"
-msgstr "Napsat komentář"
+msgstr "Napsat zprávu"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:192
 #: app/static/app/ts/src/pages/chat/components/chat.ts:193
 #, javascript-format
 msgid "Reakciu pridal: %s"
-msgstr ""
+msgstr "Reakci přidal: %s"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:223
 msgid "Spojenie sa neočakávane prerušilo."
-msgstr ""
+msgstr "Spojení se neočekávaně přerušilo."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:291
-#, fuzzy
 #| msgid "Upraviť"
 msgid "Upraviť správu"
-msgstr "Upravit"
+msgstr "Upravit zprávu"
 
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:34
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:73
@@ -666,10 +663,9 @@ msgid "Žiadne žiadosti o sledovanie"
 msgstr "Žádné žádosti o sledování"
 
 #: app/static/app/ts/src/pages/profile/components/followers.ts:64
-#, fuzzy
 #| msgid "Žiadne žiadosti o sledovanie"
 msgid "Žiadny sledovatelia"
-msgstr "Žádné žádosti o sledování"
+msgstr "Žádní sledovatelé"
 
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
 msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
@@ -684,10 +680,9 @@ msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
 msgstr "Při zamítnutí žádosti o sledování došlo k chybě."
 
 #: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
-#, fuzzy
 #| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "Při odstraňování úloh došlo k chybě."
+msgstr "Při odstraňování sledovatele došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
@@ -710,18 +705,21 @@ msgstr "<br>Aktuální aktivita trvala:"
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o 100%% delší než průměr za posledních 7 dní"
+msgstr ""
+"Čas aktuální aktivity byl o 100%% delší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr "Čas aktuální aktivity byl o %s%% delší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o %s%% kratší než průměr za posledních 7 dní"
+msgstr ""
+"Čas aktuální aktivity byl o %s%% kratší než průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40
 msgid "Pri pridávaní úlohy došlo k chybe."
@@ -778,7 +776,6 @@ msgid "Zadajte váš e-mail"
 msgstr "Zadejte váš e-mail"
 
 #, javascript-format
-#~| msgid "/sk/stream-video/%s/%s/%s"
 #~ msgid "/api/stream-video/%s/%s/%s"
 #~ msgstr "/api/stream-video/%s/%s/%s"
 
