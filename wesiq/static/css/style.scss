@@ -105,11 +105,29 @@ select,
         .privacy_policy_accept,
         .privacy_policy_reject {
             @include blue_button;
+            width: 90%;
             margin-top: 40px;
+            color: $light-blue-color;
+        }
+
+        .privacy_policy_reject {
+            backdrop-filter: blur(5px);
+
+            &:hover,
+            &:focus-visible {
+                background-color: transparentize($dark-blue-color, 0.8);
+            }
         }
 
         .privacy_policy_accept {
+            @include glow_animated_border;
+            background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
             border-color: $blue-color;
+
+            &:hover,
+            &:focus-visible {
+                background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+            }
         }
     }
 }
@@ -237,7 +255,7 @@ header {
     .navigation_bar {
         position: fixed;
         width: 100%;
-        background-color: transparentize($main-color, 0.5);
+        background-color: transparentize($dark-blue-color, 0.8);
         border-bottom: 1px solid $secondary-color;
         backdrop-filter: blur(5px);
         opacity: 1;
@@ -257,12 +275,12 @@ header {
                     font-size: 1.2em;
                     color: $secondary-color;
                     text-transform: uppercase;
-                    transition: transform 0.3s ease, color 0.3s ease;
+                    transition: transform 0.1s ease, color 0.2s ease;
 
                     &:hover,
                     &:active {
-                        transform: scale(1.1);
-                        color: $article-color;
+                        transform: translateY(-1px);
+                        color: $light-blue-color;
                     }
                 }
             }
@@ -272,12 +290,7 @@ header {
                 margin: 10px 0px;
                 color: $secondary-color;
                 font-size: 2em;
-                transition: transform 0.3s ease;
-
-                &:hover {
-                    transform: scale(1.1);
-                    cursor: pointer;
-                }
+                cursor: pointer;
             }
         }
     }
@@ -293,9 +306,9 @@ header {
         width: 100%;
         height: calc(125px - 67px);
         padding: 0px 10px;
-        background: rgba(8, 14, 32, 0.72);
+        background-color: transparentize($dark-blue-color, 0.5);
         border-bottom: 1px solid $surface-border;
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(5px);
         z-index: 1000;
 
         .left {
@@ -347,7 +360,7 @@ header {
                 .logout {
                     position: relative;
                     text-decoration: none;
-                    color: $secondary-color;
+                    color: $light-blue-color;
 
                     &:hover,
                     &:active {
@@ -361,7 +374,7 @@ header {
 
                 .login {
                     text-decoration: none;
-                    color: $secondary-color;
+                    color: $light-blue-color;
 
                     &:hover,
                     &:active {
@@ -419,7 +432,7 @@ footer {
 
             a {
                 text-decoration: none;
-                color: darken($secondary-color, 40%);
+                color: $light-blue-color;
 
                 font: {
                     size: 0.9em;
@@ -457,7 +470,7 @@ footer {
         @include flex_center;
         gap: 10px;
         flex-wrap: wrap;
-        max-width: 500px;
+        max-width: $secondary-width;
 
         a {
             text-decoration: none;
@@ -511,7 +524,7 @@ footer {
     }
 
     .other {
-        color: darken($secondary-color, 40%);
+        color: $light-blue-color;
 
         .privacy_policy_again {
             all: unset;
@@ -527,7 +540,7 @@ footer {
 
         .nominatim_api,
         .copywrite {
-            color: darken($secondary-color, 40%);
+            color: $light-blue-color;
 
             font: {
                 family: $copywrite-font;

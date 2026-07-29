@@ -46,9 +46,9 @@ document.addEventListener("DOMContentLoaded", function():void {
         search_bar.style.borderBottom = "none"
 
         // Sets Search Result Container Styles
-        search_result_container.style.borderBottom = "1px solid rgb(75, 75, 250, 0.5)"
-        search_result_container.style.borderLeft = "1px solid rgb(75, 75, 250, 0.5)"
-        search_result_container.style.borderRight = "1px solid rgb(75, 75, 250, 0.5)"
+        search_result_container.style.borderBottom = "1px solid #5b8cff"
+        search_result_container.style.borderLeft = "1px solid #5b8cff"
+        search_result_container.style.borderRight = "1px solid #5b8cff"
 
         search_result_container.classList.add("active") // Adds Active Class To Search Result
     }
@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Function For Hide Search Results
     function hideSearchResult():void {
         // Sets Search Bar Styles
-        search_bar.style.border = "1px solid rgb(75, 75, 250, 0.5)"
-        search_bar.style.borderRadius = "25px"
+        search_bar.style.border = "1px solid #3d6ef5"
+        search_bar.style.borderRadius = "5px"
 
         // Sets Search Result Container Styles
         search_result_container.style.border = "none"

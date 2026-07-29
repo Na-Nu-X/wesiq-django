@@ -30,22 +30,21 @@ header {
             align-items: center;
             gap: 5px;
             width: max-content;
-            padding: 5px 15px;
-            background: $surface;
-            border: 1px solid $surface-border;
+            padding: 5px 10px;
+            background-color: transparent;
+            backdrop-filter: blur(5px);
+            border: 1px solid $dark-blue-color;
             border-radius: $big-border-radius;
-            backdrop-filter: blur(10px);
             cursor: pointer;
-            transition: border-color 0.3s ease, transform 0.3s ease;
+            transition: transform 0.1s ease;
 
             &:hover {
-                border-color: transparentize($blue-color, 0.25);
                 transform: translateY(-1px);
             }
 
             p {
                 display: inline-block;
-                color: $secondary-color;
+                color: $light-blue-color;
                 font-weight: semibold;
             }
 
@@ -54,12 +53,12 @@ header {
                 cursor: pointer;
 
                 &.full {
-                    color: $article-color;
+                    color: $yellow-color;
                     opacity: 1;
                 }
 
                 &.empty {
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     opacity: 0.5;
                 }
             }
@@ -74,15 +73,15 @@ header {
 
         background:
             radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.55) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($blue-soft, 0.8) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($blue-strong, 0.9) 0%, transparent 55%);
+            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($light-blue-color, 0.8) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($dark-blue-color, 0.9) 0%, transparent 55%);
 
         &::before {
-            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px, $color: transparentize($blue-color, 0.95));
+            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px);
         }
 
         &::after {
-            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px, $color: transparentize($blue-color, 0.95));
+            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px);
             overflow: hidden;
         }
 
@@ -105,7 +104,7 @@ header {
 
         .search_container {
             position: relative;
-            max-width: 500px;
+            max-width: $secondary-width;
             width: 100%;
             margin: 0px auto;
             animation: fadeIn 1s ease-out;
@@ -113,23 +112,10 @@ header {
             .search_bar_container {
                 @include search_bar;
                 z-index: 100;
-
-                .search_bar {
-                    height: 40px;
-                    background: $surface;
-                    border-radius: $big-border-radius;
-                    border-color: $surface-border;
-                    backdrop-filter: blur(10px);
-
-                    &:hover,
-                    &:focus-visible {
-                        border-color: transparentize($blue-color, 0.25);
-                        box-shadow: 0 5px 25px transparentize($blue-color, 0.85);
-                    }
-                }
             }
 
             .search_result_container {
+                @include scrollbar;
                 position: absolute;
                 top: 40px - 40px;
                 width: 100%;
@@ -141,17 +127,6 @@ header {
                 overflow-y: auto;
                 transition: top 0.3s ease, border 0.3s ease, width 0.3s ease, opacity 0.5s ease;
                 z-index: 50;
-
-                &::-webkit-scrollbar {
-                    width: 3px;
-                    background-color: transparentize($blue-color, 0.9);
-                    border-radius: calc(3px / 2);
-                }
-        
-                &::-webkit-scrollbar-thumb {
-                    background-color: $blue-color;
-                    border-radius: calc(3px / 2);
-                }
 
                 &.active {
                     top: 40px;
@@ -172,8 +147,8 @@ header {
                         line-height: 40px;
                         padding-left: 10px;
                         pointer-events: all;
+                        color: $light-blue-color;
                         cursor: pointer;
-                        color: $secondary-color;
                         transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
                         z-index: 100;
 
@@ -195,12 +170,11 @@ header {
                         color: $secondary-color;
                         text-align: center;
                         text-decoration: none;
-                        transition: background-color 0.3s ease, letter-spacing 0.3s ease;
+                        transition: background-color 0.2s ease;
 
                         &:hover,
                         &:focus-visible {
-                            background-color: transparentize($blue-color, 0.9);
-                            letter-spacing: 0.5px;
+                            background-color: transparentize($dark-blue-color, 0.95);
                         }
 
                         &:focus-visible {
@@ -229,8 +203,8 @@ header {
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 filter: drop-shadow(0 0 40px transparentize($blue-color, 0.5));
-                transition: letter-spacing 0.3s ease, filter 0.3s ease;
-                animation: fadeIn 2s ease-out, heroGlow 4s ease-in-out infinite alternate;
+                transition: letter-spacing 0.2s ease, filter 0.2s ease;
+                animation: fadeIn 2s ease-out;
     
                 font: {
                     family: $heading-font;
@@ -239,17 +213,17 @@ header {
     
                 &:hover,
                 &:active {
-                    letter-spacing: 2px;
+                    letter-spacing: 0.5px;
                     filter: drop-shadow(0 0 60px transparentize($blue-color, 0.25));
                 }
             }
         }
 
         .subheading {
-            max-width: 500px;
+            max-width: $secondary-width;
             margin: 0px;
             text-align: center;
-            color: transparentize($secondary-color, 0.25);
+            color: $light-blue-color;
             animation: fadeIn 1.5s ease-out 0.2s both;
 
             font: {
@@ -262,38 +236,36 @@ header {
 
         .buttons {
             display: flex;
-            gap: 25px;
-            max-width: 450px;
+            gap: 20px;
+            max-width: 500px;
             width: 100%;
             margin-top: 10px;
             animation: fadeInScale 1s ease-out 0.5s both;
             
             .login_button,
             .registration_button {
-                @include blue_button($width: 100%);
-                letter-spacing: 0.25px;
+                @include blue_button;
+                width: 90%;
+                color: $light-blue-color;
             }
 
             .login_button {
-                color: transparentize($secondary-color, 0.15);
-                background: transparentize($main-color, 0.85);
                 backdrop-filter: blur(5px);
 
                 &:hover,
                 &:focus-visible {
-                    background: $surface-hover;
+                    background-color: transparentize($dark-blue-color, 0.8);
                 }
             }
 
             .registration_button {
                 @include glow_animated_border;
-                color: $secondary-color;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($blue-strong, 0.55));
-                border-color: transparentize($blue-color, 0.15);
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                border-color: $blue-color;
 
                 &:hover,
                 &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($blue-strong, 0.45));
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
                 }
             }
         }
@@ -303,7 +275,7 @@ header {
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             width: 100%;
-            max-width: 550px;
+            max-width: $secondary-width;
             animation: fadeInScale 1s ease-out 0.5s both;
 
             .hero_feature_card {
@@ -311,18 +283,18 @@ header {
                 gap: 5px;
                 padding: 20px 10px;
                 text-decoration: none;
-                background: $surface;
-                border: 1px solid $surface-border;
+                background-color: transparentize($dark-blue-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
-                backdrop-filter: blur(10px);
+                backdrop-filter: blur(5px);
                 transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
                 &:hover,
                 &:focus-visible {
-                    transform: translateY(-5px);
-                    background: $surface-hover;
+                    transform: translateY(-2px);
+                    background: transparent;
                     border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.75);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
                 }
 
                 i {
@@ -331,34 +303,25 @@ header {
                     transition: transform 0.3s ease;
                 }
 
-                &:hover i {
-                    transform: scale(1.1);
+                &:hover {
+                    i {
+                        transform: scale(1.1);
+                    }
                 }
 
                 .feature_title {
-                    color: $secondary-color;
+                    color: $light-blue-color;
                     font-weight: semibold;
                     font-size: 0.9em;
                 }
 
                 .feature_desc {
-                    color: darken($secondary-color, 45%);
-                    font-size: 0.75em;
+                    color: $dark-blue-color;
+                    font-size: 0.8em;
                     text-align: center;
-                    line-height: 1.2;
                 }
             }
         }
-    }
-}
-
-@keyframes heroGlow {
-    0% {
-        filter: drop-shadow(0 0 30px transparentize($blue-color, 0.6));
-    }
-
-    100% {
-        filter: drop-shadow(0 0 50px transparentize($blue-color, 0.4));
     }
 }
 
@@ -376,40 +339,46 @@ header {
 
     .homepage_section {
         position: relative;
+        max-width: $main-width;
         margin: 0px auto 50px;
-        @include glass_panel($padding: 50px 40px, $blur: 10px);
+        padding: 50px 30px;
+        border: 1px solid transparentize($blue-color, 0.5);
+        border-radius: $medium-border-radius;
+        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
 
         &::before {
             @include glass_accent_bar;
         }
 
-        &.reviews_section {
-            max-width: $main-width;
-            padding: 50px 30px;
+        &.support_section {
+            max-width: calc($main-width - 400px);
         }
 
-        &.contact_section,
-        &.support_section {
-            max-width: 580px;
-            padding: 50px 40px 40px;
-        }
-
-        &.support_section {
-            max-width: 850px;
+        &.contact_section {
+            max-width: $secondary-width;
+            padding: 50px;
         }
     }
 
     .section_title {
-        margin-bottom: 36px;
+        margin-bottom: 20px;
         text-align: center;
-        background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
+        background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 40px transparentize($blue-color, 0.5));
+        transition: filter 0.2s ease;
+        animation: fadeIn 2s ease-out;
 
         font: {
-            family: $article-heading-font;
+            family: $heading-font;
             size: clamp(1.8em, 4vw, 2.5em);
+        }
+
+        &:hover,
+        &:active {
+            filter: drop-shadow(0 0 60px transparentize($blue-color, 0.25));
         }
     }
 
@@ -418,29 +387,28 @@ header {
     .login_form_dialog,
     .registration_form_dialog {
         &::backdrop {
-            background-color: transparentize($main-color, 0.8);
-            backdrop-filter: blur(2px);
+            background-color: transparentize($main-color, 0.5);
+            backdrop-filter: blur(5px);
         }
 
         .login_form,
         .registration_form {
             @include position_center($position: fixed);
-            max-width: 500px;
+            max-width: $secondary-width;
             width: 100%;
             padding: 30px 50px 50px;
             text-align: center;
-            background-color: transparentize($main-color, 0.8);
-            backdrop-filter: blur(5px);
-            border: 2px solid $secondary-color;
+            border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $medium-border-radius;
+            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
             overflow: hidden;
 
             &::before {
-                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
+                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
             }
 
             &::after {
-                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px, $color: transparentize($main-color, 0.8));
+                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
             }
 
             h2 {
@@ -450,7 +418,7 @@ header {
             }
 
             .back {
-                @include form_back($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%))
+                @include form_back;
             }
 
             .form_report {
@@ -458,7 +426,7 @@ header {
             }
 
             input[type="submit"] {
-                @include blue_button($width: 90%, $border-radius: $big-border-radius);
+                @include blue_button($border-radius: $big-border-radius);
                 margin-top: 40px;
                 margin-bottom: 10px;
             }
@@ -466,27 +434,20 @@ header {
             .login_methods {
                 p {
                     position: relative;
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
 
                     span {
-                        &:nth-child(1) {
-                            position: absolute;
-                            top: 50%;
-                            left: 5%;
-                            transform: translateY(-50%);
-                            width: 135px;
-                            height: 1px;
-                            background-color: darken($secondary-color, 40%);
-                        }
+                        position: absolute;
+                        top: 50%;
+                        right: 5%;
+                        transform: translateY(-50%);
+                        width: 135px;
+                        height: 1px;
+                        background-color: $light-blue-color;
 
-                        &:nth-child(2) {
-                            position: absolute;
-                            top: 50%;
-                            right: 5%;
-                            transform: translateY(-50%);
-                            width: 135px;
-                            height: 1px;
-                            background-color: darken($secondary-color, 40%);
+                        &:nth-child(1) {
+                            right: auto;
+                            left: 5%;
                         }
                     }
                 }
@@ -498,22 +459,18 @@ header {
                     height: 50px;
                     line-height: 50px;
                     margin: 10px auto;
-                    background-color: transparentize($main-color, 0.05);
+                    background-color: transparentize($main-color, 0.1);
                     border-radius: $big-border-radius;
                     transition: transform 0.3s ease, letter-spacing 0.3s ease;
 
                     &:hover {
                         letter-spacing: 0.5px;
                         cursor: pointer;
-
-                        a i {
-                            color: darken($secondary-color, 20%);
-                        }
                     }
 
                     a {
                         display: block;
-                        color: $secondary-color;
+                        color: $light-blue-color;
                         text-decoration: none;
                         width: 100%;
                         height: 100%;
@@ -524,7 +481,7 @@ header {
                             top: 50%;
                             left: 14px;
                             transform: translateY(-50%);
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                             transition: color 0.3s ease;
                         }
                     }
@@ -539,6 +496,7 @@ header {
                         blue,
                         red
                     ), 
+                    
                     $thickness: 3px)
                 }
 
@@ -549,6 +507,7 @@ header {
                         transparent,
                         chartreuse
                     ), 
+
                     $thickness: 3px)
                 }
 
@@ -559,6 +518,7 @@ header {
                         transparent,
                         dodgerblue
                     ), 
+
                     $thickness: 3px)
                 }
             }
@@ -586,7 +546,7 @@ header {
                 position: relative;
 
                 i {
-                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                    @include icon;
                     display: block;
                     position: absolute;
                     bottom: 10px;
@@ -595,42 +555,20 @@ header {
                 }
             }
 
-            .identifier_container:has(.identifier:hover) .fa-envelope, .identifier_container:has(.identifier:focus) .fa-envelope {
-                left: -16px;
-            }
-
             input[type="text"] {
-                @include form_input($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                @include form_input;
             }
 
             .password_container {
                 position: relative;
 
                 .fa-lock {
+                    @include icon;
                     display: block;
-                    color: darken($secondary-color, 40%);
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: left 0.3s ease;
-
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease, left 0.3s ease;
-                    }
-                }
-
-                &:has(.password:hover) .fa-lock, 
-                &:has(.password:focus) .fa-lock {
-                    left: -16px;
-                }
-
-                &:has(.password:hover) .show_hide_password, 
-                &:has(.password:focus) .show_hide_password {
-                    right: 0px;
+                    padding: 19px 0px 15px;
                 }
 
                 .password {
@@ -643,24 +581,12 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 20px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: right 0.3s ease;
-
-                    &:hover {
-                        cursor: pointer;
-                        
-                        .fa-eye, 
-                        .fa-eye-slash {
-                            color: darken($secondary-color, 20%);
-                        }
-                    }
+                    padding: 19px 0px 15px;
 
                     .fa-eye, 
                     .fa-eye-slash {
+                        @include icon;
                         display: block;
-                        color: darken($secondary-color, 40%);
-                        transition: color 0.3s ease;
                     }
                 }
             }
@@ -669,172 +595,38 @@ header {
 
     .registration_form_dialog {
         .registration_form {
-            .inputs {
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="password"] {
+                @include form_input;
+            }
+
+            i {
+                @include icon;
+            }
+
+            .name_container,
+            .contact_container {
                 display: flex;
-                flex-direction: row;
-                align-items: center;
-                flex-wrap: wrap;
-
-                .first_name_container, 
-                .last_name_container, 
-                .email_address_container, 
-                .phone_number_container {
-                    position: relative;
-                    width: 50%;
-                    transform-origin: left;
-
-                    &:has(input:hover) i, 
-                    &:has(input:focus) i {
-                        right: 0px;
-                    }
-
-                    input[type="text"], input[type="email"], input[type="tel"] {
-                        width: calc(90% - 20px);
-                        height: 50px;
-                        margin-bottom: 10px;
-                        padding: 0px 10px;
-                        background: transparent;
-                        color: $secondary-color;
-                        border: none;
-                        border-bottom: 1px solid darken($secondary-color, 40%);
-                        outline: none;
-                        transition: width 0.3s ease, border 0.3s ease;
-
-                        &:hover,
-                        &:focus-visible {
-                            width: calc(100%);
-                            border-bottom: 1px solid darken($secondary-color, 20%);
-                        }
-
-                        &::placeholder {
-                            color: darken($secondary-color, 40%);
-                        }
-
-                        &:-webkit-autofill {
-                            -webkit-text-fill-color: rgb(255, 255, 255);
-                            transition: width 0.3s ease, background-color 9999s ease;
-
-                            &:hover,
-                            &:focus-visible {
-                                -webkit-text-fill-color: rgb(255, 255, 255);
-                                transition: width 0.3s ease, background-color 9999s ease;
-                            }
-                        }
-                    }
-
-                    .first_name, .last_name {
-                        padding-right: 23px !important;
-                    }
-
-                    .email_address, .phone_number {
-                        padding-right: 25px !important;
-                    }
-
-                    i {
-                        @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
-                        display: block;
-                        position: absolute;
-                        bottom: 10px;
-                        right: 20px;
-                        padding: 19px 0px 16px;
-                    }
-                }
-
-                .phone_number_container {
-                    &:has(.phone_number:hover) .flag, &:has(.phone_number:focus) .flag {
-                        right: -30px;
-                    }
-            
-                    .flag {
-                        position: absolute;
-                        bottom: 21px;
-                        right: -10px;
-                        width: 24px;
-                        opacity: 0.8;
-                        transition: right 0.3s ease;
-                    }
-                }
+                gap: 10px;
             }
 
             .username_container {
                 position: relative;
 
                 .fa-at {
+                    @include icon;
                     display: block;
-                    color: darken($secondary-color, 40%);
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: left 0.3s ease;
-
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease, left 0.3s ease;
-                    }
-                }
-
-                &:has(.username:hover) .fa-at, 
-                &:has(.username:focus) .fa-at {
-                    left: -16px;
-                }
-            }
-
-            .username, 
-            .password, 
-            input[type="password"] {
-                width: 90%;
-                height: 50px;
-                margin-bottom: 10px;
-                padding: 0px 10px;
-                background: transparent;
-                color: $secondary-color;
-                border: none;
-                border-bottom: 1px solid darken($secondary-color, 40%);
-                outline: none;
-                transition: width 0.3s ease, border 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    width: 100%;
-                    border-bottom: 1px solid darken($secondary-color, 20%);
-                }
-
-                &::placeholder {
-                    color: darken($secondary-color, 40%);
-                }
-
-                &:-webkit-autofill {
-                    -webkit-text-fill-color: rgb(255, 255, 255);
-                    transition: width 0.3s ease, background-color 9999s ease;
-
-                    &:hover,
-                    &:focus-visible {
-                        -webkit-text-fill-color: rgb(255, 255, 255);
-                        transition: width 0.3s ease, background-color 9999s ease;
-                    }
+                    padding: 19px 0px 15px;
                 }
             }
 
             .password_container {
                 position: relative;
-
-                &:has(.password:hover) .generate_password, 
-                &:has(.password:focus) .generate_password {
-                    left: -16px;
-                }
-
-                &:has(.password:hover) .show_hide_password, 
-                &:has(.password:focus) .show_hide_password {
-                    right: 0px;
-                }
-
-                &:has(.password:hover) .copy_password, 
-                &:has(.password:focus) .copy_password {
-                    right: -19px;
-                }
 
                 .password {
                     padding-right: 28px !important;
@@ -846,73 +638,32 @@ header {
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: left 0.3s ease;
-
-                    &:hover {
-                        cursor: pointer;
-
-                        .fa-key {
-                            color: darken($secondary-color, 20%);
-                        }
-                    }
+                    padding: 19px 0px 15px;
 
                     .fa-key {
+                        @include icon;
                         display: block;
-                        color: darken($secondary-color, 40%);
-                        transition: color 0.3s ease;
                     }
                 }
 
-                .show_hide_password {
-                    all: unset;
-                    position: absolute;
-                    bottom: 10px;
-                    right: 20px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: right 0.3s ease;
-
-                    &:hover {
-                        cursor: pointer;
-                        
-                        .fa-eye, 
-                        .fa-eye-slash {
-                            color: darken($secondary-color, 20%);
-                        }
-                    }
-
-                    .fa-eye, 
-                    .fa-eye-slash {
-                        display: block;
-                        color: darken($secondary-color, 40%);
-                        transition: color 0.3s ease;
-                    }
-                }
-
+                .show_hide_password,
                 .copy_password {
                     all: unset;
                     position: absolute;
                     bottom: 10px;
-                    right: 1px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: right 0.3s ease;
+                    right: 20px;
+                    padding: 19px 0px 15px;
 
-                    &:hover {
-                        cursor: pointer;
-
-                        .fa-copy {
-                            color: darken($secondary-color, 20%);
-                        }
-                    }
-
+                    .fa-eye, 
+                    .fa-eye-slash,
                     .fa-copy {
+                        @include icon;
                         display: block;
-                        color: darken($secondary-color, 40%);
-                        transition: color 0.3s ease;
                     }
+                }
+
+                .copy_password {
+                    right: 1px;
                 }
             }
 
@@ -920,30 +671,12 @@ header {
                 position: relative;
 
                 .fa-lock {
+                    @include icon;
                     display: block;
-                    color: darken($secondary-color, 40%);
                     position: absolute;
                     bottom: 10px;
                     left: 3px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: left 0.3s ease;
-
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease, left 0.3s ease;
-                    }
-                }
-
-                &:has(.password_check:hover) .fa-lock, 
-                &:has(.password_check:focus) .fa-lock {
-                    left: -16px;
-                }
-
-                &:has(.password_check:hover) .paste_password, 
-                &:has(.password_check:focus) .paste_password {
-                    right: -19px;
+                    padding: 19px 0px 15px;
                 }
 
                 .password_check {
@@ -955,22 +688,11 @@ header {
                     position: absolute;
                     bottom: 10px;
                     right: 1px;
-                    padding-bottom: 15px;
-                    padding-top: 19px;
-                    transition: right 0.3s ease;
-
-                    &:hover {
-                        cursor: pointer;
-
-                        .fa-copy {
-                            color: darken($secondary-color, 20%);
-                        }
-                    }
+                    padding: 19px 0px 15px;
 
                     .fa-copy {
+                        @include icon;
                         display: block;
-                        color: darken($secondary-color, 40%);
-                        transition: color 0.3s ease;
                     }
                 }
             }
@@ -985,45 +707,37 @@ header {
 
     .reviews {
         .reviews_info_container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5px; // Visually The Gap Is 10px
+            @include flex_center($direction: column);
+            gap: 5px;
             max-width: $main-width;
-            margin: 10px 0px 25px;
-            padding: 25px 30px;
-            background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $surface-border;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid transparentize($blue-color, 0.8);
             border-radius: $medium-border-radius;
 
             .graph {
-                max-width: 500px;
+                max-width: $secondary-width;
                 width: 100%;
                 margin: 0px auto;
 
                 .one_column {
+                    @include flex_center;
                     position: relative;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
                     gap: 20px;
 
                     .rating {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
+                        @include flex_center;
                         text-align: center;
                         gap: 5px;
                         width: 40px;
-                        color: darken($secondary-color, 40%);
+                        color: $light-blue-color;
 
                         span {
                             width: 10px;
                         }
 
                         .fa-star {
-                            color: $article-color;
+                            color: $yellow-color;
                         }
                     }
 
@@ -1031,7 +745,7 @@ header {
 
                     .tooltip {
                         @include tooltip($top: 3.5px);
-                        max-width: 500px;
+                        max-width: $main-width;
                         width: 100%;
 
                         .review_bar {
@@ -1041,7 +755,7 @@ header {
                             position: relative;
                             width: 100%;
                             height: 6px;
-                            background-color: darken($secondary-color, 20%);
+                            background-color: $light-blue-color;
                             border-radius: calc(6px / 2);
                             transition: background-color 0.3s ease;
 
@@ -1053,17 +767,17 @@ header {
                                 width: var(--progress);
                                 height: 100%;
                                 background-color: var(--color);
-                                box-shadow: 0px 0px 5px transparentize($article-color, 0.4);
+                                box-shadow: 0px 0px 5px transparentize($yellow-color, 0.4);
                                 border-radius: inherit;
                                 transition: box-shadow 0.3s ease;
                             }
 
                             &:hover {
-                                background-color: darken($secondary-color, 10%);
+                                background-color: darken($light-blue-color, 5%);
                                 cursor: pointer;
 
                                 &::before {
-                                    box-shadow: 0px 0px 10px transparentize($article-color, 0.2);
+                                    box-shadow: 0px 0px 10px transparentize($yellow-color, 0.2);
                                 }
                             }
                         }
@@ -1072,16 +786,14 @@ header {
                     .counter {
                         width: 2em;
                         text-align: center;
-                        color: darken($secondary-color, 40%);
+                        color: $light-blue-color;
                     }
                 }
             }
 
             .average_rating {
+                @include flex_center;
                 position: relative;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
                 width: max-content;
                 opacity: 0;
 
@@ -1098,7 +810,7 @@ header {
                         position: relative;
                         width: 70px;
                         line-height: 1;
-                        color: darken($secondary-color, 20%);
+                        color: $light-blue-color;
 
                         &:hover {
                             cursor: pointer;
@@ -1144,11 +856,11 @@ header {
         }
 
         .found_reviews {
-            width: 500px;
+            width: $secondary-width;
             margin: 0px auto 5px;
 
             p {
-                color: darken($secondary-color, 20%);
+                color: $light-blue-color;
                 font-size: 0.9em;
 
                 span {
@@ -1160,17 +872,20 @@ header {
         // Custom Select Menu
 
         .select_menus {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
+            @include flex_center;
             gap: 20px;
-            max-width: 500px;
-            margin: 0px auto 10px;
+            max-width: $secondary-width;
+            margin: 0px auto 20px;
 
             .sort_select_menu, 
             .rating_select_menu {
                 @include custom_select_menu($options_list_height: calc(33px * 4));
+
+                &:has(.refresh:hover) {
+                    .select {
+                        border-color: $blue-color !important;
+                    }
+                }
 
                 .refresh {
                     all: unset;
@@ -1182,24 +897,23 @@ header {
                     padding-left: 8.5px;
                     z-index: 50;
 
-                    &:hover {
-                        cursor: pointer;
-
-                        .fa-arrow-rotate-right {
-                            color: $secondary-color;
-                        }
-                    }
-
                     .fa-arrow-rotate-right {
+                        @include icon;
                         display: block;
-                        color: darken($secondary-color, 20%);
-                        transition: color 0.3s ease;
                     }
                 }
             }
 
             .rating_select_menu {
                 @include custom_select_menu($options_list_height: calc(33px * 4), $scrollbar: auto);
+
+                .options_list {
+                    .option {
+                        .fa-star {
+                            color: $yellow-color;
+                        }
+                    }
+                }
             }
         }
 
@@ -1223,21 +937,23 @@ header {
                 opacity: 0;
                 max-width: 100%;
                 padding: 15px;
-                background: transparentize($main-color, 0.65);
-                border: 1px solid $surface-border;
+                background-color: transparentize($dark-blue-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
-                box-shadow: 0 5px 20px transparentize($main-color, 0.6);
+                backdrop-filter: blur(5px);
                 overflow: hidden;
-                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
                 &::before {
-                    @include circle_decoration($top: -40px, $left: -80px, $width: 200px, $height: 200px, $color: transparentize($blue-color, 0.90));
+                    @include circle_decoration($top: -40px, $left: -80px, $width: 200px, $height: 200px);
                 }
 
                 &:hover {
                     transform: translateY(-2px);
-                    border-color: transparentize($blue-color, 0.5);
-                    box-shadow: 0 8px 28px transparentize($blue-color, 0.85);
+                    background: transparent;
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                    cursor: pointer;
                 }
 
                 &.animate {
@@ -1272,7 +988,7 @@ header {
 
                         .date {
                             font-style: italic;
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                         }
                     }
     
@@ -1298,7 +1014,7 @@ header {
                         all: unset;
 
                         i {
-                            @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
+                            @include icon;
                             display: block;
                             font-size: 1.2em;
                         }
@@ -1323,14 +1039,14 @@ header {
                             }
     
                             &.empty {
-                                color: darken($secondary-color, 40%);
+                                color: $light-blue-color;
                                 opacity: 0.5;
                             }
                         }
                     }
     
                     .review_content {
-                        width: 500px;
+                        width: $secondary-width;
                         border-radius: $small-border-radius;
 
                         p {
@@ -1348,11 +1064,10 @@ header {
         .my_review {
             @include flex_center($direction: column);
             gap: 10px;
-            margin-top: 30px;
-            margin-bottom: 50px;
+            margin: 30px 0px 50px;
 
             .one_review {
-                max-width: 500px;
+                max-width: $secondary-width;
                 width: 100%;
                 animation: fadeIn 1s ease-out forwards;
             }
@@ -1362,23 +1077,16 @@ header {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 25px;
+            margin-top: 10px;
 
             .load_more_reviews,
             .hide_loaded_reviews {
                 all: unset;
-                padding: 10px 25px;
-                color: $secondary-color;
-                background: $surface-hover;
-                border: 1px solid $surface-border;
-                border-radius: $big-border-radius;
-                transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
-    
+                color: $light-blue-color;
+
                 &:hover,
-                &:focus-visible {
-                    border-color: transparentize($blue-color, 0.25);
-                    background: transparentize($blue-color, 0.8);
-                    transform: translateY(-2px);
+                &:active {
+                    text-decoration: underline;
                     cursor: pointer;
                 }
             }
@@ -1386,15 +1094,13 @@ header {
 
         .write_review_form_container {
             max-width: $main-width;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 25px;
-            background: linear-gradient(145deg, transparentize($blue-color, 0.90) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $surface-border;
+            margin: 20px 0px;
+            padding: 20px;
+            border: 1px solid transparentize($blue-color, 0.8);
             border-radius: $medium-border-radius;
 
             .write_review_form {
-                max-width: 500px;
+                max-width: $secondary-width;
                 position: relative;
                 text-align: center;
                 margin: 0px auto;
@@ -1410,12 +1116,12 @@ header {
                             transition: color 0.1s ease, transform 0.1s ease;
     
                             &.full {
-                                color: $article-color;
+                                color: $yellow-color;
                                 opacity: 1;
                             }
                             
                             &.empty {
-                                color: darken($secondary-color, 40%);
+                                color: $light-blue-color;
                                 opacity: 0.5;
                             }
     
@@ -1459,7 +1165,7 @@ header {
                         resize: none;
 
                         &::placeholder {
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                         }
                     }
 
@@ -1469,7 +1175,7 @@ header {
                         justify-content: right;
                         height: 25px;
                         padding: 0px 10px;
-                        background-color: transparentize($blue-color, 0.85);
+                        background-color: transparentize($blue-color, 0.9);
                         border-radius: 0px 0px $small-border-radius $small-border-radius;
     
                         .add_emoji {
@@ -1490,200 +1196,9 @@ header {
                 input[type="submit"] {
                     @include blue_button($border-radius: $small-border-radius);
                     width: 100%;
-                    margin-top: 6px + 10px;
+                    margin-top: 20px;
                 }
             }
-        }
-    }
-
-    // Contact Form
-
-    .contact_form { 
-        @include animated_border;
-        max-width: 100%;
-        margin: 0px auto;
-        padding: 0px;
-        text-align: center;
-        border-radius: $medium-border-radius;
-        background: transparent;
-        border: none;
-        box-shadow: none;
-
-        &::before,
-        &::after {
-            display: none;
-        }
-        
-        input[type="text"], input[type="email"] {
-            @include form_input;
-        }
-
-        // Custom Select Menu
-
-        .subject_select_menu {
-            position: relative;
-            margin-bottom: 10px;
-            cursor: pointer;
-
-            &:has(.select:hover) .options_list,
-            &:has(.select:focus-visible) .options_list {
-                width: 100%;
-            }
-
-            .select {
-                @include focus;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 90%;
-                height: 50px;
-                margin: 0px auto;
-                padding: 0px 10px;
-                background: transparent;
-                color: $secondary-color;
-                border-bottom: 1px solid transparentize($blue-color, 0.5);
-                transition: width 0.3s ease, border-color 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    width: 100%;
-                    border-color: $blue-color;
-
-                    .fa-angle-down {
-                        color: $blue-color;
-                    }
-                }
-
-                span {
-                    margin-left: 5px;
-                }
-
-                .fa-angle-down {
-                    color: transparentize($blue-color, 0.5);
-                    transition: color 0.3s ease,
-                }
-            }
-
-            .options_list {
-                interpolate-size: allow-keywords;
-                position: absolute;
-                width: 90%;
-                height: 0px;
-                left: 50%;
-                transform: translateX(-50%);
-                text-align: left;
-                color: $secondary-color;
-                background-color: transparentize($main-color, 0.2);
-                border-radius: 0px 0px 5px 5px;
-                overflow: hidden;
-                transition: height 0.3s ease, width 0.3s ease;
-                z-index: 50;
-
-                &.active {
-                    height: auto;
-                }
-
-                .option {
-                    padding: 5px 15px;
-                    transition: background-color 0.3s ease, color 0.3s ease;
-
-                    &:hover,
-                    &:focus-visible,
-                    &.selected {
-                        background-color: transparentize($blue-color, 0.9);
-                        color: $blue-color !important;
-                    }
-
-                    &:focus-visible {
-                        outline: none !important;
-                    }
-
-                    i {
-                        width: 1em;
-                        margin-right: 10px;
-                        color: $blue-color;
-                    }
-                }
-            }
-        }
-        
-        .message_container {
-            display: flex;
-            flex-direction: column;
-            width: 90%;
-            margin: 20px auto 0px;
-            border: 1px solid transparentize($blue-color, 0.5);
-            border-radius: $small-border-radius;
-            transition: border-color 0.3s ease;
-            
-            &.drag_active {
-                background-color: transparentize($main-color, 0.8);
-                border: 2px dashed transparentize($blue-color, 0.5);
-                transition: background-color 0.3s ease;
-                animation: dropZone 1s infinite alternate;
-            }
-
-            &:hover,
-            &:has(textarea:hover), 
-            &:has(textarea:focus) {
-                border-color: $blue-color;
-            }
-
-            textarea {
-                width: 100%;
-                min-height: 100px;
-                field-sizing: content;
-                padding: 5px 10px;
-                background: transparent;
-                color: $secondary-color;
-                border: none;
-                outline: none;
-                resize: none;
-
-                &::placeholder {
-                    color: darken($secondary-color, 40%);
-                }
-            }
-
-            .attachment {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                height: 25px;
-                padding: 0px 10px;
-                background-color: transparentize($blue-color, 0.85);
-                border-radius: 0px 0px $small-border-radius $small-border-radius;
-
-                p {
-                    @include crop_text;
-                    font-size: 0.8em;
-                    color: darken($secondary-color, 40%);
-                }
-
-                // Attachment Tooltip
-
-                .tooltip {
-                    @include tooltip($top: -5px);
-
-                    i {
-                        @include icon;
-                    }
-                }
-
-                #select_attachment {
-                    display: none;
-                }
-            }
-        }
-
-        .form_report {
-            @include form_report;
-        }
-
-        input[type="submit"] {
-            @include blue_button;
-            margin-top: 40px;
         }
     }
 
@@ -1709,9 +1224,8 @@ header {
                 aspect-ratio: 1.586 / 1; // ISO / IEC 7810
                 padding: 10px 15px;
                 background: linear-gradient(135deg, lighten($main-color, 10%) 0%, lighten($main-color, 5%) 50%, transparentize($blue-color, 0.90) 100%);
-                border: 1px solid $surface-border;
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
-                box-shadow: 0 10px 40px transparentize($main-color, 0.5);
 
                 .group {
                     display: flex;
@@ -1720,7 +1234,7 @@ header {
                     label {
                         font-size: 0.8em;
                         text-transform: uppercase;
-                        color: darken($secondary-color, 40%);
+                        color: $blue-color;
                     }
 
                     .card_number,
@@ -1730,13 +1244,19 @@ header {
                         height: 30px;
                         padding: 0px 5px;
                         color: $secondary-color;
-                        background-color: transparentize($main-color, 0.8);
+                        background-color: transparent;
                         border: none;
                         border: 1px solid transparentize($blue-color, 0.5);
                         border-radius: $small-border-radius;
                         font-family: monospace;
                         outline: none;
                         appearance: none;
+                        transition: border-color 0.2s ease;
+
+                        &:hover,
+                        &:focus-visible {
+                            border-color: $blue-color !important;
+                        }
                     }
                 }
             }
@@ -1826,25 +1346,36 @@ header {
 
         .donation_buttons {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             width: 85.6mm;
             margin: 0px auto;
             
             .donate_button {
-                @include blue_button($width: 100%);
-                @include glow_animated_border;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($blue-strong, 0.55));
-                border-color: transparentize($blue-color, 0.15);
-                margin-top: 15px;
-                color: transparentize($secondary-color, 0.2);
+                @include blue_button($border-radius: $medium-border-radius);
+                margin-top: 20px;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                border-color: $blue-color;
+                color: $light-blue-color;
                 font-size: 1.2em;
+                font-weight: bold;
+                line-height: 1;
+
+                &:hover {
+                    transform: translateY(-2px);
+                }
+                
+                span {
+                    font-size: 0.6em;
+                    vertical-align: super;
+                    margin-left: 2px;
+                }
             }
         }
     }
 
     .subscription_plans {
         display: flex;
-        gap: 40px;
+        gap: 30px;
         margin-top: 50px;
 
         .basic,
@@ -1858,6 +1389,7 @@ header {
 
             .title {
                 text-align: center;
+                text-transform: uppercase;
                 font-size: 1.2em;
             }
 
@@ -1868,11 +1400,10 @@ header {
 
             .price {
                 margin-bottom: 30px;
-                font-family: $article-heading-font;
                 font-size: 2.5em;
                 font-weight: bold;
                 text-align: center;
-                background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
+                background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
                 background-clip: text;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -1901,8 +1432,6 @@ header {
                     text-align: left;
 
                     &:has(.checkbox.checked) {
-                        --progress: 100;
-                        --progress-color: rgba(82, 207, 32, 0.1);
                         border-color: transparentize($green-color, 0.8);
                     }
     
@@ -1949,55 +1478,47 @@ header {
 
             .subscribe {
                 @include blue_button($width: 100%, $border-radius: $medium-border-radius);
-                letter-spacing: 0.25px;
 
                 &:hover {
-                    transform: scale(1);
+                    transform: translateY(-2px);
                 }
             }
         }
 
         .basic {
-            background-color: transparentize($surface-border, 0.9);
             transition: transform 0.3s ease;
         
             &:hover {
-                transform: translateY(-5px);
+                transform: translateY(-2px);
             }
 
             .subscribe {
-                color: transparentize($secondary-color, 0.15);
-                background: transparentize($main-color, 0.85);
-                backdrop-filter: blur(5px);
-
                 &:hover,
                 &:focus-visible {
-                    background: $surface-hover;
+                    background-color: transparentize($dark-blue-color, 0.8);
                 }
             }
         }
         
         .premium {
             @include animated_border;
-            background-color: transparentize($main-color, 0.95);
             transform: scale(1.02);
-            box-shadow: 0 10px 30px transparentize($main-color, 0.8);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: transparentize($dark-blue-color, 0.95);
+            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+            transition: transform 0.3s ease;
         
             &:hover {
-                transform: scale(1.05) translateY(-5px);
-                box-shadow: 0 15px 35px transparentize($main-color, 0.7);
+                transform: scale(1.05) translateY(-2px);
             }
 
             .subscribe {
                 @include glow_animated_border;
-                color: $secondary-color;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
-                border-color: transparentize($blue-color, 0.2);
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                border-color: $blue-color;
 
                 &:hover,
                 &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
                 }
             }
         }
@@ -2010,44 +1531,65 @@ header {
         h2 {
             margin-bottom: 10px;
             font-size: 2em;
-            background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
+            background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .cancel_subscription {
-            @include blue_button;
+            @include blue_button($width: 90%, $border-radius: $medium-border-radius);
             margin-top: 40px;
+
+            &:hover {
+                transform: translateY(-2px);
+                background-color: transparentize($dark-blue-color, 0.8);
+            }
         }
 
         .cancel_subscription_dialog {
             &::backdrop {
-                background-color: transparentize($main-color, 0.8);
-                backdrop-filter: blur(2px);
+                background-color: transparentize($main-color, 0.5);
+                backdrop-filter: blur(5px);
             }
     
             .cancel_subscription_form {
                 @include position_center($position: fixed);
-                max-width: 500px;
+                max-width: $secondary-width;
                 width: 100%;
                 padding: 30px 50px 50px;
                 text-align: center;
-                background-color: transparentize($main-color, 0.8);
-                color: $secondary-color;
-                backdrop-filter: blur(5px);
-                border: 2px solid $secondary-color;
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
                 overflow: hidden;
+
+                &::before {
+                    @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+                }
+
+                &::after {
+                    @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
+                }
 
                 h2 {
                     margin-bottom: 30px;
                     color: $secondary-color;
+                    font-size: 2.5em;
+                    background: none;
+                    background-clip: initial;
+                    -webkit-background-clip: initial;
+                    -webkit-text-fill-color: initial;
                     animation: fadeInScale 0.3s ease-out;
+                }
+
+                .back {
+                    @include form_back;
                 }
 
                 p {
                     margin-bottom: 30px;
+                    color: $secondary-color;
                 }
 
                 // Buttons
@@ -2060,30 +1602,28 @@ header {
                     
                     .no,
                     .yes {
-                        @include blue_button($width: 100%);
-                        letter-spacing: 0.25px;
+                        @include blue_button;
+                        width: 90%;
+                        color: $light-blue-color;
                     }
 
                     .no {
-                        color: transparentize($secondary-color, 0.15);
-                        background: transparentize($main-color, 0.85);
                         backdrop-filter: blur(5px);
 
                         &:hover,
                         &:focus-visible {
-                            background: $surface-hover;
+                            background-color: transparentize($dark-blue-color, 0.8);
                         }
                     }
 
                     .yes {
                         @include glow_animated_border;
-                        color: $secondary-color;
-                        background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
-                        border-color: transparentize($blue-color, 0.2);
+                        background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                        border-color: $blue-color;
 
                         &:hover,
                         &:focus-visible {
-                            background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
+                            background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
                         }
                     }
                 }
@@ -2092,7 +1632,134 @@ header {
 
         .remaining_time {
             margin-top: 10px;
-            color: transparentize($secondary-color, 0.6)
+        }
+    }
+
+    // Contact Form
+
+    .contact_form { 
+        max-width: 100%;
+        margin: 0px auto;
+        padding: 0px;
+        text-align: center;
+        border-radius: $medium-border-radius;
+        background: transparent;
+        border: none;
+        
+        input[type="text"], input[type="email"] {
+            @include form_input;
+        }
+
+        // Custom Select Menu
+
+        .subject_select_menu {
+            @include custom_select_menu($options_list_height: calc(33px * 4));
+            max-width: 90%;
+            margin: 0px auto;
+
+            .select {
+                height: 50px;
+                border-top: none;
+                border-right: none;
+                border-left: none;
+                border-radius: 0px;
+
+                span {
+                    margin-left: 0px;
+                }
+            }
+
+            .options_list {
+                .option {
+                    position: relative;
+
+                    i {
+                        position: absolute;
+                        top: 50%;
+                        left: 10px;
+                        transform: translateY(-50%);
+                    }
+                }
+            }
+        }
+        
+        .message_container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            margin: 20px auto 0px;
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $small-border-radius;
+            transition: border-color 0.3s ease;
+            
+            &.drag_active {
+                background-color: transparentize($main-color, 0.8);
+                border: 2px dashed transparentize($blue-color, 0.5);
+                transition: background-color 0.3s ease;
+                animation: dropZone 1s infinite alternate;
+            }
+
+            &:hover,
+            &:has(textarea:hover), 
+            &:has(textarea:focus) {
+                border-color: $blue-color;
+            }
+
+            textarea {
+                width: 100%;
+                min-height: 100px;
+                field-sizing: content;
+                padding: 5px 10px;
+                background: transparent;
+                color: $secondary-color;
+                border: none;
+                outline: none;
+                resize: none;
+
+                &::placeholder {
+                    color: $light-blue-color;
+                }
+            }
+
+            .attachment {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 25px;
+                padding: 0px 10px;
+                background-color: transparentize($blue-color, 0.9);
+                border-radius: 0px 0px $small-border-radius $small-border-radius;
+
+                p {
+                    @include crop_text;
+                    font-size: 0.8em;
+                    color: $light-blue-color;
+                }
+
+                // Attachment Tooltip
+
+                .tooltip {
+                    @include tooltip($top: -5px);
+
+                    i {
+                        @include icon;
+                    }
+                }
+
+                #select_attachment {
+                    display: none;
+                }
+            }
+        }
+
+        .form_report {
+            @include form_report;
+        }
+
+        input[type="submit"] {
+            @include blue_button;
+            margin-top: 40px;
         }
     }
 }

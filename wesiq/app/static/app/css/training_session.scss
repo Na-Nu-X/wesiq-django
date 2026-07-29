@@ -18,21 +18,19 @@ $training-glow: $surface-glow;
     .left {
         .manage_training_plans {
             a {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
-                padding: 5px 15px;
-                text-decoration: none;
-                color: $secondary-color;
-                background: $training-surface;
-                border: 1px solid $training-surface-border;
+                gap: 5px;
+                width: max-content;
+                padding: 5px 10px;
+                background-color: transparent;
+                backdrop-filter: blur(5px);
+                border: 1px solid $dark-blue-color;
                 border-radius: $big-border-radius;
-                backdrop-filter: blur(10px);
-                transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 5px 20px $training-glow;
+                cursor: pointer;
+                transition: transform 0.1s ease;
+    
+                &:hover {
                     transform: translateY(-1px);
                 }
             }
@@ -58,74 +56,32 @@ $training-glow: $surface-glow;
 ************/
 
 .training_page {
-    max-width: 1100px;
+    max-width: $main-width;
     margin: 0px auto;
-    padding-bottom: 40px;
-
-    .training_page_header {
-        text-align: center;
-        margin-bottom: 40px;
-        padding: 0px 20px;
-
-        .page_title {
-            line-height: 1;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px transparentize($blue-color, 0.6));
-
-            font: {
-                family: $heading-font;
-                size: clamp(2em, 5vw, 3em);
-            }
-        }
-
-        .page_subtitle {
-            max-width: 500px;
-            margin: 0px auto;
-            color: transparentize($secondary-color, 0.35);
-            font-weight: 300;
-        }
-    }
 
     .training_section {
         position: relative;
-        margin: 0px auto 40px;
-        @include glass_panel($padding: 35px 30px, $blur: 10px);
+        margin: 0px auto 50px;
         overflow: visible;
 
-        &::before {
-            @include glass_accent_bar;
-        }
-
         &.activity_section {
-            max-width: 550px;
+            max-width: $secondary-width;
         }
 
         &.tasks_section {
-            max-width: 1200px;
-            padding: 35px 30px;
+            max-width: $main-width;
         }
 
         &.history_section {
-            max-width: 550px;
+            max-width: $secondary-width;
         }
     }
 
     .section_title {
         margin-bottom: 25px;
         text-align: center;
-        background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.2) 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-
-        font: {
-            family: $article-heading-font;
-            size: clamp(1.3em, 3vw, 1.8em);
-        }
+        font-family: $article-heading-font;
+        font-size: clamp(1.2em, 3vw, 1.8em);
     }
 }
 
@@ -140,32 +96,28 @@ $training-glow: $surface-glow;
         @include flex_center($direction: column);
         width: 100%;
         margin-bottom: 30px;
-        padding: 30px 25px;
-        background: linear-gradient(145deg, transparentize($blue-color, 0.9) 0%, transparentize($main-color, 0.95) 100%);
-        border: 1px solid $training-surface-border;
+        padding: 50px 30px;
+        border: 1px solid transparentize($blue-color, 0.5);
+        border-radius: $medium-border-radius;
+        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
         border-radius: $medium-border-radius;
 
         .timer {
             margin-bottom: 20px;
             font-family: $timer-font;
-            font-size: clamp(2.2em, 6vw, 3.2em);
+            font-size: clamp(2em, 6vw, 3em);
             font-weight: lighter;
             color: $secondary-color;
             white-space: nowrap;
-            text-shadow: 0 0 40px $training-glow;
+            text-shadow: 0 0 40px transparentize($secondary-color, 0.8);
             letter-spacing: 2px;
 
             span {
                 font-variant-numeric: tabular-nums;
                 display: inline-block;
                 width: 80px;
-                margin-right: 5px;
                 font-family: inherit;
                 font-size: inherit;
-
-                &:last-child {
-                    margin-right: 0px;
-                }
             }
         }
 
@@ -177,21 +129,8 @@ $training-glow: $surface-glow;
             .play,
             .stop {
                 @include blue_button;
-                position: relative;
-
-                &:nth-child(1) {
-                    background-color: $blue-color;
-                    box-shadow: 0px 0px 10px $blue-color;
-
-                    &:not(:hover) {
-                        animation: bluePulse 1s linear alternate infinite 0.3s;
-                    }
-
-                    &:hover,
-                    &:focus-visible {
-                        background-color: lighten($blue-color, 2%);
-                    }
-                }
+                width: 90%;
+                color: $light-blue-color;
 
                 .fa-play, .fa-pause, .fa-stop {
                     @include position_center;
@@ -205,6 +144,26 @@ $training-glow: $surface-glow;
 
                 .fa-stop {
                     color: $blue-color;
+                }
+            }
+
+            .stop {
+                backdrop-filter: blur(5px);
+
+                &:hover,
+                &:focus-visible {
+                    background-color: transparentize($dark-blue-color, 0.8);
+                }
+            }
+
+            .play {
+                @include glow_animated_border;
+                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                border-color: $blue-color;
+
+                &:hover,
+                &:focus-visible {
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
                 }
             }
         }
@@ -245,10 +204,9 @@ $training-glow: $surface-glow;
             flex-direction: column;
             width: 100%;
             height: 250px;
-            background: linear-gradient(160deg, transparentize($main-color, 0.85) 0%, transparentize($blue-color, 0.95) 100%);
             border-radius: $medium-border-radius;
             overflow: hidden;
-            box-shadow: 0 10px 30px transparentize($main-color, 0.6);
+            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
 
             &.blur {
                 animation: blur 0.3s ease-out;
@@ -283,7 +241,7 @@ $training-glow: $surface-glow;
                     transition: opacity 0.5s ease;
 
                     p {
-                        color: transparentize($secondary-color, 0.4);
+                        color: transparentize($secondary-color, 0.5);
                         font-size: 0.85em;
                         text-transform: uppercase;
                         letter-spacing: 1px;
@@ -295,7 +253,7 @@ $training-glow: $surface-glow;
 
                     h3 {
                         font-family: $article-heading-font;
-                        font-size: clamp(1.4em, 4vw, 2em);
+                        font-size: clamp(1.2em, 4vw, 2em);
                         color: $secondary-color;
                     }
                 }
@@ -432,10 +390,9 @@ $training-glow: $surface-glow;
                         left: 50%;
                         transform: translate(-50%, 0%);
                         width: calc(100% + 10px);
-                        height: 24px;
                         text-align: center;
-                        font-size: 12px;
-                        line-height: 12px;
+                        font-size: 0.8em;
+                        line-height: 0.8em;
                         color: transparentize($secondary-color, 0.5);
                         text-overflow: ellipsis;
                         overflow: hidden;
@@ -528,27 +485,28 @@ $training-glow: $surface-glow;
                 display: flex;
                 flex-direction: column;
                 width: 100%;
-                padding: 15px 10px;
+                padding: 20px 10px;
                 text-align: center;
-                background: linear-gradient(145deg, transparentize($blue-color, 0.9) 0%, transparentize($main-color, 0.95) 100%);
-                border: 1px solid $training-surface-border;
+                background-color: transparentize($dark-blue-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
                 &:hover {
-                    border-color: transparentize($blue-color, 0.4);
-                    box-shadow: 0 5px 20px transparentize($blue-color, 0.85);
+                    transform: translateY(-2px);
+                    background: transparent;
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                    cursor: pointer;
                 }
 
                 p {
                     .title {
-                        display: block;
-                        height: 30px;
-                        margin-top: 5px;
-                        line-height: calc(0.8em + 3px);
+                        @include flex_center;
+                        gap: 5px;
                         font-size: 0.8em;
                         text-align: center;
-                        color: transparentize($secondary-color, 0.35);
+                        color: transparentize($secondary-color, 0.5);
 
                         i {
                             color: $blue-color;
@@ -557,10 +515,12 @@ $training-glow: $surface-glow;
 
                     .average_activity_time,
                     .activities_amount {
+                        display: block;
+                        margin-top: 15px;
+                        line-height: 1;
                         font-size: 1.5em;
                         font-weight: semibold;
                         color: $blue-color;
-                        text-shadow: 0 0 20px $training-glow;
                         white-space: nowrap;
                     }
                 }
@@ -569,16 +529,23 @@ $training-glow: $surface-glow;
 
         .bottom {
             padding: 15px;
-            background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $training-surface-border;
+            background-color: transparentize($dark-blue-color, 0.95);
+            border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $medium-border-radius;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                background: transparent;
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                cursor: pointer;
+            }
 
             .latest_activity_container,
             .longest_activity_container {
                 p {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    @include flex_center;
                     gap: 5px;
 
                     i {
@@ -588,12 +555,12 @@ $training-glow: $surface-glow;
                     span {
                         text-align: center;
                         white-space: nowrap;
-                        color: transparentize($secondary-color, 0.15);
+                        color: transparentize($secondary-color, 0.5);
 
                         &.no_latest_activity,
                         &.no_longest_activity {
                             white-space: normal;
-                            color: transparentize($secondary-color, 0.4);
+                            color: transparentize($secondary-color, 0.5);
                         }
                     }
 
@@ -602,7 +569,6 @@ $training-glow: $surface-glow;
                         font-size: 1.2em;
                         font-weight: semibold;
                         color: $blue-color;
-                        text-shadow: 0 0 15px $training-glow;
                     }
                 }
             }
@@ -698,21 +664,20 @@ $training-glow: $surface-glow;
 .todo {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 20px;
     width: 100%;
     margin: 0px auto;
     
     .official_tasks,
     .custom_tasks {
-        max-width: 500px;
+        max-width: $secondary-width;
         width: 100%;
-        padding: 25px 20px;
-        background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
-        border: 1px solid $training-surface-border;
+        padding: 20px;
+        border: 1px solid transparentize($blue-color, 0.8);
         border-radius: $medium-border-radius;
 
         h3.section_title {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .info {
@@ -724,20 +689,19 @@ $training-glow: $surface-glow;
 
             .delete_completed {
                 all: unset;
-                font-size: 0.85em;
-                color: transparentize($secondary-color, 0.25);
-                cursor: pointer;
-    
+                font-size: 0.9em;
+                color: $light-blue-color;
+
                 &:hover,
-                &:focus-visible {
-                    color: $blue-color;
+                &:active {
                     text-decoration: underline;
+                    cursor: pointer;
                 }
             }
 
             .tasks_amount {
-                font-size: 0.85em;
-                color: transparentize($secondary-color, 0.4);
+                font-size: 0.9em;
+                color: $light-blue-color;
             }
         }
 
@@ -758,7 +722,7 @@ $training-glow: $surface-glow;
                 gap: 10px;
                 background: transparentize($main-color, 0.6);
                 padding: 0px 15px;
-                border: 1px solid transparentize($blue-color, 0.85);
+                border: 1px solid transparentize($blue-color, 0.8);
                 border-radius: $small-border-radius;
                 transition: border-color 0.3s ease, transform 0.2s ease;
 
@@ -783,7 +747,6 @@ $training-glow: $surface-glow;
                     flex-grow: 1;
                     height: 50px;
                     line-height: 50px;
-                    color: transparentize($secondary-color, 0.1);
                 }
             }
         }
@@ -792,18 +755,9 @@ $training-glow: $surface-glow;
     .official_tasks {
         .remaining_hours {
             text-align: center;
-            font-size: 0.85em;
-            color: transparentize($secondary-color, 0.35);
+            font-size: 0.9em;
+            color: $light-blue-color;
             margin-bottom: 10px;
-
-            i {
-                color: $blue-color;
-            }
-
-            span {
-                font-weight: bold;
-                color: $blue-color;
-            }
         }
 
         .tasks {
@@ -821,7 +775,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid darken($secondary-color, 40%);
+                    outline: 1px solid $light-blue-color;
                     background: transparentize($main-color, 0.5);
 
                     &::before {
@@ -890,6 +844,8 @@ $training-glow: $surface-glow;
     }
 
     .custom_tasks {
+        padding: 20px 15px;
+
         .tasks {
             @include scrollbar;
             max-height: calc(50px * 3 + 15px * 2);
@@ -981,7 +937,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid darken($secondary-color, 40%);
+                    outline: 1px solid $light-blue-color;
                     background: transparentize($main-color, 0.5);
 
                     &::before {
