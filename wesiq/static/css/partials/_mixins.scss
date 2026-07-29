@@ -109,7 +109,7 @@
         0 0 0 1px rgba(91, 140, 255, 0.06) inset;
 }
 
-@mixin glass_accent_bar($width: 80px, $height: 3px) {
+@mixin glass_accent_bar($width: 80px, $height: 2px) {
     content: "";
     position: absolute;
     top: 0px;
@@ -117,10 +117,10 @@
     transform: translateX(-50%);
     width: $width;
     height: $height;
-    background: linear-gradient(90deg, transparent, $blue-soft, $blue-color, $blue-soft, transparent);
-    border-radius: 2px;
-    z-index: 10;
+    background: linear-gradient(90deg, transparent, transparentize($blue-color, 0.5), $blue-color, transparentize($blue-color, 0.5), transparent);;
+    border-radius: $small-border-radius;
     pointer-events: none;
+    z-index: 10;
 }
 
 @mixin glass_icon_button($size: 40px) {
@@ -151,7 +151,7 @@
     text-align: center;
     background-color: transparent;
     color: $secondary-color;
-    border: 1px solid transparentize($blue-color, 0.35);
+    border: 1px solid transparentize($blue-color, 0.5);
     border-radius: $border-radius;
     outline: none;
     transition: border-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
@@ -298,28 +298,23 @@
     width: 100%;
     cursor: pointer;
 
-            .select {
+    .select {
         display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
         height: 40px;
         padding: 0px 8.5px;
-        color: $text-muted;
-        background-color: $surface-inset;
-        border: 1px solid $surface-border;
+        color: $light-blue-color;
+        border: 1px solid transparentize($blue-color, 0.5);
         border-radius: $small-border-radius;
         transition: border 0.3s ease, box-shadow 0.3s ease;
 
         &:hover,
-        &:focus-visible {
+        &:focus-visible,
+        &:has(.fa-angle-down:hover),
+        &:has(.fa-angle-up:hover) {
             border-color: $blue-color !important;
-            box-shadow: 0 4px 14px transparentize($blue-color, 0.8);
-
-            .fa-angle-down,
-            .fa-angle-up {
-                color: $blue-color;
-            }
         }
 
         span {
@@ -327,19 +322,19 @@
             margin-left: 15px + 8.5px - 2px;
             
             i {
-                color: $article-color;
+                color: $light-blue-color;
                 margin-right: 8.5px;
             }
         }
 
         .fa-angle-down,
         .fa-angle-up {
-            color: transparentize($blue-color, 0.5);
-            transition: color 0.3s ease,
+            @include icon;
         }
     }
 
     .options_list {
+        @include scrollbar;
         interpolate-size: allow-keywords;
         position: absolute;
         width: 100%;
@@ -354,11 +349,6 @@
 
         &::-webkit-scrollbar {
             width: 3px;
-            background-color: $secondary-color;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: $article-color;
         }
 
         &.active {
@@ -374,7 +364,7 @@
             &:focus-visible,
             &.selected {
                 background-color: transparentize($blue-color, 0.9);
-                color: $article-color;
+                color: $light-blue-color;
             }
 
             &:focus-visible {
@@ -382,7 +372,7 @@
             }
 
             i {
-                color: $article-color;
+                color: $light-blue-color;
                 margin-right: 8.5px;
             }
         }
@@ -408,7 +398,7 @@
 
 // Form Input
 
-@mixin form_input($color: transparentize($blue-color, 0.4), $hover_color: $blue-color) {
+@mixin form_input($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
     position: relative;
     width: 90%;
     height: 50px;
@@ -419,16 +409,15 @@
     border: none;
     border-bottom: 1px solid $color;
     outline: none;
-    transition: width 0.3s ease, border-color 0.3s ease;
+    transition: border-color 0.2s ease;
 
     &:hover,
     &:focus {
-        width: 100%;
         border-color: $hover_color;
     }
 
     &::placeholder {
-        color: $text-subtle;
+        color: $light-blue-color;
     }
 
     &:-webkit-autofill {
@@ -489,7 +478,7 @@
 
 // Form Back
 
-@mixin form_back($color: transparentize($blue-color, 0.35), $hover_color: $blue-color) {
+@mixin form_back($color: $blue-color, $hover_color: $dark-blue-color) {
     position: absolute;
     top: 42.5px;
     left: 50px;
@@ -509,14 +498,13 @@
 
 // Icons
 
-@mixin icon($color: transparentize($blue-color, 0.35), $hover_color: $blue-color) {
+@mixin icon($color: $blue-color, $hover_color: $dark-blue-color) {
     color: $color;
-    transition: top 0.3s ease, right 0.3s ease, bottom 0.3s ease, left 0.3s ease;
 
     &:hover {
         color: $hover_color;
         cursor: pointer;
-        transition: color 0.3s ease, top 0.3s ease, right 0.3s ease, bottom 0.3s ease, left 0.3s ease;
+        transition: color 0.2s ease;
     }
 }
 
@@ -586,7 +574,7 @@
 
 @mixin search_bar {
     position: relative;
-    max-width: 500px;
+    max-width: $secondary-width;
     width: 100%;
     backdrop-filter: blur(5px);
     z-index: 50;
@@ -595,6 +583,7 @@
         @include icon;
         pointer-events: none;
         position: absolute;
+        color: $blue-color;
         top: 50%;
         left: 8.5px;
         transform: translateY(-50%);
@@ -616,8 +605,8 @@
 
         &:hover {
             .fa-xmark {
-                color: $blue-color;
-                transition: color 0.3s ease;
+                color: $dark-blue-color;
+                transition: color 0.2s ease;
             }
         }
 
@@ -627,7 +616,7 @@
 
         .fa-xmark {
             font-size: 20px;
-            color: transparentize($blue-color, 0.35);
+            color: $blue-color;
         }
     }
 
@@ -635,30 +624,23 @@
         width: 100%;
         height: 40px;
         padding: 0px 40px;
-        background-color: $surface-inset;
+        background-color: transparent;
         color: $secondary-color;
-        border: none;
-        border: 1px solid $surface-border;
+        border: 1px solid $dark-blue-color;
         border-radius: $small-border-radius;
         text-align: center;
         outline: none;
-        font-size: 1.2em;
-        transition: border 0.3s ease, box-shadow 0.3s ease;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
         z-index: 50;
 
         &:hover,
         &:focus-visible {
-            border-color: transparentize($blue-color, 0.2) !important;
-            box-shadow: 0 4px 18px transparentize($blue-color, 0.75);
+            border-color: $blue-color !important;
         }
 
         &::placeholder {
-            color: $text-subtle;
+            color: $light-blue-color;
         }
-    }
-
-    &:has(.search_bar:hover) .fa-magnifying-glass, &:has(.search_bar:focus) .fa-magnifying-glass {
-        color: $blue-color;
     }
 }
 
@@ -784,17 +766,17 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: transparentize($blue-color, 0.45);
+        background-color: transparentize($dark-blue-color, 0.5);
         border-radius: 2.5px;
 
         &:hover {
-            background-color: transparentize($blue-color, 0.2);
+            background-color: $dark-blue-color;
             cursor: pointer;
         }
     }
 
     &::-webkit-scrollbar-track {
-        background-color: $surface-inset;
+        background-color: transparentize($dark-blue-color, 0.8);
         border-radius: 2.5px;
     }
 }

@@ -180,7 +180,7 @@
 
             <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
             
-            <div class="inputs">
+            <div class="name_container">
                 <div class="first_name_container">
                     <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                     {{ registration_form.first_name }}
@@ -190,7 +190,9 @@
                     <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
                     {{ registration_form.last_name }}
                 </div>
-                
+            </div>
+            
+            <div class="contact_container">
                 <div class="email_address_container">
                     <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
                     {{ registration_form.email_address }}
@@ -649,58 +651,6 @@
             }
         })
     </script>
-    
-    <section class="homepage_section contact_section">
-        <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <h2 class="section_title">{% translate "Kontaktujte nás" %}</h2>
-
-            {{ contact_form.first_name }}
-            {{ contact_form.last_name }}
-            {{ contact_form.email_address }}
-
-            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
-            <div class="subject_select_menu">
-                <input type="hidden" name="subject" value="question">
-
-                <div class="select" tabindex="0">
-                    <span>{% translate "Otázka" %}</span>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-
-                <div class="options_list" inert>
-                    <div class="option" data-subject="question" tabindex="0"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
-                    <div class="option" data-subject="account_issue" tabindex="0"><i class="fa-regular fa-user"></i><span>{% translate "Problém s účtom" %}</span></div> <!-- https://fontawesome.com/icons/user -->
-                    <div class="option" data-subject="bug" tabindex="0"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
-                    <div class="option" data-subject="suggestion" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
-                </div>
-            </div>
-
-            <div class="message_container">
-                {{ contact_form.message }}
-
-                <div class="attachment">
-                    <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
-                    
-                    <label for="select_attachment" tabindex="0">
-                        <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}" title="{% translate 'Vybrať prílohu' %}" aria-label="{% translate 'Vybrať prílohu' %}">
-                            <i class="fa-solid fa-paperclip"></i> <!-- https://fontawesome.com/icons/paperclip -->
-                        </div>
-                    </label>
-                    
-                    {{ contact_form.select_attachment }}
-                </div>
-            </div>
-
-            <p class="form_report" style="bottom: 110px;"></p>
-            <input type="hidden" name="contact_form_submit" value="contact_form_submit">
-            <input type="submit" value="{% translate 'Odoslať správu' %}">
-
-            <!-- Google reCAPTCHA V3 -->
-            <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
-        </form>
-    </section>
 
     <section 
         class="homepage_section support_section"
@@ -749,9 +699,9 @@
             </div>
 
             <div class="donation_buttons">
-                <button class="donate_button" type="button" data-amount="100">1€</button>
-                <button class="donate_button" type="button" data-amount="200">2€</button>
-                <button class="donate_button" type="button" data-amount="500">5€</button>
+                <button class="donate_button" type="button" data-amount="100">1<span>€</span></button>
+                <button class="donate_button" type="button" data-amount="200">2<span>€</span></button>
+                <button class="donate_button" type="button" data-amount="500">5<span>€</span></button>
             </div>
         </form>
 
@@ -849,10 +799,10 @@
 
                 <p>
                     {% if logged_in_user.subscription.plan == "basic" %}
-                        {% translate "Základné predplatné" %} 0,99€
+                        {% translate "Základné predplatné" %} - 0,99€
     
                     {% elif logged_in_user.subscription.plan == "premium" %}
-                        {% translate "Prémiové predplatné" %} 2,99€
+                        {% translate "Prémiové predplatné" %} - 2,99€
     
                     {% endif %}
                 </p>
@@ -896,6 +846,58 @@
             </div>
             
         {% endif %}
+    </section>
+
+    <section class="homepage_section contact_section">
+        <form class="contact_form" action="{% url 'homepage_url' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h2 class="section_title">{% translate "Kontaktujte nás" %}</h2>
+
+            {{ contact_form.first_name }}
+            {{ contact_form.last_name }}
+            {{ contact_form.email_address }}
+
+            <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
+            <div class="subject_select_menu">
+                <input type="hidden" name="subject" value="question">
+
+                <div class="select" tabindex="0">
+                    <span>{% translate "Otázka" %}</span>
+                    <i class="fas fa-angle-down"></i>
+                </div>
+
+                <div class="options_list" inert>
+                    <div class="option" data-subject="question" tabindex="0"><i class="fa-solid fa-question"></i><span>{% translate "Otázka" %}</span></div> <!-- https://fontawesome.com/icons/question -->
+                    <div class="option" data-subject="account_issue" tabindex="0"><i class="fa-regular fa-user"></i><span>{% translate "Problém s účtom" %}</span></div> <!-- https://fontawesome.com/icons/user -->
+                    <div class="option" data-subject="bug" tabindex="0"><i class="fa-solid fa-bug"></i><span>{% translate "Nahlásenie chyby" %}</span></div> <!-- https://fontawesome.com/icons/bug -->
+                    <div class="option" data-subject="suggestion" tabindex="0"><i class="fa-solid fa-wand-magic-sparkles"></i><span>{% translate "Návrh na zlepšenie" %}</span></div> <!-- https://fontawesome.com/icons/wand-magic-sparkles -->
+                </div>
+            </div>
+
+            <div class="message_container">
+                {{ contact_form.message }}
+
+                <div class="attachment">
+                    <p class="attachment_report">{% translate "Nie je vybraný žiaden súbor." %}</p>
+                    
+                    <label for="select_attachment" tabindex="0">
+                        <div class="tooltip" data-tooltip="{% translate 'Vyberte prílohu z vašich súborov' %}" title="{% translate 'Vybrať prílohu' %}" aria-label="{% translate 'Vybrať prílohu' %}">
+                            <i class="fa-solid fa-paperclip"></i> <!-- https://fontawesome.com/icons/paperclip -->
+                        </div>
+                    </label>
+                    
+                    {{ contact_form.select_attachment }}
+                </div>
+            </div>
+
+            <p class="form_report" style="bottom: 110px;"></p>
+            <input type="hidden" name="contact_form_submit" value="contact_form_submit">
+            <input type="submit" value="{% translate 'Odoslať správu' %}">
+
+            <!-- Google reCAPTCHA V3 -->
+            <input type="hidden" name="g-recaptcha-response" id="contact_form_recaptcha">
+        </form>
     </section>
 {% endblock content %}
 
