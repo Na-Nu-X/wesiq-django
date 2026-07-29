@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wesiq - {% block title %}{% endblock title %}</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}"> <!-- https://www.flaticon.com/free-icon/street_10060229 -->
+    <link rel="icon" type="image/x-icon" href="{% static 'icon-32.png' %}"> <!-- https://www.flaticon.com/free-icon/weight_8881792 -->
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block style %}{% endblock style %}
@@ -21,6 +21,20 @@
     <script src="https://kit.fontawesome.com/069c0938a1.js" crossorigin="anonymous"></script> <!-- Font Awesome Icons -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNHVE1MY3"></script> <!-- Google Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
+
+    <link rel="apple-touch-icon" href="{% static 'icon-192.png' %}"> <!-- https://www.flaticon.com/free-icon/weight_8881792 -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#000000">
+
+    <script>
+        if("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+            navigator.serviceWorker.register('{% static "sw.js" %}')
+                .then((reg) => console.log("Service Worker registered successfully:", reg.scope))
+                .catch((error) => console.log("An error occurred during Service Worker registration:", error))
+            })
+        }
+    </script>
 
     {% if request.COOKIES.privacy_policy == "all_cookies" %}
         <!-- Google Analytics -->
