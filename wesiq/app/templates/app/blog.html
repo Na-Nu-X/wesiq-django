@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="{% static 'app/css/blog.css' %}">
 {% endblock style %}
 
-{% block banner %}
-    <a href="{% url 'write_article_url' %}" title="{% translate 'Pridať článok' %}" aria-label="{% translate 'Pridať článok' %}" target="_self">{% translate "Pridať článok" %}</a>
-{% endblock banner %}
-
 {% block content %}
     <div class="num_articles">
         {% if num_articles == 1 %}

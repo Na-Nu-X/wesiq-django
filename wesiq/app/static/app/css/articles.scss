@@ -63,12 +63,12 @@
                         cursor: pointer;
             
                         &.full {
-                            color: $article-color;
+                            color: $yellow-color;
                             opacity: 1;
                         }
-            
+
                         &.empty {
-                            color: darken($secondary-color, 40%);
+                            color: $dark-blue-color;
                             opacity: 0.5;
                         }
                     }
@@ -81,10 +81,10 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        max-width: 800px;
-        margin: 10px auto 0px;
-        padding: 10px;
-        background-color: transparentize($secondary-color, 0.95);
+        max-width: $secondary-width;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid transparentize($blue-color, 0.8);
         border-radius: $medium-border-radius;
 
         .bar {
@@ -116,19 +116,25 @@
                 font-size: 12px;
                 opacity: 0.5;
                 white-space: nowrap;
-                color: transparentize($secondary-color, 0.5);
+                color: $light-blue-color;
                 pointer-events: none;
             }
         }
     }
 
     .article_content {
-        max-width: 800px;
+        position: relative;
+        max-width: $main-width;
         margin: 0px auto 50px;
-        padding: 10px 20px;
-        background-color: transparentize($secondary-color, 0.95);
+        padding: 50px 30px;
+        border: 1px solid transparentize($blue-color, 0.5);
         border-radius: $medium-border-radius;
+        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
         overflow: hidden;
+
+        &::before {
+            @include glass_accent_bar;
+        }
 
         section {
             transform: translateX(calc(-50%));
@@ -182,7 +188,7 @@
         display: flex;
         justify-content: right;
         gap: 5px;
-        max-width: 800px;
+        max-width: $main-width;
         margin: 0px auto 50px;
         margin-bottom: 50px;
 
@@ -210,17 +216,17 @@
                 font-size: 1.5em;
                 cursor: pointer;
                 transition: color 0.1s ease, transform 0.1s ease;
-    
+
                 &.full {
-                    color: $article-color;
+                    color: $yellow-color;
                     opacity: 1;
                 }
                 
                 &.empty {
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     opacity: 0.5;
                 }
-    
+
                 &:hover {
                     transform: scale(1.1);
                 }
@@ -233,51 +239,16 @@
     }
 
     .comment_forum {
-        max-width: 800px;
+        max-width: $secondary-width;
         width: 100%;
         margin: 0px auto;
+        padding: 10px 20px 20px;
+        border: 1px solid transparentize($blue-color, 0.8);
+        border-radius: $medium-border-radius;
 
         &.hidden {
             display: none;
             opacity: 0;
-        }
-
-        .heading {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-
-            .comments_counter {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-    
-                .fa-comment {
-                    font-size: 1.5em;
-                    display: block;
-                    color: darken($secondary-color, 40%);
-    
-                    &:hover {
-                        color: darken($secondary-color, 20%);
-                        cursor: pointer;
-                        transition: color 0.3s ease;
-                    }
-                }
-    
-                p {
-                    display: inline-block;
-                    color: darken($secondary-color, 40%);
-                    font-size: 1.2em;
-                }
-            }
-
-            h3 {
-                position: relative;
-                right: calc(38.83px / 2);
-                line-height: 1;
-                margin: 0px auto;
-                font-size: 2em;
-            }
         }
 
         .all_comments {
@@ -369,7 +340,7 @@
         
                             .fa-heart {
                                 display: block;
-                                color: darken($secondary-color, 40%);
+                                color: $blue-color;
         
                                 &:hover {
                                     color: $red-color !important;
@@ -384,7 +355,7 @@
         
                             .likes_counter {
                                 display: inline-block;
-                                color: darken($secondary-color, 40%);
+                                color: $blue-color;
                             }
                         }
                     }
@@ -402,14 +373,8 @@
 
                         .fa-comment,
                         .fa-comment-slash {
+                            @include icon;
                             display: block;
-                            color: darken($secondary-color, 40%);
-                            cursor: pointer;
-
-                            &:hover {
-                                color: darken($secondary-color, 20%);
-                                transition: color 0.3s ease;
-                            }
                         }
                     }
 
@@ -421,7 +386,7 @@
     
                         .fa-heart {
                             display: block;
-                            color: darken($secondary-color, 40%);
+                            color: $blue-color;
     
                             &:hover {
                                 color: $red-color !important;
@@ -436,7 +401,7 @@
     
                         .likes_counter {
                             display: inline-block;
-                            color: darken($secondary-color, 40%);
+                            color: $blue-color;
                         }
                     }
 
@@ -446,7 +411,7 @@
                         p {
                             font-size: 0.8em;
                             font-style: italic;
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                         }
                     }
 
@@ -546,6 +511,7 @@
 
         .write_comment_form {
             position: relative;
+            margin-top: 8px;
 
             .comment {
                 display: block;
@@ -557,17 +523,23 @@
                 padding-bottom: 12px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background-color: lighten($main-color, 20%);
+                background: transparent;
                 color: $secondary-color;
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $big-border-radius;
                 outline: none;
                 resize: none;
-                transition: padding 0.3s ease;
+                transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:empty::before {
                     content: attr(data-placeholder);
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     cursor: text;
+                }
+
+                &:hover,
+                &:focus {
+                    border-color: $blue-color;
                 }
                 
                 .tag,
@@ -578,8 +550,6 @@
                     padding: 0px 5px;
                     border-radius: $small-border-radius;
                     font-size: 0.8em;
-                    cursor: pointer;
-                    transition: background-color 0.2s ease;
                 }
 
                 .tag {
@@ -615,14 +585,14 @@
                     cursor: pointer;
                     
                     .fa-face-surprise {
-                        color: darken($secondary-color, 20%);
+                        color: $dark-blue-color;
                         transition: color 0.3s ease;
                     }
                 }
 
                 .fa-face-surprise {
                     display: block;
-                    color: darken($secondary-color, 40%);
+                    color: $blue-color;
                     pointer-events: none;
                 }
             }
@@ -639,12 +609,12 @@
                 transform: translateY(-50%) scale(1);
                 width: 30px;
                 height: 30px;
-                color: darken($secondary-color, 40%);
-                transition: transform 0.3s ease, color 0.3s ease;
+                color: $blue-color;
+                transition: transform 0.2s ease, color 0.3s ease;
 
                 &:hover {
                     transform: translateY(-50%) scale(1.1);
-                    color: darken($secondary-color, 20%);
+                    color: $dark-blue-color;
                     cursor: pointer;
                 }
 

@@ -69,7 +69,7 @@ export function generateTrainingPlan(edit_training_plan:HTMLDivElement):void {
         const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length, edit_training_plan_state)
         renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
 
-        buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
+        // buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
     }
 
     // Orders Exercises By Order Value In Exercises Data

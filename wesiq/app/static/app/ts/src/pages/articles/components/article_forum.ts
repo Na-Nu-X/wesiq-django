@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     const article_id:number|null = Number(article_content.dataset["article_id"]) || null // Gets The Article ID
 
     const comment_forum:HTMLDivElement = document.querySelector(".comment_forum") as HTMLDivElement // Gets The Comment Forum
-    const comments_counter:HTMLDivElement = comment_forum.querySelector(".comments_counter p") as HTMLDivElement // Gets The Comments Counter Paragraph
     const all_comments:HTMLDivElement = comment_forum.querySelector(".all_comments") as HTMLDivElement // Gets The All Comments Container
     const write_comment_form:HTMLDivElement = comment_forum.querySelector(".write_comment_form") as HTMLDivElement // Gets The Write Comment Form
     const comment:HTMLTextAreaElement = write_comment_form.querySelector(".comment") as HTMLTextAreaElement // Gets The Comment Input
@@ -86,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
         const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (comment_forum.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
     
-        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, comments_counter, logged_in_user_role) // Adds Comment To The Article
+        if(article_id && comment.value.length > 0) addComment(article_id, write_comment_form, all_comments, comment_forum, parent_id, logged_in_user_role) // Adds Comment To The Article
     })
 
     // Global Event Delegations
@@ -141,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function():void {
             const one_comment:HTMLDivElement = option.closest(".one_comment") as HTMLDivElement // Gets The One Comment Container
             const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
 
-            if(one_comment.dataset["comment_id"] && action && action === "delete") deleteArticleComment(Number(one_comment.dataset["comment_id"]), one_comment, comments_counter) // Deletes The Comment
+            if(one_comment.dataset["comment_id"] && action && action === "delete") deleteArticleComment(Number(one_comment.dataset["comment_id"]), one_comment) // Deletes The Comment
         }
     })
 

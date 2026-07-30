@@ -253,14 +253,14 @@
                 </div>
             </template>
 
-            <div class="heading">
+            {% comment %} <div class="heading">
                 <div class="comments_counter">
                     <i class="fa-regular fa-comment"></i> <!-- https://fontawesome.com/icons/comment -->
                     <p>{{ article.visible_comments|length }}</p>
                 </div>
 
                 <h3>{% translate "Komentáre" %}</h3>
-            </div>
+            </div> {% endcomment %}
 
             <div class="all_comments">
                 {% for one_comment in article.root_comments %}

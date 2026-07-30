@@ -74,6 +74,7 @@ $training-glow: $surface-glow;
 
         &.history_section {
             max-width: $secondary-width;
+            margin-bottom: 30px;
         }
     }
 
@@ -95,8 +96,8 @@ $training-glow: $surface-glow;
     .record_activity {
         @include flex_center($direction: column);
         width: 100%;
-        margin-bottom: 30px;
-        padding: 50px 30px;
+        margin-bottom: 20px;
+        padding: 20px 50px 30px;
         border: 1px solid transparentize($blue-color, 0.5);
         border-radius: $medium-border-radius;
         box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
@@ -195,7 +196,7 @@ $training-glow: $surface-glow;
     .training_plan_container {
         @include flex_center($direction: column);
         width: 100%;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
 
         .training_plan {
             @include animated_border;
@@ -720,14 +721,15 @@ $training-glow: $surface-glow;
                 justify-content: space-between;
                 align-items: center;
                 gap: 10px;
-                background: transparentize($main-color, 0.6);
+                background: transparentize($main-color, 0.5);
                 padding: 0px 15px;
                 border: 1px solid transparentize($blue-color, 0.8);
                 border-radius: $small-border-radius;
-                transition: border-color 0.3s ease, transform 0.2s ease;
+                transition: transform 0.2s ease;
 
                 &:hover {
-                    border-color: $training-surface-border;
+                    transform: translateY(-2px);
+                    cursor: pointer;
                 }
 
                 &::before {
@@ -775,7 +777,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid $light-blue-color;
+                    outline: 1px solid transparentize($blue-color, 0.8);
                     background: transparentize($main-color, 0.5);
 
                     &::before {
@@ -855,14 +857,14 @@ $training-glow: $surface-glow;
                 display: flex;
                 flex-shrink: 0;
                 height: 50px;
-                background: transparentize($main-color, 0.6);
-                border: 1px solid $training-surface-border;
+                background: transparentize($main-color, 0.5);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $small-border-radius;
                 overflow: hidden;
                 transition: border-color 0.3s ease;
 
                 &:focus-within {
-                    border-color: transparentize($blue-color, 0.4);
+                    border-color: $blue-color;
                 }
                 
                 .new_task {
@@ -875,7 +877,7 @@ $training-glow: $surface-glow;
                     outline: none;
 
                     &::placeholder {
-                        color: darken($secondary-color, 45%);
+                        color: $light-blue-color;
                     }
                 }
 
@@ -884,29 +886,32 @@ $training-glow: $surface-glow;
                     margin: 5px 15px 5px 0px;
                     text-align: center;
                     color: $blue-color;
-                    transition: transform 0.3s ease, color 0.3s ease;
+                    transition: transform 0.2s ease, color 0.3s ease;
                     
                     &:hover {
                         transform: scale(1.15);
-                        color: lighten($blue-color, 10%);
+                        color: $dark-blue-color;
                         cursor: pointer;
                     }
     
                     .fa-plus {
+                        // @include icon;
+                        display: block;
                         font-size: 1.5em;
                     }
                 }
             }
 
             .task {
-                transition: transform 0.3s ease, border-color 0.3s ease;
+                transition: transform 0.2s ease;
 
                 &::before {
                     transition: transform 0.3s ease, background-color 0.3s ease;
                 }
 
                 &:hover {
-                    transform: scale(1.02);
+                    transform: translateY(-2px);
+                    cursor: pointer;
                 }
 
                 &:has(input[type="checkbox"]:checked) {
@@ -937,7 +942,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid $light-blue-color;
+                    outline: 1px solid transparentize($blue-color, 0.8);
                     background: transparentize($main-color, 0.5);
 
                     &::before {
@@ -962,8 +967,8 @@ $training-glow: $surface-glow;
                     width: 7ch;
                     padding-left: 10px;
                     text-align: center;
-                    color: darken($secondary-color, 45%);
-                    border-left: 1px solid $training-surface-border;
+                    color: $light-blue-color;
+                    border-left: 1px solid transparentize($blue-color, 0.8);
                     font-size: 0.8em;
                     font-variant-numeric: tabular-nums;
                     white-space: nowrap;
@@ -990,46 +995,70 @@ $training-glow: $surface-glow;
 
 // Activity History
 
-.activity_history {
-    @include scrollbar;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    max-width: 100%;
-    width: 100%;
-    max-height: calc(50px * 5 + 10px);
+.activity_history_container {
     margin: 0px auto;
-    padding: 10px;
+    padding: 5px;
     background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
-    border: 1px solid $training-surface-border;
+    border: 1px solid transparentize($blue-color, 0.8);
     border-radius: $medium-border-radius;
 
-    .one_activity {
+    .activity_history {
+        @include scrollbar;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
         gap: 10px;
-        flex-shrink: 0;
-        height: 50px;
-        padding: 0px 15px;
-        border-radius: $small-border-radius;
-        border: 1px solid transparent;
-        transition: background 0.3s ease, border-color 0.3s ease;
-
-        &:hover {
-            background: $training-surface-hover;
-            border-color: $training-surface-border;
-        }
-
-        p {
-            color: transparentize($secondary-color, 0.15);
-            font-size: 0.9em;
-        }
-
-        .training_plan_title {
-            color: $blue-color;
-            font-weight: 500;
-            text-shadow: 0 0 10px $training-glow;
+        max-width: 100%;
+        width: 100%;
+        max-height: calc(50px * 5 + 10px);
+        padding: 15px;
+    
+        .one_activity {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-shrink: 0;
+            height: 50px;
+            padding: 0px 15px;
+            background-color: transparentize($dark-blue-color, 0.95);
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $medium-border-radius;
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    
+            &:hover {
+                transform: translateY(-2px);
+                background: transparent;
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                cursor: pointer;
+            }
+    
+            p {
+                font-size: 0.9em;
+            }
+    
+            .training_plan_title,
+            .gained_xp {
+                color: $blue-color;
+                text-shadow: 0 0 10px $blue-color;
+            }
+    
+            .training_plan_title {
+                @include crop_text;
+                width: 180px;
+            }
+    
+            .elapsed_time {
+                width: 60px;
+            }
+    
+            .gained_xp {
+                width: 50px;
+            }
+    
+            .date {
+                width: 40px;
+            }
         }
     }
 }

@@ -434,7 +434,7 @@
 
 // Form Textarea
 
-@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.4), $hover_color: $blue-color) {
+@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
     width: $width;
     min-height: 100px;
     field-sizing: content;

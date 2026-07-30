@@ -85,10 +85,13 @@ function renderLocationResults(results:any[], location_results:HTMLDivElement, l
 
     results.forEach(function(one_place):void {
         const place:HTMLDivElement = document.createElement("div") // Creates The Place Container
+        const place_text:HTMLSpanElement = document.createElement("span") // Creates The Place Text Span
 
         place.classList.add("place") // Adds The Place Class
-        place.textContent = one_place.display_name // Sets The Location Name To The Place Container
         place.tabIndex = -1 // Makes The Element Focusable
+
+        place_text.textContent = one_place.display_name // Sets The Location Name To The Place Container
+        place.appendChild(place_text) // Appends The Place Text Span To The Place Container
         
         // Adds The Location Name To The Location Input Value After Click
         place.addEventListener("click", function():void {

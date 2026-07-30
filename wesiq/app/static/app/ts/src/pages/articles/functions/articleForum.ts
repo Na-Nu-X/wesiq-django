@@ -6,7 +6,7 @@ import { createCommentPropertiesHTML } from "../../community/functions/createCom
 import type { addCommentResponse } from "../../community/functions/postForum.js"
 
 // Function For Add Comment
-export async function addComment(article_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, comment_forum:HTMLDivElement, parent_id:number|null, comments_counter:HTMLParagraphElement, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
+export async function addComment(article_id:number, write_comment_form:HTMLDivElement, all_comments:HTMLDivElement, comment_forum:HTMLDivElement, parent_id:number|null, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
     try {
         const comment_input:HTMLTextAreaElement = write_comment_form.querySelector(".comment") as HTMLTextAreaElement // Gets The Comment Input
 
@@ -136,8 +136,6 @@ export async function addComment(article_id:number, write_comment_form:HTMLDivEl
                 new_parent_comment_interactions.insertBefore(show_replies, new_parent_comment_interactions.querySelector(".date") as HTMLDivElement) // Appends The Show Replies To The New Parent Comment
             }
         }
-
-        comments_counter.textContent = String(Number(comments_counter.textContent) + 1) // Increases The Comments Counter
     }
 
     catch {
