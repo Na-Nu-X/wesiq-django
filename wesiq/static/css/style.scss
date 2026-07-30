@@ -393,7 +393,7 @@ header {
 .content {
     min-height: calc(100vh - 125px);
     margin-bottom: 20px;
-    padding: 125px + 20px 20px 0px;
+    padding: 125px + 50px 20px 0px;
     align-content: center;
     color: $secondary-color;
 
@@ -413,7 +413,7 @@ footer {
     position: relative;
     min-height: 100vh;
     text-align: center;
-    background: radial-gradient(circle, lighten($main-color, 10%) 0%, $main-color 100%);
+    background: radial-gradient(circle, lighten($main-color, 5%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
     z-index: 1000;
 

@@ -15,21 +15,19 @@ $plans-glow: $surface-glow;
 .banner {
     .training_session {
         a {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            padding: 5px 15px;
-            text-decoration: none;
-            color: $secondary-color;
-            background: $plans-surface;
-            border: 1px solid $plans-surface-border;
+            gap: 5px;
+            width: max-content;
+            padding: 5px 10px;
+            background-color: transparent;
+            backdrop-filter: blur(5px);
+            border: 1px solid $dark-blue-color;
             border-radius: $big-border-radius;
-            backdrop-filter: blur(10px);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            transition: transform 0.1s ease;
 
-            &:hover,
-            &:focus-visible {
-                border-color: transparentize($blue-color, 0.25);
-                box-shadow: 0 5px 20px $plans-glow;
+            &:hover {
                 transform: translateY(-1px);
             }
         }
@@ -83,13 +81,11 @@ $plans-glow: $surface-glow;
     top: 50%;
     left: 0px;
     transform: translateY(-50%);
-    padding: 18px 14px;
-    background: $plans-surface;
-    border: 1px solid $plans-surface-border;
+    padding: 10px;
+    background-color: transparentize($dark-blue-color, 0.95);
+    border: 1px solid transparentize($blue-color, 0.5);
     border-left: none;
     border-radius: 0px $medium-border-radius $medium-border-radius 0px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px transparentize($main-color, 0.55);
     z-index: 2000;
 
     ul {
@@ -102,19 +98,19 @@ $plans-glow: $surface-glow;
             align-items: center;
 
             a {
-                @include flex_center;
-                width: 42px;
-                height: 42px;
-                background: $plans-surface-hover;
-                border: 1px solid $plans-surface-border;
-                border-radius: 50%;
-                text-decoration: none;
-                transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+                @include blue_button(40px);
+                position: relative;
+                height: 40px;
+
+                i {
+                    @include position_center;
+                    font-size: 1.5em;
+                    color: $blue-color;
+                }
 
                 &.active {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.55));
-                    border-color: transparentize($blue-color, 0.2);
-                    box-shadow: 0 4px 16px $plans-glow;
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                    border-color: $blue-color;
 
                     i {
                         color: $secondary-color;
@@ -123,41 +119,28 @@ $plans-glow: $surface-glow;
 
                 &:hover,
                 &:focus-visible {
-                    transform: scale(1.08);
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.55));
-                    border-color: transparentize($blue-color, 0.2);
-                    box-shadow: 0 4px 16px $plans-glow;
+                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+                    border-color: $blue-color;
 
                     i {
                         color: $secondary-color;
                     }
-                }
-
-                i {
-                    color: $blue-color;
-                    font-size: 1.15em;
-                    transition: color 0.2s ease;
                 }
             }
 
             .label {
                 pointer-events: none;
                 position: absolute;
-                transform: translateX(calc(-100% + 55px));
-                padding: 4px 10px;
+                transform: translateX(calc(-100% + 60px));
                 opacity: 0;
                 color: $secondary-color;
-                background: $plans-surface;
-                border: 1px solid $plans-surface-border;
-                border-radius: $small-border-radius;
-                backdrop-filter: blur(8px);
-                font-size: 0.85em;
+                font-size: 0.9em;
                 white-space: nowrap;
                 transition: transform 0.2s ease, opacity 0.2s ease;
 
                 &.show {
                     opacity: 1;
-                    transform: translateX(55px);
+                    transform: translateX(60px);
                 }
             }
         }
@@ -169,29 +152,17 @@ $plans-glow: $surface-glow;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    gap: 28px;
+    gap: 20px;
     max-width: $main-width;
-    margin: 0px auto;
-    padding: 0px 20px 40px;
+    margin: 0px auto 30px;
 
     .top {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        max-width: 520px;
+        max-width: $secondary-width;
         width: 100%;
-        min-height: calc(100vh - 125px);
-        padding: 28px 26px;
-        background: $plans-surface;
-        border: 1px solid $plans-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
-        position: relative;
-
-        &::before {
-            @include glass_accent_bar;
-        }
+        min-height: fit-content;
 
         // New Training Plan, Edit Training Plan
 
@@ -206,15 +177,16 @@ $plans-glow: $surface-glow;
             .additional_info {
                 display: flex;
                 justify-content: space-between;
-                gap: 10px;
+                gap: 20px;
+                flex: 1;
                 width: 100%;
-                margin-bottom: 14px;
+                margin-bottom: 20px;
 
                 .title {
                     @include form_input;
-                    max-width: calc(50% - 5px);
-                    width: 100%;
-                    margin: 0px;
+                    margin-bottom: 0px;
+                    flex: 1 1 0px; 
+                    min-width: 0;
 
                     &::-webkit-calendar-picker-indicator {
                         display: none !important;
@@ -228,93 +200,37 @@ $plans-glow: $surface-glow;
                 // Custom Select Menu
 
                 .day_select_menu {
+                    @include custom_select_menu($options_list_height: calc(33px * 4));
                     position: relative;
-                    max-width: calc(50% - 5px);
-                    width: 100%;
-                    cursor: pointer;
+                    flex: 1 1 0px; 
+                    max-width: 90%;
+                    min-width: 0;
+                    margin: 0px auto;
 
                     .select {
-                        @include focus;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        width: 100%;
                         height: 50px;
-                        padding: 0px 10px;
-                        background: transparent;
-                        color: $secondary-color;
-                        border-bottom: 1px solid transparentize($blue-color, 0.5);
-                        transition: border 0.3s ease;
-
-                        &:hover,
-                        &:focus-visible {
-                            border-color: $blue-color;
-
-                            .fa-angle-down {
-                                color: $blue-color;
-                            }
-                        }
+                        border-top: none;
+                        border-right: none;
+                        border-left: none;
+                        border-radius: 0px;
 
                         span {
-                            @include crop_text;
-                            margin-left: 5px;
-                        }
-
-                        .fa-angle-down {
-                            color: transparentize($blue-color, 0.5);
-                            transition: color 0.3s ease,
+                            margin-left: 0px;
                         }
                     }
 
                     .options_list {
-                        interpolate-size: allow-keywords;
-                        position: absolute;
-                        width: 100%;
-                        height: 0px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        text-align: left;
-                        padding: 0px 15px;
-                        color: $secondary-color;
-                        background: $plans-surface;
-                        border: 1px solid $plans-surface-border;
-                        border-top: none;
-                        border-radius: 0px 0px $small-border-radius $small-border-radius;
-                        backdrop-filter: blur(10px);
-                        box-shadow: 0 8px 24px transparentize($main-color, 0.55);
-                        overflow: hidden;
-                        transition: height 0.3s ease;
-                        z-index: 200;
-
-                        &.active {
-                            height: auto;
-                        }
-
                         .option {
-                            @include crop_text;
-                            padding: 6px 0px;
-                            transition: color 0.3s ease, background-color 0.3s ease;
-
-                            &:hover,
-                            &:focus-visible,
-                            &.selected {
-                                color: $blue-color !important;
-                            }
-
-                            &:focus-visible {
-                                outline: none !important;
-                            }
+                            position: relative;
+                            text-align: center;
 
                             i {
-                                width: 1em;
-                                margin-right: 10px;
-                                color: $blue-color;
+                                position: absolute;
+                                top: 50%;
+                                left: 10px;
+                                transform: translateY(-50%);
                             }
                         }
-                    }
-
-                    &:has(.select:hover) .options_list {
-                        width: 100%;
                     }
                 }
             }
@@ -325,12 +241,10 @@ $plans-glow: $surface-glow;
                 display: flex;
                 flex-direction: column;
                 width: 100%;
-                height: 250px;
-                background: linear-gradient(160deg, transparentize($main-color, 0.85) 0%, transparentize($blue-color, 0.95) 100%);
-                border: 1px solid $plans-surface-border;
+                height: 350px;
                 border-radius: $medium-border-radius;
                 overflow: hidden;
-                box-shadow: 0 10px 30px transparentize($main-color, 0.6);
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
 
                 &.animate {
                     animation: trainingPlanDrag 1s infinite alternate;
@@ -340,7 +254,7 @@ $plans-glow: $surface-glow;
                     @include flex_center($direction: column);
                     gap: 10px;
                     height: 100%;
-                    color: transparentize($secondary-color, 0.25);
+                    color: $blue-color;
                     z-index: 100;
 
                     &:not(.active) {
@@ -352,14 +266,14 @@ $plans-glow: $surface-glow;
 
                         .fa-compress {
                             transform: scale(1.1);
-                            color: $blue-color;
+                            color: $dark-blue-color;
                         }
                     }
 
                     .fa-compress {
                         font-size: 2.5em;
-                        color: transparentize($blue-color, 0.25);
-                        transition: transform 0.3s ease, color 0.3s ease;
+                        color: $blue-color;
+                        transition: transform 0.2s ease, color 0.3s ease;
 
                         &.error_animation {
                             animation: trainingPlanError 0.2s linear 3;
@@ -372,9 +286,10 @@ $plans-glow: $surface-glow;
                     flex-direction: column;
                     align-items: center;
                     justify-content: flex-start;
+                    gap: 10px;
                     width: 100%;
-                    height: 230px;
-                    padding: 12px 14px;
+                    height: 100%;
+                    padding: 20px 50px;
                     transition: transform 0.5s ease;
                     cursor: move;
                     z-index: 100;
@@ -386,7 +301,6 @@ $plans-glow: $surface-glow;
                     }
 
                     .title_input {
-                        max-width: 400px;
                         width: 100%;
                         text-align: center;
                         background: none;
@@ -397,18 +311,14 @@ $plans-glow: $surface-glow;
                         font-size: 2em;
 
                         &::placeholder {
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                         }
                     }
 
                     .title {
                         font-family: $article-heading-font;
-                        font-size: 2em;
-                        text-align: center;
-                        background: linear-gradient(90deg, $secondary-color 0%, transparentize($blue-color, 0.15) 100%);
-                        background-clip: text;
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
+                        font-size: clamp(1.2em, 4vw, 2em);
+                        color: $secondary-color;
                     }
 
                     .labels {
@@ -420,167 +330,95 @@ $plans-glow: $surface-glow;
                         // Custom Select Menu
 
                         .unit_select_menu {
-                            position: relative;
-                            width: 100%;
-                            cursor: pointer;
+                            @include custom_select_menu($options_list_height: calc(33px * 2));
+                            max-width: 90%;
+                            margin: 0px auto;
 
                             .select {
-                                @include flex_center;
-                                gap: 10px;
-                                width: 100%;
-                                margin: 0px auto;
-                                background: transparent;
-                                color: $secondary-color;
-
-                                &:hover {
-                                    .fa-angle-down {
-                                        color: $blue-color;
-                                    }
-                                }
+                                border: none;
 
                                 span {
-                                    margin-left: 5px;
-                                }
-
-                                .fa-angle-down {
-                                    color: darken($secondary-color, 10%);
-                                    transition: color 0.3s ease,
+                                    margin-left: 0px;
                                 }
                             }
 
                             .options_list {
-                                interpolate-size: allow-keywords;
-                                position: absolute;
-                                width: 100%;
-                                height: 0px;
-                                left: 50%;
-                                transform: translateX(-50%);
-                                text-align: left;
-                                padding: 0px 15px;
-                                color: $secondary-color;
-                                background: $plans-surface;
-                                border: 1px solid $plans-surface-border;
-                                border-radius: $small-border-radius;
-                                backdrop-filter: blur(10px);
-                                overflow: hidden;
-                                transition: height 0.3s ease;
-                                z-index: 100;
-
-                                &.active {
-                                    height: auto;
-                                }
-
                                 .option {
-                                    @include crop_text;
-                                    padding: 5px 0px;
-                                    transition: color 0.3s ease;
-
-                                    &:hover,
-                                    &:focus-visible,
-                                    &.selected {
-                                        color: $blue-color !important;
-                                    }
-
-                                    &:focus-visible {
-                                        outline: none !important;
-                                    }
+                                    position: relative;
+                                    text-align: center;
 
                                     i {
-                                        width: 1em;
-                                        margin-right: 10px;
-                                        color: $blue-color;
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 10px;
+                                        transform: translateY(-50%);
                                     }
                                 }
-                            }
-
-                            &:has(.select:hover) .options_list {
-                                width: 100%;
                             }
                         }
 
                         p {
                             width: 100%;
                             text-align: center;
-                            line-height: 15px;
-                            color: transparentize($secondary-color, 0.2);
+                            line-height: 1;
+                            color: $light-blue-color;
                         }
                     }
 
                     .add_period {
                         @include blue_button($width: 100%);
-                        max-width: 400px;
                         height: 40px;
                         margin-bottom: 10px;
                         flex-shrink: 0;
-                        background: $plans-surface-hover;
-                        border-color: $plans-surface-border;
-
-                        &:hover,
-                        &:focus-visible {
-                            border-color: transparentize($blue-color, 0.25);
-                            background: transparentize($blue-color, 0.75);
-                        }
                     }
 
                     .periods_container {
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
-                        max-width: 400px;
+                        gap: 5px;
                         width: 100%;
+                        max-height: 100px;
+                        padding: 0px 5px;
 
                         .period_selection {
                             width: 100%;
                             display: flex;
                             justify-content: space-between;
-                            gap: 8px;
-                            margin-top: 6px;
-
-                            &:first-child {
-                                margin-top: 0px;
-                            }
+                            gap: 10px;
 
                             .reps_container,
                             .sets_container {
                                 display: flex;
                                 width: 100%;
-                                background: transparentize($main-color, 0.55);
-                                border: 1px solid $plans-surface-border;
-                                border-radius: calc(35px / 2);
-                                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                                background: transparent;
+                                border: 1px solid transparentize($blue-color, 0.5);
+                                border-radius: $big-border-radius;
+                                transition: border-color 0.2s ease;
 
                                 &:hover,
                                 &:focus-within {
-                                    border-color: transparentize($blue-color, 0.35);
-                                    box-shadow: 0 4px 14px transparentize($blue-color, 0.85);
+                                    border-color: $blue-color;
                                 }
 
                                 .decrease_reps,
                                 .increase_reps,
                                 .decrease_sets,
                                 .increase_sets {
+                                    all: unset;
+                                    @include icon;
+                                    @include flex_center;
                                     width: 30px;
-                                    background: none;
-                                    color: $secondary-color;
-                                    border: none;
-                                    outline: none;
-                                    cursor: pointer;
-                                    transition: color 0.2s ease;
-
-                                    &:hover {
-                                        color: $blue-color;
-                                    }
 
                                     i {
                                         pointer-events: none;
-                                        width: inherit;
                                     }
                                 }
 
                                 .reps,
                                 .sets {
                                     width: calc(100% - 30px - 30px);
-                                    height: 35px;
+                                    height: 40px;
                                     text-align: center;
                                     background: none;
                                     color: $secondary-color;
@@ -608,7 +446,7 @@ $plans-glow: $surface-glow;
                                     @include position_center;
                                     width: calc(100% - 30px - 30px);
                                     height: 100%;
-                                    line-height: 35px;
+                                    line-height: 40px;
                                     font-size: 0.9em;
                                     text-align: center;
                                     text-overflow: ellipsis;
@@ -682,7 +520,6 @@ $plans-glow: $surface-glow;
                                 @include position_center;
                                 font-family: $timer-font;
                                 font-size: 1.2em;
-                                text-shadow: 0 0 20px $plans-glow;
                             }
                         }
                     }
@@ -694,16 +531,15 @@ $plans-glow: $surface-glow;
                     flex-direction: row;
                     justify-content: space-between;
                     gap: 10px;
-                    margin: 0px 12px 12px;
+                    margin: auto 10px 10px;
                     z-index: 100;
 
                     .bar {
                         position: relative;
                         width: 100%;
                         height: 10px;
-                        border: 1px solid $plans-surface-border;
+                        border: 1px solid transparentize($blue-color, 0.5);
                         border-radius: calc(10px / 2);
-                        background: transparentize($main-color, 0.6);
                         
                         &.animate:not(&.active) {
                             animation: barDrag 1s infinite alternate;
@@ -742,24 +578,12 @@ $plans-glow: $surface-glow;
 
             .save {
                 @include blue_button($width: 100%);
-                margin-top: 4px;
-                line-height: 15px;
-                color: $secondary-color;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
-                border-color: transparentize($blue-color, 0.2);
-                box-shadow: 0 6px 20px transparentize($blue-color, 0.7);
-
-                &:hover,
-                &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.25), transparentize($blue-color, 0.65));
-                    box-shadow: 0 8px 28px transparentize($blue-color, 0.55);
-                }
             }
         }
 
         .new_training_plan {
             .save {
-                margin-top: 14px;
+                margin-top: 20px;
             }
         }
 
@@ -776,13 +600,12 @@ $plans-glow: $surface-glow;
                 justify-content: space-between;
                 gap: 10px;
                 width: 100%;
-                margin: 12px 0px;
+                margin: 10px 0px;
 
                 .bar {
                     width: 100%;
                     height: 10px;
-                    background: transparentize($main-color, 0.6);
-                    border: 1px solid $plans-surface-border;
+                    border: 1px solid transparentize($blue-color, 0.5);
                     border-radius: calc(10px / 2);
                     transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
@@ -799,20 +622,20 @@ $plans-glow: $surface-glow;
             .buttons {
                 display: flex;
                 flex-direction: row;
-                gap: 10px;
+                gap: 20px;
                 width: 100%;
-                margin-top: 12px;
+                margin-top: 10px;
 
                 .delete {
                     @include blue_button($width: 100%);
-                    background: transparentize($red-color, 0.88);
-                    border-color: transparentize($red-color, 0.45);
+                    background: transparentize($red-color, 0.9);
+                    border-color: transparentize($red-color, 0.5);
 
                     &:hover,
                     &:focus-visible {
                         border-color: $red-color;
                         background: transparentize($red-color, 0.75);
-                        box-shadow: 0 4px 16px transparentize($red-color, 0.65);
+                        box-shadow: 0 6px 20px transparentize($red-color, 0.8);
                     }
                 }
             }
@@ -823,51 +646,24 @@ $plans-glow: $surface-glow;
 
     .exercise_selection {
         @include flex_center($direction: column);
-        max-width: calc(520px + 10px);
+        max-width: $secondary-width;
         width: 100%;
         min-height: 500px;
-        padding: 28px 24px;
-        background: $plans-surface;
-        border: 1px solid $plans-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
-        position: relative;
-
-        &::before {
-            @include glass_accent_bar;
-        }
     
         .search_bar_menu {
             @include search_bar;
-            width: 100%;
-            margin-bottom: 18px;
-
-            .search_bar {
-                height: 44px;
-                background: $plans-surface;
-                border-radius: $big-border-radius;
-                border-color: $plans-surface-border;
-                backdrop-filter: blur(10px);
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 5px 25px transparentize($blue-color, 0.85);
-                }
-            }
+            margin-bottom: 20px;
         }
     
         .exercises {
             @include scrollbar;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
+            gap: 10px;
             width: 100%;
-            max-height: 440px;
+            max-height: 450px;
             margin: 0px auto;
-            padding: 6px;
+            padding: 5px;
             text-align: center;
     
             .custom_exercise,
@@ -888,7 +684,7 @@ $plans-glow: $surface-glow;
 
                 &:hover .fa-plus,
                 &:hover .fa-dumbbell {
-                    transform: scale(1.08);
+                    transform: scale(1.05);
                 }
             }
     
@@ -897,14 +693,15 @@ $plans-glow: $surface-glow;
                 @include scrollbar;
                 position: relative;
                 aspect-ratio: 1 / 1;
+                gap: 5px;
                 padding: 10px;
-                background: $plans-surface;
-                border: 1px solid $plans-surface-border;
+                text-decoration: none;
+                background-color: transparentize($dark-blue-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
-                backdrop-filter: blur(8px);
-                box-shadow: 0 4px 16px transparentize($main-color, 0.6);
+                backdrop-filter: blur(5px);
                 cursor: move;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     
                 &.hidden {
                     display: none !important;
@@ -912,11 +709,10 @@ $plans-glow: $surface-glow;
     
                 &:hover, 
                 &:focus-visible {
-                    border-color: transparentize($blue-color, 0.25);
-                    background: $plans-surface-hover;
-                    box-shadow: 0 8px 24px transparentize($blue-color, 0.75);
                     transform: translateY(-2px);
-                    outline: none;
+                    background: transparent;
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
     
                     .name {
                         filter: blur(2px);
@@ -964,13 +760,6 @@ $plans-glow: $surface-glow;
                     width: 100%;
                     height: 100%;
                     opacity: 0.2;
-                }
-    
-                .name {
-                    transition: filter 0.3s ease;
-                    color: transparentize($secondary-color, 0.08);
-                    font-size: 0.9em;
-                    line-height: 1.2;
                 }
                 
                 .weight_selection {

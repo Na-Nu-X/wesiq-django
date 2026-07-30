@@ -60,10 +60,9 @@ export async function reportArticleComment(id:number, reason:string):Promise<voi
 }
 
 // Function For Delete The Comment
-export async function deleteArticleComment(id:number, one_comment:HTMLDivElement, comments_counter:HTMLParagraphElement):Promise<void> {
+export async function deleteArticleComment(id:number, one_comment:HTMLDivElement):Promise<void> {
     try {
         const reply_container:HTMLDivElement|null = (one_comment.parentElement as HTMLDivElement).classList.contains("reply_container") ? one_comment.parentElement as HTMLDivElement : null // Gets The Reply Container
-        const deleted_comments_amount:number = one_comment.querySelectorAll<HTMLDivElement>(".one_comment").length + 1 // Gets The Total Amount Of Deleted Comments (All Nested Replies + 1 Root Comment)
         const delete_article_comment_response:response = await sendPOST(window.location.pathname, id, "delete-article-comment") // Sends Comment ID As A POST Data
 
         // If The Response Isn't Success
@@ -73,7 +72,6 @@ export async function deleteArticleComment(id:number, one_comment:HTMLDivElement
         }
 
         one_comment.remove() // Deletes The One Comment Container From DOM
-        comments_counter.textContent = String(Number(comments_counter.textContent) - deleted_comments_amount) // Decreases The Comments Counter
 
         if(reply_container && reply_container.children.length === 0) deleteShowRepliesIcon(reply_container) // Deletes The Show Replies Icon From The Comment If There Aren't Any Replies Left
     }

@@ -226,7 +226,13 @@ export function hideUsersForTag(users_for_tag_container:HTMLDivElement):void {
     // Checks If The Container Is Active
     if(users_for_tag_container.classList.contains("active")) {
         users_for_tag_container.classList.remove("active"); // Hides The Container
-        (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
+        // (users_for_tag_container.parentElement as HTMLDivElement).removeAttribute("style") // Removes Hardcoded Style (style="border-bottom: none; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;") From The Container
+
+        const post_info_container:HTMLDivElement = (users_for_tag_container.closest(".post_info_container") as HTMLDivElement) // Gets The Post Info Container
+        post_info_container.removeAttribute("style") // Removes Hardcoded Style
+
+        const icons:HTMLDivElement = post_info_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
+        icons.removeAttribute("style") // Removes Hardcoded Style
     }
 
     tag_user_state.tag_start_index = -1
@@ -528,9 +534,19 @@ function removeTagFromTags(index:number|undefined):void {
 // Function For Show Users For Tag Container
 function showUsersForTag(container:HTMLDivElement):void {
     container.classList.add("active"); // Shows The Container
-    (container.parentElement as HTMLDivElement).style.borderBottom = "none"; // Removes The Border
-    (container.parentElement as HTMLDivElement).style.borderBottomRightRadius = "0px"; // Removes The Border
-    (container.parentElement as HTMLDivElement).style.borderBottomLeftRadius = "0px" // Removes The Border
+    
+    const post_info_container:HTMLDivElement = (container.closest(".post_info_container") as HTMLDivElement) // Gets The Post Info Container
+    post_info_container.style.borderBottom = "none"; // Removes The Border
+    post_info_container.style.borderBottomRightRadius = "0px"; // Removes The Border
+    post_info_container.style.borderBottomLeftRadius = "0px" // Removes The Border
+
+    const icons:HTMLDivElement = post_info_container.querySelector(".icons") as HTMLDivElement // Gets The Icons Container
+    icons.style.borderBottomRightRadius = "0px"; // Removes The Border
+    icons.style.borderBottomLeftRadius = "0px" // Removes The Border
+
+    // (container.parentElement as HTMLDivElement).style.borderBottom = "none"; // Removes The Border
+    // (container.parentElement as HTMLDivElement).style.borderBottomRightRadius = "0px"; // Removes The Border
+    // (container.parentElement as HTMLDivElement).style.borderBottomLeftRadius = "0px" // Removes The Border
 }
 
 // Function For Store The Tagged User To The History

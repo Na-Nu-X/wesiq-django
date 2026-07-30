@@ -458,27 +458,27 @@
         </section>
 
         <section class="training_section history_section">
-            <h2 class="section_title">{% translate "História aktivít" %}</h2>
-
-            <div class="activity_history">
-                {% for one_activity in activity_history %}
-                    <div class="one_activity" tabindex="0">
-                        <p class="training_plan_title"><i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
-                            {% if one_activity.type %}
-                                {{ one_activity.type }}
-
-                            {% else %}
-                                {% translate "Aktivita" %}
-
-                            {% endif %}
-                        </p>
-
-                        <p>{{ one_activity.elapsed_time|format_time }}</p>
-                        <p>{{ one_activity.gained_xp }}XP</p>
-                        <p>{{ one_activity.end_time|date:"d.m." }}</p>
-                    </div>
-                
-                {% endfor %}
+            <div class="activity_history_container">
+                <div class="activity_history">
+                    {% for one_activity in activity_history %}
+                        <div class="one_activity" tabindex="0">
+                            <p class="training_plan_title"><i class="fa-solid fa-list"></i> <!-- https://fontawesome.com/icons/list -->
+                                {% if one_activity.type %}
+                                    {{ one_activity.type }}
+    
+                                {% else %}
+                                    {% translate "Aktivita" %}
+    
+                                {% endif %}
+                            </p>
+    
+                            <p class="elapsed_time">{{ one_activity.elapsed_time|format_time }}</p>
+                            <p class="gained_xp">{{ one_activity.gained_xp }}XP</p>
+                            <p class="date">{{ one_activity.end_time|date:"d.m." }}</p>
+                        </div>
+                    
+                    {% endfor %}
+                </div>
             </div>
         </section>
     </div>

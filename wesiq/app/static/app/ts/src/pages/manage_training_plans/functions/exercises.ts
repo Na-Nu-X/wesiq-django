@@ -42,7 +42,7 @@ function addCustomExercise(exercise:HTMLDivElement):void {
 
     title_input.classList.add("title_input")
     title_input.type = "text"
-    title_input.placeholder = "Pridajte názov cviku"
+    title_input.placeholder = "Názov cviku"
 
     exercise.prepend(title_input) // Prepends Exercise Title Input
 
