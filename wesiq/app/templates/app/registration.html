@@ -48,16 +48,36 @@
 
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-        {{ registration_form.first_name }}
-        {{ registration_form.last_name }}
-        {{ registration_form.username }}
-        {{ registration_form.email_address }}
-
-        <div class="phone_number_container">
-            {{ registration_form.phone_number }}
+        <div class="name_container">
+            <div class="first_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ registration_form.first_name }}
+            </div>
             
-            <input class="language" type="hidden" name="language" value="en">
-            <img class="flag" src="" alt="">
+            <div class="last_name_container">
+                <i class="fa-regular fa-user"></i> <!-- https://fontawesome.com/icons/user -->
+                {{ registration_form.last_name }}
+            </div>
+        </div>
+        
+        <div class="contact_container">
+            <div class="email_address_container">
+                <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+                {{ registration_form.email_address }}
+            </div>
+            
+            <div class="phone_number_container">
+                <i class="fa-solid fa-phone"></i> <!-- https://fontawesome.com/icons/phone -->
+                {{ registration_form.phone_number }}
+
+                <input class="language" type="hidden" name="language" value="en">
+                <img class="flag" src="" alt="">
+            </div>
+        </div>
+
+        <div class="username_container">
+            <i class="fa-solid fa-at"></i> <!-- https://fontawesome.com/icons/at -->
+            {{ registration_form.username }}
         </div>
         
         <div class="password_container">
@@ -85,7 +105,7 @@
             </button>
         </div>
 
-        <p class="form_report error" style="bottom: 241px;"></p>
+        <p class="form_report error" style="bottom: 148px;"></p>
         <input class="registration_form_submit" type="submit" value="{% translate 'Vytvoriť účet' %}">
 
         <div class="form_questions">

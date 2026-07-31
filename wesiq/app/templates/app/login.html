@@ -22,9 +22,13 @@
 
         <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" aria-label="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-        {{ login_form.identifier }}
+        <div class="identifier_container">
+            <i class="fa-regular fa-envelope"></i> <!-- https://fontawesome.com/icons/envelope -->
+            {{ login_form.identifier }}
+        </div>
         
         <div class="password_container">
+            <i class="fa-solid fa-lock"></i> <!-- https://fontawesome.com/icons/lock -->
             {{ login_form.password }}
 
             <button class="show_hide_password" type="button" title="{% translate 'Zobraziť heslo' %}" aria-label="{% translate 'Zobraziť heslo' %}">
