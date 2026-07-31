@@ -610,7 +610,45 @@ header {
             .name_container,
             .contact_container {
                 display: flex;
-                gap: 10px;
+                gap: 30px;
+                width: 90%;
+                margin: 0px auto;
+
+                i {
+                    display: block;
+                    position: absolute;
+                    bottom: 10px;
+                    left: -20px;
+                    padding: 19px 0px 15px;
+                }
+
+                input {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            .first_name_container,
+            .last_name_container,
+            .email_address_container {
+                position: relative;
+            }
+
+            .phone_number_container {
+                position: relative;
+
+                .fa-phone {
+                    position: absolute;
+                }
+                
+                .flag {
+                    position: absolute;
+                    bottom: 21px;
+                    right: -30px;
+                    width: 24px;
+                    opacity: 0.8;
+                    transition: right 0.3s ease;
+                }
             }
 
             .username_container {

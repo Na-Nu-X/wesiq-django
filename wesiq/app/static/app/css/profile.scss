@@ -179,11 +179,22 @@ $profile-glow: $surface-glow;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
             margin-bottom: 20px;
-            padding: 15px;
-            background: linear-gradient(145deg, transparentize($blue-color, 0.9) 0%, transparentize($main-color, 0.95) 100%);
-            border: 1px solid $profile-surface-border;
+            padding: 20px;
+            background-color: transparentize($dark-blue-color, 0.95);
+            border: 1px solid transparentize($blue-color, 0.5);
             border-radius: $medium-border-radius;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+            &:hover,
+            &:focus-visible {
+                transform: translateY(-2px);
+                background: transparent;
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+            }
 
             .info {
                 display: flex;
@@ -192,6 +203,7 @@ $profile-glow: $surface-glow;
 
                 .profile_picture {
                     @include profile_picture($width: 64px, $height: 64px);
+                    display: block;
                     transition: transform 0.3s ease;
 
                     &:hover {
@@ -206,19 +218,7 @@ $profile-glow: $surface-glow;
                 }
             }
 
-            .delete_profile_picture {
-                position: relative;
-                opacity: 0.6;
-                transition: transform 0.3s ease, opacity 0.3s ease;
-
-                &:hover {
-                    transform: scale(1.1);
-                    opacity: 1;
-                    cursor: pointer;
-                }
-            }
-
-            #select_profile_picture, #delete_profile_picture {
+            #select_profile_picture {
                 display: none;
             }
 
@@ -254,13 +254,22 @@ $profile-glow: $surface-glow;
 
         .friend_code {
             text-align: left;
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            background: $profile-surface-hover;
-            border: 1px solid $profile-surface-border;
-            border-radius: $small-border-radius;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: transparentize($dark-blue-color, 0.95);
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $medium-border-radius;
+            backdrop-filter: blur(5px);
             font-size: 0.9em;
-            color: transparentize($secondary-color, 0.25);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+            &:hover,
+            &:focus-visible {
+                transform: translateY(-2px);
+                background: transparent;
+                border-color: transparentize($blue-color, 0.25);
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+            }
 
             span {
                 font-weight: bold;
@@ -275,27 +284,18 @@ $profile-glow: $surface-glow;
             flex-direction: column;
             width: 100%;
             margin: 10px auto 0px;
-            background: transparentize($main-color, 0.6);
-            border: 1px solid $profile-surface-border;
-            border-radius: $medium-border-radius;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            overflow: visible;
-    
-            &:has(.bio:focus),
+            border: 1px solid transparentize($blue-color, 0.5);
+            border-radius: $small-border-radius;
+            transition: border-color 0.3s ease;
+
+            &:has(.bio:focus) {
+                border-color: $blue-color;
+            }
+
             &:hover {
-                border-color: transparentize($blue-color, 0.4);
-                box-shadow: 0 5px 20px transparentize($blue-color, 0.85);
-
-                .add_link_container {
-                    border-color: transparentize($blue-color, 0.4);
-                }
+                border-color: $blue-color;
             }
 
-            &:has(.add_link_container.active) {
-                border-bottom: none;
-                border-radius: $small-border-radius $small-border-radius 0px 0px;
-            }
-    
             .bio {
                 width: 100%;
                 min-height: 100px;
@@ -306,9 +306,9 @@ $profile-glow: $surface-glow;
                 border: none;
                 outline: none;
                 resize: none;
-    
+
                 &::placeholder {
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                 }
             }
     
@@ -319,12 +319,12 @@ $profile-glow: $surface-glow;
                 gap: 10px;
                 height: 25px;
                 padding: 0px 10px;
-                background-color: transparentize($blue-color, 0.85);
+                background-color: transparentize($blue-color, 0.9);
                 border-radius: 0px 0px $small-border-radius $small-border-radius;
-    
+
                 .add_emoji {
                     all: unset;
-    
+
                     .fa-face-surprise {
                         @include icon;
                         display: block;
@@ -335,7 +335,11 @@ $profile-glow: $surface-glow;
 
                 .show_add_link_form_button {
                     @include show_properties_button;
-                    @include icon;
+
+                    .fa-link {
+                        @include icon;
+                        font-size: 1em;
+                    }
                 }
 
                 .add_link_form {
@@ -392,26 +396,20 @@ $profile-glow: $surface-glow;
             @include scrollbar($direction: "horizontal");
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             
             .link {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                height: 30px;
+                height: 25px;
                 margin-top: 5px;
                 margin-bottom: 5px;
-                padding: 0px 10px;
-                background: $profile-surface-hover;
-                border: 1px solid $profile-surface-border;
-                border-radius: $big-border-radius;
-                transition: border-color 0.3s ease, background 0.3s ease;
+                padding: 0px 5px;
+                background-color: transparentize($blue-color, 0.8);
+                border-radius: $small-border-radius;
+                transition: border-color 0.3s ease;
                 animation: fadeInScale 0.3s ease-in forwards;
-
-                &:hover {
-                    border-color: transparentize($blue-color, 0.4);
-                    background: transparentize($blue-color, 0.9);
-                }
 
                 &.hidden {
                     display: none;
@@ -433,13 +431,13 @@ $profile-glow: $surface-glow;
                         cursor: pointer;
                         
                         .fa-xmark {
-                            color: $blue-color;
+                            color: $dark-blue-color;
                             transition: color 0.3s ease;
                         }
                     }
 
                     .fa-xmark {
-                        color: transparentize($blue-color, 0.5);
+                        @include icon;
                         pointer-events: none;
                     }
                 }
@@ -447,68 +445,51 @@ $profile-glow: $surface-glow;
         }
 
         .inputs {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            
-            .first_name_container, 
-            .last_name_container, 
-            .email_address_container, 
-            .phone_number_container {
-                position: relative;
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="password"] {
+                @include form_input;
+            }
 
-                input[type="text"], input[type="email"], input[type="tel"] {
-                    width: 100%;
-                    height: 50px;
-                    margin-bottom: 10px;
-                    padding: 0px 10px;
-                    background: transparent;
-                    color: $secondary-color;
-                    border: none;
-                    border-bottom: 1px solid darken($secondary-color, 40%);
-                    outline: none;
-                    transition: border 0.3s ease;
+            i {
+                @include icon;
+            }
 
-                    &:hover,
-                    &:focus-visible {
-                        border-bottom: 1px solid darken($secondary-color, 20%);
-                    }
-
-                    &::placeholder {
-                        color: darken($secondary-color, 40%);
-                    }
-
-                    &:-webkit-autofill {
-                        -webkit-text-fill-color: rgb(255, 255, 255);
-                        transition: background-color 9999s ease;
-
-                        &:hover,
-                        &:focus-visible {
-                            -webkit-text-fill-color: rgb(255, 255, 255);
-                            transition: background-color 9999s ease;
-                        }
-                    }
-                }
-
-                .first_name, .last_name {
-                    padding-right: 23px !important;
-                }
-
-                .email_address, .phone_number {
-                    padding-right: 25px !important;
-                }
+            .name_container,
+            .contact_container {
+                display: flex;
+                gap: 30px;
+                width: 90%;
+                margin: 0px auto;
 
                 i {
-                    @include icon($color: darken($secondary-color, 40%), $hover_color: darken($secondary-color, 20%));
                     display: block;
                     position: absolute;
                     bottom: 10px;
-                    right: 0px;
-                    padding: 19px 0px 16px;
+                    left: -20px;
+                    padding: 19px 0px 15px;
+                }
+
+                input {
+                    display: block;
+                    width: 100%;
                 }
             }
 
+            .first_name_container,
+            .last_name_container,
+            .email_address_container {
+                position: relative;
+            }
+
             .phone_number_container {
+                position: relative;
+
+                .fa-phone {
+                    position: absolute;
+                }
+                
                 .flag {
                     position: absolute;
                     bottom: 21px;
@@ -525,8 +506,8 @@ $profile-glow: $surface-glow;
         }
 
         input[type="submit"] {
-            @include blue_button;
-            margin-top: 30px;
+            @include blue_button($border-radius: $big-border-radius);
+            margin-top: 40px;
         }
 
         .form_questions {
@@ -947,7 +928,7 @@ $profile-glow: $surface-glow;
 
             .badges_container {
                 position: relative;
-                margin-bottom: 20px;
+                margin-bottom: 40px;
                 padding: 20px 40px;
                 background-color: transparentize($dark-blue-color, 0.95);
                 border: 1px solid transparentize($blue-color, 0.5);
@@ -1283,9 +1264,9 @@ $profile-glow: $surface-glow;
                                 gap: 5px;
                                 height: 20px;
                                 padding: 0px 10px;
-                                background: transparentize($main-color, 0.4);
-                                backdrop-filter: blur(10px);
-                                color: $secondary-color;
+                                background: transparentize($main-color, 0.5);
+                                backdrop-filter: blur(5px);
+                                color: $light-blue-color;
                                 border: 1px solid $profile-surface-border;
                                 border-radius: $small-border-radius;
 
@@ -1308,10 +1289,9 @@ $profile-glow: $surface-glow;
 
                 .no_posts,
                 .no_saved_posts {
-                    margin-top: 30px;
+                    margin-top: 40px;
                     text-align: center;
-                    color: transparentize($secondary-color, 0.4);
-                    font-style: italic;
+                    color: $light-blue-color;
                 }
             }
 
@@ -1330,19 +1310,19 @@ $profile-glow: $surface-glow;
 
         .private_account_notice {
             text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
+            padding: 20px;
+            border: 1px solid transparentize($blue-color, 0.8);
             border: 1px solid $profile-surface-border;
             border-radius: $medium-border-radius;
 
             .fa-lock {
                 font-size: 2.5em;
-                color: transparentize($blue-color, 0.25);
+                color: $blue-color;
             }
 
             p {
                 margin-top: 10px;
-                color: transparentize($secondary-color, 0.25);
+                color: $light-blue-color;
             }
         }
     }
