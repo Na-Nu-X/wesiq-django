@@ -8,24 +8,34 @@
 // Registration Form
 
 .registration_form {
-    @include animated_border;
-    max-width: 500px;
+    position: relative;
+    max-width: $secondary-width;
+    width: 100%;
     margin: 0px auto;
     padding: 30px 50px 50px;
     text-align: center;
+    border: 1px solid transparentize($blue-color, 0.5);
     border-radius: $medium-border-radius;
+    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    overflow: hidden;
+
+    &::before {
+        @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+    }
+
+    &::after {
+        @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
+    }
 
     h2 {
         margin-bottom: 30px;
-
-        &:hover {
-            cursor: pointer;
-        }
+        color: $secondary-color;
+        animation: fadeInScale 0.3s ease-out;
 
         a {
-            font-size: 1em;
-            text-decoration: none;
             color: $secondary-color;
+            text-decoration: none;
+            font-size: 1em;
         }
     }
 
@@ -33,43 +43,63 @@
         @include form_back;
     }
 
-    input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
+    .form_report {
+        @include form_report;
+    }
+
+    input[type="submit"] {
+        @include blue_button($border-radius: $big-border-radius);
+        margin-top: 40px;
+        margin-bottom: 10px;
+    }
+
+    .form_questions {
+        margin-top: 10px;
+        color: $secondary-color;
+
+        a {
+            color: $secondary-color;
+            text-decoration: none;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
         @include form_input;
     }
 
-    .phone_number_container {
+    i {
+        @include icon;
+    }
+
+    .name_container,
+    .contact_container {
+        display: flex;
+        gap: 10px;
+    }
+
+    .username_container {
         position: relative;
 
-        &:has(.phone_number:hover) .flag, &:has(.phone_number:focus) .flag {
-            right: 0px;
-        }
-
-        .flag {
+        .fa-at {
+            @include icon;
+            display: block;
             position: absolute;
-            bottom: 18px;
-            right: 20px;
-            opacity: 0.8;
-            transition: right 0.3s ease;
+            bottom: 10px;
+            left: 3px;
+            padding: 19px 0px 15px;
         }
     }
 
     .password_container {
         position: relative;
-
-        &:has(.password:hover) .generate_password, 
-        &:has(.password:focus) .generate_password {
-            left: -16px;
-        }
-
-        &:has(.password:hover) .show_hide_password, 
-        &:has(.password:focus) .show_hide_password {
-            right: 0px;
-        }
-
-        &:has(.password:hover) .copy_password, 
-        &:has(.password:focus) .copy_password {
-            right: -19px;
-        }
 
         .password {
             padding-right: 28px !important;
@@ -81,106 +111,49 @@
             position: absolute;
             bottom: 10px;
             left: 3px;
-            padding-bottom: 15px;
-            padding-top: 19px;
-            transition: left 0.3s ease;
-
-            &:hover {
-                cursor: pointer;
-
-                .fa-key {
-                    color: darken($secondary-color, 20%);
-                }
-            }
+            padding: 19px 0px 15px;
 
             .fa-key {
+                @include icon;
                 display: block;
-                color: darken($secondary-color, 40%);
-                transition: color 0.3s ease;
             }
         }
 
-        .show_hide_password {
-            all: unset;
-            position: absolute;
-            bottom: 10px;
-            right: 20px;
-            padding-bottom: 15px;
-            padding-top: 19px;
-            transition: right 0.3s ease;
-
-            &:hover {
-                cursor: pointer;
-                
-                .fa-eye, 
-                .fa-eye-slash {
-                    color: darken($secondary-color, 20%);
-                }
-            }
-
-            .fa-eye, 
-            .fa-eye-slash {
-                display: block;
-                color: darken($secondary-color, 40%);
-                transition: color 0.3s ease;
-            }
-        }
-
+        .show_hide_password,
         .copy_password {
             all: unset;
             position: absolute;
             bottom: 10px;
-            right: 1px;
-            padding-bottom: 15px;
-            padding-top: 19px;
-            transition: right 0.3s ease;
+            right: 20px;
+            padding: 19px 0px 15px;
 
-            &:hover {
-                cursor: pointer;
-
-                .fa-copy {
-                    color: darken($secondary-color, 20%);
-                }
-            }
-
+            .fa-eye, 
+            .fa-eye-slash,
             .fa-copy {
+                @include icon;
                 display: block;
-                color: darken($secondary-color, 40%);
-                transition: color 0.3s ease;
             }
+        }
+
+        .copy_password {
+            right: 1px;
         }
     }
 
     .password_check_container {
         position: relative;
 
-        &:has(.password_check:hover) .fa-lock, 
-        &:has(.password_check:focus) .fa-lock {
-            left: -16px;
-        }
-
-        &:has(.password_check:hover) .paste_password, 
-        &:has(.password_check:focus) .paste_password {
-            right: -19px;
+        .fa-lock {
+            @include icon;
+            display: block;
+            position: absolute;
+            bottom: 10px;
+            left: 3px;
+            padding: 19px 0px 15px;
         }
 
         .password_check {
             padding-right: 28px !important;
-        }
-
-        .fa-lock {
-            position: absolute;
-            bottom: 10px;
-            left: 3px;
-            padding-top: 19px;
-            padding-bottom: 15px;
-            color: darken($secondary-color, 40%);
-            transition: color 0.3s ease, left 0.3s ease;
-
-            &:hover {
-                color: darken($secondary-color, 20%);
-                cursor: pointer;
-            }
         }
 
         .paste_password {
@@ -188,47 +161,17 @@
             position: absolute;
             bottom: 10px;
             right: 1px;
-            padding-bottom: 15px;
-            padding-top: 19px;
-            transition: right 0.3s ease;
-
-            &:hover {
-                cursor: pointer;
-
-                .fa-copy {
-                    color: darken($secondary-color, 20%);
-                }
-            }
+            padding: 19px 0px 15px;
 
             .fa-copy {
+                @include icon;
                 display: block;
-                color: darken($secondary-color, 40%);
-                transition: color 0.3s ease;
             }
         }
-    }
-
-    .form_report {
-        @include form_report;
     }
 
     input[type="submit"] {
-        @include blue_button;
-        margin-top: 40px;
-    }
-
-    .form_questions {
-        margin-top: 10px;
-
-        a {
-            color: $secondary-color;
-            text-decoration: none;
-
-            &:hover,
-            &:active {
-                text-decoration: underline;
-            }
-        }
+        margin-bottom: 0px;
     }
 }
 

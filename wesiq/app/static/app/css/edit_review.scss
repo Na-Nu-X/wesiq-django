@@ -8,24 +8,34 @@
 // Edit Review Form
 
 .edit_review_form {
-    @include animated_border;
-    max-width: 500px;
+    position: relative;
+    max-width: $secondary-width;
+    width: 100%;
     margin: 0px auto;
     padding: 30px 50px 50px;
     text-align: center;
+    border: 1px solid transparentize($blue-color, 0.5);
     border-radius: $medium-border-radius;
+    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    overflow: hidden;
+
+    &::before {
+        @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+    }
+
+    &::after {
+        @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
+    }
 
     h2 {
         margin-bottom: 30px;
-
-        &:hover {
-            cursor: pointer;
-        }
+        color: $secondary-color;
+        animation: fadeInScale 0.3s ease-out;
 
         a {
-            font-size: 1em;
-            text-decoration: none;
             color: $secondary-color;
+            text-decoration: none;
+            font-size: 1em;
         }
     }
 
@@ -33,58 +43,76 @@
         @include form_back;
     }
 
-    .reviewer {
-        position: relative;
-        height: 38px;
-        margin-left: 5%;
+    .top {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 90%;
+        margin: 0px auto;
         text-align: left;
 
-        .profile_picture {
-            @include profile_picture;
-            transition: transform 0.3s ease;
-    
-            &:hover {
-                transform: scale(1.05);
-            }
-        }
-
-        .username {
-            display: inline-block;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 48px;
-        }
-    }
-
-    .rating {
-        button {
-            all: unset;
-
-            .fa-star {
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            
+            .profile_picture {
+                @include profile_picture($width: 38px, $height: 38px);
                 display: block;
-                font-size: 1.5em;
-                cursor: pointer;
-                transition: color 0.1s ease, transform 0.1s ease;
-    
-                &.full {
-                    color: $article-color;
-                    opacity: 1;
-                }
-                
-                &.empty {
-                    color: darken($secondary-color, 40%);
-                    opacity: 0.5;
-                }
+                transition: transform 0.3s ease;
     
                 &:hover {
-                    transform: scale(1.1);
+                    transform: scale(1.05);
+                }
+            }
+    
+            .username {
+                a {
+                    text-decoration: none;
+                    color: $secondary-color;
+    
+                    &:hover,
+                    &:active {
+                        text-decoration: underline;
+                    }
+                }
+    
+                .date {
+                    font-style: italic;
+                    color: $light-blue-color;
                 }
             }
         }
-
-        input {
-            display: none;
+    
+        .rating {
+            button {
+                all: unset;
+    
+                .fa-star {
+                    display: block;
+                    font-size: 1.5em;
+                    cursor: pointer;
+                    transition: color 0.1s ease, transform 0.1s ease;
+    
+                    &.full {
+                        color: $yellow-color;
+                        opacity: 1;
+                    }
+                    
+                    &.empty {
+                        color: $light-blue-color;
+                        opacity: 0.5;
+                    }
+    
+                    &:hover {
+                        transform: scale(1.1);
+                    }
+                }
+            }
+    
+            input {
+                display: none;
+            }
         }
     }
 
@@ -96,11 +124,13 @@
         margin: 10px auto 0px;
         border: 1px solid transparentize($blue-color, 0.5);
         border-radius: $small-border-radius;
-        transition: width 0.3s ease, border-color 0.3s ease;
+        transition: border-color 0.3s ease;
 
-        &:has(textarea:focus),
+        &:has(textarea:focus) {
+            border-color: $blue-color;
+        }
+
         &:hover {
-            width: 100%;
             border-color: $blue-color;
         }
 
@@ -116,7 +146,7 @@
             resize: none;
 
             &::placeholder {
-                color: darken($secondary-color, 40%);
+                color: $light-blue-color;
             }
         }
 
@@ -126,7 +156,7 @@
             justify-content: right;
             height: 25px;
             padding: 0px 10px;
-            background-color: transparentize($blue-color, 0.85);
+            background-color: transparentize($blue-color, 0.9);
             border-radius: 0px 0px $small-border-radius $small-border-radius;
 
             .add_emoji {
@@ -149,7 +179,7 @@
     }
 
     input[type="submit"] {
-        @include blue_button;
+        @include blue_button($border-radius: $big-border-radius);
         margin-top: 40px;
     }
 }

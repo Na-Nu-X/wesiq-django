@@ -17,30 +17,32 @@ $post-glow: $surface-glow;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 14px;
-    max-width: 600px;
+    gap: 10px;
+    max-width: $secondary-width;
     width: 100%;
     margin: 0px auto;
-    @include glass_panel($padding: 22px 24px 24px, $blur: 12px);
+    padding: 20px;
+    background-color: transparentize($dark-blue-color, 0.95);
+    border: 1px solid transparentize($blue-color, 0.5);
+    border-radius: $medium-border-radius;
+    backdrop-filter: blur(5px);
     outline: none;
     overflow: visible;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
-    &::before {
-        @include glass_accent_bar($width: 72px, $height: 2px);
-    }
-
-    &:hover {
-        border-color: transparentize($blue-color, 0.3);
-        box-shadow: 0 14px 36px transparentize($blue-color, 0.78);
+    &:hover,
+    &:focus-visible {
+        transform: translateY(-2px);
+        background: transparent;
+        border-color: transparentize($blue-color, 0.25);
+        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
     }
 
     .header {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         width: 100%;
-        padding-bottom: 4px;
 
         .left {
             &:has(a:focus-visible) {
@@ -84,32 +86,33 @@ $post-glow: $surface-glow;
                     align-items: center;
                     gap: 5px;
 
+                    &:has(.followers:hover),
+                    &:has(.fa-user:hover) {
+                        .followers,
+                        .fa-user {
+                            color: $dark-blue-color;
+                        }
+                    }
+
                     .followers {
-                        color: darken($secondary-color, 40%);
+                        color: $blue-color
                     }
 
                     .fa-user {
-                        color: darken($secondary-color, 40%);
+                        @include icon;
                     }
                 }
 
                 .follow_button {
-                    padding: 6px 14px;
-                    text-align: center;
-                    background: transparentize($blue-color, 0.85);
-                    color: $secondary-color;
-                    border: 1px solid $post-surface-border;
-                    border-radius: $big-border-radius;
-                    outline: none;
-                    font-size: 0.9em;
-                    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+                    @include blue_button;
+                    width: auto;
+                    height: auto;
+                    padding: 5px 10px;
 
                     &:hover,
                     &:focus-visible {
-                        border-color: transparentize($blue-color, 0.25);
-                        background: transparentize($blue-color, 0.7);
-                        box-shadow: 0 4px 14px $post-glow;
-                        cursor: pointer;
+                        transform: scale(1);
+                        letter-spacing: 0px;
                     }
                 }
 
@@ -159,8 +162,8 @@ $post-glow: $surface-glow;
                     @include crop_text;
                     display: flex;
                     align-items: center;
-                    gap: 4px;
-                    color: darken($secondary-color, 40%);
+                    gap: 5px;
+                    color: $light-blue-color;
                     font-size: 0.8em;
                     text-decoration: none;
 
@@ -169,12 +172,12 @@ $post-glow: $surface-glow;
                         width: 4px;
                         height: 4px;
                         border-radius: 50%;
-                        background-color: darken($secondary-color, 40%);
+                        background-color: $light-blue-color;
                     }
                 }
 
                 .created_at {
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     font-size: 0.8em;
                     white-space: nowrap;
                 }
@@ -189,8 +192,8 @@ $post-glow: $surface-glow;
         width: 100%;
         border-radius: $big-border-radius;
         overflow: hidden;
-        border: 1px solid transparentize($blue-color, 0.88);
-        box-shadow: 0 4px 18px transparentize($main-color, 0.55);
+        border: 1px solid transparentize($blue-color, 0.8);
+        box-shadow: 0 5px 20px transparentize($blue-color, 0.9);
 
         &:has(.one_post .video_container:hover) .post_bars {
             visibility: hidden;
@@ -225,7 +228,6 @@ $post-glow: $surface-glow;
                 width: 100%;
                 height: 100%;
                 backdrop-filter: blur(5px);
-                border-radius: $small-border-radius;
                 opacity: 1;
                 transition: opacity 0.3s ease, display 0.3s ease allow-discrete;
                 z-index: 50;
@@ -251,7 +253,7 @@ $post-glow: $surface-glow;
                 top: 50%;
                 transform: translateY(-50%);
                 opacity: 0;
-                transition: border-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+                transition: border-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
                 z-index: 50;
 
                 &.hidden {
@@ -435,8 +437,8 @@ $post-glow: $surface-glow;
                             margin-right: auto;
                             padding: 5px 10px;
                             font-family: $article-heading-font;
-                            font-size: 0.8em;
                             font-variant-numeric: tabular-nums;
+                            font-size: 0.8em;
                             background-color: transparentize($main-color, 0.8);
                             border-radius: calc(28px / 2);
                         
@@ -464,13 +466,13 @@ $post-glow: $surface-glow;
                                 direction: rtl;
                                 position: relative;
                                 height: 5px;
-                                background-color: lighten($blue-color, 2%);
+                                background-color: $blue-color;
                                 border-radius: calc(5px / 2);
                                 cursor: pointer;
 
                                 &:hover {
                                     &::-webkit-slider-thumb {
-                                        background-color: $blue-color;
+                                        background-color: $dark-blue-color;
                                         scale: 1.2;
                                     }
                                 }
@@ -479,7 +481,7 @@ $post-glow: $surface-glow;
                                     -webkit-appearance: none !important;
                                     height: 10px;
                                     width: 10px;
-                                    background-color: lighten($blue-color, 2%);
+                                    background-color: $blue-color;
                                     border-radius: 50%;
                                     transition: background-color 0.3s ease, scale 0.3s ease;
                                 }
@@ -584,7 +586,7 @@ $post-glow: $surface-glow;
                             position: relative;
                             width: 100%;
                             height: 5px;
-                            background-color: darken($secondary-color, 40%);
+                            background-color: $light-blue-color;
                             border-radius: calc(8px / 2);
                             cursor: pointer;
     
@@ -592,7 +594,7 @@ $post-glow: $surface-glow;
                                 // height: 8px;
     
                                 &::after {
-                                    background-color: $blue-color;
+                                    background-color: $dark-blue-color;
                                     transform: translateY(-50%) scale(1.2);
                                 }
                             }
@@ -603,7 +605,7 @@ $post-glow: $surface-glow;
                                 width: var(--progress);
                                 max-width: 100%;
                                 height: inherit;
-                                background-color: lighten($blue-color, 2%);
+                                background-color: $dark-blue-color;
                                 border-radius: inherit;
                                 transition: width 0.1s linear;
                                 z-index: 100;
@@ -617,7 +619,7 @@ $post-glow: $surface-glow;
                                 width: 10px;
                                 height: 10px;
                                 margin-left: calc(var(--progress) - (10px / 2));
-                                background-color: lighten($blue-color, 2%);
+                                background-color: $dark-blue-color;
                                 border-radius: 50%;
                                 transition: transform 0.3s ease, margin-left 0.1s linear, background-color 0.3s ease;
                                 z-index: 100;
@@ -630,7 +632,7 @@ $post-glow: $surface-glow;
                                 width: var(--progress);
                                 max-width: 100%;
                                 height: inherit;
-                                background-color: darken($secondary-color, 20%);
+                                background-color: $blue-color;
                                 border-radius: inherit;
                                 transition: width 1s linear;
                                 z-index: 50;
@@ -718,10 +720,10 @@ $post-glow: $surface-glow;
             display: flex;
             flex-direction: row;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             padding: 5px 10px;
-            background-color: transparentize($main-color, 0.9);
+            background-color: transparentize($blue-color, 0.9);
             transition: visibility 1s ease 1s, opacity 1s ease 1s;
             z-index: 100;
 
@@ -729,15 +731,14 @@ $post-glow: $surface-glow;
                 position: relative;
                 width: 12px;
                 height: 12px;
-                background-color: darken($secondary-color, 40%);
-                box-shadow: 0px 0px 10px darken($secondary-color, 40%);
+                background-color: $blue-color;
                 border-radius: 50%;
                 transition: background-color 0.3s ease;
 
                 &.active,
                 &:hover {
                     cursor: pointer;
-                    background-color: darken($secondary-color, 20%);
+                    background-color: $dark-blue-color;
                 }
             }
         }
@@ -787,27 +788,27 @@ $post-glow: $surface-glow;
     .society {
         display: flex;
         align-items: center;
-        gap: 18px;
-        margin-top: 6px;
-        padding: 8px 4px 2px;
-        border-top: 1px solid $post-surface-border;
+        gap: 20px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid lighten($main-color, 20%);
 
         .likes {
             all: unset;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             height: 20px;
 
             .fa-heart {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
-                transition: color 0.25s ease, transform 0.25s ease;
+                color: $blue-color;
+                transition: color 0.3s ease, transform 0.2s ease;
 
                 &:hover {
                     color: $red-color !important;
-                    transform: scale(1.08);
+                    transform: scale(1.1);
                     cursor: pointer;
                 }
             }
@@ -819,11 +820,11 @@ $post-glow: $surface-glow;
             .likes_counter,
             .hidden_likes_counter {
                 display: inline-block;
-                color: darken($secondary-color, 35%);
+                color: $blue-color;
             }
 
             .likes_counter {
-                font-size: 1.15em;
+                font-size: 1.2em;
             }
 
             .hidden_likes_counter {
@@ -835,17 +836,17 @@ $post-glow: $surface-glow;
             all: unset;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
 
             .fa-comment {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
-                transition: color 0.25s ease, transform 0.25s ease;
+                color: $blue-color;
+                transition: color 0.3s ease, transform 0.2s ease;
 
                 &:hover {
-                    color: $blue-color;
-                    transform: scale(1.08);
+                    color: $dark-blue-color;
+                    transform: scale(1.1);
                     cursor: pointer;
                 }
             }
@@ -853,11 +854,11 @@ $post-glow: $surface-glow;
             .comments_counter,
             .hidden_comments_counter {
                 display: inline-block;
-                color: darken($secondary-color, 35%);
+                color: $blue-color;
             }
 
             .comments_counter {
-                font-size: 1.15em;
+                font-size: 1.2em;
             }
 
             .hidden_comments_counter {
@@ -869,14 +870,14 @@ $post-glow: $surface-glow;
             all: unset;
 
             .fa-share-nodes {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
-                transition: color 0.25s ease, transform 0.25s ease;
+                color: $blue-color;
+                transition: color 0.3s ease, transform 0.2s ease;
 
                 &:hover {
-                    color: $blue-color;
-                    transform: scale(1.08);
+                    color: $dark-blue-color;
+                    transform: scale(1.1);
                     cursor: pointer;
                 }
             }
@@ -885,26 +886,26 @@ $post-glow: $surface-glow;
         .views {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             height: 20px;
             margin-left: auto;
 
             .fa-eye {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
-                transition: color 0.25s ease;
+                color: $blue-color;
+                transition: color 0.3s ease;
 
                 &:hover {
-                    color: darken($secondary-color, 15%);
+                    color: $dark-blue-color;
                     cursor: pointer;
                 }
             }
 
             .views_counter {
                 display: inline-block;
-                color: darken($secondary-color, 35%);
-                font-size: 1.15em;
+                color: $blue-color;
+                font-size: 1.2em;
             }
         }
 
@@ -915,19 +916,19 @@ $post-glow: $surface-glow;
                 cursor: pointer;
 
                 .fa-chart-simple {
-                    color: $blue-color;
+                    color: $dark-blue-color;
                     cursor: pointer;
-                    transition: color 0.25s ease, transform 0.25s ease;
-                    transform: scale(1.08);
+                    transition: color 0.3s ease, transform 0.2s ease;
+                    transform: scale(1.1);
                 }
             }
 
             .fa-chart-simple {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
+                color: $blue-color;
                 pointer-events: none;
-                transition: color 0.25s ease, transform 0.25s ease;
+                transition: color 0.3s ease, transform 0.2s ease;
             }
         }
 
@@ -935,14 +936,14 @@ $post-glow: $surface-glow;
             all: unset;
             
             .fa-bookmark {
-                font-size: 1.45em;
+                font-size: 1.5em;
                 display: block;
-                color: darken($secondary-color, 35%);
-                transition: color 0.25s ease, transform 0.25s ease;
+                color: $blue-color;
+                transition: color 0.3s ease, transform 0.2s ease;
 
                 &:hover {
                     color: $article-color;
-                    transform: scale(1.08);
+                    transform: scale(1.1);
                     cursor: pointer;
                 }
             }
@@ -950,7 +951,7 @@ $post-glow: $surface-glow;
     }
 
     .description {
-        margin-top: 4px;
+        margin-top: 5px;
         line-height: 1.5;
         color: transparentize($secondary-color, 0.08);
 
@@ -962,29 +963,17 @@ $post-glow: $surface-glow;
             padding: 0px 5px;
             border-radius: $small-border-radius;
             font-size: 0.8em;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
         .tag {
             text-decoration: none;
             background-color: transparentize($blue-color, 0.8);
             color: $blue-color;
-
-            &:hover {
-                background-color: transparentize($blue-color, 0.65);
-                transform: translateY(-1px);
-            }
         }
 
         .hashtag {
             background-color: transparentize($green-color, 0.9);
             color: $green-color;
-
-            &:hover {
-                background-color: transparentize($green-color, 0.75);
-                transform: translateY(-1px);
-            }
         }
     }
 
@@ -1004,19 +993,13 @@ $post-glow: $surface-glow;
             gap: 5px;
 
             .fa-eye {
+                @include icon;
                 display: block;
-                color: darken($secondary-color, 40%);
-
-                &:hover {
-                    color: darken($secondary-color, 20%);
-                    cursor: pointer;
-                    transition: color 0.3s ease;
-                }
             }
 
             .views_counter {
                 display: inline-block;
-                color: darken($secondary-color, 40%);
+                color: $blue-color;
             }
         }
 
@@ -1055,7 +1038,7 @@ $post-glow: $surface-glow;
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                color: darken($secondary-color, 40%);
+                color: $blue-color;
                 transition: left 1s ease;
             }
 
@@ -1070,9 +1053,8 @@ $post-glow: $surface-glow;
     }
 
     .comment_forum {
-        margin-top: 4px;
-        padding-top: 8px;
-        border-top: 1px solid $post-surface-border;
+        padding-top: 5px;
+        border-top: 1px solid lighten($main-color, 20%);
 
         &.hidden {
             display: none;
@@ -1182,7 +1164,7 @@ $post-glow: $surface-glow;
             
                                 .fa-heart {
                                     display: block;
-                                    color: darken($secondary-color, 40%);
+                                    color: $blue-color;
             
                                     &:hover {
                                         color: $red-color !important;
@@ -1197,7 +1179,7 @@ $post-glow: $surface-glow;
             
                                 .likes_counter {
                                     display: inline-block;
-                                    color: darken($secondary-color, 40%);
+                                    color: $blue-color;
                                 }
                             }
                         }
@@ -1216,14 +1198,8 @@ $post-glow: $surface-glow;
 
                         .fa-comment,
                         .fa-comment-slash {
+                            @include icon;
                             display: block;
-                            color: darken($secondary-color, 40%);
-                            cursor: pointer;
-
-                            &:hover {
-                                color: darken($secondary-color, 20%);
-                                transition: color 0.3s ease;
-                            }
                         }
                     }
 
@@ -1235,7 +1211,7 @@ $post-glow: $surface-glow;
     
                         .fa-heart {
                             display: block;
-                            color: darken($secondary-color, 40%);
+                            color: $blue-color;
     
                             &:hover {
                                 color: $red-color !important;
@@ -1250,7 +1226,7 @@ $post-glow: $surface-glow;
     
                         .likes_counter {
                             display: inline-block;
-                            color: darken($secondary-color, 40%);
+                            color: $blue-color;
                         }
                     }
 
@@ -1260,7 +1236,7 @@ $post-glow: $surface-glow;
                         p {
                             font-size: 0.8em;
                             font-style: italic;
-                            color: darken($secondary-color, 40%);
+                            color: $light-blue-color;
                         }
                     }
 
@@ -1356,6 +1332,23 @@ $post-glow: $surface-glow;
                     }
                 }
             }
+
+            .show_more {
+                all: unset;
+                display: block;
+                margin: 0px auto 10px;
+                color: $light-blue-color;
+
+                &.hidden {
+                    display: none;
+                }
+
+                &:hover,
+                &:active {
+                    text-decoration: underline;
+                    cursor: pointer;
+                }
+            }
         }
 
         .write_comment_form {
@@ -1371,23 +1364,22 @@ $post-glow: $surface-glow;
                 padding-bottom: 12px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background: transparentize($main-color, 0.45);
+                background: transparent;
                 color: $secondary-color;
-                border: 1px solid $post-surface-border;
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $big-border-radius;
                 outline: none;
                 transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:empty::before {
                     content: attr(data-placeholder);
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     cursor: text;
                 }
 
                 &:hover,
                 &:focus {
-                    border-color: transparentize($blue-color, 0.35);
-                    box-shadow: 0 4px 18px transparentize($blue-color, 0.88);
+                    border-color: $blue-color;
                 }
                 
                 .tag,
@@ -1398,8 +1390,6 @@ $post-glow: $surface-glow;
                     padding: 0px 5px;
                     border-radius: $small-border-radius;
                     font-size: 0.8em;
-                    cursor: pointer;
-                    transition: background-color 0.2s ease;
                 }
 
                 .tag {
@@ -1435,14 +1425,14 @@ $post-glow: $surface-glow;
                     cursor: pointer;
                     
                     .fa-face-surprise {
-                        color: $blue-color;
+                        color: $dark-blue-color;
                         transition: color 0.3s ease;
                     }
                 }
 
                 .fa-face-surprise {
                     display: block;
-                    color: darken($secondary-color, 35%);
+                    color: $blue-color;
                     pointer-events: none;
                 }
             }
@@ -1459,12 +1449,12 @@ $post-glow: $surface-glow;
                 transform: translateY(-50%) scale(1);
                 width: 30px;
                 height: 30px;
-                color: darken($secondary-color, 35%);
-                transition: transform 0.3s ease, color 0.3s ease;
+                color: $blue-color;
+                transition: transform 0.2s ease, color 0.3s ease;
 
                 &:hover {
                     transform: translateY(-50%) scale(1.1);
-                    color: $blue-color;
+                    color: $dark-blue-color;
                     cursor: pointer;
                 }
 

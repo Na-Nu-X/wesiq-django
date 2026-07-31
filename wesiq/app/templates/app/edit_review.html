@@ -19,15 +19,32 @@
 
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-            <div class="reviewer">
-                {% if review.user.username %}
-                    <a href="{% url 'profile_url' review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+            <div class="top">
+                <div class="reviewer">
+                    {% if review.user.username %}
+                        <a href="{% url 'profile_url' review.user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+                            <img 
+                                class="profile_picture skeleton_loading" 
+                                src="
+                                    {% if review.user.profile_picture_name %}
+                                        /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
+    
+                                    {% else %}
+                                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                                    
+                                    {% endif %}
+                                "
+                                alt=""
+                            >
+                        </a>
+    
+                    {% else %}
                         <img 
                             class="profile_picture skeleton_loading" 
                             src="
                                 {% if review.user.profile_picture_name %}
                                     /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
-
+    
                                 {% else %}
                                     {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
                                 
@@ -35,55 +52,40 @@
                             "
                             alt=""
                         >
-                    </a>
-
-                {% else %}
-                    <img 
-                        class="profile_picture skeleton_loading" 
-                        src="
-                            {% if review.user.profile_picture_name %}
-                                /media/images/{{ review.user.id }}/{{ review.user.profile_picture_name }}
-
-                            {% else %}
-                                {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
-                            
-                            {% endif %}
-                        "
-                        alt=""
-                    >
-
-                {% endif %}
-
-                <p class="username">
-                    {{ review.user.username }}
-
-                    <span class="date">
-                        - {{ review.creation_time|date:"d.m. Y" }}
-
-                        {% if review.last_edit != None %}
-                            ({% translate "upravené" %})
-
-                        {% endif %}
-                    </span>
-                </p>
-            </div>
-
-            <div class="rating">
-                {% for _ in "12345" %}
-                    {% if forloop.counter <= review.rating %}
-                        <button type="button">
-                            <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                        </button>
-
-                    {% else %}
-                        <button type="button">
-                            <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
-                        </button>
-                    
+    
                     {% endif %}
-                {% endfor %}
-
-                {{ review_form.rating }}
+    
+                    <p class="username">
+                        {{ review.user.username }}
+    
+                        <span class="date">
+                            - {{ review.creation_time|date:"d.m. Y" }}
+    
+                            {% if review.last_edit != None %}
+                                ({% translate "upravené" %})
+    
+                            {% endif %}
+                        </span>
+                    </p>
+                </div>
+    
+                <div class="rating">
+                    {% for _ in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <button type="button">
+                                <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            </button>
+    
+                        {% else %}
+                            <button type="button">
+                                <i class="empty fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
+                            </button>
+                        
+                        {% endif %}
+                    {% endfor %}
+    
+                    {{ review_form.rating }}
+                </div>
             </div>
 
             <div class="review_container">
