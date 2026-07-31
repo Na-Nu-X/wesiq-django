@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-20 20:06+0000\n"
-"PO-Revision-Date: 2026-07-05 19:17+0000\n"
+"PO-Revision-Date: 2026-07-31 19:19+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -280,34 +280,32 @@ msgstr "Supprimer"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid "(upravené)"
-msgstr ""
+msgstr "(édité)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid " (upravené)"
-msgstr ""
+msgstr "(édité)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:155
 #: app/static/app/ts/src/pages/chat/components/chat.ts:471
-#, fuzzy
 #| msgid "Napísať komentár"
 msgid "Napísať správu"
-msgstr "Écrivez un commentaire"
+msgstr "Écrire un message"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:192
 #: app/static/app/ts/src/pages/chat/components/chat.ts:193
 #, javascript-format
 msgid "Reakciu pridal: %s"
-msgstr ""
+msgstr "La réaction a été ajoutée par : %s"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:223
 msgid "Spojenie sa neočakávane prerušilo."
-msgstr ""
+msgstr "La connexion a été interrompue de manière inattendue."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:291
-#, fuzzy
 #| msgid "Upraviť"
 msgid "Upraviť správu"
-msgstr "Modifier"
+msgstr "Modifier le message"
 
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:34
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:73
@@ -671,10 +669,9 @@ msgid "Žiadne žiadosti o sledovanie"
 msgstr "Aucune demande de suivi"
 
 #: app/static/app/ts/src/pages/profile/components/followers.ts:64
-#, fuzzy
 #| msgid "Žiadne žiadosti o sledovanie"
 msgid "Žiadny sledovatelia"
-msgstr "Aucune demande de suivi"
+msgstr "Aucun abonné"
 
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
 msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
@@ -692,10 +689,9 @@ msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
 msgstr "Une erreur s'est produite lors du rejet de la demande de suivi."
 
 #: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
-#, fuzzy
 #| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "Une erreur s'est produite lors de la suppression des tâches."
+msgstr "Une erreur s'est produite lors de la suppression du tracker."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
@@ -724,7 +720,8 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "La durée d'activité actuelle était supérieure de %s %% à la moyenne des 7 "
 "derniers jours"
@@ -762,7 +759,8 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:221
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
-msgstr "Une erreur s'est produite lors du marquage de la tâche comme terminée."
+msgstr ""
+"Une erreur s'est produite lors du marquage de la tâche comme terminée."
 
 #: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
@@ -795,7 +793,6 @@ msgid "Zadajte váš e-mail"
 msgstr "Entrez votre e-mail"
 
 #, javascript-format
-#~| msgid "/sk/stream-video/%s/%s/%s"
 #~ msgid "/api/stream-video/%s/%s/%s"
 #~ msgstr "/api/stream-video/%s/%s/%s"
 
