@@ -768,51 +768,91 @@ $profile-glow: $surface-glow;
                 .statistics .followers_dialog,
                 .statistics .following_dialog,
                 .follow_requests_dialog {
-                    @include position_center($position: fixed);
-                    margin: 0;
-                    padding: 10px;
-                    background-color: transparentize($main-color, 0.8);
-                    backdrop-filter: blur(5px);
-                    border: 2px solid $secondary-color;
-                    border-radius: $medium-border-radius;
-                    outline: none;
-
                     &::backdrop {
-                        background-color: transparentize($main-color, 0.8);
-                        backdrop-filter: blur(2px);
+                        background-color: transparentize($main-color, 0.5);
+                        backdrop-filter: blur(5px);
                     }
 
-                    &.no_followers,
-                    &.no_followings,
-                    &.no_requests {
-                        border: none;
+                    // @include position_center($position: fixed);
+                    // margin: 0;
+                    // padding: 10px;
+                    // background-color: transparentize($main-color, 0.8);
+                    // backdrop-filter: blur(5px);
+                    // border: 2px solid $secondary-color;
+                    // border-radius: $medium-border-radius;
+                    // outline: none;
 
-                        .followers_info,
-                        .followings_info,
-                        .follow_requests_info {
-                            margin: 20px 20px 0px;
-                            font-weight: bold;
-                        }
-                    }
+                    // &::backdrop {
+                    //     background-color: transparentize($main-color, 0.8);
+                    //     backdrop-filter: blur(2px);
+                    // }
 
-                    .followers_info,
-                    .followings_info,
-                    .follow_requests_info {
-                        margin-bottom: 10px;
-                        color: $secondary-color;
-                        text-align: center;
-                    }
+                    // &.no_followers,
+                    // &.no_followings,
+                    // &.no_requests {
+                    //     border: none;
+
+                    //     .followers_info,
+                    //     .followings_info,
+                    //     .follow_requests_info {
+                    //         margin: 20px 20px 0px;
+                    //         font-weight: bold;
+                    //     }
+                    // }
+
+                    // .followers_info,
+                    // .followings_info,
+                    // .follow_requests_info {
+                    //     margin-bottom: 10px;
+                    //     color: $secondary-color;
+                    //     text-align: center;
+                    // }
 
                     .all_followers,
                     .all_followings,
                     .all_follow_requests {
+                        @include position_center($position: fixed);
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
                         gap: 10px;
-                        max-height: 300px;
-                        padding: 10px;
-                        outline: none;
+                        max-width: $secondary-width;
+                        width: 100%;
+                        padding: 30px 50px 50px;
+                        border: 1px solid transparentize($blue-color, 0.5);
+                        border-radius: $medium-border-radius;
+                        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                        overflow: hidden;
+
+                        &::before {
+                            @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+                        }
+
+                        &::after {
+                            @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
+                        }
+
+                        h2 {
+                            margin-bottom: 30px;
+                            color: $secondary-color;
+                            font-size: 2.5em;
+                            text-align: center;
+                            animation: fadeInScale 0.3s ease-out;
+
+                            span {
+                                font-size: inherit;
+                            }
+                        }
+            
+                        .back {
+                            @include form_back;
+                        }
+
+                        .no_followers,
+                        .no_followings,
+                        .no_follow_requests {
+                            color: $secondary-color;
+                        }
                         
                         .one_follower,
                         .one_following,
@@ -837,6 +877,7 @@ $profile-glow: $surface-glow;
                                 @include crop_text;
                                 width: 250px;
                                 color: $secondary-color;
+                                text-align: left;
                             }
             
                             .approve,
@@ -867,27 +908,19 @@ $profile-glow: $surface-glow;
                         }
                     }
                 }
-                
+
                 .follow_button,
                 .remove_follower {
-                    height: 40px;
-                    line-height: 1;
-                    padding: 10px 20px;
-                    text-align: center;
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.5), transparentize($blue-color, 0.75));
-                    color: $secondary-color;
-                    border: 1px solid transparentize($blue-color, 0.25);
-                    border-radius: $big-border-radius;
-                    outline: none;
-                    font-weight: 500;
-                    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-        
+                    @include blue_button;
+                    width: auto;
+                    height: auto;
+                    margin-left: auto;
+                    padding: 5px 10px;
+
                     &:hover,
                     &:focus-visible {
-                        border-color: $blue-color;
-                        box-shadow: 0 5px 20px $profile-glow;
-                        transform: translateY(-2px);
-                        cursor: pointer;
+                        transform: scale(1);
+                        letter-spacing: 0px;
                     }
                 }
             }
