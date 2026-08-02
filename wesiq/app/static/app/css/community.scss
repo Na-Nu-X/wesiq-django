@@ -77,18 +77,9 @@ header {
         }
 
         .notifications_dialog {
-            @include position_center($position: fixed);
-            margin: 0;
-            padding: 10px;
-            background-color: transparentize($main-color, 0.8);
-            backdrop-filter: blur(5px);
-            border: 2px solid $secondary-color;
-            border-radius: $medium-border-radius;
-            outline: none;
-
             &::backdrop {
-                background-color: transparentize($main-color, 0.8);
-                backdrop-filter: blur(2px);
+                background-color: transparentize($main-color, 0.5);
+                backdrop-filter: blur(5px);
             }
 
             &.no_messages {
@@ -107,13 +98,38 @@ header {
             }
 
             .all_messages {
+                @include position_center($position: fixed);
                 @include scrollbar;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
-                max-height: 300px;
-                padding: 10px;
-                outline: none;
+                max-width: $secondary-width;
+                width: 100%;
+                padding: 30px 50px 50px;
+                border: 1px solid transparentize($blue-color, 0.5);
+                border-radius: $medium-border-radius;
+                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                overflow: hidden;
+
+                &::before {
+                    @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+                }
+
+                &::after {
+                    @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
+                }
+
+                h2 {
+                    margin-bottom: 30px;
+                    color: $secondary-color;
+                    font-size: 2.5em;
+                    text-align: center;
+                    animation: fadeInScale 0.3s ease-out;
+                }
+    
+                .back {
+                    @include form_back;
+                }
                 
                 .one_message {
                     display: flex;
@@ -143,6 +159,7 @@ header {
                         gap: 5px;
                         align-items: center;
                         justify-content: right;
+                        margin-left: auto;
                         padding: 5px 0px;
         
                         .unread_messages {
@@ -156,17 +173,12 @@ header {
         
                             &:hover {
                                 cursor: pointer;
-
-                                .fa-comment-dots {
-                                    color: $blue-color;
-                                    transition: color 0.25s ease;
-                                }
                             }
         
                             .fa-comment-dots {
+                                @include icon;
                                 display: block;
-                                font-size: 1.2em;
-                                color: darken($secondary-color, 35%);
+                                font-size: 1.5em;
                             }
                         }
                     }
@@ -194,7 +206,7 @@ header {
     max-width: $main-width;
     margin-left: auto;
     margin-right: auto;
-    padding-bottom: 40px;
+    padding-bottom: 30px;
 
     // Upload Post Form Dialog
 

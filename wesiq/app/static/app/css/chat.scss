@@ -13,27 +13,23 @@ $profile-glow: rgba(75, 75, 250, 0.35);
 ************/
 
 .chat {
-    @include animated_border;
-    max-width: 550px;
+    position: relative;
+    max-width: $secondary-width;
+    width: 100%;
     margin: 0px auto;
-    padding: 30px 35px 40px;
-    background: $profile-surface;
-    border: 1px solid $profile-surface-border;
+    padding: 30px 50px 50px;
+    text-align: center;
+    border: 1px solid transparentize($blue-color, 0.5);
     border-radius: $medium-border-radius;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    overflow: hidden;
+
+    &::before {
+        @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+    }
 
     &::after {
-        content: "";
-        position: absolute;
-        top: 0px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, $blue-color, transparent);
-        border-radius: 2px;
-        z-index: 10;
+        @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
     }
 
     .top {
@@ -42,7 +38,8 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         .receiver {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            text-align: left;
 
             a {
                 &:has(.profile_picture) {
@@ -89,23 +86,31 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 max-width: 80%;
                 width: fit-content;
                 padding: 10px;
-                background-color: transparentize($secondary-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.9);
-                opacity: 1;
-                transition: display 0.3s ease allow-discrete, transform 0.3s ease, opacity 0.3s ease;
+                background-color: transparentize($dark-blue-color, 0.95);
+                border: 1px solid transparentize($blue-color, 0.5);
+                backdrop-filter: blur(5px);
+                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+                &:hover,
+                &:focus-visible {
+                    transform: translateY(-2px);
+                    background: transparent;
+                    border-color: transparentize($blue-color, 0.25);
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                }
 
                 &::before {
                     content: attr(data-time);
                     position: absolute;
                     bottom: -12px - 5px;
                     line-height: 1;
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     font-size: 0.8em;
                     white-space: nowrap;
                 }
 
                 &.edit {
-                    border-color: transparentize($blue-color, 0.5);
+                    border-color: $blue-color;
                     animation: scale 1s ease-in-out infinite alternate;
                 }
 
@@ -212,7 +217,8 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     .bottom {
         .write_message {
             position: relative;
-    
+            margin-top: 8px;
+
             .new_message {
                 width: 100%;
                 min-height: 50px;
@@ -222,16 +228,22 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 padding-bottom: 12px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background-color: lighten($main-color, 20%);
+                background: transparent;
                 color: $secondary-color;
+                border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $big-border-radius;
                 outline: none;
-                transition: padding 0.3s ease;
-    
+                transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
                 &:empty::before {
                     content: attr(data-placeholder);
-                    color: darken($secondary-color, 40%);
+                    color: $light-blue-color;
                     cursor: text;
+                }
+
+                &:hover,
+                &:focus {
+                    border-color: $blue-color;
                 }
                 
                 .tag,
@@ -242,21 +254,19 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     padding: 0px 5px;
                     border-radius: $small-border-radius;
                     font-size: 0.8em;
-                    cursor: pointer;
-                    transition: background-color 0.2s ease;
                 }
-    
+
                 .tag {
                     background-color: transparentize($blue-color, 0.8);
                     color: $blue-color;
                 }
-    
+
                 .hashtag {
                     background-color: transparentize($green-color, 0.9);
                     color: $green-color;
                 }
             }
-    
+
             .profile_picture {
                 position: absolute;
                 top: 6px;
@@ -267,36 +277,34 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 border: 1px solid $secondary-color;
                 border-radius: 50%;
             }
-    
+
             .add_emoji {
                 all: unset;
                 position: absolute;
                 top: 24px;
                 left: calc(6px + 38px + 10px);
                 transform: translateY(-50%);
-    
+
                 &:hover {
                     cursor: pointer;
                     
                     .fa-face-surprise {
-                        color: darken($secondary-color, 20%);
+                        color: $dark-blue-color;
                         transition: color 0.3s ease;
                     }
                 }
-    
+
                 .fa-face-surprise {
                     display: block;
-                    color: darken($secondary-color, 40%);
+                    color: $blue-color;
                     pointer-events: none;
                 }
             }
-    
+
             .emoji_picker_container {
                 @include emoji_picker_container;
-                top: auto;
-                bottom: 100%;
             }
-    
+
             .send {
                 all: unset;
                 position: absolute;
@@ -305,15 +313,15 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 transform: translateY(-50%) scale(1);
                 width: 30px;
                 height: 30px;
-                color: darken($secondary-color, 40%);
-                transition: transform 0.3s ease, color 0.3s ease;
-    
+                color: $blue-color;
+                transition: transform 0.2s ease, color 0.3s ease;
+
                 &:hover {
                     transform: translateY(-50%) scale(1.1);
-                    color: darken($secondary-color, 20%);
+                    color: $dark-blue-color;
                     cursor: pointer;
                 }
-    
+
                 svg {
                     pointer-events: none;
                 }
