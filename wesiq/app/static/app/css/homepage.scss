@@ -68,6 +68,9 @@ header {
     // Header Container
 
     .header_container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
         min-height: 100vh;
         padding: 125px + 20px 20px 60px;
 
@@ -89,7 +92,7 @@ header {
             @include flex_center($direction: column);
             gap: 25px;
             position: relative;
-            height: calc(100vh - 125px - 20px - 40px);
+            min-height: calc(100vh - 125px - 20px - 40px);
         }
 
         .hero {
@@ -396,7 +399,7 @@ header {
         .registration_form {
             @include position_center($position: fixed);
             max-width: $secondary-width;
-            width: 100%;
+            width: calc(100% - 40px);
             padding: 30px 50px 50px;
             text-align: center;
             border: 1px solid transparentize($blue-color, 0.5);
@@ -434,22 +437,15 @@ header {
 
             .login_methods {
                 p {
-                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                     color: $light-blue-color;
-
+                
                     span {
-                        position: absolute;
-                        top: 50%;
-                        right: 5%;
-                        transform: translateY(-50%);
-                        width: 135px;
+                        flex: 1;
                         height: 1px;
                         background-color: $light-blue-color;
-
-                        &:nth-child(1) {
-                            right: auto;
-                            left: 5%;
-                        }
                     }
                 }
 
@@ -531,6 +527,7 @@ header {
                 a {
                     color: $secondary-color;
                     text-decoration: none;
+                    font-style: italic;
 
                     &:hover,
                     &:active {
@@ -837,7 +834,8 @@ header {
                 opacity: 0;
 
                 p {
-                    font-size: 40px;
+                    width: 70px;
+                    font-size: 2.5em;
                 }
 
                 // Average Rating Number Tooltip
@@ -846,19 +844,17 @@ header {
                     @include tooltip($top: 6px);
 
                     .average_rating_number {
-                        position: relative;
-                        width: 70px;
                         line-height: 1;
                         color: $light-blue-color;
 
                         &:hover {
                             cursor: pointer;
                         }
-
+                    
                         span {
-                            position: relative;
-                            bottom: 14px;
-                            font-size: 20px;
+                            font-size: 0.6em;
+                            vertical-align: super;
+                            margin-left: 2px;
                         }
                     }
                 }
@@ -876,11 +872,14 @@ header {
                         @include tooltip($top: 6px);
 
                         .star {
+                            display: block;
                             width: 32px;
                             height: 32px;
 
                             svg {
                                 display: block;
+                                width: 100%;
+                                height: 100%;
 
                                 &:hover {
                                     transform: scale(1.1);
@@ -1247,7 +1246,8 @@ header {
         max-width: 100%;
         margin: 0px auto;
         text-align: center;
-
+        overflow: hidden;
+    
         .credit_card {
             position: relative;
             display: flex;
@@ -1256,42 +1256,54 @@ header {
             margin-bottom: 15px;
             color: $secondary-color;
             font-family: Arial;
-
+    
             .front,
             .back {
+                position: relative;
                 width: 85.6mm; // ISO / IEC 7810
+                max-width: 100%;
                 aspect-ratio: 1.586 / 1; // ISO / IEC 7810
                 padding: 10px 15px;
                 background: linear-gradient(135deg, lighten($main-color, 10%) 0%, lighten($main-color, 5%) 50%, transparentize($blue-color, 0.90) 100%);
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
+                box-sizing: border-box;
+                overflow: hidden;
 
+                &::before {
+                    @include circle_decoration($top: -250px, $left: -150px, $width: 400px, $height: 400px, $color: transparentize($blue-color, 0.9));
+                }
+    
+                &::after {
+                    @include circle_decoration($bottom: -475px, $left: -150px, $width: 600px, $height: 600px, $color: transparentize($blue-color, 0.9));
+                }
+    
                 .group {
                     display: flex;
                     flex-direction: column;
-
+    
                     label {
                         font-size: 0.8em;
                         text-transform: uppercase;
                         color: $blue-color;
                     }
-
+    
                     .card_number,
                     .cardholder_name,
                     .card_expiry,
                     .card_cvc {
+                        max-width: 100%;
                         height: 30px;
                         padding: 0px 5px;
                         color: $secondary-color;
                         background-color: transparent;
-                        border: none;
                         border: 1px solid transparentize($blue-color, 0.5);
                         border-radius: $small-border-radius;
                         font-family: monospace;
                         outline: none;
                         appearance: none;
                         transition: border-color 0.2s ease;
-
+    
                         &:hover,
                         &:focus-visible {
                             border-color: $blue-color !important;
@@ -1299,49 +1311,39 @@ header {
                     }
                 }
             }
-
+    
             .front {
-                position: relative;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 padding-top: 5px;
-                overflow: hidden;
-                z-index: 1;
-
-                &::before {
-                    @include circle_decoration($top: -250px, $left: -150px, $width: 400px, $height: 400px, $color: transparentize($blue-color, 0.9));
-                }
-
-                &::after {
-                    @include circle_decoration($bottom: -475px, $left: -150px, $width: 600px, $height: 600px, $color: transparentize($blue-color, 0.9));
-                }
-
+                z-index: 2;
+    
                 .top {
                     display: flex;
-
+    
                     .title {
                         flex-grow: 1;
                         font-size: 1.5em;
                         font-weight: bold;
                     }
-
+    
                     .logo {
                         width: 50px;
                         flex-grow: 0;
                     }
                 }
-
+    
                 .error_report {
                     font-size: 0.9em;
                     color: $red-color;
                 }
-
+    
                 .bottom {
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
-
+    
                     .group {
                         .card_number {
                             width: 170px;
@@ -1354,6 +1356,7 @@ header {
     
                         .cardholder_name_group {
                             flex-grow: 1;
+                            min-width: 0;
                         }
                         
                         .group {
@@ -1364,18 +1367,23 @@ header {
                     }
                 }
             }
-
+    
             .back {
                 position: absolute;
                 top: 15px;
                 left: calc(50% + 70px);
                 transform: translateX(-50%);
+                z-index: 1;
 
+                p {
+                    filter: blur(3px);
+                }
+    
                 .group {
                     position: absolute;
                     bottom: 10px;
                     right: 15px;
-
+    
                     .card_cvc {
                         width: 40px;
                     }
@@ -1414,7 +1422,7 @@ header {
 
     .subscription_plans {
         display: flex;
-        gap: 30px;
+        gap: 20px;
         margin-top: 50px;
 
         .basic,
@@ -1520,6 +1528,10 @@ header {
 
                 &:hover {
                     transform: translateY(-2px);
+                }
+
+                &.disabled {
+                    cursor: not-allowed;
                 }
             }
         }
@@ -1808,113 +1820,257 @@ header {
 **************/
 
 @media (max-width: 800px) {
-    .header_container {
-        height: calc(100vh - 109px);
-        padding: 109px + 20px 20px 0px !important;
+    header {
+        .header_container {
+            min-height: calc(100vh - 109px);
+            padding: 109px + 20px 20px 0px !important;
+    
+            .center {
+                min-height: calc(100vh - 109px - 20px - 40px) !important;
+            }
+        }
+    }
 
-        .center {
-            height: calc(100vh - 109px - 20px - 40px) !important;
+    .content {
+        .subscription_plans {
+            flex-direction: column;
         }
     }
 }
 
 @media (max-width: 600px) {
-    .contact_form {
-        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, input[type="submit"] {
-            width: 100% !important;
-        }
-
-        .subject_select_menu {
-            .select {
-                width: 100% !important;
+    header {
+        .header_container {
+            .features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                max-width: 500px;
             }
         }
     }
 
-    .login_form .password_container .show_hide_password .fa-eye,
-    .login_form .password_container .show_hide_password .fa-eye-slash {
-        right: 0px !important;
-    }
+    // Credit Card
 
-    .login_methods div {
-        width: 100% !important;
-    }
+    .credit_card_form {
+        .credit_card {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 20px !important;
+            margin-bottom: 0px !important;
 
-    .registration_form .password_container .show_hide_password .fa-eye,
-    .registration_form .password_container .show_hide_password .fa-eye-slash {
-        right: 0px !important;
-    }
-    
-    .registration_form .password_container .generate_password {
-        left: -16px !important;
-    }
-
-    .registration_form .password_container .copy_password, 
-    .password_check_container .paste_password {
-        right: -19px !important;
-    }
-
-    textarea {
-        width: 100% !important;
-    }
-
-    .attachment {
-        width: 100% !important;
+            .back {
+                position: relative !important;
+                top: 0px !important;
+                left: 0px !important;
+                transform: none !important;
+            }
+        }
     }
 }
 
 @media (max-width: 500px) {
     header {
+        // Banner
+
+        .banner {
+            flex-direction: column;
+            gap: 10px;
+            height: auto;
+            padding: 10px;
+
+            .right {
+                justify-content: flex-start;
+            }
+        }
+
         .header_container {
-            padding-bottom: 40px;
+            min-height: calc(100vh - 134px) !important;
+            padding: 134px + 20px + 20px 20px 0px !important;
+    
+            .center {
+                min-height: calc(100vh - 134px - 20px - 40px) !important;
+            }
 
             .buttons {
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
+                margin-bottom: 30px;
                 
                 .login_button,
                 .registration_button {
                     width: 100%;
                 }
             }
-
-            .features {
-                grid-template-columns: 1fr;
-                max-width: 280px;
-            }
         }
     }
 
     .content {
         .homepage_section {
-            padding: 30px 20px;
-            margin-bottom: 40px;
+            padding: 20px !important;
+        }
 
-            &.reviews_section {
-                padding: 30px 15px;
+        .reviews {
+            .reviews_info_container {
+                .graph {
+                    .one_column {
+                        gap: 10px;
+                    }
+                }
+
+                .average_rating {
+                    p {
+                        width: 50px;
+                        font-size: 2em;
+                    }
+    
+                    .stars {
+                        gap: 10px;
+                        height: 24px;
+                        
+                        // Stars Tooltip
+                        
+                        .tooltip {
+                            .star {
+                                display: block;
+                                width: 24px;
+                                height: 24px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .pending_reviews,
+            .all_reviews,
+            .my_review {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+
+    // Credit Card
+
+    .credit_card_form {
+        .credit_card {
+            .front,
+            .back {
+                width: 100% !important;
+            }
+        }
+
+        .donation_buttons {
+            flex-direction: column;
+            gap: 10px !important;
+            width: 100% !important;
+            margin-top: 20px !important;
+
+            .donate_button {
+                width: 100% !important;
+                margin: 0px !important;
             }
         }
     }
 }
 
-@media (max-width: 350px) {
-    .content .reviews .reviews_info_container {
-        .graph .one_column {
-            gap: 10px;
-        }
+@media (max-width: 400px) {
+    .content {
+        // Login Form Dialog & Registration Form Dialog
 
-        .average_rating .tooltip .average_rating_number {
-            width: 65px;
-        }
+        .login_form_dialog,
+        .registration_form_dialog {
+            .login_form,
+            .registration_form {
+                padding: 10px 30px 30px;
 
-        .stars {
-            gap: 8px;
+                .back {
+                    top: 22.5px;
+                    left: 30px;
+                }
 
-            .tooltip .star svg {
-                width: 16px;
-                height: 16px;
+                input[type="text"], 
+                input[type="email"],
+                input[type="tel"],
+                input[type="password"],
+                input[type="submit"] {
+                    width: 100% !important;
+                }
             }
+
+            .login_form {
+                .identifier_container,
+                .password_container {
+                    .fa-envelope,
+                    .fa-lock {
+                        left: -15px;
+                    }
+                }
+
+                .password_container {
+                    .show_hide_password {
+                        right: 0px;
+                    }
+                }
+
+                .login_methods {
+                    div {
+                        width: 100%;
+                    }
+                }
+            }
+
+            .registration_form {
+                .name_container,
+                .contact_container {
+                    width: 100%;
+                }
+
+                .username_container,
+                .password_container,
+                .password_check_container {
+                    .fa-at,
+                    .generate_password,
+                    .fa-lock {
+                        left: -15px;
+                    }
+                }
+
+                .password_container {
+                    .show_hide_password {
+                        right: 1px;
+                    }
+
+                    .copy_password {
+                        right: -18px;
+                    }
+                }
+
+                .password_check_container {
+                    .paste_password {
+                        right: -18px;
+                    }
+                }
+            }
+        }
+
+        .reviews {
+            // Custom Select Menu
+
+            .select_menus {
+                gap: 10px;
+            }
+        }
+    }
+
+    .contact_form { 
+        input[type="text"], 
+        input[type="email"],
+        .message_container,
+        input[type="submit"] {
+            width: 100% !important;
+        }
+
+        .subject_select_menu {
+            max-width: 100% !important;
         }
     }
 }

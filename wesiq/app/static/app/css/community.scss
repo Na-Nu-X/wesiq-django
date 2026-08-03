@@ -82,21 +82,6 @@ header {
                 backdrop-filter: blur(5px);
             }
 
-            &.no_messages {
-                border: none;
-
-                .messages_info {
-                    margin: 20px 20px 0px;
-                    font-weight: bold;
-                }
-            }
-
-            .messages_info {
-                margin-bottom: 10px;
-                color: $secondary-color;
-                text-align: center;
-            }
-
             .all_messages {
                 @include position_center($position: fixed);
                 @include scrollbar;
@@ -104,7 +89,7 @@ header {
                 flex-direction: column;
                 gap: 10px;
                 max-width: $secondary-width;
-                width: 100%;
+                width: calc(100% - 40px);
                 padding: 30px 50px 50px;
                 border: 1px solid transparentize($blue-color, 0.5);
                 border-radius: $medium-border-radius;
@@ -129,6 +114,15 @@ header {
     
                 .back {
                     @include form_back;
+                }
+
+                .no_messages {
+                    color: $secondary-color;
+                    text-align: center;
+
+                    &.hidden {
+                        display: none;
+                    }
                 }
                 
                 .one_message {
@@ -219,7 +213,7 @@ header {
         .upload_post_form {
             @include position_center($position: fixed);
             max-width: $secondary-width;
-            width: 100%;
+            width: calc(100% - 40px);
             padding: 30px 50px 50px;
             text-align: center;
             border: 1px solid transparentize($blue-color, 0.5);
@@ -247,7 +241,7 @@ header {
 
             .posts_preview {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
                 gap: 10px;
                 margin: 0px auto 20px;
 
@@ -802,10 +796,9 @@ header {
                 @include form_report;
             }
 
-            input[type="submit"] {
+            .upload_post_form_submit {
                 @include blue_button($border-radius: $big-border-radius);
                 margin-top: 40px;
-                margin-bottom: 10px;
             }
         }
     }
@@ -2612,19 +2605,10 @@ header {
 
 @media (width <= 800px) {
     .content {
-        padding-bottom: 32px;
-
-        .upload_post_form_dialog .upload_post_form {
-            padding: 28px 24px 36px;
-            max-width: calc(100% - 24px);
-        }
-
         .feed {
-            gap: 18px;
-
             .post_container,
             .processing_post_container {
-                padding: 16px;
+                padding: 10px;
             }
         }
     }
@@ -2632,6 +2616,12 @@ header {
 
 @media (width <= 400px) {
     .content {
+        .upload_post_form_dialog {
+            .upload_post_form {
+                padding: 10px 30px 30px;
+            }
+        }
+
         .search_users .search_result_container .all_users .one_user {
             .full_name {
                 display: none;
@@ -2647,7 +2637,7 @@ header {
             .post_container,
             .processing_post_container {
                 .society {
-                    gap: 12px;
+                    gap: 10px;
                 }
             }
         }

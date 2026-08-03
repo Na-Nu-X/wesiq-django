@@ -156,7 +156,13 @@
 						popover
 						style="position-anchor: --delete_review_button_{{ one_review.id }};"
 					>
-						<p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
+						{% if request.session.logged_in_user_id == one_review.user.id %}
+							<p>{% translate "Naozaj chcete odstrániť Vaše hodnotenie?" %}</p>
+
+						{% else %}
+							<p>{% translate "Naozaj chcete odstrániť recenziu?" %}</p>
+
+						{% endif %}
 
 						<button data-action="delete">
 							<i class="fa-solid fa-eraser"></i> <!-- https://fontawesome.com/icons/eraser -->

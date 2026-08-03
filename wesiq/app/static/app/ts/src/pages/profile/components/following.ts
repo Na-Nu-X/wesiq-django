@@ -41,12 +41,15 @@ document.addEventListener("DOMContentLoaded", function():void {
     // Global Event Delegations
 
     // All Followings Container Click Functionalities
-    all_followings.addEventListener("click", function(event:PointerEvent):void {
+    all_followings.addEventListener("click", async function(event:PointerEvent):Promise<void> {
         if((event.target as HTMLButtonElement).classList.contains("follow_button")) {
             const follow_button:HTMLButtonElement = event.target as HTMLButtonElement // Gets The Follow Button
             const clicked_user_id:number|null = Number(follow_button.dataset["id"]) || null // Gets Clicked User ID
+            const followings_amount:HTMLSpanElement = following_dialog.querySelector(".followings_amount") as HTMLSpanElement // Gets The Followings Amount
             
-            toggleFollow(follow_button, clicked_user_id) // Adds Or Removes The Follow
+            await toggleFollow(follow_button, clicked_user_id) // Adds Or Removes The Follow
+
+            followings_amount.textContent = follow_button.dataset["action"] === "follow" ? String(Number(followings_amount.textContent) - 1) : String(Number(followings_amount.textContent) + 1) // Updates The Followings Amount Text
         }
     })
 })

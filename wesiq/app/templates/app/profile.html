@@ -428,25 +428,23 @@
 
                                     {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                                         <dialog class="followers_dialog">
-                                            {% comment %} <p class="followers_info">
-                                                {% if followers.count > 0 %}
-                                                    {% translate "Všetci sledovatelia" %} (<span class="followers_amount">{{ followers.count|default:0 }}</span>):
-                                                
-                                                {% else %}
-                                                    {% translate "Žiadny sledovatelia" %}
-                                                
-                                                {% endif %}
-                                            </p> {% endcomment %}
-
                                             <div class="all_followers">
                                                 <h2>{% translate "Sledovatelia" %} (<span class="followers_amount">{{ followers.count|default:0 }}</span>)</h2>
 
                                                 <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+                                                
+                                                <p 
+                                                    class="
+                                                        no_followers
 
-                                                {% if followers.count == 0 %}
-                                                    <p class="no_followers">{% translate "Žiadny sledovatelia." %}</p>
-    
-                                                {% endif %}
+                                                        {% if followers.count > 0 %}
+                                                            hidden
+
+                                                        {% endif %}
+                                                    "
+                                                >
+                                                    {% translate "Žiadny sledovatelia." %}
+                                                </p>
 
                                                 {% for one_follower in followers %}
                                                     <div class="one_follower" data-id="{{ one_follower.id }}">
@@ -489,25 +487,23 @@
 
                                     {% if request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                                         <dialog class="following_dialog">
-                                            {% comment %} <p class="followings_info">
-                                                {% if following.count > 0 %}
-                                                    {% translate "Všetci sledujúci" %} (<span class="followings_amount">{{ following.count|default:0 }}</span>):
-                                                
-                                                {% else %}
-                                                    {% translate "Žiadny sledujúci" %}
-                                                
-                                                {% endif %}
-                                            </p> {% endcomment %}
-
                                             <div class="all_followings">
                                                 <h2>{% translate "Sleduješ" %} (<span class="followings_amount">{{ following.count|default:0 }}</span>)</h2>
 
                                                 <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-                                                {% if following.count == 0 %}
-                                                    <p class="no_followings">{% translate "Nikoho nesleduješ." %}</p>
-    
-                                                {% endif %}
+                                                <p 
+                                                    class="
+                                                        no_followings
+
+                                                        {% if following.count > 0 %}
+                                                            hidden
+
+                                                        {% endif %}
+                                                    "
+                                                >
+                                                    {% translate "Nikoho nesleduješ." %}
+                                                </p>
 
                                                 {% for one_following in following %}
                                                     <div class="one_following" data-id="{{ one_following.id }}">
@@ -559,17 +555,23 @@
                                     </button>
 
                                     <dialog class="follow_requests_dialog">
-                                        {% comment %} <p class="follow_requests_info">{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>):</p> {% endcomment %}
-
                                         <div class="all_follow_requests">
                                             <h2>{% translate "Žiadosti o sledovanie" %} (<span class="follow_requests_amount">{{ logged_in_user.follow_requests.count|default:0 }}</span>)</h2>
 
                                             <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 
-                                            {% if logged_in_user.follow_requests.count == 0 %}
-                                                <p class="no_follow_requests">{% translate "Žiadne žiadosti o sledovanie." %}</p>
+                                            <p 
+                                                class="
+                                                    no_follow_requests
 
-                                            {% endif %}
+                                                    {% if logged_in_user.follow_requests.count > 0 %}
+                                                        hidden
+
+                                                    {% endif %}
+                                                "
+                                            >
+                                                {% translate "Žiadne žiadosti o sledovanie." %}
+                                            </p>
 
                                             {% for one_follow_request in logged_in_user.follow_requests %}
                                                 <div class="one_follow_request" data-id="{{ one_follow_request.id }}">

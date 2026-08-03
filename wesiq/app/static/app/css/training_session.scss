@@ -82,7 +82,7 @@ $training-glow: $surface-glow;
         margin-bottom: 25px;
         text-align: center;
         font-family: $article-heading-font;
-        font-size: clamp(1.2em, 3vw, 1.8em);
+        font-size: 1.8em;
     }
 }
 
@@ -106,7 +106,7 @@ $training-glow: $surface-glow;
         .timer {
             margin-bottom: 20px;
             font-family: $timer-font;
-            font-size: clamp(2em, 6vw, 3em);
+            font-size: 3em;
             font-weight: lighter;
             color: $secondary-color;
             white-space: nowrap;
@@ -172,7 +172,8 @@ $training-glow: $surface-glow;
 
     .no_training_plan,
     .no_logged_in {
-        width: $secondary-width;
+        max-width: $secondary-width;
+        width: 100%;
         margin-bottom: 40px;
         padding: 20px 10px;
         text-align: center;
@@ -263,7 +264,7 @@ $training-glow: $surface-glow;
 
                     h3 {
                         font-family: $article-heading-font;
-                        font-size: clamp(1.2em, 4vw, 2em);
+                        font-size: 2em;
                         color: $secondary-color;
                     }
                 }
@@ -276,7 +277,6 @@ $training-glow: $surface-glow;
                 .skip_warm_up_button {
                     @include blue_button(50px);
                     position: relative;
-                    margin-left: 10px;
 
                     .fa-play,
                     .fa-angle-right,
@@ -315,6 +315,8 @@ $training-glow: $surface-glow;
 
             .break {
                 .add_time {
+                    overflow: visible;
+
                     .add_time_message {
                         visibility: hidden;
                         opacity: 0;
@@ -755,6 +757,7 @@ $training-glow: $surface-glow;
                 }
 
                 .title {
+                    @include crop_text;
                     flex-grow: 1;
                     height: 50px;
                     line-height: 50px;
@@ -836,6 +839,21 @@ $training-glow: $surface-glow;
                 }
             }
         }
+
+        .no_logged_in {
+            text-align: center;
+
+            a {
+                color: $secondary-color;
+                text-decoration: none;
+                font-style: italic;
+
+                &:hover,
+                &:active {
+                    text-decoration: underline;
+                }
+            }
+        }
     }
 
     .custom_tasks {
@@ -862,6 +880,7 @@ $training-glow: $surface-glow;
                 
                 .new_task {
                     flex: 1;
+                    min-width: 0;
                     padding: 0px 15px;
                     vertical-align: middle;
                     background: transparent;
@@ -882,13 +901,12 @@ $training-glow: $surface-glow;
                     transition: transform 0.2s ease, color 0.3s ease;
                     
                     &:hover {
-                        transform: scale(1.15);
+                        transform: scale(1.1);
                         color: $dark-blue-color;
                         cursor: pointer;
                     }
     
                     .fa-plus {
-                        // @include icon;
                         display: block;
                         font-size: 1.5em;
                     }
@@ -1105,25 +1123,37 @@ $training-glow: $surface-glow;
 }
 
 @media (width <= 500px) {
-    .training_page {
-        .training_section {
-            padding: 30px 15px;
-            margin-bottom: 30px;
-        }
+    header {
+        // Banner
 
-        .training_page_header {
-            margin-bottom: 30px;
+        .banner {
+            flex-direction: column;
+            gap: 10px;
+            height: auto;
+            padding: 10px;
+
+            .right {
+                justify-content: flex-start;
+            }
         }
+    }
+
+    .content {
+        min-height: calc(100vh - 30px + 104px + 20px);
+        padding-top: 30px + 104px + 20px + 20px;
     }
 
     .activity {
         .record_activity {
-            .timer {
-                margin-bottom: 0px;
-            }
+            padding: 20px;
 
             .buttons {
-                gap: 10px;
+                flex-direction: column;
+
+                .play,
+                .stop {
+                    width: 100%;
+                }
             }
         }
 
@@ -1146,7 +1176,7 @@ $training-glow: $surface-glow;
 
                 span {
                     width: 65px;
-                    margin-left: 2px;
+                    margin-left: 0px;
                 }
             }
         }
@@ -1165,15 +1195,6 @@ $training-glow: $surface-glow;
                     height: calc(100% - 50px);
                     padding: 50px 10px;
                     text-align: center;
-
-                    .start_training_button,
-                    .next_exercise_button,
-                    .finish_training_button,
-                    .add_time,
-                    .skip_break_button,
-                    .skip_warm_up_button {
-                        margin-left: 0px;
-                    }
                 }
             }
         }

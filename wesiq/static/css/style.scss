@@ -412,6 +412,7 @@ footer {
     gap: 20px;
     position: relative;
     min-height: 100vh;
+    padding: 20px;
     text-align: center;
     background: radial-gradient(circle, lighten($main-color, 5%) 0%, $main-color 100%);
     border-top: 1px solid $secondary-color;
