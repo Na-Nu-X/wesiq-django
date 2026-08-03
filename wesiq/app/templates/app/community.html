@@ -41,30 +41,24 @@
             <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
         </button>
 
-        <dialog 
-            class="
-                notifications_dialog
-
-                {% if logged_in_user.unread_messages_amount == 0 %}
-                    no_messages
-
-                {% endif %}
-            "
-        >
-            <p class="messages_info">
-                {% if logged_in_user.unread_messages_amount > 0 %}
-                    {% translate "Všetky správy" %} (<span class="unread_messages_amount">{{ logged_in_user.unread_messages_amount|default:0 }}</span>):
-                
-                {% else %}
-                    {% translate "Žiadne správy" %}
-                
-                {% endif %}
-            </p>
-
+        <dialog class="notifications_dialog">
             <div class="all_messages">
                 <h2>{% translate "Správy" %}</h2>
 
                 <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+
+                <p 
+                    class="
+                        no_messages
+
+                        {% if logged_in_user.unread_messages_amount > 0 %}
+                            hidden
+
+                        {% endif %}
+                    "
+                >
+                    {% translate "Žiadne nové správy" %}
+                </p>
 
                 {% regroup logged_in_user.unread_chats by sender as all_senders %}
 

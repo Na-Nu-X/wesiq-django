@@ -54,12 +54,11 @@ document.addEventListener("DOMContentLoaded", function():void {
                 one_follower.classList.add("hidden") // Hides The One Follower Container
                 followers_amount.textContent = String(Number(followers_amount.textContent) - 1) // Updates The Followers Amount Text
 
-                if(Number(followers_amount.textContent) - 1 > 0) {
-                    followers_amount.textContent = String(Number(followers_amount.textContent) - 1) // Updates The Followers Amount Text
-                }
+                if(Number(followers_amount.textContent) - 1 > 0) followers_amount.textContent = String(Number(followers_amount.textContent) - 1) // Updates The Followers Amount Text
 
                 else {
-                    followers_dialog.classList.add("no_followers") // Adds The No Followers Class
+                    const no_followers:HTMLParagraphElement = followers_dialog.querySelector(".no_followers") as HTMLParagraphElement // Gets The No Followers Paragraph
+                    no_followers.classList.remove("hidden") // Shows The No Followers Paragraph
                 }
             }
         }

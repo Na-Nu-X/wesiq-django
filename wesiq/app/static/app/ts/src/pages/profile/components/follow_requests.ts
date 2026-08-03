@@ -56,8 +56,12 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 one_follow_request.classList.add("hidden") // Hides The One Follow Request Container
                 follow_requests_amount_notification.textContent = String(Number(follow_requests_amount_notification.textContent) - 1) // Updates The Follow Requests Amount
-
                 follow_requests_amount.textContent = String(Number(follow_requests_amount.textContent) - 1) // Updates The Follow Requests Amount Text
+
+                if(Number(follow_requests_amount.textContent) === 0) {
+                    const no_follow_requests:HTMLParagraphElement = follow_requests_dialog.querySelector(".no_follow_requests") as HTMLParagraphElement // Gets The No Follow Requests Paragraph
+                    no_follow_requests.classList.remove("hidden") // Shows The No Followers Paragraph
+                }
             }
         }
 
@@ -71,8 +75,12 @@ document.addEventListener("DOMContentLoaded", function():void {
 
                 one_follow_request.classList.add("hidden") // Hides The One Follow Request Container
                 follow_requests_amount_notification.textContent = String(Number(follow_requests_amount_notification.textContent) - 1) // Updates The Follow Requests Amount
-
                 follow_requests_amount.textContent = String(Number(follow_requests_amount.textContent) - 1) // Updates The Follow Requests Amount Text
+
+                if(Number(follow_requests_amount.textContent) === 0) {
+                    const no_follow_requests:HTMLParagraphElement = follow_requests_dialog.querySelector(".no_follow_requests") as HTMLParagraphElement // Gets The No Follow Requests Paragraph
+                    no_follow_requests.classList.remove("hidden") // Shows The No Followers Paragraph
+                }
             }
         }
     })

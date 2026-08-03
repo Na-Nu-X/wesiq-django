@@ -2664,7 +2664,6 @@ def writeArticleView(request):
     })
 
 def trainingSessionView(request):
-    request.session["logged_in_user_id"] = 16
     # Gets Logged In User
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session

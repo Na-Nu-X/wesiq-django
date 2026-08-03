@@ -325,7 +325,7 @@
                                 "
                             >
                                 <span class="star">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 18 18" increment="0.01">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" increment="0.01">
                                         <linearGradient id="float_star_{{ index }}" x1="0" x2="100%" y1="0" y2="0">
                                             <stop offset="0" stop-color="rgb(235, 185, 20)"></stop>
                                             <stop offset="0%" stop-color="rgb(235, 185, 20)"></stop>
@@ -691,6 +691,10 @@
                 </div>
 
                 <div class="back">
+                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nostrum, quia!</p>
+                    <br>
+                    <p>Lorem, ipsum dolor.</p>
+
                     <div class="group">
                         <label>{% translate "CVC" %}</label>
                         <div class="card_cvc"></div>
@@ -722,7 +726,25 @@
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Lepšia kvalita videí!" %}</p></li>
                     </ul>
 
-                    <button class="subscribe" data-plan="basic">{% translate "Predplatiť" %}</button>
+                    <button 
+                        class="
+                            subscribe
+
+                            {% if not logged_in_user %}
+                                disabled
+
+                            {% endif %}
+                        " 
+
+                        data-plan="basic"
+
+                        {% if not logged_in_user %}
+                            disabled
+
+                        {% endif %}
+                    >
+                        {% translate "Predplatiť" %}
+                    </button>
                 </article>
 
                 <article class="premium">
@@ -740,7 +762,25 @@
                         <li class="check"><div class="checkbox checked"></div><p>{% translate "Najlepšia kvalita videí!" %}</p></li>
                     </ul>
 
-                    <button class="subscribe" data-plan="premium">{% translate "Predplatiť" %}</button>
+                    <button 
+                        class="
+                            subscribe
+
+                            {% if not logged_in_user %}
+                                disabled
+
+                            {% endif %}
+                        " 
+
+                        data-plan="premium"
+
+                        {% if not logged_in_user %}
+                            disabled
+
+                        {% endif %}
+                    >
+                        {% translate "Predplatiť" %}
+                    </button>
                 </article>
             </div>
 

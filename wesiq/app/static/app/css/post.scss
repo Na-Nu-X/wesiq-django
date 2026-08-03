@@ -777,7 +777,7 @@ $post-glow: $surface-glow;
         .fa-lock,
         .fa-magnifying-glass {
             font-size: 3em;
-            color: darken($secondary-color, 40%);
+            color: $blue-color;
         }
 
         p {
