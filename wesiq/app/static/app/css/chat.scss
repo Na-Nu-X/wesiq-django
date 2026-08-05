@@ -354,3 +354,13 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         transform: translateY(-1px);
     }
 }
+
+/**************
+ Media Queries
+**************/
+
+@media (width <= 400px) {
+    .chat {
+        padding: 10px 30px 30px;
+    }
+}

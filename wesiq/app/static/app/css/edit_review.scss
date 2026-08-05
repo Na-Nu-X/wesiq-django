@@ -180,7 +180,7 @@
 
     input[type="submit"] {
         @include blue_button($border-radius: $big-border-radius);
-        margin-top: 40px;
+        margin-top: 50px;
     }
 }
 
@@ -203,9 +203,21 @@
  Media Queries
 **************/
 
-@media (width <= 600px) {
+@media (width <= 400px) {
     .edit_review_form {
-        textarea, input[type="submit"] {
+        padding: 10px 30px 30px;
+
+        .back {
+            top: 22.5px;
+            left: 30px;
+        }
+
+        .top {
+            margin: 0px;
+        }
+
+        .review_container,
+        input[type="submit"] {
             width: 100% !important;
         }
     }

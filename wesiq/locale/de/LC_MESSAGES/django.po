@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-21 09:58+0000\n"
-"PO-Revision-Date: 2026-08-02 21:39+0000\n"
+"PO-Revision-Date: 2026-08-03 20:08+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -354,27 +354,27 @@ msgstr "Follow-Beziehungen des Benutzers zu anderen Benutzern."
 
 #: app/models.py:52
 msgid "First Name"
-msgstr ""
+msgstr "Vorname"
 
 #: app/models.py:53
 msgid "User's first name."
-msgstr ""
+msgstr "Vorname des Benutzers."
 
 #: app/models.py:59
 msgid "Last Name"
-msgstr ""
+msgstr "Nachname"
 
 #: app/models.py:60
 msgid "User's last name."
-msgstr ""
+msgstr "Nachname des Benutzers."
 
 #: app/models.py:66
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: app/models.py:67
 msgid "User's username."
-msgstr ""
+msgstr "Benutzername des Benutzers."
 
 #: app/models.py:73
 #| msgid "E-mail"
@@ -383,19 +383,19 @@ msgstr "E-Mail-Adresse"
 
 #: app/models.py:74
 msgid "User's e-mail address."
-msgstr ""
+msgstr "E-Mail-Adresse des Benutzers."
 
 #: app/models.py:79
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: app/models.py:80
 msgid "User's phone number."
-msgstr ""
+msgstr "Telefonnummer des Benutzers."
 
 #: app/models.py:86
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: app/models.py:87
 msgid "User's hashed password."
@@ -527,43 +527,44 @@ msgstr "Der aktuelle Aktivitätsverlauf des Benutzers."
 
 #: app/models.py:208
 msgid "Max Activity Streak"
-msgstr ""
+msgstr "Maximale Aktivitätssträhne"
 
 #: app/models.py:209
 msgid "Stores the user's maximum activity streak."
-msgstr ""
+msgstr "Speichert die maximale Aktivitätsserie des Benutzers."
 
 #: app/models.py:215
 msgid "Last Activity Streak Increase time"
-msgstr ""
+msgstr "Letzte Aktivitätssträhne Zeit verlängern"
 
 #: app/models.py:216
 msgid "Stores the user's last activity streak increase time."
 msgstr ""
+"Speichert die letzte Steigerungszeit der Aktivitätssträhne des Benutzers."
 
 #: app/models.py:223
 msgid "Private Account"
-msgstr ""
+msgstr "Privatkonto"
 
 #: app/models.py:224
 msgid "Stores the information if the user's account is private."
-msgstr ""
+msgstr "Speichert die Informationen, wenn das Konto des Benutzers privat ist."
 
 #: app/models.py:230
 msgid "Account Status"
-msgstr ""
+msgstr "Kontostatus"
 
 #: app/models.py:231
 msgid "User's account Status."
-msgstr ""
+msgstr "Kontostatus des Benutzers."
 
 #: app/models.py:239
 msgid "Suspension time"
-msgstr ""
+msgstr "Aussetzungszeit"
 
 #: app/models.py:240
 msgid "Stores the user's suspension time if had any."
-msgstr ""
+msgstr "Speichert die Sperrzeit des Benutzers, falls vorhanden."
 
 #: app/models.py:246
 msgid "Last Login"
@@ -715,31 +716,31 @@ msgstr "Der Benutzer, dem die Aufgabe gehört."
 
 #: app/models.py:453
 msgid "Progress Percentage"
-msgstr ""
+msgstr "Fortschrittsprozentsatz"
 
 #: app/models.py:454
 msgid "Task's progress percentage of completion."
-msgstr ""
+msgstr "Der Fortschrittsprozentsatz der Aufgabe."
 
 #: app/models.py:463 app/models.py:1257
 msgid "Is Completed"
-msgstr ""
+msgstr "Ist abgeschlossen"
 
 #: app/models.py:464 app/models.py:1258
 msgid "Stores the information if the task is completed."
-msgstr ""
+msgstr "Speichert die Informationen, wenn die Aufgabe abgeschlossen ist."
 
 #: app/models.py:471
 msgid "Time of the generation of the task."
-msgstr ""
+msgstr "Zeitpunkt der Generierung der Aufgabe."
 
 #: app/models.py:478
 msgid "Denná oficiálna úloha užívateľa"
-msgstr ""
+msgstr "Die tägliche offizielle Aufgabe des Benutzers"
 
 #: app/models.py:479
 msgid "Denné oficiálne úlohy užívateľov"
-msgstr ""
+msgstr "Tägliche offizielle Benutzeraufgaben"
 
 #: app/models.py:483
 #, python-format
@@ -752,6 +753,8 @@ msgid ""
 "%(first_name)s %(last_name)s splnil úlohu \"%(title)s\" na "
 "%(progress_percentage)s%."
 msgstr ""
+"%(first_name)s %(last_name)s hat die Aufgabe „%(title)s“ zu "
+"%(progress_percentage)s % abgeschlossen."
 
 #: app/models.py:490 app/models.py:689 app/models.py:1028 app/models.py:1639
 #: app/models.py:1982 app/templates/app/articles.html:239
@@ -765,12 +768,12 @@ msgstr "Spam"
 #: app/models.py:491 app/models.py:690 app/models.py:1029 app/models.py:1640
 #: app/models.py:1983
 msgid "Harassment"
-msgstr ""
+msgstr "Belästigung"
 
 #: app/models.py:492 app/models.py:691 app/models.py:1030 app/models.py:1641
 #: app/models.py:1984
 msgid "Hate Speech"
-msgstr ""
+msgstr "Hassrede"
 
 #: app/models.py:493 app/models.py:692 app/models.py:1031 app/models.py:1642
 #: app/models.py:1985
@@ -936,39 +939,39 @@ msgstr "Bewertung"
 
 #: app/models.py:628 app/models.py:889
 msgid "Rating from 1 to 5."
-msgstr ""
+msgstr "Bewertung von 1 bis 5."
 
 #: app/models.py:634 app/models.py:699
 msgid "Review"
-msgstr ""
+msgstr "Rezension"
 
 #: app/models.py:635
 msgid "Content of the written review."
-msgstr ""
+msgstr "Inhalt der schriftlichen Rezension."
 
 #: app/models.py:642
 msgid "Current status of the written review."
-msgstr ""
+msgstr "Aktueller Stand der schriftlichen Rezension."
 
 #: app/models.py:649
 msgid "Rejection Time"
-msgstr ""
+msgstr "Ablehnungszeit"
 
 #: app/models.py:650
 msgid "Review rejection time."
-msgstr ""
+msgstr "Überprüfen Sie die Ablehnungszeit."
 
 #: app/models.py:657
 msgid "Amount of total obtained reports."
-msgstr ""
+msgstr "Anzahl der insgesamt erhaltenen Berichte."
 
 #: app/models.py:664
 msgid "Time of the last editing."
-msgstr ""
+msgstr "Zeitpunkt der letzten Bearbeitung."
 
 #: app/models.py:671
 msgid "Time of the review submission."
-msgstr ""
+msgstr "Zeitpunkt der Bewertungseinreichung."
 
 #: app/models.py:677
 #| msgid "recenzia"
@@ -986,6 +989,8 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s "
 "hviezdičkami."
 msgstr ""
+"Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s "
+"hviezdičkami."
 
 #: app/models.py:685
 #, python-format
@@ -1134,16 +1139,16 @@ msgstr "Stärkeprozentsatz"
 
 #: app/models.py:849
 msgid "Exercise required strength in percent."
-msgstr ""
+msgstr "Übungserforderliche Kraft in Prozent."
 
 #: app/models.py:856
 msgid "Technique Percentage"
-msgstr ""
+msgstr "Übungserforderliche Kraft in Prozent."
 
 #: app/models.py:857
 msgid ""
 "The technical difficulty value of the exercise, expressed as a percentage."
-msgstr ""
+msgstr "Der technische Schwierigkeitswert der Übung, ausgedrückt in Prozent."
 
 #: app/models.py:865
 #| msgid "Článok"
@@ -1152,19 +1157,19 @@ msgstr "Artikel"
 
 #: app/models.py:873 app/models.py:917
 msgid "Article"
-msgstr ""
+msgstr "Artikel"
 
 #: app/models.py:874
 msgid "The article to which the given rating applies."
-msgstr ""
+msgstr "Der Artikel, für den die angegebene Bewertung gilt."
 
 #: app/models.py:882
 msgid "The user who rated the article."
-msgstr ""
+msgstr "Der Benutzer, der den Artikel bewertet hat."
 
 #: app/models.py:896 app/models.py:918
 msgid "Time the article rating was submitted."
-msgstr ""
+msgstr "Zeitpunkt, zu dem die Artikelbewertung abgegeben wurde."
 
 #: app/models.py:903
 #| msgid "Pridať článok"
@@ -1173,7 +1178,7 @@ msgstr "Artikelrezension"
 
 #: app/models.py:904
 msgid "Recenzie článkov"
-msgstr ""
+msgstr "Artikelrezensionen"
 
 #: app/models.py:907
 #, python-format
@@ -1181,10 +1186,12 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal recenziu pre článok: "
 "%(article_title)s."
 msgstr ""
+"Benutzer %(first_name)s %(last_name)s hat eine Rezension für den Artikel "
+"hinzugefügt: %(article_title)s."
 
 #: app/models.py:927
 msgid "The user who wrote the comment."
-msgstr ""
+msgstr "Der Benutzer, der den Kommentar geschrieben hat."
 
 #: app/models.py:937 app/models.py:1891
 msgid "Users who reported the comment."
@@ -1339,33 +1346,36 @@ msgstr "Name des Trainingsplans."
 
 #: app/models.py:1116 app/models.py:1163
 msgid "Exercise"
-msgstr ""
+msgstr "Übung"
 
 #: app/models.py:1117 app/models.py:1164
 msgid "Exercise name."
-msgstr ""
+msgstr "Übungsname."
 
 #: app/models.py:1127
 msgid ""
 "Exercise periods (the length of the array represents sets and the amount of "
 "reps represents the values (0 = to failute / max. reps)."
 msgstr ""
+"Übungszeiträume (die Länge des Arrays stellt Sätze dar und die Anzahl der "
+"Wiederholungen stellt die Werte dar (0 = bis zum Scheitern / max. "
+"Wiederholungen)."
 
 #: app/models.py:1133 app/models.py:1170
 msgid "Unit"
-msgstr ""
+msgstr "Einheit"
 
 #: app/models.py:1134 app/models.py:1171
 msgid "The unit in which the exercise is measured."
-msgstr ""
+msgstr "Die Einheit, in der die Übung gemessen wird."
 
 #: app/models.py:1142 app/models.py:1264 app/models.py:1762
 msgid "Order"
-msgstr ""
+msgstr "Befehl"
 
 #: app/models.py:1143
 msgid "The order of the exercise in the training plan."
-msgstr ""
+msgstr "Die Reihenfolge der Übung im Trainingsplan."
 
 #: app/models.py:1149 app/templates/app/training_session.html:138
 #: app/templates/app/training_session.html:151
@@ -1384,15 +1394,15 @@ msgstr "Trainingsplan des Benutzers %(first_name)s %(last_name)s."
 
 #: app/models.py:1157
 msgid "reps"
-msgstr ""
+msgstr "Vertreter"
 
 #: app/models.py:1158
 msgid "seconds"
-msgstr ""
+msgstr "Sekunden"
 
 #: app/models.py:1159
 msgid "steps"
-msgstr ""
+msgstr "Schritte"
 
 #: app/models.py:1184
 msgid "Categories the given exercise falls into."
@@ -1536,43 +1546,43 @@ msgstr "Titel der Zahlung."
 
 #: app/models.py:1349
 msgid "Transakcia"
-msgstr ""
+msgstr "Transaktion"
 
 #: app/models.py:1350
 msgid "Transakcie"
-msgstr ""
+msgstr "Transaktionen"
 
 #: app/models.py:1357
 msgid "Zadarmo"
-msgstr ""
+msgstr "Frei"
 
 #: app/models.py:1358
 msgid "Základné"
-msgstr ""
+msgstr "Basic"
 
 #: app/models.py:1359
 msgid "Prémiové"
-msgstr ""
+msgstr "Prämie"
 
 #: app/models.py:1365
 msgid "The user who activated the subscription."
-msgstr ""
+msgstr "Der Benutzer, der das Abonnement aktiviert hat."
 
 #: app/models.py:1372
 msgid "Stripe Subscription ID"
-msgstr ""
+msgstr "Stripe-Abonnement-ID"
 
 #: app/models.py:1373
 msgid "ID of the Stripe subscription."
-msgstr ""
+msgstr "ID des Stripe-Abonnements."
 
 #: app/models.py:1381
 msgid "Plan"
-msgstr ""
+msgstr "Planen"
 
 #: app/models.py:1382
 msgid "Activated subscription plan."
-msgstr ""
+msgstr "Aktivierter Abonnementplan."
 
 #: app/models.py:1390
 msgid "Is Active"
@@ -1746,14 +1756,16 @@ msgstr "Neueste Interaktion"
 msgid ""
 "Time of the last recorded interaction with the post (new comment, like)."
 msgstr ""
+"Zeitpunkt der letzten aufgezeichneten Interaktion mit dem Beitrag (neuer "
+"Kommentar, „Gefällt mir“)."
 
 #: app/models.py:1615
 msgid "Time of creation of the post."
-msgstr ""
+msgstr "Zeitpunkt der Erstellung des Beitrags."
 
 #: app/models.py:1622
 msgid "Amount of received reports of the post."
-msgstr ""
+msgstr "Anzahl der erhaltenen Berichte zum Beitrag."
 
 #: app/models.py:1631 app/models.py:1681 app/templates/app/post.html:5
 msgid "Príspevok"
@@ -1772,11 +1784,11 @@ msgstr "Beitrag von Benutzer %(first_name)s %(last_name)s."
 
 #: app/models.py:1649 app/models.py:1690 app/models.py:1807 app/models.py:1871
 msgid "Post"
-msgstr ""
+msgstr "Post"
 
 #: app/models.py:1650
 msgid "The post that received a report."
-msgstr ""
+msgstr "Der Beitrag, der einen Bericht erhalten hat."
 
 #: app/models.py:1685
 #, python-format
@@ -1784,22 +1796,24 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s nahlásil príspevok užívateľa "
 "%(reported_first_name)s %(reported_last_name)s."
 msgstr ""
+"Benutzer %(first_name)s %(last_name)s hat einen Beitrag von Benutzer "
+"%(reported_first_name)s %(reported_last_name)s gemeldet."
 
 #: app/models.py:1691
 msgid "The post to which the given medium belongs."
-msgstr ""
+msgstr "Der Beitrag, zu dem das angegebene Medium gehört."
 
 #: app/models.py:1699
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: app/models.py:1700
 msgid "Path to the file."
-msgstr ""
+msgstr "Pfad zur Datei."
 
 #: app/models.py:1705
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniaturansicht"
 
 #: app/models.py:1706
 msgid "Path to the video thumbnail."
@@ -1849,43 +1863,43 @@ msgstr "Ursprünglicher Dateiname"
 
 #: app/models.py:1741
 msgid "Original filename of the uploaded file."
-msgstr ""
+msgstr "Ursprünglicher Dateiname der hochgeladenen Datei."
 
 #: app/models.py:1748
 msgid "Original Size"
-msgstr ""
+msgstr "Originalgröße"
 
 #: app/models.py:1749
 msgid "Original size of the uploaded file."
-msgstr ""
+msgstr "Originalgröße der hochgeladenen Datei."
 
 #: app/models.py:1755
 msgid "Compressed Size"
-msgstr ""
+msgstr "Komprimierte Größe"
 
 #: app/models.py:1756
 msgid "Compressed size of the uploaded file."
-msgstr ""
+msgstr "Komprimierte Größe der hochgeladenen Datei."
 
 #: app/models.py:1763
 msgid "Order of the uploaded file in post."
-msgstr ""
+msgstr "Reihenfolge der hochgeladenen Datei per Post."
 
 #: app/models.py:1769
 msgid "Sprite Sheet"
-msgstr ""
+msgstr "Sprite-Blatt"
 
 #: app/models.py:1770
 msgid "Video image sprite sheet for scrubbar preview."
-msgstr ""
+msgstr "Videobild-Sprite-Sheet für die Scrubbar-Vorschau."
 
 #: app/models.py:1777
 msgid "VTT File Map"
-msgstr ""
+msgstr "VTT-Dateizuordnung"
 
 #: app/models.py:1778
 msgid "VTT file map of the video sprite sheet."
-msgstr ""
+msgstr "VTT-Dateizuordnung des Video-Sprite-Sheets."
 
 #: app/models.py:1789
 #| msgid "Popis príspevku"
@@ -1955,11 +1969,11 @@ msgstr "Der Zeitpunkt, zu dem der Benutzer das Video angesehen hat."
 
 #: app/models.py:1857
 msgid "Označené videné video"
-msgstr ""
+msgstr "Als angesehenes Video markiert"
 
 #: app/models.py:1858
 msgid "Označenia videných videií"
-msgstr ""
+msgstr "Markierungen der angesehenen Videos"
 
 #: app/models.py:1861
 #, python-format
@@ -1967,22 +1981,24 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s videl video príspevku od "
 "%(post_user_first_name)s %(post_user_last_name)s."
 msgstr ""
+"Benutzer %(first_name)s %(last_name)s hat einen Videobeitrag von "
+"%(post_user_first_name)s %(post_user_last_name)s gesehen."
 
 #: app/models.py:1872
 msgid "The post to which the comment belongs."
-msgstr ""
+msgstr "Der Beitrag, zu dem der Kommentar gehört."
 
 #: app/models.py:1881
 msgid "The user who added the comment."
-msgstr ""
+msgstr "Der Benutzer, der den Kommentar hinzugefügt hat."
 
 #: app/models.py:1908
 msgid "Amount of obtained likes on the comment."
-msgstr ""
+msgstr "Anzahl der erhaltenen Likes für den Kommentar."
 
 #: app/models.py:1923
 msgid "Time the comment was added."
-msgstr ""
+msgstr "Zeitpunkt, zu dem der Kommentar hinzugefügt wurde."
 
 #: app/models.py:1974
 #| msgid "Počet príspevkov"
@@ -2000,14 +2016,16 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal komentár k príspevku od "
 "%(post_user_first_name)s %(post_user_last_name)s."
 msgstr ""
+"Benutzer %(first_name)s %(last_name)s hat einen Kommentar zu "
+"%(post_user_first_name)s %(post_user_last_name)ss Beitrag hinzugefügt."
 
 #: app/models.py:1992
 msgid "Post Forum Comment"
-msgstr ""
+msgstr "Forumskommentar posten"
 
 #: app/models.py:1993
 msgid "The post comment that received a report."
-msgstr ""
+msgstr "Der Beitragskommentar, der einen Bericht erhalten hat."
 
 #: app/models.py:2024
 msgid "Nahlásenie komentáru príspevku"
@@ -2072,44 +2090,44 @@ msgstr "Nachrichteninhalt."
 
 #: app/models.py:2092
 msgid "Message sending time."
-msgstr ""
+msgstr "Uhrzeit des Nachrichtenversands."
 
 #: app/models.py:2098
 msgid "Is Read"
-msgstr ""
+msgstr "Ist gelesen"
 
 #: app/models.py:2099
 msgid "Stores the information if the message is read."
-msgstr ""
+msgstr "Speichert die Informationen, wenn die Nachricht gelesen wird."
 
 #: app/models.py:2105
 msgid "Is Edited"
-msgstr ""
+msgstr "Wird bearbeitet"
 
 #: app/models.py:2106
 msgid "Stores the information if the message was edited."
-msgstr ""
+msgstr "Speichert die Informationen, ob die Nachricht bearbeitet wurde."
 
 #: app/models.py:2114
 msgid "Reactions"
-msgstr ""
+msgstr "Reaktionen"
 
 #: app/models.py:2115
 msgid "Users who reacted to the message."
-msgstr ""
+msgstr "Benutzer, die auf die Nachricht reagiert haben."
 
 #: app/models.py:2146
 msgid "teraz"
-msgstr ""
+msgstr "Jetzt"
 
 #: app/models.py:2154
 msgid "pred minútou"
-msgstr ""
+msgstr "vor einer Minute"
 
 #: app/models.py:2157
 #, python-format
 msgid "pred %(minutes)s minútami"
-msgstr ""
+msgstr "Vor %(minutes)s Minuten"
 
 #: app/models.py:2164
 msgid "pred hodinou"
@@ -2160,11 +2178,11 @@ msgstr "Emoji"
 
 #: app/models.py:2205
 msgid "Emoji added as a reaction."
-msgstr ""
+msgstr "Emoji als Reaktion hinzugefügt."
 
 #: app/models.py:2212
 msgid "Time the reaction was added."
-msgstr ""
+msgstr "Zeitpunkt, zu dem die Reaktion hinzugefügt wurde."
 
 #: app/models.py:2225
 #, python-format
@@ -2172,6 +2190,8 @@ msgid ""
 "Reakcia od %(first_name)s %(last_name)s na správu od "
 "%(chat_user_first_name)s %(chat_user_last_name)s."
 msgstr ""
+"Antwort von %(first_name)s %(last_name)s auf die Nachricht von "
+"%(chat_user_first_name)s %(chat_user_last_name)s."
 
 #: app/tasks.py:32 app/tasks.py:36 app/tasks.py:54 app/tasks.py:57
 #: app/tasks.py:76 app/tasks.py:79 app/tasks.py:100 app/tasks.py:103
@@ -2745,7 +2765,7 @@ msgstr "einzigartige Besucher"
 
 #: app/templates/app/chat.html:42 app/templates/app/chat.html:221
 msgid "Reakcia"
-msgstr ""
+msgstr "Reaktion"
 
 #: app/templates/app/chat.html:163
 #| msgid "upravené"
@@ -2754,7 +2774,7 @@ msgstr "(bearbeitet)"
 
 #: app/templates/app/chat.html:192
 msgid "Reakciu pridal:"
-msgstr ""
+msgstr "Die Reaktion wurde hinzugefügt durch:"
 
 #: app/templates/app/chat.html:286 app/templates/app/community.html:710
 #: app/templates/app/homepage.html:510
@@ -3329,11 +3349,13 @@ msgstr "CVC"
 
 #: app/templates/app/homepage.html:764 app/templates/app/homepage.html:857
 msgid "Základné predplatné"
-msgstr ""
+msgstr "Basisabonnement"
 
 #: app/templates/app/homepage.html:765
 msgid "Vážime si Vašu podporu, ktorá nám pomáha držať aplikáciu pri živote."
 msgstr ""
+"Wir freuen uns über Ihre Unterstützung, die uns hilft, die App am Leben zu "
+"halten."
 
 #: app/templates/app/homepage.html:766 app/templates/app/homepage.html:785
 #| msgid "2 - 6 mesiacov"
@@ -3342,15 +3364,15 @@ msgstr "Monat"
 
 #: app/templates/app/homepage.html:771 app/templates/app/homepage.html:790
 msgid "Odznak na profile!"
-msgstr ""
+msgstr "Abzeichen im Profil!"
 
 #: app/templates/app/homepage.html:772 app/templates/app/homepage.html:791
 msgid "Obrázky až do 10MB!"
-msgstr ""
+msgstr "Bilder bis zu 10 MB!"
 
 #: app/templates/app/homepage.html:773
 msgid "Videá až do 50MB!"
-msgstr ""
+msgstr "Videos bis zu 50 MB!"
 
 #: app/templates/app/homepage.html:774
 msgid "2 minúty dlhé videá!"
@@ -3398,11 +3420,11 @@ msgstr "Die beste Videoqualität!"
 
 #: app/templates/app/homepage.html:853
 msgid "Moje predplatné"
-msgstr ""
+msgstr "Mein Abonnement"
 
 #: app/templates/app/homepage.html:871
 msgid "do ďalšej fakturácie."
-msgstr ""
+msgstr "bis zur nächsten Abrechnung."
 
 #: app/templates/app/homepage.html:874 app/templates/app/homepage.html:880
 #| msgid "Dokončiť tréning"
@@ -3414,22 +3436,24 @@ msgid ""
 "Naozaj si praješ ukončiť predplatné? Tvoje aktuálne predplatné sa ukončí "
 "hneď po vypršaní, ešte si ho uži."
 msgstr ""
+"Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten? Ihr aktuelles "
+"Abonnement endet, sobald es abläuft. Genießen Sie es."
 
 #: app/templates/app/homepage.html:885
 msgid "Ostať"
-msgstr ""
+msgstr "Bleiben"
 
 #: app/templates/app/homepage.html:886
 msgid "Ukončiť"
-msgstr ""
+msgstr "Beenden"
 
 #: app/templates/app/homepage.html:892
 msgid "Vaše predplatné bolo zrušené."
-msgstr ""
+msgstr "Ihr Abonnement wurde gekündigt."
 
 #: app/templates/app/homepage.html:897
 msgid "do konca predplatného."
-msgstr ""
+msgstr "bis zum Ende des Abonnements."
 
 #: app/templates/app/login.html:13
 msgid "REGISTRÁCIA"
@@ -3746,11 +3770,11 @@ msgstr "Entwickler"
 
 #: app/templates/app/profile.html:668 app/templates/app/profile.html:678
 msgid "Základný predplatiteľ"
-msgstr ""
+msgstr "Basisabonnent"
 
 #: app/templates/app/profile.html:671 app/templates/app/profile.html:681
 msgid "Prémiový predplatiteľ"
-msgstr ""
+msgstr "Premium-Abonnent"
 
 #: app/templates/app/profile.html:717 app/templates/app/profile.html:718
 msgid "Prispievateľ"
@@ -4082,7 +4106,7 @@ msgstr "Vielen Dank für den Kauf eines Abonnements!"
 
 #: app/views.py:253
 msgid "Zvolený neplatný plán predplatného."
-msgstr ""
+msgstr "Ungültiger Abonnementplan ausgewählt."
 
 #: app/views.py:300
 #| msgid "Sledovanie nie je možné zmeniť bez prihlásenia."

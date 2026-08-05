@@ -160,7 +160,9 @@ $profile-glow: $surface-glow;
             .info {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 10px;
+                flex: 1;
+                min-width: 0;
 
                 .profile_picture {
                     @include profile_picture($width: 64px, $height: 64px);
@@ -173,9 +175,12 @@ $profile-glow: $surface-glow;
                 }
 
                 .username {
+                    @include crop_text;
+                    flex: 1;
+                    min-width: 0;
                     font-size: 1.2em;
-                    font-weight: semibold;
                     color: $secondary-color;
+                    text-align: left;
                 }
             }
 
@@ -191,6 +196,8 @@ $profile-glow: $surface-glow;
 
             .account_properties {
                 @include properties_menu;
+                max-width: 250px;
+                // position-area: top center;
 
                 .data_saving_mode_container,
                 .private_account_container,
@@ -208,6 +215,12 @@ $profile-glow: $surface-glow;
                     &:hover,
                     &:focus-visible {
                         background-color: transparentize($blue-color, 0.9);
+                    }
+
+                    span {
+                        @include crop_text;
+                        flex: 1;
+                        min-width: 0;
                     }
                 }
             }
@@ -533,6 +546,8 @@ $profile-glow: $surface-glow;
                     display: flex;
                     align-items: center;
                     gap: 10px;
+                    flex: 1;
+                    min-width: 0;
     
                     .profile_picture {
                         @include profile_picture($width: 64px, $height: 64px);
@@ -547,9 +562,11 @@ $profile-glow: $surface-glow;
                         display: flex;
                         flex-direction: column;
                         gap: 2px;
+                        min-width: 0;
                         text-align: left;
 
                         .username {
+                            @include crop_text;
                             font-size: 1.2em;
                             font-weight: semibold;
                             background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
@@ -559,6 +576,7 @@ $profile-glow: $surface-glow;
                         }
 
                         .full_name {
+                            @include crop_text;
                             font-size: 0.9em;
                             color: $light-blue-color;
                         }
@@ -608,7 +626,7 @@ $profile-glow: $surface-glow;
 
                     .bio {
                         font-size: 0.9em;
-                        text-align: justify;
+                        text-align: left;
                         color: $light-blue-color;
                     }
 
@@ -1253,7 +1271,7 @@ $profile-glow: $surface-glow;
 
                 .no_posts,
                 .no_saved_posts {
-                    margin-top: 40px;
+                    margin-top: 15px;
                     text-align: center;
                     color: $light-blue-color;
                 }
@@ -1296,21 +1314,96 @@ $profile-glow: $surface-glow;
  Media Queries
 **************/
 
-@media (width <= 600px) {
+@media (width <= 400px) {
     .profile_page {
         .profile_container {
-            padding: 25px 20px 30px;
+            padding: 20px 30px 30px;
+
+            .edit_account_form {
+                .header {
+                    .info {
+                        .profile_picture {
+                            width: 48px;
+                            height: 48px;
+                        }
+                    }
+                }
+
+                .name_container,
+                .contact_container {
+                    width: 100%;
+        
+                    .first_name_container,
+                    .last_name_container,
+                    .email_address_container,
+                    .phone_number_container {
+                        .fa-user, 
+                        .fa-envelope, 
+                        .fa-phone {
+                            left: -15px;
+                        }
+                    }
+                }
+            }
+
+            .profile {
+                .header {
+                    .top {
+                        flex-direction: column;
+                        align-items: normal;
+                        gap: 10px;
+
+                        .info {
+                            .profile_picture {
+                                width: 48px;
+                                height: 48px;
+                            }
+                        }
+                    }
+                }
+
+                .middle {
+                    .follow_container {
+                        .statistics {
+                            justify-content: space-between;
+                            gap: 10px;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
         }
     }
+}
 
-    .edit_account_form {
-        input[type="text"], input[type="email"], input[type="tel"], input[type="submit"] {
-            width: 100% !important;
-        }
+@media (width <= 350px) {
+    .profile_page {
+        .profile_container {
+            .profile {
+                .middle {
+                    .follow_container {
+                        .statistics {
+                            justify-content: space-between;
+                            gap: 10px;
+                            width: 100%;
 
-        .first_name_container, .last_name_container, .email_address_container, .phone_number_container {
-            .fa-user, .fa-envelope, .fa-phone {
-                left: -16px !important;
+                            .posts {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .edit_account_form {
+                .header {
+                    .account_properties {
+                        top: auto;
+                        right: auto;
+                        position-area: top center;
+                        margin-bottom: 10px;
+                    }
+                }
             }
         }
     }
