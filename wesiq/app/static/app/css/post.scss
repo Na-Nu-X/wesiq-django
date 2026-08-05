@@ -1491,3 +1491,31 @@ $post-glow: $surface-glow;
         opacity: 0.8;
     }
 }
+
+/**************
+ Media Queries
+**************/
+
+@media (width <= 800px) {
+    .content {
+        .feed {
+            .post_container,
+            .processing_post_container {
+                padding: 10px;
+            }
+        }
+    }
+}
+
+@media (width <= 400px) {
+    .content {
+        .feed {
+            .post_container,
+            .processing_post_container {
+                .society {
+                    gap: 10px;
+                }
+            }
+        }
+    }
+}

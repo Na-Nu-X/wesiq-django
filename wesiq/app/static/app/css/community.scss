@@ -198,8 +198,7 @@ header {
 
 .content {
     max-width: $main-width;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0px auto 20px;
     padding-bottom: 30px;
 
     // Upload Post Form Dialog
@@ -2599,9 +2598,9 @@ header {
     }
 }
 
-/***************
- Responsive
-***************/
+/**************
+ Media Queries
+**************/
 
 @media (width <= 800px) {
     .content {

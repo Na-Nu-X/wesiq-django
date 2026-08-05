@@ -55,6 +55,8 @@ $blog-glow: $surface-glow;
         .sort_select_menu,
         .category_select_menu {
             @include custom_select_menu($options_list_height: calc(33px * 4));
+            flex: 1 1 0;
+            min-width: 0;
 
             &:has(.refresh:hover) {
                 .select {
@@ -136,66 +138,81 @@ $blog-glow: $surface-glow;
             }
         }
 
-        .info {
+        .top {
             position: absolute;
-            top: 20px + (45px / 2) - (16px / 2) - 4px;
-            left: 20px;
-            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 5px 20px;
 
-            // Info Tooltip
-
-            .tooltip {
-                @include tooltip($top: 50%);
-
-                &::before,
-                &::after {
-                    left: 5px + 10px + 5px;
-                    transform: translateX(var(--translate-x, 0)) translateY(-50%) scale(var(--scale));
-                    transform-origin: left center;
-                }
-
-                &::before {
-                    --translate-x: calc(1 * 10px);
-
-                    max-width: none;
-                    width: 150px;
-                }
-
-                &::after {
-                    --translate-x: calc(-100% + 10px);
-
-                    border: none;
-                    border: 10px solid transparent;
-                    border-right-color: transparentize($secondary-color, 0.8);
-                    transform-origin: right center;
-                }
-
-                .fa-circle-info {
-                    color: $blue-color;
-
-                    &:hover {
-                        color: $dark-blue-color;
+            .info {
+                position: relative;
+                z-index: 60;
+    
+                // Info Tooltip
+    
+                .tooltip {
+                    @include tooltip($top: 50%);
+    
+                    &::before,
+                    &::after {
+                        left: 5px + 10px + 5px;
+                        transform: translateX(var(--translate-x, 0)) translateY(-50%) scale(var(--scale));
+                        transform-origin: left center;
+                    }
+    
+                    &::before {
+                        --translate-x: calc(1 * 10px);
+    
+                        max-width: none;
+                        width: 150px;
+                    }
+    
+                    &::after {
+                        --translate-x: calc(-100% + 10px);
+    
+                        border: none;
+                        border: 10px solid transparent;
+                        border-right-color: transparentize($secondary-color, 0.8);
+                        transform-origin: right center;
+                    }
+    
+                    .fa-circle-info {
+                        color: $blue-color;
+    
+                        &:hover {
+                            color: $dark-blue-color;
+                        }
                     }
                 }
             }
-        }
+    
+            div {
+                z-index: 60;
 
-        .share {
-            all: unset;
-            position: absolute;
-            top: 20px + (45px / 2) - (26px / 2);
-            right: 20px;
-            z-index: 60;
-            cursor: pointer;
-
-            .fa-share-nodes {
-                display: block;
-                font-size: 2em;
-                color: $blue-color;
-                transition: color 0.3s ease;
-
-                &:hover {
-                    color: $dark-blue-color;
+                .title {
+                    font-family: $article-heading-font;
+                    font-size: 2.5em;
+                    color: $blue-color;
+                    text-shadow: 0px 5px 15px transparentize($blue-color, 0.5);
+                }
+            }
+    
+            .share {
+                all: unset;
+                z-index: 60;
+                cursor: pointer;
+    
+                .fa-share-nodes {
+                    display: block;
+                    font-size: 2em;
+                    color: $blue-color;
+                    transition: color 0.3s ease;
+    
+                    &:hover {
+                        color: $dark-blue-color;
+                    }
                 }
             }
         }
@@ -239,6 +256,8 @@ $blog-glow: $surface-glow;
                 }
         
                 p {
+                    text-align: center;
+
                     &::first-letter {
                         all: unset;
                     }
@@ -257,19 +276,12 @@ $blog-glow: $surface-glow;
             position: relative;
             z-index: 30;
 
-            h2 {
-                font-family: $article-heading-font;
-                color: $blue-color;
-                text-shadow: 0px 5px 15px transparentize($blue-color, 0.5);
-            }
-
             .article_info {
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 width: 100%;
                 height: 70px;
                 background-color: transparentize($secondary-color, 0.9);
@@ -302,11 +314,17 @@ $blog-glow: $surface-glow;
                     display: flex;
                     align-items: center;
                     justify-content: flex-end;
+                    gap: 5px;
+                    min-width: 0;
                     padding: 0px 20px 0px 10px;
 
-                    p {
-                        @include crop_text;
-                        color: $blue-color;
+                    div {
+                        max-width: calc(100% - 20px);
+
+                        p {
+                            @include crop_text;
+                            color: $blue-color;
+                        }
                     }
                     
                     i {
@@ -365,5 +383,49 @@ $blog-glow: $surface-glow;
 @media (width <= 1075px) {
     article {
         max-width: 800px !important;
+    }
+}
+
+@media (width <= 400px) {
+    .search_bar_container {
+        .select_menus {
+            gap: 10px;
+        }
+    }
+
+    .articles {
+        article {
+            .top {
+                padding: 5px 10px;
+
+                div {
+                    .title {
+                        font-size: 1.8em;
+                    }
+                }
+            }
+
+            a {
+                padding: 10px;
+                
+                .article_info {
+                    .rating {
+                        padding: 0px 5px 0px 10px;
+                    }
+    
+                    .category {
+                        padding: 0px 10px 0px 5px;
+                    }
+
+                    .visitors {
+                        padding: 0px 5px 0px 10px;
+                    }
+    
+                    .date {
+                        padding: 0px 10px 0px 5px;
+                    }
+                }
+            }
+        }
     }
 }

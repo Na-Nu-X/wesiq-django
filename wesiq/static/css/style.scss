@@ -391,7 +391,7 @@ header {
 ************/
 
 .content {
-    min-height: calc(100vh - 125px);
+    min-height: calc(100vh - 20px); // Screen - Bottom Margin
     margin-bottom: 20px;
     padding: 125px + 50px 20px 0px;
     align-content: center;
@@ -685,8 +685,27 @@ footer {
     }
 
     .content {
-        min-height: calc(100vh - 109px);
         padding-top: 109px + 20px;
+    }
+}
+
+@media (width <= 500px) {
+    header {
+        // Banner
+
+        .banner {
+            flex-direction: column;
+            height: auto;
+            padding: 10px;
+
+            .left:empty {
+                display: none;
+            }
+
+            .right {
+                justify-content: flex-start;
+            }
+        }
     }
 }
 

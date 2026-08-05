@@ -72,7 +72,7 @@ header {
         flex-direction: column;
         gap: 20px;
         min-height: 100vh;
-        padding: 125px + 20px 20px 60px;
+        padding: 125px + 20px 20px 0px;
 
         background:
             radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.55) 0%, transparent 70%),
@@ -335,7 +335,7 @@ header {
 .content {
     max-width: $main-width;
     margin: 0px auto 20px;
-    padding-top: 40px;
+    padding-top: 0px;
     text-align: justify;
 
     // Section panels
@@ -918,6 +918,8 @@ header {
             .sort_select_menu, 
             .rating_select_menu {
                 @include custom_select_menu($options_list_height: calc(33px * 4));
+                flex: 1 1 0;
+                min-width: 0;
 
                 &:has(.refresh:hover) {
                     .select {
@@ -1819,7 +1821,7 @@ header {
  Media Queries
 **************/
 
-@media (max-width: 800px) {
+@media (width <= 800px) {
     header {
         .header_container {
             min-height: calc(100vh - 109px);
@@ -1838,7 +1840,7 @@ header {
     }
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
     header {
         .header_container {
             .features {
@@ -1868,19 +1870,12 @@ header {
     }
 }
 
-@media (max-width: 500px) {
+@media (width <= 500px) {
     header {
         // Banner
 
         .banner {
-            flex-direction: column;
             gap: 10px;
-            height: auto;
-            padding: 10px;
-
-            .right {
-                justify-content: flex-start;
-            }
         }
 
         .header_container {
@@ -1972,7 +1967,7 @@ header {
     }
 }
 
-@media (max-width: 400px) {
+@media (width <= 400px) {
     .content {
         // Login Form Dialog & Registration Form Dialog
 

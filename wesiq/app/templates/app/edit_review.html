@@ -15,7 +15,7 @@
         <form class="edit_review_form" action="{% url 'edit_review_url' %}" method="POST">
             {% csrf_token %}
 
-            <h2><a style="font-size: 35px;" href="{% url 'edit_review_url' %}" target="_self">{% translate "Moje&nbsp;hodnotenie" %}</a></h2>
+            <h2><a style="font-size: 35px;" href="{% url 'edit_review_url' %}" target="_self">{% translate "Moje hodnotenie" %}</a></h2>
 
             <a class="back" href="{% url 'homepage_url' %}" title="{% translate 'Späť na úvodnú stránku' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 

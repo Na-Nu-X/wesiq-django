@@ -1127,19 +1127,11 @@ $training-glow: $surface-glow;
         // Banner
 
         .banner {
-            flex-direction: column;
             gap: 10px;
-            height: auto;
-            padding: 10px;
-
-            .right {
-                justify-content: flex-start;
-            }
         }
     }
 
     .content {
-        min-height: calc(100vh - 30px + 104px + 20px);
         padding-top: 30px + 104px + 20px + 20px;
     }
 

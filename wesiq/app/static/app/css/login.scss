@@ -104,22 +104,15 @@
 
     .login_methods {
         p {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: $light-blue-color;
-
+        
             span {
-                position: absolute;
-                top: 50%;
-                right: 5%;
-                transform: translateY(-50%);
-                width: 135px;
+                flex: 1;
                 height: 1px;
                 background-color: $light-blue-color;
-
-                &:nth-child(1) {
-                    right: auto;
-                    left: 5%;
-                }
             }
         }
 
@@ -215,19 +208,41 @@
  Media Queries
 **************/
 
-@media (width <= 600px) {
+@media (width <= 400px) {
     .login_form {
-        input[type="text"], input[type="submit"] {
+        padding: 10px 30px 30px;
+
+        .back {
+            top: 22.5px;
+            left: 30px;
+        }
+
+        input[type="text"], 
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="submit"] {
             width: 100% !important;
         }
 
-        .password_container .show_hide_password .fa-eye,
-        .password_container .show_hide_password .fa-eye-slash {
-            right: 0px !important;
+        .identifier_container,
+        .password_container {
+            .fa-envelope,
+            .fa-lock {
+                left: -15px;
+            }
         }
 
-        .login_methods div {
-            width: 100% !important;
+        .password_container {
+            .show_hide_password {
+                right: 0px;
+            }
+        }
+
+        .login_methods {
+            div {
+                width: 100%;
+            }
         }
     }
 }

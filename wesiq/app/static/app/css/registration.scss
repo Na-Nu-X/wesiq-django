@@ -213,24 +213,52 @@
  Media Queries
 **************/
 
-@media (width <= 600px) {
+@media (width <= 400px) {
     .registration_form {
-        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="submit"] {
-            width: 100% !important;
-        }
-    
-        .password_container .show_hide_password .fa-eye,
-        .password_container .show_hide_password .fa-eye-slash {
-            right: 0px !important;
-        }
-        
-        .password_container .generate_password {
-            left: -16px !important;
+        padding: 10px 30px 30px;
+
+        .back {
+            top: 22.5px;
+            left: 30px;
         }
 
-        .password_container .copy_password, 
-        .password_check_container .paste_password {
-            right: -19px !important;
+        input[type="text"], 
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100% !important;
+        }
+
+        .name_container,
+        .contact_container {
+            width: 100%;
+        }
+
+        .username_container,
+        .password_container,
+        .password_check_container {
+            .fa-at,
+            .generate_password,
+            .fa-lock {
+                left: -15px;
+            }
+        }
+
+        .password_container {
+            .show_hide_password {
+                right: 1px;
+            }
+
+            .copy_password {
+                right: -18px;
+            }
+        }
+
+        .password_check_container {
+            .paste_password {
+                right: -18px;
+            }
         }
     }
 }

@@ -3,10 +3,7 @@
 
 .content {
     max-width: $main-width;
-    min-height: 100vh;
     margin: 0px auto 20px;
-    padding-top: 125px + 20px;
-    background-color: transparentize($main-color, 0.9);
     text-align: justify;
     overflow: hidden;
 
@@ -631,36 +628,65 @@
 **************/
 
 @media (width <= 800px) {
-    .article_banner {
-        flex-direction: column !important;
+    .content {
+        .article_banner {
+            flex-direction: column;
+    
+            .banner_image {
+                img {
+                    max-width: 100%;
+                }
+            }
+    
+            .banner_info {
+                padding: 0px 20px 10px;
+            }
+        }
+    
+        .exercise_statistics {
+            max-width: 100%;
+        }
+    }
+}
 
-        .banner_image {
-            img {
-                max-width: 100% !important;
+@media (width <= 500px) {
+    .content {
+        .exercise_statistics {
+            gap: 30px;
+            padding: 20px 20px 30px;
+
+            .bar {
+                &:before {
+                    top: 10px;
+                    right: auto;
+                    transform: none;
+                }
             }
         }
 
-        .banner_info {
-            padding: 0px 20px 10px !important;
+        .article_content {
+            padding: 20px;
         }
     }
 }
 
 @media (width <= 400px) {
-    .article_banner {
-        .banner_info {
-            padding: 0px 10px 10px !important;
-
-            .article_opening {
-                h2 {
-                    font-size: 2em !important;
+    .content {
+        .article_banner {
+            .banner_info {
+                padding: 0px 10px 10px;
+    
+                .article_opening {
+                    h2 {
+                        font-size: 2em;
+                    }
                 }
-            }
-
-            .article_info {
-                .rating {
-                    .fa-star {
-                        font-size: 1em !important;
+    
+                .article_info {
+                    .rating {
+                        .fa-star {
+                            font-size: 1em;
+                        }
                     }
                 }
             }

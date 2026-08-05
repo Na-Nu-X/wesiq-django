@@ -38,732 +38,702 @@ $plans-glow: $surface-glow;
  Main Styles
 ************/
 
-.no_logged_in {
-    @include flex_center;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: calc(100vh);
-    backdrop-filter: blur(4px);
-    background-color: transparentize($main-color, 0.45);
-    z-index: 500;
+.content {
+    padding-bottom: 30px;
 
-    p {
-        max-width: 420px;
-        padding: 28px 32px;
-        text-align: center;
-        background: $plans-surface;
-        border: 1px solid $plans-surface-border;
-        border-radius: $medium-border-radius;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px transparentize($main-color, 0.5);
-        color: transparentize($secondary-color, 0.1);
-        line-height: 1.6;
-
-        a {
-            color: $blue-color;
-            text-decoration: none;
-            font-style: italic;
-            font-weight: 500;
-
-            &:hover,
-            &:active,
-            &:focus-visible {
-                text-decoration: underline;
-            }
-        }
-    }
-}
-
-.sidebar {
-    position: fixed;
-    top: 50%;
-    left: 0px;
-    transform: translateY(-50%);
-    padding: 10px;
-    background-color: transparentize($dark-blue-color, 0.95);
-    border: 1px solid transparentize($blue-color, 0.5);
-    border-left: none;
-    border-radius: 0px $medium-border-radius $medium-border-radius 0px;
-    z-index: 2000;
-
-    ul {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-
-        li {
-            display: flex;
-            align-items: center;
-
-            a {
-                @include blue_button(40px);
-                position: relative;
-                height: 40px;
-
-                i {
-                    @include position_center;
-                    font-size: 1.5em;
-                    color: $blue-color;
-                }
-
-                &.active {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
-                    border-color: $blue-color;
-
-                    i {
-                        color: $secondary-color;
-                    }
-                }
-
-                &:hover,
-                &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
-                    border-color: $blue-color;
-
-                    i {
-                        color: $secondary-color;
-                    }
-                }
-            }
-
-            .label {
-                pointer-events: none;
-                position: absolute;
-                transform: translateX(calc(-100% + 60px));
-                opacity: 0;
-                color: $secondary-color;
-                font-size: 0.9em;
-                white-space: nowrap;
-                transition: transform 0.2s ease, opacity 0.2s ease;
-
-                &.show {
-                    opacity: 1;
-                    transform: translateX(60px);
-                }
-            }
-        }
-    }
-}
-
-.first_section {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 20px;
-    max-width: $main-width;
-    margin: 0px auto 30px;
-
-    .top {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        max-width: $secondary-width;
+    .no_logged_in {
+        @include flex_center;
+        position: fixed;
+        top: 0px;
+        left: 0px;
         width: 100%;
-        min-height: fit-content;
-
-        // New Training Plan, Edit Training Plan
-
-        .new_training_plan,
-        .edit_training_plan {
-            @include flex_center($direction: column);
-
-            &.hidden {
-                display: none;
-            }
-
-            .additional_info {
-                display: flex;
-                justify-content: space-between;
-                gap: 20px;
-                flex: 1;
-                width: 100%;
-                margin-bottom: 20px;
-
-                .title {
-                    @include form_input;
-                    margin-bottom: 0px;
-                    flex: 1 1 0px; 
-                    min-width: 0;
-
-                    &::-webkit-calendar-picker-indicator {
-                        display: none !important;
-                    }
-
-                    &.error_animation {
-                        animation: trainingTitleError 0.2s linear 3;
-                    }
+        height: calc(100vh);
+        backdrop-filter: blur(4px);
+        background-color: transparentize($main-color, 0.45);
+        z-index: 500;
+    
+        p {
+            max-width: 420px;
+            padding: 28px 32px;
+            text-align: center;
+            background: $plans-surface;
+            border: 1px solid $plans-surface-border;
+            border-radius: $medium-border-radius;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+            color: transparentize($secondary-color, 0.1);
+            line-height: 1.6;
+    
+            a {
+                color: $blue-color;
+                text-decoration: none;
+                font-style: italic;
+                font-weight: 500;
+    
+                &:hover,
+                &:active,
+                &:focus-visible {
+                    text-decoration: underline;
                 }
-
-                // Custom Select Menu
-
-                .day_select_menu {
-                    @include custom_select_menu($options_list_height: calc(33px * 4));
+            }
+        }
+    }
+    
+    .sidebar {
+        position: fixed;
+        top: 50%;
+        left: 0px;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: transparentize($dark-blue-color, 0.95);
+        border: 1px solid transparentize($blue-color, 0.5);
+        border-left: none;
+        border-radius: 0px $medium-border-radius $medium-border-radius 0px;
+        z-index: 2000;
+    
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+    
+            li {
+                display: flex;
+                align-items: center;
+    
+                a {
+                    @include blue_button(40px);
                     position: relative;
-                    flex: 1 1 0px; 
-                    max-width: 90%;
-                    min-width: 0;
-                    margin: 0px auto;
-
-                    .select {
-                        height: 50px;
-                        border-top: none;
-                        border-right: none;
-                        border-left: none;
-                        border-radius: 0px;
-
-                        span {
-                            margin-left: 0px;
+                    height: 40px;
+    
+                    i {
+                        @include position_center;
+                        font-size: 1.5em;
+                        color: $blue-color;
+                    }
+    
+                    &.active {
+                        background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                        border-color: $blue-color;
+    
+                        i {
+                            color: $secondary-color;
                         }
                     }
-
-                    .options_list {
-                        .option {
-                            position: relative;
-                            text-align: center;
-
-                            i {
-                                position: absolute;
-                                top: 50%;
-                                left: 10px;
-                                transform: translateY(-50%);
+    
+                    &:hover,
+                    &:focus-visible {
+                        background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+                        border-color: $blue-color;
+    
+                        i {
+                            color: $secondary-color;
+                        }
+                    }
+                }
+    
+                .label {
+                    pointer-events: none;
+                    position: absolute;
+                    transform: translateX(calc(-100% + 60px));
+                    opacity: 0;
+                    color: $secondary-color;
+                    font-size: 0.9em;
+                    white-space: nowrap;
+                    transition: transform 0.2s ease, opacity 0.2s ease;
+    
+                    &.show {
+                        opacity: 1;
+                        transform: translateX(60px);
+                    }
+                }
+            }
+        }
+    }
+    
+    .first_section {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        gap: 20px;
+        max-width: $main-width;
+        margin: 0px auto;
+    
+        .top {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            max-width: $secondary-width;
+            width: 100%;
+            min-height: fit-content;
+    
+            // New Training Plan, Edit Training Plan
+    
+            .new_training_plan,
+            .edit_training_plan {
+                @include flex_center($direction: column);
+    
+                &.hidden {
+                    display: none;
+                }
+    
+                .additional_info {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 20px;
+                    width: 100%;
+                    margin-bottom: 20px;
+    
+                    .title {
+                        @include form_input;
+                        width: 100%;
+                        margin-bottom: 0px;
+                        flex: 1 1 0px; 
+                        min-width: 0;
+                        max-width: calc(50% - 10px);
+    
+                        &::-webkit-calendar-picker-indicator {
+                            display: none !important;
+                        }
+    
+                        &.error_animation {
+                            animation: trainingTitleError 0.2s linear 3;
+                        }
+                    }
+    
+                    // Custom Select Menu
+    
+                    .day_select_menu {
+                        @include custom_select_menu($options_list_height: calc(33px * 4));
+                        flex: 1 1 0;
+                        min-width: 0;
+    
+                        .select {
+                            height: 50px;
+                            border-top: none;
+                            border-right: none;
+                            border-left: none;
+                            border-radius: 0px;
+    
+                            span {
+                                margin-left: 0px;
                             }
                         }
                     }
                 }
-            }
-
-            .training_plan {
-                @include animated_border;
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                height: 350px;
-                border-radius: $medium-border-radius;
-                overflow: hidden;
-                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-
-                &.animate {
-                    animation: trainingPlanDrag 1s infinite alternate;
-                }
-
-                .drop_zone {
-                    @include flex_center($direction: column);
-                    gap: 10px;
-                    height: 100%;
-                    color: $blue-color;
-                    z-index: 100;
-
-                    &:not(.active) {
-                        display: none;
-                    }
-
-                    &:hover {
-                        cursor: pointer;
-
-                        .fa-compress {
-                            transform: scale(1.1);
-                            color: $dark-blue-color;
-                        }
-                    }
-
-                    .fa-compress {
-                        font-size: 2.5em;
-                        color: $blue-color;
-                        transition: transform 0.2s ease, color 0.3s ease;
-
-                        &.error_animation {
-                            animation: trainingPlanError 0.2s linear 3;
-                        }
-                    }
-                }
-
-                .exercise {
+    
+                .training_plan {
+                    @include animated_border;
+                    position: relative;
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: 10px;
                     width: 100%;
-                    height: 100%;
-                    padding: 20px 50px;
-                    transition: transform 0.5s ease;
-                    cursor: move;
-                    z-index: 100;
-
-                    &:not(.active) {
-                        position: absolute;
-                        top: 0px;
-                        transform: translateX(100%);
+                    height: 350px;
+                    border-radius: $medium-border-radius;
+                    overflow: hidden;
+                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    
+                    &.animate {
+                        animation: trainingPlanDrag 1s infinite alternate;
                     }
-
-                    .title_input {
-                        width: 100%;
-                        text-align: center;
-                        background: none;
-                        border: none;
-                        outline: none;
-                        color: $secondary-color;
-                        font-family: $article-heading-font;
-                        font-size: 2em;
-
-                        &::placeholder {
-                            color: $light-blue-color;
+    
+                    .drop_zone {
+                        @include flex_center($direction: column);
+                        gap: 10px;
+                        height: 100%;
+                        color: $blue-color;
+                        z-index: 100;
+    
+                        &:not(.active) {
+                            display: none;
                         }
-                    }
-
-                    .title {
-                        font-family: $article-heading-font;
-                        font-size: clamp(1.2em, 4vw, 2em);
-                        color: $secondary-color;
-                    }
-
-                    .labels {
-                        @include flex_center;
-                        max-width: 400px;
-                        width: 100%;
-                        margin: 10px 0px 5px;
-
-                        // Custom Select Menu
-
-                        .unit_select_menu {
-                            @include custom_select_menu($options_list_height: calc(33px * 2));
-                            max-width: 90%;
-                            margin: 0px auto;
-
-                            .select {
-                                border: none;
-
-                                span {
-                                    margin-left: 0px;
-                                }
-                            }
-
-                            .options_list {
-                                .option {
-                                    position: relative;
-                                    text-align: center;
-
-                                    i {
-                                        position: absolute;
-                                        top: 50%;
-                                        left: 10px;
-                                        transform: translateY(-50%);
-                                    }
-                                }
+    
+                        &:hover {
+                            cursor: pointer;
+    
+                            .fa-compress {
+                                transform: scale(1.1);
+                                color: $dark-blue-color;
                             }
                         }
-
-                        p {
-                            width: 100%;
-                            text-align: center;
-                            line-height: 1;
-                            color: $light-blue-color;
+    
+                        .fa-compress {
+                            font-size: 2.5em;
+                            color: $blue-color;
+                            transition: transform 0.2s ease, color 0.3s ease;
+    
+                            &.error_animation {
+                                animation: trainingPlanError 0.2s linear 3;
+                            }
                         }
                     }
-
-                    .add_period {
-                        @include blue_button($width: 100%);
-                        height: 40px;
-                        margin-bottom: 10px;
-                        flex-shrink: 0;
-                    }
-
-                    .periods_container {
-                        @include scrollbar;
+    
+                    .exercise {
                         display: flex;
                         flex-direction: column;
-                        gap: 5px;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 10px;
                         width: 100%;
-                        max-height: 100px;
-                        padding: 0px 5px;
-
-                        .period_selection {
+                        height: 100%;
+                        padding: 20px 50px;
+                        transition: transform 0.5s ease;
+                        cursor: move;
+                        z-index: 100;
+    
+                        &:not(.active) {
+                            position: absolute;
+                            top: 0px;
+                            transform: translateX(100%);
+                        }
+    
+                        .title_input {
                             width: 100%;
-                            display: flex;
-                            justify-content: space-between;
-                            gap: 10px;
-
-                            .reps_container,
-                            .sets_container {
-                                display: flex;
-                                width: 100%;
-                                background: transparent;
-                                border: 1px solid transparentize($blue-color, 0.5);
-                                border-radius: $big-border-radius;
-                                transition: border-color 0.2s ease;
-
-                                &:hover,
-                                &:focus-within {
-                                    border-color: $blue-color;
-                                }
-
-                                .decrease_reps,
-                                .increase_reps,
-                                .decrease_sets,
-                                .increase_sets {
-                                    all: unset;
-                                    @include icon;
-                                    @include flex_center;
-                                    width: 30px;
-
-                                    i {
-                                        pointer-events: none;
-                                    }
-                                }
-
-                                .reps,
-                                .sets {
-                                    width: calc(100% - 30px - 30px);
-                                    height: 40px;
-                                    text-align: center;
-                                    background: none;
-                                    color: $secondary-color;
+                            text-align: center;
+                            background: none;
+                            border: none;
+                            outline: none;
+                            color: $secondary-color;
+                            font-family: $article-heading-font;
+                            font-size: 2em;
+    
+                            &::placeholder {
+                                color: $light-blue-color;
+                            }
+                        }
+    
+                        h3 {
+                            font-family: $article-heading-font;
+                            font-size: 2em;
+                            color: $secondary-color;
+                        }
+    
+                        .labels {
+                            @include flex_center;
+                            max-width: 400px;
+                            width: 100%;
+                            margin: 10px 0px 5px;
+                            padding: 0px 10px;
+    
+                            // Custom Select Menu
+    
+                            .unit_select_menu {
+                                @include custom_select_menu($options_list_height: calc(33px * 2));
+                                max-width: 90%;
+                                margin: 0px auto;
+    
+                                .select {
                                     border: none;
-                                    outline: none;
-
-                                    &::-webkit-inner-spin-button,
-                                    &::-webkit-outer-spin-button {
-                                        -webkit-appearance: none;
-                                        -moz-appearance: none;
-                                        appearance: none;
+    
+                                    span {
+                                        margin-left: 0px;
                                     }
                                 }
-
-                                .reps {
-                                    visibility: hidden;
+    
+                                .options_list {
+                                    .option {
+                                        position: relative;
+                                        text-align: center;
+    
+                                        i {
+                                            position: absolute;
+                                            top: 50%;
+                                            left: 10px;
+                                            transform: translateY(-50%);
+                                        }
+                                    }
+                                }
+                            }
+    
+                            p {
+                                width: 100%;
+                                text-align: center;
+                                line-height: 1;
+                                color: $light-blue-color;
+                            }
+                        }
+    
+                        .add_period {
+                            @include blue_button($width: 100%);
+                            height: 40px;
+                            margin-bottom: 10px;
+                            flex-shrink: 0;
+                        }
+    
+                        .periods_container {
+                            @include scrollbar;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 5px;
+                            width: 100%;
+                            max-height: 100px;
+                            padding: 0px 5px;
+    
+                            .period_selection {
+                                width: 100%;
+                                display: flex;
+                                justify-content: space-between;
+                                gap: 10px;
+    
+                                .reps_container,
+                                .sets_container {
+                                    display: flex;
+                                    width: 100%;
+                                    background: transparent;
+                                    border: 1px solid transparentize($blue-color, 0.5);
+                                    border-radius: $big-border-radius;
+                                    transition: border-color 0.2s ease;
+    
+                                    &:hover,
+                                    &:focus-within {
+                                        border-color: $blue-color;
+                                    }
+    
+                                    .decrease_reps,
+                                    .increase_reps,
+                                    .decrease_sets,
+                                    .increase_sets {
+                                        all: unset;
+                                        @include icon;
+                                        @include flex_center;
+                                        width: 30px;
+    
+                                        i {
+                                            pointer-events: none;
+                                        }
+                                    }
+    
+                                    .reps,
+                                    .sets {
+                                        width: calc(100% - 30px - 30px);
+                                        height: 40px;
+                                        text-align: center;
+                                        background: none;
+                                        color: $secondary-color;
+                                        border: none;
+                                        outline: none;
+    
+                                        &::-webkit-inner-spin-button,
+                                        &::-webkit-outer-spin-button {
+                                            -webkit-appearance: none;
+                                            -moz-appearance: none;
+                                            appearance: none;
+                                        }
+                                    }
+    
+                                    .reps {
+                                        visibility: hidden;
+                                    }
+                                }
+    
+                                .reps_container {
+                                    position: relative;
+    
+                                    .to_failure,
+                                    .time {
+                                        @include position_center;
+                                        width: calc(100% - 30px - 30px);
+                                        height: 100%;
+                                        line-height: 40px;
+                                        font-size: 0.9em;
+                                        text-align: center;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                    }
+    
+                                    .time {
+                                        visibility: hidden;
+                                    }
+                                }
+                            }
+                        }
+    
+                        // Warm Up Timer
+    
+                        .timer_container {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: space-between;
+                            width: 100%;
+                            margin-top: 29px;
+                            padding: 0px 40px;
+    
+                            .add_time,
+                            .subtract_time {
+                                @include blue_button($width: 50px);
+                                position: relative;
+                                background: $plans-surface-hover;
+                                border-color: $plans-surface-border;
+    
+                                &:hover,
+                                &:focus-visible {
+                                    border-color: transparentize($blue-color, 0.25);
+                                    box-shadow: 0 4px 14px $plans-glow;
+                                }
+    
+                                .fa-plus,
+                                .fa-minus {
+                                    pointer-events: none;
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    font-size: 30px;
+                                    color: $blue-color;
                                 }
                             }
 
-                            .reps_container {
-                                position: relative;
-
-                                .to_failure,
-                                .time {
-                                    @include position_center;
-                                    width: calc(100% - 30px - 30px);
-                                    height: 100%;
-                                    line-height: 40px;
-                                    font-size: 0.9em;
-                                    text-align: center;
-                                    text-overflow: ellipsis;
-                                    overflow: hidden;
-                                }
-
-                                .time {
-                                    visibility: hidden;
+                            .timer {
+                                @include timer;
+                        
+                                .countdown {
+                                    text-shadow: 0 0 20px $secondary-color;
                                 }
                             }
                         }
                     }
-
-                    // Warm Up Timer
-
-                    .timer_container {
+    
+                    .bar_container {
+                        position: relative;
                         display: flex;
                         flex-direction: row;
-                        align-items: center;
                         justify-content: space-between;
-                        width: 100%;
-                        margin-top: 29px;
-                        padding: 0px 40px;
-
-                        .add_time,
-                        .subtract_time {
-                            @include blue_button($width: 50px);
+                        gap: 10px;
+                        margin: auto 10px 10px;
+                        z-index: 100;
+    
+                        .bar {
                             position: relative;
-                            background: $plans-surface-hover;
-                            border-color: $plans-surface-border;
-
-                            &:hover,
-                            &:focus-visible {
-                                border-color: transparentize($blue-color, 0.25);
-                                box-shadow: 0 4px 14px $plans-glow;
+                            width: 100%;
+                            height: 10px;
+                            border: 1px solid transparentize($blue-color, 0.5);
+                            border-radius: calc(10px / 2);
+                            
+                            &.animate:not(&.active) {
+                                animation: barDrag 1s infinite alternate;
                             }
-
-                            .fa-plus,
-                            .fa-minus {
-                                pointer-events: none;
+    
+                            &:before {
+                                content: "";
                                 position: absolute;
-                                top: 50%;
-                                left: 50%;
-                                transform: translate(-50%, -50%);
-                                font-size: 30px;
-                                color: $blue-color;
+                                top: 0px;
+                                left: 0px;
+                                width: 100%;
+                                height: 100%;
+                                border-radius: inherit;
+                                transition: background-color 0.3s ease;
                             }
-                        }
-
-                        .timer {
-                            position: relative;
-                            width: 100px;
-                            height: 100px;
-                            border-radius: 50px;
-
-                            svg {
-                                position: absolute;
-                                top: 50%;
-                                left: 50%;
-                                transform: rotate(-90deg) translate(50%, -50%);
-
-                                .progress_background {
-                                    fill: none;
-                                    stroke: darken($secondary-color, 40%);
-                                    stroke-width: 3;
-                                    stroke-dasharray: 2 4;
+    
+                            &.active,
+                            &:hover {
+                                cursor: pointer;
+    
+                                &.animate {
+                                    &:before {
+                                        animation: barDrag 1s infinite alternate;
+                                    }
                                 }
-                            }
-
-                            .countdown {
-                                @include position_center;
-                                font-family: $timer-font;
-                                font-size: 1.2em;
+    
+                                &:before {
+                                    width: 100%;
+                                    background-color: $green-color;
+                                    box-shadow: 0px 0px 10px $green-color;
+                                }
                             }
                         }
                     }
                 }
-
-                .bar_container {
-                    position: relative;
+    
+                .save {
+                    @include blue_button($width: 100%);
+                }
+            }
+    
+            .new_training_plan {
+                .save {
+                    margin-top: 20px;
+                }
+            }
+    
+            .edit_training_plan {
+                .training_plan {
+                    &.blur {
+                        animation: blur 0.3s ease-out;
+                    }
+                }
+    
+                .training_plan_bar_container {
                     display: flex;
                     flex-direction: row;
                     justify-content: space-between;
                     gap: 10px;
-                    margin: auto 10px 10px;
-                    z-index: 100;
-
+                    width: 100%;
+                    margin: 10px 0px;
+    
                     .bar {
-                        position: relative;
                         width: 100%;
                         height: 10px;
                         border: 1px solid transparentize($blue-color, 0.5);
                         border-radius: calc(10px / 2);
-                        
-                        &.animate:not(&.active) {
-                            animation: barDrag 1s infinite alternate;
-                        }
-
-                        &:before {
-                            content: "";
-                            position: absolute;
-                            top: 0px;
-                            left: 0px;
-                            width: 100%;
-                            height: 100%;
-                            border-radius: inherit;
-                            transition: background-color 0.3s ease;
-                        }
-
+                        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    
                         &.active,
                         &:hover {
                             cursor: pointer;
-
-                            &.animate {
-                                &:before {
-                                    animation: barDrag 1s infinite alternate;
-                                }
-                            }
-
-                            &:before {
-                                width: 100%;
-                                background-color: $green-color;
-                                box-shadow: 0px 0px 10px $green-color;
-                            }
+                            background-color: $blue-color;
+                            border-color: transparentize($blue-color, 0.2);
+                            box-shadow: 0px 0px 12px $plans-glow;
+                        }
+                    }
+                }
+    
+                .buttons {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 20px;
+                    width: 100%;
+                    margin-top: 10px;
+    
+                    .delete {
+                        @include blue_button($width: 100%);
+                        background: transparentize($red-color, 0.9);
+                        border-color: transparentize($red-color, 0.5);
+    
+                        &:hover,
+                        &:focus-visible {
+                            border-color: $red-color;
+                            background: transparentize($red-color, 0.75);
+                            box-shadow: 0 6px 20px transparentize($red-color, 0.8);
                         }
                     }
                 }
             }
-
-            .save {
-                @include blue_button($width: 100%);
-            }
         }
-
-        .new_training_plan {
-            .save {
-                margin-top: 20px;
+    
+        // Exercise Selection
+    
+        .exercise_selection {
+            @include flex_center($direction: column);
+            max-width: $secondary-width;
+            width: 100%;
+            min-height: 500px;
+        
+            .search_bar_menu {
+                @include search_bar;
+                margin-bottom: 20px;
             }
-        }
-
-        .edit_training_plan {
-            .training_plan {
-                &.blur {
-                    animation: blur 0.3s ease-out;
-                }
-            }
-
-            .training_plan_bar_container {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
+        
+            .exercises {
+                @include scrollbar;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
                 gap: 10px;
                 width: 100%;
-                margin: 10px 0px;
-
-                .bar {
-                    width: 100%;
-                    height: 10px;
-                    border: 1px solid transparentize($blue-color, 0.5);
-                    border-radius: calc(10px / 2);
-                    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-
-                    &.active,
+                max-height: 450px;
+                margin: 0px auto;
+                padding: 5px;
+                text-align: center;
+        
+                .custom_exercise,
+                .warm_up {
                     &:hover {
-                        cursor: pointer;
-                        background-color: $blue-color;
-                        border-color: transparentize($blue-color, 0.2);
-                        box-shadow: 0px 0px 12px $plans-glow;
+                        .fa-plus,
+                        .fa-dumbbell {
+                            filter: blur(2px);
+                            transform: scale(1.05);
+                        }
                     }
-                }
-            }
-
-            .buttons {
-                display: flex;
-                flex-direction: row;
-                gap: 20px;
-                width: 100%;
-                margin-top: 10px;
-
-                .delete {
-                    @include blue_button($width: 100%);
-                    background: transparentize($red-color, 0.9);
-                    border-color: transparentize($red-color, 0.5);
-
-                    &:hover,
-                    &:focus-visible {
-                        border-color: $red-color;
-                        background: transparentize($red-color, 0.75);
-                        box-shadow: 0 6px 20px transparentize($red-color, 0.8);
-                    }
-                }
-            }
-        }
-    }
-
-    // Exercise Selection
-
-    .exercise_selection {
-        @include flex_center($direction: column);
-        max-width: $secondary-width;
-        width: 100%;
-        min-height: 500px;
-    
-        .search_bar_menu {
-            @include search_bar;
-            margin-bottom: 20px;
-        }
-    
-        .exercises {
-            @include scrollbar;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            width: 100%;
-            max-height: 450px;
-            margin: 0px auto;
-            padding: 5px;
-            text-align: center;
-    
-            .custom_exercise,
-            .warm_up {
-                &:hover {
+        
                     .fa-plus,
                     .fa-dumbbell {
-                        filter: blur(2px);
+                        font-size: 2.5em;
+                        color: $blue-color;
+                        transition: filter 0.3s ease, transform 0.3s ease;
                     }
-                }
-    
-                .fa-plus,
-                .fa-dumbbell {
-                    font-size: 2.5em;
-                    color: $blue-color;
-                    transition: filter 0.3s ease, transform 0.3s ease;
-                }
 
-                &:hover .fa-plus,
-                &:hover .fa-dumbbell {
-                    transform: scale(1.05);
-                }
-            }
-    
-            .exercise {
-                @include flex_center;
-                @include scrollbar;
-                position: relative;
-                aspect-ratio: 1 / 1;
-                gap: 5px;
-                padding: 10px;
-                text-decoration: none;
-                background-color: transparentize($dark-blue-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $medium-border-radius;
-                backdrop-filter: blur(5px);
-                cursor: move;
-                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    
-                &.hidden {
-                    display: none !important;
-                }
-    
-                &:hover, 
-                &:focus-visible {
-                    transform: translateY(-2px);
-                    background: transparent;
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-    
                     .name {
-                        filter: blur(2px);
+                        display: none;
+                    }
+                }
+        
+                .exercise {
+                    @include flex_center;
+                    @include scrollbar;
+                    position: relative;
+                    aspect-ratio: 1 / 1;
+                    gap: 5px;
+                    padding: 10px;
+                    text-decoration: none;
+                    background-color: transparentize($dark-blue-color, 0.95);
+                    border: 1px solid transparentize($blue-color, 0.5);
+                    border-radius: $medium-border-radius;
+                    backdrop-filter: blur(5px);
+                    cursor: move;
+                    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        
+                    &.hidden {
+                        display: none !important;
+                    }
+        
+                    &:hover, 
+                    &:focus-visible {
+                        transform: translateY(-2px);
+                        background: transparent;
+                        border-color: transparentize($blue-color, 0.25);
+                        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+        
+                        .name {
+                            filter: blur(2px);
+                        }
+        
+                        .weight_selection {
+                            @include position_center;
+                            @include flex_center($direction: column);
+                            width: 100%;
+                            height: 100%;
+                            
+                            .decrease_weight, 
+                            .increase_weight {
+                                background: none;
+                                color: $secondary-color;
+                                border: none;
+                                outline: none;
+                                cursor: pointer;
+                                transition: color 0.2s ease;
+    
+                                &:hover {
+                                    color: $blue-color;
+                                }
+                                
+                                i {
+                                    pointer-events: none;
+                                    font-size: 1.2em;
+                                }
+                            }
+        
+                            .weight {
+                                font-size: 2em;
+                                cursor: default;
+                                color: $secondary-color;
+        
+                                span {
+                                    font-size: inherit;
+                                }
+                            }
+                        }
                     }
     
-                    .weight_selection {
+                    img {
                         @include position_center;
-                        @include flex_center($direction: column);
                         width: 100%;
                         height: 100%;
-                        
-                        .decrease_weight, 
-                        .increase_weight {
-                            background: none;
-                            color: $secondary-color;
-                            border: none;
-                            outline: none;
-                            cursor: pointer;
-                            transition: color 0.2s ease;
-
-                            &:hover {
-                                color: $blue-color;
-                            }
-                            
-                            i {
-                                pointer-events: none;
-                                font-size: 1.2em;
-                            }
-                        }
-    
-                        .weight {
-                            font-size: 2em;
-                            cursor: default;
-                            color: $secondary-color;
-    
-                            span {
-                                font-size: inherit;
-                            }
-                        }
+                        opacity: 0.2;
                     }
-                }
-
-                img {
-                    @include position_center;
-                    width: 100%;
-                    height: 100%;
-                    opacity: 0.2;
-                }
-                
-                .weight_selection {
-                    display: none;
+                    
+                    .weight_selection {
+                        display: none;
+                    }
                 }
             }
         }
@@ -824,57 +794,105 @@ $plans-glow: $surface-glow;
 **************/
 
 @media (width <= 1060px) {
-    .first_section {
-        flex-direction: column;
-        padding-bottom: 32px;
-
-        .top {
-            justify-content: center;
-            max-width: 800px;
-        }
-
-        .exercise_selection {
-            max-width: 800px;
+    .content {
+        .first_section {
+            flex-direction: column;
+            gap: 50px;
     
-            .exercises {
-                max-height: 450px;
+            .top {
+                justify-content: center;
+                max-width: 800px;
+            }
+    
+            .exercise_selection {
+                max-width: 800px;
+        
+                .exercises {
+                    max-height: 450px;
+                }
+            }
+        }
+    }
+}
+
+@media (width <= 500px) {
+    header {
+        // Banner
+
+        .banner {
+            gap: 10px;
+        }
+    }
+
+    .content {
+        padding-top: 30px + 104px + 20px + 20px;
+
+        .first_section {
+            .top {
+                .edit_training_plan {
+                    .buttons {
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 10px;
+                        
+                        .save,
+                        .delete {
+                            width: 100%;
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @media (width <= 400px) {
-    .first_section {
-        padding: 0px 12px 28px;
-        gap: 18px;
+    .content {
+        .first_section {
+            .top {
+                justify-content: flex-start;
+    
+                .new_training_plan,
+                .edit_training_plan {
+                    .additional_info {
+                        gap: 10px;
 
-        .top {
-            justify-content: flex-start;
-            padding: 20px 16px;
+                        .title {
+                            max-width: calc(50% - 5px);
+                        }
+                    }
 
-            .new_training_plan,
-            .edit_training_plan {
-                .training_plan {
-                    justify-content: space-between;
-                    height: calc(100vh - 50px - 10px - 125px - 10px);
+                    .training_plan {
+                        justify-content: space-between;
+                        height: calc(100vh - 97px - 20px - 125px - 10px);
+    
+                        .exercise {
+                            flex-direction: column;
+                            justify-content: space-between;
+                            height: calc(100% - 50px);
+                            padding: 50px 10px;
+                            text-align: center;
+                            
+                            // Warm Up Timer
+                            
+                            .timer_container {
+                                height: 100%;
+                                margin-top: 0px;
+                                padding: 0px;
+                            }
 
-                    .exercise {
-                        height: calc(100% - 20px);
-                        
-                        // Warm Up Timer
-                        
-                        .timer_container {
-                            height: 100%;
-                            margin-top: 0px;
-                            padding: 0px;
+                            .add_period {
+                                margin-bottom: auto;
+                            }
+
+                            .periods_container {
+                                max-height: 100%;
+                                margin-bottom: auto;
+                            }
                         }
                     }
                 }
             }
-        }
-
-        .exercise_selection {
-            padding: 20px 14px;
         }
     }
 }
