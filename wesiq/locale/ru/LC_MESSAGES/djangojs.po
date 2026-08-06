@@ -9,16 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-20 20:06+0000\n"
-"PO-Revision-Date: 2026-07-05 19:31+0000\n"
+"PO-Revision-Date: 2026-08-06 20:26+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
@@ -281,34 +279,32 @@ msgstr "Удалить"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid "(upravené)"
-msgstr ""
+msgstr "(отредактировано)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid " (upravené)"
-msgstr ""
+msgstr "(отредактировано)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:155
 #: app/static/app/ts/src/pages/chat/components/chat.ts:471
-#, fuzzy
 #| msgid "Napísať komentár"
 msgid "Napísať správu"
-msgstr "Написать комментарий"
+msgstr "Написать сообщение"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:192
 #: app/static/app/ts/src/pages/chat/components/chat.ts:193
 #, javascript-format
 msgid "Reakciu pridal: %s"
-msgstr ""
+msgstr "Реакцию добавил: %s"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:223
 msgid "Spojenie sa neočakávane prerušilo."
-msgstr ""
+msgstr "Соединение неожиданно прервалось."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:291
-#, fuzzy
 #| msgid "Upraviť"
 msgid "Upraviť správu"
-msgstr "Редактировать"
+msgstr "Редактировать сообщение"
 
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:34
 #: app/static/app/ts/src/pages/community/components/search_posts.ts:73
@@ -667,10 +663,9 @@ msgid "Žiadne žiadosti o sledovanie"
 msgstr "Нет запросов на подписку"
 
 #: app/static/app/ts/src/pages/profile/components/followers.ts:64
-#, fuzzy
 #| msgid "Žiadne žiadosti o sledovanie"
 msgid "Žiadny sledovatelia"
-msgstr "Нет запросов на подписку"
+msgstr "Нет подписчиков"
 
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
 msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
@@ -685,10 +680,9 @@ msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
 msgstr "Произошла ошибка при отклонении запроса на отслеживание."
 
 #: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
-#, fuzzy
 #| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "Произошла ошибка при удалении задач."
+msgstr "При удалении трекера произошла ошибка."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
@@ -717,7 +711,8 @@ msgstr ""
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgid ""
+"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
 "Продолжительность текущей активности была на %s%% больше, чем в среднем за "
 "последние 7 дней"
@@ -785,7 +780,6 @@ msgid "Zadajte váš e-mail"
 msgstr "Введите адрес электронной почты"
 
 #, javascript-format
-#~| msgid "/sk/stream-video/%s/%s/%s"
 #~ msgid "/api/stream-video/%s/%s/%s"
 #~ msgstr "/api/stream-video/%s/%s/%s"
 

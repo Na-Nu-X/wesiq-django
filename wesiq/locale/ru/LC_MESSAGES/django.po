@@ -9,16 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-21 09:58+0000\n"
-"PO-Revision-Date: 2026-07-05 19:28+0000\n"
+"PO-Revision-Date: 2026-08-06 20:24+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/forms.py:8 app/forms.py:22
@@ -306,11 +304,11 @@ msgstr "Введите URL-адрес"
 
 #: app/models.py:21
 msgid "Developer"
-msgstr ""
+msgstr "Разработчик"
 
 #: app/models.py:22
 msgid "Admin"
-msgstr ""
+msgstr "Админ"
 
 #: app/models.py:23 app/models.py:400 app/models.py:446 app/models.py:543
 #: app/models.py:610 app/models.py:707 app/models.py:740 app/models.py:881
@@ -319,439 +317,438 @@ msgstr ""
 #: app/models.py:1798 app/models.py:1842 app/models.py:1880 app/models.py:2000
 #: app/models.py:2033 app/models.py:2196
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: app/models.py:27
 msgid "Unverified"
-msgstr ""
+msgstr "Непроверенный"
 
 #: app/models.py:28 app/models.py:911
 msgid "OK"
-msgstr ""
+msgstr "ХОРОШО"
 
 #: app/models.py:29
 msgid "Suspended"
-msgstr ""
+msgstr "Приостановленный"
 
 #: app/models.py:30
 msgid "Deleted"
-msgstr ""
+msgstr "Удалено"
 
 #: app/models.py:36
 msgid "Daily Official Tasks"
-msgstr ""
+msgstr "Ежедневные официальные задания"
 
 #: app/models.py:37
 msgid "User's random generated daily official tasks."
-msgstr ""
+msgstr "Случайно генерируемые пользователем ежедневные официальные задания."
 
 #: app/models.py:44
-#, fuzzy
 #| msgid "follow"
 msgid "Following"
-msgstr "follow"
+msgstr "Подписан"
 
 #: app/models.py:45
 msgid "User's follow relations with other users."
-msgstr ""
+msgstr "Пользователь следит за отношениями с другими пользователями."
 
 #: app/models.py:52
 msgid "First Name"
-msgstr ""
+msgstr "Имя"
 
 #: app/models.py:53
 msgid "User's first name."
-msgstr ""
+msgstr "Имя пользователя."
 
 #: app/models.py:59
 msgid "Last Name"
-msgstr ""
+msgstr "Фамилия"
 
 #: app/models.py:60
 msgid "User's last name."
-msgstr ""
+msgstr "Фамилия пользователя."
 
 #: app/models.py:66
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: app/models.py:67
 msgid "User's username."
-msgstr ""
+msgstr "Имя пользователя пользователя."
 
 #: app/models.py:73
-#, fuzzy
 #| msgid "E-mail"
 msgid "E-mail Address"
-msgstr "Электронная почта"
+msgstr "Адрес электронной почты"
 
 #: app/models.py:74
 msgid "User's e-mail address."
-msgstr ""
+msgstr "Адрес электронной почты пользователя."
 
 #: app/models.py:79
 msgid "Phone Number"
-msgstr ""
+msgstr "Номер телефона"
 
 #: app/models.py:80
 msgid "User's phone number."
-msgstr ""
+msgstr "Номер телефона пользователя."
 
 #: app/models.py:86
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: app/models.py:87
 msgid "User's hashed password."
-msgstr ""
+msgstr "Хешированный пароль пользователя."
 
 #: app/models.py:92
 msgid "Role"
-msgstr ""
+msgstr "Роль"
 
 #: app/models.py:93
 msgid "User's role."
-msgstr ""
+msgstr "Роль пользователя."
 
 #: app/models.py:100
 msgid "Profile Picture File"
-msgstr ""
+msgstr "Файл изображения профиля"
 
 #: app/models.py:101
 msgid "User's profile picture filename."
-msgstr ""
+msgstr "Имя файла изображения профиля пользователя."
 
 #: app/models.py:108
 msgid "Language Code"
-msgstr ""
+msgstr "Код языка"
 
 #: app/models.py:109
 msgid "User's default preferred language."
-msgstr ""
+msgstr "Предпочитаемый язык пользователя по умолчанию."
 
 #: app/models.py:117 app/models.py:663
 msgid "Last Edit Time"
-msgstr ""
+msgstr "Время последнего редактирования"
 
 #: app/models.py:118
 msgid "Time of the last account edition (only crucial changes)."
-msgstr ""
+msgstr "Время последней редакции аккаунта (только существенные изменения)."
 
 #: app/models.py:124 app/models.py:670 app/models.py:810 app/models.py:968
 #: app/models.py:1922
 msgid "Creation Time"
-msgstr ""
+msgstr "Время создания"
 
 #: app/models.py:125
 msgid "User's account creation time."
-msgstr ""
+msgstr "Время создания учетной записи пользователя."
 
 #: app/models.py:131
 msgid "Verification Code"
-msgstr ""
+msgstr "Проверочный код"
 
 #: app/models.py:132
 msgid "User's verification code to activate account."
-msgstr ""
+msgstr "Код подтверждения пользователя для активации учетной записи."
 
 #: app/models.py:139
 msgid "Password Reset Code"
-msgstr ""
+msgstr "Код сброса пароля"
 
 #: app/models.py:140
 msgid "User's password reset code to change the password."
-msgstr ""
+msgstr "Код сброса пароля пользователя для изменения пароля."
 
 #: app/models.py:147
 msgid "Google ID"
-msgstr ""
+msgstr "идентификатор Google"
 
 #: app/models.py:148
 msgid "ID of user registered with Google."
-msgstr ""
+msgstr "Идентификатор пользователя, зарегистрированного в Google."
 
 #: app/models.py:155
 msgid "Friend Code"
-msgstr ""
+msgstr "Код друга"
 
 #: app/models.py:156
 msgid "User's random generated friend code."
-msgstr ""
+msgstr "Случайно сгенерированный код друга пользователя."
 
 #: app/models.py:165
 msgid "Saved Posts"
-msgstr ""
+msgstr "Сохраненные сообщения"
 
 #: app/models.py:166
 msgid "User's saved posts of other users."
-msgstr ""
+msgstr "Сохраненные пользователем сообщения других пользователей."
 
 #: app/models.py:172
 msgid "Bio"
-msgstr ""
+msgstr "Био"
 
 #: app/models.py:173
 msgid "User's bio."
-msgstr ""
+msgstr "Биография пользователя."
 
 #: app/models.py:180
 msgid "Total XP"
-msgstr ""
+msgstr "Общий опыт"
 
 #: app/models.py:181
 msgid "User's total amount of obtained XP."
-msgstr ""
+msgstr "Общая сумма полученного пользователем опыта."
 
 #: app/models.py:187
 msgid "XP Boost Expiration Time"
-msgstr ""
+msgstr "Срок действия повышения опыта"
 
 #: app/models.py:188
 msgid "Stores the last time of XP boost expiration."
-msgstr ""
+msgstr "Сохраняет время последнего истечения срока действия буста XP."
 
 #: app/models.py:194
 msgid "Total Activities"
-msgstr ""
+msgstr "Всего мероприятий"
 
 #: app/models.py:195
 msgid "User's total amount of recorded activities."
-msgstr ""
+msgstr "Общий объем зарегистрированных действий пользователя."
 
 #: app/models.py:201
-#, fuzzy
 #| msgid "Aktivita"
 msgid "Activity Streak"
-msgstr "Активность"
+msgstr "Полоса активности"
 
 #: app/models.py:202
 msgid "User's current activity streak."
-msgstr ""
+msgstr "Текущая полоса активности пользователя."
 
 #: app/models.py:208
 msgid "Max Activity Streak"
-msgstr ""
+msgstr "Максимальная полоса активности"
 
 #: app/models.py:209
 msgid "Stores the user's maximum activity streak."
-msgstr ""
+msgstr "Сохраняет максимальную полосу активности пользователя."
 
 #: app/models.py:215
 msgid "Last Activity Streak Increase time"
-msgstr ""
+msgstr "Последняя полоса активности Увеличить время"
 
 #: app/models.py:216
 msgid "Stores the user's last activity streak increase time."
-msgstr ""
+msgstr "Сохраняет время увеличения последней полосы активности пользователя."
 
 #: app/models.py:223
 msgid "Private Account"
-msgstr ""
+msgstr "Личный кабинет"
 
 #: app/models.py:224
 msgid "Stores the information if the user's account is private."
 msgstr ""
+"Сохраняет информацию, если учетная запись пользователя является частной."
 
 #: app/models.py:230
 msgid "Account Status"
-msgstr ""
+msgstr "Статус аккаунта"
 
 #: app/models.py:231
 msgid "User's account Status."
-msgstr ""
+msgstr "Статус учетной записи пользователя."
 
 #: app/models.py:239
 msgid "Suspension time"
-msgstr ""
+msgstr "Время приостановки"
 
 #: app/models.py:240
 msgid "Stores the user's suspension time if had any."
-msgstr ""
+msgstr "Сохраняет время приостановки пользователя, если таковое имелось."
 
 #: app/models.py:246
 msgid "Last Login"
-msgstr ""
+msgstr "Последний вход"
 
 #: app/models.py:247
 msgid "Stores the time of the user's last login."
-msgstr ""
+msgstr "Сохраняет время последнего входа пользователя в систему."
 
 #: app/models.py:254 app/models.py:656 app/models.py:993 app/models.py:1621
 #: app/models.py:1947
 msgid "Reports"
-msgstr ""
+msgstr "Отчеты"
 
 #: app/models.py:255
 msgid "User's reports amount."
-msgstr ""
+msgstr "Количество отчетов пользователя."
 
 #: app/models.py:261
 msgid "Data Saving Mode"
-msgstr ""
+msgstr "Режим сохранения данных"
 
 #: app/models.py:262
 msgid "Stores the information if the user has turned on the data saving mode."
 msgstr ""
+"Сохраняет информацию, если пользователь включил режим сохранения данных."
 
 #: app/models.py:323
-#, fuzzy
 #| msgid "Nájsť užívateľa"
 msgid "Užívateľ"
-msgstr "Найти пользователя"
+msgstr "Пользователь"
 
 #: app/models.py:324
 msgid "Užívatelia"
-msgstr ""
+msgstr "Пользователи"
 
 #: app/models.py:352 app/models.py:602
 msgid "Pending"
-msgstr ""
+msgstr "В ожидании"
 
 #: app/models.py:353
 msgid "Accepted"
-msgstr ""
+msgstr "Принял"
 
 #: app/models.py:359
 msgid "From User"
-msgstr ""
+msgstr "От пользователя"
 
 #: app/models.py:360
 msgid "Follow from the selected user."
-msgstr ""
+msgstr "Подпишитесь на выбранного пользователя."
 
 #: app/models.py:368
 msgid "To User"
-msgstr ""
+msgstr "Пользователю"
 
 #: app/models.py:369
 msgid "Follow to the selected user."
-msgstr ""
+msgstr "Следуйте к выбранному пользователю."
 
 #: app/models.py:375 app/models.py:641 app/models.py:985 app/models.py:1326
 #: app/models.py:1939
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: app/models.py:376
 msgid "Status of the follow relation."
-msgstr ""
+msgstr "Статус следующего отношения."
 
 #: app/models.py:384 app/models.py:470 app/models.py:526 app/models.py:723
 #: app/models.py:895 app/models.py:1062 app/models.py:1271 app/models.py:1335
 #: app/models.py:1404 app/models.py:1411 app/models.py:1614 app/models.py:1673
 #: app/models.py:1849 app/models.py:2016 app/models.py:2091 app/models.py:2211
 msgid "Created At"
-msgstr ""
+msgstr "Создано в"
 
 #: app/models.py:385
 msgid "Time of the follow relation creation."
-msgstr ""
+msgstr "Время создания следующего отношения."
 
 #: app/models.py:391
-#, fuzzy
 #| msgid "Zobraziť užívateľa"
 msgid "Vzťah užívateľov"
-msgstr "Показать пользователя"
+msgstr "Отношения с пользователем"
 
 #: app/models.py:395
 #, python-format
 msgid "From %(from_user)s to %(to_user)s."
-msgstr ""
+msgstr "От %(from_user)s к %(to_user)s."
 
 #: app/models.py:401
 msgid "Stores the receiver Of the Badge."
-msgstr ""
+msgstr "Хранит получателя Значка."
 
 #: app/models.py:408 app/models.py:756 app/models.py:1213 app/models.py:1250
 #: app/models.py:1342
 msgid "Title"
-msgstr ""
+msgstr "Заголовок"
 
 #: app/models.py:409
 msgid "Full title of the badge."
-msgstr ""
+msgstr "Полное название значка."
 
 #: app/models.py:415 app/models.py:1220
 msgid "Data"
-msgstr ""
+msgstr "Данные"
 
 #: app/models.py:416
 msgid "Spaceless title of the badge used in the programming logic."
-msgstr ""
+msgstr "Название бейджа без пробелов, используемое в логике программирования."
 
 #: app/models.py:422
 msgid "Obtained In"
-msgstr ""
+msgstr "Получено в"
 
 #: app/models.py:423
 msgid "Time of receivation of the badge."
-msgstr ""
+msgstr "Время получения бейджа."
 
 #: app/models.py:429
 msgid "Špeciálny odznak"
-msgstr ""
+msgstr "Специальный значок"
 
 #: app/models.py:430
 msgid "Špeciálne odznaky"
-msgstr ""
+msgstr "Специальные значки"
 
 #: app/models.py:433
-#, fuzzy, python-format
+#, python-format
 #| msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgid "%(first_name)s %(last_name)s získal \"%(title)s\" v %(obtained_in)s."
-msgstr "Аккаунт %(first_name)s %(last_name)s удален"
+msgstr "%(first_name)s %(last_name)s получил «%(title)s» в %(obtained_in)s."
 
 #: app/models.py:438
 msgid "Official Task"
-msgstr ""
+msgstr "Официальное задание"
 
 #: app/models.py:439
 msgid "Full title of the task."
-msgstr ""
+msgstr "Полное название задачи."
 
 #: app/models.py:447
 msgid "The user to whom the task belongs."
-msgstr ""
+msgstr "Пользователь, которому принадлежит задача."
 
 #: app/models.py:453
 msgid "Progress Percentage"
-msgstr ""
+msgstr "Процент прогресса"
 
 #: app/models.py:454
 msgid "Task's progress percentage of completion."
-msgstr ""
+msgstr "Процент выполнения задачи."
 
 #: app/models.py:463 app/models.py:1257
 msgid "Is Completed"
-msgstr ""
+msgstr "Завершено"
 
 #: app/models.py:464 app/models.py:1258
 msgid "Stores the information if the task is completed."
-msgstr ""
+msgstr "Сохраняет информацию, если задача выполнена."
 
 #: app/models.py:471
 msgid "Time of the generation of the task."
-msgstr ""
+msgstr "Время генерации задачи."
 
 #: app/models.py:478
 msgid "Denná oficiálna úloha užívateľa"
-msgstr ""
+msgstr "Ежедневная официальная задача пользователя"
 
 #: app/models.py:479
 msgid "Denné oficiálne úlohy užívateľov"
-msgstr ""
+msgstr "Ежедневные официальные пользовательские задания"
 
 #: app/models.py:483
-#, fuzzy, python-format
+#, python-format
 #| msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgid "%(first_name)s %(last_name)s splnil úlohu \"%(title)s\"."
-msgstr "Аккаунт %(first_name)s %(last_name)s удален"
+msgstr "%(first_name)s %(last_name)s исполнил роль «%(title)s»."
 
 #: app/models.py:486
 msgid ""
-"%(first_name)s %(last_name)s splnil úlohu \"%(title)s\" na %"
-"(progress_percentage)s%."
+"%(first_name)s %(last_name)s splnil úlohu \"%(title)s\" na "
+"%(progress_percentage)s%."
 msgstr ""
+"%(first_name)s %(last_name)s выполнил задание «%(title)s» на "
+"%(progress_percentage)s%."
 
 #: app/models.py:490 app/models.py:689 app/models.py:1028 app/models.py:1639
 #: app/models.py:1982 app/templates/app/articles.html:239
@@ -765,124 +762,127 @@ msgstr "Спам"
 #: app/models.py:491 app/models.py:690 app/models.py:1029 app/models.py:1640
 #: app/models.py:1983
 msgid "Harassment"
-msgstr ""
+msgstr "Домогательство"
 
 #: app/models.py:492 app/models.py:691 app/models.py:1030 app/models.py:1641
 #: app/models.py:1984
 msgid "Hate Speech"
-msgstr ""
+msgstr "Разжигание ненависти"
 
 #: app/models.py:493 app/models.py:692 app/models.py:1031 app/models.py:1642
 #: app/models.py:1985
 msgid "Misinformation"
-msgstr ""
+msgstr "Дезинформация"
 
 #: app/models.py:494 app/models.py:693 app/models.py:1032 app/models.py:1643
 #: app/models.py:1986
-#, fuzzy
 #| msgid "Explicitný obsah"
 msgid "Explicit Content"
-msgstr "Откровенный контент"
+msgstr "Явный контент"
 
 #: app/models.py:500
 msgid "Reported User"
-msgstr ""
+msgstr "Сообщенный пользователь"
 
 #: app/models.py:501
 msgid "The user against whom the report was filed."
-msgstr ""
+msgstr "Пользователь, против которого был подан отчет."
 
 #: app/models.py:509
 msgid "Reporting User"
-msgstr ""
+msgstr "Сообщивший о пользователе"
 
 #: app/models.py:510 app/models.py:1047 app/models.py:1658 app/models.py:2001
 msgid "The user who submitted the report."
-msgstr ""
+msgstr "Пользователь, отправивший отчет."
 
 #: app/models.py:517 app/models.py:714 app/models.py:1053 app/models.py:1664
 #: app/models.py:2007
 msgid "Reason"
-msgstr ""
+msgstr "Причина"
 
 #: app/models.py:518
 msgid "Reason of the given report."
-msgstr ""
+msgstr "Причина данного сообщения."
 
 #: app/models.py:527
 msgid "Time the report was submitted."
-msgstr ""
+msgstr "Время подачи отчета."
 
 #: app/models.py:534
-#, fuzzy
 #| msgid "Nájsť užívateľa"
 msgid "Nahlásenie užívateľa"
-msgstr "Найти пользователя"
+msgstr "Отчеты пользователей"
 
 #: app/models.py:535
-#, fuzzy
 #| msgid "Nájsť užívateľa"
 msgid "Nahlásenia užívateľov"
-msgstr "Найти пользователя"
+msgstr "Пользовательские отчеты"
 
 #: app/models.py:538
 #, python-format
 msgid ""
-"Užívateľ %(reporting_user_first_name)s %(reporting_user_last_name)s nahlásil "
-"užívateľa %(reported_user_first_name)s %(reported_user_last_name)s."
+"Užívateľ %(reporting_user_first_name)s %(reporting_user_last_name)s nahlásil"
+" užívateľa %(reported_user_first_name)s %(reported_user_last_name)s."
 msgstr ""
+"Пользователь %(reporting_user_first_name)s %(reporting_user_last_name)s "
+"сообщил о пользователе %(reported_user_first_name)s "
+"%(reported_user_last_name)s."
 
 #: app/models.py:544
 msgid "The user to whom the activity record belongs."
-msgstr ""
+msgstr "Пользователь, которому принадлежит запись активности."
 
 #: app/models.py:551
 msgid "End Time"
-msgstr ""
+msgstr "Конец Времени"
 
 #: app/models.py:552
 msgid "Activity end time."
-msgstr ""
+msgstr "Время окончания активности."
 
 #: app/models.py:558
 msgid "Elapsed Time (Seconds)"
-msgstr ""
+msgstr "Прошедшее время (секунды)"
 
 #: app/models.py:559
 msgid "Duration of the activity in seconds."
-msgstr ""
+msgstr "Продолжительность активности в секундах."
 
 #: app/models.py:565
 msgid "Gained XP"
-msgstr ""
+msgstr "Получен опыт"
 
 #: app/models.py:566
 msgid "Amount of XP received for activity."
-msgstr ""
+msgstr "Количество XP, полученное за активность."
 
 #: app/models.py:572 app/models.py:1109
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: app/models.py:573
 msgid "Selected activity name."
-msgstr ""
+msgstr "Название выбранного действия."
 
 #: app/models.py:579 app/models.py:1102
 msgid "Day"
-msgstr ""
+msgstr "День"
 
 #: app/models.py:580
 msgid "Assigned activity day."
-msgstr ""
+msgstr "Назначенный день активности."
 
 #: app/models.py:586
 msgid "Training Plan Summary"
-msgstr ""
+msgstr "Краткое описание плана обучения"
 
 #: app/models.py:587
-msgid "Data recorded for an activity completed according to the training plan."
+msgid ""
+"Data recorded for an activity completed according to the training plan."
 msgstr ""
+"Данные, записанные для деятельности, выполненной в соответствии с планом "
+"обучения."
 
 #: app/models.py:594 app/templates/app/homepage.html:90
 #: app/templates/app/manage_training_plans.html:13
@@ -891,10 +891,9 @@ msgid "Aktivita"
 msgstr "Активность"
 
 #: app/models.py:595
-#, fuzzy
 #| msgid "Aktivita"
 msgid "Aktivity"
-msgstr "Активность"
+msgstr "Деятельность"
 
 #: app/models.py:598
 #, python-format
@@ -902,82 +901,82 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s zaznamenal %(elapsed_time)s sekúnd "
 "aktívneho času."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s зафиксировал %(elapsed_time)s "
+"секунд активного времени."
 
 #: app/models.py:603
 msgid "Approved"
-msgstr ""
+msgstr "Одобренный"
 
 #: app/models.py:604
 msgid "Denied"
-msgstr ""
+msgstr "Отклонен"
 
 #: app/models.py:605 app/models.py:912
 msgid "Hidden"
-msgstr ""
+msgstr "Скрытый"
 
 #: app/models.py:611
 msgid "The user who wrote the review."
-msgstr ""
+msgstr "Пользователь, написавший отзыв."
 
 #: app/models.py:620 app/models.py:936 app/models.py:1522 app/models.py:1890
 msgid "Reports From Users"
-msgstr ""
+msgstr "Отчеты от пользователей"
 
 #: app/models.py:621
 msgid "Users who submitted a report."
-msgstr ""
+msgstr "Пользователи, отправившие отчет."
 
 #: app/models.py:627 app/models.py:888
 msgid "Rating"
-msgstr ""
+msgstr "Рейтинг"
 
 #: app/models.py:628 app/models.py:889
 msgid "Rating from 1 to 5."
-msgstr ""
+msgstr "Оценка от 1 до 5."
 
 #: app/models.py:634 app/models.py:699
 msgid "Review"
-msgstr ""
+msgstr "Обзор"
 
 #: app/models.py:635
 msgid "Content of the written review."
-msgstr ""
+msgstr "Содержание письменной рецензии."
 
 #: app/models.py:642
 msgid "Current status of the written review."
-msgstr ""
+msgstr "Текущий статус письменного обзора."
 
 #: app/models.py:649
 msgid "Rejection Time"
-msgstr ""
+msgstr "Время отклонения"
 
 #: app/models.py:650
 msgid "Review rejection time."
-msgstr ""
+msgstr "Просмотрите время отказа."
 
 #: app/models.py:657
 msgid "Amount of total obtained reports."
-msgstr ""
+msgstr "Общее количество полученных отчетов."
 
 #: app/models.py:664
 msgid "Time of the last editing."
-msgstr ""
+msgstr "Время последнего редактирования."
 
 #: app/models.py:671
 msgid "Time of the review submission."
-msgstr ""
+msgstr "Время подачи отзыва."
 
 #: app/models.py:677
-#, fuzzy
 #| msgid "recenzia"
 msgid "Recenzia"
-msgstr "обзор"
+msgstr "Обзор"
 
 #: app/models.py:678
-#, fuzzy
 #| msgid "recenzie"
 msgid "Recenzie"
-msgstr "обзоры"
+msgstr "Отзывы"
 
 #: app/models.py:682
 #, python-format
@@ -985,6 +984,8 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s "
 "hviezdičkami."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s добавил отзыв с %(rating)s "
+"звездами."
 
 #: app/models.py:685
 #, python-format
@@ -992,34 +993,34 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s "
 "hviezdičkou."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s добавил отзыв с %(rating)s "
+"звездой."
 
 #: app/models.py:700
 msgid "A review that has been reported."
-msgstr ""
+msgstr "Обзор, о котором сообщалось."
 
 #: app/models.py:708
 msgid "The user who reported the review."
-msgstr ""
+msgstr "Пользователь, который сообщил об отзыве."
 
 #: app/models.py:715
 msgid "Reason for reporting the review."
-msgstr ""
+msgstr "Причина жалобы на отзыв."
 
 #: app/models.py:724
 msgid "Time of review report submission."
-msgstr ""
+msgstr "Время предоставления отчета о проверке."
 
 #: app/models.py:731
-#, fuzzy
 #| msgid "Našla sa 1 recenzia."
 msgid "Nahlásená recenzia"
-msgstr "Найдено 1 отзыв."
+msgstr "Жалоба на отзыв"
 
 #: app/models.py:732
-#, fuzzy
 #| msgid "Najnovšie recenzie"
 msgid "Nahlásené recenzie"
-msgstr "Последние отзывы"
+msgstr "Сообщенные отзывы"
 
 #: app/models.py:735
 #, python-format
@@ -1027,153 +1028,152 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s nahlásil recenziu od "
 "%(reviewer_first_name)s %(reviewer_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s сообщил отзыв от "
+"%(reviewer_first_name)s %(reviewer_last_name)s."
 
 #: app/models.py:741
 msgid "The user who owns the article."
-msgstr ""
+msgstr "Пользователь, которому принадлежит статья."
 
 #: app/models.py:750
 msgid "Rating From Users"
-msgstr ""
+msgstr "Рейтинг пользователей"
 
 #: app/models.py:751
 msgid "User rating of the article."
-msgstr ""
+msgstr "Пользовательский рейтинг статьи."
 
 #: app/models.py:757
 msgid "Title of the article."
-msgstr ""
+msgstr "Название статьи."
 
 #: app/models.py:763 app/models.py:1529
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: app/models.py:764
 msgid "Description of the article."
-msgstr ""
+msgstr "Описание статьи."
 
 #: app/models.py:770
 msgid "Image File"
-msgstr ""
+msgstr "Файл изображения"
 
 #: app/models.py:771
 msgid "Filename of the banner image of the article."
-msgstr ""
+msgstr "Имя файла баннера статьи."
 
 #: app/models.py:777
 msgid "HTML Filename"
-msgstr ""
+msgstr "HTML-имя файла"
 
 #: app/models.py:778
 msgid "Filename of the HTML template of the article."
-msgstr ""
+msgstr "Имя файла HTML-шаблона статьи."
 
 #: app/models.py:786
 msgid "URL of the article."
-msgstr ""
+msgstr "URL статьи."
 
 #: app/models.py:793 app/models.py:1180
-#, fuzzy
 #| msgid "Kategória"
 msgid "Categories"
-msgstr "Категория"
+msgstr "Категории"
 
 #: app/models.py:794
 msgid "Categories corresponding to the article."
-msgstr ""
+msgstr "Категории соответствующие статье."
 
 #: app/models.py:803
 msgid "Visitors"
-msgstr ""
+msgstr "Посетители"
 
 #: app/models.py:804
 msgid "Amount of the article's visitors."
-msgstr ""
+msgstr "Количество посетителей статьи."
 
 #: app/models.py:811
 msgid "Time of the article creation."
-msgstr ""
+msgstr "Время создания статьи."
 
 #: app/models.py:817
 msgid "Difficulty Percentage"
-msgstr ""
+msgstr "Процент сложности"
 
 #: app/models.py:818
 msgid "Exercise difficulty in percent."
-msgstr ""
+msgstr "Сложность упражнения в процентах."
 
 #: app/models.py:825
 msgid "Time To Learn Percentage"
-msgstr ""
+msgstr "Время учиться в процентах"
 
 #: app/models.py:826
 msgid "Exercise time to learn in percent."
-msgstr ""
+msgstr "Время упражнений на обучение в процентах."
 
 #: app/models.py:833
 msgid "Time To Learn Text"
-msgstr ""
+msgstr "Время выучить текст"
 
 #: app/models.py:834
 msgid "Exercise time to learn labeled text."
-msgstr ""
+msgstr "Упражнение время, чтобы изучить помеченный текст."
 
 #: app/models.py:840
 msgid "Rarity Percentage"
-msgstr ""
+msgstr "Процент редкости"
 
 #: app/models.py:841
 msgid "Exercise rarity in percent."
-msgstr ""
+msgstr "Редкость упражнений в процентах."
 
 #: app/models.py:848
 msgid "Strength Percentage"
-msgstr ""
+msgstr "Процент прочности"
 
 #: app/models.py:849
 msgid "Exercise required strength in percent."
-msgstr ""
+msgstr "Упражнение требует силы в процентах."
 
 #: app/models.py:856
 msgid "Technique Percentage"
-msgstr ""
+msgstr "Техника в процентах"
 
 #: app/models.py:857
 msgid ""
 "The technical difficulty value of the exercise, expressed as a percentage."
-msgstr ""
+msgstr "Техническая сложность упражнения, выраженная в процентах."
 
 #: app/models.py:865
-#, fuzzy
 #| msgid "Článok"
 msgid "Články"
-msgstr "Статья"
+msgstr "Статьи"
 
 #: app/models.py:873 app/models.py:917
 msgid "Article"
-msgstr ""
+msgstr "Статья"
 
 #: app/models.py:874
 msgid "The article to which the given rating applies."
-msgstr ""
+msgstr "Статья, к которой относится данный рейтинг."
 
 #: app/models.py:882
 msgid "The user who rated the article."
-msgstr ""
+msgstr "Пользователь, оценивший статью."
 
 #: app/models.py:896 app/models.py:918
 msgid "Time the article rating was submitted."
-msgstr ""
+msgstr "Время подачи рейтинга статьи."
 
 #: app/models.py:903
-#, fuzzy
 #| msgid "Pridať článok"
 msgid "Recenzia článku"
-msgstr "Добавить статью"
+msgstr "Обзор статьи"
 
 #: app/models.py:904
 msgid "Recenzie článkov"
-msgstr ""
+msgstr "Обзоры статей"
 
 #: app/models.py:907
 #, python-format
@@ -1181,58 +1181,60 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal recenziu pre článok: "
 "%(article_title)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s добавил отзыв к статье: "
+"%(article_title)s."
 
 #: app/models.py:927
 msgid "The user who wrote the comment."
-msgstr ""
+msgstr "Пользователь, написавший комментарий."
 
 #: app/models.py:937 app/models.py:1891
 msgid "Users who reported the comment."
-msgstr ""
+msgstr "Пользователи, которые сообщили о комментарии."
 
 #: app/models.py:943 app/models.py:1897
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: app/models.py:944 app/models.py:1898
 msgid "Comment content."
-msgstr ""
+msgstr "Содержание комментария."
 
 #: app/models.py:953 app/models.py:1592 app/models.py:1907
 msgid "Likes"
-msgstr ""
+msgstr "Нравится"
 
 #: app/models.py:954
 msgid "Number of likes on the comment."
-msgstr ""
+msgstr "Количество лайков на комментарий."
 
 #: app/models.py:961 app/models.py:1600 app/models.py:1915
 msgid "Likes From Users"
-msgstr ""
+msgstr "Лайки от пользователей"
 
 #: app/models.py:962 app/models.py:1916
 msgid "Users who liked the comment."
-msgstr ""
+msgstr "Пользователи, которым понравился комментарий."
 
 #: app/models.py:969
 msgid "Time the comment was written."
-msgstr ""
+msgstr "Время написания комментария."
 
 #: app/models.py:976 app/models.py:1930
 msgid "Parent"
-msgstr ""
+msgstr "Родитель"
 
 #: app/models.py:977 app/models.py:1931
 msgid "Link to the parent comment in the case of a reply."
-msgstr ""
+msgstr "Ссылка на родительский комментарий в случае ответа."
 
 #: app/models.py:986 app/models.py:1940
 msgid "Current status of the comment."
-msgstr ""
+msgstr "Текущий статус комментария."
 
 #: app/models.py:994 app/models.py:1948
 msgid "Amount of received reports of the comment."
-msgstr ""
+msgstr "Количество полученных сообщений о комментарии."
 
 #: app/models.py:1000 app/models.py:1954 app/templates/app/profile.html:772
 #: app/templates/app/profile.html:773 app/templates/app/profile.html:1402
@@ -1242,22 +1244,22 @@ msgstr "Уровень"
 #: app/models.py:1001 app/models.py:1955
 msgid "Comment nesting level (1 is a main comment; deeper levels are replies)"
 msgstr ""
+"Уровень вложенности комментариев (1 - основной комментарий, более глубокие "
+"уровни - ответы)"
 
 #: app/models.py:1010 app/models.py:1964
 msgid "Maximum level of nested comments has been reached."
 msgstr "Достигнут максимальный уровень вложенных комментариев."
 
 #: app/models.py:1020
-#, fuzzy
 #| msgid "Populárne články"
 msgid "Komentár článku"
-msgstr "Популярные статьи"
+msgstr "Комментарий к статье"
 
 #: app/models.py:1021
-#, fuzzy
 #| msgid "Komentáre"
 msgid "Komentáre článkov"
-msgstr "Комментарии"
+msgstr "Комментарии к статье"
 
 #: app/models.py:1024
 #, python-format
@@ -1265,34 +1267,36 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal komentár pre článok: "
 "%(article_title)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s добавил комментарий к статье: "
+"%(article_title)s."
 
 #: app/models.py:1033 app/models.py:1644 app/models.py:1987
 msgid "Other"
-msgstr ""
+msgstr "Другой"
 
 #: app/models.py:1038
 msgid "Article Forum Comment"
-msgstr ""
+msgstr "Статья Форум Комментарий"
 
 #: app/models.py:1039
 msgid "The article comment that received a report."
-msgstr ""
+msgstr "Комментарий к статье, получивший отчет."
 
 #: app/models.py:1054 app/models.py:1665 app/models.py:2008
 msgid "Reason for reporting."
-msgstr ""
+msgstr "Причина сообщения."
 
 #: app/models.py:1063 app/models.py:1674 app/models.py:2017
 msgid "Report submission time."
-msgstr ""
+msgstr "Срок подачи отчета."
 
 #: app/models.py:1070
 msgid "Nahlásenie komentáru článku"
-msgstr ""
+msgstr "Жалоба на комментарий к статье"
 
 #: app/models.py:1071
 msgid "Nahlásenia komentárov článkov"
-msgstr ""
+msgstr "Отчеты о комментариях к статьям"
 
 #: app/models.py:1074 app/models.py:2028
 #, python-format
@@ -1300,68 +1304,73 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s nahlásil komentár od "
 "%(reported_first_name)s %(reported_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s сообщил о комментарии "
+"%(reported_first_name)s %(reported_last_name)s."
 
 #: app/models.py:1078 app/models.py:1124
 msgid "Reps"
-msgstr ""
+msgstr "Представители"
 
 #: app/models.py:1079
 msgid "Seconds"
-msgstr ""
+msgstr "Секунды"
 
 #: app/models.py:1080
 msgid "Steps"
-msgstr ""
+msgstr "Шаги"
 
 #: app/models.py:1086
 msgid "The user to whom the training plan belongs."
-msgstr ""
+msgstr "Пользователь, которому принадлежит план обучения."
 
 #: app/models.py:1093
 msgid "Training Plan Key"
-msgstr ""
+msgstr "Ключ к плану обучения"
 
 #: app/models.py:1094
 msgid "Random identification key for the training plan."
-msgstr ""
+msgstr "Случайный идентификационный ключ для плана обучения."
 
 #: app/models.py:1103
 msgid "Training plan day."
-msgstr ""
+msgstr "День тренировочного плана."
 
 #: app/models.py:1110
 msgid "Training plan name."
-msgstr ""
+msgstr "Название плана обучения."
 
 #: app/models.py:1116 app/models.py:1163
 msgid "Exercise"
-msgstr ""
+msgstr "Упражнение"
 
 #: app/models.py:1117 app/models.py:1164
 msgid "Exercise name."
-msgstr ""
+msgstr "Название упражнения."
 
 #: app/models.py:1127
 msgid ""
 "Exercise periods (the length of the array represents sets and the amount of "
 "reps represents the values (0 = to failute / max. reps)."
 msgstr ""
+"Периоды упражнений (длина массива представляет собой подходы, а количество "
+"повторений представляет собой значения (0 = до отказа / максимальное "
+"количество повторений)."
 
 #: app/models.py:1133 app/models.py:1170
 msgid "Unit"
-msgstr ""
+msgstr "Единица"
 
 #: app/models.py:1134 app/models.py:1171
 msgid "The unit in which the exercise is measured."
-msgstr ""
+msgstr "Единица измерения упражнения."
 
 #: app/models.py:1142 app/models.py:1264 app/models.py:1762
 msgid "Order"
-msgstr ""
+msgstr "Заказ"
 
 #: app/models.py:1143
 msgid "The order of the exercise in the training plan."
-msgstr ""
+msgstr "Порядок выполнения упражнений в плане тренировок."
 
 #: app/models.py:1149 app/templates/app/training_session.html:138
 #: app/templates/app/training_session.html:151
@@ -1373,320 +1382,317 @@ msgid "Tréningové plány"
 msgstr "Планы тренировок"
 
 #: app/models.py:1153
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgid "Tréningový plán užívateľa %(first_name)s %(last_name)s."
-msgstr "Привет %(first_name)s %(last_name)s"
+msgstr "План тренировок пользователя %(first_name)s %(last_name)s."
 
 #: app/models.py:1157
 msgid "reps"
-msgstr ""
+msgstr "представители"
 
 #: app/models.py:1158
 msgid "seconds"
-msgstr ""
+msgstr "секунды"
 
 #: app/models.py:1159
 msgid "steps"
-msgstr ""
+msgstr "шаги"
 
 #: app/models.py:1184
 msgid "Categories the given exercise falls into."
-msgstr ""
+msgstr "Категории, к которым относится данное упражнение."
 
 #: app/models.py:1190
 msgid "Requires Weight"
-msgstr ""
+msgstr "Требуется вес"
 
 #: app/models.py:1191
 msgid "Stores the information if the exercise requires the additional weight."
-msgstr ""
+msgstr "Сохраняет информацию, если упражнение требует дополнительного веса."
 
 #: app/models.py:1197
 msgid "Image Filename"
-msgstr ""
+msgstr "Имя файла изображения"
 
 #: app/models.py:1198
 msgid "Stores the filename of the exercise image."
-msgstr ""
+msgstr "Сохраняет имя файла изображения упражнения."
 
 #: app/models.py:1205
 msgid "Cvik"
-msgstr ""
+msgstr "Упражнение"
 
 #: app/models.py:1206
 msgid "Cviky"
-msgstr ""
+msgstr "Упражнения"
 
 #: app/models.py:1214
 msgid "Title of the task."
-msgstr ""
+msgstr "Название задачи."
 
 #: app/models.py:1221
 msgid "Spaceless title of the task used in the programming logic."
-msgstr ""
+msgstr "Название задачи без пробелов, используемое в логике программирования."
 
 #: app/models.py:1227
 msgid "XP"
-msgstr ""
+msgstr "XP"
 
 #: app/models.py:1228
 msgid "Amount of XP upon completing the task."
-msgstr ""
+msgstr "Количество опыта после выполнения задания."
 
 #: app/models.py:1234
 msgid "Oficiálna úloha"
-msgstr ""
+msgstr "Официальное задание"
 
 #: app/models.py:1235
 msgid "Oficiálne úlohy"
-msgstr ""
+msgstr "Официальные задания"
 
 #: app/models.py:1238
 #, python-format
 msgid "Oficiálna úloha za %(xp)s XP."
-msgstr ""
+msgstr "Официальный квест на %(xp)s XP."
 
 #: app/models.py:1244
 msgid "The user who created a custom task."
-msgstr ""
+msgstr "Пользователь, создавший пользовательскую задачу."
 
 #: app/models.py:1251
 msgid "Title of the custom task."
-msgstr ""
+msgstr "Название пользовательской задачи."
 
 #: app/models.py:1265
 msgid "Order of the task."
-msgstr ""
+msgstr "Порядок выполнения задачи."
 
 #: app/models.py:1272
 msgid "Time of creation of the task."
-msgstr ""
+msgstr "Время создания задачи."
 
 #: app/models.py:1278
-#, fuzzy
 #| msgid "Pridaj vlastnú úlohu."
 msgid "Vlastná úloha"
-msgstr "Добавьте свою задачу."
+msgstr "Своя задача"
 
 #: app/models.py:1279
-#, fuzzy
 #| msgid "Pridaj vlastnú úlohu."
 msgid "Vlastné úlohy"
-msgstr "Добавьте свою задачу."
+msgstr "Собственные задачи"
 
 #: app/models.py:1282
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgid "Vlastná úloha užívateľa %(first_name)s %(last_name)s."
-msgstr "Привет %(first_name)s %(last_name)s"
+msgstr "Собственная роль %(first_name)s %(last_name)s."
 
 #: app/models.py:1286
 msgid "pending"
-msgstr ""
+msgstr "в ожидании"
 
 #: app/models.py:1287
 msgid "succeeded"
-msgstr ""
+msgstr "удалось"
 
 #: app/models.py:1288
 msgid "failed"
-msgstr ""
+msgstr "неуспешный"
 
 #: app/models.py:1294
 msgid "The user who created the transaction."
-msgstr ""
+msgstr "Пользователь, создавший транзакцию."
 
 #: app/models.py:1302
 msgid "Transaction ID in the Stripe service."
-msgstr ""
+msgstr "Идентификатор транзакции в сервисе Stripe."
 
 #: app/models.py:1309
 msgid "Cardholder Name"
-msgstr ""
+msgstr "Имя владельца карты"
 
 #: app/models.py:1310
 msgid "Cardholder's name."
-msgstr ""
+msgstr "Имя владельца карты."
 
 #: app/models.py:1317
 msgid "Amount (€)"
-msgstr ""
+msgstr "Сумма (€)"
 
 #: app/models.py:1318
 msgid "Volume of processed funds in EUR."
-msgstr ""
+msgstr "Объем обработанных средств в евро."
 
 #: app/models.py:1327
 msgid "Status of the added transaction."
-msgstr ""
+msgstr "Статус добавленной транзакции."
 
 #: app/models.py:1336
 msgid "Transaction addition time."
-msgstr ""
+msgstr "Время добавления транзакции."
 
 #: app/models.py:1343
 msgid "Title of the payment."
-msgstr ""
+msgstr "Название платежа."
 
 #: app/models.py:1349
 msgid "Transakcia"
-msgstr ""
+msgstr "Сделка"
 
 #: app/models.py:1350
 msgid "Transakcie"
-msgstr ""
+msgstr "Транзакции"
 
 #: app/models.py:1357
 msgid "Zadarmo"
-msgstr ""
+msgstr "Бесплатно"
 
 #: app/models.py:1358
 msgid "Základné"
-msgstr ""
+msgstr "Базовый"
 
 #: app/models.py:1359
 msgid "Prémiové"
-msgstr ""
+msgstr "Премиум"
 
 #: app/models.py:1365
 msgid "The user who activated the subscription."
-msgstr ""
+msgstr "Пользователь, активировавший подписку."
 
 #: app/models.py:1372
 msgid "Stripe Subscription ID"
-msgstr ""
+msgstr "Идентификатор подписки Stripe"
 
 #: app/models.py:1373
 msgid "ID of the Stripe subscription."
-msgstr ""
+msgstr "Идентификатор подписки Stripe."
 
 #: app/models.py:1381
 msgid "Plan"
-msgstr ""
+msgstr "План"
 
 #: app/models.py:1382
 msgid "Activated subscription plan."
-msgstr ""
+msgstr "Активированный план подписки."
 
 #: app/models.py:1390
 msgid "Is Active"
-msgstr ""
+msgstr "Активен"
 
 #: app/models.py:1391
 msgid "Stores the information if the subscription is still active."
-msgstr ""
+msgstr "Сохраняет информацию, если подписка все еще активна."
 
 #: app/models.py:1397
 msgid "Is Cancelled"
-msgstr ""
+msgstr "Отменено"
 
 #: app/models.py:1398
 msgid ""
 "Stores the information if the subscription is cancelled. The subscription "
 "will end at the end of the billing period."
 msgstr ""
+"Сохраняет информацию, если подписка отменена. Подписка завершится в конце "
+"расчетного периода."
 
 #: app/models.py:1405
 msgid "Time the subscription was added."
-msgstr ""
+msgstr "Время добавления подписки."
 
 #: app/models.py:1412
 msgid "Time the subscription was updated."
-msgstr ""
+msgstr "Время обновления подписки."
 
 #: app/models.py:1420
-#, fuzzy
 #| msgid "Žiadne aktívne navýšenie XP"
 msgid "Žiadne aktívne predplatné"
-msgstr "Нет активного повышения опыта"
+msgstr "Нет активной подписки"
 
 #: app/models.py:1429 app/models.py:1434 app/models.py:1460
-#, fuzzy
 #| msgid "Graf sa nepodarilo načítať."
 msgid "Nepodarilo sa načítať dáta."
-msgstr "График не удалось загрузить."
+msgstr "Не удалось загрузить данные."
 
 #: app/models.py:1444
 msgid "Predplatné vypršalo."
-msgstr ""
+msgstr "Предплатное выпршало."
 
 #: app/models.py:1449
 #, python-format
 msgid "Ostáva %(remaining_days)s dní"
-msgstr ""
+msgstr "осталось %(remaining_days)s дней"
 
 #: app/models.py:1455
-#, fuzzy, python-format
+#, python-format
 #| msgid "Ostáva <span>%(official_tasks_remaining_hours)s</span> hodín."
 msgid "Ostáva %(remaining_hours)s hodín"
-msgstr "Осталось <span>%(official_tasks_remaining_hours)s</span> часов."
+msgstr "Oсталось %(remaining_hours)s часов"
 
 #: app/models.py:1463
 msgid "Predplatné"
-msgstr ""
+msgstr "Подписка"
 
 #: app/models.py:1467
-#, fuzzy, python-format
+#, python-format
 #| msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgid "Užívateľ %(first_name)s %(last_name)s má aktívne predplatné."
-msgstr "Аккаунт %(first_name)s %(last_name)s удален"
+msgstr "Пользователь %(first_name)s %(last_name)s имеет активную подписку."
 
 #: app/models.py:1470
-#, fuzzy, python-format
+#, python-format
 #| msgid "Účet %(first_name)s %(last_name)s bol odstránený"
 msgid "Užívateľ %(first_name)s %(last_name)s nemá aktívne predplatné."
-msgstr "Аккаунт %(first_name)s %(last_name)s удален"
+msgstr "Пользователь %(first_name)s %(last_name)s не имеет активной подписки."
 
 #: app/models.py:1505
 msgid "The user who uploaded the post."
-msgstr ""
+msgstr "Пользователь, загрузивший публикацию."
 
 #: app/models.py:1514
 msgid "Seen By"
-msgstr ""
+msgstr "Просмотрено"
 
 #: app/models.py:1515
 msgid "Users who have already seen the post."
-msgstr ""
+msgstr "Пользователи, которые уже видели публикацию."
 
 #: app/models.py:1523
 msgid "Users who reported the post."
-msgstr ""
+msgstr "Пользователи, которые пожаловались на публикацию."
 
 #: app/models.py:1530
 msgid "Description of the post."
-msgstr ""
+msgstr "Описание поста."
 
 #: app/models.py:1538
 msgid "Tagged Users"
-msgstr ""
+msgstr "Отмеченные пользователи"
 
 #: app/models.py:1539
 msgid "Users tagged in the post."
-msgstr ""
+msgstr "Пользователи, отмеченные в публикации."
 
 #: app/models.py:1545
-#, fuzzy
 #| msgid "Pridať Hashtag"
 msgid "Added Hashtags"
-msgstr "Добавить хештег"
+msgstr "Добавлены хэштеги"
 
 #: app/models.py:1549
 msgid "Hashtags added to the post."
-msgstr ""
+msgstr "К посту добавлены хештеги."
 
 #: app/models.py:1555
 msgid "Location"
-msgstr ""
+msgstr "Расположение"
 
 #: app/models.py:1556
 msgid "Location added to the post."
-msgstr ""
+msgstr "Местоположение добавлено в пост."
 
 #: app/models.py:1563
 msgid "Coordinates"
-msgstr ""
+msgstr "Координаты"
 
 #: app/models.py:1564
 msgid ""
@@ -1694,79 +1700,84 @@ msgid ""
 "(Standardized, Geocentric Coordinate System Used Globally For Mapping, "
 "Navigation And GPS) format."
 msgstr ""
+"Точные координаты местоположения добавлены в сообщение в формате WGS84 "
+"(стандартизированная геоцентрическая система координат, используемая во всем"
+" мире для картографии, навигации и GPS)."
 
 #: app/models.py:1571
 msgid "Public Visibility"
-msgstr ""
+msgstr "Публичная видимость"
 
 #: app/models.py:1572
 msgid "Stores the information if the post is visible for public."
 msgstr ""
+"Сохраняет информацию, если сообщение доступно для публичного просмотра."
 
 #: app/models.py:1578
 msgid "Allow Comments"
-msgstr ""
+msgstr "Разрешить комментарии"
 
 #: app/models.py:1579
 msgid "Stores the information if the comments are allowed for the post."
-msgstr ""
+msgstr "Сохраняет информацию, разрешены ли комментарии к сообщению."
 
 #: app/models.py:1585
 msgid "Hide Likes"
-msgstr ""
+msgstr "Скрыть лайки"
 
 #: app/models.py:1586
 msgid "Stores the information if the post's likes are hidden."
-msgstr ""
+msgstr "Сохраняет информацию, если лайки поста скрыты."
 
 #: app/models.py:1593
 msgid "Total amount of obtained likes."
-msgstr ""
+msgstr "Общее количество полученных лайков."
 
 #: app/models.py:1601
 msgid "Users who liked the post."
-msgstr ""
+msgstr "Пользователи, которым понравился пост."
 
 #: app/models.py:1607
 msgid "Latest Interaction"
-msgstr ""
+msgstr "Последнее взаимодействие"
 
 #: app/models.py:1608
 msgid ""
 "Time of the last recorded interaction with the post (new comment, like)."
 msgstr ""
+"Время последнего зафиксированного взаимодействия с публикацией (новый "
+"комментарий, лайк)."
 
 #: app/models.py:1615
 msgid "Time of creation of the post."
-msgstr ""
+msgstr "Время создания поста."
 
 #: app/models.py:1622
 msgid "Amount of received reports of the post."
-msgstr ""
+msgstr "Количество полученных отчетов по посту."
 
 #: app/models.py:1631 app/models.py:1681 app/templates/app/post.html:5
 msgid "Príspevok"
 msgstr "пост"
 
 #: app/models.py:1632 app/models.py:1682
-#, fuzzy
 #| msgid "Príspevok"
 msgid "Príspevky"
-msgstr "пост"
+msgstr "Посты"
 
 #: app/models.py:1635
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgid "Príspevok užívateľa %(first_name)s %(last_name)s."
-msgstr "Привет %(first_name)s %(last_name)s"
+msgstr "Вклад пользователя %(first_name)s %(last_name)s."
 
 #: app/models.py:1649 app/models.py:1690 app/models.py:1807 app/models.py:1871
 msgid "Post"
-msgstr ""
+msgstr "Публикация"
 
 #: app/models.py:1650
 msgid "The post that received a report."
-msgstr ""
+msgstr "Пост, на который поступил отчет."
 
 #: app/models.py:1685
 #, python-format
@@ -1774,146 +1785,147 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s nahlásil príspevok užívateľa "
 "%(reported_first_name)s %(reported_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s сообщил о сообщении пользователя "
+"%(reported_first_name)s %(reported_last_name)s."
 
 #: app/models.py:1691
 msgid "The post to which the given medium belongs."
-msgstr ""
+msgstr "Пост, к которому принадлежит данный носитель."
 
 #: app/models.py:1699
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 #: app/models.py:1700
 msgid "Path to the file."
-msgstr ""
+msgstr "Путь к файлу."
 
 #: app/models.py:1705
 msgid "Thumbnail"
-msgstr ""
+msgstr "Миниатюра"
 
 #: app/models.py:1706
 msgid "Path to the video thumbnail."
-msgstr ""
+msgstr "Путь к миниатюре видео."
 
 #: app/models.py:1712
 msgid "Is Video"
-msgstr ""
+msgstr "Видео"
 
 #: app/models.py:1713
 msgid "Stores the information if the uploaded file is a video."
-msgstr ""
+msgstr "Сохраняет информацию, если загруженный файл является видео."
 
 #: app/models.py:1719
 msgid "Is Muted Video"
-msgstr ""
+msgstr "Видео отключено"
 
 #: app/models.py:1720
 msgid "Stores the information if the uploaded video is muted."
-msgstr ""
+msgstr "Сохраняет информацию, если звук загруженного видео отключен."
 
 #: app/models.py:1726
 msgid "Total Watch Time"
-msgstr ""
+msgstr "Общее время просмотра"
 
 #: app/models.py:1727
 msgid "Total video watch time in seconds."
-msgstr ""
+msgstr "Общее время просмотра видео в секундах."
 
 #: app/models.py:1733
 msgid "Is Processed"
-msgstr ""
+msgstr "Обрабатывается"
 
 #: app/models.py:1734
 msgid "Stores the information if the uploaded file is already processed."
-msgstr ""
+msgstr "Сохраняет информацию, если загруженный файл уже обработан."
 
 #: app/models.py:1740
 msgid "Original Filename"
-msgstr ""
+msgstr "Исходное имя файла"
 
 #: app/models.py:1741
 msgid "Original filename of the uploaded file."
-msgstr ""
+msgstr "Исходное имя загруженного файла."
 
 #: app/models.py:1748
 msgid "Original Size"
-msgstr ""
+msgstr "Исходный размер"
 
 #: app/models.py:1749
 msgid "Original size of the uploaded file."
-msgstr ""
+msgstr "Исходный размер загружаемого файла."
 
 #: app/models.py:1755
 msgid "Compressed Size"
-msgstr ""
+msgstr "Сжатый размер"
 
 #: app/models.py:1756
 msgid "Compressed size of the uploaded file."
-msgstr ""
+msgstr "Сжатый размер загружаемого файла."
 
 #: app/models.py:1763
 msgid "Order of the uploaded file in post."
-msgstr ""
+msgstr "Порядок загруженного файла в посте."
 
 #: app/models.py:1769
 msgid "Sprite Sheet"
-msgstr ""
+msgstr "Спрайт-лист"
 
 #: app/models.py:1770
 msgid "Video image sprite sheet for scrubbar preview."
 msgstr ""
+"Лист спрайтов видеоизображения для предварительного просмотра полосы "
+"прокрутки."
 
 #: app/models.py:1777
 msgid "VTT File Map"
-msgstr ""
+msgstr "Карта файлов VTT"
 
 #: app/models.py:1778
 msgid "VTT file map of the video sprite sheet."
-msgstr ""
+msgstr "Карта файла VTT листа видеоспрайтов."
 
 #: app/models.py:1789
-#, fuzzy
 #| msgid "Popis príspevku"
 msgid "Médium príspevku"
-msgstr "Описание поста"
+msgstr "Средний пост"
 
 #: app/models.py:1790
-#, fuzzy
 #| msgid "Zdieľať príspevok"
 msgid "Média príspevkov"
-msgstr "Поделиться публикацией"
+msgstr "Публикация в СМИ"
 
 #: app/models.py:1793
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgid "Médium príspevku od %(first_name)s %(last_name)s."
-msgstr "Привет %(first_name)s %(last_name)s"
+msgstr "Средний пост %(first_name)s %(last_name)s."
 
 #: app/models.py:1799
 msgid "User who viewed the post."
-msgstr ""
+msgstr "Пользователь, просмотревший публикацию."
 
 #: app/models.py:1808
 msgid "A post that has been viewed."
-msgstr ""
+msgstr "Пост, который был просмотрен."
 
 #: app/models.py:1815
 msgid "Viewed At"
-msgstr ""
+msgstr "Просмотрено на"
 
 #: app/models.py:1816
 msgid "Post view time."
-msgstr ""
+msgstr "Время просмотра поста."
 
 #: app/models.py:1824
 msgid "Označený videný príspevok"
-msgstr ""
+msgstr "Отмеченное сообщение видно"
 
 #: app/models.py:1825
-#, fuzzy
 #| msgid "Počet príspevkov"
 msgid "Označenia videných príspevkov"
-msgstr "Количество сообщений"
+msgstr "Отметки просмотренных публикаций"
 
 #: app/models.py:1828
 #, python-format
@@ -1921,30 +1933,32 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s videl príspevok od "
 "%(post_user_first_name)s %(post_user_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s увидел сообщение "
+"%(post_user_first_name)s %(post_user_last_name)s."
 
 #: app/models.py:1833
 msgid "Post Media"
-msgstr ""
+msgstr "Пост СМИ"
 
 #: app/models.py:1834
 msgid "The exact video from the post that was marked as seen."
-msgstr ""
+msgstr "Точное видео из поста, отмеченного как просмотренное."
 
 #: app/models.py:1843
 msgid "A user who watched the video."
-msgstr ""
+msgstr "Пользователь, просмотревший видео."
 
 #: app/models.py:1850
 msgid "The time when the user viewed the video."
-msgstr ""
+msgstr "Время, когда пользователь просматривал видео."
 
 #: app/models.py:1857
 msgid "Označené videné video"
-msgstr ""
+msgstr "Отмечено просмотренное видео"
 
 #: app/models.py:1858
 msgid "Označenia videných videií"
-msgstr ""
+msgstr "Отметки просмотренных видео"
 
 #: app/models.py:1861
 #, python-format
@@ -1952,34 +1966,34 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s videl video príspevku od "
 "%(post_user_first_name)s %(post_user_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s увидел видеопост "
+"%(post_user_first_name)s %(post_user_last_name)s."
 
 #: app/models.py:1872
 msgid "The post to which the comment belongs."
-msgstr ""
+msgstr "Сообщение, к которому принадлежит комментарий."
 
 #: app/models.py:1881
 msgid "The user who added the comment."
-msgstr ""
+msgstr "Пользователь, добавивший комментарий."
 
 #: app/models.py:1908
 msgid "Amount of obtained likes on the comment."
-msgstr ""
+msgstr "Количество полученных лайков на комментарий."
 
 #: app/models.py:1923
 msgid "Time the comment was added."
-msgstr ""
+msgstr "Время добавления комментария."
 
 #: app/models.py:1974
-#, fuzzy
 #| msgid "Počet príspevkov"
 msgid "Komentár príspevku"
-msgstr "Количество сообщений"
+msgstr "Оставить комментарий"
 
 #: app/models.py:1975
-#, fuzzy
 #| msgid "Počet príspevkov"
 msgid "Komentáre príspevkov"
-msgstr "Количество сообщений"
+msgstr "Оставлять комментарии"
 
 #: app/models.py:1978
 #, python-format
@@ -1987,141 +2001,140 @@ msgid ""
 "Užívateľ %(first_name)s %(last_name)s pridal komentár k príspevku od "
 "%(post_user_first_name)s %(post_user_last_name)s."
 msgstr ""
+"Пользователь %(first_name)s %(last_name)s добавил комментарий к сообщению "
+"%(post_user_first_name)s %(post_user_last_name)s."
 
 #: app/models.py:1992
 msgid "Post Forum Comment"
-msgstr ""
+msgstr "Сообщение на форуме Комментарий"
 
 #: app/models.py:1993
 msgid "The post comment that received a report."
-msgstr ""
+msgstr "Комментарий к сообщению, на которое поступил отчет."
 
 #: app/models.py:2024
 msgid "Nahlásenie komentáru príspevku"
-msgstr ""
+msgstr "Жалоба на комментарий к записи"
 
 #: app/models.py:2025
 msgid "Nahlásenia komentárov príspevkov"
-msgstr ""
+msgstr "Опубликовать отчеты о комментариях"
 
 #: app/models.py:2034
 msgid "The user who added the link to their bio."
-msgstr ""
+msgstr "Пользователь, который добавил ссылку в свою биографию."
 
 #: app/models.py:2043
 msgid "URL Address"
-msgstr ""
+msgstr "URL-адрес"
 
 #: app/models.py:2044
 msgid "URL of the added link."
-msgstr ""
+msgstr "URL добавленной ссылки."
 
 #: app/models.py:2056
-#, fuzzy
 #| msgid "Pridať odkaz"
 msgid "Bio odkaz"
-msgstr "Добавить ссылку"
+msgstr "Био ссылка"
 
 #: app/models.py:2057
-#, fuzzy
 #| msgid "Pridať odkaz"
 msgid "Bio odkazy"
-msgstr "Добавить ссылку"
+msgstr "Био ссылки"
 
 #: app/models.py:2060
-#, fuzzy, python-format
+#, python-format
 #| msgid "Dobrý deň %(first_name)s %(last_name)s"
 msgid "Odkaz užívateľa %(first_name)s %(last_name)s."
-msgstr "Привет %(first_name)s %(last_name)s"
+msgstr "Ссылка от пользователя %(first_name)s %(last_name)s."
 
 #: app/models.py:2065
 msgid "Sender"
-msgstr ""
+msgstr "Отправитель"
 
 #: app/models.py:2066
 msgid "Message sender."
-msgstr ""
+msgstr "Отправитель сообщения."
 
 #: app/models.py:2075
-#, fuzzy
 #| msgid "recenzie"
 msgid "Receiver"
-msgstr "обзоры"
+msgstr "Получатель"
 
 #: app/models.py:2076
 msgid "Message receiver."
-msgstr ""
+msgstr "Получатель сообщений."
 
 #: app/models.py:2084
 msgid "Content"
-msgstr ""
+msgstr "Содержание"
 
 #: app/models.py:2085
 msgid "Message content."
-msgstr ""
+msgstr "Содержание сообщения."
 
 #: app/models.py:2092
 msgid "Message sending time."
-msgstr ""
+msgstr "Время отправки сообщения."
 
 #: app/models.py:2098
 msgid "Is Read"
-msgstr ""
+msgstr "Читается"
 
 #: app/models.py:2099
 msgid "Stores the information if the message is read."
-msgstr ""
+msgstr "Сохраняет информацию, если сообщение прочитано."
 
 #: app/models.py:2105
 msgid "Is Edited"
-msgstr ""
+msgstr "Редактируется"
 
 #: app/models.py:2106
 msgid "Stores the information if the message was edited."
-msgstr ""
+msgstr "Сохраняет информацию, если сообщение было отредактировано."
 
 #: app/models.py:2114
 msgid "Reactions"
-msgstr ""
+msgstr "Реакции"
 
 #: app/models.py:2115
 msgid "Users who reacted to the message."
-msgstr ""
+msgstr "Пользователи, отреагировали на сообщение."
 
 #: app/models.py:2146
 msgid "teraz"
-msgstr ""
+msgstr "сейчас"
 
 #: app/models.py:2154
 msgid "pred minútou"
-msgstr ""
+msgstr "минуту назад"
 
 #: app/models.py:2157
 #, python-format
 msgid "pred %(minutes)s minútami"
-msgstr ""
+msgstr "%(minutes)s минут назад"
 
 #: app/models.py:2164
 msgid "pred hodinou"
-msgstr ""
+msgstr "час назад"
 
 #: app/models.py:2167
 #, python-format
 msgid "pred %(hours)s hodinami"
-msgstr ""
+msgstr "%(hours)s часов назад"
 
 #: app/models.py:2171
 #, python-format
 msgid "včera o %(time)s"
-msgstr ""
+msgstr "вчера в %(time)s"
 
 #: app/models.py:2178 app/models.py:2221
 msgid "Správa"
-msgstr ""
+msgstr "Cообщение"
 
 #: app/models.py:2179 app/models.py:2222 app/templates/app/chat.html:5
 msgid "Správy"
-msgstr ""
+msgstr "Новости"
 
 #: app/models.py:2182
 #, python-format
@@ -2129,30 +2142,32 @@ msgid ""
 "Správa od %(sender_first_name)s %(sender_first_name)s pre "
 "%(receiver_first_name)s %(receiver_last_name)s."
 msgstr ""
+"Сообщение от %(sender_first_name)s %(sender_first_name)s "
+"%(receiver_first_name)s %(receiver_last_name)s."
 
 #: app/models.py:2187
 msgid "Chat"
-msgstr ""
+msgstr "Чат"
 
 #: app/models.py:2188
 msgid "The message to which the reaction belongs."
-msgstr ""
+msgstr "Сообщение, которому принадлежит реакция."
 
 #: app/models.py:2197
 msgid "The user who added a reaction to the message."
-msgstr ""
+msgstr "Пользователь, добавивший реакцию на сообщение."
 
 #: app/models.py:2204
 msgid "Emoji"
-msgstr ""
+msgstr "Эмодзи"
 
 #: app/models.py:2205
 msgid "Emoji added as a reaction."
-msgstr ""
+msgstr "В качестве реакции добавлены смайлики."
 
 #: app/models.py:2212
 msgid "Time the reaction was added."
-msgstr ""
+msgstr "Время реакции добавлялось."
 
 #: app/models.py:2225
 #, python-format
@@ -2160,6 +2175,8 @@ msgid ""
 "Reakcia od %(first_name)s %(last_name)s na správu od "
 "%(chat_user_first_name)s %(chat_user_last_name)s."
 msgstr ""
+"Ответ %(first_name)s %(last_name)s на сообщение %(chat_user_first_name)s "
+"%(chat_user_last_name)s."
 
 #: app/tasks.py:32 app/tasks.py:36 app/tasks.py:54 app/tasks.py:57
 #: app/tasks.py:76 app/tasks.py:79 app/tasks.py:100 app/tasks.py:103
@@ -2214,9 +2231,9 @@ msgid ""
 "- to je o <span style=\"color: #df3535\">100%</span> horšie oproti "
 "predchádzajúcemu týždňu"
 msgstr ""
-"В общей сложности вы достигли <span style=\"color: #df3535\">0 секунд</span> "
-"активного времени — это на <span style=\"color: #df3535\">100 %</span> хуже, "
-"чем на прошлой неделе"
+"В общей сложности вы достигли <span style=\"color: #df3535\">0 секунд</span>"
+" активного времени — это на <span style=\"color: #df3535\">100 %</span> "
+"хуже, чем на прошлой неделе"
 
 #: app/tasks.py:100 app/tasks.py:105
 msgid "Pozri sa na svoj prehľad aktivít za posledný týždeň."
@@ -2253,12 +2270,12 @@ msgstr "Вы записали всего %(total_activity_amount)s действ�
 #: app/tasks.py:107
 #, python-format
 msgid ""
-"Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s celkovým "
-"časom aktivity <strong>%(most_active_day_time)s</strong>"
+"Tvoj najviac aktívny deň bol <strong>%(most_active_day)s</strong> s celkovým"
+" časom aktivity <strong>%(most_active_day_time)s</strong>"
 msgstr ""
 "Самым активным днем ​​был <strong>%(most_active_day)s</strong>, общая "
-"продолжительность активности составила <strong>%(most_active_day_time)s</"
-"strong>"
+"продолжительность активности составила "
+"<strong>%(most_active_day_time)s</strong>"
 
 #: app/tasks.py:109
 #, python-format
@@ -2286,8 +2303,8 @@ msgid ""
 "Celkovo si zaznamenal <span style=\"color: "
 "#52cf20\">%(total_activity_amount)s</span> aktivity"
 msgstr ""
-"Вы записали всего <span style=\"color: #52cf20\">%(total_activity_amount)s</"
-"span> действия"
+"Вы записали всего <span style=\"color: "
+"#52cf20\">%(total_activity_amount)s</span> действия"
 
 #: app/tasks.py:217 app/templates/app/manage_training_plans.html:162
 #: app/templates/app/manage_training_plans.html:216
@@ -2330,8 +2347,8 @@ msgid ""
 "to je o <span style='color: #52cf20'>%(value)s%%</span> lepšie oproti "
 "predchádzajúcemu týždňu"
 msgstr ""
-"это на <span style='color: #52cf20'>%(value)s%%</span> лучше, чем на прошлой "
-"неделе"
+"это на <span style='color: #52cf20'>%(value)s%%</span> лучше, чем на прошлой"
+" неделе"
 
 #: app/tasks.py:287
 #, python-format
@@ -2355,8 +2372,8 @@ msgstr "это на %(value)s%% хуже, чем на прошлой недел�
 #: app/tasks.py:300
 #, python-format
 msgid ""
-"Tvoj obľúbený cvik týždňa bol <span style=\"color: %(color)s\">%(exercise)s</"
-"span>"
+"Tvoj obľúbený cvik týždňa bol <span style=\"color: "
+"%(color)s\">%(exercise)s</span>"
 msgstr ""
 "Вашим любимым упражнением недели было <span style=\"color: "
 "%(color)s\">%(exercise)s</span>"
@@ -2370,8 +2387,8 @@ msgstr "Вашим любимым упражнением недели было %
 #, python-format
 msgid ""
 "Vytvor si <a href=\"%(domain)s%(language)s/my-training-plans/?create\" "
-"title=\"Vytvoriť tréningový plán\" target=\"_blank\">tréningový plán</a> pre "
-"získanie viac štatistík."
+"title=\"Vytvoriť tréningový plán\" target=\"_blank\">tréningový plán</a> pre"
+" získanie viac štatistík."
 msgstr ""
 "Создайте <a href=\"%(domain)s%(language)s/moi-plany-trenirovok/?create\" "
 "title=\"Vytvoriť tréningový plán\" target=\"_blank\">план тренировок</a>, "
@@ -2393,21 +2410,18 @@ msgstr "Удаление аккаунта"
 #: app/tasks.py:392
 #, python-format
 msgid ""
-"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
-"prihlásenie do pôvodného účtu už nie je možné.\n"
+"oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n"
 "\n"
 "%(domain)s%(language)s/registracia/\n"
 "\n"
 "Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 "Tím Wesiq."
 msgstr ""
-"мы хотели бы сообщить вам, что ваша учетная запись была безвозвратно "
-"удалена. Вход в вашу первоначальную учетную запись больше невозможен.\n"
+"мы хотели бы сообщить вам, что ваша учетная запись была безвозвратно удалена. Вход в вашу первоначальную учетную запись больше невозможен.\n"
 "\n"
 "%(domain)s%(language)s/registratsiya/\n"
 "\n"
-"Если вы захотите вернуться в будущем, мы с удовольствием создадим новую "
-"учетную запись.\n"
+"Если вы захотите вернуться в будущем, мы с удовольствием создадим новую учетную запись.\n"
 "Команда Wesiq."
 
 #: app/tasks.py:393
@@ -2514,7 +2528,8 @@ msgstr "Эта статья еще не закончена."
 #: app/templates/app/post.html:240 app/templates/app/post.html:330
 #: app/templates/app/post.html:1072 app/templates/app/profile.html:453
 #: app/templates/app/profile.html:515 app/templates/app/profile.html:569
-#: app/templates/partials/comment.html:19 app/templates/partials/reviews.html:8
+#: app/templates/partials/comment.html:19
+#: app/templates/partials/reviews.html:8
 #: app/templates/partials/reviews.html:47
 msgid "Zobraziť užívateľa"
 msgstr "Показать пользователя"
@@ -2702,7 +2717,8 @@ msgstr "Изотонические упражнения"
 
 #: app/templates/app/blog.html:103
 msgid ""
-"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť žiadne&nbsp;články."
+"Ospravedlňujeme&nbsp;sa!<br>Nepodarilo&nbsp;sa&nbsp;nájsť "
+"žiadne&nbsp;články."
 msgstr "Извините!<br>Статьи&nbsp;не&nbsp;найдены."
 
 #: app/templates/app/blog.html:132
@@ -2727,17 +2743,16 @@ msgstr "уникальных посетителей"
 
 #: app/templates/app/chat.html:42 app/templates/app/chat.html:221
 msgid "Reakcia"
-msgstr ""
+msgstr "Реакция"
 
 #: app/templates/app/chat.html:163
-#, fuzzy
 #| msgid "upravené"
 msgid "(upravené)"
-msgstr "скорректированный"
+msgstr "(отредактировано)"
 
 #: app/templates/app/chat.html:192
 msgid "Reakciu pridal:"
-msgstr ""
+msgstr "Реакцию добавил:"
 
 #: app/templates/app/chat.html:286 app/templates/app/community.html:710
 #: app/templates/app/homepage.html:510
@@ -2761,7 +2776,6 @@ msgid "Vymazať"
 msgstr "Удалить"
 
 #: app/templates/app/chat.html:316 app/templates/app/profile.html:642
-#, fuzzy
 #| msgid "Napíšte správu"
 msgid "Napísať správu"
 msgstr "Написать сообщение"
@@ -2930,8 +2944,7 @@ msgstr "Открыть карты"
 #, python-format
 msgid ""
 "\n"
-"                                                        Príspevok užívateľa "
-"%(username)s\n"
+"                                                        Príspevok užívateľa %(username)s\n"
 "                                                    "
 msgstr ""
 "\n"
@@ -2942,8 +2955,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                                                    Príspevok užívateľa "
-"%(username)s\n"
+"                                                    Príspevok užívateľa %(username)s\n"
 "                                                "
 msgstr ""
 "\n"
@@ -3106,7 +3118,8 @@ msgstr "У вас ещё нет аккаунта?"
 msgid "Registrácia"
 msgstr "Регистрация"
 
-#: app/templates/app/homepage.html:215 app/templates/app/password_reset.html:54
+#: app/templates/app/homepage.html:215
+#: app/templates/app/password_reset.html:54
 #: app/templates/app/registration.html:64
 msgid "Navrhnúť heslo"
 msgstr "Предложить пароль"
@@ -3313,108 +3326,111 @@ msgstr "KVK"
 
 #: app/templates/app/homepage.html:764 app/templates/app/homepage.html:857
 msgid "Základné predplatné"
-msgstr ""
+msgstr "Базовая подписка"
 
 #: app/templates/app/homepage.html:765
 msgid "Vážime si Vašu podporu, ktorá nám pomáha držať aplikáciu pri živote."
 msgstr ""
+"Мы ценим вашу поддержку, которая помогает нам поддерживать приложение."
 
 #: app/templates/app/homepage.html:766 app/templates/app/homepage.html:785
-#, fuzzy
 #| msgid "2 - 6 mesiacov"
 msgid "mesiac"
-msgstr "2 - 6 месяцев"
+msgstr "месяц"
 
 #: app/templates/app/homepage.html:771 app/templates/app/homepage.html:790
 msgid "Odznak na profile!"
-msgstr ""
+msgstr "Значок в профиле!"
 
 #: app/templates/app/homepage.html:772 app/templates/app/homepage.html:791
 msgid "Obrázky až do 10MB!"
-msgstr ""
+msgstr "Изображения до 10 МБ!"
 
 #: app/templates/app/homepage.html:773
 msgid "Videá až do 50MB!"
-msgstr ""
+msgstr "Видео до 50 МБ!"
 
 #: app/templates/app/homepage.html:774
 msgid "2 minúty dlhé videá!"
-msgstr ""
+msgstr "2 минуты видео!"
 
 #: app/templates/app/homepage.html:775
 msgid "Lepšia kvalita obrázkov!"
-msgstr ""
+msgstr "Лучшее качество изображения!"
 
 #: app/templates/app/homepage.html:776
 msgid "Lepšia kvalita videí!"
-msgstr ""
+msgstr "Лучшее качество видео!"
 
 #: app/templates/app/homepage.html:779 app/templates/app/homepage.html:798
 msgid "Predplatiť"
-msgstr ""
+msgstr "Подписаться"
 
 #: app/templates/app/homepage.html:783 app/templates/app/homepage.html:860
 msgid "Prémiové predplatné"
-msgstr ""
+msgstr "Prémiové predplatné"
 
 #: app/templates/app/homepage.html:784
 msgid ""
-"Pre náročných používateľov, ktorí chcú z aplikácie vyťažiť absolútne maximum."
+"Pre náročných používateľov, ktorí chcú z aplikácie vyťažiť absolútne "
+"maximum."
 msgstr ""
+"Для требовательных пользователей, которые хотят получить от приложения "
+"абсолютный максимум."
 
 #: app/templates/app/homepage.html:792
 msgid "Videá až do 100MB!"
-msgstr ""
+msgstr "Видео до 100МБ!"
 
 #: app/templates/app/homepage.html:793
 msgid "3 minúty dlhé videá!"
-msgstr ""
+msgstr "Видео продолжительностью 3 минуты!"
 
 #: app/templates/app/homepage.html:794
 msgid "Najlepšia kvalita obrázkov!"
-msgstr ""
+msgstr "Лучшее качество изображения!"
 
 #: app/templates/app/homepage.html:795
 msgid "Najlepšia kvalita videí!"
-msgstr ""
+msgstr "Лучшее качество видео!"
 
 #: app/templates/app/homepage.html:853
 msgid "Moje predplatné"
-msgstr ""
+msgstr "Моя подписка"
 
 #: app/templates/app/homepage.html:871
 msgid "do ďalšej fakturácie."
-msgstr ""
+msgstr "до следующего платежа."
 
 #: app/templates/app/homepage.html:874 app/templates/app/homepage.html:880
-#, fuzzy
 #| msgid "Dokončiť tréning"
 msgid "Ukončiť predplatné"
-msgstr "Завершить обучение"
+msgstr "Завершить подписку"
 
 #: app/templates/app/homepage.html:882
 msgid ""
 "Naozaj si praješ ukončiť predplatné? Tvoje aktuálne predplatné sa ukončí "
 "hneď po vypršaní, ešte si ho uži."
 msgstr ""
+"Вы уверены, что хотите отменить подписку? Ваша текущая подписка завершится, "
+"как только истечет срок ее действия, но продолжайте наслаждаться ею."
 
 #: app/templates/app/homepage.html:885
 msgid "Ostať"
-msgstr ""
+msgstr "Оставаться"
 
 #: app/templates/app/homepage.html:886
 msgid "Ukončiť"
-msgstr ""
+msgstr "Прекратить"
 
 #: app/templates/app/homepage.html:892
-#, fuzzy
 #| msgid "Vaše hodnotenie bolo odstránené"
 msgid "Vaše predplatné bolo zrušené."
-msgstr "Ваша оценка удалена"
+msgstr "Ваша подписка отменена."
 
 #: app/templates/app/homepage.html:897
 msgid "do konca predplatného."
-msgstr ""
+msgstr "до окончания подписки."
 
 #: app/templates/app/login.html:13
 msgid "REGISTRÁCIA"
@@ -3547,8 +3563,9 @@ msgid "Nájsť cvik"
 msgstr "Найдите упражнение"
 
 #: app/templates/app/password_reset.html:5
-#: app/templates/app/password_reset.html:16 app/views.py:1109 app/views.py:1746
-#: app/views.py:1837 app/views.py:4905 templates/base.html:173
+#: app/templates/app/password_reset.html:16 app/views.py:1109
+#: app/views.py:1746 app/views.py:1837 app/views.py:4905
+#: templates/base.html:173
 msgid "Obnova hesla"
 msgstr "Восстановление пароля"
 
@@ -3563,7 +3580,8 @@ msgstr "Попробуйте еще раз"
 #: app/templates/app/password_reset.html:79
 msgid "Platnosť overovacieho kódu pre zmenu hesla k vášmu účtu vypršala."
 msgstr ""
-"Срок действия кода подтверждения для смены пароля вашей учетной записи истек."
+"Срок действия кода подтверждения для смены пароля вашей учетной записи "
+"истек."
 
 #: app/templates/app/password_reset.html:79
 msgid "Na stránke s"
@@ -3679,44 +3697,38 @@ msgid "sledujú"
 msgstr "подписчиков"
 
 #: app/templates/app/profile.html:442
-#, fuzzy
 #| msgid "Počet sledovateľov"
 msgid "Všetci sledovatelia"
-msgstr "Количество подписчиков"
+msgstr "Все подписчики"
 
 #: app/templates/app/profile.html:445
-#, fuzzy
 #| msgid "Žiadosti o sledovanie"
 msgid "Žiadny sledovatelia"
-msgstr "Следуйте запросам"
+msgstr "Нет подписчиков"
 
 #: app/templates/app/profile.html:476
-#, fuzzy
 #| msgid "Odstrániť odkaz"
 msgid "Odstrániť"
-msgstr "Удалить ссылку"
+msgstr "Удалять"
 
 #: app/templates/app/profile.html:488 app/templates/app/profile.html:1391
 msgid "sleduje"
 msgstr "подписок"
 
 #: app/templates/app/profile.html:504
-#, fuzzy
 #| msgid "sledujú"
 msgid "Všetci sledujúci"
-msgstr "подписчиков"
+msgstr "Все подписчики"
 
 #: app/templates/app/profile.html:507
-#, fuzzy
 #| msgid "sledujú"
 msgid "Žiadny sledujúci"
-msgstr "подписчиков"
+msgstr "Нет подписчиков"
 
 #: app/templates/app/profile.html:551
-#, fuzzy
 #| msgid "Príspevok"
 msgid "príspevky"
-msgstr "пост"
+msgstr "посты"
 
 #: app/templates/app/profile.html:564
 msgid "Žiadosti o sledovanie"
@@ -3736,11 +3748,11 @@ msgstr "Разработчик"
 
 #: app/templates/app/profile.html:668 app/templates/app/profile.html:678
 msgid "Základný predplatiteľ"
-msgstr ""
+msgstr "Базовый подписчик"
 
 #: app/templates/app/profile.html:671 app/templates/app/profile.html:681
 msgid "Prémiový predplatiteľ"
-msgstr ""
+msgstr "Премиум-подписчик"
 
 #: app/templates/app/profile.html:717 app/templates/app/profile.html:718
 msgid "Prispievateľ"
@@ -3783,20 +3795,18 @@ msgid "Tento účet je súkromný."
 msgstr "Этот аккаунт является частным."
 
 #: app/templates/app/profile.html:1223 app/templates/app/profile.html:1234
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
 #| "\n"
-#| "                                                                    Príspevok "
-#| "užívateľa %(username)s\n"
+#| "                                                                    Príspevok užívateľa %(username)s\n"
 #| "                                                                "
 msgid ""
 "\n"
-"                                                                        Príspevok "
-"užívateľa %(username)s\n"
+"                                                                        Príspevok užívateľa %(username)s\n"
 "                                                                    "
 msgstr ""
 "\n"
-"Пост пользователя %(username)s"
+"Вклад пользователя %(username)s"
 
 #: app/templates/app/profile.html:1287 app/templates/app/profile.html:1423
 msgid "Zatiaľ žiadne príspevky."
@@ -3806,8 +3816,7 @@ msgstr "Постов пока нет."
 #, python-format
 msgid ""
 "\n"
-"                                                                    Príspevok "
-"užívateľa %(username)s\n"
+"                                                                    Príspevok užívateľa %(username)s\n"
 "                                                                "
 msgstr ""
 "\n"
@@ -4027,20 +4036,18 @@ msgid "prispevok/<str:post_id>"
 msgstr "post/<str:post_id>"
 
 #: app/urls.py:22
-#, fuzzy
 #| msgid "profil/<str:username>"
 msgid "chat/<str:username>"
-msgstr "profil/<str:username>"
+msgstr "chat/<str:username>"
 
 #: app/urls.py:27
 msgid "platba-uspesna/"
 msgstr "platezh-uspeshen/"
 
 #: app/urls.py:28
-#, fuzzy
 #| msgid "platba-uspesna/"
 msgid "platba-predplatneho-uspesna/"
-msgstr "platezh-uspeshen/"
+msgstr "oplata-podpiski-proshla-uspeshno/"
 
 #: app/views.py:110
 msgid "Lokálny test"
@@ -4059,36 +4066,32 @@ msgid "Ďakujeme za Vašu podporu!"
 msgstr "Спасибо за вашу поддержку!"
 
 #: app/views.py:216 app/views.py:286
-#, fuzzy
 #| msgid "Pri pridávaní úlohy došlo k chybe."
 msgid "Pri spracovávaní platby došlo k chybe."
-msgstr "При добавлении задачи произошла ошибка."
+msgstr "При обработке платежа произошла ошибка."
 
 #: app/views.py:223 app/views.py:293
 msgid "Platba sa dá uskutočniť len pomocou POST metódy."
 msgstr "Оплата возможна только методом POST."
 
 #: app/views.py:227
-#, fuzzy
 #| msgid "Ďakujeme za Vašu podporu!"
 msgid "Ďakujeme za kúpu predplatného!"
-msgstr "Спасибо за вашу поддержку!"
+msgstr "Благодарим за приобретение подписки!"
 
 #: app/views.py:253
 msgid "Zvolený neplatný plán predplatného."
-msgstr ""
+msgstr "Выбран неверный план подписки."
 
 #: app/views.py:300
-#, fuzzy
 #| msgid "Sledovanie nie je možné zmeniť bez prihlásenia."
 msgid "Platbu nie je možné vykonať bez prihlásenia."
-msgstr "Отслеживание невозможно изменить без входа в систему."
+msgstr "Оплата не может быть произведена без входа в систему."
 
 #: app/views.py:371
-#, fuzzy
 #| msgid "Pri registrácii došlo k chybe"
 msgid "Pri aktivácii predplatného došlo k chybe."
-msgstr "Во время регистрации произошла ошибка"
+msgstr "Произошла ошибка при активации подписки."
 
 #: app/views.py:420 app/views.py:641 app/views.py:842 app/views.py:2341
 #: app/views.py:5026
@@ -4264,20 +4267,14 @@ msgstr "Вход в аккаунт"
 #: app/views.py:1044 app/views.py:1706
 #, python-format
 msgid ""
-"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli "
-"informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje "
-"môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás "
-"kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
+"bolo vykonané prihlásenie do Vášho účtu. Touto správou by sme Vás chceli informovať, v prípade, ak ste sa v tomto čase neprihlasovali, Vaše údaje môžu byť ohrozené. Odporúčame Vám okamžite zmeniť heslo alebo nás kontaktovať. Záleží nám na bezpečnosti Vašich údajov.\n"
 "\n"
 "%(domain)s%(language)s/profil/%(username)s?password-reset=true\n"
 "\n"
 "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"ваш аккаунт авторизован. В этом сообщении мы хотели бы сообщить вам, что "
-"если вы не входили в систему в течение этого времени, ваши данные могут быть "
-"под угрозой. Мы рекомендуем вам немедленно сменить пароль или связаться с "
-"нами. Мы заботимся о безопасности ваших данных.\n"
+"ваш аккаунт авторизован. В этом сообщении мы хотели бы сообщить вам, что если вы не входили в систему в течение этого времени, ваши данные могут быть под угрозой. Мы рекомендуем вам немедленно сменить пароль или связаться с нами. Мы заботимся о безопасности ваших данных.\n"
 "\n"
 "%(domain)s%(language)s/profil/%(username)s?password-reset=true\n"
 "\n"
@@ -4295,11 +4292,11 @@ msgid ""
 "kontaktovať. Záleží nám na bezpečnosti Vašich údajov."
 msgstr ""
 "ваш аккаунт авторизован. В этом сообщении мы хотели бы сообщить вам, что "
-"если вы не входили в систему в течение этого времени, ваши данные могут быть "
-"под угрозой. Мы рекомендуем вам немедленно сменить пароль, перейдя по <a "
+"если вы не входили в систему в течение этого времени, ваши данные могут быть"
+" под угрозой. Мы рекомендуем вам немедленно сменить пароль, перейдя по <a "
 "href=\"%(domain)s%(language)s/profil/%(username)s?password-reset=true\" "
-"title=\"Сбросить пароль\" target=\"_blank\">этой</a> ссылке или связавшись с "
-"нами. Мы заботимся о безопасности ваших данных."
+"title=\"Сбросить пароль\" target=\"_blank\">этой</a> ссылке или связавшись с"
+" нами. Мы заботимся о безопасности ваших данных."
 
 #: app/views.py:1046 app/views.py:1708
 msgid "Ak ste sa prihlásili Vy, tento e-mail prosím ignorujte."
@@ -4334,36 +4331,32 @@ msgstr "Успешная регистрация"
 #: app/views.py:1089
 #, python-format
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
-"účet je odteraz plne aktívny.\n"
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš účet je odteraz plne aktívny.\n"
 "\n"
 "%(domain)s%(language)s/profil/\n"
 "\n"
-"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať "
-"všetky funkcie našich služieb.\n"
+"Sme radi, že ste sa pridali k našej komunite. Teraz môžete naplno využívať všetky funkcie našich služieb.\n"
 "Tím Wesiq."
 msgstr ""
-"у нас для вас отличные новости! Ваш адрес электронной почты успешно "
-"подтвержден, и ваша учетная запись теперь полностью активна.\n"
+"у нас для вас отличные новости! Ваш адрес электронной почты успешно подтвержден, и ваша учетная запись теперь полностью активна.\n"
 "\n"
 "%(domain)s%(language)s/profil/\n"
 "\n"
-"Мы рады, что вы присоединились к нашему сообществу. Теперь вы можете в "
-"полной мере использовать все возможности наших сервисов.\n"
+"Мы рады, что вы присоединились к нашему сообществу. Теперь вы можете в полной мере использовать все возможности наших сервисов.\n"
 "Команда Wesiq."
 
 #: app/views.py:1090
 #, python-format
 msgid ""
-"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš "
-"účet je odteraz plne aktívny. Kliknite na <a href=\"%(domain)s%(language)s/"
-"profil/\" title=\"Môj účet\" target=\"_blank\">tento</a> odkaz pre "
-"zobrazenie Vášho úštu."
+"máme pre Vás skvelú správu! Vaša e-mailová adresa bola úspešne overená a Váš"
+" účet je odteraz plne aktívny. Kliknite na <a "
+"href=\"%(domain)s%(language)s/profil/\" title=\"Môj účet\" "
+"target=\"_blank\">tento</a> odkaz pre zobrazenie Vášho úštu."
 msgstr ""
 "у нас для вас отличные новости! Ваш адрес электронной почты успешно "
 "подтвержден, и ваша учетная запись теперь полностью активна. Нажмите на <a "
-"%(domain)s%(language)s/profil/\" title=\"Мой счет\" target=\"_blank\">эту</"
-"a> ссылку, чтобы просмотреть свой аккаунт."
+"%(domain)s%(language)s/profil/\" title=\"Мой счет\" "
+"target=\"_blank\">эту</a> ссылку, чтобы просмотреть свой аккаунт."
 
 #: app/views.py:1091
 msgid ""
@@ -4383,20 +4376,16 @@ msgstr "Авторизация выполнена успешно %(first_name)s 
 #: app/views.py:1110 app/views.py:1747 app/views.py:1838 app/views.py:4906
 #, python-format
 msgid ""
-"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, "
-"prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
+"dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n"
 "\n"
 "%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n"
 "\n"
 "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"мы получили запрос на сброс пароля вашей учетной записи. Если это был ваш "
-"запрос, пожалуйста, воспользуйтесь следующей ссылкой и введите следующий "
-"проверочный код.\n"
+"мы получили запрос на сброс пароля вашей учетной записи. Если это был ваш запрос, пожалуйста, воспользуйтесь следующей ссылкой и введите следующий проверочный код.\n"
 "\n"
-"%(domain)s%(language)s/vosstanovleniye-parolya?password-reset-code=%(code)s "
-"- %(code)s\n"
+"%(domain)s%(language)s/vosstanovleniye-parolya?password-reset-code=%(code)s - %(code)s\n"
 "\n"
 "Если вы не запрашивали сброс пароля, пожалуйста, проигнорируйте это письмо.\n"
 "Команда Wesiq."
@@ -4410,9 +4399,10 @@ msgid ""
 "zadajte nasledovný overovací kód."
 msgstr ""
 "мы получили запрос на сброс пароля вашей учетной записи. Если это был ваш "
-"запрос, пожалуйста, воспользуйтесь <a %(domain)s%(language)s/vosstanovleniye-"
-"parolya?password-reset-code=%(code)s\" title=\"Сбросить пароль\" "
-"target=\"_blank\">следующей</a> ссылкой и введите следующий проверочный код."
+"запрос, пожалуйста, воспользуйтесь <a "
+"%(domain)s%(language)s/vosstanovleniye-parolya?password-reset-"
+"code=%(code)s\" title=\"Сбросить пароль\" target=\"_blank\">следующей</a> "
+"ссылкой и введите следующий проверочный код."
 
 #: app/views.py:1112 app/views.py:1749 app/views.py:1840 app/views.py:4908
 msgid "Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte."
@@ -4459,46 +4449,35 @@ msgstr "Проверка аккаунта"
 #: app/views.py:1191 app/views.py:1970
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
-"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie "
-"uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do "
-"svojho nového účtu.\n"
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n"
 "\n"
 "%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z "
-"bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu "
-"nevykonali Vy, tento e-mail prosím ignorujte.\n"
+"Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\n"
 "Tím Wesiq."
 msgstr ""
-"благодарим вас за регистрацию. Для завершения процесса регистрации и "
-"активации вашей учетной записи необходимо подтвердить свой адрес электронной "
-"почты. Нажмите на ссылку ниже, чтобы подтвердить свой адрес электронной "
-"почты, и вы автоматически войдете в свою новую учетную запись.\n"
+"благодарим вас за регистрацию. Для завершения процесса регистрации и активации вашей учетной записи необходимо подтвердить свой адрес электронной почты. Нажмите на ссылку ниже, чтобы подтвердить свой адрес электронной почты, и вы автоматически войдете в свою новую учетную запись.\n"
 "\n"
 "%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n"
 "\n"
-"Эта ссылка действительна в течение следующих 24 часов. По истечении этого "
-"времени вам потребуется зарегистрироваться заново по соображениям "
-"безопасности. Если вы не зарегистрировались, пожалуйста, проигнорируйте это "
-"письмо.\n"
+"Эта ссылка действительна в течение следующих 24 часов. По истечении этого времени вам потребуется зарегистрироваться заново по соображениям безопасности. Если вы не зарегистрировались, пожалуйста, проигнорируйте это письмо.\n"
 "Команда Wesiq."
 
 #: app/views.py:1192 app/views.py:1971
 #, python-format
 msgid ""
-"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu "
-"Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
+"ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu"
+" Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a "
 "href=\"%(domain)s%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Dokončiť registráciu\" "
-"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky "
-"prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
+"target=\"_blank\">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky"
+" prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 "
 "hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné "
 "registráciu zopakovať."
 msgstr ""
 "благодарим вас за регистрацию. Для завершения процесса регистрации и "
-"активации вашей учетной записи необходимо подтвердить свой адрес электронной "
-"почты. Нажмите на <a href=\"%(domain)s%(language)s?verification-"
+"активации вашей учетной записи необходимо подтвердить свой адрес электронной"
+" почты. Нажмите на <a href=\"%(domain)s%(language)s?verification-"
 "code=%(verification_code)s&id=%(id)s\" title=\"Завершить регистрацию\" "
 "target=\"_blank\">эту</a> ссылку, чтобы подтвердить свой адрес электронной "
 "почты, и вы автоматически войдете в свою новую учетную запись. Эта ссылка "
@@ -4559,17 +4538,16 @@ msgstr "Рейтинг опубликовать не удалось"
 
 #: app/views.py:1541
 msgid "Predplatné bude ukončené po skončení"
-msgstr ""
+msgstr "Подписка будет прекращена после окончания"
 
 #: app/views.py:1544
-#, fuzzy
 #| msgid "Komentár sa nepodarilo odstrániť."
 msgid "Predplatné sa nepodarilo zrušiť"
-msgstr "Комментарий не удалось удалить."
+msgstr "Невозможно отменить подписку"
 
 #: app/views.py:1547
 msgid "Nenašlo sa žiadne aktívne predplatné"
-msgstr ""
+msgstr "Активная подписка не найдена"
 
 #: app/views.py:1561
 msgid "Recenzia bola úspešne schválená správcom."
@@ -4857,16 +4835,14 @@ msgstr "Произошла ошибка при отклонении запрос
 #: app/views.py:4739
 #, python-format
 msgid ""
-"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-"možnosť prihlásiť sa.\n"
+"dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n"
 "\n"
 "%(domain)s%(language)s/prihlasenie/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Wesiq."
 msgstr ""
-"мы получили запрос на удаление вашей учетной записи. В случае ошибки у вас "
-"есть 30 дней на повторный вход в систему.\n"
+"мы получили запрос на удаление вашей учетной записи. В случае ошибки у вас есть 30 дней на повторный вход в систему.\n"
 "\n"
 "%(domain)s%(language)s/avtorizovatsya/\n"
 "\n"
@@ -4882,8 +4858,8 @@ msgid ""
 "neodvratne odstránený."
 msgstr ""
 "мы получили запрос на удаление вашей учетной записи. В случае ошибки у вас "
-"есть 30 дней на повторный <a href=\"%(domain)s%(language)s/avtorizovatsya/\" "
-"title=\"Авторизоваться\" target=\"_blank\">вход в систему</a>. В противном "
+"есть 30 дней на повторный <a href=\"%(domain)s%(language)s/avtorizovatsya/\""
+" title=\"Авторизоваться\" target=\"_blank\">вход в систему</a>. В противном "
 "случае ваша учетная запись будет безвозвратно удалена."
 
 #: app/views.py:4741 app/views.py:5019 app/views.py:5053
@@ -4906,16 +4882,14 @@ msgid "Pri vykonávaní zmien v účte došlo k chybe"
 msgstr "Произошла ошибка при внесении изменений в аккаунт"
 
 #: app/views.py:4889
-#, fuzzy
 #| msgid "Sledovanie bolo úspešne odstránené."
 msgid "Sledovateľ bol odstránený."
-msgstr "Отслеживание успешно удалено."
+msgstr "Подписчик удален."
 
 #: app/views.py:4897
-#, fuzzy
 #| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "Произошла ошибка при удалении задач."
+msgstr "При удалении трекера произошла ошибка."
 
 #: app/views.py:5016 app/views.py:5050
 msgid "Odstavenie účtu"
@@ -4924,18 +4898,14 @@ msgstr "Блокировка аккаунта"
 #: app/views.py:5017
 #, python-format
 msgid ""
-"oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu "
-"obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez "
-"kontaktný formulár.\n"
+"oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n"
 "\n"
 "%(domain)s%(language)s/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Wesiq."
 msgstr ""
-"сообщаем вам, что ваша учетная запись была заблокирована из-за большого "
-"количества полученных отчетов. В случае ошибки у вас есть 7 дней, чтобы "
-"подать апелляцию через контактную форму.\n"
+"сообщаем вам, что ваша учетная запись была заблокирована из-за большого количества полученных отчетов. В случае ошибки у вас есть 7 дней, чтобы подать апелляцию через контактную форму.\n"
 "\n"
 "%(domain)s%(language)s/\n"
 "\n"
@@ -4960,17 +4930,14 @@ msgstr ""
 #: app/views.py:5051
 #, python-format
 msgid ""
-"oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V "
-"prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n"
+"oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n"
 "\n"
 "%(domain)s%(language)s/\n"
 "\n"
 "V opačnom prípade bude váš účet neodvratne odstránený.\n"
 "Tím Wesiq."
 msgstr ""
-"сообщаем вам, что ваша учетная запись была отключена на основании проверки "
-"вручную. В случае ошибки у вас есть 7 дней, чтобы подать апелляцию через "
-"контактную форму.\n"
+"сообщаем вам, что ваша учетная запись была отключена на основании проверки вручную. В случае ошибки у вас есть 7 дней, чтобы подать апелляцию через контактную форму.\n"
 "\n"
 "%(domain)s%(language)s/\n"
 "\n"
@@ -5086,8 +5053,8 @@ msgstr "Политика&nbsp;конфиденциальности"
 #: templates/base.html:49
 msgid ""
 "Táto stránka používa súbory cookies, aby vám poskytla čo najlepší zážitok "
-"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a "
-"zlepšovať naše služby."
+"pri jej prehliadaní. Súbory cookies nám pomáhajú analyzovať, optimalizovať a"
+" zlepšovať naše služby."
 msgstr ""
 "Этот сайт использует файлы cookie, чтобы обеспечить вам максимально "
 "комфортное использование. Файлы cookie помогают нам анализировать, "
@@ -5160,8 +5127,7 @@ msgstr "Все права защищены."
 #, python-format
 #~ msgid ""
 #~ "\n"
-#~ "                                                                Príspevok "
-#~ "užívateľa %(username)s\n"
+#~ "                                                                Príspevok užívateľa %(username)s\n"
 #~ "                                                            "
 #~ msgstr ""
 #~ "\n"
@@ -5212,8 +5178,7 @@ msgstr "Все права защищены."
 #, python-format
 #~ msgid ""
 #~ "\n"
-#~ "                                                Príspevok užívateľa "
-#~ "%(username)s\n"
+#~ "                                                Príspevok užívateľa %(username)s\n"
 #~ "                                            "
 #~ msgstr ""
 #~ "\n"
@@ -5270,16 +5235,11 @@ msgstr "Все права защищены."
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné "
-#~ "prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v "
-#~ "budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
+#~ "oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné. Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\n"
 #~ "Tím Wesiq."
 #~ msgstr ""
 #~ "Привет %(first_name)s %(last_name)s,\n"
-#~ "мы хотели бы сообщить вам, что ваша учетная запись была безвозвратно "
-#~ "удалена. Вход в вашу первоначальную учетную запись больше невозможен. "
-#~ "Если вы захотите вернуться в будущем, мы с удовольствием создадим новую "
-#~ "учетную запись."
+#~ "мы хотели бы сообщить вам, что ваша учетная запись была безвозвратно удалена. Вход в вашу первоначальную учетную запись больше невозможен. Если вы захотите вернуться в будущем, мы с удовольствием создадим новую учетную запись."
 
 #~ msgid "Wesiq - Obnova hesla"
 #~ msgstr "SW Zhilina - Восстановление пароля"
@@ -5287,15 +5247,11 @@ msgstr "Все права защищены."
 #, python-format
 #~ msgid ""
 #~ "Dobrý deň %(first_name)s %(last_name)s,\n"
-#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní "
-#~ "možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne "
-#~ "odstránený.\n"
+#~ "dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa. V opačnom prípade bude váš účet neodvratne odstránený.\n"
 #~ "Tím Wesiq."
 #~ msgstr ""
 #~ "Привет %(first_name)s %(last_name)s,\n"
-#~ "мы получили запрос на удаление вашей учетной записи. В случае ошибки у "
-#~ "вас есть 30 дней на повторный вход в систему. В противном случае ваша "
-#~ "учетная запись будет безвозвратно удалена."
+#~ "мы получили запрос на удаление вашей учетной записи. В случае ошибки у вас есть 30 дней на повторный вход в систему. В противном случае ваша учетная запись будет безвозвратно удалена."
 
 #~ msgid "Brazilian"
 #~ msgstr "Бразильский"

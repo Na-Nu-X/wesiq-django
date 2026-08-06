@@ -2089,6 +2089,9 @@ def blogView(request):
         articles = list(
             Articles.objects.all().annotate(
                 average_rating=Avg("articlerating__rating"),
+            ).order_by(
+                F("html_filename").desc(nulls_last=True), 
+                "-creation_time"
             )
         )
 
@@ -2233,6 +2236,8 @@ def blogView(request):
 
             # articles = articles.filter(categories__contains=[category]).order_by("-title") # Queryset
 
+    articles.sort(key=lambda x: x.html_filename in (None, "")) # Completed Articles Are On The First Place
+
     # Number Of All Articles
     num_articles = len(articles) # Redis List
     # num_articles = articles.count() # Queryset
@@ -2258,6 +2263,9 @@ def blogView(request):
                 "plan": logged_in_user.subscription.plan,
                 "is_active": logged_in_user.subscription.is_active
             }
+
+        for one_article in articles:
+            print(one_article.html_filename) 
 
         # Renders Blog Page With User Data And Articles
         return render(request, "app/blog.html", {
