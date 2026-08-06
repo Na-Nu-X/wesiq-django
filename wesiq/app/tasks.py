@@ -16,6 +16,7 @@ from django.core.files.base import ContentFile
 from PIL import Image
 from django.core.files import File
 from django.core.files.storage import default_storage 
+from django.db.models import F
 
 # Functions
 
@@ -346,6 +347,9 @@ def modelsWarmUp():
     articles = list(
         Articles.objects.all().annotate(
             average_rating=Avg("articlerating__rating"),
+        ).order_by(
+            F("html_filename").desc(nulls_last=True), 
+            "-creation_time"
         )
     )
 
@@ -928,12 +932,6 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
             crf_720 = "21" # 21 CRF Quality Of 720p Video Segment For Subscribers With Premium Plan
             crf_1080 = "19" # 19 CRF Quality Of 1080p Video Segment For Subscribers With Premium Plan
             audio_bitrate = "192k" # 192k Video's Audio Bitrate For Subscribers With Premium Plan
-
-        print("---------------")
-        print(crf_480)
-        print(crf_720)
-        print(crf_1080)
-        print(audio_bitrate)
 
         # HLS Settings Command
         hls_settings = [
