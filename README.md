@@ -1900,6 +1900,28 @@ The account owner is empowered with three explicit operational pathways to manag
 
 - **Ignore**: The user can choose to leave the request in an unsettled state. The application maintains the pending row in the database, ensuring the applicant cannot send duplicate requests, while allowing the profile owner to clear their active attention queue without issuing an explicit rejection.
 
+### 4.35. Tiered Subscription Architecture and Stripe Integration
+
+To ensure the long-term sustainability of the platform and reward dedicated users, the application features a voluntary, tiered subscription model. The financial infrastructure is securely powered by the Stripe API, managing payment intents, recurring billing lifecycles, and secure checkout sessions.
+
+#### 4.35.1 Subscription Tiers and Cosmetic Enhancements
+
+- **Plan Stratification**: Users can opt to support the project by upgrading their standard, free-tier account to either a Basic or Premium subscription plan.
+
+- **Visual Prestige Mechanics**: Upon successful payment verification, the backend automatically unlocks exclusive cosmetic upgrades for the user's identity markers. This includes a unique, tier-specific achievement badge and a highlighted, dynamically styled avatar frame that globally persists across the feed, comments, and profile page to signal their supporter status.
+
+#### 4.35.2 Tier-Dependent Media Processing (FFmpeg Allocation)
+
+- **Dynamic Media Limits**: The subscription tier is directly coupled with the platform's media ingestion policies, allowing premium users to bypass standard constraints and upload significantly longer video assets.
+
+- **Conditional Compression Algorithms**: During the asynchronous media upload process, the Celery background workers dynamically query the author's current subscription state. Based on the active tier, the server instructs FFmpeg to apply varying intensity levels of file compression. Premium users are allocated higher server processing overhead, resulting in minimized compression artifacts and significantly higher visual fidelity for both images and videos.
+
+#### 4.35.3 Lifecycle Management and Active State UI
+
+- **Real-Time Status Dashboard**: Within the account settings, users are provided with a transparent billing and subscription management interface.
+
+- **Temporal Tracking**: The frontend utilizes backend timestamp data to continuously track and display the exact duration remaining on the active subscription cycle, notifying the user of their current tier status and upcoming expiration or auto-renewal dates.
+
 ## 5. Security
 
 ### 5.1. Authentication Audit Logging (login.log)

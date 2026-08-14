@@ -24,7 +24,10 @@ urlpatterns = [
     path('api/load-post-comments/<int:post_id>/', views.loadPostCommentsView, name='load_post_comments_url'),
     path('api/stream-video/<int:user_id>/<int:media_id>/<path:filename>', views.streamVideo, name='stream_video_url'),
     path('api/compression-status/<str:task_id>/', views.getCompressionStatus, name='compression_status_url'),
-    path('api/update-video-watch-time/', views.updateVideoWatchTime, name='update_video_watch_time_url')
+    path('api/update-video-watch-time/', views.updateVideoWatchTime, name='update_video_watch_time_url'),
+
+    # API (Native App)
+    path('native-api/', include('app.api.urls'))
 ]
 
 urlpatterns += i18n_patterns(

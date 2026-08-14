@@ -46,6 +46,8 @@ EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') # ALLOWED_HOSTS
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Application definition
 
@@ -58,6 +60,10 @@ INSTALLED_APPS = [
     'daphne',
 
     'app',
+
+    # Native App Communication
+    'rest_framework',
+    'corsheaders',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -89,6 +95,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     # 'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -343,4 +350,13 @@ UNFOLD = {
             "700": "126 34 206"
         }
     }
+}
+
+AUTH_USER_MODEL = "app.Users"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # Native App
+        'rest_framework.authentication.SessionAuthentication' # Web App
+    )
 }
