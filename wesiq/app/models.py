@@ -15,8 +15,9 @@ from datetime import datetime, timezone as datetime_timezone
 import stripe
 import string
 import random
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
-class Users(models.Model):
+class Users(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
         ("developer", _("Developer")),
         ("admin", _("Admin")),
@@ -66,7 +67,8 @@ class Users(models.Model):
         verbose_name=_("Username"), 
         help_text=_("User's username."),
         max_length=20, 
-        null=False
+        null=False,
+        unique=True
     )
 
     email_address = models.EmailField(
@@ -263,6 +265,21 @@ class Users(models.Model):
         default=False, 
         null=False
     )
+
+    is_staff = models.BooleanField(
+        verbose_name=_("Is Staff"),
+        default=False,
+        help_text=_("Designates whether the user can log into the admin site."),
+    )
+    
+    is_active = models.BooleanField(
+        verbose_name=_("Is Active"),
+        default=True,
+        help_text=_("Designates whether this user should be treated as active."),
+    )
+
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     @property
     def total_received_likes(self):

@@ -29,5 +29,5 @@ urlpatterns = [
     # path(_('platba-zrusena/'), views.cancelDonation, name='cancel_donation_url'),
     path('create-payment-intent/', views.createPaymentIntent, name='create_payment_intent_url'),
     path('create-subscription-intent/', views.createSubscriptionIntent, name='create_subscription_intent_url'),
-    path('stripe/webhook/', views.stripeWebhook, name='stripe_webhook_url')
+    path('stripe/webhook/', views.stripeWebhook, name='stripe_webhook_url'),
 ]
