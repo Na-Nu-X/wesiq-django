@@ -21,4 +21,11 @@ urlpatterns = [
     path('get-processing-posts/', views.get_processing_posts, name='get_processing_posts_url'),
     path('get-unread-chats/', views.get_unread_chats, name='get_unread_chats_url'),
     path('get-posts/', views.get_posts, name='get_posts_url'),
+    path('get-post-comments/', views.get_post_comments, name='get_post_comments_url'),
+    path('edit-post-settings/', views.edit_post_settings, name='edit_post_settings_url'),
+    path('delete-post/', views.delete_post, name='delete_post_url'),
+    path('delete-post-comment/', views.delete_post_comment, name='delete_post_comment_url'),
+    path('toggle-follow/', views.toggle_follow, name='toggle_follow_url'),
+    path('upload-post/', views.upload_post, name='upload_post_url'),
+    path('get-upload-progress/<str:task_id>/', views.getUploadProgress, name='get_upload_progress_url'),
 ]

@@ -4335,8 +4335,6 @@ def streamVideo(request, user_id, media_id, filename):
     return video_response
 
 def getCompressionStatus(request, task_id):
-    print(task_id)
-
     result = AsyncResult(task_id)
     
     upload_progress_response = {
