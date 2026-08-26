@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
+from django.utils import translation
 from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ContactMessage
 from ..tasks import compressImage, compressVideo
 from .serializers import UserSerializer
@@ -32,18 +33,31 @@ from django.contrib.gis.geos import Point
 from django.db import transaction
 import tempfile
 from celery.result import AsyncResult
+import string, random
+from django.core.mail import EmailMultiAlternatives
+import math
+from django.db.models import Sum, Avg
+from django.db.models import F, IntegerField, ExpressionWrapper, Value
+import random, requests, os, secrets, mimetypes
+from pathlib import Path
+from django.core.files.storage import FileSystemStorage
+from django.core.cache import cache
+from django.http import FileResponse
+from collections import defaultdict
 
-# Functions
+# Function For Capture The Error
 def captureError(message):
     with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
+# Function For Capture The Login
 def captureLogin(message):
     with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
+# Function For Get The Client IP
 def getClientIp(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 
@@ -54,6 +68,46 @@ def getClientIp(request):
         ip = request.META.get('REMOTE_ADDR')
 
     return ip
+
+# Generates Random 6-Digit Code
+def generateCode(length=6, letters=False):
+    code = ""
+
+    if letters:
+        characters = string.digits + string.ascii_letters
+
+        for one_character in range(length):
+            one_character = random.choice(characters)
+            code += str(one_character)
+
+    else:
+        characters = string.digits
+
+        for one_character in range(length):
+            one_character = random.choice(characters)
+            code += str(one_character)
+
+    return code
+
+# Function For Send The Mail
+def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+    with translation.override(user.language):
+        # Send Mail
+        subject = f"Wesiq - {subject}"
+        text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}"
+        sender = settings.EMAIL_HOST_USER
+        receiver = [user.email_address]
+        html_content = f"""
+            <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
+            <p>{html_content}<p>
+            <h1>{html_content_middle}</h1>
+            <p>{html_content_end}<br>
+            {_('Tím')} Wesiq.</p>
+        """
+
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message.attach_alternative(html_content, "text/html")
+        mail_message.send()
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -91,9 +145,9 @@ def login(request):
 
                 return Response({
                     "success": True, 
-                    "message": str(_("Úspešne prihlásený ako %(username)s") % {"username": user.username}),
                     "access": str(refresh.access_token),
-                    "refresh": str(refresh)
+                    "refresh": str(refresh),
+                    "message": str(_("Úspešne prihlásený ako %(username)s") % {"username": user.username})
                 }, status=200)
             
             else: # Wrong Password
@@ -130,6 +184,92 @@ def login(request):
             "message": str(_("Pri prihlasovaní došlo k chybe"))
         }, status=200)
 
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def register(request):
+    try:
+        first_name = request.data.get("first_name") # Gets The First Name
+        last_name = request.data.get("last_name") # Gets The Last Name
+        username = request.data.get("username") # Gets The Username
+        email_address = request.data.get("email_address") # Gets The E-mail Address
+        phone_number = request.data.get("phone_number") # Gets The Phone Number
+        password = request.data.get("password") # Gets The Password
+        password_check = request.data.get("password_check") # Gets The Password Check
+        language = request.data.get("language") # Gets The Language
+
+        # E-mail Address Already In Use
+        if Users.objects.filter(email_address=email_address).exists():
+            captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+            return Response({
+                "success": False, 
+                "message": str(_("Tento e-mail už je zaregistrovaný"))
+            }, status=400)
+
+        # Username Already In Use
+        elif Users.objects.filter(username=username).exists():
+            return Response({
+                "success": False, 
+                "message": str(_("Toto používateľské meno je už obsadené"))
+            }, status=400)
+
+        elif password != password_check:
+            return Response({
+                "success": False, 
+                "message": str(_("Heslá sa nezhodujú"))
+            }, status=400)
+
+        elif len(password) < 8:
+            return Response({
+                "success": False, 
+                "message": str(_("Heslo je príliš krátke"))
+            }, status=400)
+
+        else:
+            verification_code = generateCode() # Generates Random 6-Digit Code
+
+            clean_phone_number = "".join(phone_number.split()) # Gets Phone Number With No White Spaces
+
+            new_user = Users(
+                first_name = first_name,
+                last_name = last_name,
+                username = username,
+                email_address = email_address,
+                phone_number = clean_phone_number,
+                password = make_password(password),
+                language = language,
+                verification_code = verification_code
+            )
+
+            new_user.save()
+
+            # Deletes Previous User ID Session If Was Logged In
+            if "logged_in_user_id" in request.session:
+                del request.session["logged_in_user_id"]
+
+            sendMail(
+                new_user,
+                _("Overenie účtu"), # Subject
+                _("ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na nižšie uvedený odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu.\n\n%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s\n\nTento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať. Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": language, "verification_code": verification_code, "id": new_user.id}, # Text Content
+                _('ďakujeme za Vašu registráciu. Pre dokončenie procesu registrácie a aktiváciu Vášho účtu je potrebné overiť Vašu e-mailovú adresu. Kliknutím na <a href="%(domain)s%(language)s?verification-code=%(verification_code)s&id=%(id)s" title="Dokončiť registráciu" target="_blank">tento</a> odkaz potvrdíte svoj e-mail a budete automaticky prihlásený do svojho nového účtu. Tento odkaz je platný nasledujúcich 24 hodín. Po uplynutí tohto času bude z bezpečnostných dôvodov potrebné registráciu zopakovať.') % {"domain": settings.DOMAIN_URL, "language": language, "verification_code": verification_code, "id": new_user.id}, # HTML Content
+                _("Ak ste registráciu nevykonali Vy, tento e-mail prosím ignorujte."), # End Of HTML Content
+            )
+
+            return Response({
+                "success": True, 
+                "message": str(_("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": email_address})
+            }, status=200)
+
+    # Error
+    except Exception as e:
+        captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri registrácii došlo k chybe"))
+        }, status=500)
+
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -141,24 +281,6 @@ def get_logged_in_user(request):
         id=logged_in_user_id
     ).select_related(
         "subscription"
-    ).annotate(
-        # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-        has_follow=Exists(
-            FollowRelation.objects.filter(
-                from_user=logged_in_user_id,
-                to_user=OuterRef("pk"),
-                status="accepted"
-            )
-        ),
-        
-        # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-        has_pending_follow_request=Exists(
-            FollowRelation.objects.filter(
-                from_user=logged_in_user_id,
-                to_user=OuterRef("pk"),
-                status="pending"
-            )
-        )
     ).prefetch_related(
         # Gets All Followers With All Related Data
         Prefetch(
@@ -174,6 +296,15 @@ def get_logged_in_user(request):
             to_attr="accepted_following"
         )
     ).first()
+
+    follow_requests = None # Stores The Follow Requests
+
+    if logged_in_user_object.private_account:
+        # Gets All Follow Requests With All Related Data
+        follow_requests = FollowRelation.objects.filter(
+            to_user=logged_in_user, 
+            status="pending"
+        ).select_related("from_user")
 
     if not logged_in_user_object:
         return Response({
@@ -198,9 +329,8 @@ def get_logged_in_user(request):
         "friend_code": logged_in_user_object.friend_code,
         "saved_posts": list(logged_in_user_object.saved_posts.values_list("id", flat=True)),
         "private_account": logged_in_user_object.private_account,
-        "followers": len(logged_in_user_object.accepted_followers),
-        "has_follow": logged_in_user_object.has_follow,
-        "has_pending_follow_request": logged_in_user_object.has_pending_follow_request,
+        "follow_requests": follow_requests if logged_in_user.private_account else None,
+        "followers_amount": len(logged_in_user_object.accepted_followers),
         "subscription": subscription,
         "data_saving_mode": logged_in_user_object.data_saving_mode
     }
@@ -210,6 +340,8 @@ def get_logged_in_user(request):
         "logged_in_user": logged_in_user_data,
         "message": str(_("Prihlásený užívateľ bol úspešne nájdený."))
     }, status=200)
+
+# Community Page
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1214,7 +1346,7 @@ def get_post_comments(request):
             "success": True, 
             "has_next": page_post_root_comments.has_next(), 
             "visible_comments": post_comments, 
-            "message": _("Komentáre boli úspešné nájdené.")
+            "message": str(_("Komentáre boli úspešné nájdené."))
         }, status=200)
 
     except Exception as e:
@@ -1223,7 +1355,7 @@ def get_post_comments(request):
         return Response({
             "success": False, 
             "has_next": False, 
-            "message": _("Pri hľadaní komentárov došlo k chybe.")
+            "message": str(_("Pri hľadaní komentárov došlo k chybe."))
         }, status=500)
 
 @api_view(["POST"])
@@ -1715,7 +1847,7 @@ def upload_post(request):
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def getUploadProgress(request, task_id):
+def get_upload_progress(request, task_id):
     result = AsyncResult(task_id)
     
     upload_progress = {
@@ -1738,3 +1870,2065 @@ def getUploadProgress(request, task_id):
         "upload_progress": upload_progress,
         "message": str(_("Pokrok procesu nahrávania príspevku bol úspešne získaný."))
     }, status=200)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_unread_chats(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        # Gets The Unread Chats
+        unread_chats = Chat.objects.filter(
+            receiver=logged_in_user,
+            is_read=False
+        ).select_related("sender")
+
+        return Response({
+            "success": False, 
+            "unread_chats": unread_chats,
+            "message": str(_("Nové správy boli úspešne načítané."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while loading the unread chats.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri načítavaní nových správ došlo k chybe"))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def mark_post_as_seen(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        post_id = request.data.get("post_id") # Gets The Post ID
+
+        if not post_id or not str(post_id).isdigit():
+            return Response({
+                "success": False, 
+                "message": str(_("Príspevok sa nenašiel."))
+            }, status=400)
+
+        # Marks The Post As Seen If Exists And Isn't Already Seen By The User
+        SeenPost.objects.get_or_create(
+            user_id=logged_in_user_id,
+            post_id=post_id
+        )
+
+        return Response({
+            "success": True, 
+            "message": str(_('Príspevok bol úspešne označený za "už videný".'))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_('Pri označovaní príspevku za "už videný" došlo k chybe.'))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def tag_user(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        searched_tag = request.data.get("searched_tag") # Gets The Searched Tag
+        
+        # Gets All Relevant Users By Searched Tag
+        users_for_tag = Users.objects.filter(
+            account_status="OK", 
+            username__contains=searched_tag
+        ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
+
+        # Creates Valid Format Of Users For Tag For JSON Response
+        users_for_tag = [
+            {
+                "id": one_user.id,
+                "first_name": one_user.first_name,
+                "last_name": one_user.last_name,
+                "username": one_user.username,
+                "profile_picture_name": one_user.profile_picture_name,
+            }
+
+            for one_user in users_for_tag
+        ]
+
+        return Response({
+            "success": True, 
+            "users": users_for_tag, 
+            "message": "Užívatelia pre označenie boli úspešne nájdený."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri hľadaní užívateľov pre označenie došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def update_video_watch_time(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        post_media_id = request.data.get("post_media_id") # Gets The Post Media ID
+        watch_time = request.data.get("watch_time") # Gets The Watch Time
+
+        if not post_media_id or not watch_time:
+            return Response({
+                "success": False, 
+                "message": str(_("Nepodarilo sa získať potrebné dáta pre zaznamenanie času pozerania videa."))
+            }, status=400)
+
+        # Gets The Video Author's ID
+        author_id = PostMedia.objects.filter(id=post_media_id).values_list(
+            "post__user_id", flat=True
+        ).first()
+
+        # If The Video Doesn't Belong To The Logged In User
+        if(author_id != logged_in_user_id):
+            # Updates The Total Watch Time Of The Video
+            PostMedia.objects.filter(id=post_media_id).update(
+                total_watch_time=Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
+            )
+
+            # Adds The User's First Video View
+            VideoView.objects.get_or_create(
+                post_media_id=post_media_id,
+                user=logged_in_user
+            )
+
+            return Response({
+                "success": True, 
+                "message": str(_("Celkový čas pozerania videa bol úspešne zaznamenaný."))
+            }, status=200)
+
+        else:
+            return Response({
+                "success": True, 
+                "message": str(_("Celkový čas pozerania videa nie je možné navýšiť vlastnému príspevku."))
+            }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zaznamenávaní času pozerania videa došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def stream_video(request, user_id, media_id, filename):
+    try:
+        # Manual Addition For HLS Types If The OS Doesn't Know Them
+        mimetypes.add_type("application/x-mpegURL", ".m3u8")
+        mimetypes.add_type("video/MP2T", ".ts")
+
+        # Gets The Save Video File Path (Path Traversal Protection) From Traveling Between Paths
+        safe_filename = os.path.basename(filename)
+        path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename)
+
+        if not os.path.exists(path):
+            return Response({
+                "success": False, 
+                "message": str(_("Video súbor %(safe_filename)s sa nenašiel.") % {"safe_filename": safe_filename})
+            }, status=404)
+
+        # Checks If The File Is index.m3u8 Or .ts Video File Segment
+        content_type, _ = mimetypes.guess_type(path)
+
+        if not content_type:
+            content_type = "application/octet-stream"
+
+        video_response = FileResponse(open(path, "rb"), content_type=content_type)
+        video_response["Accept-Ranges"] = "bytes"
+
+        return Response({
+            "success": True, 
+            "video": video_response,
+            "message": str(_("Video bolo nájdené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while streaming the video.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pokuse o prehratie videa došlo k chybe."))
+        }, status=500)
+
+# Activity Page
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_activity(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
+        latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
+        longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
+
+        # Gets Last 7 Days Average Logged In User's Activity Time
+        average_activity_elapsed_time = Activity.objects.filter(
+            user_id=logged_in_user_id,
+            end_time__gte=timezone.now() - timedelta(days=6)
+        ).aggregate(avg=Avg("elapsed_time"))["avg"]
+
+        average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0
+
+        average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m" if activities else "" # Formats Average Activity Time
+        activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
+
+        return Response({
+            "success": True, 
+            "latest_activity": latest_activity, 
+            "longest_activity": longest_activity, 
+            "average_activity_time": average_activity_time, 
+            "average_activity_time_formatted": average_activity_time_formatted, 
+            "activities_amount": activities_amount, 
+            "message": "Dáta o aktivite užívateľa boli úspešne získané."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní dát o aktivite užívateľa došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_weekly_activity(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        today = timezone.now().date() # Determines Today's Date
+        seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
+
+        # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+        weekly_activity = (
+            Activity.objects
+            .filter(
+                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=seven_days_ago) & Q(end_time__date__lte=today)
+            )
+            .annotate(day=TruncDate("end_time"))
+            .values("day")
+            .annotate(total_elapsed_time=Sum("elapsed_time"))
+        )
+
+        # Creates Dictionary From Weekly Activity
+        weekly_activity_dictionary = {
+            one_day["day"]: one_day["total_elapsed_time"]
+            for one_day in weekly_activity
+        }
+
+        weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
+
+        weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
+
+        # Fills And Sorts Result From The Oldest Date To Today's Date 
+        for i in range(6, -1, -1):
+            day = today - timedelta(days=i)
+            label = weekday_labels[day.weekday()]
+
+            weekly_activity_result.append({
+                "day": label,
+                "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
+            })
+
+        return Response({
+            "success": True, 
+            "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
+            "message": "Dáta o aktivite užívateľa boli úspešne získané."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní aktivity za posledný týždeň došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_training_plans(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+        
+        day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
+
+        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        training_plan = (
+            TrainingPlan.objects
+            .filter(user_id=logged_in_user_id)
+            .annotate(
+                sorted_days=ExpressionWrapper(
+                    Mod(F("day") - Value(day_index) + Value(7), Value(7)),
+                    output_field=IntegerField()
+                )
+            )
+            .order_by("sorted_days")
+        )
+
+        return Response({
+            "success": True, 
+            "training_plan": training_plan,
+            "message": "Tréningové plány boli úspešne získané."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní tréningových plánov došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_official_tasks(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        todays_date = timezone.localdate() # Gets The Today's Date
+
+        # Deletes The Older User's Official Tasks Than Today's Date
+        UserDailyOfficialTasks.objects.filter(
+            user=logged_in_user,
+            created_at__date__lt=todays_date
+        ).delete()
+
+        # Gets The All Assigned User's Official Tasks For Today
+        official_tasks = logged_in_user.daily_official_tasks.annotate(
+            progress_percentage=F("userdailyofficialtasks__progress_percentage"),
+            is_completed=F("userdailyofficialtasks__is_completed")
+        )
+
+        official_tasks_amount = official_tasks.count() # Gets The Amount Of All Assigned User's Official Tasks For Today
+
+        # Gets Assigned User's Official Tasks For Today If The User Has Less Than 3 Of Them Already Assigned
+        if official_tasks_amount < 3:
+            needed_tasks = 3 - official_tasks_amount # Gets The Amount Of Still Needed Tasks
+            existing_tasks_ids = official_tasks.values_list("id", flat=True) # Gets The Already Assigned User's Official Tasks For Today IDs
+        
+            # Gets The Random New User's Official Tasks For Today Which Aren't Already Assigned For The User
+            random_new_tasks = OfficialTasks.objects.exclude(
+                id__in=existing_tasks_ids
+            ).order_by(
+                "?"
+            )[:needed_tasks]
+            
+            # Bulk Creation Of Multiple New User's Official Tasks For Today
+            new_official_tasks = [
+                UserDailyOfficialTasks(user=logged_in_user, task=one_task)
+                for one_task in random_new_tasks
+            ]
+
+            UserDailyOfficialTasks.objects.bulk_create(new_official_tasks)
+
+            # Updates The Official Tasks
+            official_tasks = logged_in_user.daily_official_tasks.annotate(
+                progress_percentage=F("userdailyofficialtasks__progress_percentage"),
+                is_completed=F("userdailyofficialtasks__is_completed")
+            )
+
+        current_time = timezone.localtime(timezone.now())
+        next_midnight = (current_time + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        official_tasks_remaining_time = next_midnight - current_time
+        official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600
+
+        return Response({
+            "success": True, 
+            "official_tasks": official_tasks,
+            "official_tasks_remaining_hours": official_tasks_remaining_hours,
+            "message": "Oficiálne úlohy pre tento deň boli úspešne získané."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting user's official tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní oficiálnych úloh došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_custom_tasks(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        custom_tasks = CustomTasks.objects.filter(
+            user_id=logged_in_user_id
+        ).order_by(
+            "order"
+        )
+
+        return Response({
+            "success": True, 
+            "custom_tasks": custom_tasks,
+            "message": "Vlastné úlohy boli úspešne získané."
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting user's custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní vlastných úloh došlo k chybe."))
+        }, status=500)
+    
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_activity_history(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
+        activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago, user_id=logged_in_user_id) # Gets The Activity History Items
+
+        return Response({
+            "success": True, 
+            "activity_history": activity_history,
+            "message": "História zaznamenaných aktivít bola úspešne získaná."
+        }, status=200)
+    
+    except Exception as e:
+        captureError(f"An error occurred while getting activity history.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní histórie zaznamenaných aktivít došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def is_xp_boost_available(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        # XP Boost
+        is_xp_boost_available = False # Stores The Value If The XP Boost Is Available
+        one_day_ago = timezone.now() - timedelta(days=1) # Gets The 1 Day Ago Time
+        yesterdays_activity = Activity.objects.filter(end_time__gte=one_day_ago).first() # Gets One Of The Yesterday's Activity
+
+        # Checks If The User's XP Boost Expired Yesterday Or Earlier And If The User Recorded Any Activity Yesterday
+        if logged_in_user.xp_boost_expiration_time < one_day_ago and yesterdays_activity:
+            is_xp_boost_available = True
+
+        return Response({
+            "success": True, 
+            "is_xp_boost_available": is_xp_boost_available,
+            "message": "Informácia o dostupnom navýšení XP bola úspešne získaná."
+        }, status=200)
+    
+    except Exception as e:
+        captureError(f"An error occurred while getting information if the XP boost is available.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní informácie o dostupnom navýšení XP došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def use_xp_boost(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        xp_boost_expiration_time = timezone.now() + timedelta(minutes=30) # Creates The New XP Boost Expiration Time
+
+        Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
+
+        return Response({
+            "success": True, 
+            "xp_boost_expiration_time": xp_boost_expiration_time, 
+            "message": str(_("Navýšenie XP bolo úspešne uplatnené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri uplatňovaní navýšenia XP došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def complete_official_task(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        task_data = request.data.get("task_data") # Gets The Completed Task Data
+        task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
+
+        # Gets The Task From User's Daily Official Tasks
+        users_daily_official_task = UserDailyOfficialTasks.objects.filter(
+            user=logged_in_user, 
+            task=task
+        ).first()
+
+        # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
+        if users_daily_official_task and not users_daily_official_task.is_completed:
+            if users_daily_official_task.task.data == "2_activities":
+                users_daily_official_task.progress_percentage += 50
+                users_daily_official_task.save()
+
+            else:
+                users_daily_official_task.progress_percentage = 100.00
+                users_daily_official_task.save()
+
+            if users_daily_official_task.progress_percentage == 100.00:
+                users_daily_official_task.is_completed=True # Marks The Task As Completed
+                users_daily_official_task.save() # Saves The Updated Task
+
+                # Increases And Updates The Amount Of User's Obtained XP
+                Users.objects.filter(
+                    id=logged_in_user_id
+                ).update(
+                    xp = F("xp") + task.xp
+                )
+
+                return Response({
+                    "success": True, 
+                    "progress_percentage": 100, 
+                    "is_completed": True, 
+                    "first_completion": True, 
+                    "gained_xp": task.xp, 
+                    "message": str(_("Úloha bola úspešne dokončená."))
+                }, status=200)
+
+            return Response({
+                "success": True, 
+                "progress_percentage": users_daily_official_task.progress_percentage, 
+                "is_completed": False, 
+                "first_completion": True, 
+                "gained_xp": task.xp, 
+                "message": str(_("Pokrok úlohy bol úspešne zaznamenaný."))
+            }, status=200)
+
+        else:
+            return Response({
+                "success": True, 
+                "progress_percentage": 100, 
+                "is_completed": True, 
+                "first_completion": False, 
+                "gained_xp": 0, 
+                "message": str(_("Úloha už bola dokončená."))
+            }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri označovaní úlohy za dokončenú došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_custom_task(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        custom_task_title = request.data.get("custom_task_title") # Gets The Custom Task Title
+
+        # Creates The New Custom Task
+        new_custom_task = CustomTasks(
+            user_id = logged_in_user_id,
+            title = custom_task_title
+        )
+
+        new_custom_task.save() # Saves The New Custom Task
+
+        custom_task = {
+            "id": new_custom_task.id,
+            "title": new_custom_task.title,
+            "created_at": new_custom_task.created_at
+        }
+
+        return Response({
+            "success": True, 
+            "custom_task": custom_task, 
+            "message": str(_("Úloha bola úspešne pridaná."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pridávaní úlohy došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def toggle_complete_custom_task(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        task_id = request.data.get("task_id") # Gets The Task ID
+        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+        task.is_completed = not task.is_completed # Inverts The Completion Status
+        task.save(update_fields=["is_completed"]) # Saves The Updated Task
+
+        return Response({
+            "success": True, 
+            "message": str(_("Stav úlohy bol úspešne zmenený."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zmene stavu úlohy došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_custom_task(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        task_id = request.data.get("task_id") # Gets The Task ID
+        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+        task.delete() # Deletes The User's Custom Task
+
+        return Response({
+            "success": True, 
+            "message": str(_("Úloha bola úspešne odstránená."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní úlohy došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_completed_custom_tasks(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        completed_custom_tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+
+        CustomTasks.objects.filter(
+            id__in=completed_custom_tasks_ids,
+            user_id=logged_in_user_id
+        ).delete()
+
+        return Response({
+            "success": True, 
+            "message": str(_("Úlohy boli úspešne odstránené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní úloh došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def change_custom_tasks_order(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+
+        # Updates The Order Of All The Logged In User's Custom Tasks
+        for index, task_id in enumerate(tasks_ids):
+            CustomTasks.objects.filter(
+                id=task_id, 
+                user_id=logged_in_user_id
+            ).update(order=index)
+
+        return Response({
+            "success": True, 
+            "message": str(_("Poradie úloh bolo úspešne zmenené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pokuse o zmenu poradia úloh došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def new_activity(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+        gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
+
+        Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
+        Users.objects.filter(id=logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
+
+        today = timezone.now().date() # Determines Today's Date
+        yesterday = today - timedelta(days=1) # Determines Yesterday's Date
+
+        # Gets The User's Last Activity Streak Increase Date
+        last_activity_streak_increase_date = (
+            logged_in_user.last_activity_streak_increase_time.date() if logged_in_user.last_activity_streak_increase_time else None
+        )
+
+        # Checks If The Activity Streak Hasn't Been Already Increased Today Or If It Has Never Increased Before
+        if last_activity_streak_increase_date is None or last_activity_streak_increase_date < today:
+            # Increases The Activity Streak
+            if last_activity_streak_increase_date == yesterday or logged_in_user.activity_streak == 0:
+                Users.objects.filter(id=logged_in_user_id).update(
+                    activity_streak=F("activity_streak") + 1,
+                    last_activity_streak_increase_time=today
+                )
+
+                # Increases The Max Activity Streak
+                if logged_in_user.activity_streak > logged_in_user.max_activity_streak:
+                    Users.objects.filter(id=logged_in_user_id).update(
+                        max_activity_streak=F("activity_streak")
+                    )
+
+        # Creates The New Activity
+        new_activity = Activity(
+            user_id = logged_in_user_id,
+            elapsed_time = int(new_activity_data["elapsed_time"]),
+            gained_xp = int(gained_xp),
+            type = new_activity_data["type"],
+            training_plan_day = new_activity_data["day"],
+            training_plan_summary = new_activity_data["training_plan_summary"]
+        )
+
+        new_activity.save() # Saves The New Activity
+
+        # No Day Off Week Badge Completion
+        if not logged_in_user.badges.filter(data="no_day_off_week").exists():
+            seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
+
+            # Gets The Number Of Consecutive Days With Some Recorded Activity
+            unique_seven_days_of_activity = Activity.objects.filter(
+                user=logged_in_user,
+                end_time__date__range=[seven_days_ago, today]
+            ).values(
+                "end_time__date"
+            ).distinct().count()
+
+            if unique_seven_days_of_activity == 7:
+                # Creates The New Badge
+                new_badge = SpecialBadges(
+                    user_id = logged_in_user_id,
+                    title = "No Day Off Week",
+                    data = "no_day_off_week"
+                )
+
+                new_badge.save() # Saves The New Badge
+
+        # X-Mas Activity Badge Completion
+        if not logged_in_user.badges.filter(data="xmas_activity").exists():
+            has_xmas_activity = Activity.objects.filter(
+                user=logged_in_user,
+                end_time__month=12,
+                end_time__day=24
+            ).exists()
+
+            if has_xmas_activity:
+                # Creates The New Badge
+                new_badge = SpecialBadges(
+                    user_id = logged_in_user_id,
+                    title = "X-Mas Activity",
+                    data = "xmas_activity"
+                )
+
+                new_badge.save() # Saves The New Badge
+
+        # New Year, New Goals Badge Completion
+        if not logged_in_user.badges.filter(data="new_year_new_goals").exists():
+            has_new_year_new_goals = Activity.objects.filter(
+                user=logged_in_user,
+                end_time__month=1,
+                end_time__day=1
+            ).exists()
+
+            if has_new_year_new_goals:
+                # Creates The New Badge
+                new_badge = SpecialBadges(
+                    user_id = logged_in_user_id,
+                    title = "New Year, New Goals",
+                    data = "new_year_new_goals"
+                )
+
+                new_badge.save() # Saves The New Badge
+
+        return Response({
+            "success": True, 
+            "message": str(_("Aktivita bola úspešne zaznamenaná."))
+        }, status=201)
+
+    except Exception as e:
+        captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zaznamenávaní aktivity došlo k chybe."))
+        }, status=500)
+
+# Manage Training Plans Page
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_exercises(request):
+    try:
+        exercises = cache.get("cached_exercises") # Gets All Cached Exercises
+        # exercises = Exercises.objects.all() # Queryset
+
+        # Exercises Fallback (If Cache Is Clear)
+        if exercises is None:
+            # Gets All Exercises
+            exercises = list(
+                Exercises.objects.all()
+                .order_by("exercise")
+                # .values("exercise", "unit", "categories", "requires_weight")
+            )
+
+            cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
+
+            print("Getting Exercises Data From The DB.") # Test Print
+
+        else:
+            print("Getting Exercises Data From The Redis Cache.") # Test Print
+
+        return Response({
+            "success": True, 
+            "exercises": exercises,
+            "message": str(_("Cviky boli úspešne získané."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting the exercises.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní cvikov došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def manage_training_plan(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+        
+        # Gets Each Object From The Training Plan Data
+        for one_object in training_plan_data:
+            # New Training Plan
+            if one_object["action"] == "new_training_plan":
+                new_training_plan = TrainingPlan(
+                    user_id = logged_in_user_id,
+                    training_plan_key = one_object["training_plan_key"],
+                    day = one_object["day"],
+                    type = one_object["type"],
+                    exercise = one_object["exercise"],
+                    periods = one_object["periods"],
+                    unit = one_object["unit"],
+                    order = one_object["order"],
+                )
+
+                new_training_plan.save() # Saves New Training Plan
+
+            # Edited Training Plan
+            elif one_object["action"] == "edited_training_plan":
+                previous_training_plan_key = one_object["previous_training_plan_key"] # Gets The Previous Training Plan Key
+
+                if previous_training_plan_key:
+                    TrainingPlan.objects.filter(
+                        user_id=logged_in_user_id, 
+                        training_plan_key=previous_training_plan_key
+                    ).delete()
+
+                edited_training_plan = TrainingPlan(
+                    user_id = logged_in_user_id,
+                    training_plan_key = one_object["training_plan_key"],
+                    day = one_object["day"],
+                    type = one_object["type"],
+                    exercise = one_object["exercise"],
+                    periods = one_object["periods"],
+                    unit = one_object["unit"],
+                    order = one_object["order"],
+                )
+
+                edited_training_plan.save() # Saves Edited Training Plan
+
+            elif one_object["action"] == "delete_training_plan":
+                # Deletes Exercises With Similar Training Plan Key
+                TrainingPlan.objects.filter(
+                    user_id=logged_in_user_id, 
+                    training_plan_key=one_object["training_plan_key"]
+                ).delete()
+
+        return Response({
+            "success": True, 
+            "message": str(_("Zmeny v tréningovom pláne boli úspešne vykonané."))
+        }, status=201)
+
+    except Exception as e:
+        captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri vykonávaní zmien v tréningovom pláne došlo k chybe."))
+        }, status=500)
+
+# Profile Page
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_profile(request, username):
+    try:
+        if request.user.is_authenticated:
+            logged_in_user = request.user # Gets The Logged In User
+            logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        else:
+            logged_in_user_id = None # Default State When The User Isn't Logged In
+            logged_in_user = None # Default State When The User Isn't Logged In
+
+        is_found = False # Stores The Information If The User Was Found
+
+        # Checks If The Profile With Searched Username Exists
+        if Users.objects.filter(username=username).exists():
+            is_found = True # Stores The Information That The User Was Found
+
+            # Gets The User By Username
+            user = Users.objects.filter(
+                username=username
+            ).annotate(
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("pk"),
+                        status="pending"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).first()
+
+            # Gets All Followers With All Related Data
+            followers = FollowRelation.objects.filter(
+                to_user=user, 
+                status="accepted"
+            ).select_related("from_user")
+
+            # Gets All Following Users With All Related Data
+            following = FollowRelation.objects.filter(
+                from_user=user, 
+                status="accepted"
+            ).select_related("to_user")
+
+            today = timezone.now().date() # Determines Today's Date
+
+            # Creates The Has Already Increased Activity Streak Column (True If The User Already Has)
+            if user.last_activity_streak_increase_time:
+                user.has_already_increased_activity_streak = user.last_activity_streak_increase_time.date() == today
+
+            else:
+                user.has_already_increased_activity_streak = False
+
+            # Gets All User's Posts With All Related Data
+            posts = Post.objects.filter(
+                user_id=user.id
+            ).prefetch_related(
+                Prefetch(
+                    "user",
+                    queryset=Users.objects.annotate(
+                        # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                        has_follow=Exists(
+                            FollowRelation.objects.filter(
+                                from_user=logged_in_user_id,
+                                to_user=OuterRef("pk"),
+                                status="accepted"
+                            )
+                        ) if logged_in_user else Value(False, output_field=BooleanField())
+                    )
+                ),
+
+                Prefetch(
+                    "media",
+                    queryset=PostMedia.objects.order_by("order")
+                )
+            ).exclude(
+                media__is_processed=False
+            ).order_by(
+                "-created_at"
+            ).distinct()
+
+            # If The User Is Logged In
+            if logged_in_user_id:
+                logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+
+                # If Searched Profile Belongs To The Logged In User
+                if logged_in_user == user:
+                    saved_posts = logged_in_user.saved_posts.all().select_related(
+                        "user"
+                    ).prefetch_related(
+                        "media"
+                    ).order_by(
+                        "-created_at"
+                    ).distinct()
+
+                    return Response({
+                        "success": True, 
+                        "is_found": is_found,
+                        "user": user,
+                        "followers": followers,
+                        "following": following,
+                        "posts": posts,
+                        "saved_posts": saved_posts,
+                        "message": str(_("Profil užívateľa bol nájdený."))
+                    }, status=200)
+
+                else:
+                    # Gets The Unread Messages Amount
+                    unread_messages_amount = Chat.objects.filter(
+                        sender=user,
+                        receiver=logged_in_user,
+                        is_read=False
+                    ).count()
+
+                    return Response({
+                        "success": True, 
+                        "is_found": is_found,
+                        "user": user,
+                        "followers": followers,
+                        "following": following,
+                        "unread_messages_amount": unread_messages_amount,
+                        "posts": posts,
+                        "message": str(_("Profil užívateľa bol nájdený."))
+                    }, status=200)
+
+            return Response({
+                "success": True, 
+                "is_found": is_found,
+                "user": user,
+                "followers": followers,
+                "following": following,
+                "posts": posts,
+                "message": str(_("Profil užívateľa bol nájdený."))
+            }, status=200)
+
+        return Response({
+            "success": True, 
+            "is_found": is_found,
+            "message": str(_("Profil užívateľa sa nenašiel."))
+        }, status=400)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting the profile.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní profilu užívateľa došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_follower(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        removed_follower_id = request.data.get("removed_follower_id") # Gets The Removed Follower ID
+        removed_follower = Users.objects.get(id=removed_follower_id) # Gets The Removed Follower
+
+        # Removes The Follower
+        FollowRelation.objects.filter(
+            from_user=removed_follower,
+            to_user=logged_in_user
+        ).delete()
+
+        return Response({
+            "success": True, 
+            "message": str(_("Sledovateľ bol odstránený."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní sledovateľa došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def password_reset(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        code = generateCode() # Generates Random 6-Digit Code
+
+        sendMail(
+            logged_in_user,
+            _("Obnova hesla"), # Subject
+            _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # Text Content
+            _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # HTML Content
+            _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+            code
+        )
+
+        # Saves Password Reset Code To Database
+        logged_in_user.password_reset_code = code
+        logged_in_user.save()
+
+        return Response({
+            "success": True, 
+            "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní sledovateľa došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def approve_follow_request(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        follow_request_id = request.data.get("follow_request_id") # Gets The Follow Request ID
+
+        # Gets The Follow Request
+        follow_request = FollowRelation.objects.filter(
+            id=follow_request_id,
+            to_user=logged_in_user, 
+            status="pending"
+        ).first()
+
+        follow_request.status = "accepted" # Accepts The Follow Request
+
+        follow_request.save() # Saves The Updated Follow Request
+
+        return Response({
+            "success": True, 
+            "message": str(_("Žiadosť o sledovanie bola úspešne potvrdená."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while accepting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri potvrdení žiadosti o sledovanie došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def reject_follow_request(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        follow_request_id = request.data.get("follow_request_id") # Gets The Follow Request ID
+
+        # Gets The Follow Request
+        follow_request = FollowRelation.objects.filter(
+            id=follow_request_id,
+            to_user=logged_in_user, 
+            status="pending"
+        ).first()
+
+        follow_request.delete() # Removes The Follow Request
+
+        return Response({
+            "success": True, 
+            "message": str(_("Žiadosť o sledovanie bola zamietnutá."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while rejecting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zamietnutí žiadosti o sledovanie došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def edit_account(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        delete_account = request.data.get("delete_account", None) # Gets The Delete Account Request If Is Available
+        delete_profile_picture = request.data.get("delete_profile_picture", None) # Gets The Delete Profile Picture If Is Available
+        data_saving_mode = request.data.get("data_saving_mode", False) # Gets The Data Saving Mode
+        private_account = request.data.get("private_account", False) # Gets The Private Account
+        bio = request.data.get("bio", "") # Gets The Bio
+        bio_links = request.data.get("bio_links") # Gets The Bio Links
+        first_name = request.data.get("first_name") # Gets The First Name
+        last_name = request.data.get("last_name") # Gets The Last Name
+        email_address = request.data.get("email_address") # Gets The E-mail Address
+        phone_number = request.data.get("phone_number") # Gets The Phone Number
+
+        if delete_account:
+            sendMail(
+                logged_in_user,
+                _("Odstránenie účtu"), # Subject
+                _("dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť prihlásiť sa.\n\n%(domain)s%(language)s/prihlasenie/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # Text Content
+                _('dostali sme žiadosť o odstránenie vášho účtu. V prípade chyby máte 30 dní možnosť <a href="%(domain)s%(language)s/prihlasenie/" title="Prihlásiť sa" target="_blank">prihlásiť sa</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language}, # HTML Content
+                _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+            )
+
+            logged_in_user.account_status = "suspended" # Changes Account Status
+            logged_in_user.save()
+
+            captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+            # del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
+
+            refresh = RefreshToken.for_user(logged_in_user)
+            refresh_token = str(refresh.access_token)
+
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+
+            return Response({
+                "success": True, 
+                "message": str(_("Účet %(username)s bol odstránený") % {"username": logged_in_user.username})
+            }, status=200)
+
+        if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
+            profile_picture_file = request.FILES.get("select_profile_picture")
+
+            if profile_picture_file:
+                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+
+                current_profile_picture_name = logged_in_user.profile_picture_name
+                if current_profile_picture_name != "" and current_profile_picture_name != None:
+                    os.remove(f"{path}/{current_profile_picture_name}")
+
+                new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+
+                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
+                image_save_location.save(new_image_name, profile_picture_file)
+
+                logged_in_user.profile_picture_name = new_image_name
+
+                logged_in_user.last_edit = timezone.now()
+
+            if delete_profile_picture:
+                current_profile_picture_name = logged_in_user.profile_picture_name
+                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                os.remove(f"{path}/{current_profile_picture_name}")
+
+                logged_in_user.profile_picture_name = ""
+
+                logged_in_user.last_edit = timezone.now()
+
+            if logged_in_user.data_saving_mode != data_saving_mode:
+                logged_in_user.data_saving_mode = data_saving_mode
+
+            if logged_in_user.private_account != private_account:
+                was_private = logged_in_user.private_account # Checks If The Account Was Private Before Change
+
+                logged_in_user.private_account = private_account # Switch The Account To Private Or Public
+
+                # If The Account Was Private And Now Is Public
+                if was_private and not private_account:
+                    # Updates All Follow Requests From Pending To Accepted
+                    FollowRelation.objects.filter(
+                        to_user=logged_in_user,
+                        status="pending"
+                    ).update(status="accepted")
+
+            if logged_in_user.bio != bio and bio != "":
+                logged_in_user.bio = bio
+                logged_in_user.last_edit = timezone.now()
+
+            if logged_in_user.first_name != first_name and first_name != "":
+                logged_in_user.first_name = first_name
+                logged_in_user.last_edit = timezone.now()
+
+            if logged_in_user.last_name != last_name and last_name != "":
+                logged_in_user.last_name = last_name
+                logged_in_user.last_edit = timezone.now()
+
+            if logged_in_user.email_address != email_address and email_address != "":
+                logged_in_user.email_address = email_address
+                logged_in_user.last_edit = timezone.now()
+
+            if logged_in_user.phone_number != phone_number and phone_number != "":
+                logged_in_user.phone_number = phone_number
+                logged_in_user.last_edit = timezone.now()
+
+            logged_in_user.save() # Updates The Logged In User
+
+            bio_links_json = bio_links # Gets The User's Bio Links In JSON Format
+
+            try:
+                bio_links_list = json.loads(bio_links_json) if bio_links_json else [] # Converts The Bio Links To The Python List Format
+
+                with transaction.atomic():
+                    BioLinks.objects.filter(user=logged_in_user).delete() # Deletes All Previous User's Bio Links
+
+                    new_bio_links = [] # Stores The New Bio Links
+                    
+                    # Removes White Spaces From Every URL
+                    for one_url in bio_links_list:
+                        one_url = one_url.strip()
+                        if not one_url:
+                            continue
+
+                        new_bio_links.append(
+                            BioLinks(
+                                user=logged_in_user,
+                                url=one_url
+                            )
+                        )
+
+                    # Bulk Creation Of Multiple User's Bio Links
+                    if new_bio_links:
+                        BioLinks.objects.bulk_create(new_bio_links)
+
+            # Invalid Bio Links JSON Format
+            except json.JSONDecodeError:
+                captureError(f"An error occurred while loading bio links from the JSON format.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+
+                return Response({
+                    "success": False, 
+                    "message": str(_("Pri spracovávaní vlastných odkazov došlo k chybe"))
+                }, status=500)
+
+            return Response({
+                "success": True, 
+                "message": str(_("Zmeny boli uložené"))
+            }, status=200)
+
+        else:
+            return Response({
+                "success": True, 
+                "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
+            }, status=200)
+
+    # Error
+    except Exception as e:
+        captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri vykonávaní zmien v účte došlo k chybe"))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def report_user(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        #  = request.data.get("") # Gets The 
+        report_user_data = json.loads(request.body) # Gets The Report User Data
+        reported_user_id = report_user_data["reported_user_id"] # Gets The Reported User ID
+        reason = report_user_data["reason"] # Gets The Reason
+        reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
+        has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
+
+        # Stores The Reported Comment
+        UsersReport.objects.update_or_create(
+            reported_user_id=reported_user_id,
+            reporting_user_id=logged_in_user_id,
+            defaults={"reason": reason} # Reason Can Be Updated
+        )
+
+        if not has_report:
+            reported_user.reports += 1 # Increases The Reports Counter
+
+            if reported_user.reports >= 5:
+                followers_amount = reported_user.followers.count() # Gets The Amount Of Followers Of The Reported User
+
+                if followers_amount > 0:
+                    report_percentage = (reported_user.reports / followers_amount) * 100
+
+                else:
+                    report_percentage = 100 
+
+                if report_percentage > 10:
+                    reported_user.account_status = "suspended" # Suspends The User If Has More Than 10% Of Reports
+                    reported_user.suspension_time = timezone.now() # Updates The Suspension Time
+
+                    sendMail(
+                        reported_user,
+                        _("Odstavenie účtu"), # Subject
+                        _("oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # Text Content
+                        _('oznamujeme vám, že Váš účet bol odstavený na základe vysokého počtu obdržaných nahlásení. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": reported_user.language}, # HTML Content
+                        _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+                    )
+
+            reported_user.save() # Saves The Updated User
+
+        return Response({
+            "success": True, 
+            "message": str(_("Nahlásenie bolo úspešne odoslané."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def suspend_user(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        if logged_in_user.role == "developer" or logged_in_user.role == "admin":
+            user_id = json.loads(request.body) # Gets The Suspended User ID
+            user = Users.objects.get(id=user_id) # Gets The User
+
+            user.account_status = "suspended" # Changes Account Status
+            user.suspension_time = timezone.now() # Updates The Suspension Time
+            user.save() # Saves The Updated User
+
+            sendMail(
+                user,
+                _("Odstavenie účtu"), # Subject
+                _("oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez kontaktný formulár.\n\n%(domain)s%(language)s/\n\nV opačnom prípade bude váš účet neodvratne odstránený.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language}, # Text Content
+                _('oznamujeme vám, že Váš účet bol odstavený na základe manuálnej kontroli. V prípade chyby máte 7 dní možnosť odvolať sa cez <a href="%(domain)s%(language)s/" title="Odvolať sa" target="_blank">kontaktný formulár</a>. V opačnom prípade bude váš účet neodvratne odstránený.') % {"domain": settings.DOMAIN_URL, "language": user.language}, # HTML Content
+                _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
+            )
+
+            return Response({
+                "success": True, 
+                "message": str(_("Užívateľ bol obmedzený."))
+            }, status=200)
+
+        return Response({
+            "success": False, 
+            "message": str(_("Užívateľa môže obmedziť len správca."))
+        }, status=400)
+
+    except Exception as e:
+        captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pokuse o obmedzenie užívateľa došlo k chybe."))
+        }, status=500)
+
+# Chat Page
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_chat(request, username):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        # Checks If The Profile With Searched Username Exists
+        if Users.objects.filter(username=username).exists():
+            receiver = Users.objects.filter(username=username).first() # Gets The User By Username (Receiver)
+
+            # Gets All Sender's And Receiver's Chats
+            chats = Chat.objects.filter(
+                Q(sender=logged_in_user) & Q(receiver=receiver) | 
+                Q(sender=receiver)
+            ).annotate(
+                # Creates The Is Sender Column (True If The Logged In User Is The Sender)
+                is_sender=Case(
+                    When(sender=logged_in_user, then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            ).prefetch_related(
+                "message_reactions__user"
+            ).order_by(
+                "-created_at"
+            )
+
+            return Response({
+                "success": False, 
+                "receiver": receiver,
+                "chats": chats,
+                "message": str(_("Užívateľ sa našiel."))
+            }, status=200)
+
+        return Response({
+            "success": False, 
+            "message": str(_("Užívateľ sa nenašiel."))
+        }, status=404)
+
+    except Exception as e:
+        captureError(f"An error occurred while finding the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri hľadaní užívateľa došlo k chybe."))
+        }, status=500)
+
+# Blog Page
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_articles(request):
+    try:
+        # Gets All Articles From DB
+        articles = cache.get("cached_articles") # Gets All Cached Reviews
+        # articles = Articles.objects.all() # Queryset
+
+        # Articles Fallback (If Cache Is Clear)
+        if articles is None:
+            # Gets All Articles
+            articles = list(
+                Articles.objects.all().annotate(
+                    average_rating=Avg("articlerating__rating"),
+                ).order_by(
+                    F("html_filename").desc(nulls_last=True), 
+                    "-creation_time"
+                )
+            )
+
+            cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
+
+            print("Getting Articles Data From The DB.") # Test Print
+
+        else:
+            print("Getting Articles Data From The Redis Cache.") # Test Print
+
+        no_articles = True # Default Value That Says That There Are No Articles In The Database
+
+        # Sorts Articles By User Preferencies (The Latest Articles Are Set As Default)
+        sort = request.GET.get("sort", "latest").lower()
+        category = request.GET.get("category", "all").lower()
+
+        if sort == "latest":
+            if category == "all":
+                # Redis List
+                articles = sorted(
+                    articles, 
+                    key=lambda one_article: one_article.creation_time,
+                    reverse=True
+                )
+
+                # articles.order_by("-creation_time") # Queryset
+
+            else:
+                # Redis List
+                filtered_articles = [
+                    one_article for one_article in articles 
+                    if category in one_article.categories
+                ]
+
+                articles = sorted(
+                    filtered_articles,
+                    key=lambda one_article: one_article.creation_time,
+                    reverse=True
+                )
+
+                # articles = articles.filter(categories__contains=[category]).order_by("-creation_time") # Queryset
+
+        if sort == "popular":
+            if category == "all":
+                # Redis List
+                articles = sorted(
+                    articles, 
+                    key=lambda one_article: one_article.visitors,
+                    reverse=True
+                )
+
+                # articles = articles.order_by("-visitors") # Queryset
+
+            else:
+                # Redis List
+                filtered_articles = [
+                    one_article for one_article in articles 
+                    if category in one_article.categories
+                ]
+
+                articles = sorted(
+                    filtered_articles,
+                    key=lambda one_article: one_article.visitors,
+                    reverse=True
+                )
+
+                # articles = articles.filter(categories__contains=[category]).order_by("-visitors") # Queryset
+
+        elif sort == "best":
+            if category == "all":
+                # Redis List
+                articles = sorted(
+                    articles, 
+                    key=lambda one_article: one_article.rating,
+                    reverse=True
+                )
+
+                # articles = articles.order_by("-rating") # Queryset
+
+            else:
+                # Redis List
+                filtered_articles = [
+                    one_article for one_article in articles 
+                    if category in one_article.categories
+                ]
+
+                articles = sorted(
+                    filtered_articles,
+                    key=lambda one_article: one_article.rating,
+                    reverse=True
+                )
+
+                # articles = articles.filter(categories__contains=[category]).order_by("-rating") # Queryset
+
+        elif sort == "a-z":
+            if category == "all":
+                # Redis List
+                articles = sorted(
+                    articles, 
+                    key=lambda one_article: one_article.title
+                )
+
+                # articles = articles.order_by("title") # Queryset
+            
+            else:
+                # Redis List
+                filtered_articles = [
+                    one_article for one_article in articles 
+                    if category in one_article.categories
+                ]
+
+                articles = sorted(
+                    filtered_articles,
+                    key=lambda one_article: one_article.title
+                )
+
+                # articles = articles.filter(categories__contains=[category]).order_by("title") # Queryset
+
+        elif sort == "z-a":
+            if category == "all":
+                # Redis List
+                articles = sorted(
+                    articles, 
+                    key=lambda one_article: one_article.title,
+                    reverse=True
+                )
+
+                # articles = articles.order_by("-title") # Queryset
+            
+            else:
+                # Redis List
+                filtered_articles = [
+                    one_article for one_article in articles 
+                    if category in one_article.categories
+                ]
+
+                articles = sorted(
+                    filtered_articles,
+                    key=lambda one_article: one_article.title,
+                    reverse=True
+                )
+
+                # articles = articles.filter(categories__contains=[category]).order_by("-title") # Queryset
+
+        articles.sort(key=lambda x: x.html_filename in (None, "")) # Completed Articles Are On The First Place
+
+        # Number Of All Articles
+        num_articles = len(articles) # Redis List
+        # num_articles = articles.count() # Queryset
+
+        # Checks If There Are Any Articles In The Database
+        # if(articles.exists()): # Queryset
+        if articles is not None and len(articles) > 0:
+            no_articles = False
+
+        return Response({
+            "success": True, 
+            "articles": articles,
+            "no_articles": no_articles,
+            "num_articles": num_articles,
+            "message": str(_("Dáta článkov boli úspešne nájdené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while finding the articles.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri hľadaní článkov došlo k chybe."))
+        }, status=500)
+
+# Article Page
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_article_rating(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        article_id = request.data.get("article_id") # Gets The Article ID
+        rating = request.data.get("rating") # Gets The Rating
+
+        # Stores The Added Article Rating
+        ArticleRating.objects.update_or_create(
+            article_id=article_id,
+            user_id=logged_in_user_id,
+            defaults={"rating": rating} # Rating Can Be Updated
+        )
+
+        return Response({
+            "success": True, 
+            "message": str(_("Hodnotenie bolo úspešne odoslané."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pridávaní hodnotenia došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def report_article_comment(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        comment_id = request.data.get("comment_id") # Gets The Article Forum ID
+        reason = request.data.get("reason") # Gets The Reason
+        comment = ArticleForum.objects.get(id=comment_id) # Gets The Comment
+        has_report = comment.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
+
+        # Stores The Reported Comment
+        ArticleForumReport.objects.update_or_create(
+            articleforum_id=comment_id,
+            user_id=logged_in_user_id,
+            defaults={"reason": reason} # Reason Can Be Updated
+        )
+
+        # Report
+        if not has_report:
+            comment.reports += 1 # Increases The Reports Counter
+
+            if comment.reports >= 5:
+                article = Articles.objects.get(id=comment.article_id) # Gets The Article
+
+                if article.likes > 0:
+                    report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
+
+                else:
+                    report_percentage = 100
+
+                if report_percentage > 10:
+                    comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
+
+            comment.save() # Saves The Comment
+
+        return Response({
+            "success": True, 
+            "message": str(_("Nahlásenie bolo úspešne odoslané."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_article_comment(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        article_id = request.data.get("article_id") # Gets The Article ID
+        comment = request.data.get("comment") # Gets The Comment
+        parent_id = request.data.get("parent_id") # Gets The Parent ID
+
+        new_comment = ArticleForum(
+            article_id = article_id,
+            user_id = logged_in_user_id,
+            comment = comment,
+            parent_id = parent_id
+        )
+
+        new_comment.save()
+
+        # Creates Valid Format Of Comment For JSON Response
+        comment = {
+            "id": new_comment.id,
+
+            "user": {
+                "id": new_comment.user.id,
+                "username": new_comment.user.username,
+                "profile_picture_name": new_comment.user.profile_picture_name
+            },
+
+            "creation_time": new_comment.creation_time,
+            "level": new_comment.level
+        }
+
+        return Response({
+            "success": True, 
+            "comment": comment, 
+            "message": _("Komentár pre článok bol úspešne pridaný.")
+        }, status=201)
+
+    except ValidationError as e:
+        return Response({
+            "success": False, 
+            "message": str(e.message) # Returns The Error Message From Models
+        }, status=400)
+
+    except Exception as e:
+        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri pridávaní komentáru došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def toggle_article_comment_like(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        comment_id = request.data.get("comment_id") # Gets The Comment ID
+        comment = ArticleForum.objects.get(id=int(comment_id)) # Gets The Comment
+
+        has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+
+        # Like
+        if not has_like:
+            comment.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Comment
+            comment.likes = F("likes") + 1 # Increases The Likes Counter
+            comment.save() # Updates The Comment
+
+            return Response({
+                "success": True, 
+                "message": str(_("Označenie páči sa mi to bolo úspešne pridané."))
+            }, status=200)
+
+        # Cancel Like
+        else:
+            comment.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Comment
+            comment.likes = F("likes") - 1 # Decreases The Likes Counter
+            comment.save() # Updates The Comment
+
+            return Response({
+                "success": True, 
+                "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
+            }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_article_comment(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        comment_id = request.data.get("comment_id") # Gets The Comment ID
+        comment = ArticleForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+
+        if comment:
+            comment.delete() # Deletes The Comment
+
+            return Response({
+                "success": True, 
+                "message": str(_("Komentár bol úspešne odstránený."))
+            }, status=200)
+
+        return Response({
+            "success": False, 
+            "message": str(_("Komentár sa nepodarilo odstrániť."))
+        }, status=400)
+
+    except Exception as e:
+        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní komentáru došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_article(request, theme):
+    try:
+        if request.user.is_authenticated:
+            logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        else:
+            logged_in_user_id = None # Default State When The User Isn't Logged In
+
+        not_found = True
+
+        # Gets The Article By URL Address With All Related Data
+        article = Articles.objects.filter(
+            link=theme
+        ).annotate(
+            average_rating=Avg("articlerating__rating"),
+
+            # Creates The Given Article Rating Column Of Logged In User
+            given_rating=Subquery(
+                ArticleRating.objects.filter(
+                    article_id=OuterRef("pk"),
+                    user_id=logged_in_user_id
+                ).values("rating")[:1]
+            )
+        ).prefetch_related(
+            Prefetch(
+                "comments",
+                queryset=ArticleForum.objects.exclude(
+                    status="hidden"
+                ).annotate(
+                    # Creates The Has Like Column (True If The User Has Already Liked The Comment)
+                    has_like=Exists(
+                        ArticleForum.likes_from_users.through.objects.filter(
+                            articleforum_id=OuterRef("pk"),
+                            users_id=logged_in_user_id
+                        )
+                    )
+                ).annotate(
+                    # Creates The Has Report Column (True If The User Has Already Reported The Comment)
+                    has_report=Exists(
+                        ArticleForum.reports_from_users.through.objects.filter(
+                            articleforum_id=OuterRef("pk"),
+                            user_id=logged_in_user_id
+                        )
+                    )
+                ).select_related(
+                    "user"
+                ).order_by(
+                    "-creation_time"
+                ),
+                to_attr="visible_comments"
+            )
+        ).first()
+
+        if article != None:
+            not_found = False
+
+            # Splits Comments Into Parent And Child Comments
+            comments_by_parent = defaultdict(list)
+            
+            for one_comment in article.visible_comments:
+                comments_by_parent[one_comment.parent_id].append(one_comment)
+            
+            article.nested_comments = dict(comments_by_parent)
+            article.root_comments = comments_by_parent[None]
+
+        # Adds 1 Visitor to The Article's Unique Visitors
+        if not request.COOKIES.get(article.link):
+            article.visitors += 1
+            article.save()
+
+        # response = render(request, "app/articles.html", {
+        #     "article": article,
+        #     "not_found": not_found
+        # })
+
+        # response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
+
+        # return response
+
+        return Response({
+            "success": True, 
+            "article": article,
+            "not_found": not_found,
+            "message": str(_("Článok bol nájdený."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while getting the article.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní článku došlo k chybe."))
+        }, status=500)

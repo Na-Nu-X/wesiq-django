@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(!isValidPhoneNumber(phone_number.value)) event.preventDefault() // Prevents Default Behaviour
     })
 
-    password_input.addEventListener("input", () => passwordVerification(password_input, password_check_input, form_report)) // Verifies The Password)
+    password_input.addEventListener("input", () => passwordVerification(password_input, password_check_input, form_report)) // Verifies The Password
     password_check_input.addEventListener("input", () => passwordVerification(password_input, password_check_input, form_report)) // Verifies The Password
 
     // Show Hide Password Click Functionality
