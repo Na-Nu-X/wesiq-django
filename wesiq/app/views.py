@@ -58,6 +58,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
  
 # Functions
 
+# Function For Change The Language
 def changeLanguage(request):
     language_code = request.POST.get("language")
     next_url = request.POST.get("next", "/")
@@ -83,17 +84,19 @@ def changeLanguage(request):
         
     return response
 
-# Functions
+# Function For Capture The Error
 def captureError(message):
     with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
+# Function For Capture The Login
 def captureLogin(message):
     with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
+# Function For Get The Client IP
 def getClientIp(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 
@@ -105,6 +108,7 @@ def getClientIp(request):
 
     return ip
 
+# Function For Get The Client Location
 def getClientLocation(ip):
     if ip == "127.0.0.1":
         return _("Lokálny test")
@@ -144,6 +148,7 @@ def generateCode(length=6, letters=False):
 
     return code
 
+# Function For Send The Mail
 def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
     with translation.override(user.language):
         # Send Mail
@@ -162,8 +167,6 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send()
-
-# Views
 
 def successDonation(request):
     messages.add_message(request, messages.SUCCESS, _("Ďakujeme za Vašu podporu!"))
@@ -2264,9 +2267,6 @@ def blogView(request):
                 "is_active": logged_in_user.subscription.is_active
             }
 
-        for one_article in articles:
-            print(one_article.html_filename) 
-
         # Renders Blog Page With User Data And Articles
         return render(request, "app/blog.html", {
             "logged_in_user": {
@@ -2296,7 +2296,6 @@ def blogThemeView(request, theme):
                     article_rating_data = json.loads(request.body) # Gets The Article Rating Data
                     article_id = article_rating_data["article_id"] # Gets The Article ID
                     rating = article_rating_data["rating"] # Gets The Rating
-                    comment = Articles.objects.get(id=article_id) # Gets The Article
 
                     # Stores The Added Article Rating
                     ArticleRating.objects.update_or_create(
@@ -2618,7 +2617,7 @@ def blogThemeView(request, theme):
         response = render(request, "app/articles.html", {
             "article": article,
             "write_comment_form": writeCommentForm,
-            "not_found": not_found,
+            "not_found": not_found
         })
 
     response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
@@ -2795,7 +2794,7 @@ def trainingSessionView(request):
         )
 
         two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
-        activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago) # Gets The Activity History Items
+        activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago, user_id=logged_in_user_id) # Gets The Activity History Items
 
         # XP Boost
         is_xp_boost_available = False # Stores The Value If The XP Boost Is Available
@@ -2897,7 +2896,7 @@ def trainingSessionView(request):
                         "message": _("Pri označovaní úlohy za dokončenú došlo k chybe.")
                     }, status=500)
 
-            # Toggle Complete Custom Task
+            # Add Custom Task
             if request.headers.get("X-Requested-Action") == "add-custom-task":
                 try:
                     custom_task_title = json.loads(request.body) # Gets The Custom Task Title
@@ -2955,7 +2954,7 @@ def trainingSessionView(request):
             # Delete Custom Task
             if request.headers.get("X-Requested-Action") == "delete-custom-task":
                 try:
-                    task_id = json.loads(request.body) # Gets The Custom Task Data
+                    task_id = json.loads(request.body) # Gets The Task ID
                     task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
 
                     task.delete() # Deletes The User's Custom Task
@@ -3133,7 +3132,7 @@ def trainingSessionView(request):
                     return JsonResponse({
                         "success": False, 
                         "message": _("Pri zaznamenávaní aktivity došlo k chybe.")
-                    }, status=404)
+                    }, status=500)
 
         subscription = None
 
@@ -3255,7 +3254,7 @@ def manageTrainingPlansView(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Zmeny v tréningovom pláne boli úspešne vykonané.")
-                }, status=201) # Returns Success Response
+                }, status=201)
 
             except Exception as e:
                 captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -3263,7 +3262,7 @@ def manageTrainingPlansView(request):
                 return JsonResponse({
                     "success": False, 
                     "message": _("Pri vykonávaní zmien v tréningovom pláne došlo k chybe.")
-                }, status=404)
+                }, status=500)
 
         subscription = None
 
@@ -4784,6 +4783,7 @@ def profileView(request, username):
 
                                 if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
                                     profile_picture_file = request.FILES.get("select_profile_picture")
+                                    
                                     if profile_picture_file:
                                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
 
@@ -4926,7 +4926,7 @@ def profileView(request, username):
                             return JsonResponse({
                                 "success": False, 
                                 "message": _("Pri odstraňovaní sledovateľa došlo k chybe.")
-                            }, status=404)
+                            }, status=500)
                 
                 if request.GET.get("password-reset"):
                     code = generateCode() # Generates Random 6-Digit Code
