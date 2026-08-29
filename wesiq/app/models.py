@@ -266,6 +266,13 @@ class Users(AbstractBaseUser, PermissionsMixin):
         null=False
     )
 
+    is_registered_with_app = models.BooleanField(
+        verbose_name=_("Is Registered With APP"), 
+        help_text=_("Stores the information if the user is registered with mobile APP."), 
+        default=False, 
+        null=False
+    )
+
     is_staff = models.BooleanField(
         verbose_name=_("Is Staff"),
         default=False,
@@ -1159,6 +1166,13 @@ class TrainingPlan(models.Model):
         verbose_name=_("Order"), 
         help_text=_("The order of the exercise in the training plan."), 
         default=0, 
+        null=False
+    )
+
+    is_warm_up = models.BooleanField(
+        verbose_name=_("Is Warm Up"), 
+        help_text=_("Stores the information if the exercise is warm up."), 
+        default=False, 
         null=False
     )
 
