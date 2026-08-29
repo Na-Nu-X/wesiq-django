@@ -239,7 +239,8 @@ def register(request):
                 phone_number = clean_phone_number,
                 password = make_password(password),
                 language = language,
-                verification_code = verification_code
+                verification_code = verification_code,
+                is_registered_with_app = True
             )
 
             new_user.save()
@@ -319,6 +320,7 @@ def get_logged_in_user(request):
             "is_active": logged_in_user_object.subscription.is_active
         }
 
+    # Creates Valid Format Of Users For JSON Response
     logged_in_user_data = {
         "id": logged_in_user_object.id,
         "first_name": logged_in_user_object.first_name,
@@ -1013,7 +1015,7 @@ def get_posts(request):
         # Gets The Posts With All Related Data
         thirty_days_ago = timezone.now() - timedelta(days=30)
 
-        posts_query = Post.objects.select_related(
+        posts = Post.objects.select_related(
             "user__subscription"
         ).prefetch_related(
             # Gets All Followers With All Related Data
@@ -1103,7 +1105,7 @@ def get_posts(request):
                 status="accepted"
             ).values("to_user_id")
 
-            posts_query = posts_query.exclude(
+            posts = posts.exclude(
                 # Hides Posts Which Aren't For Public And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
                 (
                     Q(public_visibility=False) & 
@@ -1120,14 +1122,14 @@ def get_posts(request):
             )
 
         else:
-            posts_query = posts_query.exclude(
+            posts = posts.exclude(
                 # Hides All Posts Which Aren't For Public Or From Authors Which Accounts Are Private When The Viewer Isn't Logged In
                 Q(public_visibility=False) | Q(user__private_account=True)
             )
 
         # Filters Posts By Searched Text
         if searched_text:
-            posts_query = posts_query.filter(
+            posts = posts.filter(
                 (Q(user__first_name__icontains=searched_text) | 
                 Q(user__last_name__icontains=searched_text) | 
                 Q(user__username__icontains=searched_text) | 
@@ -1150,7 +1152,7 @@ def get_posts(request):
                 "-created_at"
             ).distinct()
 
-        paginator = Paginator(posts_query, 5) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts_query, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
+        paginator = Paginator(posts, 5) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
 
         try:
             page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
@@ -1165,7 +1167,7 @@ def get_posts(request):
             }, status=404)
 
         # Creates Valid Format Of Posts For JSON Response
-        posts = [
+        posts_data = [
             {
                 "user": {
                     "id": one_post.user.id,
@@ -1245,7 +1247,7 @@ def get_posts(request):
         return Response({
             "success": True, 
             "has_next": page_posts.has_next(), 
-            "posts": posts, 
+            "posts": posts_data, 
             "message": str(_("Príspevky boli úspešné nájdené."))
         }, status=200)
 
@@ -1272,7 +1274,7 @@ def get_post_comments(request):
         post_id = request.GET.get("post_id") # Gets The Post ID
 
         # Gets The Post Root Comments With All Related Data
-        post_root_comments_query = PostForum.objects.filter(
+        post_root_comments = PostForum.objects.filter(
             post_id=post_id,
             parent__isnull=True
         ).exclude(
@@ -1286,13 +1288,13 @@ def get_post_comments(request):
             "creation_time"
         )
 
-        paginator = Paginator(post_root_comments_query, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(post_root_comments_query, 10) # Divides The Root Comments By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
+        paginator = Paginator(post_root_comments, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(post_root_comments, 10) # Divides The Root Comments By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
         page_post_root_comments = paginator.page(page_number) # Gets Only The Root Comments For The Selected Page
 
         post_root_comments_ids = [comment.id for comment in page_post_root_comments] # Gets All Post Root Comments IDs
         
         # Gets The Post Replies Comments With All Related Data
-        post_replies_comments_query = PostForum.objects.filter(
+        post_replies_comments = PostForum.objects.filter(
             Q(parent_id__in=post_root_comments_ids) | # Level 2 (Reply On Root Comment)
             Q(parent__parent_id__in=post_root_comments_ids) | # Level 3 (Reply On Level 2)
             Q(parent__parent__parent_id__in=post_root_comments_ids) | # Level 4 (Reply On Level 3)
@@ -1309,12 +1311,12 @@ def get_post_comments(request):
 
         # Combines The Post Root Comments And Replies
         combined_post_comments = sorted(
-            chain(page_post_root_comments, post_replies_comments_query),
+            chain(page_post_root_comments, post_replies_comments),
             key=lambda x: x.creation_time
         )
 
         # Creates Valid Format Of Post Comments For JSON Response
-        post_comments = [
+        post_comments_data = [
             {
                 "id": one_comment.id,
 
@@ -1345,7 +1347,7 @@ def get_post_comments(request):
         return Response({
             "success": True, 
             "has_next": page_post_root_comments.has_next(), 
-            "visible_comments": post_comments, 
+            "visible_comments": post_comments_data, 
             "message": str(_("Komentáre boli úspešné nájdené."))
         }, status=200)
 
@@ -2080,7 +2082,7 @@ def get_activity(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
-        latest_activity = activities.latest("end_time") if activities else "" # Gets The Latest Logged In User's Activity
+        latest_activity = activities.latest("end_time") if activities else None # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
 
         # Gets Last 7 Days Average Logged In User's Activity Time
@@ -2094,13 +2096,43 @@ def get_activity(request):
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m" if activities else "" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
-        return Response({
-            "success": True, 
-            "latest_activity": latest_activity, 
-            "longest_activity": longest_activity, 
+        latest_activity_data = None # Stores The Latest Activity
+        longest_activity_data = None # Stores The Longest Activity
+        
+        if latest_activity:
+            # Creates Valid Format Of Latest Activity For JSON Response
+            latest_activity_data = {
+                "end_time": latest_activity.end_time,
+                "elapsed_time": latest_activity.elapsed_time,
+                "gained_xp": latest_activity.gained_xp,
+                "type": latest_activity.type,
+                "training_plan_day": latest_activity.training_plan_day,
+                "training_plan_summary": latest_activity.training_plan_summary
+            }
+
+        if longest_activity:
+            # Creates Valid Format Of Latest Activity For JSON Response
+            longest_activity_data = {
+                "end_time": longest_activity.end_time,
+                "elapsed_time": longest_activity.elapsed_time,
+                "gained_xp": longest_activity.gained_xp,
+                "type": longest_activity.type,
+                "training_plan_day": longest_activity.training_plan_day,
+                "training_plan_summary": longest_activity.training_plan_summary
+            }
+
+        # Creates Valid Format Of Activity For JSON Response
+        activity = {
+            "latest_activity": latest_activity_data, 
+            "longest_activity": longest_activity_data, 
             "average_activity_time": average_activity_time, 
             "average_activity_time_formatted": average_activity_time_formatted, 
-            "activities_amount": activities_amount, 
+            "activities_amount": activities_amount
+        }
+
+        return Response({
+            "success": True, 
+            "activity": activity,
             "message": "Dáta o aktivite užívateľa boli úspešne získané."
         }, status=200)
 
@@ -2177,7 +2209,7 @@ def get_training_plans(request):
         day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
 
         # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
-        training_plan = (
+        training_plans = (
             TrainingPlan.objects
             .filter(user_id=logged_in_user_id)
             .annotate(
@@ -2189,9 +2221,24 @@ def get_training_plans(request):
             .order_by("sorted_days")
         )
 
+        # Creates Valid Format Of Training Plans For JSON Response
+        training_plans_data = [
+            {
+                "training_plan_key": one_training_plan.training_plan_key,
+                "day": one_training_plan.day,
+                "type": one_training_plan.type,
+                "exercise": one_training_plan.exercise,
+                "periods": one_training_plan.periods,
+                "unit": one_training_plan.unit,
+                "order": one_training_plan.order,
+            }
+
+            for one_training_plan in training_plans
+        ]
+
         return Response({
             "success": True, 
-            "training_plan": training_plan,
+            "training_plans": training_plans_data,
             "message": "Tréningové plány boli úspešne získané."
         }, status=200)
 
@@ -2257,9 +2304,22 @@ def get_official_tasks(request):
         official_tasks_remaining_time = next_midnight - current_time
         official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600
 
+        # Creates Valid Format Of Official Tasks For JSON Response
+        official_tasks_data = [
+            {
+                "title": one_official_task.title,
+                "data": one_official_task.data,
+                "xp": one_official_task.xp,
+                "progress_percentage": one_official_task.progress_percentage,
+                "is_completed": one_official_task.is_completed
+            }
+
+            for one_official_task in official_tasks
+        ]
+
         return Response({
             "success": True, 
-            "official_tasks": official_tasks,
+            "official_tasks": official_tasks_data,
             "official_tasks_remaining_hours": official_tasks_remaining_hours,
             "message": "Oficiálne úlohy pre tento deň boli úspešne získané."
         }, status=200)
@@ -2285,9 +2345,21 @@ def get_custom_tasks(request):
             "order"
         )
 
+        # Creates Valid Format Of Custom Tasks For JSON Response
+        custom_tasks_data = [
+            {
+                "title": one_custom_task.title,
+                "is_completed": one_custom_task.is_completed,
+                "order": one_custom_task.order,
+                "created_at": one_custom_task.created_at
+            }
+
+            for one_custom_task in custom_tasks
+        ]
+
         return Response({
             "success": True, 
-            "custom_tasks": custom_tasks,
+            "custom_tasks": custom_tasks_data,
             "message": "Vlastné úlohy boli úspešne získané."
         }, status=200)
 
@@ -2309,11 +2381,33 @@ def get_activity_history(request):
         two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
         activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago, user_id=logged_in_user_id) # Gets The Activity History Items
 
+        activity_history_data = None # Stores The Activity History Data
+        
+        if activity_history:
+            # Creates Valid Format Of Activity History For JSON Response
+            activity_history_data = [
+                {
+                    "end_time": one_activity.end_time,
+                    "elapsed_time": one_activity.elapsed_time,
+                    "gained_xp": one_activity.gained_xp,
+                    "type": one_activity.type,
+                    "training_plan_day": one_activity.training_plan_day,
+                    "training_plan_summary": one_activity.training_plan_summary
+                }
+
+                for one_activity in activity_history
+            ]
+
+            return Response({
+                "success": True, 
+                "activity_history": activity_history_data,
+                "message": "História zaznamenaných aktivít bola úspešne získaná."
+            }, status=200)
+
         return Response({
-            "success": True, 
-            "activity_history": activity_history,
-            "message": "História zaznamenaných aktivít bola úspešne získaná."
-        }, status=200)
+            "success": False, 
+            "message": "Históriu zaznamenaných aktivít sa nepodarilo získať."
+        }, status=404)
     
     except Exception as e:
         captureError(f"An error occurred while getting activity history.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2416,31 +2510,46 @@ def complete_official_task(request):
                     xp = F("xp") + task.xp
                 )
 
+                # Creates Valid Format Of Task For JSON Response
+                task_data = {
+                    "progress_percentage": 100,
+                    "is_completed": True,
+                    "first_completion": True,
+                    "gained_xp": task.xp
+                }
+
                 return Response({
                     "success": True, 
-                    "progress_percentage": 100, 
-                    "is_completed": True, 
-                    "first_completion": True, 
-                    "gained_xp": task.xp, 
+                    "task": task_data, 
                     "message": str(_("Úloha bola úspešne dokončená."))
                 }, status=200)
 
-            return Response({
-                "success": True, 
+            # Creates Valid Format Of Task For JSON Response
+            task_data = {
                 "progress_percentage": users_daily_official_task.progress_percentage, 
                 "is_completed": False, 
                 "first_completion": True, 
                 "gained_xp": task.xp, 
+            }
+
+            return Response({
+                "success": True, 
+                "task": task_data, 
                 "message": str(_("Pokrok úlohy bol úspešne zaznamenaný."))
             }, status=200)
 
         else:
-            return Response({
-                "success": True, 
+            # Creates Valid Format Of Task For JSON Response
+            task_data = {
                 "progress_percentage": 100, 
                 "is_completed": True, 
                 "first_completion": False, 
                 "gained_xp": 0, 
+            }
+
+            return Response({
+                "success": True, 
+                "task": task_data, 
                 "message": str(_("Úloha už bola dokončená."))
             }, status=200)
 
@@ -2469,7 +2578,8 @@ def add_custom_task(request):
 
         new_custom_task.save() # Saves The New Custom Task
 
-        custom_task = {
+        # Creates Valid Format Of Custom Task For JSON Response
+        custom_task_data = {
             "id": new_custom_task.id,
             "title": new_custom_task.title,
             "created_at": new_custom_task.created_at
@@ -2477,7 +2587,7 @@ def add_custom_task(request):
 
         return Response({
             "success": True, 
-            "custom_task": custom_task, 
+            "custom_task": custom_task_data, 
             "message": str(_("Úloha bola úspešne pridaná."))
         }, status=200)
 
@@ -2742,9 +2852,22 @@ def get_exercises(request):
         else:
             print("Getting Exercises Data From The Redis Cache.") # Test Print
 
+        # Creates Valid Format Of Exercises For JSON Response
+        exercises_data = [
+            {
+                "exercise": one_exercise.exercise,
+                "unit": one_exercise.unit,
+                "categories": one_exercise.categories,
+                "requires_weight": one_exercise.requires_weight,
+                "image_filename": one_exercise.image_filename
+            }
+
+            for one_exercise in exercises
+        ]
+
         return Response({
             "success": True, 
-            "exercises": exercises,
+            "exercises": exercises_data,
             "message": str(_("Cviky boli úspešne získané."))
         }, status=200)
 
@@ -2875,11 +2998,47 @@ def get_profile(request, username):
                 status="accepted"
             ).select_related("from_user")
 
+            # Creates Valid Format Of Followers For JSON Response
+            followers_data = [
+                {
+                    "from_user": {
+                        "first_name": one_follower.from_user.first_name,
+                        "last_name": one_follower.from_user.last_name,
+                        "username": one_follower.from_user.username,
+                        "profile_picture_name": one_follower.from_user.profile_picture_name,
+                        "private_account": one_follower.from_user.private_account
+                    },
+
+                    "status": one_follower.status,
+                    "created_at": one_follower.created_at
+                }
+
+                for one_follower in followers
+            ]
+
             # Gets All Following Users With All Related Data
             following = FollowRelation.objects.filter(
                 from_user=user, 
                 status="accepted"
             ).select_related("to_user")
+
+            # Creates Valid Format Of Following For JSON Response
+            following_data = [
+                {
+                    "from_user": {
+                        "first_name": one_following.to_user.first_name,
+                        "last_name": one_following.to_user.last_name,
+                        "username": one_following.to_user.username,
+                        "profile_picture_name": one_following.to_user.profile_picture_name,
+                        "private_account": one_following.to_user.private_account
+                    },
+
+                    "status": one_following.status,
+                    "created_at": one_following.created_at
+                }
+
+                for one_following in following
+            ]
 
             today = timezone.now().date() # Determines Today's Date
 
@@ -2918,32 +3077,120 @@ def get_profile(request, username):
                 "-created_at"
             ).distinct()
 
+            # Creates Valid Format Of Posts For JSON Response
+            posts_data = [
+                {
+                    "id": one_post.id,
+                    "public_visibility": one_post.public_visibility,
+                    "allow_comments": one_post.allow_comments,
+                    "hide_likes": one_post.hide_likes,
+                    "created_at": one_post.created_at.isoformat(),
+
+                    "media": [
+                        {
+                            "id": one_media.id,
+                            "file": one_media.file.name if one_media.file else None,
+                            "thumbnail": one_media.thumbnail.name if one_media.thumbnail else None,
+                            "is_video": one_media.is_video,
+                            "is_muted": one_media.is_muted
+                        }
+
+                        for one_media in one_post.media.all()
+                    ]
+                }
+
+                for one_post in posts
+            ]
+
+            # Creates Valid Format Of User For JSON Response
+            user_data = {
+                "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "username": user.username,
+                "email_address": None,
+                "phone_number": None,
+                "role": user.role,
+                "profile_picture_name": user.profile_picture_name,
+                "creation_time": user.creation_time,
+                "friend_code": user.friend_code,
+                "bio": user.bio,
+                "xp": user.xp,
+                "activity_streak": user.activity_streak,
+                "max_activity_streak": user.max_activity_streak,
+                "has_already_increased_activity_streak": user.has_already_increased_activity_streak,
+                "private_account": user.private_account,
+                "data_saving_mode": None,
+                "followers": followers_data,
+                "following": following_data,
+                "posts": posts_data,
+                "saved_posts": None,
+                "unread_messages_amount": None,
+                "subscription": None
+            }
+
             # If The User Is Logged In
             if logged_in_user_id:
                 logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
 
                 # If Searched Profile Belongs To The Logged In User
                 if logged_in_user == user:
+                    user_data["email_address"] = user.email_address # Stores The E-mail Address
+                    user_data["phone_number"] = user.phone_number # Stores The Phone Number
+                    user_data["data_saving_mode"] = user.data_saving_mode # Stores The Information If The Data Saving Mode Is Enabled
+
                     saved_posts = logged_in_user.saved_posts.all().select_related(
                         "user"
                     ).prefetch_related(
                         "media"
                     ).order_by(
                         "-created_at"
-                    ).distinct()
+                    ).distinct().values()
+
+                    # Creates Valid Format Of Saved Posts For JSON Response
+                    saved_posts_data = [
+                        {
+                            "id": one_post.id,
+                            "created_at": one_post.created_at.isoformat(),
+
+                            "media": [
+                                {
+                                    "id": one_media.id,
+                                    "file": one_media.file.name if one_media.file else None,
+                                    "thumbnail": one_media.thumbnail.name if one_media.thumbnail else None,
+                                    "is_video": one_media.is_video,
+                                    "is_muted": one_media.is_muted
+                                }
+
+                                for one_media in one_post.media.all()
+                            ]
+                        }
+
+                        for one_post in saved_posts
+                    ]
+
+                    user_data["saved_posts"] = saved_posts_data # Stores The Saved Posts
+
+                    if hasattr(user, "subscription") and user.subscription:
+                        # Gets The Subscription Data If Are Available
+                        subscription = {
+                            "plan": user.subscription.plan,
+                            "is_active": user.subscription.is_active
+                        }
+                        
+                        user_data["subscription"] = subscription # Stores The Subscription
 
                     return Response({
                         "success": True, 
                         "is_found": is_found,
-                        "user": user,
-                        "followers": followers,
-                        "following": following,
-                        "posts": posts,
-                        "saved_posts": saved_posts,
+                        "user": user_data,
                         "message": str(_("Profil užívateľa bol nájdený."))
                     }, status=200)
 
                 else:
+                    user_data["has_follow"] = user.has_follow # Stores The Information If The Logged In User Follows The User
+                    user_data["has_pending_follow_request"] = user.has_pending_follow_request # Stores The Information If The Logged In User Has Pending Follow Request To The User
+
                     # Gets The Unread Messages Amount
                     unread_messages_amount = Chat.objects.filter(
                         sender=user,
@@ -2951,24 +3198,19 @@ def get_profile(request, username):
                         is_read=False
                     ).count()
 
+                    user_data["unread_messages_amount"] = unread_messages_amount # Stores The Amount Of The Unread Messages
+
                     return Response({
                         "success": True, 
                         "is_found": is_found,
-                        "user": user,
-                        "followers": followers,
-                        "following": following,
-                        "unread_messages_amount": unread_messages_amount,
-                        "posts": posts,
+                        "user": user_data,
                         "message": str(_("Profil užívateľa bol nájdený."))
                     }, status=200)
 
             return Response({
                 "success": True, 
                 "is_found": is_found,
-                "user": user,
-                "followers": followers,
-                "following": following,
-                "posts": posts,
+                "user": user_data,
                 "message": str(_("Profil užívateľa bol nájdený."))
             }, status=200)
 
