@@ -2797,13 +2797,36 @@ def trainingSessionView(request):
         activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago, user_id=logged_in_user_id) # Gets The Activity History Items
 
         # XP Boost
-        is_xp_boost_available = False # Stores The Value If The XP Boost Is Available
-        one_day_ago = timezone.now() - timedelta(days=1) # Gets The 1 Day Ago Time
-        yesterdays_activity = Activity.objects.filter(end_time__gte=one_day_ago).first() # Gets One Of The Yesterday's Activity
+        now = timezone.now() # Gets The Current Time
+        today = timezone.localtime(now).date() # Gets The Today's Date
+        yesterday = today - timedelta(days=1) # Gets The Yesterday's Time
 
-        # Checks If The User's XP Boost Expired Yesterday Or Earlier And If The User Recorded Any Activity Yesterday
-        if logged_in_user.xp_boost_expiration_time < one_day_ago and yesterdays_activity:
-            is_xp_boost_available = True
+        xp_boost_expiration_time = None # Stores The XP Boost Expiration Time
+        is_xp_boost_available = False # Stores The Information If The XP Boost Is Available
+        # is_xp_boost_active = False # Stores The Information If The XP Boost Is Active
+        
+        if logged_in_user.xp_boost_expiration_time and logged_in_user.xp_boost_expiration_time > now:
+            xp_boost_expiration_time = logged_in_user.xp_boost_expiration_time # Sets The XP Boost Expiration Time
+            # is_xp_boost_active = True # Stores The Information That The XP Boost Is Active
+            
+        else:
+            already_claimed_today = False # Stores The Information If The User Has Already Claimed The XP Boost
+
+            if logged_in_user.xp_boost_expiration_time:
+                xp_boost_expiration_date = timezone.localtime(logged_in_user.xp_boost_expiration_time).date() # Gets The XP Boost Expiration Date
+
+                if xp_boost_expiration_date == today:
+                    already_claimed_today = True # Sets The Information That The User Has Already Claimed The XP Boost
+
+            if not already_claimed_today:
+                # Gets One Of The Yesterday's Activity
+                yesterdays_activity = Activity.objects.filter(
+                    user=logged_in_user, 
+                    end_time__date=yesterday
+                ).exists() 
+
+                if yesterdays_activity:
+                    is_xp_boost_available = True # Stores The Information That The XP Boost Is Available
 
         if request.method == "POST":
             # Use XP Boost
@@ -2919,7 +2942,7 @@ def trainingSessionView(request):
                         "success": True, 
                         "custom_task": custom_task, 
                         "message": _("Úloha bola úspešne pridaná.")
-                    }, status=200)
+                    }, status=201)
 
                 except Exception as e:
                     captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -3289,6 +3312,7 @@ def manageTrainingPlansView(request):
     })
 
 def communityView(request):
+    request.session["logged_in_user_id"] = 2
     # Load First Users
     if request.headers.get("X-Requested-Action") == "load-first-users":
         logged_in_user_id = None # Default State When The User Isn't Logged In

@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Exists, OuterRef, Case, When, BooleanField, Count, Subquery, FloatField
 from django.core.exceptions import ValidationError
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_ratelimit.decorators import ratelimit
@@ -44,6 +44,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.cache import cache
 from django.http import FileResponse
 from collections import defaultdict
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Function For Capture The Error
 def captureError(message):
@@ -275,73 +276,115 @@ def register(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_logged_in_user(request):
-    logged_in_user = request.user # Gets The Logged In User
-    logged_in_user_id = logged_in_user.id # Gets The Logged In User ID
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = logged_in_user.id # Gets The Logged In User ID
 
-    logged_in_user_object = Users.objects.filter(
-        id=logged_in_user_id
-    ).select_related(
-        "subscription"
-    ).prefetch_related(
-        # Gets All Followers With All Related Data
-        Prefetch(
-            "follower_relations",
-            queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-            to_attr="accepted_followers"
-        ),
+        logged_in_user_object = Users.objects.filter(
+            id=logged_in_user_id
+        ).select_related(
+            "subscription"
+        ).prefetch_related(
+            # Gets All Followers With All Related Data
+            Prefetch(
+                "follower_relations",
+                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                to_attr="accepted_followers"
+            ),
 
-        # Gets All Following Users With All Related Data
-        Prefetch(
-            "following_relations",
-            queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-            to_attr="accepted_following"
-        )
-    ).first()
+            # Gets All Following Users With All Related Data
+            Prefetch(
+                "following_relations",
+                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                to_attr="accepted_following"
+            )
+        ).first()
 
-    follow_requests = None # Stores The Follow Requests
+        if not logged_in_user_object:
+            return Response({
+                "success": False, 
+                "message": str(_("Používateľ sa nenašiel."))
+            }, status=404)
 
-    if logged_in_user_object.private_account:
-        # Gets All Follow Requests With All Related Data
-        follow_requests = FollowRelation.objects.filter(
-            to_user=logged_in_user, 
-            status="pending"
-        ).select_related("from_user")
+        follow_requests_data = [] # Stores The Follow Requests Data
+        existing_follow_request_ids = set() # Stores The Existing Follow Request IDs
+        
+        if logged_in_user_object.private_account:
+            # Gets All Follow Requests With All Related Data
+            follow_requests = FollowRelation.objects.filter(
+                to_user=logged_in_user_object, 
+                status="pending"
+            ).select_related("from_user")
 
-    if not logged_in_user_object:
-        return Response({
-            "success": False, 
-            "message": str(_("Používateľ sa nenašiel."))
-        }, status=404)
+            # Creates Valid Format Of Follow Requests For JSON Response
+            for one_follow_request in follow_requests:
+                user_id = one_follow_request.from_user.id # Gets The User ID
 
-    subscription = None # Stores The Subscription Data
+                # Skips The Existing Follower
+                if user_id in existing_follow_request_ids:
+                    continue
 
-    if hasattr(logged_in_user_object, "subscription") and logged_in_user_object.subscription:
-        subscription = {
-            "is_active": logged_in_user_object.subscription.is_active
+                existing_follow_request_ids.add(user_id) # Adds The User ID To The Existing Follow Requests IDs
+
+                from_user_data = {
+                    "id": user_id,
+                    "first_name": one_follow_request.from_user.first_name,
+                    "last_name": one_follow_request.from_user.last_name,
+                    "username": one_follow_request.from_user.username,
+                    "profile_picture_name": one_follow_request.from_user.profile_picture_name
+                }
+                
+                if hasattr(one_follow_request.from_user, "subscription") and one_follow_request.from_user.subscription:
+                    # Gets The Subscription Data If Are Available
+                    from_user_data["subscription"] = {
+                        "plan": one_follow_request.from_user.subscription.plan,
+                        "is_active": one_follow_request.from_user.subscription.is_active
+                    }
+                
+                follow_requests_data.append({
+                    "id": one_follow_request.id,
+                    "from_user": from_user_data,
+                    "created_at": one_follow_request.created_at
+                })
+
+        subscription = None # Stores The Subscription Data
+        
+        if hasattr(logged_in_user_object, "subscription") and logged_in_user_object.subscription:
+            subscription = {
+                "plan": logged_in_user_object.subscription.plan,
+                "is_active": logged_in_user_object.subscription.is_active
+            }
+
+        # Creates Valid Format Of Users For JSON Response
+        logged_in_user_data = {
+            "id": logged_in_user_object.id,
+            "first_name": logged_in_user_object.first_name,
+            "last_name": logged_in_user_object.last_name,
+            "username": logged_in_user_object.username,
+            "role": logged_in_user_object.role,
+            "profile_picture_name": logged_in_user_object.profile_picture_name,
+            "friend_code": logged_in_user_object.friend_code,
+            "saved_posts": list(logged_in_user_object.saved_posts.values_list("id", flat=True)),
+            "private_account": logged_in_user_object.private_account,
+            "follow_requests": follow_requests_data if logged_in_user_object.private_account else None,
+            "followers_amount": len(logged_in_user_object.accepted_followers),
+            "subscription": subscription,
+            "data_saving_mode": logged_in_user_object.data_saving_mode
         }
 
-    # Creates Valid Format Of Users For JSON Response
-    logged_in_user_data = {
-        "id": logged_in_user_object.id,
-        "first_name": logged_in_user_object.first_name,
-        "last_name": logged_in_user_object.last_name,
-        "username": logged_in_user_object.username,
-        "role": logged_in_user_object.role,
-        "profile_picture_name": logged_in_user_object.profile_picture_name,
-        "friend_code": logged_in_user_object.friend_code,
-        "saved_posts": list(logged_in_user_object.saved_posts.values_list("id", flat=True)),
-        "private_account": logged_in_user_object.private_account,
-        "follow_requests": follow_requests if logged_in_user.private_account else None,
-        "followers_amount": len(logged_in_user_object.accepted_followers),
-        "subscription": subscription,
-        "data_saving_mode": logged_in_user_object.data_saving_mode
-    }
+        return Response({
+            "success": True, 
+            "logged_in_user": logged_in_user_data,
+            "message": str(_("Prihlásený užívateľ bol úspešne nájdený."))
+        }, status=200)
+        
+    except Exception as e:
+        captureError(f"An error occurred while loading the logged in user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
-    return Response({
-        "success": True, 
-        "logged_in_user": logged_in_user_data,
-        "message": str(_("Prihlásený užívateľ bol úspešne nájdený."))
-    }, status=200)
+        return Response({
+            "success": False, 
+            "message": str(_("Pri načítavaní prihláseného užívateľa došlo k chybe."))
+        }, status=500)
 
 # Community Page
 
@@ -914,7 +957,7 @@ def toggle_post_comment_like(request):
             "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
         }, status=500)
 
-@api_view(["POST"])
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_processing_posts(request):
@@ -958,6 +1001,77 @@ def get_processing_posts(request):
                 list(one_post.tagged_users.values_list("username", flat=True))
             )
 
+        # Creates Valid Format Of Processing Posts For JSON Response
+        processing_posts_data = [
+            {
+                "user": {
+                    "id": one_post.user.id,
+                    "first_name": one_post.user.first_name,
+                    "last_name": one_post.user.last_name,
+                    "username": one_post.user.username,
+                    "profile_picture_name": one_post.user.profile_picture_name,
+                    "followers": [one_relation.from_user_id for one_relation in one_post.user.accepted_followers],
+
+                    "subscription": {
+                        "is_active": one_post.user.subscription.is_active
+                    } if hasattr(one_post.user, "subscription") and one_post.user.subscription else None,
+                },
+
+                "id": one_post.id,
+
+                "description": (
+                    one_post.description
+                    if one_post.description
+                    else None
+                ),
+
+                "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
+                "added_hashtags": list(one_post.added_hashtags),
+
+                "location": (
+                    one_post.location.replace(",", "<span></span>")
+                    if one_post.coordinates
+                    else one_post.location if one_post.location else None
+                ),
+
+                "coordinates": (
+                    {
+                        "latitude": str(one_post.coordinates.y).replace(",", "."),
+                        "longitude": str(one_post.coordinates.x).replace(",", ".")
+                    }
+
+                    if one_post.coordinates and one_post.coordinates.x is not None and one_post.coordinates.y is not None
+                    else None
+                ),
+
+                "public_visibility": one_post.public_visibility,
+                "allow_comments": one_post.allow_comments,
+                "hide_likes": one_post.hide_likes,
+                "created_at": one_post.created_at.isoformat(),
+
+                "media": [
+                    {
+                        "id": one_media.id,
+                        "file": one_media.file.name if one_media.file else None,
+                        "thumbnail": one_media.thumbnail.name if one_media.thumbnail else None,
+                        "is_video": one_media.is_video,
+                        "original_filename": one_media.original_filename,
+                        "original_size": one_media.original_size
+                    }
+
+                    for one_media in one_post.media.all()
+                ]
+            }
+
+            for one_post in processing_posts
+        ]
+            
+        return Response({
+            "success": True, 
+            "processing_posts": processing_posts_data, 
+            "message": str(_("Spracovávané príspevky boli úspešné nájdené."))
+        }, status=200)
+
     except Exception as e:
         captureError(f"An error occurred while loading the processing posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
@@ -966,10 +1080,10 @@ def get_processing_posts(request):
             "message": str(_("Pri načítaní spracovávaných príspevkov došlo k chybe."))
         }, status=500)
 
-@api_view(["POST"])
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_unread_chats(request):
+def get_chats(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
@@ -978,22 +1092,70 @@ def get_unread_chats(request):
             receiver=logged_in_user,
             is_read=False
         ).select_related("sender")
+        
+        unread_sender_ids = unread_chats.values_list("sender_id", flat=True)
 
-        unread_messages_amount = unread_chats.count() # Gets The Unread Messages Amount
+        # Creates Valid Format Of Unread Chats For JSON Response
+        unread_chats_data = [
+            {
+                "id": one_unread_chat.id, 
+
+                "sender": {
+                    "id": one_unread_chat.sender.id,
+                    "username": one_unread_chat.sender.username,
+                    "profile_picture_name": one_unread_chat.sender.profile_picture_name,
+
+                    "subscription": {
+                        "is_active": one_unread_chat.sender.subscription.is_active
+                    } if hasattr(one_unread_chat.sender, "subscription") else None
+                }
+            }
+
+            for one_unread_chat in unread_chats
+        ]
+
+        # Gets The Read Chats
+        read_chats = Chat.objects.filter(
+            receiver=logged_in_user,
+            is_read=True
+        ).exclude(
+            sender_id__in=unread_sender_ids
+        ).select_related("sender")
+
+        # Creates Valid Format Of Read Chats For JSON Response
+        read_chats_data = [
+            {
+                "id": one_read_chat.id, 
+
+                "sender": {
+                    "id": one_read_chat.sender.id,
+                    "username": one_read_chat.sender.username,
+                    "profile_picture_name": one_read_chat.sender.profile_picture_name,
+
+                    "subscription": {
+                        "is_active": one_read_chat.sender.subscription.is_active
+                    } if hasattr(one_read_chat.sender, "subscription") else None
+                },
+                
+                "content": one_read_chat.content
+            }
+
+            for one_read_chat in read_chats
+        ]
 
         return Response({
             "success": True, 
-            "message": str(_("Boli nájdené neprečítané správy.")),
-            "unread_chats": unread_chats,
-            "unread_messages_amount": unread_messages_amount
+            "message": str(_("Správy boli nájdené.")),
+            "unread_chats": unread_chats_data,
+            "read_chats": read_chats_data,
         }, status=200)
 
     except Exception as e:
-        captureError(f"An error occurred while loading the unread messages.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        captureError(f"An error occurred while loading the messages.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
 
         return Response({
             "success": False, 
-            "message": str(_("Pri načítaní nových správ došlo k chybe."))
+            "message": str(_("Pri načítaní správ došlo k chybe."))
         }, status=500)
 
 @api_view(["GET"])
@@ -1627,11 +1789,11 @@ def upload_post(request):
         location = request.data.get("location") # Gets The Location
         latitude = request.data.get("latitude", None) # Gets The Latitude
         longitude = request.data.get("longitude", None) # Gets The Longitude
-        public_visibility = request.data.get("public_visibility") # Gets The Information If The Public Visibility Is Enabled
-        allow_comments = request.data.get("allow_comments") # Gets The Information If The Comments Are Allowed
-        hide_likes = request.data.get("hide_likes") # Gets The Information If The Likes Are Hidden
+        public_visibility = str(request.data.get("public_visibility")).lower() == "true" # Gets The Information If The Public Visibility Is Enabled
+        allow_comments = str(request.data.get("allow_comments")).lower() == "true" # Gets The Information If The Comments Are Allowed
+        hide_likes = str(request.data.get("hide_likes")).lower() == "true" # Gets The Information If The Likes Are Hidden
 
-        files = request.FILES.getlist("select_posts") # Gets Files From the POST
+        files = request.FILES.getlist("selected_posts") # Gets Files From the POST
 
         thumbnail_files = request.FILES.getlist("select_thumbnail") # Gets Thumbnail Files From the POST
         thumbnail_files_dict = {one_file.name: one_file for one_file in thumbnail_files} # Converts The Thumbnail Files To The Dictionary Format
@@ -1712,10 +1874,14 @@ def upload_post(request):
                         max_video_size = 100 * 1000 * 1000 # 100MB
                         max_video_duration = 3 * 60 # 3 Minutes
 
-                    MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
-                    MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
-                    MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+                    #MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
+                    #MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+                    #MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
                     MIN_VIDEO_DURATION = 1 # 1 Second
+                    
+                    MAX_IMAGE_SIZE = 1000 * 1000 *1000 # 2MB For No Subscribers, 10MB For Subscribers
+                    MAX_VIDEO_SIZE = 1000*1000*1000 # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+                    MAX_VIDEO_DURATION = 20*60 # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
                     
                     compress_tasks = [] # Stores All Compress Tasks
 
@@ -1872,33 +2038,6 @@ def get_upload_progress(request, task_id):
         "upload_progress": upload_progress,
         "message": str(_("Pokrok procesu nahrávania príspevku bol úspešne získaný."))
     }, status=200)
-
-@api_view(["GET"])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
-def get_unread_chats(request):
-    try:
-        logged_in_user = request.user # Gets The Logged In User
-
-        # Gets The Unread Chats
-        unread_chats = Chat.objects.filter(
-            receiver=logged_in_user,
-            is_read=False
-        ).select_related("sender")
-
-        return Response({
-            "success": False, 
-            "unread_chats": unread_chats,
-            "message": str(_("Nové správy boli úspešne načítané."))
-        }, status=200)
-
-    except Exception as e:
-        captureError(f"An error occurred while loading the unread chats.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-
-        return Response({
-            "success": False, 
-            "message": str(_("Pri načítavaní nových správ došlo k chybe"))
-        }, status=500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2224,6 +2363,7 @@ def get_training_plans(request):
         # Creates Valid Format Of Training Plans For JSON Response
         training_plans_data = [
             {
+                "id": one_training_plan.id,
                 "training_plan_key": one_training_plan.training_plan_key,
                 "day": one_training_plan.day,
                 "type": one_training_plan.type,
@@ -2231,6 +2371,8 @@ def get_training_plans(request):
                 "periods": one_training_plan.periods,
                 "unit": one_training_plan.unit,
                 "order": one_training_plan.order,
+                "is_warm_up": one_training_plan.is_warm_up,
+                "is_custom_exercise": one_training_plan.is_custom_exercise
             }
 
             for one_training_plan in training_plans
@@ -2348,6 +2490,7 @@ def get_custom_tasks(request):
         # Creates Valid Format Of Custom Tasks For JSON Response
         custom_tasks_data = [
             {
+                "id": one_custom_task.id,
                 "title": one_custom_task.title,
                 "is_completed": one_custom_task.is_completed,
                 "order": one_custom_task.order,
@@ -2420,22 +2563,47 @@ def get_activity_history(request):
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def is_xp_boost_available(request):
+def get_xp_boost(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
         # XP Boost
-        is_xp_boost_available = False # Stores The Value If The XP Boost Is Available
-        one_day_ago = timezone.now() - timedelta(days=1) # Gets The 1 Day Ago Time
-        yesterdays_activity = Activity.objects.filter(end_time__gte=one_day_ago).first() # Gets One Of The Yesterday's Activity
+        now = timezone.now() # Gets The Current Time
+        today = timezone.localtime(now).date() # Gets The Today's Date
+        yesterday = today - timedelta(days=1) # Gets The Yesterday's Time
 
-        # Checks If The User's XP Boost Expired Yesterday Or Earlier And If The User Recorded Any Activity Yesterday
-        if logged_in_user.xp_boost_expiration_time < one_day_ago and yesterdays_activity:
-            is_xp_boost_available = True
+        xp_boost_expiration_time = None # Stores The XP Boost Expiration Time
+        is_xp_boost_available = False # Stores The Information If The XP Boost Is Available
+        is_xp_boost_active = False # Stores The Information If The XP Boost Is Active
+        
+        if logged_in_user.xp_boost_expiration_time and logged_in_user.xp_boost_expiration_time > now:
+            xp_boost_expiration_time = logged_in_user.xp_boost_expiration_time # Sets The XP Boost Expiration Time
+            is_xp_boost_active = True # Stores The Information That The XP Boost Is Active
+            
+        else:
+            already_claimed_today = False # Stores The Information If The User Has Already Claimed The XP Boost
+
+            if logged_in_user.xp_boost_expiration_time:
+                xp_boost_expiration_date = timezone.localtime(logged_in_user.xp_boost_expiration_time).date() # Gets The XP Boost Expiration Date
+
+                if xp_boost_expiration_date == today:
+                    already_claimed_today = True # Sets The Information That The User Has Already Claimed The XP Boost
+
+            if not already_claimed_today:
+                # Gets One Of The Yesterday's Activity
+                yesterdays_activity = Activity.objects.filter(
+                    user=logged_in_user, 
+                    end_time__date=yesterday
+                ).exists() 
+
+                if yesterdays_activity:
+                    is_xp_boost_available = True # Stores The Information That The XP Boost Is Available
 
         return Response({
             "success": True, 
+            "xp_boost_expiration_time": xp_boost_expiration_time,
             "is_xp_boost_available": is_xp_boost_available,
+            "is_xp_boost_active": is_xp_boost_active,
             "message": "Informácia o dostupnom navýšení XP bola úspešne získaná."
         }, status=200)
     
@@ -2569,14 +2737,24 @@ def add_custom_task(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         custom_task_title = request.data.get("custom_task_title") # Gets The Custom Task Title
+        
+        if not custom_task_title:
+            return Response({
+                "success": False,
+                "message": "Názov úlohy nesmie byť prázdny."
+            }, status=400)
 
-        # Creates The New Custom Task
-        new_custom_task = CustomTasks(
-            user_id = logged_in_user_id,
-            title = custom_task_title
-        )
+        with transaction.atomic():
+            CustomTasks.objects.filter(user_id=logged_in_user_id).update(order=F("order") + 1) # Moves Every Previous Task Orders Down
 
-        new_custom_task.save() # Saves The New Custom Task
+            # Creates The New Custom Task
+            new_custom_task = CustomTasks(
+                user_id = logged_in_user_id,
+                title = custom_task_title,
+                order = 1
+            )
+
+            new_custom_task.save() # Saves The New Custom Task
 
         # Creates Valid Format Of Custom Task For JSON Response
         custom_task_data = {
@@ -2589,7 +2767,7 @@ def add_custom_task(request):
             "success": True, 
             "custom_task": custom_task_data, 
             "message": str(_("Úloha bola úspešne pridaná."))
-        }, status=200)
+        }, status=201)
 
     except Exception as e:
         captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -2657,7 +2835,7 @@ def delete_completed_custom_tasks(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        completed_custom_tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+        completed_custom_tasks_ids = request.data.get("completed_custom_tasks_ids", []) # Gets The Completed Custom Tasks IDs
 
         CustomTasks.objects.filter(
             id__in=completed_custom_tasks_ids,
@@ -2714,7 +2892,7 @@ def new_activity(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        new_activity_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+        new_activity_data = request.data.get("new_activity_data") # Gets Training Plan Data From Fetched JS POST
         gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
         Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
@@ -2746,7 +2924,7 @@ def new_activity(request):
         # Creates The New Activity
         new_activity = Activity(
             user_id = logged_in_user_id,
-            elapsed_time = int(new_activity_data["elapsed_time"]),
+            elapsed_time = int(new_activity_data["elapsed_time"]) / 1000,
             gained_xp = int(gained_xp),
             type = new_activity_data["type"],
             training_plan_day = new_activity_data["day"],
@@ -2855,6 +3033,7 @@ def get_exercises(request):
         # Creates Valid Format Of Exercises For JSON Response
         exercises_data = [
             {
+                "id": one_exercise.id,
                 "exercise": one_exercise.exercise,
                 "unit": one_exercise.unit,
                 "categories": one_exercise.categories,
@@ -2886,12 +3065,42 @@ def manage_training_plan(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        training_plan_data = json.loads(request.body) # Gets Training Plan Data From Fetched JS POST
+        training_plan_data = request.data # Gets Training Plan Data From Fetched JS POST
         
-        # Gets Each Object From The Training Plan Data
+        deleted_training_plan_keys = set() # Gets The Deleted Training Plan Keys
+        
         for one_object in training_plan_data:
-            # New Training Plan
-            if one_object["action"] == "new_training_plan":
+            if one_object.get("action") == "edited_training_plan":
+                previous_training_plan_key = one_object.get("previous_training_plan_key") # Gets The Previous Training Plan Key
+                
+                if previous_training_plan_key and previous_training_plan_key not in deleted_training_plan_keys:
+                    # Deletes Exercises With Similar Training Plan Key
+                    TrainingPlan.objects.filter(
+                        user_id=logged_in_user_id, 
+                        training_plan_key=previous_training_plan_key
+                    ).delete()
+
+                    deleted_training_plan_keys.add(previous_training_plan_key) # Adds The Deleted Training Plan Keys
+            
+            # Delete Training Plan
+            elif one_object.get("action") == "delete_training_plan":
+                training_plan_key = one_object.get("training_plan_key") # Gets The Training Plan Key
+
+                if training_plan_key and training_plan_key not in deleted_training_plan_keys:
+                    # Deletes Exercises With Similar Training Plan Key
+                    TrainingPlan.objects.filter(
+                        user_id=logged_in_user_id, 
+                        training_plan_key=training_plan_key
+                    ).delete()
+
+                    deleted_training_plan_keys.add(training_plan_key) # Adds The Deleted Training Plan Keys
+
+        for one_object in training_plan_data:
+            action = one_object.get("action") # Gets The Action
+            
+            # New Training Plan / Edited Training Plan
+            if action in ["new_training_plan", "edited_training_plan"]:
+                # Creates The New Training Plan
                 new_training_plan = TrainingPlan(
                     user_id = logged_in_user_id,
                     training_plan_key = one_object["training_plan_key"],
@@ -2901,39 +3110,11 @@ def manage_training_plan(request):
                     periods = one_object["periods"],
                     unit = one_object["unit"],
                     order = one_object["order"],
+                    is_warm_up = one_object["is_warm_up"],
+                    is_custom_exercise = one_object["is_custom_exercise"]
                 )
 
-                new_training_plan.save() # Saves New Training Plan
-
-            # Edited Training Plan
-            elif one_object["action"] == "edited_training_plan":
-                previous_training_plan_key = one_object["previous_training_plan_key"] # Gets The Previous Training Plan Key
-
-                if previous_training_plan_key:
-                    TrainingPlan.objects.filter(
-                        user_id=logged_in_user_id, 
-                        training_plan_key=previous_training_plan_key
-                    ).delete()
-
-                edited_training_plan = TrainingPlan(
-                    user_id = logged_in_user_id,
-                    training_plan_key = one_object["training_plan_key"],
-                    day = one_object["day"],
-                    type = one_object["type"],
-                    exercise = one_object["exercise"],
-                    periods = one_object["periods"],
-                    unit = one_object["unit"],
-                    order = one_object["order"],
-                )
-
-                edited_training_plan.save() # Saves Edited Training Plan
-
-            elif one_object["action"] == "delete_training_plan":
-                # Deletes Exercises With Similar Training Plan Key
-                TrainingPlan.objects.filter(
-                    user_id=logged_in_user_id, 
-                    training_plan_key=one_object["training_plan_key"]
-                ).delete()
+                new_training_plan.save() # Saves The New Training Plan
 
         return Response({
             "success": True, 
@@ -2970,7 +3151,10 @@ def get_profile(request, username):
             is_found = True # Stores The Information That The User Was Found
 
             # Gets The User By Username
-            user = Users.objects.filter(
+            user = Users.objects.prefetch_related(
+                "bio_links",
+                Prefetch("badges", queryset=SpecialBadges.objects.order_by("-obtained_in"))
+            ).filter(
                 username=username
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
@@ -2996,49 +3180,111 @@ def get_profile(request, username):
             followers = FollowRelation.objects.filter(
                 to_user=user, 
                 status="accepted"
-            ).select_related("from_user")
+            ).select_related(
+                "from_user"
+            ).order_by(
+                "from_user_id", "-created_at"
+            ).distinct("from_user_id")
+
+            followers_data = []
+            existing_followers_ids = set() # Stores The Existing Followers IDs
 
             # Creates Valid Format Of Followers For JSON Response
-            followers_data = [
-                {
-                    "from_user": {
-                        "first_name": one_follower.from_user.first_name,
-                        "last_name": one_follower.from_user.last_name,
-                        "username": one_follower.from_user.username,
-                        "profile_picture_name": one_follower.from_user.profile_picture_name,
-                        "private_account": one_follower.from_user.private_account
-                    },
+            for one_follower in followers:
+                user_id = one_follower.from_user.id # Gets The User ID
 
+                # Skips The Existing Follower
+                if user_id in existing_followers_ids:
+                    continue
+
+                existing_followers_ids.add(user_id) # Adds The User ID To The Existing Followers IDs
+
+                from_user_data = {
+                    "id": user_id,
+                    "first_name": one_follower.from_user.first_name,
+                    "last_name": one_follower.from_user.last_name,
+                    "username": one_follower.from_user.username,
+                    "profile_picture_name": one_follower.from_user.profile_picture_name,
+                    "private_account": one_follower.from_user.private_account
+                }
+                
+                if hasattr(one_follower.from_user, "subscription") and one_follower.from_user.subscription:
+                    # Gets The Subscription Data If Are Available
+                    from_user_data["subscription"] = {
+                        "plan": one_follower.from_user.subscription.plan,
+                        "is_active": one_follower.from_user.subscription.is_active
+                    }
+                
+                followers_data.append({
+                    "from_user": from_user_data,
                     "status": one_follower.status,
                     "created_at": one_follower.created_at
-                }
-
-                for one_follower in followers
-            ]
+                })
 
             # Gets All Following Users With All Related Data
             following = FollowRelation.objects.filter(
                 from_user=user, 
                 status="accepted"
-            ).select_related("to_user")
+            ).select_related(
+                "to_user"
+            ).order_by(
+                "to_user_id", "-created_at"
+            ).annotate(
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("to_user_id"),
+                        status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user=OuterRef("to_user_id"),
+                        status="pending"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).distinct("to_user_id")
+
+            following_data = []
+            existing_following_ids = set() # Stores The Existing Following IDs
 
             # Creates Valid Format Of Following For JSON Response
-            following_data = [
-                {
-                    "from_user": {
-                        "first_name": one_following.to_user.first_name,
-                        "last_name": one_following.to_user.last_name,
-                        "username": one_following.to_user.username,
-                        "profile_picture_name": one_following.to_user.profile_picture_name,
-                        "private_account": one_following.to_user.private_account
-                    },
+            for one_following in following:
+                user_id = one_following.to_user.id # Gets The User ID
 
+                # Skips The Existing Following User
+                if user_id in existing_following_ids:
+                    continue
+
+                existing_following_ids.add(user_id) # Adds The User ID To The Existing Following IDs
+
+                to_user_data = {
+                    "id": one_following.to_user.id,
+                    "first_name": one_following.to_user.first_name,
+                    "last_name": one_following.to_user.last_name,
+                    "username": one_following.to_user.username,
+                    "profile_picture_name": one_following.to_user.profile_picture_name,
+                    "private_account": one_following.to_user.private_account,
+                    "has_follow": one_following.has_follow,
+                    "has_pending_follow_request": one_following.has_pending_follow_request
+                }
+                
+                if hasattr(one_following.to_user, "subscription") and one_following.to_user.subscription:
+                    # Gets The Subscription Data If Are Available
+                    to_user_data["subscription"] = {
+                        "plan": one_following.to_user.subscription.plan,
+                        "is_active": one_following.to_user.subscription.is_active
+                    }
+                
+                following_data.append({
+                    "to_user": to_user_data,
                     "status": one_following.status,
                     "created_at": one_following.created_at
-                }
-
-                for one_following in following
-            ]
+                })
 
             today = timezone.now().date() # Determines Today's Date
 
@@ -3102,6 +3348,16 @@ def get_profile(request, username):
                 for one_post in posts
             ]
 
+            # Creates Valid Format Of Badges For JSON Response
+            badges_data = [
+                {
+                    "title": one_badge.title, 
+                    "data": one_badge.data
+                }
+
+                for one_badge in user.badges.all()
+            ]
+
             # Creates Valid Format Of User For JSON Response
             user_data = {
                 "id": user.id,
@@ -3115,6 +3371,7 @@ def get_profile(request, username):
                 "creation_time": user.creation_time,
                 "friend_code": user.friend_code,
                 "bio": user.bio,
+                "bio_links": list(user.bio_links.values("id", "url")),
                 "xp": user.xp,
                 "activity_streak": user.activity_streak,
                 "max_activity_streak": user.max_activity_streak,
@@ -3123,10 +3380,19 @@ def get_profile(request, username):
                 "data_saving_mode": None,
                 "followers": followers_data,
                 "following": following_data,
+                "has_follow": user.has_follow,
+                "has_pending_follow_request": user.has_pending_follow_request,
                 "posts": posts_data,
                 "saved_posts": None,
                 "unread_messages_amount": None,
-                "subscription": None
+                "subscription": None,
+                "total_transactions_amount": user.total_transactions_amount,
+                "level": user.level,
+                "years_since_registration": user.years_since_registration,
+                "total_activities": user.total_activities,
+                "total_received_likes": user.total_received_likes,
+                "post_comments": [],
+                "badges": badges_data
             }
 
             # If The User Is Logged In
@@ -3145,7 +3411,7 @@ def get_profile(request, username):
                         "media"
                     ).order_by(
                         "-created_at"
-                    ).distinct().values()
+                    ).distinct()
 
                     # Creates Valid Format Of Saved Posts For JSON Response
                     saved_posts_data = [
@@ -3359,21 +3625,22 @@ def reject_follow_request(request):
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
 def edit_account(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        delete_account = request.data.get("delete_account", None) # Gets The Delete Account Request If Is Available
-        delete_profile_picture = request.data.get("delete_profile_picture", None) # Gets The Delete Profile Picture If Is Available
-        data_saving_mode = request.data.get("data_saving_mode", False) # Gets The Data Saving Mode
-        private_account = request.data.get("private_account", False) # Gets The Private Account
+        delete_account = str(request.data.get("delete_account")).lower() == "true" # Gets The Delete Account Request If Is Available
+        delete_profile_picture = str(request.data.get("delete_profile_picture")).lower() == "true" # Gets The Delete Profile Picture If Is Available
+        data_saving_mode = str(request.data.get("data_saving_mode")).lower() == "true" # Gets The Data Saving Mode
+        private_account = str(request.data.get("private_account")).lower() == "true" # Gets The Private Account
         bio = request.data.get("bio", "") # Gets The Bio
-        bio_links = request.data.get("bio_links") # Gets The Bio Links
-        first_name = request.data.get("first_name") # Gets The First Name
-        last_name = request.data.get("last_name") # Gets The Last Name
-        email_address = request.data.get("email_address") # Gets The E-mail Address
-        phone_number = request.data.get("phone_number") # Gets The Phone Number
+        bio_links = request.data.get("bio_links", []) # Gets The Bio Links
+        first_name = request.data.get("first_name", "") # Gets The First Name
+        last_name = request.data.get("last_name", "") # Gets The Last Name
+        email_address = request.data.get("email_address", "") # Gets The E-mail Address
+        phone_number = request.data.get("phone_number", "") # Gets The Phone Number
 
         if delete_account:
             sendMail(
@@ -3391,12 +3658,12 @@ def edit_account(request):
 
             # del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
 
-            refresh = RefreshToken.for_user(logged_in_user)
-            refresh_token = str(refresh.access_token)
+            # refresh = RefreshToken.for_user(logged_in_user)
+            # refresh_token = str(refresh.access_token)
 
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
+            # if refresh_token:
+            #     token = RefreshToken(refresh_token)
+            #     token.blacklist()
 
             return Response({
                 "success": True, 
@@ -3404,7 +3671,7 @@ def edit_account(request):
             }, status=200)
 
         if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
-            profile_picture_file = request.FILES.get("select_profile_picture")
+            profile_picture_file = request.FILES.get("selected_profile_picture")
 
             if profile_picture_file:
                 path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
@@ -3532,10 +3799,8 @@ def report_user(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        #  = request.data.get("") # Gets The 
-        report_user_data = json.loads(request.body) # Gets The Report User Data
-        reported_user_id = report_user_data["reported_user_id"] # Gets The Reported User ID
-        reason = report_user_data["reason"] # Gets The Reason
+        reported_user_id = request.data.get("reported_user_id") # Gets The Reported User ID
+        reason = request.data.get("reason") # Gets The Reason
         reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
         has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
 
@@ -3593,7 +3858,7 @@ def suspend_user(request):
         logged_in_user = request.user # Gets The Logged In User
 
         if logged_in_user.role == "developer" or logged_in_user.role == "admin":
-            user_id = json.loads(request.body) # Gets The Suspended User ID
+            user_id = request.data.get("user_id") # Gets The Suspended User ID
             user = Users.objects.get(id=user_id) # Gets The User
 
             user.account_status = "suspended" # Changes Account Status
@@ -3637,12 +3902,35 @@ def get_chat(request, username):
 
         # Checks If The Profile With Searched Username Exists
         if Users.objects.filter(username=username).exists():
-            receiver = Users.objects.filter(username=username).first() # Gets The User By Username (Receiver)
+            receiver = Users.objects.filter(
+                username=username
+            ).select_related(
+                "subscription"
+            ).first() # Gets The User By Username (Receiver)
+            
+            subscription = None # Stores The Subscription Data
+            
+            if hasattr(receiver, "subscription") and receiver.subscription:
+                subscription = {
+                    "is_active": receiver.subscription.is_active
+                }
+
+            # Creates Valid Format Of Receiver For JSON Response
+            receiver_data = {
+                "id": receiver.id, 
+                "first_name": receiver.first_name, 
+                "last_name": receiver.last_name, 
+                "username": receiver.username, 
+                "profile_picture_name": receiver.profile_picture_name,
+                "subscription": subscription
+            }
 
             # Gets All Sender's And Receiver's Chats
             chats = Chat.objects.filter(
                 Q(sender=logged_in_user) & Q(receiver=receiver) | 
                 Q(sender=receiver)
+            ).select_related(
+                "sender__subscription"
             ).annotate(
                 # Creates The Is Sender Column (True If The Logged In User Is The Sender)
                 is_sender=Case(
@@ -3656,10 +3944,49 @@ def get_chat(request, username):
                 "-created_at"
             )
 
+            # Creates Valid Format Of Chats For JSON Response
+            chats_data = [
+                {
+                    "id": one_chat.id, 
+
+                    "sender": {
+                        "id": one_chat.sender.id,
+                        "profile_picture_name": one_chat.sender.profile_picture_name,
+
+                        "subscription": {
+                            "is_active": one_chat.sender.subscription.is_active
+                        } if hasattr(one_chat.sender, "subscription") else None
+                    },
+
+                    "content": one_chat.content, 
+                    "is_read": one_chat.is_read, 
+                    "is_edited": one_chat.is_edited, 
+                    "formatted_time": one_chat.formatted_time, 
+                    "is_sender": one_chat.is_sender,
+
+                    "message_reactions": [
+                        {
+                            "user": {
+                                "username": one_message_reaction.user.username
+                            },
+                            
+                            "emoji": one_message_reaction.emoji
+                        }
+
+                        for one_message_reaction in one_chat.message_reactions.all()
+                    ],
+
+                    "is_older_than_15_minutes": one_chat.is_older_than_15_minutes,
+                    "is_older_than_1_day": one_chat.is_older_than_1_day
+                }
+
+                for one_chat in chats
+            ]
+
             return Response({
-                "success": False, 
-                "receiver": receiver,
-                "chats": chats,
+                "success": True, 
+                "receiver": receiver_data,
+                "chats": chats_data,
                 "message": str(_("Užívateľ sa našiel."))
             }, status=200)
 
@@ -3843,19 +4170,38 @@ def get_articles(request):
         articles.sort(key=lambda x: x.html_filename in (None, "")) # Completed Articles Are On The First Place
 
         # Number Of All Articles
-        num_articles = len(articles) # Redis List
-        # num_articles = articles.count() # Queryset
+        articles_amount = len(articles) # Redis List
+        # articles_amount = articles.count() # Queryset
 
         # Checks If There Are Any Articles In The Database
         # if(articles.exists()): # Queryset
         if articles is not None and len(articles) > 0:
             no_articles = False
 
+        # Creates Valid Format Of Articles For JSON Response
+        articles_data = [
+            {
+                "id": one_article.id, 
+                "title": one_article.title, 
+                "title": one_article.title, 
+                "description": one_article.description,
+                "image_name": one_article.image_name, 
+                "html_filename": one_article.html_filename,
+                "link": one_article.link,
+                "categories": one_article.categories,
+                "visitors": one_article.visitors,
+                "creation_time": one_article.creation_time,
+                "average_rating": one_article.average_rating
+            }
+
+            for one_article in articles
+        ]
+
         return Response({
             "success": True, 
-            "articles": articles,
+            "articles": articles_data,
             "no_articles": no_articles,
-            "num_articles": num_articles,
+            "articles_amount": articles_amount,
             "message": str(_("Dáta článkov boli úspešne nájdené."))
         }, status=200)
 

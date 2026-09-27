@@ -1175,6 +1175,13 @@ class TrainingPlan(models.Model):
         default=False, 
         null=False
     )
+    
+    is_custom_exercise = models.BooleanField(
+        verbose_name=_("Is Custom Exercise"), 
+        help_text=_("Stores the information if the exercise is custom."), 
+        default=False, 
+        null=False
+    )
 
     class Meta:
         verbose_name = _("Tréningový plán")
