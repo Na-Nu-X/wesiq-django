@@ -3,12 +3,36 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Users, Chat, MessageReaction
 from django.db import transaction
+from rest_framework_simplejwt.tokens import AccessToken
+from urllib.parse import parse_qs
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    # Function For Get The User From The JWT Token (Native App)
+    @database_sync_to_async
+    def get_user_from_token(self, token_key):
+        try:
+            validated_token = AccessToken(token_key)
+            user_id = validated_token["user_id"]
+            return Users.objects.get(id=user_id)
+
+        except Exception:
+            return None
+
     # Function For Connect
     async def connect(self):
         self.receiver_username = self.scope["url_route"]["kwargs"]["username"] # Gets The Receiver's Username
-        self.sender = await self.get_logged_in_user() # Gets The Sender (Logged In User)
+
+        self.sender = await self.get_logged_in_user() # Gets The Sender (Logged In User) From The Session (Only On Web)
+
+        # Gets The Sender (Logged In User) From The JWT Token (Native App)
+        if not self.sender:
+            # Gets The JWT Token (Native App)
+            query_string = self.scope.get("query_string", b"").decode("utf-8")
+            query_params = parse_qs(query_string)
+            token_list = query_params.get("token")
+
+            if token_list:
+                self.sender = await self.get_user_from_token(token_list[0]) # Gets The Sender (Logged In User) From The JWT Token (Native App)
 
         # Closes The Connection
         if not self.sender:
@@ -53,6 +77,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message = json_data["message"] # Gets The Message
 
             new_chat = await self.save_message(message) # Saves The Message
+
+            receiver_id = self.receiver.id # Gets The Receiver ID
+            receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
+
+            # Sends Data To The Notification Channel
+            await self.channel_layer.group_send(
+                receiver_group_name,
+
+                {
+                    "type": "new_message_notification",
+                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                    "message": message, # Stores The Message To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                }
+            )
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -293,3 +333,57 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver=self.sender,
             is_read=False
         ).update(is_read=True)
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+    # Function For Get The User From The JWT Token (Native App)
+    @database_sync_to_async
+    def get_user_from_token(self, token_key):
+        try:
+            validated_token = AccessToken(token_key)
+            user_id = validated_token["user_id"]
+            return Users.objects.get(id=user_id)
+
+        except Exception:
+            return None
+
+    # Function For Connect
+    async def connect(self):
+        self.user = self.scope.get("user") # Gets The User
+
+        # Gets The User (Logged In User) From The JWT Token (Native App)
+        if not self.user or not self.user.is_authenticated:
+            # Gets The JWT Token (Native App)
+            query_string = self.scope.get("query_string", b"").decode("utf-8")
+            query_params = parse_qs(query_string)
+            token_list = query_params.get("token")
+
+            if token_list:
+                self.user = await self.get_user_from_token(token_list[0]) # Gets The User (Logged In User) From The JWT Token (Native App)
+
+        # Closes The Connection
+        if not self.user or not self.user.is_authenticated:
+            await self.close()
+            return
+
+        self.user_group_name = f"user_{self.user.id}_notifications" # Creates The User Group Name
+
+
+        # Adds The Group
+        await self.channel_layer.group_add(
+            self.user_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    # Function For Disconnect
+    async def disconnect(self, close_code):
+        if hasattr(self, "user_group_name"):
+            await self.channel_layer.group_discard(
+                self.user_group_name,
+                self.channel_name
+            )
+
+    # Function For Send Data Of The New Message Notification To The Front-End
+    async def new_message_notification(self, event):
+        await self.send(text_data=json.dumps(event))
