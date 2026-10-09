@@ -3312,7 +3312,7 @@ def manageTrainingPlansView(request):
     })
 
 def communityView(request):
-    request.session["logged_in_user_id"] = 2
+    request.session["logged_in_user_id"] = 16
     # Load First Users
     if request.headers.get("X-Requested-Action") == "load-first-users":
         logged_in_user_id = None # Default State When The User Isn't Logged In

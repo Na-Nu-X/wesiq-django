@@ -1396,314 +1396,383 @@ Na poskytnutie čistého, neprehusteného používateľského rozhrania pri zach
 
 #### 4.16.1. Moderné ukotvenie pomocou CSS (CSS Anchor Positioning)
 
-<!-- Natívne ukotvenie: Namiesto spoliehania sa na ťažkopádne výpočtové knižnice v JavaScripte platforma využije najmodernejšie ukotvenie pomocou CSS (CSS Anchor Positioning). To zaručuje, že hlavný popover dialóg je dokonale pripnutý k svojmu spúšťaciemu tlačidlu.
+- **Natívne ukotvenie**: Namiesto spoliehania sa na ťažkopádne výpočtové knižnice v JavaScripte platforma využije najmodernejšie ukotvenie pomocou CSS (CSS Anchor Positioning). To zaručuje, že hlavný popover dialóg je dokonale pripnutý k svojmu spúšťaciemu tlačidlu.
 
-Stabilita pri vnorovaní (Nested Stability): Pri prechode do podponúk sa nové dialógové okná dynamicky ukotvujú k svojim nadradeným popoverom. To zaručuje štrukturálnu stabilitu a zabraňuje vykresľovaniu ponúk mimo obrazovky, bez ohľadu na zorné pole (viewport) zariadenia. -->
+- **Stabilita pri vnorovaní (Nested Stability)**: Pri prechode do podponúk sa nové dialógové okná dynamicky ukotvujú k svojim nadradeným popoverom. To zaručuje štrukturálnu stabilitu a zabraňuje vykresľovaniu ponúk mimo obrazovky, bez ohľadu na zorné pole (viewport) zariadenia.
 
-<!-- 4.16. Pokročilé vyskakovacie ponuky (Popover) a kontextové akcieNa poskytnutie čistého, neprehusteného používateľského rozhrania pri zachovaní rozsiahlych možností ovládania na úrovni objektov využije platforma sofistikovaný systém kontextovo závislých vyskakovacích ponúk (popover menus). Tieto ponuky sú univerzálne dostupné prostredníctvom štandardných trojbodkových ikon akcie (meatball icons) strategicky umiestnených naprieč celým UI.4.16.1. Moderné ukotvenie pomocou CSS (CSS Anchor Positioning)Natívne ukotvenie: Namiesto spoliehania sa na ťažkopádne výpočtové knižnice v JavaScripte platforma využije najmodernejšie ukotvenie pomocou CSS (CSS Anchor Positioning). To zaručuje, že hlavný popover dialóg je dokonale pripnutý k svojmu spúšťaciemu tlačidlu.Stabilita pri vnorovaní (Nested Stability): Pri prechode do podponúk sa nové dialógové okná dynamicky ukotvujú k svojim nadradeným popoverom. To zaručuje štrukturálnu stabilitu a zabraňuje vykresľovaniu ponúk mimo obrazovky, bez ohľadu na zorné pole (viewport) zariadenia.4.16.2. Viacúrovňová architektúra navigáciePodpora hlbokého vnorovania: Ponuky podporujú intuitívne viacúrovňové vnorovanie pre komplexné, viacskokové akcie (napr. iniciovanie vymazania $\rightarrow$ potvrdenie vymazania).Bezpečný prechod (Safe Traversal): Na zabránenie náhodnému zatvoreniu ponuky a zlepšenie UX obsahuje každá vnorovaná vrstva vyhradenú možnosť „Späť“, čo používateľom umožňuje bez námahy prechádzať späť nahor v hierarchii ponuky bez straty kontextu.4.16.3. Kontextovo závislá funkcionalitaMožnosti zobrazené v rámci popover ponúk sa dynamicky prispôsobujú na základe konkrétneho objektu, s ktorým sa interaguje, a úrovne oprávnení používateľa:Správa recenzií:Autori môžu upravovať svoje recenzie (čo spustí presmerovanie do vyhradeného editora) alebo ich vymazať (čo otvorí vnorovanú, bezpečnostnú varovnú ponuku).Bežní používatelia vidia iba možnosť nahlásiť recenziu, čím sa otvorí vnorovaná ponuka na špecifikovanie presného dôvodu nahlásenia.Nastavenia príspevku a vlastné prepínače:Autori majú detailnú kontrolu nad svojím obsahom. Môžu v reálnom čase upravovať nastavenia, ako je prepínanie verejnej viditeľnosti, povolenie/zakázanie komentárov alebo skrytie počtu páči sa mi to. Tieto nastavenia sú elegantne reprezentované vlastnoručne navrhnutými tlačidlami prepínačov (vytvorenými pomocou skrytých HTML checkboxov a štylizovaných štítkov).Bežní používatelia sú obmedzení len na nahlásenie príspevku.Zachytávanie aktívneho nahrávania (Active Upload Interception): Pozoruhodné je, že tieto kontextové ponuky zostávajú aktívne aj vtedy, keď sa príspevok asynchrónne spracováva na pozadí. Autori môžu proaktívne nakonfigurovať nastavenia príspevku alebo úplne zrušiť a vymazať nahrávanie ešte predtým, ako sa kompresia dokončí a príspevok sa zverejní. -->
+#### 4.16.2. Viacúrovňová architektúra navigácie
+
+- **Podpora hlbokého vnorovania**: Ponuky podporujú intuitívne viacúrovňové vnorovanie pre komplexné, viacskokové akcie (napr. iniciovanie vymazania $\rightarrow$ potvrdenie vymazania).
+
+- **Bezpečný prechod (Safe Traversal)**: Na zabránenie náhodnému zatvoreniu ponuky a zlepšenie UX obsahuje každá vnorovaná vrstva vyhradenú možnosť „Späť“, čo používateľom umožňuje bez námahy prechádzať späť nahor v hierarchii ponuky bez straty kontextu.
+
+#### 4.16.3. Kontextovo závislá funkcionalita
+
+Možnosti zobrazené v rámci popover ponúk sa dynamicky prispôsobujú na základe konkrétneho objektu, s ktorým sa interaguje, a úrovne oprávnení používateľa:
+
+- **Správa recenzií**:
+
+    - Autori môžu upravovať svoje recenzie (čo spustí presmerovanie do vyhradeného editora) alebo ich vymazať (čo otvorí vnorovanú, bezpečnostnú varovnú ponuku).
+
+    - Bežní používatelia vidia iba možnosť nahlásiť recenziu, čím sa otvorí vnorovaná ponuka na špecifikovanie presného dôvodu nahlásenia.
+
+- **Nastavenia príspevku a vlastné prepínače**:
+
+    - Autori majú detailnú kontrolu nad svojím obsahom. Môžu v reálnom čase upravovať nastavenia, ako je prepínanie verejnej viditeľnosti, povolenie/zakázanie komentárov alebo skrytie počtu páči sa mi to. Tieto nastavenia sú elegantne reprezentované vlastnoručne navrhnutými tlačidlami prepínačov (vytvorenými pomocou skrytých HTML checkboxov a štylizovaných štítkov).
+
+    - Bežní používatelia sú obmedzení len na nahlásenie príspevku.
+
+- **Zachytávanie aktívneho nahrávania (Active Upload Interception)**: Pozoruhodné je, že tieto kontextové ponuky zostávajú aktívne aj vtedy, keď sa príspevok asynchrónne spracováva na pozadí. Autori môžu proaktívne nakonfigurovať nastavenia príspevku alebo úplne zrušiť a vymazať nahrávanie ešte predtým, ako sa kompresia dokončí a príspevok sa zverejní.
 
 #### 4.17. Dynamické stránkovanie a engine na filtrovanie recenzií
 
 Na udržanie optimálnej rýchlosti načítavania stránok a zabránenie preťaženiu modelu DOM na hlavnej stránke aplikácia implementuje interaktívny systém stránkovania recenzií. Táto architektúra zaručuje, že veľké objemy používateľskej spätnej väzby sa doručujú v ľahkých, riadených dávkach bez obmedzenia pokročilých možností vyhľadávania.
 
-4.17.1. Delenie dát na strane servera
-Integrácia systému Django Paginator: Backend využíva natívny systém Paginator vo frameworku Django na rozdelenie celkovej dátovej sady recenzií. Pri počiatočnom načítaní stránky sú recenzie striktne obmedzené na maximálne 5 položiek na jednu dávku.
+#### 4.17.1. Delenie dát na strane servera
 
-Zachovanie stavu (State Preservation): Logika stránkovania je plne integrovaná so systémom filtrovania recenzií platformy. Keď používatelia zoradia recenzie podľa špecifických kritérií (najlepšie, najhoršie, najnovšie, najstaršie) alebo ich vyfiltrujú podľa zvoleného hviezdičkového hodnotenia, tento stav sa zachováva naprieč všetkými následnými načítaniami dát.
+- **Integrácia systému Django Paginator**: Backend využíva natívny systém Paginator vo frameworku Django na rozdelenie celkovej dátovej sady recenzií. Pri počiatočnom načítaní stránky sú recenzie striktne obmedzené na maximálne 5 položiek na jednu dávku.
 
-4.17.2. Stavové ovládacie prvky na front-ende (UX)
-Dynamické generovanie tlačidla „Zobraziť viac“: Ak systém deteguje ďalšie recenzie nad rámec aktuálne zobrazenej dávky, dynamicky vygeneruje tlačidlo „Zobraziť viac“. Kliknutie na toto tlačidlo spustí asynchrónnu požiadavku na načítanie a plynulé pripojenie ďalších 5 recenzií do zobrazenia.
+- **Zachovanie stavu (State Preservation)**: Logika stránkovania je plne integrovaná so systémom filtrovania recenzií platformy. Keď používatelia zoradia recenzie podľa špecifických kritérií (najlepšie, najhoršie, najnovšie, najstaršie) alebo ich vyfiltrujú podľa zvoleného hviezdičkového hodnotenia, tento stav sa zachováva naprieč všetkými následnými načítaniami dát.
 
-Skladací reset (Tlačidlo „Skryť“): Akonáhle používateľ rozšíri zoznam nad rámec počiatočného základu, automaticky sa vygeneruje dodatočné tlačidlo „Skryť“. To používateľovi umožňuje okamžite zbaliť rozšírený kanál a vrátiť sa k čistému rozloženiu pôvodných 5 recenzií, čo poskytuje vynikajúcu kontrolu nad zorným poľom (viewport).
+#### 4.17.2. Stavové ovládacie prvky na front-ende (UX)
 
-4.18. Integrácia kontextového výberu emoji (Emoji Picker)
+- **Dynamické generovanie tlačidla „Zobraziť viac“**: Ak systém deteguje ďalšie recenzie nad rámec aktuálne zobrazenej dávky, dynamicky vygeneruje tlačidlo „Zobraziť viac“. Kliknutie na toto tlačidlo spustí asynchrónnu požiadavku na načítanie a plynulé pripojenie ďalších 5 recenzií do zobrazenia.
+
+- **Skladací reset (Tlačidlo „Skryť“)**: Akonáhle používateľ rozšíri zoznam nad rámec počiatočného základu, automaticky sa vygeneruje dodatočné tlačidlo „Skryť“. To používateľovi umožňuje okamžite zbaliť rozšírený kanál a vrátiť sa k čistému rozloženiu pôvodných 5 recenzií, čo poskytuje vynikajúcu kontrolu nad zorným poľom (viewport).
+
+### 4.18. Integrácia kontextového výberu emoji (Emoji Picker)
+
 Na obohatenie prejavu používateľov a zvýšenie zapojenia v komunikačných poliach (ako sú popisy príspevkov a komentáre) platforma integruje moderné a vysoko responzívne rozhranie na výber emoji.
 
-4.18.1. Odľahčený UI komponent
-Natívny webový komponent: Rozhranie obsahuje vyhradenú ikonu emoji vloženú priamo do určených textových vstupov a textových polí (textarea). Kliknutím na túto ikonu sa otvorí elegantná ponuka poháňaná JavaScriptovou knižnicou emoji-picker-element, ktorá využíva vysokovýkonnú architektúru webových komponentov.
+#### 4.18.1. Odľahčený UI komponent
 
-Inteligentné zatváranie kliknutím mimo (Smart Click-Outside Dismissal): Na zachovanie čistého a nerušivého rozloženia je výber vybavený poslucháčom udalostí pre kliknutie mimo (click-outside event listener). Ak používateľ interaguje s akoukoľvek inou časťou obrazovky počas toho, ako je ponuka otvorená, výber emoji sa automaticky zruší a zatvorí.
+- **Natívny webový komponent**: Rozhranie obsahuje vyhradenú ikonu emoji vloženú priamo do určených textových vstupov a textových polí (textarea). Kliknutím na túto ikonu sa otvorí elegantná ponuka poháňaná JavaScriptovou knižnicou emoji-picker-element, ktorá využíva vysokovýkonnú architektúru webových komponentov.
 
-4.18.2. Logika vkladania na pozíciu kurzora
-Dynamické sledovanie kurzora (Caret Tracking): Namiesto jednoduchého pridania vybraných symbolov na úplný koniec textového bloku, vlastný klientsky skript (TypeScript) dynamicky sleduje presnú polohu kurzora (caret position) používateľa v rámci vstupného poľa.
+- **Inteligentné zatváranie kliknutím mimo (Smart Click-Outside Dismissal)**: Na zachovanie čistého a nerušivého rozloženia je výber vybavený poslucháčom udalostí pre kliknutie mimo (click-outside event listener). Ak používateľ interaguje s akoukoľvek inou časťou obrazovky počas toho, ako je ponuka otvorená, výber emoji sa automaticky zruší a zatvorí.
 
-Plynulé vkladanie textu: Keď sa vyberie emoji, systém rozdelí existujúci reťazec a vloží znak presne tam, kde používateľ aktívne píše, čím okamžite obnoví zameranie poľa (focus) a zachová plynulý pracovný postup používateľa.
+#### 4.18.2. Logika vkladania na pozíciu kurzora
 
-4.19. Dynamický algoritmus kanála príspevkov a zoraďovanie obsahu
+- **Dynamické sledovanie kurzora (Caret Tracking)**: Namiesto jednoduchého pridania vybraných symbolov na úplný koniec textového bloku, vlastný klientsky skript (TypeScript) dynamicky sleduje presnú polohu kurzora (caret position) používateľa v rámci vstupného poľa.
+
+- **Plynulé vkladanie textu**: Keď sa vyberie emoji, systém rozdelí existujúci reťazec a vloží znak presne tam, kde používateľ aktívne píše, čím okamžite obnoví zameranie poľa (focus) a zachová plynulý pracovný postup používateľa.
+
+### 4.19. Dynamický algoritmus kanála príspevkov a zoraďovanie obsahu
+
 Na maximalizáciu zapojenia používateľov a zabezpečenie relevantnosti obsahu platforma úplne upúšťa od jednoduchých chronologických časových osí alebo náhodného načítavania dát. Namiesto toho je kanál príspevkov poháňaný sofistikovaným algoritmom zoraďovania (ranking algorithm), ktorý je navrhnutý tak, aby dynamicky vynášal na povrch ten najhodnotnejší obsah pre každého jednotlivého používateľa.
 
-4.19.1. Prioritizácia na základe sociálneho grafu
-Afinita k tvorcovi (Creator Affinity): Algoritmus prirodzene rešpektuje vytvorené sociálne väzby používateľa. Obsah pochádzajúci z účtov, ktoré používateľ aktívne sleduje, získava významný násobiteľ relevantnosti, čo zaručuje, že tieto príspevky sú systematicky umiestňované na samý vrchol hierarchie kanála.
+#### 4.19.1. Prioritizácia na základe sociálneho grafu
 
-4.19.2. Relevantnosť riadená zapojením (Engagement-Driven Relevancy)
-Dynamické časové pečiatky interakcií: Kanál je vysoko reaktívny na prebiehajúce zapojenie komunity. Každá nová interakcia – konkrétne označenie „páči sa mi to“ (like) alebo novo uverejnený komentár – aktualizuje internú časovú pečiatku interakcie príspevku v databáze.
+- **Afinita k tvorcovi (Creator Affinity)**: Algoritmus prirodzene rešpektuje vytvorené sociálne väzby používateľa. Obsah pochádzajúci z účtov, ktoré používateľ aktívne sleduje, získava významný násobiteľ relevantnosti, čo zaručuje, že tieto príspevky sú systematicky umiestňované na samý vrchol hierarchie kanála.
 
-Organické podporenie obsahu (Organic Content Boosting): Príspevky s najnovšími časmi interakcií sú dynamicky posúvané späť na vrchol kanála. Tým sa vytvára systém založený na zásluhách (merit-based system), v ktorom sa vysoko pútavý obsah, bez ohľadu na dátum jeho pôvodného nahratia, neustále vynára a dosahuje tak širšie publikum.
+#### 4.19.2. Relevantnosť riadená zapojením (Engagement-Driven Relevancy)
 
-4.19.3. Životný cyklus zobrazenia a čerstvosť obsahu
-Zníženie priority na základe zobrazenia (View-Based Demotion): V priamom prepojení so systémom sledovania viditeľnosti (Sekcia 3.48) je akýkoľvek príspevok, ktorý je potvrdený ako „videný“ používateľom, systematicky odsunutý na nižšiu úroveň priority pri ďalšom načítaní kanála, čím sa efektívne predchádza vizuálnej únave a opakovaniu.
+- **Dynamické časové pečiatky interakcií**: Kanál je vysoko reaktívny na prebiehajúce zapojenie komunity. Každá nová interakcia – konkrétne označenie „páči sa mi to“ (like) alebo novo uverejnený komentár – aktualizuje internú časovú pečiatku interakcie príspevku v databáze.
 
-30-dňový filter čerstvosti: Na udržanie prehľadného zážitku a optimalizáciu výkonu databázových dopytov algoritmus uplatňuje prísne pravidlo exspirácie. Akýkoľvek predtým zobrazený príspevok, ktorý je starší ako 30 dní, je úplne vyfiltrovaný a už sa v kanáli daného používateľa nevykresľuje.
+- **Organické podporenie obsahu (Organic Content Boosting)**: Príspevky s najnovšími časmi interakcií sú dynamicky posúvané späť na vrchol kanála. Tým sa vytvára systém založený na zásluhách (merit-based system), v ktorom sa vysoko pútavý obsah, bez ohľadu na dátum jeho pôvodného nahratia, neustále vynára a dosahuje tak širšie publikum.
 
-4.20. Gamifikovaný systém úspechov a dynamické odznaky
+#### 4.19.3. Životný cyklus zobrazenia a čerstvosť obsahu
+
+- **Zníženie priority na základe zobrazenia (View-Based Demotion)**: V priamom prepojení so systémom sledovania viditeľnosti (Sekcia 3.48) je akýkoľvek príspevok, ktorý je potvrdený ako „videný“ používateľom, systematicky odsunutý na nižšiu úroveň priority pri ďalšom načítaní kanála, čím sa efektívne predchádza vizuálnej únave a opakovaniu.
+
+- **30-dňový filter čerstvosti**: Na udržanie prehľadného zážitku a optimalizáciu výkonu databázových dopytov algoritmus uplatňuje prísne pravidlo exspirácie. Akýkoľvek predtým zobrazený príspevok, ktorý je starší ako 30 dní, je úplne vyfiltrovaný a už sa v kanáli daného používateľa nevykresľuje.
+
+### 4.20. Gamifikovaný systém úspechov a dynamické odznaky
+
 Na odmeňovanie dlhodobého odhodlania používateľov a zvýraznenie míľnikových úspechov platforma obsahuje robustný, viacúrovňový systém odznakov a úspechov (achievements). Tieto digitálne ocenenia sa zobrazujú ako výrazné vizuálne prvky na stránke profilu používateľa.
 
-4.20.1. Viacúrovňový rámec zriedkavosti (Rarity Framework)
-Vizuálna stupnica zriedkavosti: Úspechy sú usporiadané do prísnej hierarchie progresu zloženej zo 6 odlišných farebne rozlíšených úrovní, ktoré reprezentujú zriedkavosť a náročnosť daného úspechu:
+#### 4.20.1. Viacúrovňový rámec zriedkavosti (Rarity Framework)
 
-Modrá (Bežná / Základná)
+- **Vizuálna stupnica zriedkavosti**: Úspechy sú usporiadané do prísnej hierarchie progresu zloženej zo 6 odlišných farebne rozlíšených úrovní, ktoré reprezentujú zriedkavosť a náročnosť daného úspechu:
 
-Zelená (Neobvyklá)
+    - Modrá (Bežná / Základná)
 
-Žltá (Zriedkavá)
+    - Zelená (Neobvyklá)
 
-Oranžová (Epická)
+    - Žltá (Zriedkavá)
 
-Červená (Legendárna)
+    - Oranžová (Epická)
 
-Fialová (Mytická / Vrcholový úspech)
+    - Červená (Legendárna)
 
-Vylepšovateľné archetypy: Štandardné odznaky nie sú statické; sú navrhnuté tak, aby zhromažďovali dáta a automaticky postúpili („level up“) na ďalšiu farebnú úroveň, keď používateľ prekročí vyššie štatistické hranice.
+    - Fialová (Mytická / Vrcholový úspech)
 
-4.20.2. Klasifikácia míľnikov a časových udalostí
+- **Vylepšovateľné archetypy**: Štandardné odznaky nie sú statické; sú navrhnuté tak, aby zhromažďovali dáta a automaticky postúpili („level up“) na ďalšiu farebnú úroveň, keď používateľ prekročí vyššie štatistické hranice.
+
+#### 4.20.2. Klasifikácia míľnikov a časových udalostí
+
 Engine na generovanie odznakov dynamicky monitoruje dve odlišné kategórie správania používateľov:
 
-Výkonnostné míľniky: Sleduje kľúčové metriky zapojenia na platforme, ako je celkový objem nahromadených skúsenostných bodov (XP) alebo globálna úroveň účtu používateľa.
+- **Výkonnostné míľniky**: Sleduje kľúčové metriky zapojenia na platforme, ako je celkový objem nahromadených skúsenostných bodov (XP) alebo globálna úroveň účtu používateľa.
 
-Časové a špeciálne udalosti: Odmeňuje účasť počas unikátnych kalendárnych udalostí alebo komunitných míľnikov. Zahŕňajú ukazovatele vernosti (napr. oslavu presného počtu rokov od dátumu registrácie používateľa) a časovo obmedzené sviatočné výzvy (napr. úspešné dokončenie fyzickej aktivity na Štedrý deň).
+- **Časové a špeciálne udalosti**: Odmeňuje účasť počas unikátnych kalendárnych udalostí alebo komunitných míľnikov. Zahŕňajú ukazovatele vernosti (napr. oslavu presného počtu rokov od dátumu registrácie používateľa) a časovo obmedzené sviatočné výzvy (napr. úspešné dokončenie fyzickej aktivity na Štedrý deň).
 
-4.20.3. Zapuzdrená logika modelu a výpočet v reálnom čase (On-The-Fly)
-Integrácia na úrovni modelu: Na zabezpečenie prísnej konzistentnosti dát je hlavná vyhodnocovacia logika pre všetky stavy odznakov, kontrolu kritérií a hranice úrovní zapuzdrená priamo v architektúre backendového modelu používateľa (User Model) – napríklad využitím metód modelu Django alebo dekorátorov vlastností (@property).
+#### 4.20.3. Zapuzdrená logika modelu a výpočet v reálnom čase (On-The-Fly)
 
-Výpočet na požiadanie v reálnom čase: Namiesto spoliehania sa na ťažkopádne, neustále bežiace databázové poslucháče (listeners), ktoré by aktualizovali stavy pri každej drobnej akcii, systém využíva stratégiu generovania na požiadanie (on-demand). Presné úrovne odznakov a rozdelenie zriedkavostí sa dynamicky prepočítavajú a načítavajú v reálnom čase v presnom momente, keď sa inicializuje alebo obnoví stránka profilu používateľa, čo zaručuje absolútnu efektivitu výkonu.
+- **Integrácia na úrovni modelu**: Na zabezpečenie prísnej konzistentnosti dát je hlavná vyhodnocovacia logika pre všetky stavy odznakov, kontrolu kritérií a hranice úrovní zapuzdrená priamo v architektúre backendového modelu používateľa (User Model) – napríklad využitím metód modelu Django alebo dekorátorov vlastností (@property).
 
-4.21. Automatizovaný engine pre sériu aktivít (Streak)
+- **Výpočet na požiadanie v reálnom čase**: Namiesto spoliehania sa na ťažkopádne, neustále bežiace databázové poslucháče (listeners), ktoré by aktualizovali stavy pri každej drobnej akcii, systém využíva stratégiu generovania na požiadanie (on-demand). Presné úrovne odznakov a rozdelenie zriedkavostí sa dynamicky prepočítavajú a načítavajú v reálnom čase v presnom momente, keď sa inicializuje alebo obnoví stránka profilu používateľa, čo zaručuje absolútnu efektivitu výkonu.
+
+### 4.21. Automatizovaný engine pre sériu aktivít (Streak)
+
 Na podporu dlhodobého udržania používateľov (retention) a povzbudenie k dennej fyzickej konzistentnosti aplikácia obsahuje robustný systém na sledovanie série aktivít (Activity Streak). Tento systém odmeňuje používateľov za udržiavanie neprerušenej reťaze po sebe nasledujúcich aktívnych dní, čo funguje ako silný psychologický motivátor.
 
-4.21.1. Podmienená logika progresu
-Protokoly denného prírastku: Počítadlo prebiehajúcej série používateľa je prirodzene prepojené s jeho denným zaznamenávaním aktivít. Systém automaticky zvýši počítadlo série presne o jeden bod po úspešnom dokončení a uložení aktivity.
+#### 4.21.1. Podmienená logika progresu
 
-Validačné pravidlá: Aby sa predišlo umelému navyšovaniu, backend pred povolením prírastku prísne overuje dve podmienky: používateľ musel zaznamenať aktivitu v bezprostredne predchádzajúcom dni a séria už nesmela byť navýšená počas aktuálneho kalendárneho dňa.
+- **Protokoly denného prírastku**: Počítadlo prebiehajúcej série používateľa je prirodzene prepojené s jeho denným zaznamenávaním aktivít. Systém automaticky zvýši počítadlo série presne o jeden bod po úspešnom dokončení a uložení aktivity.
 
-4.21.2. Asynchrónne spracovanie exspirácie
-Automatizované uplatňovanie sankcií: Integrita systému sérií sa udržiava pomocou plánovanej, asynchrónnej úlohy Celery bežiacej na pozadí.
+- **Validačné pravidlá**: Aby sa predišlo umelému navyšovaniu, backend pred povolením prírastku prísne overuje dve podmienky: používateľ musel zaznamenať aktivitu v bezprostredne predchádzajúcom dni a séria už nesmela byť navýšená počas aktuálneho kalendárneho dňa.
 
-48-hodinová hranica neaktivity: Tento worker na pozadí nepretržite monitoruje časové pečiatky aktivít používateľa. Ak worker zistí, že používateľ nezaznamenal žiadnu platnú aktivitu počas dvoch po sebe nasledujúcich dní (48-hodinový výpadok), automaticky spustí reset stavu, čím vráti aktuálne počítadlo série používateľa späť na nulu.
+#### 4.21.2. Asynchrónne spracovanie exspirácie
 
-4.21.3. Dynamická vizuálna reprezentácia
-Farebne rozlíšené stavové UI: Aktuálny počet dní v sérii používateľa sa výrazne zobrazuje na jeho verejnej stránke profilu pomocou intuitívnej ikony ohňa riadenej stavom.
+- **Automatizované uplatňovanie sankcií**: Integrita systému sérií sa udržiava pomocou plánovanej, asynchrónnej úlohy Celery bežiacej na pozadí.
 
-Indikátor dennej akcie: Logika front-endu vizuálne komunikuje denný stav používateľa. Ak si používateľ už zabezpečil svoju sériu pre aktuálny deň, ikona sa rozsvieti ako žiarivý oranžový oheň. Naopak, ak denná aktivita stále čaká na dokončenie, ikona zostáva v tlmenom sivom stave, čo slúži ako jemná vizuálna výzva na dokončenie tréningu.
+- **48-hodinová hranica neaktivity**: Tento worker na pozadí nepretržite monitoruje časové pečiatky aktivít používateľa. Ak worker zistí, že používateľ nezaznamenal žiadnu platnú aktivitu počas dvoch po sebe nasledujúcich dní (48-hodinový výpadok), automaticky spustí reset stavu, čím vráti aktuálne počítadlo série používateľa späť na nulu.
 
-4.22. Prístupnosť pomocou klávesnice (A11y) a správa zamerania (Focus Management)
+#### 4.21.3. Dynamická vizuálna reprezentácia
+
+- **Farebne rozlíšené stavové UI**: Aktuálny počet dní v sérii používateľa sa výrazne zobrazuje na jeho verejnej stránke profilu pomocou intuitívnej ikony ohňa riadenej stavom.
+
+- **Indikátor dennej akcie**: Logika front-endu vizuálne komunikuje denný stav používateľa. Ak si používateľ už zabezpečil svoju sériu pre aktuálny deň, ikona sa rozsvieti ako žiarivý oranžový oheň. Naopak, ak denná aktivita stále čaká na dokončenie, ikona zostáva v tlmenom sivom stave, čo slúži ako jemná vizuálna výzva na dokončenie tréningu.
+
+### 4.22. Prístupnosť pomocou klávesnice (A11y) a správa zamerania (Focus Management)
+
 Na poskytnutie inkluzívneho a vysoko efektívneho používateľského zážitku platforma obsahuje robustnú podporu navigácie pomocou klávesnice, ktorá je plne v súlade s modernými pokynmi pre prístupnosť (A11y). Používatelia môžu plynulo prechádzať, kontrolovať a spúšťať všetky interaktívne moduly bez použitia polohovacieho zariadenia.
 
-4.22.1. Vysokokontrastná vizualizácia zamerania (Focus)
-Deterministická navigácia: Používatelia môžu sekvenčne prechádzať cez všetky zamerateľné prvky UI – vrátane tlačidiel, odkazov, vstupných polí a vlastných ovládacích prvkov – pomocou štandardných klávesových skratiek TAB a SHIFT + TAB.
+#### 4.22.1. Vysokokontrastná vizualizácia zamerania (Focus)
 
-Vylepšené indikátory zamerania (Focus Rings): Na pomoc používateľom so zrakovým postihnutím alebo tým, ktorí pracujú výhradne cez klávesnicu, je predvolený indikátor zamerania prehliadača nahradený. Aktuálne zamerané prvky sú dynamicky zvýraznené hrubým, vysokokontrastným červeným obrysom, čo zaručuje jasné vizuálne potvrdenie stavu na prvý pohľad.
+- **Deterministická navigácia**: Používatelia môžu sekvenčne prechádzať cez všetky zamerateľné prvky UI – vrátane tlačidiel, odkazov, vstupných polí a vlastných ovládacích prvkov – pomocou štandardných klávesových skratiek TAB a SHIFT + TAB.
 
-4.22.2. Emulácia natívneho ovládania pre vlastné komponenty
-Injekcia atribútu Tab Index: Prvkom navrhnutým ako interaktívne komponenty, ktorým chýba natívna schopnosť zamerania v prehliadači (ako sú vlastné karty založené na prvku div alebo ikony), je priamo v HTML explicitne pridaný atribút tabindex="0". To ich bezpečne zaradí do sekvenčného toku navigácie klávesnice v dokumente.
+- **Vylepšené indikátory zamerania (Focus Rings)**: Na pomoc používateľom so zrakovým postihnutím alebo tým, ktorí pracujú výhradne cez klávesnicu, je predvolený indikátor zamerania prehliadača nahradený. Aktuálne zamerané prvky sú dynamicky zvýraznené hrubým, vysokokontrastným červeným obrysom, čo zaručuje jasné vizuálne potvrdenie stavu na prvý pohľad.
 
-Zachytávanie stlačení klávesov (Keystroke Interception): Na zaručenie parity s natívnymi tlačidlami sú tieto vlastné prvky podporované reaktívnymi poslucháčmi udalostí v TypeScript-e. Systém monitoruje tok udalostí keydown; ak používateľ zvýrazní vlastný komponent a stlačí kláves Enter, obslužný program (handler) zachytí udalosť a programovo spustí podkladovú metódu .click().
+#### 4.22.2. Emulácia natívneho ovládania pre vlastné komponenty
 
-4.22.3. Prevencia úniku zamerania pomocou maskovania HTML atribútom inert
-Dynamická izolácia zorného poľa: Pri práci so zbaliteľnými alebo prepínateľnými rozvrhnutiami (ako sú vysúvacie ponuky, rozbaľovacie zoznamy alebo modálne okná) môže skrytý obsah mimo obrazovky náhodne zachytiť zameranie, čo spôsobuje nevyspytateľné skákanie zorného poľa (viewport).
+- **Injekcia atribútu Tab Index**: Prvkom navrhnutým ako interaktívne komponenty, ktorým chýba natívna schopnosť zamerania v prehliadači (ako sú vlastné karty založené na prvku div alebo ikony), je priamo v HTML explicitne pridaný atribút tabindex="0". To ich bezpečne zaradí do sekvenčného toku navigácie klávesnice v dokumente.
 
-Automatizované riadenie atribútu inert: Platforma cez kód v TypeScript-e dynamicky aplikuje natívny HTML atribút inert na neaktívne alebo skryté podstromy modelu DOM. Keď je kontajner zatvorený, inert úplne zbaví všetky obsiahnuté prvky možnosti zamerania a skryje ich pred asistenčnými technológiami. Po aktivácii skript atribút odstráni, čím okamžite obnoví prístupnosť a predíde chybám pri neštandardnej interakcii.
+- **Zachytávanie stlačení klávesov (Keystroke Interception)**: Na zaručenie parity s natívnymi tlačidlami sú tieto vlastné prvky podporované reaktívnymi poslucháčmi udalostí v TypeScript-e. Systém monitoruje tok udalostí keydown; ak používateľ zvýrazní vlastný komponent a stlačí kláves Enter, obslužný program (handler) zachytí udalosť a programovo spustí podkladovú metódu .click().
 
-4.23. Prístupnosť pre čítačky obrazovky a integrácia ARIA
+#### 4.22.3. Prevencia úniku zamerania pomocou maskovania HTML atribútom inert
+
+- **Dynamická izolácia zorného poľa**: Pri práci so zbaliteľnými alebo prepínateľnými rozvrhnutiami (ako sú vysúvacie ponuky, rozbaľovacie zoznamy alebo modálne okná) môže skrytý obsah mimo obrazovky náhodne zachytiť zameranie, čo spôsobuje nevyspytateľné skákanie zorného poľa (viewport).
+
+- **Automatizované riadenie atribútu inert**: Platforma cez kód v TypeScript-e dynamicky aplikuje natívny HTML atribút inert na neaktívne alebo skryté podstromy modelu DOM. Keď je kontajner zatvorený, inert úplne zbaví všetky obsiahnuté prvky možnosti zamerania a skryje ich pred asistenčnými technológiami. Po aktivácii skript atribút odstráni, čím okamžite obnoví prístupnosť a predíde chybám pri neštandardnej interakcii.
+
+### 4.23. Prístupnosť pre čítačky obrazovky a integrácia ARIA
+
 Na zabezpečenie toho, že platforma je plne inkluzívna, v súlade s modernými štandardmi prístupnosti webu (WCAG) a navigovateľná pre zrakovo postihnutých používateľov využívajúcich asistenčné technológie, rozhranie UI obsahuje rozsiahle implementácie ARIA (Accessible Rich Internet Applications).
 
-4.23.1. Popisné označovanie pomocou ARIA (ARIA Labeling)
-Kontextualizácia ikonografie: Interaktívne prvky, ktorým chýba explicitný textový obsah – najmä tlačidlá alebo odkazy obsahujúce iba grafické ikony (ako je symbol „X“ pre tlačidlo zavrieť alebo lupa pre vyhľadávanie) – sú systematicky rozšírené o atribúty aria-label. To zaručuje, že čítačky obrazovky presne vyslovia presnú funkciu prvku namiesto čítania nejednoznačných HTML značiek.
+#### 4.23.1. Popisné označovanie pomocou ARIA (ARIA Labeling)
 
-Vylepšená čitateľnosť: Tieto popisné značky fungujú ako neviditeľná vrstva metadát, ktorá plynulo premosťuje medzeru medzi vizuálnym dizajnom UI a sluchovou navigáciou, čo zaručuje, že zrakovo postihnutí používatelia získajú presne tie isté kontextové informácie ako vidiaci používatelia.
+- **Kontextualizácia ikonografie**: Interaktívne prvky, ktorým chýba explicitný textový obsah – najmä tlačidlá alebo odkazy obsahujúce iba grafické ikony (ako je symbol „X“ pre tlačidlo zavrieť alebo lupa pre vyhľadávanie) – sú systematicky rozšírené o atribúty aria-label. To zaručuje, že čítačky obrazovky presne vyslovia presnú funkciu prvku namiesto čítania nejednoznačných HTML značiek.
 
-4.23.2. Reaktívna správa prístupnosti
-Statické a dynamické vkladanie: Kým základné ARIA atribúty sú pevne zapísané priamo v statických HTML šablónach, architektúra prístupnosti zasahuje hlboko do logiky klientskych skriptov.
+- **Vylepšená čitateľnosť**: Tieto popisné značky fungujú ako neviditeľná vrstva metadát, ktorá plynulo premosťuje medzeru medzi vizuálnym dizajnom UI a sluchovou navigáciou, čo zaručuje, že zrakovo postihnutí používatelia získajú presne tie isté kontextové informácie ako vidiaci používatelia.
 
-Mutačnosť DOM v TypeScript-e (JS): Keď sa interaktívny obsah generuje, upravuje alebo odstraňuje asynchrónne (napr. vykresľovanie nových komponentov úloh alebo dynamické generovanie popover ponúk), riadiace funkcie v TypeScript-e aktívne a v reálnom čase (on the fly) aplikujú a aktualizujú potrebné atribúty aria-label. To zaručuje, že strom prístupnosti (accessibility tree) zostáva za každých okolností dokonale synchronizovaný s dynamickým vizuálnym stavom aplikácie.
+#### 4.23.2. Reaktívna správa prístupnosti
 
-4.24. Súkromie používateľa a detailné riadenie viditeľnosti
+- **Statické a dynamické vkladanie**: Kým základné ARIA atribúty sú pevne zapísané priamo v statických HTML šablónach, architektúra prístupnosti zasahuje hlboko do logiky klientskych skriptov.
+
+- **Mutačnosť DOM v TypeScript-e (JS)**: Keď sa interaktívny obsah generuje, upravuje alebo odstraňuje asynchrónne (napr. vykresľovanie nových komponentov úloh alebo dynamické generovanie popover ponúk), riadiace funkcie v TypeScript-e aktívne a v reálnom čase (on the fly) aplikujú a aktualizujú potrebné atribúty aria-label. To zaručuje, že strom prístupnosti (accessibility tree) zostáva za každých okolností dokonale synchronizovaný s dynamickým vizuálnym stavom aplikácie.
+
+### 4.24. Súkromie používateľa a detailné riadenie viditeľnosti
+
 Na zabezpečenie prísnej ochrany dát a poskytnutie plnej kontroly používateľom nad ich digitálnou stopou platforma implementuje robustnú, viacvrstvovú architektúru súkromia. Používatelia môžu spravovať svoju viditeľnosť tak na globálnej úrovni účtu, ako aj na úrovni jednotlivých objektov (príspevkov).
 
-4.24.1. Globálny stav súkromia účtu
-Hlavný prepínač: Používatelia môžu priamo v ponuke nastavení profilu dynamicky prepínať globálny stav svojho účtu medzi štandardným (verejným) a súkromným režimom.
+#### 4.24.1. Globálny stav súkromia účtu
 
-Zdedené obmedzenia: Keď sa účet prepne do súkromného režimu, backend uplatní prísne prepísanie (override) pre všetok obsah spojený s daným používateľom. Systém automaticky obmedzí viditeľnosť všetkých nahraných príspevkov výhradne pre schválených sledovateľov používateľa, čím trvalo zakáže distribúciu do verejného kanála pre tento konkrétny účet.
+- **Hlavný prepínač**: Používatelia môžu priamo v ponuke nastavení profilu dynamicky prepínať globálny stav svojho účtu medzi štandardným (verejným) a súkromným režimom.
 
-4.24.2. Prísne maskovanie obsahu a ochrana smerovania
-Zachytávanie v kanáli a URL: Protokoly súkromia zasahujú hlboko do logiky smerovania (routing) aplikácie. Ak sa nesledovateľ pokúsi o priamy prístup k URL adrese konkrétneho príspevku patriaceho k súkromnému účtu, backend požiadavku aktívne zachytí.
+- **Zdedené obmedzenia**: Keď sa účet prepne do súkromného režimu, backend uplatní prísne prepísanie (override) pre všetok obsah spojený s daným používateľom. Systém automaticky obmedzí viditeľnosť všetkých nahraných príspevkov výhradne pre schválených sledovateľov používateľa, čím trvalo zakáže distribúciu do verejného kanála pre tento konkrétny účet.
 
-Elegantná degradácia (UI): Namiesto zobrazenia strohej chybovej správy servera alebo rozbitého rozvrhnutia aplikácia elegantne zníži úroveň zobrazenia (graceful degradation). Vykreslí vyhradený zástupný prvok („prázdny príspevok“) s upozornením, ktoré neoprávnenému divákovi jasne oznámi, že autorov účet je súkromný a obsah je obmedzený.
+#### 4.24.2. Prísne maskovanie obsahu a ochrana smerovania
 
-4.24.3. Detailná viditeľnosť na úrovni objektov
-Flexibilita verejného účtu: Pre používateľov so štandardným (verejným) účtom systém poskytuje detailnú kontrolu na úrovni jednotlivých objektov.
+- **Zachytávanie v kanáli a URL**: Protokoly súkromia zasahujú hlboko do logiky smerovania (routing) aplikácie. Ak sa nesledovateľ pokúsi o priamy prístup k URL adrese konkrétneho príspevku patriaceho k súkromnému účtu, backend požiadavku aktívne zachytí.
 
-Prepínače pre jednotlivé príspevky: Autori môžu manuálne určovať publikum pre každé jednotlivé nahranie. Prostredníctvom vlastnej ponuky nastavení príspevku v popover okne (Sekcia 3.52) môžu používatelia plynulo zapínať alebo vypínať viditeľnosť konkrétneho príspevku pre širokú verejnosť. To umožňuje kombinovaný kanál verejného obsahu a obsahu určeného len pre sledovateľov v rámci jedného verejného profilu.
+- **Elegantná degradácia (UI)**: Namiesto zobrazenia strohej chybovej správy servera alebo rozbitého rozvrhnutia aplikácia elegantne zníži úroveň zobrazenia (graceful degradation). Vykreslí vyhradený zástupný prvok („prázdny príspevok“) s upozornením, ktoré neoprávnenému divákovi jasne oznámi, že autorov účet je súkromný a obsah je obmedzený.
 
-4.25. Vstavaný moderačný engine a administrátorské ovládacie prvky na úrovni objektov
+#### 4.24.3. Detailná viditeľnosť na úrovni objektov
+
+- **Flexibilita verejného účtu**: Pre používateľov so štandardným (verejným) účtom systém poskytuje detailnú kontrolu na úrovni jednotlivých objektov.
+
+- **Prepínače pre jednotlivé príspevky**: Autori môžu manuálne určovať publikum pre každé jednotlivé nahranie. Prostredníctvom vlastnej ponuky nastavení príspevku v popover okne (Sekcia 3.52) môžu používatelia plynulo zapínať alebo vypínať viditeľnosť konkrétneho príspevku pre širokú verejnosť. To umožňuje kombinovaný kanál verejného obsahu a obsahu určeného len pre sledovateľov v rámci jedného verejného profilu.
+
+### 4.25. Vstavaný moderačný engine a administrátorské ovládacie prvky na úrovni objektov
+
 Na udržanie integrity platformy, zaistenie bezpečnosti komunity a zabránenie šíreniu neoprávneného alebo explicitného obsahu integruje aplikácia pokročilý vstavaný (inline) moderačný rámec. Tento systém vkladá administrátorské akcie s vysokými oprávneniami priamo do štandardných kontextových popover ponúk na základe roly používateľa.
 
-4.25.1. Rozšírenie ponuky na základe rolí
-Úprava zorného poľa s oprávneniami (Privileged Viewport Modification): Systém automaticky vyhodnocuje autentifikačný token a príznaky rolí (napr. is_staff alebo is_superuser) prihlásenej relácie. Ak je používateľ identifikovaný ako administrátor alebo vývojár, front-end dynamicky vloží špecializované nástroje na správu do štandardných trojbodkových popover ponúk.
+#### 4.25.1. Rozšírenie ponuky na základe rolí
 
-Priama správa obsahu: Bez nutnosti presmerovania na samostatný backendový riadiaci panel (dashboard) môže administrátor v reálnom čase okamžite vykonať deštruktívne alebo nápravné akcie – napríklad vymazať príspevok ktoréhokoľvek používateľa, odstrániť nevyhovujúce recenzie alebo okamžite pozastaviť účet priamo z aktuálneho zobrazenia.
+- **Úprava zorného poľa s oprávneniami (Privileged Viewport Modification)**: Systém automaticky vyhodnocuje autentifikačný token a príznaky rolí (napr. is_staff alebo is_superuser) prihlásenej relácie. Ak je používateľ identifikovaný ako administrátor alebo vývojár, front-end dynamicky vloží špecializované nástroje na správu do štandardných trojbodkových popover ponúk.
 
-4.25.2. Dvojkrokový proces overovania recenzií (Pipeline)
-Brána pre manuálnu moderáciu: Na zaručenie kontroly kvality a zabránenie spamu alebo škodlivému textu platforma uplatňuje prísny pracovný postup vyhodnocovania spätnej väzby od používateľov. Novovytvorené recenzie prechádzajú do stavu čakania (pending state) a sú skryté pred širokou verejnosťou.
+- **Priama správa obsahu**: Bez nutnosti presmerovania na samostatný backendový riadiaci panel (dashboard) môže administrátor v reálnom čase okamžite vykonať deštruktívne alebo nápravné akcie – napríklad vymazať príspevok ktoréhokoľvek používateľa, odstrániť nevyhovujúce recenzie alebo okamžite pozastaviť účet priamo z aktuálneho zobrazenia.
 
-Akcie schválenia / zamietnutia: Administrátori majú k dispozícii vyhradené tlačidlá rozhrania na schválenie recenzie (čím sa stane okamžite viditeľnou naprieč platformou a aktualizuje sa celkové agregované hodnotenie produktu) alebo jej zamietnutie, čo spustí bezpečné vymazanie z databázy.
+#### 4.25.2. Dvojkrokový proces overovania recenzií (Pipeline)
 
-4.25.3. Architektúra nahlasovania riadená používateľmi
-Distribuovaná asistenčná moderácia: Funkcie, ktoré umožňujú bežným používateľom nahlásiť nevyhovujúce objekty (profily, príspevky a recenzie), fungujú ako nepretržitý telemetrický tok pre administrátorský tím.
+- **Brána pre manuálnu moderáciu**: Na zaručenie kontroly kvality a zabránenie spamu alebo škodlivému textu platforma uplatňuje prísny pracovný postup vyhodnocovania spätnej väzby od používateľov. Novovytvorené recenzie prechádzajú do stavu čakania (pending state) a sú skryté pred širokou verejnosťou.
 
-Automatizované vs. manuálne riešenie: Backend je navrhnutý tak, aby sledoval hraničné hodnoty počtu nahlásení (report thresholds), čím otvára budúce cesty pre automatizované označovanie obsahu alebo algoritmy dočasného pozastavenia na základe kumulatívnych hlásení používateľov. Systém však zásadne uprednostňuje okamžitý ľudský dohľad, čo zaručuje, že administrátor dokáže obísť automatizované rady a manuálne vymazať obsah alebo pozastaviť problematické profily jediným kliknutím.
+- **Akcie schválenia / zamietnutia**: Administrátori majú k dispozícii vyhradené tlačidlá rozhrania na schválenie recenzie (čím sa stane okamžite viditeľnou naprieč platformou a aktualizuje sa celkové agregované hodnotenie produktu) alebo jej zamietnutie, čo spustí bezpečné vymazanie z databázy.
 
-4.26. Optimalizácia siete a engine na šetrenie dát
+#### 4.25.3. Architektúra nahlasovania riadená používateľmi
+
+- **Distribuovaná asistenčná moderácia**: Funkcie, ktoré umožňujú bežným používateľom nahlásiť nevyhovujúce objekty (profily, príspevky a recenzie), fungujú ako nepretržitý telemetrický tok pre administrátorský tím.
+
+- **Automatizované vs. manuálne riešenie**: Backend je navrhnutý tak, aby sledoval hraničné hodnoty počtu nahlásení (report thresholds), čím otvára budúce cesty pre automatizované označovanie obsahu alebo algoritmy dočasného pozastavenia na základe kumulatívnych hlásení používateľov. Systém však zásadne uprednostňuje okamžitý ľudský dohľad, čo zaručuje, že administrátor dokáže obísť automatizované rady a manuálne vymazať obsah alebo pozastaviť problematické profily jediným kliknutím.
+
+### 4.26. Optimalizácia siete a engine na šetrenie dát
+
 Na prispôsobenie sa používateľom fungujúcim s obmedzenými dátovými balíkmi mobilných sietí alebo v oblastiach s nízkou priepustnosťou siete platforma zahŕňa celosystémový režim šetrenia dát (Data Saving Mode). Tento modul systematicky znižuje kvalitu médií a obmedzuje (throttles) agresívne procesy načítavania dát, aby sa minimalizoval objem prenášaných dát v sieti.
 
-4.26.1. Globálna aktivácia a správa stavu
-Prepínač ovládaný používateľom: Funkcia je prístupná ako trvalý prepínač v nastaveniach používateľského účtu na stránke profilu. Po zmene sa stav preferencie synchronizuje s backendovou reláciou (session) alebo modelom používateľského profilu, aby sa vynútilo podmienené vykresľovanie rozvrhnutia.
+#### 4.26.1. Globálna aktivácia a správa stavu
 
-Optimalizácia kanála: Keď je optimalizačný engine aktívny, zasahuje predovšetkým do životného cyklu hlavného kanála príspevkov počas udalostí posúvania (scrolling), kde je spotreba dát prirodzene na vrchole kvôli agregácii bohatých médií.
+- **Prepínač ovládaný používateľom**: Funkcia je prístupná ako trvalý prepínač v nastaveniach používateľského účtu na stránke profilu. Po zmene sa stav preferencie synchronizuje s backendovou reláciou (session) alebo modelom používateľského profilu, aby sa vynútilo podmienené vykresľovanie rozvrhnutia.
 
-4.26.2. Adaptívne streamovanie videa a obmedzenia predbežného načítavania
-Potlačené predbežné načítavanie (Preloading): Platforma potláča akékoľvek automatické načítavanie videí do vyrovnávacej pamäte na pozadí. Videá zostávajú v pozastavenom stave so statickou miniatúrou a neprenášajú žiadne dátové toky, kým používateľ nevykoná explicitné manuálne kliknutie na rozhraní prehrávania.
+- **Optimalizácia kanála**: Keď je optimalizačný engine aktívny, zasahuje predovšetkým do životného cyklu hlavného kanála príspevkov počas udalostí posúvania (scrolling), kde je spotreba dát prirodzene na vrchole kvôli agregácii bohatých médií.
 
-Základ s nízkym rozlíšením: Po aktivácii sa prehrávanie videa predvolene obmedzí striktne na 480p rozlíšenie s nízkymi nárokmi na šírku pásma. Pre zachovanie autonómie používateľa je možné toto základné obmedzenie manuálne prepísať pomocou rozhrania výberu kvality vo video prehrávači pre každé video samostatne.
+#### 4.26.2. Adaptívne streamovanie videa a obmedzenia predbežného načítavania
 
-4.26.3. Dynamické obmedzovanie stránkovania
-Zmenšené dávky dát: Systém priamo manipuluje s veľkosťami dávok, ktoré využíva backendový systém stránkovania v Djangu (Sekcia 3.53).
+- **Potlačené predbežné načítavanie (Preloading)**: Platforma potláča akékoľvek automatické načítavanie videí do vyrovnávacej pamäte na pozadí. Videá zostávajú v pozastavenom stave so statickou miniatúrou a neprenášajú žiadne dátové toky, kým používateľ nevykoná explicitné manuálne kliknutie na rozhraní prehrávania.
 
-Adaptívne limity objektov: Keď je zaznamenaná aktivita režimu šetrenia dát, objem databázových objektov serializovaných a odoslaných na jednu asynchrónnu požiadavku Fetch sa zníži (napr. zmenšenie základnej dávky príspevkov v kanáli z 5 položiek na prísnejšiu hranicu). To efektívne obmedzuje zbytočnú záťaž modelu DOM a výrazne šetrí sťahované mobilné dáta.
+- **Základ s nízkym rozlíšením**: Po aktivácii sa prehrávanie videa predvolene obmedzí striktne na 480p rozlíšenie s nízkymi nárokmi na šírku pásma. Pre zachovanie autonómie používateľa je možné toto základné obmedzenie manuálne prepísať pomocou rozhrania výberu kvality vo video prehrávači pre každé video samostatne.
 
-4.27. Odstránenie zvuku z videa a deaktivácia ovládacích prvkov
+#### 4.26.3. Dynamické obmedzovanie stránkovania
+
+- **Zmenšené dávky dát**: Systém priamo manipuluje s veľkosťami dávok, ktoré využíva backendový systém stránkovania v Djangu (Sekcia 3.53).
+
+- **Adaptívne limity objektov**: Keď je zaznamenaná aktivita režimu šetrenia dát, objem databázových objektov serializovaných a odoslaných na jednu asynchrónnu požiadavku Fetch sa zníži (napr. zmenšenie základnej dávky príspevkov v kanáli z 5 položiek na prísnejšiu hranicu). To efektívne obmedzuje zbytočnú záťaž modelu DOM a výrazne šetrí sťahované mobilné dáta.
+
+### 4.27. Odstránenie zvuku z videa a deaktivácia ovládacích prvkov
 
 Aby mali tvorcovia obsahu presnú kontrolu nad svojimi nahranými súbormi, platforma obsahuje možnosť úplne odstrániť zvukové stopy z video súborov počas procesu ich tvorby. To zaručuje, že videá, ktoré majú byť bez zvuku, nespracúvajú ani neprenášajú prázdne zvukové toky.
 
-4.27.1 Deaktivácia zvuku pred nahratím
+#### 4.27.1 Deaktivácia zvuku pred nahratím
 
-Kontrola tvorcu: V sprievodcovi tvorbou príspevku majú používatelia k dispozícii vyhradený konfiguračný prepínač, ktorý im umožňuje individuálne vypnúť zvukovú stopu pre každý nahrávaný video súbor.
+- **Kontrola tvorcu**: V sprievodcovi tvorbou príspevku majú používatelia k dispozícii vyhradený konfiguračný prepínač, ktorý im umožňuje individuálne vypnúť zvukovú stopu pre každý nahrávaný video súbor.
 
-Asynchrónny proces spracovania: Po odoslaní sa mediálne dáta presunú do architektúry na pozadí. Asynchrónny proces (Celery worker) zachytí súbor a použije nástroj FFmpeg na trvalé odstránenie kontajnera zvukového toku z video súboru. Táto štrukturálna kompresia trvalo upraví súbor na úrovni servera ešte predtým, ako je finalizovaný a zverejnený.
+- **Asynchrónny proces spracovania**: Po odoslaní sa mediálne dáta presunú do architektúry na pozadí. Asynchrónny proces (Celery worker) zachytí súbor a použije nástroj FFmpeg na trvalé odstránenie kontajnera zvukového toku z video súboru. Táto štrukturálna kompresia trvalo upraví súbor na úrovni servera ešte predtým, ako je finalizovaný a zverejnený.
 
-4.27.2 Reaktívne ovládacie prvky médií na strane klienta
+#### 4.27.2 Reaktívne ovládacie prvky médií na strane klienta
 
-Dynamické odstránenie ovládania zvuku: Pri príspevkoch, pri ktorých sa autor rozhodol vypnúť zvuk, sa frontendový prehrávač médií dynamicky prispôsobí.
+- **Dynamické odstránenie ovládania zvuku**: Pri príspevkoch, pri ktorých sa autor rozhodol vypnúť zvuk, sa frontendový prehrávač médií dynamicky prispôsobí.
 
-Deaktivované rozhrania hlasitosti: Vo vlastných ovládacích prvkoch prehrávania videa v informačnom kanáli (feed) sú všetky posuvníky hlasitosti, tlačidlá na stlmenie a konfigurácie zvuku úplne deaktivované alebo skryté. To poskytuje sledujúcemu používateľovi okamžité vizuálne potvrdenie, že daný mediálny súbor neobsahuje žiadnu natívnu zvukovú stopu, čím sa predchádza zbytočnému "riešeniu problémov" stláčaním tlačidiel hlasitosti na zariadení.
+- **Deaktivované rozhrania hlasitosti**: Vo vlastných ovládacích prvkoch prehrávania videa v informačnom kanáli (feed) sú všetky posuvníky hlasitosti, tlačidlá na stlmenie a konfigurácie zvuku úplne deaktivované alebo skryté. To poskytuje sledujúcemu používateľovi okamžité vizuálne potvrdenie, že daný mediálny súbor neobsahuje žiadnu natívnu zvukovú stopu, čím sa predchádza zbytočnému "riešeniu problémov" stláčaním tlačidiel hlasitosti na zariadení.
 
-4.28. Dynamické ambientné pozadia pomocou HTML5 Canvas
+### 4.28. Dynamické ambientné pozadia pomocou HTML5 Canvas
 
 Na pozdvihnutie vizuálnej identity a estetickej príťažlivosti platformy bez ohrozenia výkonu rozhrania za behu aplikácia implementuje sofistikovaný systém ambientného pozadia poháňaný natívnou technológiou HTML5.
 
-4.28.1 Vysokovýkonné vykresľovanie grafiky
+#### 4.28.1 Vysokovýkonné vykresľovanie grafiky
 
-Izolácia bitmáp: Namiesto využívania ťažkých, komplexných konfigurácií rozloženia CSS alebo ukotvovania obrovského množstva jednotlivých prvkov DOM na dosiahnutie pohybu – čo by vyvolalo neustále a výpočtovo náročné prepočítavanie rozloženia stránky (reflows) – je efekt pozadia úplne izolovaný v jedinom HTML5 prvku <canvas>.
+- **Izolácia bitmáp**: Namiesto využívania ťažkých, komplexných konfigurácií rozloženia CSS alebo ukotvovania obrovského množstva jednotlivých prvkov DOM na dosiahnutie pohybu – čo by vyvolalo neustále a výpočtovo náročné prepočítavanie rozloženia stránky (reflows) – je efekt pozadia úplne izolovaný v jedinom HTML5 prvku <canvas>.
 
-Animačné slučky s nízkou réžiou: Canvas sa spolieha na optimalizované animačné rutiny na strane klienta (ako sú vysoko efektívne slučky requestAnimationFrame cez TypeScript). To zaručuje, že jemné, ambientné vizuálne prvky (napr. plynulé siete častíc alebo mäkké posuny farebných prechodov) plynú hladko a pri konzistentnej snímkovej frekvencii naprieč rôznymi konfiguráciami zariadení.
+- **Animačné slučky s nízkou réžiou**: Canvas sa spolieha na optimalizované animačné rutiny na strane klienta (ako sú vysoko efektívne slučky requestAnimationFrame cez TypeScript). To zaručuje, že jemné, ambientné vizuálne prvky (napr. plynulé siete častíc alebo mäkké posuny farebných prechodov) plynú hladko a pri konzistentnej snímkovej frekvencii naprieč rôznymi konfiguráciami zariadení.
 
-4.28.2 Neinvazívne vrstvenie rozloženia
+#### 4.28.2 Neinvazívne vrstvenie rozloženia
 
-Vrstvenie pomocou Z-Indexu a nepriehľadnosť: Komponent canvas je explicitne navrstvený priamo za aktívnym zorným poľom používateľského rozhrania pomocou vypočítaného CSS polohovania (position: fixed; z-index: -1;).
+- **Vrstvenie pomocou Z-Indexu a nepriehľadnosť**: Komponent canvas je explicitne navrstvený priamo za aktívnym zorným poľom používateľského rozhrania pomocou vypočítaného CSS polohovania (position: fixed; z-index: -1;).
 
-Zachovanie vizuálnej hierarchie: Animačné sekvencie sú vyladené na jemnú prahovú hodnotu nepriehľadnosti s nízkym kontrastom. Táto dizajnová záruka zabezpečuje, že dynamické pozadie zostáva striktne dekoratívne a nikdy nekonkuruje ani neodvádza pozornosť od čitateľnosti textu v popredí či interaktívnych komponentov.
+- **Zachovanie vizuálnej hierarchie**: Animačné sekvencie sú vyladené na jemnú prahovú hodnotu nepriehľadnosti s nízkym kontrastom. Táto dizajnová záruka zabezpečuje, že dynamické pozadie zostáva striktne dekoratívne a nikdy nekonkuruje ani neodvádza pozornosť od čitateľnosti textu v popredí či interaktívnych komponentov.
 
-4.29. Architektúra vlastných miniatúr videa
+### 4.29. Architektúra vlastných miniatúr videa
 
 Na poskytnutie úplnej vizuálnej kontroly tvorcom obsahu nad ich mediálnou prezentáciou platforma obsahuje flexibilný nástroj na výber miniatúr, ktorý je integrovaný priamo do procesu nahrávania videa.
 
-4.29.1 Používateľom definovaný výber miniatúry
+#### 4.29.1 Používateľom definovaný výber miniatúry
 
-Integrácia do sprievodcu nahrávaním: Počas procesu vytvárania príspevku majú používatelia k dispozícii vyhradené rozhranie na manuálne nahranie a priradenie vlastného obrázka miniatúry pre každý jednotlivý video súbor.
+- **Integrácia do sprievodcu nahrávaním**: Počas procesu vytvárania príspevku majú používatelia k dispozícii vyhradené rozhranie na manuálne nahranie a priradenie vlastného obrázka miniatúry pre každý jednotlivý video súbor.
 
-Trvalé úložisko a mapovanie: Po odoslaní vlastnej miniatúry sa obrazový súbor automaticky spracuje a bezpečne zapíše do súborového systému platformy. Backendová architektúra zároveň zaregistruje presné relačné metadáta v databáze, čím trvalo prepojí súbor vlastného obrázka s jeho nadradeným video objektom.
+- **Trvalé úložisko a mapovanie**: Po odoslaní vlastnej miniatúry sa obrazový súbor automaticky spracuje a bezpečne zapíše do súborového systému platformy. Backendová architektúra zároveň zaregistruje presné relačné metadáta v databáze, čím trvalo prepojí súbor vlastného obrázka s jeho nadradeným video objektom.
 
-4.29.2 Automatická extrakcia záložného obrázka (Fallback)
+#### 4.29.2 Automatická extrakcia záložného obrázka (Fallback)
 
-Predvolené nastavenie s nulovou konfiguráciou: Na zabezpečenie bezproblémového používateľského zážitku pre tvorcov, ktorí vynechajú manuálne prispôsobenie, backend implementuje vysoko spoľahlivý záložný mechanizmus (fallback).
+- **Predvolené nastavenie s nulovou konfiguráciou**: Na zabezpečenie bezproblémového používateľského zážitku pre tvorcov, ktorí vynechajú manuálne prispôsobenie, backend implementuje vysoko spoľahlivý záložný mechanizmus (fallback).
 
-Generovanie prvej snímky: Ak sú video dáta odoslané bez určenej vlastnej miniatúry, proces spracovania médií na serveri (s využitím nástroja FFmpeg) automaticky extrahuje snímku z úplne prvej sekundy klipu. Táto extrahovaná snímka sa okamžite nakonfiguruje ako predvolený vizuálny zástupný prvok (placeholder) pre video naprieč celou platformou.
+- **Generovanie prvej snímky**: Ak sú video dáta odoslané bez určenej vlastnej miniatúry, proces spracovania médií na serveri (s využitím nástroja FFmpeg) automaticky extrahuje snímku z úplne prvej sekundy klipu. Táto extrahovaná snímka sa okamžite nakonfiguruje ako predvolený vizuálny zástupný prvok (placeholder) pre video naprieč celou platformou.
 
-4.30. Metriky času sledovania videa a analytika pre tvorcov
+### 4.30. Metriky času sledovania videa a analytika pre tvorcov
 
 Na poskytnutie využiteľných dát tvorcom obsahu ohľadom zapojenia publika platforma obsahuje integrovaný analytický modul špecifický pre video súbory.
 
-4.30.1 Exkluzívne rozhranie pre tvorcu
+#### 4.30.1 Exkluzívne rozhranie pre tvorcu
 
-Prístup len pre autora: Analytické metriky sú prísne chránené. Štrukturálne dáta a príslušné prepínacie tlačidlá používateľského rozhrania sú dynamicky generované a vykresľované výlučne vtedy, keď je autentifikovaný divák overeným autorom príspevku.
+- **Prístup len pre autora**: Analytické metriky sú prísne chránené. Štrukturálne dáta a príslušné prepínacie tlačidlá používateľského rozhrania sú dynamicky generované a vykresľované výlučne vtedy, keď je autentifikovaný divák overeným autorom príspevku.
 
-Viditeľnosť na požiadanie: Na udržanie čistej a neprehustenej vizuálnej hierarchie v informačnom kanáli (feed) je analytická vrstva predvolene skrytá. Tvorcovia môžu plynulo zobraziť alebo zbaliť štatistický panel prostredníctvom vyhradeného prepínacieho tlačidla integrovaného do ich administratívneho UI.
+- **Viditeľnosť na požiadanie**: Na udržanie čistej a neprehustenej vizuálnej hierarchie v informačnom kanáli (feed) je analytická vrstva predvolene skrytá. Tvorcovia môžu plynulo zobraziť alebo zbaliť štatistický panel prostredníctvom vyhradeného prepínacieho tlačidla integrovaného do ich administratívneho UI.
 
-4.30.2 Telemetria a integrita metrík
+#### 4.30.2 Telemetria a integrita metrík
 
-Komplexné sledovanie zapojenia: Backend dôkladne zaznamenáva agregované štatistiky času sledovania a poskytuje priamu porovnávaciu vizualizáciu voči absolútnej dĺžke videa. Okrem toho sleduje presný počet unikátnych zhliadnutí používateľmi.
+- **Komplexné sledovanie zapojenia**: Backend dôkladne zaznamenáva agregované štatistiky času sledovania a poskytuje priamu porovnávaciu vizualizáciu voči absolútnej dĺžke videa. Okrem toho sleduje presný počet unikátnych zhliadnutí používateľmi.
 
-Protokoly proti umelému navyšovaniu: Na zaručenie absolútnej presnosti dát a zabránenie umelému navyšovaniu metrík uplatňuje engine na sledovanie prísne validačné pravidlo. Čas sledovania a udalosti zhliadnutia sa registrujú a zapisujú do databázy výlučne vtedy, keď je konzumentom iný používateľ než samotný tvorca príspevku.
+- **Protokoly proti umelému navyšovaniu**: Na zaručenie absolútnej presnosti dát a zabránenie umelému navyšovaniu metrík uplatňuje engine na sledovanie prísne validačné pravidlo. Čas sledovania a udalosti zhliadnutia sa registrujú a zapisujú do databázy výlučne vtedy, keď je konzumentom iný používateľ než samotný tvorca príspevku.
 
-4.31. Optimalizácia pre vyhľadávače (SEO) a automatizovaná infraštruktúra indexovania
+### 4.31. Optimalizácia pre vyhľadávače (SEO) a automatizovaná infraštruktúra indexovania
+
 Na maximalizáciu organickej objaviteľnosti, zabezpečenie vysokej viditeľnosti v globálnych vyhľadávačoch a zefektívnenie indexovania platformy architektúra zahŕňa vyhradený nástroj na optimalizáciu pre vyhľadávače (SEO).
 
-4.31.1. Navádzanie prehľadávačov a optimalizácia rozpočtu na prehľadávanie (Crawl Budget)
-Deterministické smerovanie botov: V koreňovom adresári aplikácie je nasadený štruktúrovaný konfiguračný súbor robots.txt. Tento súbor slúži ako primárne rozhranie pre smernice prehľadávačov vyhľadávacích nástrojov (ako je Googlebot), pričom definuje explicitné hranice medzi prístupným verejným obsahom a obmedzenými administratívnymi koncovými bodmi (endpoints) alebo tými, ktoré sú špecifické pre reláciu.
+#### 4.31.1. Navádzanie prehľadávačov a optimalizácia rozpočtu na prehľadávanie (Crawl Budget)
 
-Ochrana rozpočtu na prehľadávanie: Tým, že systém explicitne bráni botom v plytvaní zdrojmi na náročné backendové procesy, optimalizuje svoj rozpočet na prehľadávanie (crawl budget). To núti vyhľadávače zamerať sa výlučne na hodnotné, na obsah bohaté verejné podstránky.
+- **Deterministické smerovanie botov**: V koreňovom adresári aplikácie je nasadený štruktúrovaný konfiguračný súbor robots.txt. Tento súbor slúži ako primárne rozhranie pre smernice prehľadávačov vyhľadávacích nástrojov (ako je Googlebot), pričom definuje explicitné hranice medzi prístupným verejným obsahom a obmedzenými administratívnymi koncovými bodmi (endpoints) alebo tými, ktoré sú špecifické pre reláciu.
 
-4.31.2. Automatizované generovanie viacúrovňovej mapy stránok (Sitemap)
-Aplikácia využíva natívny systém Django Sitemap Framework na dynamické generovanie a údržbu komplexnej štruktúry webového adresára. Infraštruktúra mapy stránok je rozdelená do dvoch škálovateľných vrstiev:
+- **Ochrana rozpočtu na prehľadávanie**: Tým, že systém explicitne bráni botom v plytvaní zdrojmi na náročné backendové procesy, optimalizuje svoj rozpočet na prehľadávanie (crawl budget). To núti vyhľadávače zamerať sa výlučne na hodnotné, na obsah bohaté verejné podstránky.
 
-Statické mapovanie stránok: Automaticky katalogizuje kľúčové štrukturálne marketingové stránky, ktoré majú pevné cesty, vrátane domovskej stránky, repozitára blogu a verejných komunitných uzlov.
+#### 4.31.2. Automatizované generovanie viacúrovňovej mapy stránok (Sitemap)
 
-Dynamické mapovanie na úrovni objektov: Na zabezpečenie rýchleho indexovania novovytvoreného používateľského obsahu sa framework dynamicky prepája s databázou. Programovo generuje uzly mapy stránok v reálnom čase pre každú novopublikovanú verejnú stránku príspevku a každú verejnú stránku používateľského profilu, pričom automaticky sleduje časové pečiatky vytvorenia a úprav.
+Aplikácia využíva natívny systém **Django Sitemap Framework** na dynamické generovanie a údržbu komplexnej štruktúry webového adresára. Infraštruktúra mapy stránok je rozdelená do dvoch škálovateľných vrstiev:
 
-4.31.3. Internacionalizácia (i18n) a viditeľnosť vo viacerých krajinách
-Lokalizované alternatívne smerovanie: Na podporu globálnej adopcie používateľmi je engine na generovanie mapy stránok úzko prepojený s prekladovými vrstvami platformy.
+- **Statické mapovanie stránok**: Automaticky katalogizuje kľúčové štrukturálne marketingové stránky, ktoré majú pevné cesty, vrátane domovskej stránky, repozitára blogu a verejných komunitných uzlov.
 
-Medzijazykové indexovanie: Systém vkladá presné definície mapovania pre lokalizované alternatívy identických koncových bodov (napríklad mapovanie /en/homepage ako priameho anglického ekvivalentu slovenskej verzie /sk/domov). Táto štruktúra slúži ako natívna implementácia signalizácie hreflang, čo umožňuje vyhľadávačom kontextovo doručiť správnu jazykovú verziu na základe geolokácie a jazykových preferencií hľadajúceho koncového používateľa, čím sa drasticky znižujú penalizácie za duplicitný obsah.
+- **Dynamické mapovanie na úrovni objektov**: Na zabezpečenie rýchleho indexovania novovytvoreného používateľského obsahu sa framework dynamicky prepája s databázou. Programovo generuje uzly mapy stránok v reálnom čase pre každú novopublikovanú verejnú stránku príspevku a každú verejnú stránku používateľského profilu, pričom automaticky sleduje časové pečiatky vytvorenia a úprav.
 
-4.32. Pokročilé náhľady na časovej osi videa (Scrubbar) a mapovanie VTT miniatúr
+#### 4.31.3. Internacionalizácia (i18n) a viditeľnosť vo viacerých krajinách
+
+- **Lokalizované alternatívne smerovanie**: Na podporu globálnej adopcie používateľmi je engine na generovanie mapy stránok úzko prepojený s prekladovými vrstvami platformy.
+
+- **Medzijazykové indexovanie**: Systém vkladá presné definície mapovania pre lokalizované alternatívy identických koncových bodov (napríklad mapovanie /en/homepage ako priameho anglického ekvivalentu slovenskej verzie /sk/domov). Táto štruktúra slúži ako natívna implementácia signalizácie hreflang, čo umožňuje vyhľadávačom kontextovo doručiť správnu jazykovú verziu na základe geolokácie a jazykových preferencií hľadajúceho koncového používateľa, čím sa drasticky znižujú penalizácie za duplicitný obsah.
+
+### 4.32. Pokročilé náhľady na časovej osi videa (Scrubbar) a mapovanie VTT miniatúr
+
 Na replikovanie štandardných interakcií streamovania videa v odvetví a maximalizáciu efektivity navigácie platforma obsahuje pokročilý engine náhľadov na časovej osi. Tento podsystém umožňuje používateľom vizuálne kontrolovať chronologické kontrolné body videa v reálnom čase ešte predtým, ako preskočia na konkrétnu časovú pečiatku.
 
-4.32.1. Automatizovaný proces spracovania VTT (Pipeline)
-Asynchrónne spracovanie snímok: Počas počiatočného životného cyklu nahrávania a spracovania videa sa spustí automatizovaný backendový proces (pipeline). Server spracuje video súbor pomocou FFmpeg na extrahovanie vysoko komprimovaných záberov snímok v nízkom rozlíšení v deterministických intervaloch (napríklad jedna snímka za sekundu).
+#### 4.32.1. Automatizovaný proces spracovania VTT (Pipeline)
 
-Mapovanie schémy WebVTT: Tieto serializované obrazové súbory sú zmapované do štandardizovaného konfiguračného súboru WebVTT (.vtt). Tento manifest čisto prepája špecifické časové vektory videa (časové pečiatky) so zodpovedajúcimi názvami obrazových súborov alebo priestorovými súradnicami v rámci kombinovaného rozloženia (image sprite), čím sa minimalizujú nadbytočné požiadavky na HTTP server.
+- **Asynchrónne spracovanie snímok**: Počas počiatočného životného cyklu nahrávania a spracovania videa sa spustí automatizovaný backendový proces (pipeline). Server spracuje video súbor pomocou FFmpeg na extrahovanie vysoko komprimovaných záberov snímok v nízkom rozlíšení v deterministických intervaloch (napríklad jedna snímka za sekundu).
 
-4.32.2. Interaktívne zachytávanie prechodu myšou na časovej osi
-Výpočet polohy s vysokou presnosťou: Na strane klienta sú vlastné ukazovatele priebehu videa vybavené reaktívnymi poslucháčmi udalostí ukazovateľa (pointer event listeners). Keď používateľ prejde myšou (hover) po časovej osi, klientsky skript v TypeScript-e nepretržite zachytáva presnú horizontálnu X-ovú súradnicu kurzora.
+- **Mapovanie schémy WebVTT**: Tieto serializované obrazové súbory sú zmapované do štandardizovaného konfiguračného súboru WebVTT (.vtt). Tento manifest čisto prepája špecifické časové vektory videa (časové pečiatky) so zodpovedajúcimi názvami obrazových súborov alebo priestorovými súradnicami v rámci kombinovaného rozloženia (image sprite), čím sa minimalizujú nadbytočné požiadavky na HTTP server.
 
-Prepočet časového pomeru: Skript vypočíta presné percento polohy kurzora vzhľadom na celkovú šírku ohraničujúceho boxu (bounding box) ukazovateľa priebehu. Tento pomer sa následne okamžite vynásobí absolútnou dĺžkou aktívneho mediálneho prvku, aby sa určila presná časová pozícia, nad ktorou sa kurzor nachádza.
+#### 4.32.2. Interaktívne zachytávanie prechodu myšou na časovej osi
 
-4.32.3. Dynamická správa vykresľovania kontextových nápovedí (Tooltip)
-Vkladanie uzlov v reálnom čase (Node Injection): Klientsky engine, vyzbrojený vypočítanou časovou pečiatkou, odošle dopyt do vopred načítanej mapy WebVTT, aby izoloval presne zodpovedajúcu obrazovú snímku.
+- **Výpočet polohy s vysokou presnosťou**: Na strane klienta sú vlastné ukazovatele priebehu videa vybavené reaktívnymi poslucháčmi udalostí ukazovateľa (pointer event listeners). Keď používateľ prejde myšou (hover) po časovej osi, klientsky skript v TypeScript-e nepretržite zachytáva presnú horizontálnu X-ovú súradnicu kurzora.
 
-Kontextové ukotvené prekrytia (Anchor Overlays): Aplikácia vykreslí plávajúci kontajner s náhľadom priamo nad indikátorom časovej osi. Tento tooltip dynamicky sleduje horizontálnu dráhu kurzora používateľa, okamžite obnovuje vloženú miniatúru snímky v nízkej kvalite a poskytuje tak okamžité, bezproblémové vizuálne potvrdenie toho, čo sa nachádza v danej presnej milisekunde klipu.
+- **Prepočet časového pomeru**: Skript vypočíta presné percento polohy kurzora vzhľadom na celkovú šírku ohraničujúceho boxu (bounding box) ukazovateľa priebehu. Tento pomer sa následne okamžite vynásobí absolútnou dĺžkou aktívneho mediálneho prvku, aby sa určila presná časová pozícia, nad ktorou sa kurzor nachádza.
 
-4.33. Architektúra komunikácie a posielania správ v reálnom čase
+#### 4.32.3. Dynamická správa vykresľovania kontextových nápovedí (Tooltip)
+
+- **Vkladanie uzlov v reálnom čase (Node Injection)**: Klientsky engine, vyzbrojený vypočítanou časovou pečiatkou, odošle dopyt do vopred načítanej mapy WebVTT, aby izoloval presne zodpovedajúcu obrazovú snímku.
+
+- **Kontextové ukotvené prekrytia (Anchor Overlays)**: Aplikácia vykreslí plávajúci kontajner s náhľadom priamo nad indikátorom časovej osi. Tento tooltip dynamicky sleduje horizontálnu dráhu kurzora používateľa, okamžite obnovuje vloženú miniatúru snímky v nízkej kvalite a poskytuje tak okamžité, bezproblémové vizuálne potvrdenie toho, čo sa nachádza v danej presnej milisekunde klipu.
+
+### 4.33. Architektúra komunikácie a posielania správ v reálnom čase
+
 Na podporu komunitnej interakcie a umožnenie okamžitého prepojovania používateľov platforma obsahuje plne duplexný rámec živého chatu (Live Chat framework). Tento modul obchádza tradičné cykly požiadaviek a odpovedí HTTP a využíva trvalé pripojenia na dosiahnutie distribúcie správ a synchronizácie stavu s nulovou latenciou.
 
-4.33.1. Asynchrónny WebSocket proces (Pipeline) a vrstva Pub/Sub
-Trvalá vrstva riadená udalosťami (Event-Driven Layer): Obojsmerný tok dát v reálnom čase je riadený prostredníctvom asynchrónnych WebSocketov, ktoré sú natívne spravované na backende prostredníctvom Django Channels.
+#### 4.33.1. Asynchrónny WebSocket proces (Pipeline) a vrstva Pub/Sub
 
-Pamäťový sprostredkovateľ Redis (Memory Broker): Na uľahčenie smerovania správ naprieč viacerými serverovými procesmi (worker processes) systém integruje Redis ako vysokovýkonnú vrstvu kanálov v pamäti (in-memory Channel Layer).
+- **Trvalá vrstva riadená udalosťami (Event-Driven Layer)**: Obojsmerný tok dát v reálnom čase je riadený prostredníctvom asynchrónnych WebSocketov, ktoré sú natívne spravované na backende prostredníctvom Django Channels.
 
-Atómový proces spracovania (Atomic Processing Pipeline): Každá transakčná správa odoslaná používateľom sleduje prísnu architektonickú sekvenciu:
+- **Pamäťový sprostredkovateľ Redis (Memory Broker)**: Na uľahčenie smerovania správ naprieč viacerými serverovými procesmi (worker processes) systém integruje Redis ako vysokovýkonnú vrstvu kanálov v pamäti (in-memory Channel Layer).
 
-Dátové užitočné zaťaženie (payload) je zachytené aktívnym klientskym pripojením WebSocket.
+- **Atómový proces spracovania (Atomic Processing Pipeline)**: Každá transakčná správa odoslaná používateľom sleduje prísnu architektonickú sekvenciu:
 
-Backend asynchrónne spracuje a overí obal udalosti (event wrapper).
+    1. Dátové užitočné zaťaženie (payload) je zachytené aktívnym klientskym pripojením WebSocket.
 
-Stav správy sa trvalo zapíše do perzistentnej databázy.
+    1. Backend asynchrónne spracuje a overí obal udalosti (event wrapper).
 
-Overený payload sa okamžite vysiela (broadcast) prostredníctvom rámca Redis Pub/Sub do všetkých prepojených uzlov vo vnútri cieľovej aktívnej četovacej miestnosti (pričom súčasne zasiahne relácie odosielateľa aj prijímateľa).
+    1. Stav správy sa trvalo zapíše do perzistentnej databázy.
 
-4.33.2. Dynamické generovanie UI a živé reakcie
-Reaktívne vkladanie na front-ende: Po prijatí úspešne smerovanej udalosti správy z backendového kanála zachytia klientske slučky udalostí (event loops) v TypeScript-e odoslané dáta. Model DOM sa programovo zmení tak, aby sa bublina so správou okamžite vykreslila v zornom poli bez potreby opätovného načítania (re-hydration) celej stránky.
+    1. Overený payload sa okamžite vysiela (broadcast) prostredníctvom rámca Redis Pub/Sub do všetkých prepojených uzlov vo vnútri cieľovej aktívnej četovacej miestnosti (pričom súčasne zasiahne relácie odosielateľa aj prijímateľa).
 
-Živá telemetria emoji: Používatelia môžu vydávať okamžitú metadátovú spätnú väzbu vo forme emoji reakcií. Tieto mikrointerakcie sú odosielané ako štruktúrované rámce WebSocketu, spracované správcami stavu na backende a okamžite vysielané na synchronizáciu počtu reakcií naprieč všetkými otvorenými zornými poľami v četovacej miestnosti.
+#### 4.33.2. Dynamické generovanie UI a živé reakcie
+
+- **Reaktívne vkladanie na front-ende**: Po prijatí úspešne smerovanej udalosti správy z backendového kanála zachytia klientske slučky udalostí (event loops) v TypeScript-e odoslané dáta. Model DOM sa programovo zmení tak, aby sa bublina so správou okamžite vykreslila v zornom poli bez potreby opätovného načítania (re-hydration) celej stránky.
+
+- **Živá telemetria emoji**: Používatelia môžu vydávať okamžitú metadátovú spätnú väzbu vo forme emoji reakcií. Tieto mikrointerakcie sú odosielané ako štruktúrované rámce WebSocketu, spracované správcami stavu na backende a okamžite vysielané na synchronizáciu počtu reakcií naprieč všetkými otvorenými zornými poľami v četovacej miestnosti.
 
 #### 4.33.3 Temporal Message Mutation Guardrails
 
@@ -1714,97 +1783,118 @@ Na zachovanie integrity konverzácie, zabránenie prepisovaniu histórie a zmier
 | Úprava obsahu správy | Do 15 minút od absolútneho vytvorenia. | Umožňuje okamžité opravy preklepov, pričom zabraňuje spätnej manipulácii s kontextom konverzácie. |
 | Úplné vymazanie správy  | Do 24 hodín od absolútneho vytvorenia. | Posilňuje súkromie používateľa a kontrolu nad obsahom, po uplynutí ktorých sa stav databázy uzamkne pre stabilitu archívu. |
 
-4.34. Protokoly prichádzajúcich žiadostí o sledovanie a triedenie súkromia (Privacy Triage)
+### 4.34. Protokoly prichádzajúcich žiadostí o sledovanie a triedenie súkromia (Privacy Triage)
+
 Na doplnenie globálnych stavov súkromných účtov platforma zahŕňa štruktúrovaný proces relačného overovania (relational verification pipeline). Keď je profil obmedzený, štandardný mechanizmus okamžitého sledovania (instant-follow) sa zachytí a zmení na čakajúcu žiadosť o autorizáciu.
 
-4.34.1. Zachytávanie a smerovanie čakajúceho stavu
-Podmienené prevzatie akcie (Action Hijacking): Keď používateľ iniciuje akciu sledovania zameranú na účet označený ako Súkromný, backend zablokuje okamžitú zmenu stavu (state mutation) v databázovej matici sledovateľov.
+#### 4.34.1. Zachytávanie a smerovanie čakajúceho stavu
 
-Asynchrónna registrácia žiadosti: Namiesto vytvorenia aktívneho vzťahu systém vytvorí dočasný záznam v tabuľke čakajúcich žiadostí o sledovanie. Stav žiadajúceho používateľa sa nastaví na „Čakajúci“ (Pending) a cieľový používateľ je upozornený bez toho, aby sa žiadateľovi odhalil akýkoľvek obmedzený obsah profilu alebo dáta z informačného kanála.
+- **Podmienené prevzatie akcie (Action Hijacking)**: Keď používateľ iniciuje akciu sledovania zameranú na účet označený ako Súkromný, backend zablokuje okamžitú zmenu stavu (state mutation) v databázovej matici sledovateľov.
 
-4.34.2. Centralizované centrum správy
-Riadiaci panel vložený do profilu: Do zobrazenia profilovej stránky vlastníka účtu sa exkluzívne vkladá vyhradené a bezpečné rozhranie upozornení. Tento panel agreguje všetky prichádzajúce čakajúce žiadosti do čistého, ľahko prehľadávateľného zoznamu.
+- **Asynchrónna registrácia žiadosti**: Namiesto vytvorenia aktívneho vzťahu systém vytvorí dočasný záznam v tabuľke čakajúcich žiadostí o sledovanie. Stav žiadajúceho používateľa sa nastaví na „Čakajúci“ (Pending) a cieľový používateľ je upozornený bez toho, aby sa žiadateľovi odhalil akýkoľvek obmedzený obsah profilu alebo dáta z informačného kanála.
 
-Kontextualizácia identity: Každá položka v toku žiadostí zobrazuje základné identifikátory žiadateľa (avatar, meno a používateľské meno), čo umožňuje vlastníkovi účtu rýchlo overiť profil žiadateľa pred prijatím rozhodnutia.
+#### 4.34.2. Centralizované centrum správy
 
-4.34.3. Možnosti triedenia a vysporiadanie vzťahu
+- **Riadiaci panel vložený do profilu**: Do zobrazenia profilovej stránky vlastníka účtu sa exkluzívne vkladá vyhradené a bezpečné rozhranie upozornení. Tento panel agreguje všetky prichádzajúce čakajúce žiadosti do čistého, ľahko prehľadávateľného zoznamu.
+
+- **Kontextualizácia identity**: Každá položka v toku žiadostí zobrazuje základné identifikátory žiadateľa (avatar, meno a používateľské meno), čo umožňuje vlastníkovi účtu rýchlo overiť profil žiadateľa pred prijatím rozhodnutia.
+
+#### 4.34.3. Možnosti triedenia a vysporiadanie vzťahu
+
 Vlastník účtu má k dispozícii tri explicitné operačné cesty na správu prichádzajúcej dátovej prevádzky:
 
-Schváliť (Approve): Kliknutím na potvrdzovací prvok sa prostredníctvom asynchrónnej požiadavky aktualizuje databázový záznam. Čakajúci stav sa zruší, žiadateľ je oficiálne presunutý do zoznamu aktívnych sledovateľov a získa okamžitý prístup k informačnému kanálu, mriežkam príspevkov (grids) a súkromným metrikám autora.
+- **Schváliť (Approve)**: Kliknutím na potvrdzovací prvok sa prostredníctvom asynchrónnej požiadavky aktualizuje databázový záznam. Čakajúci stav sa zruší, žiadateľ je oficiálne presunutý do zoznamu aktívnych sledovateľov a získa okamžitý prístup k informačnému kanálu, mriežkam príspevkov (grids) a súkromným metrikám autora.
 
-Zamietnuť (Reject): Výber prvku zamietnutia úplne odstráni čakajúci riadok z databázy. Žiadateľ zostáva neoverený a má zablokovaný prístup k súkromným dátam, zatiaľ čo používateľské rozhranie pomocou plynulého CSS prechodu položku okamžite vymaže zo zorného poľa vlastníka.
+- **Zamietnuť (Reject)**: Výber prvku zamietnutia úplne odstráni čakajúci riadok z databázy. Žiadateľ zostáva neoverený a má zablokovaný prístup k súkromným dátam, zatiaľ čo používateľské rozhranie pomocou plynulého CSS prechodu položku okamžite vymaže zo zorného poľa vlastníka.
 
-Ignorovať (Ignore): Používateľ sa môže rozhodnúť ponechať žiadosť v nevysporiadanom stave. Aplikácia uchováva čakajúci riadok v databáze, čím sa zabezpečí, že žiadateľ nemôže posielať duplicitné žiadosti, zatiaľ čo vlastníkovi profilu to umožňuje vyčistiť si zoznam aktívnych upozornení bez vydania explicitného zamietnutia.
+- **Ignorovať (Ignore)**: Používateľ sa môže rozhodnúť ponechať žiadosť v nevysporiadanom stave. Aplikácia uchováva čakajúci riadok v databáze, čím sa zabezpečí, že žiadateľ nemôže posielať duplicitné žiadosti, zatiaľ čo vlastníkovi profilu to umožňuje vyčistiť si zoznam aktívnych upozornení bez vydania explicitného zamietnutia.
 
-4.35. Architektúra viacúrovňového predplatného a integrácia Stripe
+### 4.35. Architektúra viacúrovňového predplatného a integrácia Stripe
+
 Na zabezpečenie dlhodobej udržateľnosti platformy a odmenenie oddaných používateľov obsahuje aplikácia dobrovoľný, viacúrovňový model predplatného. Finančná infraštruktúra je bezpečne poháňaná cez API služby Stripe, ktoré spravuje zámery platieb (payment intents), životné cykly opakovaného fakturovania a bezpečné relácie pokladne (checkout sessions).
 
-4.35.1. Úrovne predplatného a kozmetické vylepšenia
-Rozvrstvenie plánov: Používatelia sa môžu rozhodnúť podporiť projekt prechodom zo svojho štandardného bezplatného účtu na predplatné kategórie Basic alebo Premium.
+#### 4.35.1. Úrovne predplatného a kozmetické vylepšenia
 
-Mechanika vizuálnej prestíže: Po úspešnom overení platby backend automaticky odomkne exkluzívne kozmetické vylepšenia pre identifikátory používateľa. Zahŕňa to jedinečný odznak úspechu špecifický pre danú úroveň a zvýraznený, dynamicky štylizovaný rámik avatara, ktorý sa globálne a trvalo zobrazuje v informačnom kanáli, v komentároch a na stránke profilu, aby vizuálne signalizoval status podporovateľa.
+- **Rozvrstvenie plánov**: Používatelia sa môžu rozhodnúť podporiť projekt prechodom zo svojho štandardného bezplatného účtu na predplatné kategórie Basic alebo Premium.
 
-4.35.2. Spracovanie médií závislé od úrovne (Alokácia FFmpeg)
-Dynamické limity médií: Úroveň predplatného je priamo prepojená so zásadami spracovania médií na platforme, čo umožňuje prémiovým používateľom obísť štandardné obmedzenia a nahrávať podstatne dlhšie video súbory.
+- **Mechanika vizuálnej prestíže**: Po úspešnom overení platby backend automaticky odomkne exkluzívne kozmetické vylepšenia pre identifikátory používateľa. Zahŕňa to jedinečný odznak úspechu špecifický pre danú úroveň a zvýraznený, dynamicky štylizovaný rámik avatara, ktorý sa globálne a trvalo zobrazuje v informačnom kanáli, v komentároch a na stránke profilu, aby vizuálne signalizoval status podporovateľa.
 
-Podmienené kompresné algoritmy: Počas asynchrónneho procesu nahrávania médií procesy na pozadí (Celery workers) dynamicky overujú aktuálny stav predplatného autora. Na základe aktívnej úrovne vydá server pokyn pre FFmpeg, aby aplikoval rôzne úrovne intenzity kompresie súborov. Prémiovým používateľom je pridelená vyššia réžia výpočtového výkonu servera, čo vedie k minimalizácii kompresných artefaktov a výrazne vyššej vizuálnej kvalite pre obrázky aj videá.
+#### 4.35.2. Spracovanie médií závislé od úrovne (Alokácia FFmpeg)
 
-4.35.3. Správa životného cyklu a UI aktívneho stavu
-Riadiaci panel stavu v reálnom čase: V rámci nastavení účtu majú používatelia k dispozícii transparentné rozhranie na správu fakturácie a predplatného.
+- **Dynamické limity médií**: Úroveň predplatného je priamo prepojená so zásadami spracovania médií na platforme, čo umožňuje prémiovým používateľom obísť štandardné obmedzenia a nahrávať podstatne dlhšie video súbory.
 
-Časové sledovanie: Front-end využíva údaje z časových pečiatok z backendu na nepretržité sledovanie a zobrazovanie presného času zostávajúceho do konca aktívneho cyklu predplatného. Tým informuje používateľa o jeho aktuálnom statuse a blížiacich sa dátumoch exspirácie alebo automatického predĺženia.
+- **Podmienené kompresné algoritmy**: Počas asynchrónneho procesu nahrávania médií procesy na pozadí (Celery workers) dynamicky overujú aktuálny stav predplatného autora. Na základe aktívnej úrovne vydá server pokyn pre FFmpeg, aby aplikoval rôzne úrovne intenzity kompresie súborov. Prémiovým používateľom je pridelená vyššia réžia výpočtového výkonu servera, čo vedie k minimalizácii kompresných artefaktov a výrazne vyššej vizuálnej kvalite pre obrázky aj videá.
+
+#### 4.35.3. Správa životného cyklu a UI aktívneho stavu
+
+- **Riadiaci panel stavu v reálnom čase**: V rámci nastavení účtu majú používatelia k dispozícii transparentné rozhranie na správu fakturácie a predplatného.
+
+- **Časové sledovanie**: Front-end využíva údaje z časových pečiatok z backendu na nepretržité sledovanie a zobrazovanie presného času zostávajúceho do konca aktívneho cyklu predplatného. Tým informuje používateľa o jeho aktuálnom statuse a blížiacich sa dátumoch exspirácie alebo automatického predĺženia.
 
 ## 5. Security
 
-5.1. Protokolovanie auditu autentifikácie (login.log)
+### 5.1. Protokolovanie auditu autentifikácie (login.log)
+
 Na zaistenie vysokej zodpovednosti a umožnenie forenznej analýzy používateľských relácií (sessions) aplikácia udržiava vyhradenú auditnú stopu na strane servera pre všetky udalosti autentifikácie.
 
-5.1.1. Trvalé zachytávanie udalostí (Persistent Event Capture)
+#### 5.1.1. Trvalé zachytávanie udalostí (Persistent Event Capture)
+
 Každá inštancia prihlásenia alebo odhlásenia používateľa sa prísne zachytáva a pridáva do centralizovaného súboru login.log. To poskytuje trvalý záznam, ktorý existuje nezávisle od stavu primárnej databázy.
 
-5.1.2. Štruktúrované metadáta
+#### 5.1.2. Štruktúrované metadáta
+
 Na uľahčenie rýchleho vyšetrovania podozrivých aktivít obsahuje každý záznam v protokole podrobný snímok (snapshot) udalosti:
 
-Kontext udalosti: Špecifický dôvod záznamu (napr. úspešné prihlásenie, ukončenie relácie / odhlásenie).
+- **Kontext udalosti**: Špecifický dôvod záznamu (napr. úspešné prihlásenie, ukončenie relácie / odhlásenie).
 
-Sledovanie identity: Unikátne ID používateľa (User ID), ktoré umožňuje administrátorom korelovať relácie s konkrétnymi účtami.
+- **Sledovanie identity**: Unikátne ID používateľa (User ID), ktoré umožňuje administrátorom korelovať relácie s konkrétnymi účtami.
 
-Sieťový pôvod: IP adresa klienta, kľúčová pre identifikáciu neoprávneného prístupu z neočakávaných geografických lokalít.
+- **Sieťový pôvod**: IP adresa klienta, kľúčová pre identifikáciu neoprávneného prístupu z neočakávaných geografických lokalít.
 
-Presné časové pečiatky: Každý záznam má časovú pečiatku s presnosťou na sekundu, čo umožňuje presné chronologické radenie udalostí.
+- **Presné časové pečiatky**: Každý záznam má časovú pečiatku s presnosťou na sekundu, čo umožňuje presné chronologické radenie udalostí.
 
-5.1.3. Užitočnosť pre bezpečnosť
+#### 5.1.3. Užitočnosť pre bezpečnosť
+
 Tento protokol slúži ako primárny diagnostický nástroj na identifikáciu vzorov, ako je napĺňanie ukradnutých prihlasovacích údajov (credential stuffing) alebo podozrivé prepínanie relácií (session-hopping), čo zaručuje, že administrátori môžu reagovať na hrozby s podloženými dôkazmi.
 
-5.2. Protokolovanie chýb aplikácie (error.log)
+### 5.2. Protokolovanie chýb aplikácie (error.log)
+
 Na uľahčenie rýchleho ladenia (debuggingu) a udržanie absolútnej stability platformy sa všetky výnimky na strane servera a ošetrené chyby v blokoch catch dôkladne zaznamenávajú do vyhradeného súboru protokolu chýb.
 
-5.2.1. Diagnostické metadáta
+#### 5.2.1. Diagnostické metadáta
+
 Keď používateľ narazí na neočakávaný problém, systém automaticky zachytí presnú časovú pečiatku udalosti, údaje autentifikovaného používateľa a zdrojovú IP adresu klienta.
 
-5.2.2. Zachytávanie spätnej stopy (Traceback Capture)
+#### 5.2.2. Zachytávanie spätnej stopy (Traceback Capture)
+
 Ak sa problém zachytí v konkrétnom bloku na spracovanie výnimiek, do protokolu sa pripojí vlastné chybové hlásenie a príslušná stopa zásobníka (stack trace). To poskytuje vývojárom presný kontext potrebný na efektívnu reprodukciu a vyriešenie chyby bez toho, aby sa museli spoliehať na hlásenia chýb od používateľov.
 
-5.3. Plánované úlohy a protokolovanie úloh Cron (Cron Job Logging)
+### 5.3. Plánované úlohy a protokolovanie úloh Cron (Cron Job Logging)
+
 Na monitorovanie bezchybného chodu (health) a úspešného vykonávania automatizovaných backendových procesov systém udržiava samostatný, vyhradený protokol pre všetky plánované úlohy na pozadí.
 
-5.3.1. Overenie vykonania
+#### 5.3.1. Overenie vykonania
+
 Tento protokol poskytuje overiteľné potvrdenie o dokončených asynchrónnych operáciách. Zaznamenáva časy začiatku a konca úloh bežnej údržby, ktoré spúšťa server.
 
-5.3.2. Prevádzkové metriky
+#### 5.3.2. Prevádzkové metriky
+
 Záznamy obsahujú podrobné metriky týkajúce sa výsledku úlohy. Zaznamenáva napríklad presný počet trvalo pozastavených účtov, ktoré boli úspešne vymazané z databázy počas plánovaného cyklu čistenia databázy, čím zaručuje úplnú transparentnosť automatizovanej správy dát.
 
 ## 6. Replaced Features
 
-6.1. Optimalizovaná architektúra streamovania videa (HTTP 206)
+### 6.1. Optimalizovaná architektúra streamovania videa (HTTP 206)
+
 Na zabezpečenie plynulého prehrávania videa bez sekania (bufferovania) naprieč platformou backend implementuje špecializovanú architektúru streamovania, namiesto spoliehania sa na štandardné metódy poskytovania statických súborov.
 
-6.1.1. Vyhradené koncové body pre streamovanie (Endpoints)
-Vlastné smerovanie (Custom Routing): Namiesto toho, aby sa front-endu priamo odhaľovali surové cesty k súborom na serveri, video médiá sa bezpečne doručujú prostredníctvom vyhradených, vlastných URL koncových bodov. To poskytuje dodatočnú vrstvu abstrakcie a kontroly nad tým, ako sa médiá konzumujú.
+#### 6.1.1. Vyhradené koncové body pre streamovanie (Endpoints)
 
-6.1.2. Implementácia odpovedí v rozsahoch (Ranged Response)
-Prenos dát po častiach (Chunked Data Transfer): Server využíva obslužný program pre odpovede v rozsahoch (napríklad knižnicu django-ranged-response) na spracovanie prichádzajúcich požiadaviek na video. To umožňuje serveru interpretovať a odpovedať na špecifické požiadavky na rozsah bajtov (byte-range requests), ktoré generuje prehrávač videa HTML5.
+- **Vlastné smerovanie (Custom Routing)**: Namiesto toho, aby sa front-endu priamo odhaľovali surové cesty k súborom na serveri, video médiá sa bezpečne doručujú prostredníctvom vyhradených, vlastných URL koncových bodov. To poskytuje dodatočnú vrstvu abstrakcie a kontroly nad tým, ako sa médiá konzumujú.
 
-Vynucovanie HTTP 206 (Čiastočný obsah): Štandardné poskytovanie súborov často vedie k odpovediam HTTP 200 (OK), čo núti klienta stiahnuť celý súbor sekvenčne. Striktným vynucovaním stavových kódov HTTP 206 (Partial Content) backend umožňuje prehliadaču streamovať video v dynamických častiach (chunks).
+#### 6.1.2. Implementácia odpovedí v rozsahoch (Ranged Response)
 
-Stabilita prehrávania: Táto architektúra drasticky zlepšuje stabilitu videa, minimalizuje počiatočné časy načítania a – čo je kritické – umožňuje správne fungovanie vlastného ovládača časovej osi videa (Sekcia 3.46). Používatelia môžu plynulo preskakovať dopredu (seek) na nenačítané úseky videa bez toho, aby museli čakať na stiahnutie predchádzajúcich dát.
+- **Prenos dát po častiach (Chunked Data Transfer)**: Server využíva obslužný program pre odpovede v rozsahoch (napríklad knižnicu django-ranged-response) na spracovanie prichádzajúcich požiadaviek na video. To umožňuje serveru interpretovať a odpovedať na špecifické požiadavky na rozsah bajtov (byte-range requests), ktoré generuje prehrávač videa HTML5.
+
+- **Vynucovanie HTTP 206 (Čiastočný obsah)**: Štandardné poskytovanie súborov často vedie k odpovediam HTTP 200 (OK), čo núti klienta stiahnuť celý súbor sekvenčne. Striktným vynucovaním stavových kódov HTTP 206 (Partial Content) backend umožňuje prehliadaču streamovať video v dynamických častiach (chunks).
+
+- **Stabilita prehrávania**: Táto architektúra drasticky zlepšuje stabilitu videa, minimalizuje počiatočné časy načítania a – čo je kritické – umožňuje správne fungovanie vlastného ovládača časovej osi videa (Sekcia 3.46). Používatelia môžu plynulo preskakovať dopredu (seek) na nenačítané úseky videa bez toho, aby museli čakať na stiahnutie predchádzajúcich dát.

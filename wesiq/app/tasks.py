@@ -1,7 +1,8 @@
+from pathlib import Path
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia
+from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia, ChatAttachment
 import os, shutil, io, subprocess, math, random, json, re, datetime
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -1051,6 +1052,212 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
         return message
 
     except PostMedia.DoesNotExist as e:
+        message = "Video Does Not Exist."
+        raise Exception(message) from e
+
+    except subprocess.CalledProcessError as e:
+        message = "FFmpeg Error Occurred During Video Compression."
+        raise Exception(message) from e
+
+    except Exception as e:
+        message = "An Error Occurred During Video Compression."
+        raise Exception(message) from e
+
+@shared_task(bind=True)
+def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
+    try:
+        self.update_state(state="PROGRESS", meta={"percentage": 10}) # 10%
+
+        chat_attachment_object = ChatAttachment.objects.get(id=chat_attachment_id) # Gets The Chat Attachment
+        
+        # If The File Was Not Found
+        if not chat_attachment_object.file:
+            message = "The Image To Compress Was Not Found."
+            raise Exception(message)
+
+        old_file_path = chat_attachment_object.file.path # Stores The File Path Of The Original File
+        original_size = chat_attachment_object.file.size # Gets The Original Size
+
+        with Image.open(chat_attachment_object.file) as image:
+            # Resizes The Image
+            max_width = 1920
+
+            if image.width > max_width:
+                ratio = max_width / float(image.width)
+                new_height = int(float(image.height) * float(ratio))
+                image = image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+            # Converts The Image To RGB Format
+            if image.mode in ("RGBA", "P"):
+                image = image.convert("RGB")
+
+            # Image Quality
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            subscription = None
+
+            if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+                # Gets The Subscription Data If Are Available
+                subscription = {
+                    "plan": logged_in_user.subscription.plan
+                }
+
+            subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+            quality = 40 # 40% For No Subscribers
+
+            if subscription_plan == "basic":
+                quality = 70 # 70% For Subscribers With Basic Plan
+
+            elif subscription_plan == "premium":
+                quality = 90 # 90% For Subscribers With Premium Plan
+            
+            # Stores To Memory
+            buffer = io.BytesIO()
+            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
+
+            compressed_size = buffer.tell() # Gets The Compressed Size
+            
+            new_file_name = f"IMG-{chat_attachment_id}.jpg"
+
+            # Saves The Data To The Database
+            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            chat_attachment_object.is_processed = True
+            chat_attachment_object.original_size = original_size # Saves The Original Size
+            chat_attachment_object.compressed_size = compressed_size # Saves The Compressed Size
+            chat_attachment_object.save()
+
+        chat_attachment_object.file.close()
+        
+        # Removes Original Image File From Disk
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+        message = "Image Was Successfully Compressed."
+        return message
+        
+    except ChatAttachment.DoesNotExist:
+        message = "Image Does Not Exist."
+        raise Exception(message)
+
+    except Exception:
+        message = "An Error Occurred During Image Compression."
+        raise Exception(message)
+
+@shared_task(bind=True)
+def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
+    try:
+        chat_attachment_object = ChatAttachment.objects.get(id=chat_attachment_id) # Gets The Chat Attachment
+        
+        # If The File Was Not Found
+        if not chat_attachment_object.file:
+            message = "The Video To Compress Was Not Found."
+            raise Exception(message)
+
+        input_path = chat_attachment_object.file.path
+        old_file_path = input_path # Stores The File Path Of The Original File
+
+        # Thumbnail Generation
+
+        # Auto-Generated Thumbnail
+        thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{chat_attachment_id}.jpg")
+        os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
+        
+        # Gets The Frame From The First Second Of The Video
+        thumb_command = [
+            "ffmpeg", "-y", "-ss", "00:00:01", "-i", input_path,
+            "-vframes", "1", "-q:v", "2", thumb_temp_path
+        ]
+
+        try:
+            subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            with open(thumb_temp_path, "rb") as f:
+                chat_attachment_object.thumbnail.save(f"THUMB-{chat_attachment_id}.jpg", ContentFile(f.read()), save=False)
+
+            ChatAttachment.objects.filter(id=chat_attachment_id).update(thumbnail=chat_attachment_object.thumbnail.name)
+
+        except subprocess.CalledProcessError:
+            message = "Video Is Shorter Than 1 Second."
+            raise Exception(message)
+
+        finally:
+            # Removes Temporary Thumbnail Image File From Disk
+            if os.path.exists(thumb_temp_path):
+                os.remove(thumb_temp_path)
+
+
+        # Video Compression
+
+        # Video Quality
+        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan
+            }
+
+        subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+        crf = "32" # 32 CRF Quality Of Video For No Subscribers
+        audio_bitrate = "96k" # 96k Video's Audio Bitrate For No Subscribers
+
+        if subscription_plan == "basic":
+            crf = "26" # 26 CRF Quality Of Video For Subscribers With Basic Plan
+            audio_bitrate = "128k" # 128k Video's Audio Bitrate For Subscribers With Basic Plan
+
+        elif subscription_plan == "premium":
+            crf = "21" # 21 CRF Quality Of Video For Subscribers With Premium Plan
+            audio_bitrate = "192k" # 192k Video's Audio Bitrate For Subscribers With Premium Plan
+
+        video_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"video_{chat_attachment_id}.mp4")
+
+        # FFmpeg Compression Command For Video With Audio
+        command = [
+            "ffmpeg", "-y", "-i", input_path,
+            "-c:v", "libx264", # Video Codec
+            "-crf", crf, # Video Quality
+            "-preset", "fast", # Fast Compression
+            "-vf", "scale=-2:720",
+            "-c:a", "aac", # Audio Codec
+            "-b:a", audio_bitrate, # Audio Bitrate
+            video_temp_path
+        ]
+
+        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        original_size = os.path.getsize(input_path) # Gets The Original Size
+        compressed_size = os.path.getsize(video_temp_path) # Gets The Compressed Size
+
+        original_extension = Path(input_path).suffix.lower() # Gets The Original Extension
+        new_filename = os.path.basename(input_path) # Gets The New Filename
+        
+        # Converts The File To MP4 Format
+        if original_extension != ".mp4":
+            new_filename = new_filename.replace(original_extension, ".mp4")
+
+        with open(video_temp_path, "rb") as f:
+            chat_attachment_object.file.save(new_filename, ContentFile(f.read()), save=False)
+
+        # Saves The Data To The Database
+        chat_attachment_object.is_processed = True
+        chat_attachment_object.original_size = original_size
+        chat_attachment_object.compressed_size = compressed_size
+        chat_attachment_object.save()
+
+        # Removes Original Video File From Disk
+        if os.path.exists(old_file_path) and old_file_path != chat_attachment_object.file.path:
+            os.remove(old_file_path)
+
+        # Removes Temporary Video File From Disk
+        if os.path.exists(video_temp_path):
+            os.remove(video_temp_path)
+
+        message = "Video Was Successfully Compressed."
+        return message
+
+    except ChatAttachment.DoesNotExist as e:
         message = "Video Does Not Exist."
         raise Exception(message) from e
 

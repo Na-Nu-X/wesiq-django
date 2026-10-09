@@ -939,7 +939,7 @@ class ArticleForum(models.Model):
     article = models.ForeignKey(
         Articles, 
         verbose_name=_("Article"), 
-        help_text=_("Time the article rating was submitted."), 
+        help_text=_("The article to which the comment belongs."), 
         on_delete=models.DO_NOTHING, 
         related_name="comments", 
         null=False,
@@ -1096,6 +1096,31 @@ class ArticleForumReport(models.Model):
 
     def __str__(self):
         return _("Užívateľ %(first_name)s %(last_name)s nahlásil komentár od %(reported_first_name)s %(reported_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "reported_first_name": self.articleforum.user.first_name, "reported_last_name": self.articleforum.user.last_name}
+
+# Native App
+class ArticleVisitor(models.Model):
+    article = models.ForeignKey(
+        Articles, 
+        verbose_name=_("Article"), 
+        help_text=_("The article to which the view belongs."), 
+        on_delete=models.CASCADE, 
+        related_name="visitor_records", 
+        null=False,
+    )
+
+    device_id = models.CharField(
+        verbose_name=_("Device ID"), 
+        help_text=_("Unique identification key for the device."), 
+        db_index=True,
+        max_length=255, 
+        null=False, 
+        blank=False
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["article", "device_id"], name="unique_article_visitor")
+        ]
 
 class TrainingPlan(models.Model):
     UNIT_CHOICES = [
@@ -1512,7 +1537,7 @@ def getPostUploadPath(instance, filename):
     if filename == "index.m3u8":
         return f"posts/{instance.post.user_id}/videos/{instance.id}/index.m3u8" # For Example: posts/5/videos/12/index.m3u8
 
-    if not hasattr(instance, '_random_uuid'):
+    if not hasattr(instance, "_random_uuid"):
         instance._random_uuid = secrets.token_hex(nbytes=10)
 
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
@@ -2122,8 +2147,16 @@ class Chat(models.Model):
         verbose_name=_("Content"), 
         help_text=_("Message content."), 
         max_length=250, 
-        null=False
+        null=True
     )
+
+    # attachment = models.ForeignKey(
+    #     "ChatAttachment", 
+    #     verbose_name=_("Chat Attachment"),
+    #     help_text=_("Message attachment content."), 
+    #     on_delete=models.CASCADE,
+    #     null=True
+    # )
 
     created_at = models.DateTimeField(
         verbose_name=_("Created At"), 
@@ -2261,6 +2294,105 @@ class MessageReaction(models.Model):
 
     def __str__(self):
         return _("Reakcia od %(first_name)s %(last_name)s na správu od %(chat_user_first_name)s %(chat_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "chat_user_first_name": self.chat.user.first_name, "chat_user_last_name": self.chat.user.last_name}
+
+def getChatAttachmentUploadPath(instance, filename):
+    if not hasattr(instance, "_random_uuid"):
+        instance._random_uuid = secrets.token_hex(nbytes=10)
+
+    IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
+    VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
+
+    extension = Path(filename).suffix.lower() # Gets The File Extension
+
+    if extension in VIDEO_EXTENSIONS:
+        prefix = "VID"
+
+    elif extension in IMAGE_EXTENSIONS:
+        prefix = "IMG"
+
+    else:
+        prefix = "FILE"
+
+    new_filename = f"{prefix}-{instance._random_uuid}{extension}" # Creates The New Filename
+    return f"chat_attachments/{instance.sent_by.id}/{new_filename}" # Returns The Full Path
+
+class ChatAttachment(models.Model):
+    chat = models.ForeignKey(
+        "Chat", 
+        verbose_name=_("Chat"),
+        help_text=_("The message to which the attachment belongs."), 
+        on_delete=models.CASCADE,
+        related_name="attachments",
+        null=True, 
+        blank=True
+    )
+
+    sent_by = models.ForeignKey(
+        Users, 
+        verbose_name=_("User"),
+        help_text=_("The user who sent the attachment."), 
+        on_delete=models.CASCADE, 
+        null=False
+    )
+    
+    file = models.FileField(
+        upload_to=getChatAttachmentUploadPath,
+        verbose_name=_("File"),
+        help_text=_("Path to the file."), 
+    )
+
+    thumbnail = models.ImageField(
+        upload_to=getChatAttachmentUploadPath, 
+        verbose_name=_("Thumbnail"),
+        help_text=_("Path to the video thumbnail."), 
+        null=True, 
+        blank=True,
+    )
+
+    type = models.CharField(
+        verbose_name=_("Type"), 
+        help_text=_("Type of the media (e.g. Image, Video)."), 
+        max_length=10, 
+        default="image", 
+        null=False, 
+        blank=False
+    )
+
+    is_processed = models.BooleanField(
+        verbose_name=_("Is Processed"), 
+        help_text=_("Stores the information if the uploaded file is already processed."), 
+        default=False, 
+        null=False
+    )
+
+    original_filename = models.CharField(
+        verbose_name=_("Original Filename"), 
+        help_text=_("Original filename of the uploaded file."), 
+        max_length=255, 
+        null=True, 
+        blank=True
+    )
+
+    original_size = models.BigIntegerField(
+        verbose_name=_("Original Size"), 
+        help_text=_("Original size of the uploaded file."), 
+        null=True, 
+        blank=True
+    )
+
+    compressed_size = models.BigIntegerField(
+        verbose_name=_("Compressed Size"), 
+        help_text=_("Compressed size of the uploaded file."), 
+        null=True, 
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name=_("Created At"), 
+        help_text=_("Time of the attachment creation."), 
+        auto_now_add=True, 
+        null=False
+    )
 
 class ContactMessage(models.Model):
     SUBJECT_CHOICES = [
