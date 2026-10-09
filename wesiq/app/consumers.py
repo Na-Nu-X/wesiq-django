@@ -1,10 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Chat, MessageReaction
+from .models import Users, Chat, MessageReaction, ChatAttachment
 from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
+from django.utils.translation import gettext as _
 
 class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)
@@ -86,10 +87,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 receiver_group_name,
 
                 {
-                    "type": "new_message_notification",
+                    "action": "new_message_notification",
+                    "type": "new_message_notification", # Calls The Function "New Message Notification"
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
                     "message": message, # Stores The Message To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
             )
@@ -182,6 +185,61 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Mark As Read Message Action
         elif action == "mark_as_read":
             await self.mark_messages_as_read() # Mark Messages As Read
+            
+        # Send Attachment Action
+        elif action == "send_attachment":
+            attachment_ids = json_data["attachment_ids"] # Gets The Attachment IDs
+            message = json_data["message"] or None # Gets The Message
+
+            new_chat = await self.save_attachments(message, attachment_ids)
+
+            receiver_id = self.receiver.id # Gets The Receiver ID
+            receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
+
+            # Sends Data To The Notification Channel
+            await self.channel_layer.group_send(
+                receiver_group_name,
+                
+                {
+                    "action": "new_message_notification",
+                    "type": "new_message_notification", # Calls The Function "New Message Notification"
+                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                    "message": message or str(_("Nové prílohy")), # Stores The Message To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                }
+            )
+
+            attachments_data = await self.get_attachments_data(new_chat) # Gets The Attachments Data
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "new",
+                    "chat_id": new_chat.id,
+                    "message": message,
+                    "attachments": attachments_data, # Odošle pole všetkých príloh patriacich k správe
+                    "formatted_time": new_chat.formatted_time,
+                    "sender_id": self.sender.id,
+                    "sender_profile_picture_name": self.sender.profile_picture_name
+                }
+            )
+
+    @database_sync_to_async
+    def get_attachments_data(self, chat):
+        return [
+            {
+                "attachment_url": one_attachment.file.url,
+                "attachment_thumbnail": one_attachment.thumbnail.url if one_attachment.thumbnail else None,
+                "attachment_type": one_attachment.type,
+                "original_filename": one_attachment.original_filename,
+                "original_size": one_attachment.original_size,
+                "compressed_size": one_attachment.compressed_size
+            }
+
+            for one_attachment in chat.attachments.all()
+        ]
 
     # Function For Send Data Of The New Message To The Front-End
     async def new(self, event):
@@ -189,6 +247,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "action": "new",
             "chat_id": event["chat_id"],
             "message": event["message"],
+            "attachments": event["attachments"],
             "formatted_time": event["formatted_time"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
@@ -334,6 +393,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             is_read=False
         ).update(is_read=True)
 
+    # Function For Save The Attachments
+    @database_sync_to_async
+    def save_attachments(self, content, attachment_ids):
+        # Saves The New Message
+        new_chat = Chat.objects.create(
+            sender=self.sender,
+            receiver=self.receiver,
+            content=content
+        )
+
+        if attachment_ids:
+            chat_attachments = ChatAttachment.objects.filter(id__in=attachment_ids) # Gets The Chat Attachments
+            chat_attachments.update(chat=new_chat) # Saves The Updated Chat Attachments
+
+        return new_chat # Returns The New Chat
+
 class NotificationConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)
     @database_sync_to_async
@@ -386,4 +461,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The New Message Notification To The Front-End
     async def new_message_notification(self, event):
-        await self.send(text_data=json.dumps(event))
+        await self.send(text_data=json.dumps({
+            "action": "new_message_notification",
+            "chat_id": event["chat_id"],
+            "message": event["message"],
+            "sender_id": event["sender_id"],
+            "sender_username": event["sender_username"],
+            "sender_profile_picture_name": event["sender_profile_picture_name"]
+        }))

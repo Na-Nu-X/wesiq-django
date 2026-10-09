@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
 from django.utils import translation
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ContactMessage
-from ..tasks import compressImage, compressVideo
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, ContactMessage
+from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment
 from .serializers import UserSerializer
 from django.conf import settings
 from django.utils import timezone
@@ -45,6 +45,7 @@ from django.core.cache import cache
 from django.http import FileResponse
 from collections import defaultdict
 from rest_framework.parsers import MultiPartParser, FormParser
+from PIL import Image, UnidentifiedImageError
 
 # Function For Capture The Error
 def captureError(message):
@@ -1874,14 +1875,10 @@ def upload_post(request):
                         max_video_size = 100 * 1000 * 1000 # 100MB
                         max_video_duration = 3 * 60 # 3 Minutes
 
-                    #MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
-                    #MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
-                    #MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+                    MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
+                    MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+                    MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
                     MIN_VIDEO_DURATION = 1 # 1 Second
-                    
-                    MAX_IMAGE_SIZE = 1000 * 1000 *1000 # 2MB For No Subscribers, 10MB For Subscribers
-                    MAX_VIDEO_SIZE = 1000*1000*1000 # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
-                    MAX_VIDEO_DURATION = 20*60 # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
                     
                     compress_tasks = [] # Stores All Compress Tasks
 
@@ -1904,8 +1901,10 @@ def upload_post(request):
 
                             # Catches A Too Long Video
                             if is_video:
+                                suffix = os.path.splitext(one_file.name)[1] # Gets The File Suffix
+
                                 # Creates A Temporary File For The moviepy Library
-                                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_file:
+                                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
                                     for one_chunk in one_file.chunks():
                                         temp_file.write(one_chunk)
                                         
@@ -1922,6 +1921,9 @@ def upload_post(request):
 
                                     elif duration < MIN_VIDEO_DURATION:
                                         raise ValueError(_("Video je príliš krátke:\n%(file)s") % {"file": one_file.name})
+
+                                except ValueError as custom_error:
+                                    raise custom_error
 
                                 except Exception:
                                     raise ValueError(_("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name})
@@ -2862,7 +2864,7 @@ def change_custom_tasks_order(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        tasks_ids = json.loads(request.body) # Gets The Completed Custom Tasks IDs
+        tasks_ids = request.data.get("tasks_ids", []) # Gets The Completed Custom Tasks IDs
 
         # Updates The Order Of All The Logged In User's Custom Tasks
         for index, task_id in enumerate(tasks_ids):
@@ -3678,7 +3680,10 @@ def edit_account(request):
 
                 current_profile_picture_name = logged_in_user.profile_picture_name
                 if current_profile_picture_name != "" and current_profile_picture_name != None:
-                    os.remove(f"{path}/{current_profile_picture_name}")
+                    old_file_path = os.path.join(path, current_profile_picture_name) # Gets The Old File Path
+
+                    if os.path.exists(old_file_path):
+                        os.remove(old_file_path) # Removes The Old Profile Picture
 
                 new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
 
@@ -3931,6 +3936,8 @@ def get_chat(request, username):
                 Q(sender=receiver)
             ).select_related(
                 "sender__subscription"
+            ).prefetch_related(
+                "attachments"
             ).annotate(
                 # Creates The Is Sender Column (True If The Logged In User Is The Sender)
                 is_sender=Case(
@@ -3959,6 +3966,20 @@ def get_chat(request, username):
                     },
 
                     "content": one_chat.content, 
+
+                    "attachments": [
+                        {
+                            "attachment_url": one_attachment.file.url,
+                            "attachment_thumbnail": one_attachment.thumbnail.url if one_attachment.thumbnail else None,
+                            "attachment_type": one_attachment.type,
+                            "original_filename": one_attachment.original_filename,
+                            "original_size": one_attachment.original_size,
+                            "compressed_size": one_attachment.compressed_size
+                        }
+
+                        for one_attachment in one_chat.attachments.all()
+                    ],
+
                     "is_read": one_chat.is_read, 
                     "is_edited": one_chat.is_edited, 
                     "formatted_time": one_chat.formatted_time, 
@@ -4191,7 +4212,11 @@ def get_articles(request):
                 "categories": one_article.categories,
                 "visitors": one_article.visitors,
                 "creation_time": one_article.creation_time,
-                "average_rating": one_article.average_rating
+                "average_rating": one_article.average_rating,
+                
+                "user": {
+                    "username": one_article.user.username
+                }
             }
 
             for one_article in articles
@@ -4424,7 +4449,7 @@ def delete_article_comment(request):
             "message": str(_("Pri odstraňovaní komentáru došlo k chybe."))
         }, status=500)
 
-@api_view(["POST"])
+@api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
 def get_article(request, theme):
@@ -4449,7 +4474,9 @@ def get_article(request, theme):
                     article_id=OuterRef("pk"),
                     user_id=logged_in_user_id
                 ).values("rating")[:1]
-            )
+            ),
+
+            comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True),
         ).prefetch_related(
             Prefetch(
                 "comments",
@@ -4480,35 +4507,54 @@ def get_article(request, theme):
             )
         ).first()
 
+        articles_data = {}
+
         if article != None:
             not_found = False
 
-            # Splits Comments Into Parent And Child Comments
-            comments_by_parent = defaultdict(list)
+            # # Splits Comments Into Parent And Child Comments
+            # comments_by_parent = defaultdict(list)
             
-            for one_comment in article.visible_comments:
-                comments_by_parent[one_comment.parent_id].append(one_comment)
+            # for one_comment in article.visible_comments:
+            #     comments_by_parent[one_comment.parent_id].append(one_comment)
             
-            article.nested_comments = dict(comments_by_parent)
-            article.root_comments = comments_by_parent[None]
+            # article.nested_comments = dict(comments_by_parent)
+            # article.root_comments = comments_by_parent[None]
 
-        # Adds 1 Visitor to The Article's Unique Visitors
-        if not request.COOKIES.get(article.link):
-            article.visitors += 1
-            article.save()
+            # Creates Valid Format Of Article For JSON Response
+            articles_data = {
+                "id": article.id, 
+                "title": article.title,
+                "description": article.description,
+                "image_name": article.image_name, 
+                "html_filename": article.html_filename,
+                "link": article.link,
+                "categories": article.categories,
+                "visitors": article.visitors,
+                "creation_time": article.creation_time,
+                "difficulty": article.difficulty,
+                "time_to_learn": article.time_to_learn,
+                "time_to_learn_text": article.time_to_learn_text,
+                "rarity": article.rarity,
+                "strength": article.strength,
+                "technique": article.technique,
+                "average_rating": article.average_rating,
+                "given_rating": article.given_rating,
+                "comments_amount": article.comments_amount
+            }
 
-        # response = render(request, "app/articles.html", {
-        #     "article": article,
-        #     "not_found": not_found
-        # })
+            device_id = request.headers.get("X-Device-ID") # Gets The Device ID
 
-        # response.set_cookie(article.link, "visited", expires=timezone.now() + timedelta(days=365)) # Sets 1 Year Timed Cookie About Information That The User Has Already Visited The Article
-
-        # return response
+            if device_id:
+                has_visited = ArticleVisitor.objects.filter(article=article, device_id=device_id).exists() # Checks If The User Has Already Visited An Article
+                
+                if not has_visited:
+                    ArticleVisitor.objects.create(article=article, device_id=device_id)
+                    Articles.objects.filter(id=article.id).update(visitors=F("visitors") + 1) # Adds 1 Visitor to The Article's Unique Visitors
 
         return Response({
             "success": True, 
-            "article": article,
+            "article": articles_data,
             "not_found": not_found,
             "message": str(_("Článok bol nájdený."))
         }, status=200)
@@ -4519,4 +4565,380 @@ def get_article(request, theme):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní článku došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_article_comments(request):
+    try:
+        if request.user.is_authenticated:
+            logged_in_user = request.user # Gets The Logged In User
+
+        else:
+            logged_in_user = None # Default State When The User Isn't Logged In
+
+        page_number = request.GET.get("page", 1) # Gets The Current Page Number
+        article_id = request.GET.get("article_id") # Gets The Article ID
+
+        # Gets The Article Root Comments With All Related Data
+        article_root_comments = ArticleForum.objects.filter(
+            article_id=article_id,
+            parent__isnull=True
+        ).exclude(
+            status="hidden"
+        ).select_related(
+            "user__subscription"
+        ).prefetch_related(
+            "likes_from_users",
+            "reports_from_users"
+        ).order_by(
+            "creation_time"
+        )
+
+        paginator = Paginator(article_root_comments, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(article_root_comments, 10) # Divides The Root Comments By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
+        page_article_root_comments = paginator.page(page_number) # Gets Only The Root Comments For The Selected Page
+
+        article_root_comments_ids = [comment.id for comment in page_article_root_comments] # Gets All Article Root Comments IDs
+        
+        # Gets The Article Replies Comments With All Related Data
+        article_replies_comments = ArticleForum.objects.filter(
+            Q(parent_id__in=article_root_comments_ids) | # Level 2 (Reply On Root Comment)
+            Q(parent__parent_id__in=article_root_comments_ids) | # Level 3 (Reply On Level 2)
+            Q(parent__parent__parent_id__in=article_root_comments_ids) | # Level 4 (Reply On Level 3)
+            Q(parent__parent__parent__parent_id__in=article_root_comments_ids), # Level 5 (Reply On Level 4)
+            article_id=article_id
+        ).exclude(
+            status="hidden"
+        ).select_related(
+            "user__subscription"
+        ).prefetch_related(
+            "likes_from_users",
+            "reports_from_users"
+        )
+
+        # Combines The Article Root Comments And Replies
+        combined_article_comments = sorted(
+            chain(page_article_root_comments, article_replies_comments),
+            key=lambda x: x.creation_time
+        )
+
+        # Creates Valid Format Of Article Comments For JSON Response
+        article_comments_data = [
+            {
+                "id": one_comment.id,
+
+                "user": {
+                    "id": one_comment.user.id,
+                    "first_name": one_comment.user.first_name,
+                    "last_name": one_comment.user.last_name,
+                    "username": one_comment.user.username,
+                    "profile_picture_name": one_comment.user.profile_picture_name,
+
+                    "subscription": {
+                        "is_active": one_comment.user.subscription.is_active
+                    } if hasattr(one_comment.user, "subscription") and one_comment.user.subscription else None
+                },
+
+                "comment": one_comment.comment,
+                "likes": one_comment.likes,
+                "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
+                "creation_time": one_comment.creation_time.isoformat(),
+                "parent_id": one_comment.parent_id,
+                "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
+                "level": one_comment.level
+            }
+
+            for one_comment in combined_article_comments
+        ]
+
+        return Response({
+            "success": True, 
+            "has_next": page_article_root_comments.has_next(), 
+            "visible_comments": article_comments_data, 
+            "message": str(_("Komentáre boli úspešné nájdené."))
+        }, status=200)
+
+    except Exception as e:
+        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "has_next": False, 
+            "message": str(_("Pri hľadaní komentárov došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def send_chat_attachment(request):
+    # Defines The Disallowed Mime Types
+    DISALLOWED_MIME_TYPES = [
+        "application/x-msdownload", # Executable (.exe) Files
+        "application/x-executable", # Linux Binaries
+        "application/x-sh", # Shell Scripts
+        "text/x-php", # PHP Scripts
+    ]
+
+    # Defines The Word Mime Types
+    WORD_MIME_TYPES = [
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ]
+
+    # Defines The Excel Mime Types
+    EXCEL_MIME_TYPES = [
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "text/csv",
+    ]
+
+    # Defines The Powerpoint Mime Types
+    POWERPOINT_MIME_TYPES = [
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ]
+
+    # Defines The Archive Mime Types
+    ARCHIVE_MIME_TYPES = [
+        "application/zip",
+        "application/x-zip-compressed",
+        "application/x-rar-compressed",
+        "application/x-7z-compressed",
+        "application/x-tar",
+        "application/gzip",
+    ]
+
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        subscription = None
+
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            # Gets The Subscription Data If Are Available
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
+
+        subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+        max_image_size = 2 * 1000 * 1000 if subscription_plan == "free" else 10 * 1000 * 1000 # 2MB For No Subscribers, 10MB For Subscribers
+        max_video_size = 25 * 1000 * 1000 # 25MB For No Subscribers
+        max_video_duration = 60 # 1 Minute For No Subscribers
+        max_file_size = 5 * 1000 * 1000 if subscription_plan == "free" else 10 * 1000 * 1000 # 5MB For No Subscribers, 10MB For Subscribers
+
+        # Subscribers With Basic Plan
+        if subscription_plan == "basic":
+            max_video_size = 50 * 1000 * 1000 # 50MB
+            max_video_duration = 2 * 60 # 2 Minutes
+
+        # Subscribers With Premium Plan
+        elif subscription_plan == "premium":
+            max_video_size = 100 * 1000 * 1000 # 100MB
+            max_video_duration = 3 * 60 # 3 Minutes
+
+        MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
+        MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
+        MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
+        MIN_VIDEO_DURATION = 1 # 1 Second
+        MAX_FILE_SIZE = max_file_size # 5MB For No Subscribers, 10MB For Subscribers
+
+        selected_files = request.FILES.getlist("selected_files") # Gets The Selected Files
+
+        if not selected_files:
+            return Response({
+                "success": False,
+                "message": str(_("Neboli vybrané žiadne súbory."))
+            }, status=400)
+
+        sent_attachments = [] # Stores The Uploaded Results
+
+        for one_selected_file in selected_files:
+            try:
+                file_head = one_selected_file.read(2048) # Reads Head Of File And Validates The Real Format
+                one_selected_file.seek(0)
+                mime_type = magic.from_buffer(file_head, mime=True)
+                
+                # Catches An Unsupported File
+                if mime_type in DISALLOWED_MIME_TYPES:
+                    return Response({
+                        "success": False,
+                        "message": str(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_selected_file.name})
+                    }, status=400)
+
+                # Gets The Attachment Type By Mime Type
+                if mime_type.startswith("image/"): attachment_type = "image"
+                elif mime_type.startswith("video/"): attachment_type = "video"
+                elif mime_type.startswith("audio/"): attachment_type = "audio"
+                elif mime_type == "application/pdf": attachment_type = "pdf"
+                elif mime_type in WORD_MIME_TYPES: attachment_type = "doc"
+                elif mime_type in EXCEL_MIME_TYPES: attachment_type = "excel"
+                elif mime_type in POWERPOINT_MIME_TYPES: attachment_type = "powerpoint"
+                elif mime_type in ARCHIVE_MIME_TYPES: attachment_type = "archive"
+                elif mime_type == "text/plain": attachment_type = "text"
+                
+                # Gets The Attachment Type By Extension
+                else:
+                    extension = os.path.splitext(one_selected_file.name)[1].lower().replace(".", "") # Gets The Extension
+
+                    if extension in ["doc", "docx"]: attachment_type = "doc"
+                    elif extension in ["xls", "xlsx", "csv"]: attachment_type = "excel"
+                    elif extension in ["ppt", "pptx"]: attachment_type = "powerpoint"
+                    elif extension in ["zip", "rar", "7z", "tar", "gz"]: attachment_type = "archive"
+                    elif extension in ["txt"]: attachment_type = "text"
+                    else: attachment_type = "file"
+                
+                # Image
+                if attachment_type == "image":
+                    # Catches Too Large File
+                    if one_selected_file.size > MAX_IMAGE_SIZE:
+                        raise ValueError(_("Obrázok je príliš veľký:\n%(file)s") % {"file": one_selected_file.name})
+
+                    # Verifies The Image File
+                    try:
+                        # Image Verification
+                        one_selected_file.seek(0)
+                        image = Image.open(one_selected_file)
+                        image.verify()
+                        one_selected_file.seek(0)
+
+                        # Image Scale Verification
+                        image = Image.open(one_selected_file)
+                        width, height = image.size
+
+                        MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
+                        MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
+
+                        if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
+                            raise ValueError(_("Rozmery obrázka sú príliš veľké:\n%(file)s") % {"file": one_selected_file.name})
+
+                        one_selected_file.seek(0)
+
+                    except ValueError as custom_error:
+                        raise custom_error
+
+                    except (UnidentifiedImageError, OSError, SyntaxError):
+                        raise ValueError(_("Súbor nie je platný obrázok:\n%(file)s") % {"file": one_selected_file.name})
+
+                    # Creates The New Attachment
+                    new_attachment = ChatAttachment.objects.create(
+                        sent_by=logged_in_user,
+                        file=one_selected_file,
+                        type=attachment_type or "image",
+                        is_processed=False,
+                        original_filename=one_selected_file.name,
+                        compressed_size=one_selected_file.size
+                    )
+
+                    transaction.on_commit(
+                        lambda: compressImageAttachment.delay(new_attachment.id, logged_in_user_id)
+                    )
+
+                # Video
+                elif attachment_type == "video":
+                    # Catches Too Large File
+                    if one_selected_file.size > MAX_VIDEO_SIZE:
+                        raise ValueError(_("Video je príliš veľké:\n%(file)s") % {"file": one_selected_file.name})
+
+                    # Catches A Too Long Video
+                    suffix = os.path.splitext(one_selected_file.name)[1] # Gets The File Suffix
+
+                    # Creates A Temporary File For The moviepy Library
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                        for one_chunk in one_selected_file.chunks():
+                            temp_file.write(one_chunk)
+                            
+                        temporary_path = temp_file.name
+                    
+                    try:
+                        video = VideoFileClip(temporary_path)
+                        duration = video.duration
+                        video.close()
+                        os.remove(temporary_path) # Deletes The Temporary File
+
+                        if duration > MAX_VIDEO_DURATION:
+                            raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_selected_file.name})
+
+                        elif duration < MIN_VIDEO_DURATION:
+                            raise ValueError(_("Video je príliš krátke:\n%(file)s") % {"file": one_selected_file.name})
+
+                    except ValueError as custom_error:
+                        raise custom_error
+
+                    except Exception:
+                        raise ValueError(_("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_selected_file.name})
+
+                    finally:
+                        if os.path.exists(temporary_path): 
+                            os.remove(temporary_path)
+
+                    # Creates The New Attachment
+                    new_attachment = ChatAttachment.objects.create(
+                        sent_by=logged_in_user,
+                        file=one_selected_file,
+                        type=attachment_type,
+                        is_processed=attachment_type or "video",
+                        original_filename=one_selected_file.name,
+                        compressed_size=one_selected_file.size
+                    )
+
+                    transaction.on_commit(
+                        lambda: compressVideoAttachment.delay(logged_in_user_id, chat_attachment_id=new_attachment.id)
+                    )
+
+                # Other Files
+                elif not attachment_type == "image" and not attachment_type == "video":
+                    print("Subor")
+                    # Catches Too Large File
+                    if one_selected_file.size > MAX_FILE_SIZE:
+                        raise ValueError(_("Súbor je príliš veľký:\n%(file)s") % {"file": one_selected_file.name})
+
+            except ValueError as custom_error:
+                return Response({
+                    "success": False, 
+                    "message": str(custom_error)
+                }, status=500)
+
+            except Exception:
+                return Response({
+                    "success": False, 
+                    "message": str(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_selected_file.name})
+                }, status=500)
+
+            # Creates The New Attachment
+            new_attachment = ChatAttachment.objects.create(
+                sent_by=logged_in_user,
+                file=one_selected_file,
+                type=attachment_type,
+                is_processed=True,
+                original_filename=one_selected_file.name,
+                compressed_size=one_selected_file.size
+            )
+
+            # Appends The New Attachment To The Sent Attachments
+            sent_attachments.append({
+                "attachment_id": new_attachment.id,
+                "attachment_url": new_attachment.file.url,
+                "attachment_thumbnail": new_attachment.thumbnail.url if new_attachment.thumbnail else None,
+                "attachment_type": attachment_type,
+                "original_filename": new_attachment.original_filename,
+                "original_size": new_attachment.original_size,
+                "compressed_size": new_attachment.compressed_size
+            })
+
+        return Response({
+            "success": True, 
+            "sent_attachments": sent_attachments, 
+            "message": str(_("Prílohy boli úspešne odoslané."))
+        }, status=201)
+
+    except Exception as e:
+        captureError(f"An error occurred while sending the chat attachment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odosielaní prílohy došlo k chybe."))
         }, status=500)
