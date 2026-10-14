@@ -2150,13 +2150,14 @@ class Chat(models.Model):
         null=True
     )
 
-    # attachment = models.ForeignKey(
-    #     "ChatAttachment", 
-    #     verbose_name=_("Chat Attachment"),
-    #     help_text=_("Message attachment content."), 
-    #     on_delete=models.CASCADE,
-    #     null=True
-    # )
+    post = models.ForeignKey(
+        Post,
+        verbose_name=_("Post"),
+        help_text=_("The shared post."), 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     created_at = models.DateTimeField(
         verbose_name=_("Created At"), 

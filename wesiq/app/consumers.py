@@ -6,6 +6,7 @@ from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
 from django.utils.translation import gettext as _
+from django.db.models import Count, Q
 
 class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)
@@ -105,6 +106,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "new", # Calls The Function "New"
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
                     "message": message, # Stores The Message To The Event
+                    "attachments": [],
                     "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
@@ -219,10 +221,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "new",
                     "chat_id": new_chat.id,
                     "message": message,
-                    "attachments": attachments_data, # Odošle pole všetkých príloh patriacich k správe
+                    "attachments": attachments_data,
                     "formatted_time": new_chat.formatted_time,
                     "sender_id": self.sender.id,
                     "sender_profile_picture_name": self.sender.profile_picture_name
+                }
+            )
+
+        # Share Post Action
+        if action == "share_post":
+            post_id = json_data["post_id"] # Gets The Post ID
+
+            new_chat = await self.share_post(post_id) # Shares The Post
+
+            receiver_id = self.receiver.id # Gets The Receiver ID
+            receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
+            
+            notification_message = str(_("Zdielaný príspevok od %(post_creator_username)s") % {"post_creator_username": new_chat["post"]["user"]["username"]})
+
+            # Sends Data To The Notification Channel
+            await self.channel_layer.group_send(
+                receiver_group_name,
+
+                {
+                    "action": "new_message_notification",
+                    "type": "new_message_notification", # Calls The Function "New Message Notification"
+                    "chat_id": new_chat["id"], # Stores The Chat ID To The Event
+                    "message": notification_message, # Stores The Message To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                }
+            )
+
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "new", # Calls The Function "New"
+                    "chat_id": new_chat["id"], # Stores The Chat ID To The Event
+                    "message": None, # Stores The Message To The Event
+                    "attachments": [],
+                    "post": new_chat["post"], # Stores The Post To The Event
+                    "formatted_time": new_chat["formatted_time"], # Stores The Chat Formatted Time To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
             )
 
@@ -248,6 +292,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "chat_id": event["chat_id"],
             "message": event["message"],
             "attachments": event["attachments"],
+            "post": event["post"],
             "formatted_time": event["formatted_time"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
@@ -407,7 +452,67 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat_attachments = ChatAttachment.objects.filter(id__in=attachment_ids) # Gets The Chat Attachments
             chat_attachments.update(chat=new_chat) # Saves The Updated Chat Attachments
 
-        return new_chat # Returns The New Chat
+    # Function For Save The New Message With The Shared Post
+    @database_sync_to_async
+    def share_post(self, post_id):
+        # Saves The New Message
+        new_chat = Chat.objects.create(
+            sender=self.sender,
+            receiver=self.receiver,
+            post_id=post_id
+        )
+
+        # Gets The New Chat With Shared Post
+        new_chat_with_shared_post = Chat.objects.select_related(
+            "post",
+            "post__user",
+            "post__user__subscription"
+        ).prefetch_related(
+            "post__media"
+        ).annotate(
+            post_comments_amount=Count("post__comments", filter=~Q(post__comments__status="hidden"), distinct=True),
+            post_likes_amount=Count("post__likes", distinct=True)
+        ).get(id=new_chat.id)
+
+        post_media_list = list(new_chat_with_shared_post.post.media.all()) if new_chat_with_shared_post.post else [] # Gets The Post Media List
+        first_post_media = post_media_list[0] if post_media_list else None # Gets The First Post Media
+
+        # Creates Valid Format Of New Chat With Shared Post For JSON Response
+        new_chat_with_shared_post_data = {
+            "id": new_chat_with_shared_post.id,
+            "formatted_time": new_chat_with_shared_post.formatted_time,
+
+            "post": {
+                "id": new_chat_with_shared_post.post.id,
+                
+                "user": {
+                    "id": new_chat_with_shared_post.post.user.id,
+                    "username": new_chat_with_shared_post.post.user.username,
+                    "profile_picture_name": new_chat_with_shared_post.post.user.profile_picture_name,
+
+                    "subscription": {
+                        "is_active": new_chat_with_shared_post.post.user.subscription.is_active
+                    } if hasattr(new_chat_with_shared_post.post.user, "subscription") and new_chat_with_shared_post.post.user.subscription else None,
+                },
+
+                "description": new_chat_with_shared_post.post.description if new_chat_with_shared_post.post.description else None,
+                "public_visibility": new_chat_with_shared_post.post.public_visibility,
+                "allow_comments": new_chat_with_shared_post.post.allow_comments,
+                "hide_likes": new_chat_with_shared_post.post.hide_likes,
+                "likes": getattr(new_chat_with_shared_post, "post_likes_amount", 0),
+                "comments": getattr(new_chat_with_shared_post, "post_comments_amount", 0),
+                "created_at": new_chat_with_shared_post.post.created_at.isoformat(),
+
+                "media": {
+                    "id": first_post_media.id,
+                    "file": first_post_media.file.name if first_post_media.file else None,
+                    "thumbnail": first_post_media.thumbnail.name if first_post_media.thumbnail else None,
+                    "is_video": first_post_media.is_video
+                } if first_post_media else None           
+            } if new_chat_with_shared_post.post else None
+        }
+
+        return new_chat_with_shared_post_data # Returns The New Chat With Shared Post Data
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)
