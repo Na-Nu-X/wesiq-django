@@ -1119,12 +1119,14 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
             
             new_file_name = f"IMG-{chat_attachment_id}.jpg"
 
+            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+
             # Saves The Data To The Database
             chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
             chat_attachment_object.is_processed = True
             chat_attachment_object.original_size = original_size # Saves The Original Size
             chat_attachment_object.compressed_size = compressed_size # Saves The Compressed Size
-            chat_attachment_object.save()
+            chat_attachment_object.save(update_fields=["file", "is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
 
         chat_attachment_object.file.close()
         
@@ -1244,7 +1246,7 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
         chat_attachment_object.is_processed = True
         chat_attachment_object.original_size = original_size
         chat_attachment_object.compressed_size = compressed_size
-        chat_attachment_object.save()
+        chat_attachment_object.save(update_fields=["is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
 
         # Removes Original Video File From Disk
         if os.path.exists(old_file_path) and old_file_path != chat_attachment_object.file.path:

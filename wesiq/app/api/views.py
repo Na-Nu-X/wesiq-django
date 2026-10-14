@@ -5,7 +5,6 @@ from django.utils.translation import gettext as _
 from django.utils import translation
 from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, ContactMessage
 from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment
-from .serializers import UserSerializer
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
@@ -50,55 +49,51 @@ from PIL import Image, UnidentifiedImageError
 # Function For Capture The Error
 def captureError(message):
     with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
-        # timezone.LocalTimezone
-        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n") # Writes The Log
 
 # Function For Capture The Login
 def captureLogin(message):
     with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
-        # timezone.LocalTimezone
-        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
+        file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n") # Writes The Log
 
 # Function For Get The Client IP
 def getClientIp(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+    if x_forwarded_for: ip = x_forwarded_for.split(",")[0].strip()
+    else: ip = request.META.get("REMOTE_ADDR")
 
     return ip
 
 # Generates Random 6-Digit Code
 def generateCode(length=6, letters=False):
-    code = ""
+    code = "" # Stores The Code
+    characters = string.digits # Gets The Characters (Digits)
 
-    if letters:
-        characters = string.digits + string.ascii_letters
+    if letters: characters += string.ascii_letters # Gets The Characters (Digits And Letters)
 
-        for one_character in range(length):
-            one_character = random.choice(characters)
-            code += str(one_character)
+    for one_character in range(length):
+        one_character = random.choice(characters) # Gets The Random Character
+        code += str(one_character) # Adds The Character To The Code
 
-    else:
-        characters = string.digits
-
-        for one_character in range(length):
-            one_character = random.choice(characters)
-            code += str(one_character)
-
-    return code
+    return code # Returns The Code
 
 # Function For Send The Mail
-def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+def sendMail(
+    user, 
+    subject, 
+    text_content, 
+    html_content, 
+    html_content_end, 
+    html_content_middle=""
+):
     with translation.override(user.language):
-        # Send Mail
-        subject = f"Wesiq - {subject}"
-        text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}"
-        sender = settings.EMAIL_HOST_USER
-        receiver = [user.email_address]
+        subject = f"Wesiq - {subject}" # Sets The Subject
+        text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}" # Sets The Text Content As A Fallback
+        sender = settings.EMAIL_HOST_USER # Sets The Sender
+        receiver = [user.email_address] # Sets The Receiver
+
+        # Sets The HTML Content
         html_content = f"""
             <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
             <p>{html_content}<p>
@@ -109,7 +104,7 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
 
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
-        mail_message.send()
+        mail_message.send() # Sends The Mail
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -117,33 +112,45 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
 @ratelimit(key="ip", rate="3/m", method="POST", block=False)
 def login(request):
     try:
-        identifier = request.data.get("identifier", "") # Gets The Identifier
-        password = request.data.get("password", "") # Gets The Password
+        identifier = request.data.get("identifier", None) # Gets The Identifier (E-mail or Username)
+        password = request.data.get("password", None) # Gets The Password
 
-        was_limited = getattr(request, "limited", False)
+        # If The Credentials Were Not Entered
+        if not identifier or not password:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre prihlásenie zadajte prihlasovacie údaje."))
+            }, status=500)
 
+        was_limited = getattr(request, "limited", False) # Gets The Information If The User Was Limited
+
+        # If The User Was Limited
         if was_limited:
-            captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Too many login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
             return Response({
                 "success": False, 
                 "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
             }, status=200)
 
+        clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
+
         try:
+            # Gets The User
             user = Users.objects.get(
-                Q(username__iexact=identifier) |
+                Q(username__iexact=clean_username) |
                 Q(email_address__iexact=identifier)
             )
 
+            # Checks The Password Validity
             if check_password(password, user.password):
                 user.last_login = timezone.now() # Stores Last Login Time
                 user.account_status = "OK"
-                user.save()
+                user.save(update_fields=["last_login", "account_status"]) # Saves The Updated User
 
-                refresh = RefreshToken.for_user(user)
+                refresh = RefreshToken.for_user(user) # Gets The Refresh Token
 
-                captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
+                captureLogin(f"Successful Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {identifier},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Login
 
                 return Response({
                     "success": True, 
@@ -152,88 +159,88 @@ def login(request):
                     "message": str(_("Úspešne prihlásený ako %(username)s") % {"username": user.username})
                 }, status=200)
             
-            else: # Wrong Password
-                captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n")
+            # Wrong Password
+            else:
+                captureError(f"Incorrect login credentials (wrong password).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
                 return Response({
                     "success": False, 
-                    "message": str(_("Nesprávne prihlasovacie údaje"))
-                }, status=200)
+                    "message": str(_("Nesprávne prihlasovacie údaje."))
+                }, status=500)
         
         # Wrong Identifier
-        except Users.DoesNotExist as e:
-            captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        except Users.DoesNotExist as error:
+            captureError(f"Incorrect login credentials (unregistered username or e-mail address).\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
             return Response({
                 "success": False, 
-                "message": str(_("Nesprávne prihlasovacie údaje"))
-            }, status=200)
-
-        # Error
-        except Exception as e:
-            captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
-
-            return Response({
-                "success": False, 
-                "message": str(_("Pri prihlasovaní došlo k chybe"))
-            }, status=200)
+                "message": str(_("Nesprávne prihlasovacie údaje."))
+            }, status=404)
     
-    except Exception as e:
-        captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
-            "message": str(_("Pri prihlasovaní došlo k chybe"))
-        }, status=200)
+            "message": str(_("Pri prihlasovaní došlo k chybe."))
+        }, status=500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
 def register(request):
     try:
-        first_name = request.data.get("first_name") # Gets The First Name
-        last_name = request.data.get("last_name") # Gets The Last Name
-        username = request.data.get("username") # Gets The Username
-        email_address = request.data.get("email_address") # Gets The E-mail Address
-        phone_number = request.data.get("phone_number") # Gets The Phone Number
-        password = request.data.get("password") # Gets The Password
-        password_check = request.data.get("password_check") # Gets The Password Check
-        language = request.data.get("language") # Gets The Language
+        first_name = request.data.get("first_name", None) # Gets The First Name
+        last_name = request.data.get("last_name", None) # Gets The Last Name
+        username = request.data.get("username", None) # Gets The Username
+        email_address = request.data.get("email_address", None) # Gets The E-mail Address
+        phone_number = request.data.get("phone_number", None) # Gets The Phone Number
+        password = request.data.get("password", None) # Gets The Password
+        password_check = request.data.get("password_check", None) # Gets The Password Check
+        language = request.data.get("language", "en") # Gets The Language
+
+        # If The Credentials Were Not Entered
+        if not username or not email_address or not password or not password_check:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre registráciu vyplnte povinné údaje."))
+            }, status=500)
 
         # E-mail Address Already In Use
         if Users.objects.filter(email_address=email_address).exists():
-            captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
             return Response({
                 "success": False, 
-                "message": str(_("Tento e-mail už je zaregistrovaný"))
-            }, status=400)
+                "message": str(_("Tento e-mail už je zaregistrovaný."))
+            }, status=500)
 
         # Username Already In Use
         elif Users.objects.filter(username=username).exists():
             return Response({
                 "success": False, 
-                "message": str(_("Toto používateľské meno je už obsadené"))
-            }, status=400)
+                "message": str(_("Toto používateľské meno je už obsadené."))
+            }, status=500)
 
         elif password != password_check:
             return Response({
                 "success": False, 
-                "message": str(_("Heslá sa nezhodujú"))
-            }, status=400)
+                "message": str(_("Heslá sa nezhodujú."))
+            }, status=500)
 
-        elif len(password) < 8:
+        elif len(password.strip()) < 8:
             return Response({
                 "success": False, 
-                "message": str(_("Heslo je príliš krátke"))
-            }, status=400)
+                "message": str(_("Heslo je príliš krátke."))
+            }, status=500)
 
         else:
             verification_code = generateCode() # Generates Random 6-Digit Code
 
             clean_phone_number = "".join(phone_number.split()) # Gets Phone Number With No White Spaces
 
-            new_user = Users(
+            # Creates The New User
+            new_user = Users.objects.create(
                 first_name = first_name,
                 last_name = last_name,
                 username = username,
@@ -245,12 +252,10 @@ def register(request):
                 is_registered_with_app = True
             )
 
-            new_user.save()
-
-            # Deletes Previous User ID Session If Was Logged In
             if "logged_in_user_id" in request.session:
-                del request.session["logged_in_user_id"]
+                del request.session["logged_in_user_id"] # Deletes The Previous User ID
 
+            # Sends The Mail
             sendMail(
                 new_user,
                 _("Overenie účtu"), # Subject
@@ -264,13 +269,12 @@ def register(request):
                 "message": str(_("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": email_address})
             }, status=200)
 
-    # Error
-    except Exception as e:
-        captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
-            "message": str(_("Pri registrácii došlo k chybe"))
+            "message": str(_("Pri registrácii došlo k chybe."))
         }, status=500)
 
 @api_view(["GET"])
@@ -281,7 +285,8 @@ def get_logged_in_user(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = logged_in_user.id # Gets The Logged In User ID
 
-        logged_in_user_object = Users.objects.filter(
+        # Gets The User
+        user = Users.objects.filter(
             id=logged_in_user_id
         ).select_related(
             "subscription"
@@ -301,7 +306,7 @@ def get_logged_in_user(request):
             )
         ).first()
 
-        if not logged_in_user_object:
+        if not user:
             return Response({
                 "success": False, 
                 "message": str(_("Používateľ sa nenašiel."))
@@ -310,10 +315,11 @@ def get_logged_in_user(request):
         follow_requests_data = [] # Stores The Follow Requests Data
         existing_follow_request_ids = set() # Stores The Existing Follow Request IDs
         
-        if logged_in_user_object.private_account:
+        # If The User Has Private Account
+        if user.private_account:
             # Gets All Follow Requests With All Related Data
             follow_requests = FollowRelation.objects.filter(
-                to_user=logged_in_user_object, 
+                to_user=user, 
                 status="pending"
             ).select_related("from_user")
 
@@ -335,6 +341,7 @@ def get_logged_in_user(request):
                     "profile_picture_name": one_follow_request.from_user.profile_picture_name
                 }
                 
+                # If The User Has Subscription
                 if hasattr(one_follow_request.from_user, "subscription") and one_follow_request.from_user.subscription:
                     # Gets The Subscription Data If Are Available
                     from_user_data["subscription"] = {
@@ -342,6 +349,7 @@ def get_logged_in_user(request):
                         "is_active": one_follow_request.from_user.subscription.is_active
                     }
                 
+                # Appends The Follow Request To The Follow Requests Data
                 follow_requests_data.append({
                     "id": one_follow_request.id,
                     "from_user": from_user_data,
@@ -350,37 +358,38 @@ def get_logged_in_user(request):
 
         subscription = None # Stores The Subscription Data
         
-        if hasattr(logged_in_user_object, "subscription") and logged_in_user_object.subscription:
+        # If The User Has Subscription
+        if hasattr(user, "subscription") and user.subscription:
             subscription = {
-                "plan": logged_in_user_object.subscription.plan,
-                "is_active": logged_in_user_object.subscription.is_active
+                "plan": user.subscription.plan,
+                "is_active": user.subscription.is_active
             }
 
-        # Creates Valid Format Of Users For JSON Response
-        logged_in_user_data = {
-            "id": logged_in_user_object.id,
-            "first_name": logged_in_user_object.first_name,
-            "last_name": logged_in_user_object.last_name,
-            "username": logged_in_user_object.username,
-            "role": logged_in_user_object.role,
-            "profile_picture_name": logged_in_user_object.profile_picture_name,
-            "friend_code": logged_in_user_object.friend_code,
-            "saved_posts": list(logged_in_user_object.saved_posts.values_list("id", flat=True)),
-            "private_account": logged_in_user_object.private_account,
-            "follow_requests": follow_requests_data if logged_in_user_object.private_account else None,
-            "followers_amount": len(logged_in_user_object.accepted_followers),
+        # Creates Valid Format Of User For JSON Response
+        user_data = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.username,
+            "role": user.role,
+            "profile_picture_name": user.profile_picture_name,
+            "friend_code": user.friend_code,
+            "saved_posts": list(user.saved_posts.values_list("id", flat=True)),
+            "private_account": user.private_account,
+            "follow_requests": follow_requests_data if user.private_account else None,
+            "followers_amount": len(user.accepted_followers),
             "subscription": subscription,
-            "data_saving_mode": logged_in_user_object.data_saving_mode
+            "data_saving_mode": user.data_saving_mode
         }
 
         return Response({
             "success": True, 
-            "logged_in_user": logged_in_user_data,
+            "logged_in_user": user_data,
             "message": str(_("Prihlásený užívateľ bol úspešne nájdený."))
         }, status=200)
         
-    except Exception as e:
-        captureError(f"An error occurred while loading the logged in user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while loading the logged in user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -404,6 +413,7 @@ def load_first_users(request):
 
         searched_users_history = request.data if isinstance(request.data, list) else [] # Gets The Searched Users History
 
+        # Gets The Loaded Users From History
         loaded_users_from_history = Users.objects.filter(
             username__in=searched_users_history,
             account_status="OK"
@@ -447,7 +457,7 @@ def load_first_users(request):
         loaded_users_from_history_list.sort(key=lambda user: searched_users_history.index(user.username) if user.username in searched_users_history else 0) # Sorts The Loaded Users From History List By The Original Order In The History
 
         missing_users_amount = 3 - len(loaded_users_from_history_list) # Gets The Amount Of Missing Users To The Maximum Of 3
-        missing_users_list = []
+        missing_users_list = [] # Stores The List Of The Missing Users
 
         if missing_users_amount > 0:
             loaded_users_from_history_ids = [u.id for u in loaded_users_from_history_list] # Gets The IDs Of Users In History
@@ -501,22 +511,23 @@ def load_first_users(request):
                     id=logged_in_user_id
                 )
 
-            missing_users = missing_users[:missing_users_amount]
-
+            missing_users = missing_users[:missing_users_amount] # Crops The Missing Users To Selected Amount
             missing_users_list = list(missing_users) # Converts The Missing Users To List
 
         users = loaded_users_from_history_list + missing_users_list # Connects Loaded Users From History And Missing Users Into The One List
 
-        loaded_users = []
+        loaded_users = [] # Stores The Loaded Users
 
         for one_user in users:
-            subscription = None
+            subscription = None # Stores The Subscription Data
 
+            # If The User Has Subscription
             if hasattr(one_user, "subscription") and one_user.subscription:
                 subscription = {
                     "is_active": one_user.subscription.is_active
                 }
 
+            # Appends The User To The Loaded Users
             loaded_users.append({
                 "id": one_user.id,
                 "first_name": one_user.first_name,
@@ -537,8 +548,8 @@ def load_first_users(request):
             "message": str(_("Užívatelia boli úspešne načítaný."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -648,8 +659,8 @@ def search_users(request):
             "message": str(_("Užívatelia boli úspešné nájdený."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -664,7 +675,7 @@ def toggle_post_like(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        post_id = request.data.get("post_id") # Gets The Post ID
+        post_id = request.data.get("post_id", None) # Gets The Post ID
 
         if not post_id or not str(post_id).isdigit():
             return Response({
@@ -697,8 +708,8 @@ def toggle_post_like(request):
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -713,8 +724,8 @@ def report_post(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        post_id = request.data.get("post_id") # Gets The Post ID
-        reason = request.data.get("reason") # Gets The Reason
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+        reason = request.data.get("reason", None) # Gets The Reason
 
         if not post_id or not reason:
             return Response({
@@ -749,8 +760,8 @@ def report_post(request):
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -764,7 +775,7 @@ def toggle_post_save(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        post_id = request.data.get("post_id") # Gets The Post ID
+        post_id = request.data.get("post_id", None) # Gets The Post ID
 
         if not post_id or not str(post_id).isdigit():
             return Response({
@@ -794,8 +805,8 @@ def toggle_post_save(request):
                 "message": str(_("Príspevok bol odstránený zo zoznamu uložených."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -810,14 +821,14 @@ def report_post_comment(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
         
-        comment_id = request.data.get("comment_id") # Gets The Post Forum ID
-        reason = request.data.get("reason") # Gets The Reason
+        comment_id = request.data.get("comment_id", None) # Gets The Post Forum ID
+        reason = request.data.get("reason", None) # Gets The Reason
 
         if not comment_id or not reason:
             return Response({
                 "success": False, 
-                "message": str(_("Chýbajúce dáta pre nahlásenie."))
-            }, status=400)
+                "message": str(_("Pre nahlásenie komentáru chýbajú potrebné údaje."))
+            }, status=500)
 
         comment = get_object_or_404(PostForum, id=int(comment_id)) # Gets The Comment
         has_report = PostForumReport.objects.filter(postforum_id=comment.id, user_id=logged_in_user.id).exists() # Checks If The User Has Already Reported The Comment
@@ -848,8 +859,8 @@ def report_post_comment(request):
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -863,18 +874,24 @@ def add_comment(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        post_id = request.data.get("post_id") # Gets The Post ID
-        comment = request.data.get("comment") # Gets The Comment
-        parent_id = request.data.get("parent_id") # Gets The Parent ID
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+        comment = request.data.get("comment", None) # Gets The Comment
+        parent_id = request.data.get("parent_id", None) # Gets The Parent ID
 
-        new_comment = PostForum(
+        # If The Information Are Missing
+        if not post_id or not comment:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre pridanie komentáru chýbajú potrebné údaje."))
+            }, status=500)
+
+        # Creates The New Comment
+        new_comment = PostForum.objects.create(
             post_id = post_id,
             user_id = logged_in_user_id,
             comment = comment,
             parent_id = parent_id
         )
-
-        new_comment.save() # Saves The New Comment
 
         # Creates Valid Format Of Comment For JSON Response
         comment = {
@@ -900,15 +917,14 @@ def add_comment(request):
             "message": str(_("Komentár pre príspevok bol úspešne pridaný."))
         }, status=201)
 
-    except ValidationError as e:
-        # Returns The Error Message From Models
+    except ValidationError as error:
         return Response({
             "success": False, 
-            "message": str(e.message)
-        }, status=400)
+            "message": str(error.message) # Returns The Error Message From Models
+        }, status=500)
 
-    except Exception as e:
-        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -923,7 +939,15 @@ def toggle_post_comment_like(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        comment_id = request.data.get("comment_id", "") # Gets The Comment ID
+        comment_id = request.data.get("comment_id", None) # Gets The Comment ID
+
+        # If The Information Are Missing
+        if not comment_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre pridanie označenia páči sa mi to chýbajú potrebné údaje."))
+            }, status=500)
+
         comment = PostForum.objects.get(id=int(comment_id)) # Gets The Comment
 
         has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
@@ -950,8 +974,8 @@ def toggle_post_comment_like(request):
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1019,13 +1043,7 @@ def get_processing_posts(request):
                 },
 
                 "id": one_post.id,
-
-                "description": (
-                    one_post.description
-                    if one_post.description
-                    else None
-                ),
-
+                "description": (one_post.description if one_post.description else None),
                 "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
                 "added_hashtags": list(one_post.added_hashtags),
 
@@ -1073,8 +1091,8 @@ def get_processing_posts(request):
             "message": str(_("Spracovávané príspevky boli úspešné nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while loading the processing posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while loading the processing posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1094,7 +1112,7 @@ def get_chats(request):
             is_read=False
         ).select_related("sender")
         
-        unread_sender_ids = unread_chats.values_list("sender_id", flat=True)
+        unread_sender_ids = unread_chats.values_list("sender_id", flat=True) # Gets The Sender IDs Of Unread Chats
 
         # Creates Valid Format Of Unread Chats For JSON Response
         unread_chats_data = [
@@ -1151,8 +1169,8 @@ def get_chats(request):
             "read_chats": read_chats_data,
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while loading the messages.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while loading the messages.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1175,9 +1193,9 @@ def get_posts(request):
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         searched_text = request.GET.get("searched_text", "") # Gets The Searched Text
 
-        # Gets The Posts With All Related Data
-        thirty_days_ago = timezone.now() - timedelta(days=30)
+        thirty_days_ago = timezone.now() - timedelta(days=30) # Gets The Thirty Days Ago Time
 
+        # Gets The Posts With All Related Data
         posts = Post.objects.select_related(
             "user__subscription"
         ).prefetch_related(
@@ -1315,13 +1333,13 @@ def get_posts(request):
                 "-created_at"
             ).distinct()
 
-        paginator = Paginator(posts, 5) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
+        paginator = Paginator(posts, 3) if logged_in_user and logged_in_user.data_saving_mode else Paginator(posts, 10) # Divides The Posts By Maximum 10 Per Page (3 When The Logged In User Has Data Saving Mode Enabled)
 
         try:
             page_posts = paginator.page(page_number) # Gets Only The Posts For The Selected Page
 
-        except Exception as e:
-            captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+        except Exception as error:
+            captureError(f"An error occurred while searching for posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
             return Response({
                 "success": False, 
@@ -1351,13 +1369,7 @@ def get_posts(request):
                 },
 
                 "id": one_post.id,
-
-                "description": (
-                    one_post.description
-                    if one_post.description
-                    else None
-                ),
-
+                "description": (one_post.description if one_post.description else None),
                 "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
                 "added_hashtags": list(one_post.added_hashtags),
 
@@ -1414,8 +1426,182 @@ def get_posts(request):
             "message": str(_("Príspevky boli úspešné nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while loading the posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while loading the posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri načítaní príspevkov došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_post(request, post_id):
+    try:
+        if request.user.is_authenticated:
+            logged_in_user = request.user # Gets The Logged In User
+            logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        else:
+            logged_in_user_id = None # Default State When The User Isn't Logged In
+            logged_in_user = None # Default State When The User Isn't Logged In
+
+        is_found = False # Stores The Information If The User Was Found
+
+        # Checks If The Profile With Searched Username Exists
+        if Post.objects.filter(id=post_id).exists():
+            is_found = True # Stores The Information That The User Was Found
+
+            # Gets The Posts With All Related Data
+            post = Post.objects.select_related(
+                "user__subscription"
+            ).prefetch_related(
+                # Gets All Followers With All Related Data
+                Prefetch(
+                    "user__follower_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
+                    to_attr="accepted_followers"
+                ),
+                
+                # Gets All Following Users With All Related Data
+                Prefetch(
+                    "user__following_relations",
+                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
+                    to_attr="accepted_following"
+                ),
+
+                "tagged_users", 
+
+                Prefetch(
+                    "media",
+                    queryset=PostMedia.objects.annotate(
+                        unique_video_views=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+                    ).annotate(
+                        # Calculates The Average Watch Time Per 1 Viewer
+                        average_watch_time_per_viewer=Case(
+                            When(unique_video_views=0, then=Value(0.0)),
+                            default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
+                            output_field=FloatField()
+                        )
+                    ).order_by("order")
+                )
+            ).filter(
+                id=post_id
+            ).exclude(
+                media__is_processed=False
+            ).annotate(
+                views=Count("seen_by_instances", distinct=True),
+
+                # Creates Is Seen Column (True If The Logged In User Has Already Viewed The Post)
+                is_seen=Exists(
+                    SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
+                is_followed=Case(
+                    When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
+                    default=False,
+                    output_field=BooleanField()
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+                comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True),
+
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user_id=OuterRef("user_id"),
+                        status="accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                
+                # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+                has_pending_follow_request=Exists(
+                    FollowRelation.objects.filter(
+                        from_user=logged_in_user_id,
+                        to_user_id=OuterRef("user_id"),
+                        status="pending"
+                    )
+                ) if logged_in_user else Value(False, output_field=BooleanField())
+            ).first()
+
+            # Creates Valid Format Of Post For JSON Response
+            post_data = {
+                "user": {
+                    "id": post.user.id,
+                    "first_name": post.user.first_name,
+                    "last_name": post.user.last_name,
+                    "username": post.user.username,
+                    "profile_picture_name": post.user.profile_picture_name,
+                    "following": [one_relation.from_user_id for one_relation in post.user.accepted_following],
+                    "followers": [one_relation.from_user_id for one_relation in post.user.accepted_followers],
+                    "private_account": post.user.private_account,
+
+                    "subscription": {
+                        "is_active": post.user.subscription.is_active
+                    } if hasattr(post.user, "subscription") and post.user.subscription else None,
+
+                    "has_follow": post.has_follow,
+                    "has_pending_follow_request": post.has_pending_follow_request
+                },
+
+                "id": post.id,
+                "description": (post.description if post.description else None),
+                "tagged_users": list(post.tagged_users.values("id", "first_name", "last_name", "username")),
+                "added_hashtags": list(post.added_hashtags),
+
+                "location": (
+                    post.location.replace(",", "<span></span>")
+                    if post.coordinates
+                    else post.location if post.location else None
+                ),
+
+                "coordinates": (
+                    {
+                        "latitude": str(post.coordinates.y).replace(",", "."),
+                        "longitude": str(post.coordinates.x).replace(",", ".")
+                    }
+
+                    if post.coordinates and post.coordinates.x is not None and post.coordinates.y is not None
+                    else None
+                ),
+
+                "public_visibility": post.public_visibility,
+                "allow_comments": post.allow_comments,
+                "hide_likes": post.hide_likes,
+                "likes": post.likes,
+                "likes_from_users": list(post.likes_from_users.values_list("id", flat=True)),
+                "created_at": post.created_at.isoformat(),
+
+                "media": [
+                    {
+                        "id": one_media.id,
+                        "file": one_media.file.name if one_media.file else None,
+                        "thumbnail": one_media.thumbnail.name if one_media.thumbnail else None,
+                        "is_video": one_media.is_video,
+                        "is_muted": one_media.is_muted,
+                        "average_watch_time": one_media.average_watch_time_per_viewer if one_media.is_video and logged_in_user_id == post.user.id else None,
+                        "video_views": one_media.unique_video_views if one_media.is_video and logged_in_user_id == post.user.id else None,
+                        "sprite_sheet": one_media.sprite_sheet.name if one_media.sprite_sheet else None,
+                        "vtt_file": one_media.vtt_file.name if one_media.vtt_file else None
+                    }
+
+                    for one_media in post.media.all()
+                ],
+
+                "views": post.views,
+                "comments_amount": post.comments_amount
+            }
+
+        return Response({
+            "success": True, 
+            "post": post_data, 
+            "message": str(_("Príspevky boli úspešné nájdené."))
+        }, status=200)
+
+    except Exception as error:
+        captureError(f"An error occurred while loading the posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1514,8 +1700,8 @@ def get_post_comments(request):
             "message": str(_("Komentáre boli úspešné nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1529,7 +1715,14 @@ def get_post_comments(request):
 def mark_post_as_seen(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
-        post_id = request.data.get("post_id") # Gets The Post ID
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+
+        # If The Information Are Missing
+        if not post_id:
+            return Response({
+                "success": False, 
+                "message": str(_('Príspevok nie je možné označiť za "už videný" bez potrebných údajov.'))
+            }, status=500)
 
         # Marks The Post As Seen If Exists And Isn't Already Seen By The User
         SeenPost.objects.get_or_create(
@@ -1542,8 +1735,8 @@ def mark_post_as_seen(request):
             "message": str(_('Príspevok bol úspešne označený za "už videný".'))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1557,7 +1750,15 @@ def toggle_follow(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        user_to_follow_id = request.data.get("user_to_follow_id") # Gets The User To Follow ID
+        user_to_follow_id = request.data.get("user_to_follow_id", None) # Gets The User To Follow ID
+
+        # If The Information Are Missing
+        if not user_to_follow_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
+            }, status=500)
+
         user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
 
         # Checks If The Logged In User Is Already Following The User
@@ -1595,8 +1796,8 @@ def toggle_follow(request):
                 "message": message
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1609,9 +1810,18 @@ def toggle_follow(request):
 def edit_post_settings(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
-        post_id = request.data.get("post_id") # Gets The Post ID
-        setting = request.data.get("setting") # Gets The Setting
-        action = request.data.get("action") # Gets The Action
+
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+        setting = request.data.get("setting", None) # Gets The Setting
+        action = request.data.get("action", None) # Gets The Action
+
+        # If The Information Are Missing
+        if not post_id or not setting:
+            return Response({
+                "success": False, 
+                "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
+            }, status=500)
+
         post = Post.objects.filter(id=post_id, user_id=logged_in_user_id).first() # Gets The Post
 
         if post:
@@ -1628,8 +1838,8 @@ def edit_post_settings(request):
             "message": str(_("Príspevok sa nepodarilo upraviť."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1643,11 +1853,20 @@ def delete_post(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
-        post_id = request.data.get("post_id") # Gets The Post ID
+
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+
+        # If The Information Are Missing
+        if not post_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Príspevok nie je možné odstrániť bez potrebných údajov."))
+            }, status=500)
+
         post = Post.objects.prefetch_related("media").get(id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(id=post_id, user_id=logged_in_user_id) # Gets The Post
 
         if post:
-            unfinished_media = post.media.filter(is_processed=False)
+            unfinished_media = post.media.filter(is_processed=False) # Gets The Unfinished Media
 
             for one_media in unfinished_media:
                 # Stops The Celery Task For Compression Of Media Of The Post
@@ -1656,25 +1875,19 @@ def delete_post(request):
 
                 # Video
                 if one_media.is_video:
-                    video_temp_name = f"compressed_{one_media.id}.mp4"
-                    video_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", video_temp_name)
+                    video_temporary_name = f"compressed_{one_media.id}.mp4" # Gets The Video Temporary Name
+                    video_temporary_path = os.path.join(settings.MEDIA_ROOT, "temp", video_temporary_name) # Gets The Video Temporary Path
 
                     # Removes Temporary Video File From Disk
-                    if os.path.exists(video_temp_path):
-                        try:
-                            os.remove(video_temp_path)
-                        except OSError:
-                            pass
+                    if os.path.exists(video_temporary_path):
+                        os.remove(video_temporary_path)
 
-                    thumb_temp_name = f"thumb_{one_media.id}.jpg"
-                    thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", thumb_temp_name)
+                    thumbnail_temporary_name = f"thumb_{one_media.id}.jpg" # Gets The Video Temporary Name
+                    thumbnail_temporary_path = os.path.join(settings.MEDIA_ROOT, "temp", thumbnail_temporary_name) # Gets The Video Temporary Path
 
                     # Removes Temporary Thumbnail Image File From Disk
-                    if os.path.exists(thumb_temp_path):
-                        try:
-                            os.remove(thumb_temp_path)
-                        except OSError:
-                            pass
+                    if os.path.exists(thumbnail_temporary_path):
+                        os.remove(thumbnail_temporary_path)
 
             post.delete() # Deletes The Post
 
@@ -1688,8 +1901,8 @@ def delete_post(request):
             "message": str(_("Príspevok sa nepodarilo odstrániť."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1703,7 +1916,16 @@ def delete_post_comment(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
+
         comment_id = request.data.get("comment_id") # Gets The Comment ID
+
+        # If The Information Are Missing
+        if not comment_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Komentár nie je možné odstrániť bez potrebných údajov."))
+            }, status=500)
+
         comment = PostForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
 
         if comment:
@@ -1719,8 +1941,8 @@ def delete_post_comment(request):
             "message": str(_("Komentár sa nepodarilo odstrániť."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1760,8 +1982,8 @@ def tag_user(request):
             "message": str(_("Užívatelia pre označenie boli úspešne nájdený."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -1777,17 +1999,17 @@ def upload_post(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        subscription = None
+        subscription = None # Stores The Subscription Data
 
+        # If The User Has Subscription
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-            # Gets The Subscription Data If Are Available
             subscription = {
                 "plan": logged_in_user.subscription.plan,
                 "is_active": logged_in_user.subscription.is_active
             }
 
-        description = request.data.get("description") # Gets The Description
-        location = request.data.get("location") # Gets The Location
+        description = request.data.get("description", "") # Gets The Description
+        location = request.data.get("location", "") # Gets The Location
         latitude = request.data.get("latitude", None) # Gets The Latitude
         longitude = request.data.get("longitude", None) # Gets The Longitude
         public_visibility = str(request.data.get("public_visibility")).lower() == "true" # Gets The Information If The Public Visibility Is Enabled
@@ -1914,7 +2136,9 @@ def upload_post(request):
                                     video = VideoFileClip(temporary_path)
                                     duration = video.duration
                                     video.close()
-                                    os.remove(temporary_path) # Deletes The Temporary File
+
+                                    if os.path.exists(temporary_path): 
+                                        os.remove(temporary_path) # Deletes The Temporary File
 
                                     if duration > MAX_VIDEO_DURATION:
                                         raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name})
@@ -1985,10 +2209,10 @@ def upload_post(request):
                         except Exception:
                             raise ValueError(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name})
 
-            except ValueError as e:
+            except ValueError as error:
                 return Response({
                     "success": False, 
-                    "message": str(e)
+                    "message": str(error)
                 }, status=400)
 
             return Response({
@@ -1999,15 +2223,15 @@ def upload_post(request):
 
         # Wrong Form
         else:
-            captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+            captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
             return Response({
                 "success": False, 
                 "message": str(_("Pridávanie príspevku zlyhalo"))
             }, status=500)
     
-    except Exception as e:
-        captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2067,8 +2291,8 @@ def mark_post_as_seen(request):
             "message": str(_('Príspevok bol úspešne označený za "už videný".'))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2109,8 +2333,8 @@ def tag_user(request):
             "message": "Užívatelia pre označenie boli úspešne nájdený."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2163,8 +2387,8 @@ def update_video_watch_time(request):
                 "message": str(_("Celkový čas pozerania videa nie je možné navýšiť vlastnému príspevku."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2205,8 +2429,8 @@ def stream_video(request, user_id, media_id, filename):
             "message": str(_("Video bolo nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while streaming the video.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while streaming the video.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2277,8 +2501,8 @@ def get_activity(request):
             "message": "Dáta o aktivite užívateľa boli úspešne získané."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2332,8 +2556,8 @@ def get_weekly_activity(request):
             "message": "Dáta o aktivite užívateľa boli úspešne získané."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2386,8 +2610,8 @@ def get_training_plans(request):
             "message": "Tréningové plány boli úspešne získané."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2468,8 +2692,8 @@ def get_official_tasks(request):
             "message": "Oficiálne úlohy pre tento deň boli úspešne získané."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting user's official tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting user's official tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2508,8 +2732,8 @@ def get_custom_tasks(request):
             "message": "Vlastné úlohy boli úspešne získané."
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting user's custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting user's custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2554,8 +2778,8 @@ def get_activity_history(request):
             "message": "Históriu zaznamenaných aktivít sa nepodarilo získať."
         }, status=404)
     
-    except Exception as e:
-        captureError(f"An error occurred while getting activity history.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting activity history.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2609,8 +2833,8 @@ def get_xp_boost(request):
             "message": "Informácia o dostupnom navýšení XP bola úspešne získaná."
         }, status=200)
     
-    except Exception as e:
-        captureError(f"An error occurred while getting information if the XP boost is available.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting information if the XP boost is available.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2634,8 +2858,8 @@ def use_xp_boost(request):
             "message": str(_("Navýšenie XP bolo úspešne uplatnené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2723,8 +2947,8 @@ def complete_official_task(request):
                 "message": str(_("Úloha už bola dokončená."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2771,8 +2995,8 @@ def add_custom_task(request):
             "message": str(_("Úloha bola úspešne pridaná."))
         }, status=201)
 
-    except Exception as e:
-        captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2797,8 +3021,8 @@ def toggle_complete_custom_task(request):
             "message": str(_("Stav úlohy bol úspešne zmenený."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2822,8 +3046,8 @@ def delete_custom_task(request):
             "message": str(_("Úloha bola úspešne odstránená."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2849,8 +3073,8 @@ def delete_completed_custom_tasks(request):
             "message": str(_("Úlohy boli úspešne odstránené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2878,8 +3102,8 @@ def change_custom_tasks_order(request):
             "message": str(_("Poradie úloh bolo úspešne zmenené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -2998,8 +3222,8 @@ def new_activity(request):
             "message": str(_("Aktivita bola úspešne zaznamenaná."))
         }, status=201)
 
-    except Exception as e:
-        captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3052,8 +3276,8 @@ def get_exercises(request):
             "message": str(_("Cviky boli úspešne získané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting the exercises.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting the exercises.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3123,8 +3347,8 @@ def manage_training_plan(request):
             "message": str(_("Zmeny v tréningovom pláne boli úspešne vykonané."))
         }, status=201)
 
-    except Exception as e:
-        captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3210,8 +3434,8 @@ def get_profile(request, username):
                     "private_account": one_follower.from_user.private_account
                 }
                 
+                # If The User Has Subscription
                 if hasattr(one_follower.from_user, "subscription") and one_follower.from_user.subscription:
-                    # Gets The Subscription Data If Are Available
                     from_user_data["subscription"] = {
                         "plan": one_follower.from_user.subscription.plan,
                         "is_active": one_follower.from_user.subscription.is_active
@@ -3275,8 +3499,8 @@ def get_profile(request, username):
                     "has_pending_follow_request": one_following.has_pending_follow_request
                 }
                 
+                # If The User Has Subscription
                 if hasattr(one_following.to_user, "subscription") and one_following.to_user.subscription:
-                    # Gets The Subscription Data If Are Available
                     to_user_data["subscription"] = {
                         "plan": one_following.to_user.subscription.plan,
                         "is_active": one_following.to_user.subscription.is_active
@@ -3439,8 +3663,8 @@ def get_profile(request, username):
 
                     user_data["saved_posts"] = saved_posts_data # Stores The Saved Posts
 
+                    # If The User Has Subscription
                     if hasattr(user, "subscription") and user.subscription:
-                        # Gets The Subscription Data If Are Available
                         subscription = {
                             "plan": user.subscription.plan,
                             "is_active": user.subscription.is_active
@@ -3488,8 +3712,8 @@ def get_profile(request, username):
             "message": str(_("Profil užívateľa sa nenašiel."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting the profile.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting the profile.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3517,8 +3741,8 @@ def remove_follower(request):
             "message": str(_("Sledovateľ bol odstránený."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3534,6 +3758,7 @@ def password_reset(request):
 
         code = generateCode() # Generates Random 6-Digit Code
 
+        # Sends The Mail
         sendMail(
             logged_in_user,
             _("Obnova hesla"), # Subject
@@ -3552,8 +3777,8 @@ def password_reset(request):
             "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3585,8 +3810,8 @@ def approve_follow_request(request):
             "message": str(_("Žiadosť o sledovanie bola úspešne potvrdená."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while accepting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while accepting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3616,8 +3841,8 @@ def reject_follow_request(request):
             "message": str(_("Žiadosť o sledovanie bola zamietnutá."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while rejecting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while rejecting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3645,6 +3870,7 @@ def edit_account(request):
         phone_number = request.data.get("phone_number", "") # Gets The Phone Number
 
         if delete_account:
+            # Sends The Mail
             sendMail(
                 logged_in_user,
                 _("Odstránenie účtu"), # Subject
@@ -3697,7 +3923,9 @@ def edit_account(request):
             if delete_profile_picture:
                 current_profile_picture_name = logged_in_user.profile_picture_name
                 path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                os.remove(f"{path}/{current_profile_picture_name}")
+
+                if os.path.exists(f"{path}/{current_profile_picture_name}"): 
+                    os.remove(f"{path}/{current_profile_picture_name}")
 
                 logged_in_user.profile_picture_name = ""
 
@@ -3770,7 +3998,7 @@ def edit_account(request):
 
             # Invalid Bio Links JSON Format
             except json.JSONDecodeError:
-                captureError(f"An error occurred while loading bio links from the JSON format.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
+                captureError(f"An error occurred while loading bio links from the JSON format.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
                 return Response({
                     "success": False, 
@@ -3788,9 +4016,8 @@ def edit_account(request):
                 "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
             }, status=200)
 
-    # Error
-    except Exception as e:
-        captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3832,6 +4059,7 @@ def report_user(request):
                     reported_user.account_status = "suspended" # Suspends The User If Has More Than 10% Of Reports
                     reported_user.suspension_time = timezone.now() # Updates The Suspension Time
 
+                    # Sends The Mail
                     sendMail(
                         reported_user,
                         _("Odstavenie účtu"), # Subject
@@ -3847,8 +4075,8 @@ def report_user(request):
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3870,6 +4098,7 @@ def suspend_user(request):
             user.suspension_time = timezone.now() # Updates The Suspension Time
             user.save() # Saves The Updated User
 
+            # Sends The Mail
             sendMail(
                 user,
                 _("Odstavenie účtu"), # Subject
@@ -3888,8 +4117,8 @@ def suspend_user(request):
             "message": str(_("Užívateľa môže obmedziť len správca."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3905,6 +4134,8 @@ def get_chat(request, username):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
+        page_number = request.GET.get("page", 1) # Gets The Current Page Number
+
         # Checks If The Profile With Searched Username Exists
         if Users.objects.filter(username=username).exists():
             receiver = Users.objects.filter(
@@ -3915,6 +4146,7 @@ def get_chat(request, username):
             
             subscription = None # Stores The Subscription Data
             
+            # If The User Has Subscription
             if hasattr(receiver, "subscription") and receiver.subscription:
                 subscription = {
                     "is_active": receiver.subscription.is_active
@@ -3935,7 +4167,8 @@ def get_chat(request, username):
                 Q(sender=logged_in_user) & Q(receiver=receiver) | 
                 Q(sender=receiver)
             ).select_related(
-                "sender__subscription"
+                "sender__subscription",
+                "post",
             ).prefetch_related(
                 "attachments"
             ).annotate(
@@ -3944,12 +4177,29 @@ def get_chat(request, username):
                     When(sender=logged_in_user, then=True),
                     default=False,
                     output_field=BooleanField()
-                )
+                ),
+
+                post_comments_amount=Count("post__comments", filter=~Q(post__comments__status="hidden"), distinct=True),
+                post_likes_amount=Count("post__likes", distinct=True)
             ).prefetch_related(
                 "message_reactions__user"
             ).order_by(
                 "-created_at"
             )
+
+            paginator = Paginator(chats, 10) if logged_in_user and logged_in_user.data_saving_mode else Paginator(chats, 20) # Divides The Chats By Maximum 20 Per Page (10 When The Logged In User Has Data Saving Mode Enabled)
+
+            try:
+                page_chats = paginator.page(page_number) # Gets Only The Chats For The Selected Page
+
+            except Exception as error:
+                captureError(f"An error occurred while searching for chats.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+                return Response({
+                    "success": False, 
+                    "has_next": False, 
+                    "message": str(_("Pri hľadaní správ došlo k chybe."))
+                }, status=404)
 
             # Creates Valid Format Of Chats For JSON Response
             chats_data = [
@@ -3998,14 +4248,52 @@ def get_chat(request, username):
                     ],
 
                     "is_older_than_15_minutes": one_chat.is_older_than_15_minutes,
-                    "is_older_than_1_day": one_chat.is_older_than_1_day
+                    "is_older_than_1_day": one_chat.is_older_than_1_day,
+
+                    "post": {
+                        "id": one_chat.post.id,
+                        
+                        "user": {
+                            "id": one_chat.post.user.id,
+                            "username": one_chat.post.user.username,
+                            "profile_picture_name": one_chat.post.user.profile_picture_name,
+
+                            "subscription": {
+                                "is_active": one_chat.post.user.subscription.is_active
+                            } if hasattr(one_chat.post.user, "subscription") and one_chat.post.user.subscription else None,
+                        },
+
+                        "description": one_chat.post.description if one_chat.post.description else None,
+                        "public_visibility": one_chat.post.public_visibility,
+                        "allow_comments": one_chat.post.allow_comments,
+                        "hide_likes": one_chat.post.hide_likes,
+                        "likes": getattr(one_chat, "post_likes_amount", 0),
+                        "comments": getattr(one_chat, "post_comments_amount", 0),
+                        "created_at": one_chat.post.created_at.isoformat(),
+
+                        "media": next(
+                            (
+                                {
+                                    "id": first_post_media.id,
+                                    "file": first_post_media.file.name if first_post_media.file else None,
+                                    "thumbnail": first_post_media.thumbnail.name if first_post_media.thumbnail else None,
+                                    "is_video": first_post_media.is_video
+                                }
+                                
+                                for first_post_media in list(one_chat.post.media.all())[:1]
+                            ),
+
+                            None
+                        )
+                    } if one_chat.post else None
                 }
 
-                for one_chat in chats
+                for one_chat in page_chats
             ]
 
             return Response({
                 "success": True, 
+                "has_next": page_chats.has_next(), 
                 "receiver": receiver_data,
                 "chats": chats_data,
                 "message": str(_("Užívateľ sa našiel."))
@@ -4016,8 +4304,8 @@ def get_chat(request, username):
             "message": str(_("Užívateľ sa nenašiel."))
         }, status=404)
 
-    except Exception as e:
-        captureError(f"An error occurred while finding the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while finding the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4230,8 +4518,8 @@ def get_articles(request):
             "message": str(_("Dáta článkov boli úspešne nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while finding the articles.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while finding the articles.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4262,8 +4550,8 @@ def add_article_rating(request):
             "message": str(_("Hodnotenie bolo úspešne odoslané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4312,8 +4600,8 @@ def report_article_comment(request):
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4360,14 +4648,14 @@ def add_article_comment(request):
             "message": _("Komentár pre článok bol úspešne pridaný.")
         }, status=201)
 
-    except ValidationError as e:
+    except ValidationError as error:
         return Response({
             "success": False, 
-            "message": str(e.message) # Returns The Error Message From Models
+            "message": str(error.message) # Returns The Error Message From Models
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4409,8 +4697,8 @@ def toggle_article_comment_like(request):
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
             }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4441,8 +4729,8 @@ def delete_article_comment(request):
             "message": str(_("Komentár sa nepodarilo odstrániť."))
         }, status=400)
 
-    except Exception as e:
-        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4559,8 +4847,8 @@ def get_article(request, theme):
             "message": str(_("Článok bol nájdený."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while getting the article.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while getting the article.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4659,8 +4947,8 @@ def get_article_comments(request):
             "message": str(_("Komentáre boli úspešné nájdené."))
         }, status=200)
 
-    except Exception as e:
-        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -4714,10 +5002,10 @@ def send_chat_attachment(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        subscription = None
+        subscription = None # Stores The Subscription Data
 
+        # If The User Has Subscription
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-            # Gets The Subscription Data If Are Available
             subscription = {
                 "plan": logged_in_user.subscription.plan,
                 "is_active": logged_in_user.subscription.is_active
@@ -4823,20 +5111,6 @@ def send_chat_attachment(request):
                     except (UnidentifiedImageError, OSError, SyntaxError):
                         raise ValueError(_("Súbor nie je platný obrázok:\n%(file)s") % {"file": one_selected_file.name})
 
-                    # Creates The New Attachment
-                    new_attachment = ChatAttachment.objects.create(
-                        sent_by=logged_in_user,
-                        file=one_selected_file,
-                        type=attachment_type or "image",
-                        is_processed=False,
-                        original_filename=one_selected_file.name,
-                        compressed_size=one_selected_file.size
-                    )
-
-                    transaction.on_commit(
-                        lambda: compressImageAttachment.delay(new_attachment.id, logged_in_user_id)
-                    )
-
                 # Video
                 elif attachment_type == "video":
                     # Catches Too Large File
@@ -4847,17 +5121,19 @@ def send_chat_attachment(request):
                     suffix = os.path.splitext(one_selected_file.name)[1] # Gets The File Suffix
 
                     # Creates A Temporary File For The moviepy Library
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temporary_file:
                         for one_chunk in one_selected_file.chunks():
-                            temp_file.write(one_chunk)
+                            temporary_file.write(one_chunk)
                             
-                        temporary_path = temp_file.name
+                        temporary_path = temporary_file.name
                     
                     try:
                         video = VideoFileClip(temporary_path)
                         duration = video.duration
                         video.close()
-                        os.remove(temporary_path) # Deletes The Temporary File
+
+                        if os.path.exists(temporary_path): 
+                            os.remove(temporary_path) # Deletes The Temporary File
 
                         if duration > MAX_VIDEO_DURATION:
                             raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_selected_file.name})
@@ -4875,23 +5151,8 @@ def send_chat_attachment(request):
                         if os.path.exists(temporary_path): 
                             os.remove(temporary_path)
 
-                    # Creates The New Attachment
-                    new_attachment = ChatAttachment.objects.create(
-                        sent_by=logged_in_user,
-                        file=one_selected_file,
-                        type=attachment_type,
-                        is_processed=attachment_type or "video",
-                        original_filename=one_selected_file.name,
-                        compressed_size=one_selected_file.size
-                    )
-
-                    transaction.on_commit(
-                        lambda: compressVideoAttachment.delay(logged_in_user_id, chat_attachment_id=new_attachment.id)
-                    )
-
                 # Other Files
                 elif not attachment_type == "image" and not attachment_type == "video":
-                    print("Subor")
                     # Catches Too Large File
                     if one_selected_file.size > MAX_FILE_SIZE:
                         raise ValueError(_("Súbor je príliš veľký:\n%(file)s") % {"file": one_selected_file.name})
@@ -4908,15 +5169,27 @@ def send_chat_attachment(request):
                     "message": str(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_selected_file.name})
                 }, status=500)
 
+            one_selected_file.seek(0)
+
             # Creates The New Attachment
             new_attachment = ChatAttachment.objects.create(
                 sent_by=logged_in_user,
                 file=one_selected_file,
                 type=attachment_type,
-                is_processed=True,
+                is_processed=True if attachment_type not in ["image", "video"] else False,
                 original_filename=one_selected_file.name,
                 compressed_size=one_selected_file.size
             )
+
+            if attachment_type == "image":
+                transaction.on_commit(
+                    lambda att_id=new_attachment.id: compressImageAttachment.delay(att_id, logged_in_user_id)
+                )
+
+            elif attachment_type == "video":
+                transaction.on_commit(
+                    lambda att_id=new_attachment.id: compressVideoAttachment.delay(logged_in_user_id, chat_attachment_id=att_id)
+                )
 
             # Appends The New Attachment To The Sent Attachments
             sent_attachments.append({
@@ -4935,10 +5208,83 @@ def send_chat_attachment(request):
             "message": str(_("Prílohy boli úspešne odoslané."))
         }, status=201)
 
-    except Exception as e:
-        captureError(f"An error occurred while sending the chat attachment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
+    except Exception as error:
+        captureError(f"An error occurred while sending the chat attachment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní prílohy došlo k chybe."))
+        }, status=500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_friends(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        # Gets All Following Users With All Related Data
+        following = FollowRelation.objects.filter(
+            from_user=logged_in_user, 
+            status="accepted"
+        ).select_related(
+            "to_user"
+        ).order_by(
+            "to_user_id", "-created_at"
+        ).annotate(
+            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+            has_follow=Exists(
+                FollowRelation.objects.filter(
+                    from_user=logged_in_user_id,
+                    to_user=OuterRef("to_user_id"),
+                    status="accepted"
+                )
+            ) if logged_in_user else Value(False, output_field=BooleanField()),
+
+            # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+            has_pending_follow_request=Exists(
+                FollowRelation.objects.filter(
+                    from_user=logged_in_user_id,
+                    to_user=OuterRef("to_user_id"),
+                    status="pending"
+                )
+            ) if logged_in_user else Value(False, output_field=BooleanField())
+        ).distinct("to_user_id")
+
+        following_data = []
+        existing_following_ids = set() # Stores The Existing Following IDs
+
+        # Creates Valid Format Of Following For JSON Response
+        for one_following in following:
+            user_id = one_following.to_user.id # Gets The User ID
+
+            # Skips The Existing Following User
+            if user_id in existing_following_ids:
+                continue
+
+            existing_following_ids.add(user_id) # Adds The User ID To The Existing Following IDs
+
+            following_data.append({
+                "id": one_following.to_user.id,
+                "username": one_following.to_user.username,
+                "profile_picture_name": one_following.to_user.profile_picture_name,
+
+                "subscription": {
+                    "is_active": one_following.to_user.subscription.is_active
+                } if hasattr(one_following.to_user, "subscription") and one_following.to_user.subscription else None
+            })
+
+        return Response({
+            "success": True, 
+            "following": following_data,
+            "message": str(_("Sledovaní užívatelia boli úspešne nájdení."))
+        }, status=200)
+
+    except Exception as error:
+        captureError(f"An error occurred while getting the following users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní sledovaných užívateľov došlo k chybe."))
         }, status=500)

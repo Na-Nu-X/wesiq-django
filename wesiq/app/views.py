@@ -3819,7 +3819,9 @@ def communityView(request):
                                             video = VideoFileClip(temporary_path)
                                             duration = video.duration
                                             video.close()
-                                            os.remove(temporary_path) # Deletes The Temporary File
+
+                                            if os.path.exists(temporary_path): 
+                                                os.remove(temporary_path) # Deletes The Temporary File
 
                                             if duration > MAX_VIDEO_DURATION:
                                                 new_post.delete() # Deletes The New Post
@@ -4813,7 +4815,8 @@ def profileView(request, username):
 
                                         current_profile_picture_name = logged_in_user.profile_picture_name
                                         if current_profile_picture_name != "" and current_profile_picture_name != None:
-                                            os.remove(f"{path}/{current_profile_picture_name}")
+                                            if os.path.exists(f"{path}/{current_profile_picture_name}"): 
+                                                os.remove(f"{path}/{current_profile_picture_name}")
 
                                         new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
 
@@ -4829,7 +4832,9 @@ def profileView(request, username):
                                     if delete_profile_picture:
                                         current_profile_picture_name = logged_in_user.profile_picture_name
                                         path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
-                                        os.remove(f"{path}/{current_profile_picture_name}")
+
+                                        if os.path.exists(f"{path}/{current_profile_picture_name}"): 
+                                            os.remove(f"{path}/{current_profile_picture_name}")
 
                                         logged_in_user.profile_picture_name = ""
 

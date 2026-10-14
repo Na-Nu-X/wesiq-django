@@ -23,6 +23,7 @@ node_modules/
 # Logs
 logs/
 
-# Posts Media
+# Media
 posts/
 temp/
+chat_attachments/

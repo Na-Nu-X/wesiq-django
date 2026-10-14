@@ -68,4 +68,6 @@ urlpatterns = [
     path("get-article/<str:theme>/", views.get_article, name="get_article_url"),
     path("get-article-comments/", views.get_article_comments, name="get_article_comments_url"),
     path("send-chat-attachment/", views.send_chat_attachment, name="send_chat_attachment_url"),
+    path("get-post/<str:post_id>/", views.get_post, name="get_post_url"),
+    path("get-friends/", views.get_friends, name="get_friends_url"),
 ]
