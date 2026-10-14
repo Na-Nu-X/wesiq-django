@@ -1,0 +1,10 @@
+wesiq
+root
+admin
+administrator
+moderator
+support
+system
+official
+info
+api

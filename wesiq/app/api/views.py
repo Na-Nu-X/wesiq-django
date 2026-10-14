@@ -46,6 +46,47 @@ from collections import defaultdict
 from rest_framework.parsers import MultiPartParser, FormParser
 from PIL import Image, UnidentifiedImageError
 
+# Function For Load The Profanities
+# https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
+# Word lists by Shutterstock and contributors (LDNOOBW), licensed under CC BY 4.0
+def load_profanities():
+    profanities = set() # Stores The Profanities
+
+    profanities_directory = settings.BASE_DIR / "data" / "profanities" # Gets The Profanities Directory
+
+    if not profanities_directory.exists() or not profanities_directory.is_dir():
+        return profanities # Returns The Profanities
+
+    for filename in os.listdir(profanities_directory):
+        file_path = profanities_directory / filename # Gets The File Path
+        
+        if file_path.is_file():
+            try:
+                with open(file_path, "r", encoding="utf-8") as file:
+                    for one_line in file:
+                        cleaned_word = one_line.strip().lower() # Gets The Cleaned Word
+
+                        if cleaned_word:
+                            profanities.add(cleaned_word) # Adds The Cleaned Word To The Profanities
+
+            except Exception:
+                pass
+
+    return profanities # Returns The Profanities
+
+PROFANITIES = load_profanities() # Gets The Profanities
+
+# Function For Load The Forbidden Usernames
+def load_forbidden_usernames():
+    try:
+        with open(settings.BASE_DIR / "data" / "forbidden_usernames.txt", "r", encoding="utf-8") as file:
+            return {one_line.strip().lower() for one_line in file if one_line.strip()}
+
+    except FileNotFoundError:
+        return set()
+
+FORBIDDEN_USERNAMES = load_forbidden_usernames() # Gets The Forbidden Usernames
+
 # Function For Capture The Error
 def captureError(message):
     with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
@@ -206,8 +247,14 @@ def register(request):
                 "message": str(_("Pre registráciu vyplnte povinné údaje."))
             }, status=500)
 
+        elif username.lower() in FORBIDDEN_USERNAMES or username.lower() in PROFANITIES:
+            return Response({
+                "success": False, 
+                "message": str(_("Zvolené používateľské meno nie je povolené."))
+            }, status=500)
+
         # E-mail Address Already In Use
-        if Users.objects.filter(email_address=email_address).exists():
+        elif Users.objects.filter(email_address=email_address).exists():
             captureError(f"This e-mail is already registered.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
             return Response({
