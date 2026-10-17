@@ -16,6 +16,7 @@ import stripe
 import string
 import random
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from hashid_field import HashidAutoField
 
 class Users(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
@@ -1562,6 +1563,15 @@ def getPostUploadPath(instance, filename):
     return f"posts/{instance.post.user_id}/{new_filename}" # Returns The Full Path
 
 class Post(models.Model):
+    public_id = models.CharField(
+        verbose_name=_("Public ID"),
+        help_text=_("Public ID of the post."),
+        max_length=15, 
+        unique=True, 
+        editable=False, 
+        db_index=True
+    )
+
     user = models.ForeignKey(
         Users,
         verbose_name=_("User"),
@@ -1689,6 +1699,12 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("post_url", kwargs={"post_id": self.id})
+
+    def save(self, *args, **kwargs):
+        if not self.public_id:
+            self.public_id = secrets.token_urlsafe(7) # Generates Random 8 Characters For Public ID
+
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Príspevok")
@@ -2394,6 +2410,127 @@ class ChatAttachment(models.Model):
         auto_now_add=True, 
         null=False
     )
+
+    class Meta:
+        verbose_name = "Chat Attachment"
+        verbose_name_plural = "Chat Attachments"
+
+    def __str__(self):
+        return f"Chat attachment from {self.sent_by.first_name} {self.sent_by.last_name}"
+
+class MutedUser(models.Model):
+    user = models.ForeignKey(
+        Users, 
+        verbose_name=_("User"),
+        help_text=_("The user who mutes the other user."), 
+        on_delete=models.CASCADE, 
+        related_name="muting_users",
+        null=False
+    )
+
+    muted_user = models.ForeignKey(
+        Users, 
+        verbose_name=_("Muted User"),
+        help_text=_("The user who got muted by the other user."), 
+        on_delete=models.CASCADE, 
+        related_name="muted_by",
+        null=False
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name=_("Created At"), 
+        help_text=_("Time of the user muting."), 
+        auto_now_add=True, 
+        null=False
+    )
+
+    class Meta:
+        unique_together = ("user", "muted_user") 
+        verbose_name = _("Stlmený užívateľ")
+        verbose_name_plural = _("Stlmení užívatelia")
+
+    def __str__(self):
+        return f"User {self.user.username} has muted the user {self.muted_user.username}."
+
+def getBackgroundImageUploadPath(instance, filename):
+    if not hasattr(instance, "_random_uuid"):
+        instance._random_uuid = secrets.token_hex(nbytes=10)
+        
+    extension = Path(filename).suffix.lower() # Gets The File Extension
+    new_filename = f"IMG-{instance._random_uuid}{extension}" # Creates The New Filename
+
+    return f"chat_backgrounds/{instance.user_id}/{new_filename}" # Returns The Full Path
+
+class ChatSettings(models.Model):
+    user = models.ForeignKey(
+        Users, 
+        verbose_name=_("User"),
+        help_text=_("The user to whom the settings belong."), 
+        on_delete=models.CASCADE, 
+        related_name="my_chat_settings",
+        null=False
+    )
+
+    chat_partner = models.ForeignKey(
+        Users, 
+        verbose_name=_("Chat Partner"),
+        help_text=_("The user who is a chat partner of a main user."), 
+        on_delete=models.CASCADE, 
+        related_name="partner_chat_settings",
+        null=False
+    )
+
+    background_image = models.ImageField(
+        upload_to=getBackgroundImageUploadPath, 
+        verbose_name=_("Background Image"),
+        help_text=_("Path to the chat background image."), 
+        null=True, 
+        blank=True,
+    )
+
+    is_processed = models.BooleanField(
+        verbose_name=_("Is Processed"), 
+        help_text=_("Stores the information if the uploaded image is already processed."), 
+        default=False, 
+        null=False
+    )
+
+    original_filename = models.CharField(
+        verbose_name=_("Original Filename"), 
+        help_text=_("Original filename of the uploaded image."), 
+        max_length=255, 
+        null=True, 
+        blank=True
+    )
+
+    original_size = models.BigIntegerField(
+        verbose_name=_("Original Size"), 
+        help_text=_("Original size of the uploaded image."), 
+        null=True, 
+        blank=True
+    )
+
+    compressed_size = models.BigIntegerField(
+        verbose_name=_("Compressed Size"), 
+        help_text=_("Compressed size of the uploaded image."), 
+        null=True, 
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name=_("Created At"), 
+        help_text=_("Time of the chat settings creation."), 
+        auto_now_add=True, 
+        null=False
+    )
+
+    class Meta:
+        unique_together = ("user", "chat_partner") 
+        verbose_name = _("Nastavenia užívateľa")
+        verbose_name_plural = _("Nastavenia užívateľov")
+
+    def __str__(self):
+        return f"Chat settings {self.user.username} with {self.chat_partner.username}"
 
 class ContactMessage(models.Model):
     SUBJECT_CHOICES = [

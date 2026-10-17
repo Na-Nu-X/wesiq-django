@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
 from django.utils import translation
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, ContactMessage
-from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, MutedUser, ChatSettings, ContactMessage
+from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment, compressChatBackgroundImage
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
@@ -45,6 +45,43 @@ from django.http import FileResponse
 from collections import defaultdict
 from rest_framework.parsers import MultiPartParser, FormParser
 from PIL import Image, UnidentifiedImageError
+
+# Defines The Disallowed Mime Types
+DISALLOWED_MIME_TYPES = [
+    "application/x-msdownload", # Executable (.exe) Files
+    "application/x-executable", # Linux Binaries
+    "application/x-sh", # Shell Scripts
+    "text/x-php", # PHP Scripts
+]
+
+# Defines The Word Mime Types
+WORD_MIME_TYPES = [
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]
+
+# Defines The Excel Mime Types
+EXCEL_MIME_TYPES = [
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv",
+]
+
+# Defines The Powerpoint Mime Types
+POWERPOINT_MIME_TYPES = [
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+]
+
+# Defines The Archive Mime Types
+ARCHIVE_MIME_TYPES = [
+    "application/zip",
+    "application/x-zip-compressed",
+    "application/x-rar-compressed",
+    "application/x-7z-compressed",
+    "application/x-tar",
+    "application/gzip",
+]
 
 # Function For Load The Profanities
 # https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
@@ -353,6 +390,7 @@ def get_logged_in_user(request):
             )
         ).first()
 
+        # If The User Wasn't Found
         if not user:
             return Response({
                 "success": False, 
@@ -450,13 +488,8 @@ def get_logged_in_user(request):
 @permission_classes([AllowAny])
 def load_first_users(request):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         searched_users_history = request.data if isinstance(request.data, list) else [] # Gets The Searched Users History
 
@@ -608,13 +641,8 @@ def load_first_users(request):
 @permission_classes([AllowAny])
 def search_users(request):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         searched_text = request.data.get("searched_text", "") # Gets The Searched Text
         
@@ -723,20 +751,25 @@ def toggle_post_like(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         post_id = request.data.get("post_id", None) # Gets The Post ID
+        
+        print(post_id)
 
-        if not post_id or not str(post_id).isdigit():
+        # If The Information Are Missing
+        if not post_id:
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok sa nenašiel."))
             }, status=400)
 
-        post = get_object_or_404(Post, id=int(post_id)) # Gets The Post
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        print("Post")
         has_like = post.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
+        print("has Like")
 
         # Like
         if not has_like:
             post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
-            Post.objects.filter(id=int(post_id)).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
+            Post.objects.filter(public_id=post_id).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
             post.refresh_from_db(fields=["likes"]) # Reloads The Post
 
             return Response({
@@ -747,7 +780,7 @@ def toggle_post_like(request):
         # Cancel Like
         else:
             post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
-            Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
+            Post.objects.filter(public_id=post_id).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
             post.refresh_from_db(fields=["likes"]) # Reloads The Post
 
             return Response({
@@ -774,18 +807,19 @@ def report_post(request):
         post_id = request.data.get("post_id", None) # Gets The Post ID
         reason = request.data.get("reason", None) # Gets The Reason
 
+        # If The Information Are Missing
         if not post_id or not reason:
             return Response({
                 "success": False, 
                 "message": str(_("Chýbajúce dáta pre nahlásenie."))
             }, status=400)
 
-        post = get_object_or_404(Post, id=int(post_id)) # Gets The Post
-        has_report = PostReport.objects.filter(post_id=post.id, user_id=logged_in_user.id).exists() # Checks If The User Has Already Reported The Post
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        has_report = PostReport.objects.filter(post=post, user_id=logged_in_user.id).exists() # Checks If The User Has Already Reported The Post
 
         # Stores The Reported Comment
         PostReport.objects.update_or_create(
-            post_id=post_id,
+            post=post,
             user_id=logged_in_user_id,
             defaults={"reason": reason} # Reason Can Be Updated
         )
@@ -824,15 +858,16 @@ def toggle_post_save(request):
 
         post_id = request.data.get("post_id", None) # Gets The Post ID
 
-        if not post_id or not str(post_id).isdigit():
+        # If The Information Are Missing
+        if not post_id:
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok sa nenašiel."))
             }, status=400)
 
-        post = get_object_or_404(Post, id=int(post_id)) # Gets The Post
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
 
-        has_save = logged_in_user.saved_posts.filter(id=post_id).exists() # Checks If The User Has Already Saved The Post
+        has_save = logged_in_user.saved_posts.filter(public_id=post_id).exists() # Checks If The User Has Already Saved The Post
 
         # Save
         if not has_save:
@@ -871,6 +906,7 @@ def report_post_comment(request):
         comment_id = request.data.get("comment_id", None) # Gets The Post Forum ID
         reason = request.data.get("reason", None) # Gets The Reason
 
+        # If The Information Are Missing
         if not comment_id or not reason:
             return Response({
                 "success": False, 
@@ -932,9 +968,11 @@ def add_comment(request):
                 "message": str(_("Pre pridanie komentáru chýbajú potrebné údaje."))
             }, status=500)
 
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+
         # Creates The New Comment
         new_comment = PostForum.objects.create(
-            post_id = post_id,
+            post = post,
             user_id = logged_in_user_id,
             comment = comment,
             parent_id = parent_id
@@ -1036,7 +1074,7 @@ def get_processing_posts(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        # Gets The User's Currently Processed Post With All Related Data
+        # Gets The Processing Posts With All Related Data
         processing_posts = Post.objects.filter(
             user__id=logged_in_user_id,
             media__is_processed=False
@@ -1089,7 +1127,7 @@ def get_processing_posts(request):
                     } if hasattr(one_post.user, "subscription") and one_post.user.subscription else None,
                 },
 
-                "id": one_post.id,
+                "id": one_post.public_id,
                 "description": (one_post.description if one_post.description else None),
                 "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
                 "added_hashtags": list(one_post.added_hashtags),
@@ -1229,13 +1267,8 @@ def get_chats(request):
 @permission_classes([AllowAny])
 def get_posts(request):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         searched_text = request.GET.get("searched_text", "") # Gets The Searched Text
@@ -1415,7 +1448,7 @@ def get_posts(request):
                     "has_pending_follow_request": one_post.has_pending_follow_request
                 },
 
-                "id": one_post.id,
+                "id": one_post.public_id,
                 "description": (one_post.description if one_post.description else None),
                 "tagged_users": list(one_post.tagged_users.values("id", "first_name", "last_name", "username")),
                 "added_hashtags": list(one_post.added_hashtags),
@@ -1486,20 +1519,11 @@ def get_posts(request):
 @permission_classes([AllowAny])
 def get_post(request, post_id):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
-            logged_in_user = None # Default State When The User Isn't Logged In
-
-        is_found = False # Stores The Information If The User Was Found
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         # Checks If The Profile With Searched Username Exists
-        if Post.objects.filter(id=post_id).exists():
-            is_found = True # Stores The Information That The User Was Found
-
+        if Post.objects.filter(public_id=post_id).exists():
             # Gets The Posts With All Related Data
             post = Post.objects.select_related(
                 "user__subscription"
@@ -1534,7 +1558,7 @@ def get_post(request, post_id):
                     ).order_by("order")
                 )
             ).filter(
-                id=post_id
+                public_id=post_id
             ).exclude(
                 media__is_processed=False
             ).annotate(
@@ -1593,7 +1617,7 @@ def get_post(request, post_id):
                     "has_pending_follow_request": post.has_pending_follow_request
                 },
 
-                "id": post.id,
+                "id": post.public_id,
                 "description": (post.description if post.description else None),
                 "tagged_users": list(post.tagged_users.values("id", "first_name", "last_name", "username")),
                 "added_hashtags": list(post.added_hashtags),
@@ -1660,18 +1684,16 @@ def get_post(request, post_id):
 @permission_classes([AllowAny])
 def get_post_comments(request):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-
-        else:
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
 
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         post_id = request.GET.get("post_id") # Gets The Post ID
 
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+
         # Gets The Post Root Comments With All Related Data
         post_root_comments = PostForum.objects.filter(
-            post_id=post_id,
+            post=post,
             parent__isnull=True
         ).exclude(
             status="hidden"
@@ -1695,7 +1717,7 @@ def get_post_comments(request):
             Q(parent__parent_id__in=post_root_comments_ids) | # Level 3 (Reply On Level 2)
             Q(parent__parent__parent_id__in=post_root_comments_ids) | # Level 4 (Reply On Level 3)
             Q(parent__parent__parent__parent_id__in=post_root_comments_ids), # Level 5 (Reply On Level 4)
-            post_id=post_id
+            post=post
         ).exclude(
             status="hidden"
         ).select_related(
@@ -1771,10 +1793,12 @@ def mark_post_as_seen(request):
                 "message": str(_('Príspevok nie je možné označiť za "už videný" bez potrebných údajov.'))
             }, status=500)
 
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+
         # Marks The Post As Seen If Exists And Isn't Already Seen By The User
         SeenPost.objects.get_or_create(
             user_id=logged_in_user_id,
-            post_id=post_id
+            post=post
         )
 
         return Response({
@@ -1806,7 +1830,7 @@ def toggle_follow(request):
                 "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
             }, status=500)
 
-        user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
+        user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets The User To Follow
 
         # Checks If The Logged In User Is Already Following The User
         follow_relation = FollowRelation.objects.filter(
@@ -1818,11 +1842,11 @@ def toggle_follow(request):
         if not follow_relation:
             status = "pending" if user_to_follow.private_account else "accepted" # Defines The Status (Pending If The User's Account Is Private)
 
-            # Creates The New Follow Relation Between 2 Users
+            # Creates The New Follow Relation Between Two Users
             FollowRelation.objects.create(
-                from_user=logged_in_user,
-                to_user=user_to_follow,
-                status=status
+                from_user = logged_in_user,
+                to_user = user_to_follow,
+                status = status
             )
 
             message = str(_("Žiadosť o sledovanie bola odoslaná.")) if status == "pending" else str(_("Sledovanie bolo úspešne pridané."))
@@ -1836,7 +1860,7 @@ def toggle_follow(request):
         else:
             message = _("Žiadosť o sledovanie bola zrušená.") if follow_relation.status == "pending" else _("Sledovanie bolo úspešne odstránené.")
 
-            follow_relation.delete() # Removes The Relation Between 2 Users
+            follow_relation.delete() # Removes The Relation Between Two Users
 
             return Response({
                 "success": True, 
@@ -1869,7 +1893,7 @@ def edit_post_settings(request):
                 "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
             }, status=500)
 
-        post = Post.objects.filter(id=post_id, user_id=logged_in_user_id).first() # Gets The Post
+        post = Post.objects.filter(public_id=post_id, user_id=logged_in_user_id).first() # Gets The Post
 
         if post:
             setattr(post, setting, action) # Updates The Given Column's Value
@@ -1910,7 +1934,7 @@ def delete_post(request):
                 "message": str(_("Príspevok nie je možné odstrániť bez potrebných údajov."))
             }, status=500)
 
-        post = Post.objects.prefetch_related("media").get(id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(id=post_id, user_id=logged_in_user_id) # Gets The Post
+        post = Post.objects.prefetch_related("media").get(public_id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(public_id=post_id, user_id=logged_in_user_id) # Gets The Post
 
         if post:
             unfinished_media = post.media.filter(is_processed=False) # Gets The Unfinished Media
@@ -2063,13 +2087,13 @@ def upload_post(request):
         allow_comments = str(request.data.get("allow_comments")).lower() == "true" # Gets The Information If The Comments Are Allowed
         hide_likes = str(request.data.get("hide_likes")).lower() == "true" # Gets The Information If The Likes Are Hidden
 
-        files = request.FILES.getlist("selected_posts") # Gets Files From the POST
+        selected_posts = request.FILES.getlist("selected_posts") # Gets The Selected Posts
 
-        thumbnail_files = request.FILES.getlist("select_thumbnail") # Gets Thumbnail Files From the POST
-        thumbnail_files_dict = {one_file.name: one_file for one_file in thumbnail_files} # Converts The Thumbnail Files To The Dictionary Format
+        selected_thumbnails = request.FILES.getlist("select_thumbnail") # Gets The Selected Thumbnails
+        selected_thumbnails_dict = {one_file.name: one_file for one_file in selected_thumbnails} # Converts The Selected Thumbnails To The Dictionary Format
 
-        # Saves Only if The Form is Valid And Includes at Least One File
-        if files:
+        # Saves Only if The Form Includes at Least One Selected Post
+        if selected_posts:
             media_data = json.loads(request.data.get("media_data", "[]")) # Gets The Media Data
 
             # Converts The Media Data To The Dictionary Format (For Example: {"photo1.jpg": {"order": 0, "is_muted": False}, "photo2.jpg": {"order": 1, "is_muted": False}})
@@ -2091,14 +2115,14 @@ def upload_post(request):
             
             # Gets The Coordinates If They Are Available
             if coordinates_data["latitude"] and coordinates_data["longitude"]:
-                coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates Format With GeoDjango
+                coordinates = Point(float(coordinates_data["longitude"]), float(coordinates_data["latitude"])) # Converts Coordinates With GeoDjango
 
             else:
                 coordinates = None
 
             try:
                 with transaction.atomic():
-                    # Saves The New Post Media
+                    # Creates The New Post
                     new_post = Post.objects.create(
                         user_id=logged_in_user_id,
                         description=description,
@@ -2114,7 +2138,7 @@ def upload_post(request):
                     if coordinates:
                         new_post.coordinates = coordinates
 
-                    new_post.save()
+                    new_post.save() # Saves The New Post
 
                     tagged_users_data = json.loads(request.data.get("tagged_users", "[]")) # For Example: ["@user1","@user2","@user3"]
 
@@ -2124,11 +2148,11 @@ def upload_post(request):
                         .values_list("id", flat=True)
                     )
 
-                    tagged_users = Users.objects.filter(id__in=tagged_users_ids)
+                    tagged_users = Users.objects.filter(id__in=tagged_users_ids) # Gets The Tagged Users
 
                     new_post.tagged_users.set(tagged_users)
 
-                    subscription_plan = subscription.get("plan", "free") if subscription else "free"
+                    subscription_plan = subscription.get("plan", "free") if subscription else "free" # Gets The Subscription Plan
 
                     max_image_size = 2 * 1000 * 1000 if subscription_plan == "free" else 10 * 1000 * 1000 # 2MB For No Subscribers, 10MB For Subscribers
                     max_video_size = 25 * 1000 * 1000 # 25MB For No Subscribers
@@ -2151,18 +2175,18 @@ def upload_post(request):
                     
                     compress_tasks = [] # Stores All Compress Tasks
 
-                    for one_file in files:
+                    for one_file in selected_posts:
                         try:
                             file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
                             one_file.seek(0)
-                            mime_type = magic.from_buffer(file_head, mime=True)
-                            is_video = mime_type.startswith("video/")
+                            mime_type = magic.from_buffer(file_head, mime=True) # Gets The Mime Type
+                            is_video = mime_type.startswith("video/") # Stores The Information If The File Is Video
                             
                             # Catches An Unsupported File
                             if not (mime_type.startswith("image/") or is_video):
                                 raise ValueError(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_file.name})
 
-                            max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE
+                            max_file_size = MAX_VIDEO_SIZE if is_video else MAX_IMAGE_SIZE # Stores The Max File Size
 
                             # Catches Too Large File
                             if one_file.size > max_file_size:
@@ -2173,19 +2197,19 @@ def upload_post(request):
                                 suffix = os.path.splitext(one_file.name)[1] # Gets The File Suffix
 
                                 # Creates A Temporary File For The moviepy Library
-                                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temporary_file:
                                     for one_chunk in one_file.chunks():
-                                        temp_file.write(one_chunk)
+                                        temporary_file.write(one_chunk)
                                         
-                                    temporary_path = temp_file.name
+                                    temporary_video_path = temporary_file.name # Gets The Temporary Video Path
                                 
                                 try:
-                                    video = VideoFileClip(temporary_path)
-                                    duration = video.duration
-                                    video.close()
+                                    video = VideoFileClip(temporary_video_path) # Opens The Video
+                                    duration = video.duration # Gets The Video Duration
+                                    video.close() # Closes The Video
 
-                                    if os.path.exists(temporary_path): 
-                                        os.remove(temporary_path) # Deletes The Temporary File
+                                    if os.path.exists(temporary_video_path): 
+                                        os.remove(temporary_video_path) # Deletes The Temporary Video File
 
                                     if duration > MAX_VIDEO_DURATION:
                                         raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name})
@@ -2200,24 +2224,24 @@ def upload_post(request):
                                     raise ValueError(_("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_file.name})
 
                                 finally:
-                                    if os.path.exists(temporary_path): 
-                                        os.remove(temporary_path)
+                                    if os.path.exists(temporary_video_path): 
+                                        os.remove(temporary_video_path) # Deletes The Temporary Video File
 
-                            file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False, "thumbnail_filename": ""})
+                            file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False, "thumbnail_filename": ""}) # Gets The File Settings
                             order = file_settings["order"] # Gets The Order Of The Current File
                             is_muted = file_settings["is_muted"] # Gets The Value Of If The Current File Is Muted
                             thumbnail_filename = file_settings["thumbnail_filename"] # Gets The Video Thumbnail's Filename
-                            thumbnail_file = thumbnail_files_dict.get(thumbnail_filename) # Gets The Thumbnail File
+                            thumbnail_file = selected_thumbnails_dict.get(thumbnail_filename) # Gets The Thumbnail File
                             
-                            # Saves The New Post Media
+                            # Creates The New Post Media
                             new_post_media = PostMedia.objects.create(
-                                post=new_post,
-                                file=one_file,
-                                is_video=is_video,
-                                original_filename=one_file.name,
-                                original_size=one_file.size,
-                                order=order,
-                                is_muted=is_muted if is_video else False
+                                post = new_post,
+                                file = one_file,
+                                is_video = is_video,
+                                original_filename = one_file.name,
+                                original_size = one_file.size,
+                                order = order,
+                                is_muted = is_muted if is_video else False
                             )
 
                             # Video
@@ -2225,13 +2249,14 @@ def upload_post(request):
                                 custom_thumbnail_path = None # Stores The Custom Thumbnail Path
 
                                 if thumbnail_file:
-                                    thumb_temp_path = f"temp/thumb_{new_post_media.id}"
-                                    custom_thumbnail_path = default_storage.save(thumb_temp_path, ContentFile(thumbnail_file.read())) # Gets The Custom Thumbnail Path
+                                    temporary_thumbnail_path = f"temp/thumb_{new_post_media.id}" # Gets The Temporary Thumbnail Path
+                                    custom_thumbnail_path = default_storage.save(temporary_thumbnail_path, ContentFile(thumbnail_file.read())) # Gets The Custom Thumbnail Path
 
+                                # Gets The Compress Video Task
                                 compress_video_task = compressVideo.delay(
                                     logged_in_user_id,
-                                    post_media_id=new_post_media.id, 
-                                    custom_thumbnail_path=custom_thumbnail_path
+                                    post_media_id = new_post_media.id, 
+                                    custom_thumbnail_path = custom_thumbnail_path
                                 )
 
                                 compress_tasks.append({
@@ -2242,7 +2267,7 @@ def upload_post(request):
                             
                             # Image
                             elif not is_video:
-                                compress_image_task = compressImage.delay(new_post_media.id, logged_in_user_id)
+                                compress_image_task = compressImage.delay(new_post_media.id, logged_in_user_id) # Gets The Compress Image Task
 
                                 compress_tasks.append({
                                     "task_id": compress_image_task.id,
@@ -2289,7 +2314,7 @@ def upload_post(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_upload_progress(request, task_id):
-    result = AsyncResult(task_id)
+    result = AsyncResult(task_id) # Gets The Result
     
     upload_progress = {
         "task_id": task_id,
@@ -2297,14 +2322,9 @@ def get_upload_progress(request, task_id):
         "progress": 0
     }
 
-    if result.state == "PROGRESS":
-        upload_progress["progress"] = result.info.get("percentage", 0)
-    
-    elif result.state == "SUCCESS":
-        upload_progress["progress"] = 100
-    
-    elif result.state == "FAILURE":
-        upload_progress["progress"] = 0
+    if result.state == "PROGRESS": upload_progress["progress"] = result.info.get("percentage", 0) # Sets The Progress
+    elif result.state == "SUCCESS": upload_progress["progress"] = 100 # Sets The Progress
+    elif result.state == "FAILURE": upload_progress["progress"] = 0 # Sets The Progress
 
     return Response({
         "success": True,
@@ -2321,16 +2341,19 @@ def mark_post_as_seen(request):
 
         post_id = request.data.get("post_id") # Gets The Post ID
 
-        if not post_id or not str(post_id).isdigit():
+        # If The Information Are Missing
+        if not post_id:
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok sa nenašiel."))
             }, status=400)
 
+        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+
         # Marks The Post As Seen If Exists And Isn't Already Seen By The User
         SeenPost.objects.get_or_create(
             user_id=logged_in_user_id,
-            post_id=post_id
+            post=post
         )
 
         return Response({
@@ -2399,6 +2422,7 @@ def update_video_watch_time(request):
         post_media_id = request.data.get("post_media_id") # Gets The Post Media ID
         watch_time = request.data.get("watch_time") # Gets The Watch Time
 
+        # If The Information Are Missing
         if not post_media_id or not watch_time:
             return Response({
                 "success": False, 
@@ -2451,23 +2475,21 @@ def stream_video(request, user_id, media_id, filename):
         mimetypes.add_type("application/x-mpegURL", ".m3u8")
         mimetypes.add_type("video/MP2T", ".ts")
 
-        # Gets The Save Video File Path (Path Traversal Protection) From Traveling Between Paths
-        safe_filename = os.path.basename(filename)
-        path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename)
+        # Gets The Safe Video File Path (Path Traversal Protection) From Traveling Between Paths
+        safe_filename = os.path.basename(filename) # Gets The Safe Filename
+        file_path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename) # Gets The File Path
 
-        if not os.path.exists(path):
+        if not os.path.exists(file_path):
             return Response({
                 "success": False, 
                 "message": str(_("Video súbor %(safe_filename)s sa nenašiel.") % {"safe_filename": safe_filename})
             }, status=404)
 
         # Checks If The File Is index.m3u8 Or .ts Video File Segment
-        content_type, _ = mimetypes.guess_type(path)
+        content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
+        if not content_type: content_type = "application/octet-stream"
 
-        if not content_type:
-            content_type = "application/octet-stream"
-
-        video_response = FileResponse(open(path, "rb"), content_type=content_type)
+        video_response = FileResponse(open(file_path, "rb"), content_type=content_type)
         video_response["Accept-Ranges"] = "bytes"
 
         return Response({
@@ -3409,13 +3431,8 @@ def manage_training_plan(request):
 @permission_classes([AllowAny])
 def get_profile(request, username):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         is_found = False # Stores The Information If The User Was Found
 
@@ -3599,7 +3616,7 @@ def get_profile(request, username):
             # Creates Valid Format Of Posts For JSON Response
             posts_data = [
                 {
-                    "id": one_post.id,
+                    "id": one_post.public_id,
                     "public_visibility": one_post.public_visibility,
                     "allow_comments": one_post.allow_comments,
                     "hide_likes": one_post.hide_likes,
@@ -3689,7 +3706,7 @@ def get_profile(request, username):
                     # Creates Valid Format Of Saved Posts For JSON Response
                     saved_posts_data = [
                         {
-                            "id": one_post.id,
+                            "id": one_post.public_id,
                             "created_at": one_post.created_at.isoformat(),
 
                             "media": [
@@ -3952,6 +3969,7 @@ def edit_account(request):
                 path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
 
                 current_profile_picture_name = logged_in_user.profile_picture_name
+
                 if current_profile_picture_name != "" and current_profile_picture_name != None:
                     old_file_path = os.path.join(path, current_profile_picture_name) # Gets The Old File Path
 
@@ -4189,6 +4207,14 @@ def get_chat(request, username):
                 username=username
             ).select_related(
                 "subscription"
+            ).annotate(
+                # Creates The Is Muted Column
+                is_muted=Exists(
+                    MutedUser.objects.filter(
+                        user=logged_in_user,
+                        muted_user=OuterRef("pk")
+                    )
+                )
             ).first() # Gets The User By Username (Receiver)
             
             subscription = None # Stores The Subscription Data
@@ -4206,7 +4232,8 @@ def get_chat(request, username):
                 "last_name": receiver.last_name, 
                 "username": receiver.username, 
                 "profile_picture_name": receiver.profile_picture_name,
-                "subscription": subscription
+                "subscription": subscription,
+                "is_muted": receiver.is_muted
             }
 
             # Gets All Sender's And Receiver's Chats
@@ -4298,7 +4325,7 @@ def get_chat(request, username):
                     "is_older_than_1_day": one_chat.is_older_than_1_day,
 
                     "post": {
-                        "id": one_chat.post.id,
+                        "id": one_chat.post.public_id,
                         
                         "user": {
                             "id": one_chat.post.user.id,
@@ -4789,11 +4816,7 @@ def delete_article_comment(request):
 @permission_classes([AllowAny])
 def get_article(request, theme):
     try:
-        if request.user.is_authenticated:
-            logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        else:
-            logged_in_user_id = None # Default State When The User Isn't Logged In
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         not_found = True
 
@@ -4907,11 +4930,7 @@ def get_article(request, theme):
 @permission_classes([AllowAny])
 def get_article_comments(request):
     try:
-        if request.user.is_authenticated:
-            logged_in_user = request.user # Gets The Logged In User
-
-        else:
-            logged_in_user = None # Default State When The User Isn't Logged In
+        logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
 
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         article_id = request.GET.get("article_id") # Gets The Article ID
@@ -5008,43 +5027,6 @@ def get_article_comments(request):
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def send_chat_attachment(request):
-    # Defines The Disallowed Mime Types
-    DISALLOWED_MIME_TYPES = [
-        "application/x-msdownload", # Executable (.exe) Files
-        "application/x-executable", # Linux Binaries
-        "application/x-sh", # Shell Scripts
-        "text/x-php", # PHP Scripts
-    ]
-
-    # Defines The Word Mime Types
-    WORD_MIME_TYPES = [
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ]
-
-    # Defines The Excel Mime Types
-    EXCEL_MIME_TYPES = [
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "text/csv",
-    ]
-
-    # Defines The Powerpoint Mime Types
-    POWERPOINT_MIME_TYPES = [
-        "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ]
-
-    # Defines The Archive Mime Types
-    ARCHIVE_MIME_TYPES = [
-        "application/zip",
-        "application/x-zip-compressed",
-        "application/x-rar-compressed",
-        "application/x-7z-compressed",
-        "application/x-tar",
-        "application/gzip",
-    ]
-
     try:
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
@@ -5220,12 +5202,12 @@ def send_chat_attachment(request):
 
             # Creates The New Attachment
             new_attachment = ChatAttachment.objects.create(
-                sent_by=logged_in_user,
-                file=one_selected_file,
-                type=attachment_type,
-                is_processed=True if attachment_type not in ["image", "video"] else False,
-                original_filename=one_selected_file.name,
-                compressed_size=one_selected_file.size
+                sent_by = logged_in_user,
+                file = one_selected_file,
+                type = attachment_type,
+                is_processed = True if attachment_type not in ["image", "video"] else False,
+                original_filename = one_selected_file.name,
+                compressed_size = one_selected_file.size
             )
 
             if attachment_type == "image":
@@ -5334,4 +5316,254 @@ def get_friends(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní sledovaných užívateľov došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def toggle_mute_user(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+        
+        receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
+
+        # If The Information Are Missing
+        if not receiver_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu stlmenia užívateľa chýbajú potrebné údaje."))
+            }, status=400)
+
+        muted_user = MutedUser.objects.filter(user_id=logged_in_user_id, muted_user_id=int(receiver_id)).first() # Gets The Muted User
+
+        # Mute
+        if not muted_user:
+            # Saves The New Muted User
+            MutedUser.objects.create(
+                user_id=logged_in_user_id,
+                muted_user_id=int(receiver_id)
+            )
+
+            return Response({
+                "success": True, 
+                "message": str(_("Užívateľ bol úspešne stlmený."))
+            }, status=200)
+
+        # Unmute
+        else:
+            muted_user.delete() # Deletes The Muted User Record
+
+            return Response({
+                "success": True, 
+                "message": str(_("Stlmenie užívateľa bolo úspešne odstránené."))
+            }, status=200)
+
+    except Exception as error:
+        captureError(f"An error occurred while toggle mute of the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zmene stlmenia užívateľa došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_chat_settings(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
+
+        # Gets The Chat Settings
+        chat_settings = ChatSettings.objects.filter(
+            user_id=logged_in_user_id,
+            chat_partner_id=receiver_id,
+        ).first()
+
+        return Response({
+            "success": True, 
+
+            "chat_settings": {
+                "background_image": chat_settings.background_image.url
+            } if chat_settings else None,
+
+            "message": str(_("Nastavenia chatu boli úspešne získané."))
+        }, status=200)
+
+    except Exception as error:
+        captureError(f"An error occurred while getting the chat settings.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní nastavení chatu došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def change_chat_background_image(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
+
+        subscription = None # Stores The Subscription Data
+
+        # If The User Has Subscription
+        if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+            subscription = {
+                "plan": logged_in_user.subscription.plan,
+                "is_active": logged_in_user.subscription.is_active
+            }
+
+        subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+        max_image_size = 2 * 1000 * 1000 if subscription_plan == "free" else 10 * 1000 * 1000 # 2MB For No Subscribers, 10MB For Subscribers
+        MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
+
+        selected_chat_background_image = request.FILES.get("selected_chat_background_image") # Gets The Selected Chat Background Image
+
+        if not selected_chat_background_image:
+            return Response({
+                "success": False,
+                "message": str(_("Nebol vybraný žiaden súbor."))
+            }, status=400)
+
+        try:
+            file_head = selected_chat_background_image.read(2048) # Reads Head Of File And Validates The Real Format
+            selected_chat_background_image.seek(0)
+            mime_type = magic.from_buffer(file_head, mime=True)
+            
+            # Catches An Unsupported File
+            if mime_type in DISALLOWED_MIME_TYPES:
+                return Response({
+                    "success": False,
+                    "message": str(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": selected_chat_background_image.name})
+                }, status=400)
+
+            # Gets The Attachment Type By Mime Type
+            if mime_type.startswith("image/"): attachment_type = "image"
+            
+            # Image
+            if attachment_type == "image":
+                # Catches Too Large File
+                if selected_chat_background_image.size > MAX_IMAGE_SIZE:
+                    raise ValueError(_("Obrázok je príliš veľký:\n%(file)s") % {"file": selected_chat_background_image.name})
+
+                # Verifies The Image File
+                try:
+                    # Image Verification
+                    selected_chat_background_image.seek(0)
+                    image = Image.open(selected_chat_background_image)
+                    image.verify()
+                    selected_chat_background_image.seek(0)
+
+                    # Image Scale Verification
+                    image = Image.open(selected_chat_background_image)
+                    width, height = image.size
+
+                    MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
+                    MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
+
+                    if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
+                        raise ValueError(_("Rozmery obrázka sú príliš veľké:\n%(file)s") % {"file": selected_chat_background_image.name})
+
+                    selected_chat_background_image.seek(0)
+
+                except ValueError as custom_error:
+                    raise custom_error
+
+                except (UnidentifiedImageError, OSError, SyntaxError):
+                    raise ValueError(_("Súbor nie je platný obrázok:\n%(file)s") % {"file": selected_chat_background_image.name})
+
+        except ValueError as custom_error:
+            return Response({
+                "success": False, 
+                "message": str(custom_error)
+            }, status=500)
+
+        except Exception:
+            return Response({
+                "success": False, 
+                "message": str(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": selected_chat_background_image.name})
+            }, status=500)
+
+        selected_chat_background_image.seek(0)
+
+        # Gets Or Creates The New Chat Settings
+        chat_settings, created = ChatSettings.objects.get_or_create(
+            user = logged_in_user,
+            chat_partner_id = receiver_id
+        )
+
+        # Updates The Chat Settings
+        chat_settings.background_image = selected_chat_background_image
+        chat_settings.is_processed = False
+        chat_settings.original_filename = selected_chat_background_image.name
+        chat_settings.compressed_size = selected_chat_background_image.size
+        
+        chat_settings.save() # Saves The Updated Chat Settings
+
+        if attachment_type == "image":
+            transaction.on_commit(
+                lambda att_id=chat_settings.id: compressChatBackgroundImage.delay(att_id, logged_in_user_id)
+            )
+
+        return Response({
+            "success": True, 
+
+            "chat_settings": {
+                "background_image": chat_settings.background_image.url,
+            }, 
+
+            "message": str(_("Prílohy boli úspešne odoslané."))
+        }, status=201)
+
+    except Exception as error:
+        captureError(f"An error occurred while changing the chat background.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri zmene obrázku pozadia došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_chat_background_image(request):
+    try:
+        logged_in_user_id = request.user.id # Gets The Logged In User ID
+
+        receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
+        background_image = request.data.get("background_image", None) # Gets The Background Image
+
+        # Gets The Chat Settings
+        chat_settings = ChatSettings.objects.filter(
+            user_id=logged_in_user_id,
+            chat_partner_id=receiver_id,
+            background_image__icontains=background_image.split("/")[-1]
+        ).first()
+
+        if chat_settings:
+            chat_settings.delete() # Deletes The Chat Settings
+
+            return Response({
+                "success": True, 
+                "message": str(_("Obrázok pozadia chatu bol úspešne odstránený."))
+            }, status=200)
+
+        return Response({
+            "success": False, 
+            "message": str(_("Obrázok pozadia chatu sa nepodarilo nájsť."))
+        }, status=404)
+
+    except Exception as error:
+        captureError(f"An error occurred while deleting the chat image.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odstraňovaní obrázku pozadia chatu došlo k chybe."))
         }, status=500)

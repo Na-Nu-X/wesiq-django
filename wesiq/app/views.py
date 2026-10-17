@@ -3926,7 +3926,7 @@ def communityView(request):
                                         compress_tasks.append({
                                             "task_id": compress_video_task.id,
                                             "post_media_id": new_post_media.id,
-                                            "post_id": new_post_media.post.id
+                                            "post_id": str(new_post_media.post.id)
                                         })
                                     
                                     # Image
@@ -3936,7 +3936,7 @@ def communityView(request):
                                         compress_tasks.append({
                                             "task_id": compress_image_task.id,
                                             "post_media_id": new_post_media.id,
-                                            "post_id": new_post_media.post.id
+                                            "post_id": str(new_post_media.post.id)
                                         })
 
                                 except Exception:
@@ -4202,7 +4202,7 @@ def loadPostsView(request):
                 } if hasattr(one_post.user, "subscription") and one_post.user.subscription else None
             },
 
-            "id": one_post.id,
+            "id": str(one_post.id),
 
             "description": (
                 one_post.description
