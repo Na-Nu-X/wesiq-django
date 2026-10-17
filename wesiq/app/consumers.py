@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Chat, MessageReaction, ChatAttachment
+from .models import Users, Chat, MessageReaction, ChatAttachment, MutedUser
 from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
@@ -83,20 +83,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
 
-            # Sends Data To The Notification Channel
-            await self.channel_layer.group_send(
-                receiver_group_name,
+            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
 
-                {
-                    "action": "new_message_notification",
-                    "type": "new_message_notification", # Calls The Function "New Message Notification"
-                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
-                    "message": message, # Stores The Message To The Event
-                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
-                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
-                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
-                }
-            )
+            if not is_muted:
+                # Sends Data To The Notification Channel
+                await self.channel_layer.group_send(
+                    receiver_group_name,
+
+                    {
+                        "action": "new_message_notification",
+                        "type": "new_message_notification", # Calls The Function "New Message Notification"
+                        "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                        "message": message, # Stores The Message To The Event
+                        "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                        "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                        "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                    }
+                )
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -107,6 +110,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
                     "message": message, # Stores The Message To The Event
                     "attachments": [],
+                    "post": {},
                     "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
@@ -198,33 +202,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
 
-            # Sends Data To The Notification Channel
-            await self.channel_layer.group_send(
-                receiver_group_name,
-                
-                {
-                    "action": "new_message_notification",
-                    "type": "new_message_notification", # Calls The Function "New Message Notification"
-                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
-                    "message": message or str(_("Nové prílohy")), # Stores The Message To The Event
-                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
-                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
-                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
-                }
-            )
+            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
+
+            if not is_muted:
+                # Sends Data To The Notification Channel
+                await self.channel_layer.group_send(
+                    receiver_group_name,
+                    
+                    {
+                        "action": "new_message_notification",
+                        "type": "new_message_notification", # Calls The Function "New Message Notification"
+                        "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                        "message": message or str(_("Nové prílohy")), # Stores The Message To The Event
+                        "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                        "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                        "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                    }
+                )
 
             attachments_data = await self.get_attachments_data(new_chat) # Gets The Attachments Data
 
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    "type": "new",
-                    "chat_id": new_chat.id,
-                    "message": message,
-                    "attachments": attachments_data,
-                    "formatted_time": new_chat.formatted_time,
-                    "sender_id": self.sender.id,
-                    "sender_profile_picture_name": self.sender.profile_picture_name
+                    "type": "new", # Calls The Function "New"
+                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                    "message": message, # Stores The Message To The Event
+                    "attachments": attachments_data, # Stores The Attachments To The Event
+                    "post": {},
+                    "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
                 }
             )
 
@@ -239,20 +247,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
             
             notification_message = str(_("Zdielaný príspevok od %(post_creator_username)s") % {"post_creator_username": new_chat["post"]["user"]["username"]})
 
-            # Sends Data To The Notification Channel
-            await self.channel_layer.group_send(
-                receiver_group_name,
+            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
 
-                {
-                    "action": "new_message_notification",
-                    "type": "new_message_notification", # Calls The Function "New Message Notification"
-                    "chat_id": new_chat["id"], # Stores The Chat ID To The Event
-                    "message": notification_message, # Stores The Message To The Event
-                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
-                    "sender_username": self.sender.username, # Stores The Sender's Username To The Event
-                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
-                }
-            )
+            if not is_muted:
+                # Sends Data To The Notification Channel
+                await self.channel_layer.group_send(
+                    receiver_group_name,
+
+                    {
+                        "action": "new_message_notification",
+                        "type": "new_message_notification", # Calls The Function "New Message Notification"
+                        "chat_id": new_chat["id"], # Stores The Chat ID To The Event
+                        "message": notification_message, # Stores The Message To The Event
+                        "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                        "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                        "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                    }
+                )
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -442,7 +453,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_attachments(self, content, attachment_ids):
         # Saves The New Message
-        new_chat = Chat.objects.create(
+        new_chat_with_attachments = Chat.objects.create(
             sender=self.sender,
             receiver=self.receiver,
             content=content
@@ -450,7 +461,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if attachment_ids:
             chat_attachments = ChatAttachment.objects.filter(id__in=attachment_ids) # Gets The Chat Attachments
-            chat_attachments.update(chat=new_chat) # Saves The Updated Chat Attachments
+            chat_attachments.update(chat=new_chat_with_attachments) # Saves The Updated Chat Attachments
+            
+        return new_chat_with_attachments # Returns The New Chat With Attachments
 
     # Function For Save The New Message With The Shared Post
     @database_sync_to_async
@@ -513,6 +526,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }
 
         return new_chat_with_shared_post_data # Returns The New Chat With Shared Post Data
+
+    # Function For Get The Information If The User Is Muted
+    @database_sync_to_async
+    def is_user_muted(self, user, muted_user):
+        return MutedUser.objects.filter(user=user, muted_user=muted_user).exists() # Checks If The Muted User Exists
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)

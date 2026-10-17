@@ -70,4 +70,8 @@ urlpatterns = [
     path("send-chat-attachment/", views.send_chat_attachment, name="send_chat_attachment_url"),
     path("get-post/<str:post_id>/", views.get_post, name="get_post_url"),
     path("get-friends/", views.get_friends, name="get_friends_url"),
+    path("toggle-mute-user/", views.toggle_mute_user, name="toggle_mute_user_url"),
+    path("get-chat-settings/", views.get_chat_settings, name="get_chat_settings_url"),
+    path("change-chat-background-image/", views.change_chat_background_image, name="change_chat_background_image_url"),
+    path("delete-chat-background-image/", views.delete_chat_background_image, name="delete_chat_background_image_url"),
 ]

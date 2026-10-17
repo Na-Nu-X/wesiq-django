@@ -2,7 +2,7 @@ from pathlib import Path
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia, ChatAttachment
+from app.models import Users, Reviews, Articles, Exercises, Activity, PostMedia, ChatAttachment, ChatSettings
 import os, shutil, io, subprocess, math, random, json, re, datetime
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -1270,3 +1270,83 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
     except Exception as e:
         message = "An Error Occurred During Video Compression."
         raise Exception(message) from e
+
+@shared_task(bind=True)
+def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
+    try:
+        background_image_object = ChatSettings.objects.get(id=chat_settings_id)
+        
+        # If The File Was Not Found
+        if not background_image_object.background_image:
+            message = "The Image To Compress Was Not Found."
+            raise Exception(message)
+
+        old_file_path = background_image_object.background_image.path # Stores The File Path Of The Original File
+        original_size = background_image_object.background_image.size # Gets The Original Size
+
+        self.update_state(state="PROGRESS", meta={"percentage": 50}) # 50%
+
+        with Image.open(background_image_object.background_image) as image:
+            # Resizes The Image
+            max_width = 1920
+
+            if image.width > max_width:
+                ratio = max_width / float(image.width)
+                new_height = int(float(image.height) * float(ratio))
+                image = image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+            # Converts The Image To RGB Format
+            if image.mode in ("RGBA", "P"):
+                image = image.convert("RGB")
+
+            # Image Quality
+            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            subscription = None
+
+            if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
+                # Gets The Subscription Data If Are Available
+                subscription = {
+                    "plan": logged_in_user.subscription.plan
+                }
+
+            subscription_plan = subscription.get("plan", "free") if subscription else "free"
+
+            quality = 40 # 40% For No Subscribers
+
+            if subscription_plan == "basic":
+                quality = 70 # 70% For Subscribers With Basic Plan
+
+            elif subscription_plan == "premium":
+                quality = 90 # 90% For Subscribers With Premium Plan
+            
+            # Stores To Memory
+            buffer = io.BytesIO()
+            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
+
+            compressed_size = buffer.tell() # Gets The Compressed Size
+            
+            new_file_name = f"IMG-{chat_settings_id}.jpg"
+
+            # Saves The Data To The Database
+            background_image_object.background_image.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            background_image_object.is_processed = True
+            background_image_object.original_size = original_size # Saves The Original Size
+            background_image_object.compressed_size = compressed_size # Saves The Compressed Size
+            background_image_object.save()
+
+        background_image_object.background_image.close()
+        
+        # Removes Original Image File From Disk
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+        message = "Image Was Successfully Compressed."
+        return message
+        
+    except PostMedia.DoesNotExist:
+        message = "Image Does Not Exist."
+        raise Exception(message)
+
+    except Exception:
+        message = "An Error Occurred During Image Compression."
+        raise Exception(message)
