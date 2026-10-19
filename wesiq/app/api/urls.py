@@ -52,6 +52,7 @@ urlpatterns = [
     path("manage-training-plan/", views.manage_training_plan, name="manage_training_plan_url"),
     path("get-profile/<str:username>/", views.get_profile, name="get_profile_url"),
     path("remove-follower/", views.remove_follower, name="remove_follower_url"),
+    path("get-password-reset-code/", views.get_password_reset_code, name="get_password_reset_code_url"),
     path("password-reset/", views.password_reset, name="password_reset_url"),
     path("approve-follow-request/", views.approve_follow_request, name="approve_follow_request_url"),
     path("reject-follow-request/", views.reject_follow_request, name="reject_follow_request_url"),

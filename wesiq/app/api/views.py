@@ -3815,38 +3815,93 @@ def remove_follower(request):
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_password_reset_code(request):
+    try:
+        identifier = request.data.get("identifier") # Gets The Identifier
+        
+        # If The Information Are Missing
+        if not identifier:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
+            }, status=400)
+        
+        code = generateCode() # Generates Random 6-Digit Code
+        
+        clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
+
+        # Gets The User
+        user = Users.objects.get(
+            Q(username__iexact=identifier) | 
+            Q(username__iexact=clean_username) | 
+            Q(email_address__iexact=identifier)
+        )
+
+        # # Sends The Mail
+        # sendMail(
+        #     user,
+        #     _("Obnova hesla"), # Subject
+        #     _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # Text Content
+        #     _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # HTML Content
+        #     _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+        #     code
+        # )
+
+        # Saves Password Reset Code To Database
+        user.password_reset_code = code
+        user.save()
+
+        return Response({
+            "success": True, 
+            "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": user.email_address})
+        }, status=200)
+
+    except Exception as error:
+        captureError(f"An error occurred while sending the password reset code.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri odosielaní overovacieho kódu došlo k chybe."))
+        }, status=500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def password_reset(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        code = generateCode() # Generates Random 6-Digit Code
+        password_reset_code = request.data.get("password_reset_code") # Gets The Password Reset Code
+        new_password = request.data.get("new_password") # Gets The New Password
 
-        # Sends The Mail
-        sendMail(
-            logged_in_user,
-            _("Obnova hesla"), # Subject
-            _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # Text Content
-            _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # HTML Content
-            _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-            code
-        )
+        # if password_reset_code == logged_in_user.password_reset_code:
+        #     if len(new_password) < 8:
+        #         messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
 
-        # Saves Password Reset Code To Database
-        logged_in_user.password_reset_code = code
-        logged_in_user.save()
+        #     else:
+        #         # Saves New Password To Database And Deletes Password Reset Code From Database
+        #         logged_in_user.password = make_password(new_password)
+        #         logged_in_user.password_reset_code = None
+        #         logged_in_user.save()
 
-        return Response({
-            "success": True, 
-            "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address})
-        }, status=200)
+        #         messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
+
+        #         # Redirect After Changing Password
+        #         response = HttpResponseRedirect(reverse("login_url"))
+        #         response.delete_cookie("email_address") # Deletes Cookie With Email Address
+        #         return response
+        
+        # else:
+        #     messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
+        #     captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user.id},\n\t- IP Address: {getClientIp(request)}\n")
 
     except Exception as error:
-        captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+        captureError(f"An error occurred while processing the password reset request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
-            "message": str(_("Pri odstraňovaní sledovateľa došlo k chybe."))
+            "message": str(_("Pri spracovaní žiadosti o zmenu hesla došlo k chybe."))
         }, status=500)
 
 @api_view(["POST"])
