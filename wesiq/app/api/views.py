@@ -1832,13 +1832,13 @@ def toggle_follow(request):
 
         user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets The User To Follow
 
-        # Checks If The Logged In User Is Already Following The User
+        # Gets The Follow Relation
         follow_relation = FollowRelation.objects.filter(
             from_user=logged_in_user, 
             to_user=user_to_follow
         ).first()
 
-        # Follow
+        # Follow (If Logged In User Isn't Following The User)
         if not follow_relation:
             status = "pending" if user_to_follow.private_account else "accepted" # Defines The Status (Pending If The User's Account Is Private)
 
@@ -1856,11 +1856,11 @@ def toggle_follow(request):
                 "message": message
             }, status=200)
 
-        # Unfollow
+        # Unfollow (If Logged In User Is Already Following The User)
         else:
             message = _("Žiadosť o sledovanie bola zrušená.") if follow_relation.status == "pending" else _("Sledovanie bolo úspešne odstránené.")
 
-            follow_relation.delete() # Removes The Relation Between Two Users
+            follow_relation.delete() # Removes The Follow Relation Between Two Users
 
             return Response({
                 "success": True, 
@@ -1934,7 +1934,17 @@ def delete_post(request):
                 "message": str(_("Príspevok nie je možné odstrániť bez potrebných údajov."))
             }, status=500)
 
-        post = Post.objects.prefetch_related("media").get(public_id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(public_id=post_id, user_id=logged_in_user_id) # Gets The Post
+        # Gets The Post
+        post = Post.objects.prefetch_related(
+            "media"
+        ).get(
+            public_id=post_id
+        ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related(
+            "media"
+        ).get(
+            public_id=post_id, 
+            user_id=logged_in_user_id
+        )
 
         if post:
             unfinished_media = post.media.filter(is_processed=False) # Gets The Unfinished Media
@@ -1988,7 +1998,7 @@ def delete_post_comment(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        comment_id = request.data.get("comment_id") # Gets The Comment ID
+        comment_id = request.data.get("comment_id", None) # Gets The Comment ID
 
         # If The Information Are Missing
         if not comment_id:
@@ -1997,7 +2007,13 @@ def delete_post_comment(request):
                 "message": str(_("Komentár nie je možné odstrániť bez potrebných údajov."))
             }, status=500)
 
-        comment = PostForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+        # Gets The Comment
+        comment = PostForum.objects.get(
+            id=comment_id
+        ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(
+            id=comment_id, 
+            user_id=logged_in_user_id
+        ) 
 
         if comment:
             comment.delete() # Deletes The Comment
@@ -2026,13 +2042,24 @@ def delete_post_comment(request):
 def tag_user(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
-        searched_tag = request.data.get("searched_tag") # Gets The Searched Tag
+        searched_tag = request.data.get("searched_tag", None) # Gets The Searched Tag
+
+        # If The Information Are Missing
+        if not searched_tag:
+            return Response({
+                "success": False, 
+                "message": str(_("Používateľa nie je možné označiť bez potrebných údajov."))
+            }, status=500)
         
-        # Gets All Relevant Users By Searched Tag
+        # Gets Users For Tag (All Relevant Users By Searched Tag)
         users_for_tag = Users.objects.filter(
             account_status="OK", 
-            username__contains=searched_tag
-        ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
+            username__contains=searched_tag # Filters Users By Searched Tag (Case-Sensitive)
+        ).exclude(
+            id=logged_in_user_id
+        ).order_by(
+            "-creation_time"
+        ) 
 
         # Creates Valid Format Of Users For Tag For JSON Response
         users_for_tag = [
@@ -2070,6 +2097,14 @@ def upload_post(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
+        description = request.data.get("description", "") # Gets The Description
+        location = request.data.get("location", "") # Gets The Location
+        latitude = request.data.get("latitude", None) # Gets The Latitude
+        longitude = request.data.get("longitude", None) # Gets The Longitude
+        public_visibility = str(request.data.get("public_visibility")).lower() == "true" # Gets The Information If The Public Visibility Is Enabled
+        allow_comments = str(request.data.get("allow_comments")).lower() == "true" # Gets The Information If The Comments Are Allowed
+        hide_likes = str(request.data.get("hide_likes")).lower() == "true" # Gets The Information If The Likes Are Hidden
+
         subscription = None # Stores The Subscription Data
 
         # If The User Has Subscription
@@ -2078,14 +2113,6 @@ def upload_post(request):
                 "plan": logged_in_user.subscription.plan,
                 "is_active": logged_in_user.subscription.is_active
             }
-
-        description = request.data.get("description", "") # Gets The Description
-        location = request.data.get("location", "") # Gets The Location
-        latitude = request.data.get("latitude", None) # Gets The Latitude
-        longitude = request.data.get("longitude", None) # Gets The Longitude
-        public_visibility = str(request.data.get("public_visibility")).lower() == "true" # Gets The Information If The Public Visibility Is Enabled
-        allow_comments = str(request.data.get("allow_comments")).lower() == "true" # Gets The Information If The Comments Are Allowed
-        hide_likes = str(request.data.get("hide_likes")).lower() == "true" # Gets The Information If The Likes Are Hidden
 
         selected_posts = request.FILES.getlist("selected_posts") # Gets The Selected Posts
 
@@ -2124,15 +2151,14 @@ def upload_post(request):
                 with transaction.atomic():
                     # Creates The New Post
                     new_post = Post.objects.create(
-                        user_id=logged_in_user_id,
-                        description=description,
-                        location=location,
-                        public_visibility=public_visibility,
-                        allow_comments=allow_comments,
-                        hide_likes=hide_likes
+                        user_id = logged_in_user_id,
+                        description = description,
+                        location = location,
+                        public_visibility = public_visibility,
+                        allow_comments = allow_comments,
+                        hide_likes = hide_likes
                     )
 
-                    # new_post.tagged_users = [str(one_id) for one_id in tagged_users_ids]
                     new_post.added_hashtags = json.loads(request.data.get("added_hashtags", "[]"))
 
                     if coordinates:
@@ -2144,11 +2170,15 @@ def upload_post(request):
 
                     # Gets List Of IDs Of Tagged Users
                     tagged_users_ids = list(
-                        Users.objects.filter(username__in=tagged_users_data)
-                        .values_list("id", flat=True)
+                        Users.objects.filter(
+                            username__in = tagged_users_data
+                        ).values_list(
+                            "id", 
+                            flat = True
+                        )
                     )
 
-                    tagged_users = Users.objects.filter(id__in=tagged_users_ids) # Gets The Tagged Users
+                    tagged_users = Users.objects.filter(id__in = tagged_users_ids) # Gets The Tagged Users
 
                     new_post.tagged_users.set(tagged_users)
 
@@ -2192,12 +2222,12 @@ def upload_post(request):
                             if one_file.size > max_file_size:
                                 raise ValueError(_("Súbor je príliš veľký:\n%(file)s") % {"file": one_file.name})
 
-                            # Catches A Too Long Video
                             if is_video:
                                 suffix = os.path.splitext(one_file.name)[1] # Gets The File Suffix
 
                                 # Creates A Temporary File For The moviepy Library
                                 with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temporary_file:
+                                    # Stores The Temporary File
                                     for one_chunk in one_file.chunks():
                                         temporary_file.write(one_chunk)
                                         
@@ -2211,9 +2241,11 @@ def upload_post(request):
                                     if os.path.exists(temporary_video_path): 
                                         os.remove(temporary_video_path) # Deletes The Temporary Video File
 
+                                    # Catches A Too Long Video
                                     if duration > MAX_VIDEO_DURATION:
                                         raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_file.name})
 
+                                    # Catches A Too Short Video
                                     elif duration < MIN_VIDEO_DURATION:
                                         raise ValueError(_("Video je príliš krátke:\n%(file)s") % {"file": one_file.name})
 
@@ -2259,6 +2291,7 @@ def upload_post(request):
                                     custom_thumbnail_path = custom_thumbnail_path
                                 )
 
+                                # Appends The Compress Video Task To The Compress Tasks
                                 compress_tasks.append({
                                     "task_id": compress_video_task.id,
                                     "post_media_id": new_post_media.id,
@@ -2269,6 +2302,7 @@ def upload_post(request):
                             elif not is_video:
                                 compress_image_task = compressImage.delay(new_post_media.id, logged_in_user_id) # Gets The Compress Image Task
 
+                                # Appends The Compress Image Task To The Compress Tasks
                                 compress_tasks.append({
                                     "task_id": compress_image_task.id,
                                     "post_media_id": new_post_media.id,
@@ -2299,7 +2333,7 @@ def upload_post(request):
 
             return Response({
                 "success": False, 
-                "message": str(_("Pridávanie príspevku zlyhalo"))
+                "message": str(_("Pridávanie príspevku zlyhalo."))
             }, status=500)
     
     except Exception as error:
@@ -2307,7 +2341,7 @@ def upload_post(request):
 
         return Response({
             "success": False, 
-            "message": str(_("Pri pridávaní príspevku došlo k chybe"))
+            "message": str(_("Pri pridávaní príspevku došlo k chybe."))
         }, status=500)
 
 @api_view(["GET"])
@@ -2316,6 +2350,7 @@ def upload_post(request):
 def get_upload_progress(request, task_id):
     result = AsyncResult(task_id) # Gets The Result
     
+    # Stores The Upload Progress Data
     upload_progress = {
         "task_id": task_id,
         "state": result.state, # PENDING, PROGRESS, SUCCESS, FAILURE
@@ -2372,48 +2407,6 @@ def mark_post_as_seen(request):
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def tag_user(request):
-    try:
-        logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        searched_tag = request.data.get("searched_tag") # Gets The Searched Tag
-        
-        # Gets All Relevant Users By Searched Tag
-        users_for_tag = Users.objects.filter(
-            account_status="OK", 
-            username__contains=searched_tag
-        ).exclude(id=logged_in_user_id).order_by("-creation_time") # Filters Users By Searched Tag (Case-Sensitive)
-
-        # Creates Valid Format Of Users For Tag For JSON Response
-        users_for_tag = [
-            {
-                "id": one_user.id,
-                "first_name": one_user.first_name,
-                "last_name": one_user.last_name,
-                "username": one_user.username,
-                "profile_picture_name": one_user.profile_picture_name,
-            }
-
-            for one_user in users_for_tag
-        ]
-
-        return Response({
-            "success": True, 
-            "users": users_for_tag, 
-            "message": "Užívatelia pre označenie boli úspešne nájdený."
-        }, status=200)
-
-    except Exception as error:
-        captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
-
-        return Response({
-            "success": False, 
-            "message": str(_("Pri hľadaní užívateľov pre označenie došlo k chybe."))
-        }, status=500)
-
-@api_view(["POST"])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
 def update_video_watch_time(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
@@ -2430,21 +2423,24 @@ def update_video_watch_time(request):
             }, status=400)
 
         # Gets The Video Author's ID
-        author_id = PostMedia.objects.filter(id=post_media_id).values_list(
-            "post__user_id", flat=True
+        author_id = PostMedia.objects.filter(
+            id = post_media_id
+        ).values_list(
+            "post__user_id", 
+            flat=True
         ).first()
 
         # If The Video Doesn't Belong To The Logged In User
         if(author_id != logged_in_user_id):
             # Updates The Total Watch Time Of The Video
-            PostMedia.objects.filter(id=post_media_id).update(
-                total_watch_time=Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
+            PostMedia.objects.filter(id = post_media_id).update(
+                total_watch_time = Coalesce(F("total_watch_time"), Value(0.0)) + float(watch_time) # If The Watch Time Is Null, Replaces Null With 0.0
             )
 
             # Adds The User's First Video View
             VideoView.objects.get_or_create(
-                post_media_id=post_media_id,
-                user=logged_in_user
+                post_media_id = post_media_id,
+                user = logged_in_user
             )
 
             return Response({
@@ -2489,7 +2485,7 @@ def stream_video(request, user_id, media_id, filename):
         content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
         if not content_type: content_type = "application/octet-stream"
 
-        video_response = FileResponse(open(file_path, "rb"), content_type=content_type)
+        video_response = FileResponse(open(file_path, "rb"), content_type=content_type) # Gets The Video Response
         video_response["Accept-Ranges"] = "bytes"
 
         return Response({
@@ -2515,17 +2511,17 @@ def get_activity(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        activities = Activity.objects.filter(user_id=logged_in_user_id) # Gets All Logged In User's Activities
+        activities = Activity.objects.filter(user_id = logged_in_user_id) # Gets All Logged In User's Activities
         latest_activity = activities.latest("end_time") if activities else None # Gets The Latest Logged In User's Activity
         longest_activity = activities.order_by("-elapsed_time").first() # Gets The Longest Logged In User's Activity
 
         # Gets Last 7 Days Average Logged In User's Activity Time
         average_activity_elapsed_time = Activity.objects.filter(
-            user_id=logged_in_user_id,
-            end_time__gte=timezone.now() - timedelta(days=6)
-        ).aggregate(avg=Avg("elapsed_time"))["avg"]
+            user_id = logged_in_user_id,
+            end_time__gte = timezone.now() - timedelta(days = 6)
+        ).aggregate(avg = Avg("elapsed_time"))["avg"]
 
-        average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0
+        average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0 # Gets The Average Activity Time
 
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m" if activities else "" # Formats Average Activity Time
         activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
@@ -2545,7 +2541,7 @@ def get_activity(request):
             }
 
         if longest_activity:
-            # Creates Valid Format Of Latest Activity For JSON Response
+            # Creates Valid Format Of Longest Activity For JSON Response
             longest_activity_data = {
                 "end_time": longest_activity.end_time,
                 "elapsed_time": longest_activity.elapsed_time,
@@ -2586,20 +2582,25 @@ def get_weekly_activity(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         today = timezone.now().date() # Determines Today's Date
-        seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
+        seven_days_ago = today - timedelta(days = 6) # Determines Seven Days Ago Date
 
-        # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+        # Gets The Weekly Activity
         weekly_activity = (
-            Activity.objects
-            .filter(
-                Q(user_id=logged_in_user_id) & Q(end_time__date__gte=seven_days_ago) & Q(end_time__date__lte=today)
+            # Gets Activities From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
+            Activity.objects.filter(
+                Q(user_id = logged_in_user_id) & 
+                Q(end_time__date__gte = seven_days_ago) & 
+                Q(end_time__date__lte = today)
+            ).annotate(
+                day = TruncDate("end_time")
+            ).values(
+                "day"
+            ).annotate(
+                total_elapsed_time = Sum("elapsed_time")
             )
-            .annotate(day=TruncDate("end_time"))
-            .values("day")
-            .annotate(total_elapsed_time=Sum("elapsed_time"))
         )
 
-        # Creates Dictionary From Weekly Activity
+        # Converts The Weekly Activity To The Dictionary Format
         weekly_activity_dictionary = {
             one_day["day"]: one_day["total_elapsed_time"]
             for one_day in weekly_activity
@@ -2607,13 +2608,14 @@ def get_weekly_activity(request):
 
         weekday_labels = ["PO", "UT", "ST", "ŠT", "PI", "SO", "NE"] # Weekday Labels For Each Day
 
-        weekly_activity_result = [] # Gets Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{'day': 'ŠT', 'total_elapsed_time': 2872}, {'day': 'PI', 'total_elapsed_time': 1451}, {'day': 'SO', 'total_elapsed_time': 825}, {'day': 'NE', 'total_elapsed_time': 639}, {'day': 'PO', 'total_elapsed_time': 2104}, {'day': 'UT', 'total_elapsed_time': 2555}, {'day': 'ST', 'total_elapsed_time': 3000}])
+        weekly_activity_result = [] # Stores Final Results Of Weekly Activity Days And Elapsed Time For Each Day (For Example: [{"day": "ŠT", "total_elapsed_time": 2872}, {"day": "PI", "total_elapsed_time": 1451}, {"day": "SO", "total_elapsed_time": 825}, {"day": "NE", "total_elapsed_time": 639}, {"day": "PO", "total_elapsed_time": 2104}, {"day": "UT", "total_elapsed_time": 2555}, {"day": "ST", "total_elapsed_time": 3000}])
 
         # Fills And Sorts Result From The Oldest Date To Today's Date 
         for i in range(6, -1, -1):
-            day = today - timedelta(days=i)
+            day = today - timedelta(days = i)
             label = weekday_labels[day.weekday()]
 
+            # Appends The Day And Total Elapsed Time To The Weekly Activity Result
             weekly_activity_result.append({
                 "day": label,
                 "total_elapsed_time": weekly_activity_dictionary.get(day, 0)
@@ -2621,8 +2623,8 @@ def get_weekly_activity(request):
 
         return Response({
             "success": True, 
-            "weekly_activity": json.dumps(weekly_activity_result), # Export As A Valid JSON Format
-            "message": "Dáta o aktivite užívateľa boli úspešne získané."
+            "weekly_activity": json.dumps(weekly_activity_result),
+            "message": str(_("Dáta o aktivite užívateľa boli úspešne získané."))
         }, status=200)
 
     except Exception as error:
@@ -2644,15 +2646,14 @@ def get_training_plans(request):
 
         # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
         training_plans = (
-            TrainingPlan.objects
-            .filter(user_id=logged_in_user_id)
-            .annotate(
-                sorted_days=ExpressionWrapper(
+            TrainingPlan.objects.filter(
+                user_id = logged_in_user_id
+            ).annotate(
+                sorted_days = ExpressionWrapper(
                     Mod(F("day") - Value(day_index) + Value(7), Value(7)),
-                    output_field=IntegerField()
+                    output_field = IntegerField()
                 )
-            )
-            .order_by("sorted_days")
+            ).order_by("sorted_days")
         )
 
         # Creates Valid Format Of Training Plans For JSON Response
@@ -2694,18 +2695,18 @@ def get_official_tasks(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        todays_date = timezone.localdate() # Gets The Today's Date
+        today = timezone.localdate() # Gets The Today's Date
 
         # Deletes The Older User's Official Tasks Than Today's Date
         UserDailyOfficialTasks.objects.filter(
-            user=logged_in_user,
-            created_at__date__lt=todays_date
+            user = logged_in_user,
+            created_at__date__lt = today
         ).delete()
 
         # Gets The All Assigned User's Official Tasks For Today
         official_tasks = logged_in_user.daily_official_tasks.annotate(
-            progress_percentage=F("userdailyofficialtasks__progress_percentage"),
-            is_completed=F("userdailyofficialtasks__is_completed")
+            progress_percentage = F("userdailyofficialtasks__progress_percentage"),
+            is_completed = F("userdailyofficialtasks__is_completed")
         )
 
         official_tasks_amount = official_tasks.count() # Gets The Amount Of All Assigned User's Official Tasks For Today
@@ -2717,14 +2718,14 @@ def get_official_tasks(request):
         
             # Gets The Random New User's Official Tasks For Today Which Aren't Already Assigned For The User
             random_new_tasks = OfficialTasks.objects.exclude(
-                id__in=existing_tasks_ids
+                id__in = existing_tasks_ids
             ).order_by(
                 "?"
             )[:needed_tasks]
             
             # Bulk Creation Of Multiple New User's Official Tasks For Today
             new_official_tasks = [
-                UserDailyOfficialTasks(user=logged_in_user, task=one_task)
+                UserDailyOfficialTasks(user = logged_in_user, task = one_task)
                 for one_task in random_new_tasks
             ]
 
@@ -2734,12 +2735,12 @@ def get_official_tasks(request):
             official_tasks = logged_in_user.daily_official_tasks.annotate(
                 progress_percentage=F("userdailyofficialtasks__progress_percentage"),
                 is_completed=F("userdailyofficialtasks__is_completed")
-            )
+            ).order_by("xp")
 
-        current_time = timezone.localtime(timezone.now())
-        next_midnight = (current_time + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        official_tasks_remaining_time = next_midnight - current_time
-        official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600
+        current_time = timezone.localtime(timezone.now()) # Gets The Current Time
+        next_midnight = (current_time + timedelta(days = 1)).replace(hour = 0, minute = 0, second = 0, microsecond = 0) # Gets The Next Midnight
+        official_tasks_remaining_time = next_midnight - current_time # Gets The Official Tasks Remaining Time
+        official_tasks_remaining_hours = official_tasks_remaining_time.seconds // 3600 # Gets The Official Tasks Remaining Hours
 
         # Creates Valid Format Of Official Tasks For JSON Response
         official_tasks_data = [
@@ -2777,7 +2778,7 @@ def get_custom_tasks(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         custom_tasks = CustomTasks.objects.filter(
-            user_id=logged_in_user_id
+            user_id = logged_in_user_id
         ).order_by(
             "order"
         )
@@ -2816,8 +2817,8 @@ def get_activity_history(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
-        activity_history = Activity.objects.filter(end_time__gte=two_weeks_ago, user_id=logged_in_user_id) # Gets The Activity History Items
+        two_weeks_ago = timezone.now() - timedelta(days = 14) # Gets The 2 Weeks Ago Time
+        activity_history = Activity.objects.filter(end_time__gte = two_weeks_ago, user_id = logged_in_user_id) # Gets The Activity History
 
         activity_history_data = None # Stores The Activity History Data
         
@@ -2887,8 +2888,8 @@ def get_xp_boost(request):
             if not already_claimed_today:
                 # Gets One Of The Yesterday's Activity
                 yesterdays_activity = Activity.objects.filter(
-                    user=logged_in_user, 
-                    end_time__date=yesterday
+                    user = logged_in_user, 
+                    end_time__date = yesterday
                 ).exists() 
 
                 if yesterdays_activity:
@@ -2917,9 +2918,9 @@ def use_xp_boost(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        xp_boost_expiration_time = timezone.now() + timedelta(minutes=30) # Creates The New XP Boost Expiration Time
+        xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Creates The New XP Boost Expiration Time
 
-        Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time=xp_boost_expiration_time) # Stores New XP Boost Expiration Time
+        Users.objects.filter(id=logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores New XP Boost Expiration Time
 
         return Response({
             "success": True, 
@@ -2943,24 +2944,33 @@ def complete_official_task(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        task_data = request.data.get("task_data") # Gets The Completed Task Data
-        task = OfficialTasks.objects.get(data=task_data) # Gets The Completed Task
+        task_data = request.data.get("task_data", None) # Gets The Completed Task Data
+
+        # If The Information Are Missing
+        if not identifier:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
+            }, status=400)
+
+        task = OfficialTasks.objects.get(data = task_data) # Gets The Completed Task
 
         # Gets The Task From User's Daily Official Tasks
         users_daily_official_task = UserDailyOfficialTasks.objects.filter(
-            user=logged_in_user, 
-            task=task
+            user = logged_in_user, 
+            task = task
         ).first()
 
         # Marks The Task In The User's Daily Official Tasks As Completed If Isn't Already
         if users_daily_official_task and not users_daily_official_task.is_completed:
+            # 2 Activities Task
             if users_daily_official_task.task.data == "2_activities":
-                users_daily_official_task.progress_percentage += 50
-                users_daily_official_task.save()
+                users_daily_official_task.progress_percentage += 50 # Increases The Progress Percentage Of Task By 50%
+                users_daily_official_task.save() # Saves The Updated Task
 
             else:
-                users_daily_official_task.progress_percentage = 100.00
-                users_daily_official_task.save()
+                users_daily_official_task.progress_percentage = 100.00 # Sets The Progress Percentage Of Task To 100%
+                users_daily_official_task.save() # Saves The Updated Task
 
             if users_daily_official_task.progress_percentage == 100.00:
                 users_daily_official_task.is_completed=True # Marks The Task As Completed
@@ -2968,7 +2978,7 @@ def complete_official_task(request):
 
                 # Increases And Updates The Amount Of User's Obtained XP
                 Users.objects.filter(
-                    id=logged_in_user_id
+                    id = logged_in_user_id
                 ).update(
                     xp = F("xp") + task.xp
                 )
@@ -3031,8 +3041,9 @@ def add_custom_task(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        custom_task_title = request.data.get("custom_task_title") # Gets The Custom Task Title
+        custom_task_title = request.data.get("custom_task_title", None) # Gets The Custom Task Title
         
+        # If The Information Are Missing
         if not custom_task_title:
             return Response({
                 "success": False,
@@ -3040,7 +3051,7 @@ def add_custom_task(request):
             }, status=400)
 
         with transaction.atomic():
-            CustomTasks.objects.filter(user_id=logged_in_user_id).update(order=F("order") + 1) # Moves Every Previous Task Orders Down
+            CustomTasks.objects.filter(user_id = logged_in_user_id).update(order = F("order") + 1) # Moves Every Previous Tasks Down
 
             # Creates The New Custom Task
             new_custom_task = CustomTasks(
@@ -3080,10 +3091,18 @@ def toggle_complete_custom_task(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         task_id = request.data.get("task_id") # Gets The Task ID
-        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+        # If The Information Are Missing
+        if not task_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
+            }, status=400)
+
+        task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
 
         task.is_completed = not task.is_completed # Inverts The Completion Status
-        task.save(update_fields=["is_completed"]) # Saves The Updated Task
+        task.save(update_fields = ["is_completed"]) # Saves The Updated Task
 
         return Response({
             "success": True, 
@@ -3106,7 +3125,15 @@ def delete_custom_task(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         task_id = request.data.get("task_id") # Gets The Task ID
-        task = CustomTasks.objects.get(id=task_id, user_id=logged_in_user_id) # Gets The User's Custom Task
+
+        # If The Information Are Missing
+        if not task_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre odstránenie úlohy chýbajú potrebné údaje."))
+            }, status=400)
+
+        task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
 
         task.delete() # Deletes The User's Custom Task
 
@@ -3132,9 +3159,17 @@ def delete_completed_custom_tasks(request):
 
         completed_custom_tasks_ids = request.data.get("completed_custom_tasks_ids", []) # Gets The Completed Custom Tasks IDs
 
+        # If The Information Are Missing
+        if completed_custom_tasks_ids.len == 0:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre odstránenie úloh chýbajú potrebné údaje."))
+            }, status=400)
+
+        # Deletes The Completed Custom Tasks
         CustomTasks.objects.filter(
-            id__in=completed_custom_tasks_ids,
-            user_id=logged_in_user_id
+            id__in = completed_custom_tasks_ids,
+            user_id = logged_in_user_id
         ).delete()
 
         return Response({
@@ -3158,6 +3193,13 @@ def change_custom_tasks_order(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         tasks_ids = request.data.get("tasks_ids", []) # Gets The Completed Custom Tasks IDs
+
+        # If The Information Are Missing
+        if tasks_ids.len == 0:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu poradia úloh chýbajú potrebné údaje."))
+            }, status=400)
 
         # Updates The Order Of All The Logged In User's Custom Tasks
         for index, task_id in enumerate(tasks_ids):
@@ -3187,7 +3229,15 @@ def new_activity(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        new_activity_data = request.data.get("new_activity_data") # Gets Training Plan Data From Fetched JS POST
+        new_activity_data = request.data.get("new_activity_data", None) # Gets The New Activity Data
+
+        # If The Information Are Missing
+        if not new_activity_data:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zaznamenanie aktivity chýbajú potrebné údaje."))
+            }, status=400)
+
         gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
         Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
