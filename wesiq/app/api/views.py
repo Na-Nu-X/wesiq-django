@@ -3243,8 +3243,8 @@ def new_activity(request):
         Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
         Users.objects.filter(id=logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
 
-        today = timezone.now().date() # Determines Today's Date
-        yesterday = today - timedelta(days=1) # Determines Yesterday's Date
+        today = timezone.now().date() # Gets The Today's Date
+        yesterday = today - timedelta(days=1) # Gets The Yesterday's Date
 
         # Gets The User's Last Activity Streak Increase Date
         last_activity_streak_increase_date = (
@@ -3280,12 +3280,12 @@ def new_activity(request):
 
         # No Day Off Week Badge Completion
         if not logged_in_user.badges.filter(data="no_day_off_week").exists():
-            seven_days_ago = today - timedelta(days=6) # Determines Seven Days Ago Date
+            seven_days_ago = today - timedelta(days=6) # Gets The Seven Days Ago Date
 
             # Gets The Number Of Consecutive Days With Some Recorded Activity
             unique_seven_days_of_activity = Activity.objects.filter(
-                user=logged_in_user,
-                end_time__date__range=[seven_days_ago, today]
+                user = logged_in_user,
+                end_time__date__range = [seven_days_ago, today]
             ).values(
                 "end_time__date"
             ).distinct().count()
@@ -3301,11 +3301,11 @@ def new_activity(request):
                 new_badge.save() # Saves The New Badge
 
         # X-Mas Activity Badge Completion
-        if not logged_in_user.badges.filter(data="xmas_activity").exists():
+        if not logged_in_user.badges.filter(data = "xmas_activity").exists():
             has_xmas_activity = Activity.objects.filter(
-                user=logged_in_user,
-                end_time__month=12,
-                end_time__day=24
+                user = logged_in_user,
+                end_time__month = 12,
+                end_time__day = 24
             ).exists()
 
             if has_xmas_activity:
@@ -3319,11 +3319,11 @@ def new_activity(request):
                 new_badge.save() # Saves The New Badge
 
         # New Year, New Goals Badge Completion
-        if not logged_in_user.badges.filter(data="new_year_new_goals").exists():
+        if not logged_in_user.badges.filter(data = "new_year_new_goals").exists():
             has_new_year_new_goals = Activity.objects.filter(
-                user=logged_in_user,
-                end_time__month=1,
-                end_time__day=1
+                user = logged_in_user,
+                end_time__month = 1,
+                end_time__day = 1
             ).exists()
 
             if has_new_year_new_goals:
@@ -3357,7 +3357,6 @@ def new_activity(request):
 def get_exercises(request):
     try:
         exercises = cache.get("cached_exercises") # Gets All Cached Exercises
-        # exercises = Exercises.objects.all() # Queryset
 
         # Exercises Fallback (If Cache Is Clear)
         if exercises is None:
@@ -3365,15 +3364,9 @@ def get_exercises(request):
             exercises = list(
                 Exercises.objects.all()
                 .order_by("exercise")
-                # .values("exercise", "unit", "categories", "requires_weight")
             )
 
-            cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
-
-            print("Getting Exercises Data From The DB.") # Test Print
-
-        else:
-            print("Getting Exercises Data From The Redis Cache.") # Test Print
+            cache.set("cached_exercises", exercises, timeout = settings.CACHE_TTL) # Caches Exercises
 
         # Creates Valid Format Of Exercises For JSON Response
         exercises_data = [
@@ -3411,18 +3404,26 @@ def manage_training_plan(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         training_plan_data = request.data # Gets Training Plan Data From Fetched JS POST
+
+        # If The Information Are Missing
+        if not training_plan_data:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre vykonanie zmien v tréningovom pláne chýbajú potrebné údaje."))
+            }, status=400)
         
         deleted_training_plan_keys = set() # Gets The Deleted Training Plan Keys
         
         for one_object in training_plan_data:
+            # Edit Training Plan
             if one_object.get("action") == "edited_training_plan":
                 previous_training_plan_key = one_object.get("previous_training_plan_key") # Gets The Previous Training Plan Key
                 
                 if previous_training_plan_key and previous_training_plan_key not in deleted_training_plan_keys:
                     # Deletes Exercises With Similar Training Plan Key
                     TrainingPlan.objects.filter(
-                        user_id=logged_in_user_id, 
-                        training_plan_key=previous_training_plan_key
+                        user_id = logged_in_user_id, 
+                        training_plan_key = previous_training_plan_key
                     ).delete()
 
                     deleted_training_plan_keys.add(previous_training_plan_key) # Adds The Deleted Training Plan Keys
@@ -3434,8 +3435,8 @@ def manage_training_plan(request):
                 if training_plan_key and training_plan_key not in deleted_training_plan_keys:
                     # Deletes Exercises With Similar Training Plan Key
                     TrainingPlan.objects.filter(
-                        user_id=logged_in_user_id, 
-                        training_plan_key=training_plan_key
+                        user_id = logged_in_user_id, 
+                        training_plan_key = training_plan_key
                     ).delete()
 
                     deleted_training_plan_keys.add(training_plan_key) # Adds The Deleted Training Plan Keys
@@ -3487,7 +3488,7 @@ def get_profile(request, username):
         is_found = False # Stores The Information If The User Was Found
 
         # Checks If The Profile With Searched Username Exists
-        if Users.objects.filter(username=username).exists():
+        if Users.objects.filter(username = username).exists():
             is_found = True # Stores The Information That The User Was Found
 
             # Gets The User By Username
@@ -3498,32 +3499,33 @@ def get_profile(request, username):
                 username=username
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                has_follow=Exists(
+                has_follow = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user=OuterRef("pk"),
-                        status="accepted"
+                        from_user = logged_in_user_id,
+                        to_user = OuterRef("pk"),
+                        status = "accepted"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField()),
 
                 # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
                 has_pending_follow_request=Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user=OuterRef("pk"),
-                        status="pending"
+                        from_user = logged_in_user_id,
+                        to_user = OuterRef("pk"),
+                        status = "pending"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
             ).first()
 
             # Gets All Followers With All Related Data
             followers = FollowRelation.objects.filter(
-                to_user=user, 
-                status="accepted"
+                to_user = user, 
+                status = "accepted"
             ).select_related(
                 "from_user"
             ).order_by(
-                "from_user_id", "-created_at"
+                "from_user_id", 
+                "-created_at"
             ).distinct("from_user_id")
 
             followers_data = []
@@ -3563,28 +3565,29 @@ def get_profile(request, username):
 
             # Gets All Following Users With All Related Data
             following = FollowRelation.objects.filter(
-                from_user=user, 
-                status="accepted"
+                from_user = user, 
+                status = "accepted"
             ).select_related(
                 "to_user"
             ).order_by(
-                "to_user_id", "-created_at"
+                "to_user_id", 
+                "-created_at"
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                has_follow=Exists(
+                has_follow = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user=OuterRef("to_user_id"),
-                        status="accepted"
+                        from_user = logged_in_user_id,
+                        to_user = OuterRef("to_user_id"),
+                        status = "accepted"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
 
                 # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-                has_pending_follow_request=Exists(
+                has_pending_follow_request = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user=OuterRef("to_user_id"),
-                        status="pending"
+                        from_user = logged_in_user_id,
+                        to_user = OuterRef("to_user_id"),
+                        status = "pending"
                     )
                 ) if logged_in_user else Value(False, output_field=BooleanField())
             ).distinct("to_user_id")
@@ -3626,7 +3629,7 @@ def get_profile(request, username):
                     "created_at": one_following.created_at
                 })
 
-            today = timezone.now().date() # Determines Today's Date
+            today = timezone.now().date() # Gets The Today's Date
 
             # Creates The Has Already Increased Activity Streak Column (True If The User Already Has)
             if user.last_activity_streak_increase_time:
@@ -3637,28 +3640,28 @@ def get_profile(request, username):
 
             # Gets All User's Posts With All Related Data
             posts = Post.objects.filter(
-                user_id=user.id
+                user_id = user.id
             ).prefetch_related(
                 Prefetch(
                     "user",
-                    queryset=Users.objects.annotate(
+                    queryset = Users.objects.annotate(
                         # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                        has_follow=Exists(
+                        has_follow = Exists(
                             FollowRelation.objects.filter(
-                                from_user=logged_in_user_id,
-                                to_user=OuterRef("pk"),
-                                status="accepted"
+                                from_user = logged_in_user_id,
+                                to_user = OuterRef("pk"),
+                                status = "accepted"
                             )
-                        ) if logged_in_user else Value(False, output_field=BooleanField())
+                        ) if logged_in_user else Value(False, output_field = BooleanField())
                     )
                 ),
 
                 Prefetch(
                     "media",
-                    queryset=PostMedia.objects.order_by("order")
+                    queryset = PostMedia.objects.order_by("order")
                 )
             ).exclude(
-                media__is_processed=False
+                media__is_processed = False
             ).order_by(
                 "-created_at"
             ).distinct()
@@ -3737,7 +3740,7 @@ def get_profile(request, username):
 
             # If The User Is Logged In
             if logged_in_user_id:
-                logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+                logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
 
                 # If Searched Profile Belongs To The Logged In User
                 if logged_in_user == user:
@@ -3799,9 +3802,9 @@ def get_profile(request, username):
 
                     # Gets The Unread Messages Amount
                     unread_messages_amount = Chat.objects.filter(
-                        sender=user,
-                        receiver=logged_in_user,
-                        is_read=False
+                        sender = user,
+                        receiver = logged_in_user,
+                        is_read = False
                     ).count()
 
                     user_data["unread_messages_amount"] = unread_messages_amount # Stores The Amount Of The Unread Messages
@@ -3841,13 +3844,20 @@ def remove_follower(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        removed_follower_id = request.data.get("removed_follower_id") # Gets The Removed Follower ID
-        removed_follower = Users.objects.get(id=removed_follower_id) # Gets The Removed Follower
+        removed_follower_id = request.data.get("removed_follower_id", None) # Gets The Removed Follower ID
+        removed_follower = Users.objects.get(id = removed_follower_id) # Gets The Removed Follower
+
+        # If The Information Are Missing
+        if not removed_follower_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre odstránenie sledovateľa chýbajú potrebné údaje."))
+            }, status=400)
 
         # Removes The Follower
         FollowRelation.objects.filter(
-            from_user=removed_follower,
-            to_user=logged_in_user
+            from_user = removed_follower,
+            to_user = logged_in_user
         ).delete()
 
         return Response({
@@ -3883,9 +3893,9 @@ def get_password_reset_code(request):
 
         # Gets The User
         user = Users.objects.get(
-            Q(username__iexact=identifier) | 
-            Q(username__iexact=clean_username) | 
-            Q(email_address__iexact=identifier)
+            Q(username__iexact = identifier) | 
+            Q(username__iexact = clean_username) | 
+            Q(email_address__iexact = identifier)
         )
 
         # # Sends The Mail
@@ -3922,8 +3932,15 @@ def password_reset(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        password_reset_code = request.data.get("password_reset_code") # Gets The Password Reset Code
-        new_password = request.data.get("new_password") # Gets The New Password
+        password_reset_code = request.data.get("password_reset_code", None) # Gets The Password Reset Code
+        new_password = request.data.get("new_password", None) # Gets The New Password
+
+        # If The Information Are Missing
+        if not password_reset_code or not new_password:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
+            }, status=400)
 
         # if password_reset_code == logged_in_user.password_reset_code:
         #     if len(new_password) < 8:
@@ -3961,13 +3978,20 @@ def approve_follow_request(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        follow_request_id = request.data.get("follow_request_id") # Gets The Follow Request ID
+        follow_request_id = request.data.get("follow_request_id", None) # Gets The Follow Request ID
+
+        # If The Information Are Missing
+        if not follow_request_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre potvrdenie žiadosti o sledovanie chýbajú potrebné údaje."))
+            }, status=400)
 
         # Gets The Follow Request
         follow_request = FollowRelation.objects.filter(
-            id=follow_request_id,
-            to_user=logged_in_user, 
-            status="pending"
+            id = follow_request_id,
+            to_user = logged_in_user, 
+            status = "pending"
         ).first()
 
         follow_request.status = "accepted" # Accepts The Follow Request
@@ -3994,13 +4018,20 @@ def reject_follow_request(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        follow_request_id = request.data.get("follow_request_id") # Gets The Follow Request ID
+        follow_request_id = request.data.get("follow_request_id", None) # Gets The Follow Request ID
+
+        # If The Information Are Missing
+        if not follow_request_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zamietnutie žiadosti o sledovanie chýbajú potrebné údaje."))
+            }, status=400)
 
         # Gets The Follow Request
         follow_request = FollowRelation.objects.filter(
-            id=follow_request_id,
-            to_user=logged_in_user, 
-            status="pending"
+            id = follow_request_id,
+            to_user = logged_in_user, 
+            status = "pending"
         ).first()
 
         follow_request.delete() # Removes The Follow Request
@@ -4067,45 +4098,41 @@ def edit_account(request):
                 "message": str(_("Účet %(username)s bol odstránený") % {"username": logged_in_user.username})
             }, status=200)
 
-        if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days=7):
+        if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
             profile_picture_file = request.FILES.get("selected_profile_picture")
 
             if profile_picture_file:
-                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
 
-                current_profile_picture_name = logged_in_user.profile_picture_name
+                if profile_picture_name != "" and profile_picture_name != None:
+                    profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{logged_in_user.profile_picture_name}") # Gets The Profile Picture Path
 
-                if current_profile_picture_name != "" and current_profile_picture_name != None:
-                    old_file_path = os.path.join(path, current_profile_picture_name) # Gets The Old File Path
+                    if os.path.exists(profile_picture_path):
+                        os.remove(profile_picture_path) # Removes The Profile Picture File
 
-                    if os.path.exists(old_file_path):
-                        os.remove(old_file_path) # Removes The Old Profile Picture
+                new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + Path(profile_picture_file.name).suffix}" # Creates The New Profile Picture Name
 
-                new_image_name = f"IMG-{secrets.token_hex(nbytes=10) + Path(profile_picture_file.name).suffix}"
+                profile_picture_location = FileSystemStorage(location = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")) # Gets The Profile Picture Location
+                profile_picture_location.save(new_profile_picture_name, profile_picture_file) # Saves The Profile Picture
 
-                image_save_location = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}"))
-                image_save_location.save(new_image_name, profile_picture_file)
-
-                logged_in_user.profile_picture_name = new_image_name
-
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.profile_picture_name = new_profile_picture_name # Updates The Profile Picture Name
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if delete_profile_picture:
-                current_profile_picture_name = logged_in_user.profile_picture_name
-                path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")
+                profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
+                profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{logged_in_user.profile_picture_name}") # Gets The Profile Picture Path
 
-                if os.path.exists(f"{path}/{current_profile_picture_name}"): 
-                    os.remove(f"{path}/{current_profile_picture_name}")
+                if os.path.exists(profile_picture_path): 
+                    os.remove(profile_picture_path) # Removes The Profile Picture File
 
-                logged_in_user.profile_picture_name = ""
-
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.profile_picture_name = "" # Updates The Profile Picture Name
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if logged_in_user.data_saving_mode != data_saving_mode:
-                logged_in_user.data_saving_mode = data_saving_mode
+                logged_in_user.data_saving_mode = data_saving_mode # Updates The Data Saving Mode
 
             if logged_in_user.private_account != private_account:
-                was_private = logged_in_user.private_account # Checks If The Account Was Private Before Change
+                was_private = logged_in_user.private_account # Checks If The Account Was Private Before The Change
 
                 logged_in_user.private_account = private_account # Switch The Account To Private Or Public
 
@@ -4113,31 +4140,31 @@ def edit_account(request):
                 if was_private and not private_account:
                     # Updates All Follow Requests From Pending To Accepted
                     FollowRelation.objects.filter(
-                        to_user=logged_in_user,
-                        status="pending"
-                    ).update(status="accepted")
+                        to_user = logged_in_user,
+                        status = "pending"
+                    ).update(status = "accepted")
 
             if logged_in_user.bio != bio and bio != "":
-                logged_in_user.bio = bio
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.bio = bio # Updates The Bio
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if logged_in_user.first_name != first_name and first_name != "":
-                logged_in_user.first_name = first_name
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.first_name = first_name # Updates The First Name
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if logged_in_user.last_name != last_name and last_name != "":
-                logged_in_user.last_name = last_name
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.last_name = last_name # Updates The Last Name
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if logged_in_user.email_address != email_address and email_address != "":
-                logged_in_user.email_address = email_address
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.email_address = email_address # Updates The E-mail Address
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
             if logged_in_user.phone_number != phone_number and phone_number != "":
-                logged_in_user.phone_number = phone_number
-                logged_in_user.last_edit = timezone.now()
+                logged_in_user.phone_number = phone_number # Updates The Phone Number
+                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
-            logged_in_user.save() # Updates The Logged In User
+            logged_in_user.save() # Saves The Updated Logged In User
 
             bio_links_json = bio_links # Gets The User's Bio Links In JSON Format
 
@@ -4145,7 +4172,7 @@ def edit_account(request):
                 bio_links_list = json.loads(bio_links_json) if bio_links_json else [] # Converts The Bio Links To The Python List Format
 
                 with transaction.atomic():
-                    BioLinks.objects.filter(user=logged_in_user).delete() # Deletes All Previous User's Bio Links
+                    BioLinks.objects.filter(user = logged_in_user).delete() # Deletes All Previous User's Bio Links
 
                     new_bio_links = [] # Stores The New Bio Links
                     
@@ -4154,11 +4181,12 @@ def edit_account(request):
                         one_url = one_url.strip()
                         if not one_url:
                             continue
-
+                        
+                        # Appends The New Bio Link To The New Bio Links
                         new_bio_links.append(
                             BioLinks(
-                                user=logged_in_user,
-                                url=one_url
+                                user = logged_in_user,
+                                url = one_url
                             )
                         )
 
@@ -4201,15 +4229,23 @@ def report_user(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        reported_user_id = request.data.get("reported_user_id") # Gets The Reported User ID
-        reason = request.data.get("reason") # Gets The Reason
-        reported_user = Users.objects.get(id=reported_user_id) # Gets The Reported User
-        has_report = reported_user.reports_received.filter(reporting_user_id=logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
+        reported_user_id = request.data.get("reported_user_id", None) # Gets The Reported User ID
+        reason = request.data.get("reason", None) # Gets The Reason
+
+        # If The Information Are Missing
+        if not reported_user_id or not reason:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre nahlásenie používateľa chýbajú potrebné údaje."))
+            }, status=400)
+
+        reported_user = Users.objects.get(id = reported_user_id) # Gets The Reported User
+        has_report = reported_user.reports_received.filter(reporting_user_id = logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
 
         # Stores The Reported Comment
         UsersReport.objects.update_or_create(
-            reported_user_id=reported_user_id,
-            reporting_user_id=logged_in_user_id,
+            reported_user_id = reported_user_id,
+            reporting_user_id = logged_in_user_id,
             defaults={"reason": reason} # Reason Can Be Updated
         )
 
@@ -4261,10 +4297,18 @@ def suspend_user(request):
         logged_in_user = request.user # Gets The Logged In User
 
         if logged_in_user.role == "developer" or logged_in_user.role == "admin":
-            user_id = request.data.get("user_id") # Gets The Suspended User ID
-            user = Users.objects.get(id=user_id) # Gets The User
+            user_id = request.data.get("user_id", None) # Gets The Suspended User ID
 
-            user.account_status = "suspended" # Changes Account Status
+            # If The Information Are Missing
+            if not user_id:
+                return Response({
+                    "success": False, 
+                    "message": str(_("Pre obmedzenie používateľa chýbajú potrebné údaje."))
+                }, status=400)
+
+            user = Users.objects.get(id = user_id) # Gets The User
+
+            user.account_status = "suspended" # Updates The Account Status
             user.suspension_time = timezone.now() # Updates The Suspension Time
             user.save() # Saves The Updated User
 
@@ -4307,17 +4351,17 @@ def get_chat(request, username):
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
 
         # Checks If The Profile With Searched Username Exists
-        if Users.objects.filter(username=username).exists():
+        if Users.objects.filter(username = username).exists():
             receiver = Users.objects.filter(
-                username=username
+                username = username
             ).select_related(
                 "subscription"
             ).annotate(
                 # Creates The Is Muted Column
-                is_muted=Exists(
+                is_muted = Exists(
                     MutedUser.objects.filter(
-                        user=logged_in_user,
-                        muted_user=OuterRef("pk")
+                        user = logged_in_user,
+                        muted_user = OuterRef("pk")
                     )
                 )
             ).first() # Gets The User By Username (Receiver)
@@ -4343,8 +4387,8 @@ def get_chat(request, username):
 
             # Gets All Sender's And Receiver's Chats
             chats = Chat.objects.filter(
-                Q(sender=logged_in_user) & Q(receiver=receiver) | 
-                Q(sender=receiver)
+                Q(sender = logged_in_user) & Q(receiver = receiver) | 
+                Q(sender = receiver)
             ).select_related(
                 "sender__subscription",
                 "post",
@@ -4353,13 +4397,13 @@ def get_chat(request, username):
             ).annotate(
                 # Creates The Is Sender Column (True If The Logged In User Is The Sender)
                 is_sender=Case(
-                    When(sender=logged_in_user, then=True),
-                    default=False,
-                    output_field=BooleanField()
+                    When(sender = logged_in_user, then = True),
+                    default = False,
+                    output_field = BooleanField()
                 ),
 
-                post_comments_amount=Count("post__comments", filter=~Q(post__comments__status="hidden"), distinct=True),
-                post_likes_amount=Count("post__likes", distinct=True)
+                post_comments_amount = Count("post__comments", filter = ~Q(post__comments__status = "hidden"), distinct = True),
+                post_likes_amount = Count("post__likes", distinct = True)
             ).prefetch_related(
                 "message_reactions__user"
             ).order_by(
@@ -4498,28 +4542,21 @@ def get_chat(request, username):
 @permission_classes([AllowAny])
 def get_articles(request):
     try:
-        # Gets All Articles From DB
         articles = cache.get("cached_articles") # Gets All Cached Reviews
-        # articles = Articles.objects.all() # Queryset
 
         # Articles Fallback (If Cache Is Clear)
         if articles is None:
             # Gets All Articles
             articles = list(
                 Articles.objects.all().annotate(
-                    average_rating=Avg("articlerating__rating"),
+                    average_rating = Avg("articlerating__rating"),
                 ).order_by(
-                    F("html_filename").desc(nulls_last=True), 
+                    F("html_filename").desc(nulls_last = True), 
                     "-creation_time"
                 )
             )
 
-            cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
-
-            print("Getting Articles Data From The DB.") # Test Print
-
-        else:
-            print("Getting Articles Data From The Redis Cache.") # Test Print
+            cache.set("cached_articles", articles, timeout = settings.CACHE_TTL) # Caches Articles
 
         no_articles = True # Default Value That Says That There Are No Articles In The Database
 
@@ -4532,11 +4569,9 @@ def get_articles(request):
                 # Redis List
                 articles = sorted(
                     articles, 
-                    key=lambda one_article: one_article.creation_time,
-                    reverse=True
+                    key = lambda one_article: one_article.creation_time,
+                    reverse = True
                 )
-
-                # articles.order_by("-creation_time") # Queryset
 
             else:
                 # Redis List
@@ -4547,22 +4582,18 @@ def get_articles(request):
 
                 articles = sorted(
                     filtered_articles,
-                    key=lambda one_article: one_article.creation_time,
-                    reverse=True
+                    key = lambda one_article: one_article.creation_time,
+                    reverse = True
                 )
-
-                # articles = articles.filter(categories__contains=[category]).order_by("-creation_time") # Queryset
 
         if sort == "popular":
             if category == "all":
                 # Redis List
                 articles = sorted(
                     articles, 
-                    key=lambda one_article: one_article.visitors,
-                    reverse=True
+                    key = lambda one_article: one_article.visitors,
+                    reverse = True
                 )
-
-                # articles = articles.order_by("-visitors") # Queryset
 
             else:
                 # Redis List
@@ -4573,22 +4604,18 @@ def get_articles(request):
 
                 articles = sorted(
                     filtered_articles,
-                    key=lambda one_article: one_article.visitors,
-                    reverse=True
+                    key = lambda one_article: one_article.visitors,
+                    reverse = True
                 )
-
-                # articles = articles.filter(categories__contains=[category]).order_by("-visitors") # Queryset
 
         elif sort == "best":
             if category == "all":
                 # Redis List
                 articles = sorted(
                     articles, 
-                    key=lambda one_article: one_article.rating,
-                    reverse=True
+                    key = lambda one_article: one_article.rating,
+                    reverse = True
                 )
-
-                # articles = articles.order_by("-rating") # Queryset
 
             else:
                 # Redis List
@@ -4599,21 +4626,17 @@ def get_articles(request):
 
                 articles = sorted(
                     filtered_articles,
-                    key=lambda one_article: one_article.rating,
-                    reverse=True
+                    key = lambda one_article: one_article.rating,
+                    reverse = True
                 )
-
-                # articles = articles.filter(categories__contains=[category]).order_by("-rating") # Queryset
 
         elif sort == "a-z":
             if category == "all":
                 # Redis List
                 articles = sorted(
                     articles, 
-                    key=lambda one_article: one_article.title
+                    key = lambda one_article: one_article.title
                 )
-
-                # articles = articles.order_by("title") # Queryset
             
             else:
                 # Redis List
@@ -4624,21 +4647,17 @@ def get_articles(request):
 
                 articles = sorted(
                     filtered_articles,
-                    key=lambda one_article: one_article.title
+                    key = lambda one_article: one_article.title
                 )
-
-                # articles = articles.filter(categories__contains=[category]).order_by("title") # Queryset
 
         elif sort == "z-a":
             if category == "all":
                 # Redis List
                 articles = sorted(
                     articles, 
-                    key=lambda one_article: one_article.title,
-                    reverse=True
+                    key = lambda one_article: one_article.title,
+                    reverse = True
                 )
-
-                # articles = articles.order_by("-title") # Queryset
             
             else:
                 # Redis List
@@ -4649,20 +4668,16 @@ def get_articles(request):
 
                 articles = sorted(
                     filtered_articles,
-                    key=lambda one_article: one_article.title,
-                    reverse=True
+                    key = lambda one_article: one_article.title,
+                    reverse = True
                 )
 
-                # articles = articles.filter(categories__contains=[category]).order_by("-title") # Queryset
-
-        articles.sort(key=lambda x: x.html_filename in (None, "")) # Completed Articles Are On The First Place
+        articles.sort(key = lambda x: x.html_filename in (None, "")) # Completed Articles Are On The First Place
 
         # Number Of All Articles
         articles_amount = len(articles) # Redis List
-        # articles_amount = articles.count() # Queryset
 
         # Checks If There Are Any Articles In The Database
-        # if(articles.exists()): # Queryset
         if articles is not None and len(articles) > 0:
             no_articles = False
 
@@ -4794,9 +4809,16 @@ def add_article_comment(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        article_id = request.data.get("article_id") # Gets The Article ID
-        comment = request.data.get("comment") # Gets The Comment
-        parent_id = request.data.get("parent_id") # Gets The Parent ID
+        article_id = request.data.get("article_id", None) # Gets The Article ID
+        comment = request.data.get("comment", None) # Gets The Comment
+        parent_id = request.data.get("parent_id", None) # Gets The Parent ID
+
+        # If The Information Are Missing
+        if not article_id or not comment:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre pridanie komentára chýbajú potrebné údaje."))
+            }, status=400)
 
         new_comment = ArticleForum(
             article_id = article_id,
@@ -4805,7 +4827,7 @@ def add_article_comment(request):
             parent_id = parent_id
         )
 
-        new_comment.save()
+        new_comment.save() # Saves The New Comment
 
         # Creates Valid Format Of Comment For JSON Response
         comment = {
@@ -4849,16 +4871,23 @@ def toggle_article_comment_like(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        comment_id = request.data.get("comment_id") # Gets The Comment ID
-        comment = ArticleForum.objects.get(id=int(comment_id)) # Gets The Comment
+        comment_id = request.data.get("comment_id", None) # Gets The Comment ID
 
-        has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+        # If The Information Are Missing
+        if not comment_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu označenia páči sa mi to chýbajú potrebné údaje."))
+            }, status=400)
+
+        comment = ArticleForum.objects.get(id = int(comment_id)) # Gets The Comment
+        has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
 
         # Like
         if not has_like:
             comment.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Comment
             comment.likes = F("likes") + 1 # Increases The Likes Counter
-            comment.save() # Updates The Comment
+            comment.save() # Saves The Updated Comment
 
             return Response({
                 "success": True, 
@@ -4869,7 +4898,7 @@ def toggle_article_comment_like(request):
         else:
             comment.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Comment
             comment.likes = F("likes") - 1 # Decreases The Likes Counter
-            comment.save() # Updates The Comment
+            comment.save() # Saves The Updated Comment
 
             return Response({
                 "success": True, 
@@ -4892,8 +4921,16 @@ def delete_article_comment(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        comment_id = request.data.get("comment_id") # Gets The Comment ID
-        comment = ArticleForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+        comment_id = request.data.get("comment_id", None) # Gets The Comment ID
+
+        # If The Information Are Missing
+        if not comment_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre odstránenie komentáru chýbajú potrebné údaje."))
+            }, status=400)
+
+        comment = ArticleForum.objects.get(id = comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id = comment_id, user_id = logged_in_user_id) # Gets The Comment
 
         if comment:
             comment.delete() # Deletes The Comment
@@ -4927,38 +4964,38 @@ def get_article(request, theme):
 
         # Gets The Article By URL Address With All Related Data
         article = Articles.objects.filter(
-            link=theme
+            link = theme
         ).annotate(
-            average_rating=Avg("articlerating__rating"),
+            average_rating = Avg("articlerating__rating"),
 
             # Creates The Given Article Rating Column Of Logged In User
-            given_rating=Subquery(
+            given_rating = Subquery(
                 ArticleRating.objects.filter(
-                    article_id=OuterRef("pk"),
-                    user_id=logged_in_user_id
+                    article_id = OuterRef("pk"),
+                    user_id = logged_in_user_id
                 ).values("rating")[:1]
             ),
 
-            comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True),
+            comments_amount = Count("comments", filter=~Q(comments__status = "hidden"), distinct = True),
         ).prefetch_related(
             Prefetch(
                 "comments",
-                queryset=ArticleForum.objects.exclude(
-                    status="hidden"
+                queryset = ArticleForum.objects.exclude(
+                    status = "hidden"
                 ).annotate(
                     # Creates The Has Like Column (True If The User Has Already Liked The Comment)
-                    has_like=Exists(
+                    has_like = Exists(
                         ArticleForum.likes_from_users.through.objects.filter(
-                            articleforum_id=OuterRef("pk"),
-                            users_id=logged_in_user_id
+                            articleforum_id = OuterRef("pk"),
+                            users_id = logged_in_user_id
                         )
                     )
                 ).annotate(
                     # Creates The Has Report Column (True If The User Has Already Reported The Comment)
-                    has_report=Exists(
+                    has_report = Exists(
                         ArticleForum.reports_from_users.through.objects.filter(
-                            articleforum_id=OuterRef("pk"),
-                            user_id=logged_in_user_id
+                            articleforum_id = OuterRef("pk"),
+                            user_id = logged_in_user_id
                         )
                     )
                 ).select_related(
@@ -4966,7 +5003,7 @@ def get_article(request, theme):
                 ).order_by(
                     "-creation_time"
                 ),
-                to_attr="visible_comments"
+                to_attr = "visible_comments"
             )
         ).first()
 
@@ -4974,15 +5011,6 @@ def get_article(request, theme):
 
         if article != None:
             not_found = False
-
-            # # Splits Comments Into Parent And Child Comments
-            # comments_by_parent = defaultdict(list)
-            
-            # for one_comment in article.visible_comments:
-            #     comments_by_parent[one_comment.parent_id].append(one_comment)
-            
-            # article.nested_comments = dict(comments_by_parent)
-            # article.root_comments = comments_by_parent[None]
 
             # Creates Valid Format Of Article For JSON Response
             articles_data = {
@@ -5009,11 +5037,11 @@ def get_article(request, theme):
             device_id = request.headers.get("X-Device-ID") # Gets The Device ID
 
             if device_id:
-                has_visited = ArticleVisitor.objects.filter(article=article, device_id=device_id).exists() # Checks If The User Has Already Visited An Article
+                has_visited = ArticleVisitor.objects.filter(article = article, device_id = device_id).exists() # Checks If The User Has Already Visited An Article
                 
                 if not has_visited:
-                    ArticleVisitor.objects.create(article=article, device_id=device_id)
-                    Articles.objects.filter(id=article.id).update(visitors=F("visitors") + 1) # Adds 1 Visitor to The Article's Unique Visitors
+                    ArticleVisitor.objects.create(article = article, device_id = device_id) # Creates The New Article Visitor
+                    Articles.objects.filter(id = article.id).update(visitors = F("visitors") + 1) # Adds 1 Visitor to The Article's Unique Visitors
 
         return Response({
             "success": True, 
