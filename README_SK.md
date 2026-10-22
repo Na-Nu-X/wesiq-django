@@ -1881,6 +1881,56 @@ Tento protokol poskytuje overiteľné potvrdenie o dokončených asynchrónnych 
 
 Záznamy obsahujú podrobné metriky týkajúce sa výsledku úlohy. Zaznamenáva napríklad presný počet trvalo pozastavených účtov, ktoré boli úspešne vymazané z databázy počas plánovaného cyklu čistenia databázy, čím zaručuje úplnú transparentnosť automatizovanej správy dát.
 
+### 5.4. Sledovanie srdcovej frekvencie / tepu (BPM) (Len pre natívnu aplikáciu)
+
+- **Monitorovanie v reálnom čase počas aktivít**: Počas prebiehajúcej aktivity môžu používatelia sledovať svoju srdcovú frekvenciu v reálnom čase pripojením kompatibilného externého monitora alebo inteligentných hodiniek. Aplikácia získava tieto dáta prostredníctvom dvoch primárnych metód: priamou integráciou cez Bluetooth alebo cez natívne zdravotné frameworky operačného systému.
+
+- **Priame BLE pripojenie**: Aplikácia podporuje priame párovanie s monitormi srdcovej frekvencie, ktoré využívajú technológiu **Bluetooth Low Energy (BLE)**. Systém sa prihlási na odber štandardizovanej služby BLE Heart Rate Service (UUID: 0x180D) a číta charakteristiku Heart Rate Measurement **(UUID: 0x2A37)**, čím zabezpečuje nepretržitý tok aktuálnych dát o BPM (počet úderov za minútu).
+
+- **Integrácia s natívnymi ekosystémami OS**: Alternatívne môže aplikácia požiadať používateľa o povolenie na čítanie metrík srdcovej frekvencie priamo z natívneho zdravotného ekosystému daného zariadenia. Táto integrácia využíva framework Apple **HealthKit** výlučne na zariadeniach so systémom iOS a **Health Connect** výlučne na zariadeniach so systémom Android.
+
+### 5.5. Stránkovanie chatu / Paginator (Natívna aplikácia)
+
+- **Optimalizácia na strane servera**: Na zníženie zaťaženia servera a minimalizáciu spotreby pamäte bol framework Django Paginator integrovaný priamo do infraštruktúry chatu. To zabezpečuje, že historické správy sú doručované v štruktúrovaných, spravovateľných dávkach namiesto toho, aby sa do aktívnej pamäte naraz sypali celé histórie konverzácií.
+
+- **Spúšťanie riadené klientom (Integrácia FlatList)**: Na strane klienta v React Native je cyklus stránkovania poháňaný komponentom FlatList, ktorý je optimalizovaný pre výkon. Keď používateľ roluje v zornom poli chatu, spúšťače nekonečného rolovania (infinite-scroll) odosielajú asynchrónne požiadavky na vyžiadanie starších balíkov správ na základe dopytu.
+
+- **Dynamická veľkosť dávok a integrácia režimu úspory dát**: Stránkovací engine prispôsobuje objem svojich dávok na základe aktívnych konfigurácií klienta:
+
+- **Predvolený stav**: Načíta štandardné dávky 20 správ na jednu požiadavku, čím sa dosahuje rovnováha medzi plynulým používateľským zážitkom a sieťovou efektivitou.
+
+- **Režim úspory dát**: Dynamicky znižuje objem dávky na 10 správ na jednu požiadavku, keď je aktívny celosystémový profil úspory dát, čím sa výrazne znižuje spotreba mobilných dát a réžia vykresľovania modelu DOM.
+
+### 5.6. Nahrávanie príloh v chate (Natívna aplikácia)
+
+- **Multimodálny príjem príloh**: Infraštruktúra chatu podporuje zdieľanie multimédií a dokumentov, čo umožňuje používateľom nahrávať rôzne typy súborov priamo v aktívnych četovacích miestnostiach. Podporované formáty zahŕňajú štandardné rastrové obrázky, video súbory a štruktúrované dokumenty (napr. PDF, DOCX, TXT atď.).
+
+- **Dvojfázová overovacia schéma (Validation Pipeline)**: Spracovanie súborov je rozdelené medzi proaktívne kontroly na strane klienta a prísne bezpečnostné audity na strane servera:
+
+    - **Predbežné spracovanie na strane klienta**: React Native front-end vykonáva predbežné kontroly veľkosti výberu a integrity lokálnych súborov pred odoslaním dátového balíka (payload).
+
+    - **Bezpečnostná kontrola a kontrola metadát na strane servera**: Backend vykonáva hĺbkové inšpekčné rutiny na overenie skutočných typov súborov (analýzou binárnych hlavičiek / magic numbers namiesto spoliehania sa výhradne na prípony súborov), presadzuje prísne obmedzenia veľkosti a vypočítava štrukturálne metriky, ako je trvanie videa.
+
+- **Kvóty a optimalizácia médií závislé od úrovne**: Parametre príloh sa dynamicky škálujú na základe úrovne predplatného používateľa:
+
+    - **Kapacitné limity**: Predplatiteľom sú priradené podstatne vyššie limity maximálnej veľkosti súborov a predĺžené stropy pre dĺžku videa v porovnaní s používateľmi s bezplatným plánom.
+
+    - **Alokácia vernosti a kompresie**: V súlade s mediálnou procesnou schémou platformy (media pipeline) prílohy nahrané predplatiteľmi obchádzajú agresívne zmenšovanie rozlíšenia a sú smerované cez optimalizované konfigurácie procesov Celery s nižšou intenzitou kompresie, aby sa zachovala maximálna vizuálna vernosť.
+
+### 5.7. Systém upozornení (Natívna aplikácia)
+
+- **Push upozornenia riadené udalosťami (Event-Driven)**: Aplikácia obsahuje robustný subsystém upozornení navrhnutý tak, aby okamžite upozornil používateľov pri prijatí nových správ alebo sociálnych interakcií v rámci platformy.
+
+- **Rozsah spúšťačov a typy obsahu**: Upozornenia sa automaticky odosielajú naprieč rôznymi vektormi aktivity, vrátane:
+
+    - Prichádzajúcich textových správ a komunikácie v chate.
+
+    - Zdieľaných multimediálnych súborov, ako sú obrázky, videá alebo štruktúrované dokumenty (PDF, DOCX, TXT).
+
+    - Externých zdieľaní, ktoré sa spúšťajú vždy, keď iný používateľ zdieľa príspevok priamo do aktívneho kanála príjemcu.
+
+- **Architektúra spracovania na backende (consumers.py)**: Keď používateľ odošle novú správu, dátové zaťaženie (payload) sa okamžite odošle na backend, kde súbor smerovania websocketov consumers.py v Django Channels túto udalosť spracuje. Systém spracuje transakciu, riadi synchronizáciu stavu a odošle udalosť späť zamýšľanému príjemcovi v štandardizovanom formáte upozornenia.
+
 ## 6. Replaced Features
 
 ### 6.1. Optimalizovaná architektúra streamovania videa (HTTP 206)
@@ -1898,3 +1948,17 @@ Na zabezpečenie plynulého prehrávania videa bez sekania (bufferovania) naprie
 - **Vynucovanie HTTP 206 (Čiastočný obsah)**: Štandardné poskytovanie súborov často vedie k odpovediam HTTP 200 (OK), čo núti klienta stiahnuť celý súbor sekvenčne. Striktným vynucovaním stavových kódov HTTP 206 (Partial Content) backend umožňuje prehliadaču streamovať video v dynamických častiach (chunks).
 
 - **Stabilita prehrávania**: Táto architektúra drasticky zlepšuje stabilitu videa, minimalizuje počiatočné časy načítania a – čo je kritické – umožňuje správne fungovanie vlastného ovládača časovej osi videa (Sekcia 3.46). Používatelia môžu plynulo preskakovať dopredu (seek) na nenačítané úseky videa bez toho, aby museli čakať na stiahnutie predchádzajúcich dát.
+
+### 6.2. Migrácia z knižnice expo-av na expo-video (Natívna aplikácia)
+
+Architektonický vývoj a motivácia: Počas počiatočných fáz vývoja aplikácia spoliehala na staršiu knižnicu expo-av na zabezpečenie prehrávania médií. Avšak kvôli občasným nekonzistenciám medzi platformami, obmedzeniam dekódovania na hardvérovej úrovni a ojedinelým zlyhaniam prehrávania naprieč rôznymi konfiguráciami mobilných zariadení bola aplikácia systematicky migrovaná na moderný, vysoko výkonný framework expo-video.
+
+- **Funkčná parita a syntaktické úpravy**: Hoci obe knižnice slúžia na hlavný účel vykresľovania a ovládania video streamov, expo-video zavádza čistejšiu, modernizovanú štruktúru API. Aj keď logická vrstva na vyššej úrovni zostáva konzistentná, základná syntax bola plne refaktorovaná tak, aby využívala moderné väzby (bindings) pre React Native a optimalizované háčiky životného cyklu (lifecycle hooks).
+
+- **Kľúčové výhody pre výkon**:
+
+- **Odstránenie nekompatibility zariadení**: Rieši hardvérové úzke miesta špecifické pre danú platformu, kde expo-av často zlyhávalo alebo sa stávalo nestabilným.
+
+- **Zlepšená efektivita vykresľovania**: Znižuje zaťaženie vlákna používateľského rozhrania (UI thread) a zabezpečuje plynulejšiu prezentáciu videa, čím priamo dopĺňa procesy streamovania videa a optimalizácie platformy.
+
+- **Dlhodobá udržateľnosť ekosystému**: Zlaďuje aplikáciu so súčasnými štandardmi vývoja v Expo, čo zaručuje dlhodobú podporu, lepšie natívne dekódovanie a schopnosti spracovania médií pripravené do budúcnosti.
