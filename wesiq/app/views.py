@@ -74,7 +74,7 @@ def load_profanities():
         
         if file_path.is_file():
             try:
-                with open(file_path, "r", encoding="utf-8") as file:
+                with open(file_path, "r", encoding = "utf-8") as file:
                     for one_line in file:
                         cleaned_word = one_line.strip().lower() # Gets The Cleaned Word
 
@@ -91,7 +91,7 @@ PROFANITIES = load_profanities() # Gets The Profanities
 # Function For Load The Forbidden Usernames
 def load_forbidden_usernames():
     try:
-        with open(settings.BASE_DIR / "data" / "forbidden_usernames.txt", "r", encoding="utf-8") as file:
+        with open(settings.BASE_DIR / "data" / "forbidden_usernames.txt", "r", encoding = "utf-8") as file:
             return {one_line.strip().lower() for one_line in file if one_line.strip()}
 
     except FileNotFoundError:
@@ -118,7 +118,7 @@ def changeLanguage(request):
         # Stores Language To The User's DB
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Get Logged In User ID From Session
-            user = Users.objects.get(id=logged_in_user_id) # Get Logged In User From DB
+            user = Users.objects.get(id = logged_in_user_id) # Get Logged In User From DB
 
             user.language = language_code
             user.save()
@@ -127,25 +127,25 @@ def changeLanguage(request):
 
 # Function For Capture The Error
 def captureError(message):
-    with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/error.log", mode = "a", encoding = "utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 # Function For Capture The Login
 def captureLogin(message):
-    with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/login.log", mode = "a", encoding = "utf-8") as file:
         # timezone.LocalTimezone
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 # Function For Get The Client IP
 def getClientIp(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0].strip()
 
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.META.get("REMOTE_ADDR")
 
     return ip
 
@@ -170,7 +170,7 @@ def getClientLocation(ip):
         return _("Služba je nedostupná.")
 
 # Generates Random 6-Digit Code
-def generateCode(length=6, letters=False):
+def generateCode(length = 6, letters = False):
     code = ""
 
     if letters:
@@ -190,7 +190,14 @@ def generateCode(length=6, letters=False):
     return code
 
 # Function For Send The Mail
-def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+def sendMail(
+    user, 
+    subject, 
+    text_content, 
+    html_content, 
+    html_content_end, 
+    html_content_middle = ""
+):
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
@@ -229,8 +236,8 @@ def createPaymentIntent(request):
             logged_in_user_id = request.session.get("logged_in_user_id") if "logged_in_user_id" in request.session else None
 
             intent = stripe.PaymentIntent.create(
-                amount=amount,
-                currency="eur",
+                amount = amount,
+                currency = "eur",
 
                 metadata={
                     "integration_check": "accept_a_payment",
@@ -240,17 +247,17 @@ def createPaymentIntent(request):
 
             # Creates The Transaction
             Transactions.objects.create(
-                user_id=logged_in_user_id,
-                stripe_intent_id=intent.id,
-                cardholder_name=name,
-                amount=amount / 100,
-                status="pending",
-                title="Donation"
+                user_id = logged_in_user_id,
+                stripe_intent_id = intent.id,
+                cardholder_name = name,
+                amount = amount / 100,
+                status = "pending",
+                title = "Donation"
             )
 
             return JsonResponse({
                 "client_secret": intent.client_secret
-            }, status=200)
+            }, status = 200)
 
         except Exception as e:
             captureError(f"An error occurred while processing the payment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -258,14 +265,14 @@ def createPaymentIntent(request):
             return JsonResponse({
                 "success": False, 
                 "message": _("Pri spracovávaní platby došlo k chybe.")
-            }, status=400)
+            }, status = 400)
             
     captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     return JsonResponse({
         "success": False, 
         "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")
-    }, status=405)
+    }, status = 405)
 
 def successSubscription(request):
     messages.add_message(request, messages.SUCCESS, _("Ďakujeme za kúpu predplatného!"))
@@ -295,22 +302,22 @@ def createSubscriptionIntent(request):
                     return JsonResponse({
                         "success": False, 
                         "message": _("Zvolený neplatný plán predplatného.")
-                    }, status=400)
+                    }, status = 400)
 
                 intent = stripe.checkout.Session.create(
-                    payment_method_types=["card"],
+                    payment_method_types = ["card"],
 
-                    line_items=[
+                    line_items = [
                         {
                             "price": selected_price_id,
                             "quantity": 1,
                         },
                     ],
 
-                    mode="subscription",
+                    mode = "subscription",
                     
-                    success_url=request.build_absolute_uri(reverse("success_subscription_url")),
-                    cancel_url=request.build_absolute_uri(reverse("homepage_url")),
+                    success_url = request.build_absolute_uri(reverse("success_subscription_url")),
+                    cancel_url = request.build_absolute_uri(reverse("homepage_url")),
 
                     metadata={
                         "plan": plan,
@@ -320,7 +327,7 @@ def createSubscriptionIntent(request):
 
                 return JsonResponse({
                     "url": intent.url
-                }, status=200)
+                }, status = 200)
 
             except Exception as e:
                 captureError(f"An error occurred while processing the payment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -328,21 +335,21 @@ def createSubscriptionIntent(request):
                 return JsonResponse({
                     "success": False, 
                     "message": _("Pri spracovávaní platby došlo k chybe.")
-                }, status=400)
+                }, status = 400)
                 
         captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
         return JsonResponse({
             "success": False, 
             "message": _("Platba sa dá uskutočniť len pomocou POST metódy.")
-        }, status=405)
+        }, status = 405)
 
     captureError(f"Subscription can only be made when user is logged in.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     return JsonResponse({
         "success": False, 
         "message": _("Platbu nie je možné vykonať bez prihlásenia.")
-    }, status=401)
+    }, status = 401)
 
 @csrf_exempt
 def stripeWebhook(request):
@@ -354,10 +361,10 @@ def stripeWebhook(request):
         event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
 
     except ValueError:
-        return HttpResponse(status=400)
+        return HttpResponse(status = 400)
 
     except stripe.error.SignatureVerificationError:
-        return HttpResponse(status=400)
+        return HttpResponse(status = 400)
 
     # Donation
     if event["type"] == "payment_intent.succeeded":
@@ -368,7 +375,7 @@ def stripeWebhook(request):
         user_id = metadata["user_id"] if "user_id" in metadata else None # Gets The User ID If Is Available
 
         try:
-            payment = Transactions.objects.get(stripe_intent_id=stripe_id) # Gets The Transaction
+            payment = Transactions.objects.get(stripe_intent_id = stripe_id) # Gets The Transaction
             payment.status = "succeeded" # Updates The Payment Status
 
             if user_id:
@@ -388,10 +395,10 @@ def stripeWebhook(request):
                 metadata = subscription_intent.metadata # Gets The Metadata
                 stripe_subscription_id = subscription_intent.subscription # Gets The Stripe Subscription ID
                 user_id = metadata["user_id"] # Gets The User ID
-                user = Users.objects.get(id=int(user_id)) # Gets The User
+                user = Users.objects.get(id = int(user_id)) # Gets The User
                 plan = metadata["plan"] # Gets The Plan (Basic / Premium)
 
-                subscription, created = Subscription.objects.get_or_create(user=user) # Updates Or Creates The Subscription
+                subscription, created = Subscription.objects.get_or_create(user = user) # Updates Or Creates The Subscription
                 subscription.stripe_subscription_id = stripe_subscription_id
                 subscription.plan = plan
                 subscription.is_active = True
@@ -400,11 +407,11 @@ def stripeWebhook(request):
 
                 # Creates The Transaction
                 Transactions.objects.create(
-                    user_id=int(user_id),
-                    stripe_intent_id=stripe_subscription_id,
-                    amount=subscription_intent.amount_total / 100,
-                    status="succeeded",
-                    title="Subscription"
+                    user_id = int(user_id),
+                    stripe_intent_id = stripe_subscription_id,
+                    amount = subscription_intent.amount_total / 100,
+                    status = "succeeded",
+                    title = "Subscription"
                 )
                 
             except Exception as e:
@@ -413,7 +420,7 @@ def stripeWebhook(request):
                 return JsonResponse({
                     "success": False, 
                     "message": _("Pri aktivácii predplatného došlo k chybe.")
-                }, status=500)
+                }, status = 500)
 
     # Subscription Cancellation
     if event["type"] == "customer.subscription.deleted":
@@ -421,7 +428,7 @@ def stripeWebhook(request):
         stripe_subscription_id = subscription_intent.id # Gets The Stripe Subscription ID
 
         try:
-            subscription = Subscription.objects.get(stripe_subscription_id=stripe_subscription_id) # Gets The Subscription
+            subscription = Subscription.objects.get(stripe_subscription_id = stripe_subscription_id) # Gets The Subscription
             subscription.is_active = False
             subscription.plan = "free"
             subscription.save() # Saves The Updated Subscription
@@ -429,7 +436,7 @@ def stripeWebhook(request):
         except Subscription.DoesNotExist:
             pass
 
-    return HttpResponse(status=200)
+    return HttpResponse(status = 200)
 
 @require_POST
 def reportReview(request):
@@ -439,14 +446,14 @@ def reportReview(request):
             report_review_data = json.loads(request.body) # Gets The Report Review Data
             review_id = report_review_data["review_id"] # Gets The Review ID
             reason = report_review_data["reason"] # Gets The Reason
-            review = Reviews.objects.get(id=review_id) # Gets The Review
-            has_report = review.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Review
+            review = Reviews.objects.get(id = review_id) # Gets The Review
+            has_report = review.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Review
 
             # Stores The Reported Review
             ReviewReport.objects.update_or_create(
-                review_id=review_id,
-                user_id=logged_in_user_id,
-                defaults={"reason": reason} # Reason Can Be Updated
+                review_id = review_id,
+                user_id = logged_in_user_id,
+                defaults = {"reason": reason} # Reason Can Be Updated
             )
 
             # Report
@@ -454,7 +461,7 @@ def reportReview(request):
                 review.reports += 1 # Increases The Reports Counter
 
                 if review.reports >= 5:
-                    review = Reviews.objects.get(id=review.review_id) # Gets The Review
+                    review = Reviews.objects.get(id = review.review_id) # Gets The Review
                     review.status = "hidden" # Hides The Review If Has More Than 10% Of Reports
 
                 review.save() # Saves The Review
@@ -462,12 +469,12 @@ def reportReview(request):
             return JsonResponse({
                 "success": True, 
                 "message": _("Nahlásenie bolo úspešne odoslané.")
-            }, status=200)
+            }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -475,16 +482,16 @@ def reportReview(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odosielaní nahlásenia došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def deleteReview(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User From The DB
             review_id = json.loads(request.body) # Gets The Review ID
-            review = Reviews.objects.get(id=review_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Reviews.objects.get(id=review_id, user_id=logged_in_user_id) # Gets The Review
+            review = Reviews.objects.get(id = review_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Reviews.objects.get(id = review_id, user_id=logged_in_user_id) # Gets The Review
 
             if review:
                 review.delete() # Deletes The Review
@@ -492,17 +499,17 @@ def deleteReview(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Recenzia bola úspešne odstránená.")
-                }, status=200)
+                }, status = 200)
 
             return JsonResponse({
                 "success": False, 
                 "message": _("Recenziu sa nepodarilo odstrániť.")
-            }, status=400)
+            }, status = 400)
 
         return JsonResponse({
             "success": False, 
             "message": _("Recenziu nie je možné odstrániť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the review.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -510,7 +517,7 @@ def deleteReview(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odstraňovaní recenzie došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def markPostAsSeen(request):
@@ -519,21 +526,23 @@ def markPostAsSeen(request):
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
             post_id = json.loads(request.body) # Gets The Post ID
 
+            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+
             # Marks The Post As Seen If Exists And Isn't Already Seen By The User
             SeenPost.objects.get_or_create(
-                user_id=logged_in_user_id,
-                post_id=post_id
+                user_id = logged_in_user_id,
+                post = post
             )
 
             return JsonResponse({
                 "success": True, 
                 "message": _('Príspevok bol úspešne označený za "už videný".')
-            }, status=200)
+            }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _('Príspevok nie je možné označiť za "už videný" bez prihlásenia.')
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -541,22 +550,22 @@ def markPostAsSeen(request):
         return JsonResponse({
             "success": False, 
             "message": _('Pri označovaní príspevku za "už videný" došlo k chybe.')
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def toggleFollow(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User From The DB
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User From The DB
 
             user_to_follow_id = json.loads(request.body)
-            user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets User To Follow From The DB
+            user_to_follow = Users.objects.get(id = user_to_follow_id) # Gets User To Follow From The DB
 
             # Checks If The Logged In User Is Already Following The User
             follow_relation = FollowRelation.objects.filter(
-                from_user=logged_in_user, 
-                to_user=user_to_follow
+                from_user = logged_in_user, 
+                to_user = user_to_follow
             ).first()
 
             # Follow
@@ -565,9 +574,9 @@ def toggleFollow(request):
 
                 # Creates The New Follow Relation Between 2 Users
                 FollowRelation.objects.create(
-                    from_user=logged_in_user,
-                    to_user=user_to_follow,
-                    status=status
+                    from_user = logged_in_user,
+                    to_user = user_to_follow,
+                    status = status
                 )
 
                 message = _("Žiadosť o sledovanie bola odoslaná.") if status == "pending" else _("Sledovanie bolo úspešne pridané.")
@@ -575,7 +584,7 @@ def toggleFollow(request):
                 return JsonResponse({
                     "success": True, 
                     "message": message
-                }, status=200)
+                }, status = 200)
 
             # Unfollow
             else:
@@ -586,12 +595,12 @@ def toggleFollow(request):
                 return JsonResponse({
                     "success": True, 
                     "message": message
-                }, status=200)
+                }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Sledovanie nie je možné zmeniť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -599,44 +608,44 @@ def toggleFollow(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri zmene sledovania došlo k chybe.")
-        }, status=404)
+        }, status = 404)
 
 @require_POST
 def togglePostLike(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.get(id=int(post_id)) # Gets The Post
+            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
-            has_like = post.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
+            has_like = post.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
 
             # Like
             if not has_like:
                 post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
-                Post.objects.filter(id=int(post_id)).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
+                Post.objects.filter(public_id = post_id).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
 
                 return JsonResponse({
                     "success": True, 
                     "message": _("Označenie páči sa mi to bolo úspešne pridané.")
-                }, status=200)
+                }, status = 200)
 
             # Cancel Like
             else:
                 post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
-                Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
+                Post.objects.filter(public_id = post_id).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
                 
                 return JsonResponse({
                     "success": True, 
                     "message": _("Označenie páči sa mi to bolo úspešne odstránené.")
-                }, status=200)
+                }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -644,7 +653,7 @@ def togglePostLike(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def reportPost(request):
@@ -654,14 +663,14 @@ def reportPost(request):
             report_post_data = json.loads(request.body) # Gets The Report Post Data
             post_id = report_post_data["post_id"] # Gets The Post ID
             reason = report_post_data["reason"] # Gets The Reason
-            post = Post.objects.get(id=post_id) # Gets The Post
-            has_report = post.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
+            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+            has_report = post.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
 
             # Stores The Reported Comment
             PostReport.objects.update_or_create(
-                post_id=post_id,
-                user_id=logged_in_user_id,
-                defaults={"reason": reason} # Reason Can Be Updated
+                post = post,
+                user_id = logged_in_user_id,
+                defaults = {"reason": reason} # Reason Can Be Updated
             )
 
             # Report
@@ -683,12 +692,12 @@ def reportPost(request):
             return JsonResponse({
                 "success": True, 
                 "message": _("Nahlásenie bolo úspešne odoslané.")
-            }, status=200)
+            }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -696,7 +705,7 @@ def reportPost(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odosielaní nahlásenia došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def editPostSettings(request):
@@ -707,7 +716,7 @@ def editPostSettings(request):
             post_id = edit_post_settings_data["post_id"] # Gets The Post ID From The Edit Post Settings Data
             setting = edit_post_settings_data["setting"] # Gets The Setting From The Edit Post Settings Data
             action = edit_post_settings_data["action"] # Gets The Action From The Edit Post Settings Data
-            post = Post.objects.filter(id=post_id, user_id=logged_in_user_id).first() # Gets The Post
+            post = get_object_or_404(Post, public_id = post_id, user_id = logged_in_user_id) # Gets The Post
 
             if post:
                 setattr(post, setting, action) # Updates The Given Column's Value
@@ -716,17 +725,17 @@ def editPostSettings(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Príspevok bol úspešne upravený.")
-                }, status=200)
+                }, status = 200)
 
             return JsonResponse({
                 "success": False, 
                 "message": _("Príspevok sa nepodarilo upraviť.")
-            }, status=400)
+            }, status = 400)
 
         return JsonResponse({
             "success": False, 
             "message": _("Príspevok nie je možné upraviť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -734,24 +743,24 @@ def editPostSettings(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri úprave príspevku došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def deletePost(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.prefetch_related("media").get(id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(id=post_id, user_id=logged_in_user_id) # Gets The Post
+            post = Post.objects.prefetch_related("media").get(public_id = post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(public_id = post_id, user_id=logged_in_user_id) # Gets The Post
 
             if post:
-                unfinished_media = post.media.filter(is_processed=False)
+                unfinished_media = post.media.filter(is_processed = False)
 
                 for one_media in unfinished_media:
                     # Stops The Celery Task For Compression Of Media Of The Post
                     if hasattr(one_media, "celery_task_id") and one_media.celery_task_id:
-                        current_app.control.revoke(one_media.celery_task_id, terminate=True)
+                        current_app.control.revoke(one_media.celery_task_id, terminate = True)
 
                     # Video
                     if one_media.is_video:
@@ -780,17 +789,17 @@ def deletePost(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Príspevok bol úspešne odstránený.")
-                }, status=200)
+                }, status = 200)
 
             return JsonResponse({
                 "success": False, 
                 "message": _("Príspevok sa nepodarilo odstrániť.")
-            }, status=400)
+            }, status = 400)
 
         return JsonResponse({
             "success": False, 
             "message": _("Príspevok nie je možné odstrániť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -798,19 +807,19 @@ def deletePost(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odstraňovaní príspevku došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def togglePostSave(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.get(id=int(post_id)) # Gets The Post
+            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
-            has_save = logged_in_user.saved_posts.filter(id=post_id).exists() # Checks If The User Has Already Saved The Post
+            has_save = logged_in_user.saved_posts.filter(public_id = post_id).exists() # Checks If The User Has Already Saved The Post
 
             # Save
             if not has_save:
@@ -820,7 +829,7 @@ def togglePostSave(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Príspevok bol úspešne uložený.")
-                }, status=200)
+                }, status = 200)
 
             # Unsave
             else:
@@ -830,12 +839,12 @@ def togglePostSave(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Príspevok bol odstránený zo zoznamu uložených.")
-                }, status=200)
+                }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Príspevok nie je možné uložiť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -843,7 +852,7 @@ def togglePostSave(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri zmene uloženia príspevku došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def reportPostComment(request):
@@ -853,14 +862,14 @@ def reportPostComment(request):
             report_comment_data = json.loads(request.body) # Gets The Report Comment Data
             comment_id = report_comment_data["postforum_id"] # Gets The Post Forum ID
             reason = report_comment_data["reason"] # Gets The Reason
-            comment = PostForum.objects.get(id=comment_id) # Gets The Comment
-            has_report = comment.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
+            comment = PostForum.objects.get(id = comment_id) # Gets The Comment
+            has_report = comment.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
 
             # Stores The Reported Comment
             PostForumReport.objects.update_or_create(
-                postforum_id=comment_id,
-                user_id=logged_in_user_id,
-                defaults={"reason": reason} # Reason Can Be Updated
+                postforum_id = comment_id,
+                user_id = logged_in_user_id,
+                defaults = {"reason": reason} # Reason Can Be Updated
             )
 
             # Report
@@ -868,7 +877,7 @@ def reportPostComment(request):
                 comment.reports += 1 # Increases The Reports Counter
 
                 if comment.reports >= 5:
-                    post = Post.objects.get(id=comment.post_id) # Gets The Post
+                    post = Post.objects.get(id = comment.post_id) # Gets The Post
 
                     if post.likes > 0:
                         report_percentage = (comment.reports / post.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
@@ -884,12 +893,12 @@ def reportPostComment(request):
             return JsonResponse({
                 "success": True, 
                 "message": _("Nahlásenie bolo úspešne odoslané.")
-            }, status=200)
+            }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Nahlásenie nie je možné odoslať bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -897,16 +906,16 @@ def reportPostComment(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odosielaní nahlásenia došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def deletePostComment(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
             comment_id = json.loads(request.body) # Gets The Comment ID
-            comment = PostForum.objects.get(id=comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(id=comment_id, user_id=logged_in_user_id) # Gets The Comment
+            comment = PostForum.objects.get(id = comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(id = comment_id, user_id = logged_in_user_id) # Gets The Comment
 
             if comment:
                 comment.delete() # Deletes The Comment
@@ -914,17 +923,17 @@ def deletePostComment(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Komentár bol úspešne odstránený.")
-                }, status=200)
+                }, status = 200)
 
             return JsonResponse({
                 "success": False, 
                 "message": _("Komentár sa nepodarilo odstrániť.")
-            }, status=400)
+            }, status = 400)
 
         return JsonResponse({
             "success": False, 
             "message": _("Komentár nie je možné odstrániť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -932,7 +941,7 @@ def deletePostComment(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri odstraňovaní komentáru došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def addComment(request):
@@ -977,19 +986,19 @@ def addComment(request):
                 "logged_in_user": logged_in_user, 
                 "comment": comment, 
                 "message": _("Komentár pre príspevok bol úspešne pridaný.")
-            }, status=201)
+            }, status = 201)
 
         return JsonResponse({
             "success": False, 
             "message": _("Komentár nie je možné pridať bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except ValidationError as e:
         # Returns The Error Message From Models
         return JsonResponse({
             "success": False, 
             "message": str(e.message)
-        }, status=400)
+        }, status = 400)
 
     except Exception as e:
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -997,19 +1006,19 @@ def addComment(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri pridávaní komentáru došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 @require_POST
 def togglePostCommentLike(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
 
             comment_id = json.loads(request.body) # Gets The Comment ID
-            comment = PostForum.objects.get(id=int(comment_id)) # Gets The Comment
+            comment = PostForum.objects.get(id = int(comment_id)) # Gets The Comment
 
-            has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+            has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
 
             # Like
             if not has_like:
@@ -1020,7 +1029,7 @@ def togglePostCommentLike(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Označenie páči sa mi to bolo úspešne pridané.")
-                }, status=200)
+                }, status = 200)
 
             # Cancel Like
             else:
@@ -1031,12 +1040,12 @@ def togglePostCommentLike(request):
                 return JsonResponse({
                     "success": True, 
                     "message": _("Označenie páči sa mi to bolo úspešne odstránené.")
-                }, status=200)
+                }, status = 200)
 
         return JsonResponse({
             "success": False, 
             "message": _("Označenie páči sa mi to nie je možné zmeniť bez prihlásenia.")
-        }, status=401)
+        }, status = 401)
 
     except Exception as e:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {e}\n")
@@ -1044,7 +1053,7 @@ def togglePostCommentLike(request):
         return JsonResponse({
             "success": False, 
             "message": _("Pri zmene označenia páči sa mi to došlo k chybe.")
-        }, status=500)
+        }, status = 500)
 
 def homepageView(request):
     logged_in_user_id = None # Default State When The User Isn't Logged In
@@ -1052,11 +1061,11 @@ def homepageView(request):
 
     if "logged_in_user_id" in request.session:
         logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
-        logged_in_user = Users.objects.select_related("subscription").get(id=logged_in_user_id) # Gets The Logged In User
+        logged_in_user = Users.objects.select_related("subscription").get(id = logged_in_user_id) # Gets The Logged In User
 
     # Login Form
     if request.method == "POST" and request.POST.get("login_form_submit"):
-        usage = get_usage(request, key="ip", rate="3/m", method="POST", increment=True, group="homepage_login")
+        usage = get_usage(request, key = "ip", rate = "3/m", method = "POST", increment = True, group = "homepage_login")
         
         if usage and usage["should_limit"]:
             messages.add_message(request, messages.ERROR, _("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
@@ -1071,8 +1080,8 @@ def homepageView(request):
 
             try:
                 user = Users.objects.get(
-                    Q(username__iexact=identifier) |
-                    Q(email_address__iexact=identifier)
+                    Q(username__iexact = identifier) |
+                    Q(email_address__iexact = identifier)
                 )
 
                 if check_password(password, user.password):
@@ -1117,8 +1126,8 @@ def homepageView(request):
             captureError(f"Failed to process login request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
 
     if request.GET.get("verification-code") and request.GET.get("id"):
-        if Users.objects.filter(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code"))).exclude(verification_code__isnull=True).exists():
-            user = Users.objects.get(Q(id=request.GET.get("id")) & Q(verification_code=request.GET.get("verification-code")))
+        if Users.objects.filter(Q(id = request.GET.get("id")) & Q(verification_code = request.GET.get("verification-code"))).exclude(verification_code__isnull = True).exists():
+            user = Users.objects.get(Q(id = request.GET.get("id")) & Q(verification_code = request.GET.get("verification-code")))
             
             request.session["logged_in_user_id"] = user.id # Sets User ID Session For New Registered User For Login or Switch Account
 
@@ -1143,8 +1152,8 @@ def homepageView(request):
     if request.GET.get("password-reset"):
         email_address = request.COOKIES.get("email_address")
 
-        if Users.objects.filter(email_address=email_address).exists():
-            user = Users.objects.get(email_address=email_address)
+        if Users.objects.filter(email_address = email_address).exists():
+            user = Users.objects.get(email_address = email_address)
 
             code = generateCode() # Generates Random 6-Digit Code
 
@@ -1175,6 +1184,7 @@ def homepageView(request):
     if request.method == "POST" and request.POST.get("registration_form_submit"):
         # Loads Data From reCaptcha In Registration Page
         recaptcha_response = request.POST.get("g-recaptcha-response")
+
         recaptcha_data = {
             "secret": settings.RECAPTCHA_SECRET_KEY,
             "response": recaptcha_response
@@ -1256,6 +1266,7 @@ def homepageView(request):
     if request.method == "POST" and request.POST.get("contact_form_submit"):
         # Loads Data From reCaptcha In Registration Page
         recaptcha_response = request.POST.get("g-recaptcha-response")
+
         recaptcha_data = {
             "secret": settings.RECAPTCHA_SECRET_KEY,
             "response": recaptcha_response
@@ -1527,6 +1538,7 @@ def homepageView(request):
             if request.POST.get("write_review_form_submit"):
                 # Loads Data From reCaptcha In Registration Page
                 recaptcha_response = request.POST.get("g-recaptcha-response")
+
                 recaptcha_data = {
                     "secret": settings.RECAPTCHA_SECRET_KEY,
                     "response": recaptcha_response
@@ -1970,6 +1982,7 @@ def registrationView(request):
     if request.method == "POST":
         # Loads Data From reCaptcha In Registration Page
         recaptcha_response = request.POST.get("g-recaptcha-response")
+
         recaptcha_data = {
             "secret": settings.RECAPTCHA_SECRET_KEY,
             "response": recaptcha_response
@@ -3722,6 +3735,7 @@ def communityView(request):
             if request.POST.get("upload_post_form_submit"):
                 # Loads Data From reCaptcha In Upload Post Form
                 recaptcha_response = request.POST.get("g-recaptcha-response")
+                
                 recaptcha_data = {
                     "secret": settings.RECAPTCHA_SECRET_KEY,
                     "response": recaptcha_response
@@ -4202,7 +4216,7 @@ def loadPostsView(request):
                 } if hasattr(one_post.user, "subscription") and one_post.user.subscription else None
             },
 
-            "id": str(one_post.id),
+            "id": one_post.public_id,
 
             "description": (
                 one_post.description
@@ -4292,10 +4306,12 @@ def loadPostCommentsView(request, post_id):
 
     page_number = request.GET.get("page", 1) # Gets The Current Page Number
 
+    post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+
     try:
         # Gets The Post Root Comments With All Related Data
         post_root_comments_query = PostForum.objects.filter(
-            post_id=post_id,
+            post=post,
             parent__isnull=True
         ).exclude(
             status="hidden"
@@ -4319,7 +4335,7 @@ def loadPostCommentsView(request, post_id):
             Q(parent__parent_id__in=post_root_comments_ids) | # Level 3 (Reply On Level 2)
             Q(parent__parent__parent_id__in=post_root_comments_ids) | # Level 4 (Reply On Level 3)
             Q(parent__parent__parent__parent_id__in=post_root_comments_ids), # Level 5 (Reply On Level 4)
-            post_id=post_id
+            post = post
         ).exclude(
             status="hidden"
         ).select_related(
@@ -4479,25 +4495,25 @@ def postView(request, post_id):
 
     # Gets The Post With All Related Data
     post = Post.objects.filter(
-        id=post_id
+        public_id = post_id
     ).select_related(
         "user__subscription"
     ).annotate(
-        views=Count("seen_by_instances", distinct=True),
+        views = Count("seen_by_instances", distinct = True),
 
         # Creates The Has Like Column (True If The User Has Already Liked The Post)
-        has_like=Exists(
+        has_like = Exists(
             Post.likes_from_users.through.objects.filter(
-                post_id=OuterRef("pk"),
-                users_id=logged_in_user_id
+                post_id = OuterRef("pk"),
+                users_id = logged_in_user_id
             )
         ),
 
         # Creates The Has Save Column (True If The User Has Already Saved The Post)
-        has_save=Exists(
+        has_save = Exists(
             Users.objects.filter(
-                id=logged_in_user_id, 
-                saved_posts=OuterRef("pk")
+                id = logged_in_user_id, 
+                saved_posts = OuterRef("pk")
             )
         )
     ).prefetch_related(
