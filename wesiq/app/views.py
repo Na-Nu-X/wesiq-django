@@ -521,8 +521,8 @@ def markPostAsSeen(request):
 
             # Marks The Post As Seen If Exists And Isn't Already Seen By The User
             SeenPost.objects.get_or_create(
-                user_id=logged_in_user_id,
-                post_id=post_id
+                user_id = logged_in_user_id,
+                public_id = post_id
             )
 
             return JsonResponse({
@@ -606,17 +606,17 @@ def togglePostLike(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.get(id=int(post_id)) # Gets The Post
+            post = Post.objects.get(public_id = post_id) # Gets The Post
 
-            has_like = post.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
+            has_like = post.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
 
             # Like
             if not has_like:
                 post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
-                Post.objects.filter(id=int(post_id)).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
+                Post.objects.filter(public_id = post_id).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
 
                 return JsonResponse({
                     "success": True, 
@@ -626,7 +626,7 @@ def togglePostLike(request):
             # Cancel Like
             else:
                 post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
-                Post.objects.filter(id=int(post_id)).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
+                Post.objects.filter(public_id = post_id).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
                 
                 return JsonResponse({
                     "success": True, 
@@ -654,13 +654,13 @@ def reportPost(request):
             report_post_data = json.loads(request.body) # Gets The Report Post Data
             post_id = report_post_data["post_id"] # Gets The Post ID
             reason = report_post_data["reason"] # Gets The Reason
-            post = Post.objects.get(id=post_id) # Gets The Post
-            has_report = post.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+            has_report = post.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
 
             # Stores The Reported Comment
             PostReport.objects.update_or_create(
-                post_id=post_id,
-                user_id=logged_in_user_id,
+                post_id = post_id,
+                user_id = logged_in_user_id,
                 defaults={"reason": reason} # Reason Can Be Updated
             )
 
@@ -707,7 +707,7 @@ def editPostSettings(request):
             post_id = edit_post_settings_data["post_id"] # Gets The Post ID From The Edit Post Settings Data
             setting = edit_post_settings_data["setting"] # Gets The Setting From The Edit Post Settings Data
             action = edit_post_settings_data["action"] # Gets The Action From The Edit Post Settings Data
-            post = Post.objects.filter(id=post_id, user_id=logged_in_user_id).first() # Gets The Post
+            post = Post.objects.filter(public_id = post_id, user_id = logged_in_user_id).first() # Gets The Post
 
             if post:
                 setattr(post, setting, action) # Updates The Given Column's Value
@@ -743,7 +743,7 @@ def deletePost(request):
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
             logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.prefetch_related("media").get(id=post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(id=post_id, user_id=logged_in_user_id) # Gets The Post
+            post = Post.objects.prefetch_related("media").get(public_id = post_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related("media").get(public_id = post_id, user_id=logged_in_user_id) # Gets The Post
 
             if post:
                 unfinished_media = post.media.filter(is_processed=False)
@@ -805,12 +805,12 @@ def togglePostSave(request):
     try:
         if "logged_in_user_id" in request.session:
             logged_in_user_id = request.session.get("logged_in_user_id") # Gets Logged In User ID From Session
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = Post.objects.get(id=int(post_id)) # Gets The Post
+            post = Post.objects.get(public_id = post_id) # Gets The Post
 
-            has_save = logged_in_user.saved_posts.filter(id=post_id).exists() # Checks If The User Has Already Saved The Post
+            has_save = logged_in_user.saved_posts.filter(public_id = post_id).exists() # Checks If The User Has Already Saved The Post
 
             # Save
             if not has_save:
@@ -4479,25 +4479,25 @@ def postView(request, post_id):
 
     # Gets The Post With All Related Data
     post = Post.objects.filter(
-        id=post_id
+        public_id = post_id
     ).select_related(
         "user__subscription"
     ).annotate(
-        views=Count("seen_by_instances", distinct=True),
+        views = Count("seen_by_instances", distinct = True),
 
         # Creates The Has Like Column (True If The User Has Already Liked The Post)
-        has_like=Exists(
+        has_like = Exists(
             Post.likes_from_users.through.objects.filter(
-                post_id=OuterRef("pk"),
-                users_id=logged_in_user_id
+                post_id = OuterRef("pk"),
+                users_id = logged_in_user_id
             )
         ),
 
         # Creates The Has Save Column (True If The User Has Already Saved The Post)
-        has_save=Exists(
+        has_save = Exists(
             Users.objects.filter(
-                id=logged_in_user_id, 
-                saved_posts=OuterRef("pk")
+                id = logged_in_user_id, 
+                saved_posts = OuterRef("pk")
             )
         )
     ).prefetch_related(

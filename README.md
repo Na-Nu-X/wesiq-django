@@ -1958,6 +1958,56 @@ To monitor the health and successful execution of automated backend processes, t
 
 - **Operational Metrics**: Entries include detailed metrics regarding the outcome of the task. For example, it logs the exact number of permanently suspended accounts that were successfully purged from the database during a scheduled database cleanup cycle, ensuring full transparency of automated data management.
 
+### 5.4. Heart Rate (BPM) Tracking (Native App Only)
+
+- **Live Monitoring During Activities**: During an active session, users can monitor their real-time heart rate by connecting a compatible external monitor or smartwatch. The application retrieves this data through two primary methods: direct Bluetooth integration or native OS health frameworks.
+
+- **Direct BLE Connection**: The app supports direct pairing with **Bluetooth Low Energy (BLE)** heart rate monitors. It subscribes to the standardized BLE Heart Rate Service **(UUID: 0x180D)** and reads the Heart Rate Measurement characteristic **(UUID: 0x2A37)** to receive a continuous stream of live BPM (beats per minute) data.
+
+- **Native OS Health Integration**: Alternatively, the application can request user permission to read heart rate metrics directly from the device's native health ecosystem. This integration utilizes Apple **HealthKit** exclusively on iOS devices and **Health Connect** exclusively on Android devices.
+
+### 5.5. Chat Paginator (Native App)
+
+- **Server-Side Optimization**: To mitigate server load and minimize memory consumption, the Django Paginator framework has been integrated directly into the chat infrastructure. This ensures that historical messages are delivered in structured, manageable batches rather than dumping entire conversation histories into active memory.
+
+- **Frontend-Driven Triggering (FlatList Integration)**: On the React Native client side, the pagination cycle is driven by the performance-optimized FlatList component. As the user scrolls through the chat viewport, infinite-scroll triggers dispatch asynchronous requests to fetch older message packets on demand.
+
+- **Dynamic Batch Sizing & Data Saving Mode Integration**: The pagination engine adapts its batch volume based on active client configurations:
+
+- **Default State**: Loads standard batches of 20 messages per request to balance smooth user experience and network efficiency.
+
+- **Data Saving Mode**: Dynamically scales down the batch volume to 10 messages per request when the system-wide data-saving profile is active, significantly lowering mobile data usage and DOM rendering overhead.
+
+### 5.6. Chat Attachment Upload (Native App)
+
+- **Multimodal Attachment Ingestion**: The chat infrastructure supports rich media and document sharing, enabling users to upload diverse file types directly within active chatrooms. Supported formats include standard raster images, video assets, and structured documents (such as PDF, DOCX, TXT, etc.).
+
+- **Dual-Stage Validation Pipeline**: File processing is distributed between proactive client-side checks and rigorous server-side security audits:
+
+    - **Client-Side Preprocessing**: The React Native frontend performs preliminary checks on selection size and local asset integrity before dispatching the payload.
+
+    - **Server-Side Security & Metadata Inspection**: The backend executes deep inspection routines to verify real file types (analyzing binary headers/magic numbers rather than relying solely on file extensions), enforces strict size caps, and computes structural metrics such as video duration.
+
+- **Tier-Dependent Quotas and Media Optimization**: Attachment parameters scale dynamically based on the user's subscription tier:
+
+    - **Capacity Thresholds**: Subscribers are allocated significantly higher maximum file size limits and extended video duration caps compared to free-tier users.
+
+    - **Fidelity and Compression Allocation**: In alignment with the platform's media pipeline, subscriber-uploaded attachments bypass aggressive downscaling, routing through optimized Celery worker configurations with lower compression intensity to preserve maximum visual fidelity.
+
+### 5.7. Notifications System (Native App)
+
+- **Event-Driven Push Notifications**: The application incorporates a robust notification subsystem designed to instantly alert users upon receiving new messages or social interactions within the platform.
+
+- **Trigger Scope & Content Types**: Notifications are automatically dispatched across various activity vectors, including:
+
+    - Incoming text messages and chat communication.
+
+    - Shared multimedia assets, such as images, videos, or structured documents (PDF, DOCX, TXT).
+
+    - External shares, triggered whenever another user shares a post directly to the recipient's active channel.
+
+- **Backend Processing Architecture (consumers.py)**: When a user transmits a new message, the payload is instantly dispatched to the backend, where the Django Channels consumers.py websocket routing file handles the event. The system processes the transaction, manages state synchronization, and broadcasts the event back to the intended receiver in a standardized notification format.
+
 ## 6. Replaced Features
 
 ### 6.1. Optimized Video Streaming Architecture (HTTP 206)
@@ -1975,3 +2025,17 @@ To ensure smooth, buffer-free video playback across the platform, the backend im
 - **HTTP 206 (Partial Content) Enforcement**: Standard file serving often results in HTTP 200 (OK) responses, which forces the client to download the entire file sequentially. By strictly enforcing HTTP 206 (Partial Content) status codes, the backend allows the browser to stream the video in dynamic chunks.
 
 - **Playback Stability**: This architecture drastically improves video stability, minimizes initial load times, and critically enables the custom video scrubber (Section 3.46) to function correctly. Users can seamlessly skip ahead (seek) to unbuffered sections of the video without waiting for the preceding data to download.
+
+### 6.2. Migration from expo-av to expo-video Library (Native App)
+
+Architectural Evolution & Motivation: During the initial development phases, the application relied on the legacy expo-av library to handle media playback capabilities. However, due to intermittent cross-platform inconsistencies, hardware-level decoding limitations, and occasional playback failures across various mobile device configurations, the application was systematically migrated to the modern, high-performance expo-video framework.
+
+- **Functional Parity and Syntactical Adjustments**: While both libraries serve the core purpose of rendering and controlling video streams, expo-video introduces a cleaner, modernized API structure. Although the high-level logic remains consistent, the underlying syntax was fully refactored to leverage modern React Native bindings and optimized lifecycle hooks.
+
+- **Key Performance Benefits**:
+
+- **Elimination of Device Incompatibilities**: Resolves platform-specific hardware bottlenecks where expo-av frequently failed or became unstable.
+
+- **Improved Rendering Efficiency**: Reduces UI thread overhead and ensures smoother video presentation, directly complementing the platform's video streaming and optimization pipelines.
+
+- **Ecosystem Longevity**: Aligns the application with current Expo development standards, guaranteeing long-term support, better native decoding, and future-proof media processing capabilities.
