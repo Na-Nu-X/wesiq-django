@@ -126,12 +126,12 @@ FORBIDDEN_USERNAMES = load_forbidden_usernames() # Gets The Forbidden Usernames
 
 # Function For Capture The Error
 def captureError(message):
-    with open(f"{settings.LOGS_DIR}/error.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/error.log", mode = "a", encoding = "utf-8") as file:
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n") # Writes The Log
 
 # Function For Capture The Login
 def captureLogin(message):
-    with open(f"{settings.LOGS_DIR}/login.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/login.log", mode = "a", encoding = "utf-8") as file:
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n") # Writes The Log
 
 # Function For Get The Client IP
@@ -144,7 +144,7 @@ def getClientIp(request):
     return ip
 
 # Generates Random 6-Digit Code
-def generateCode(length=6, letters=False):
+def generateCode(length = 6, letters = False):
     code = "" # Stores The Code
     characters = string.digits # Gets The Characters (Digits)
 
@@ -187,7 +187,7 @@ def sendMail(
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
-@ratelimit(key="ip", rate="3/m", method="POST", block=False)
+@ratelimit(key = "ip", rate = "3/m", method = "POST", block = False)
 def login(request):
     try:
         identifier = request.data.get("identifier", None) # Gets The Identifier (E-mail or Username)
@@ -198,7 +198,7 @@ def login(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre prihlásenie zadajte prihlasovacie údaje."))
-            }, status=500)
+            }, status = 500)
 
         was_limited = getattr(request, "limited", False) # Gets The Information If The User Was Limited
 
@@ -209,22 +209,22 @@ def login(request):
             return Response({
                 "success": False, 
                 "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
-            }, status=200)
+            }, status = 200)
 
         clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
 
         try:
             # Gets The User
             user = Users.objects.get(
-                Q(username__iexact=clean_username) |
-                Q(email_address__iexact=identifier)
+                Q(username__iexact = clean_username) |
+                Q(email_address__iexact = identifier)
             )
 
             # Checks The Password Validity
             if check_password(password, user.password):
                 user.last_login = timezone.now() # Stores Last Login Time
                 user.account_status = "OK"
-                user.save(update_fields=["last_login", "account_status"]) # Saves The Updated User
+                user.save(update_fields = ["last_login", "account_status"]) # Saves The Updated User
 
                 refresh = RefreshToken.for_user(user) # Gets The Refresh Token
 
@@ -235,7 +235,7 @@ def login(request):
                     "access": str(refresh.access_token),
                     "refresh": str(refresh),
                     "message": str(_("Úspešne prihlásený ako %(username)s") % {"username": user.username})
-                }, status=200)
+                }, status = 200)
             
             # Wrong Password
             else:
@@ -244,7 +244,7 @@ def login(request):
                 return Response({
                     "success": False, 
                     "message": str(_("Nesprávne prihlasovacie údaje."))
-                }, status=500)
+                }, status = 500)
         
         # Wrong Identifier
         except Users.DoesNotExist as error:
@@ -253,7 +253,7 @@ def login(request):
             return Response({
                 "success": False, 
                 "message": str(_("Nesprávne prihlasovacie údaje."))
-            }, status=404)
+            }, status = 404)
     
     except Exception as error:
         captureError(f"An error occurred while logging in.\n\t- URL: {request.build_absolute_uri()}\n\t- Identifier: {identifier},\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -261,7 +261,7 @@ def login(request):
         return Response({
             "success": False, 
             "message": str(_("Pri prihlasovaní došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -282,13 +282,13 @@ def register(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre registráciu vyplnte povinné údaje."))
-            }, status=500)
+            }, status = 500)
 
         elif username.lower() in FORBIDDEN_USERNAMES or username.lower() in PROFANITIES:
             return Response({
                 "success": False, 
                 "message": str(_("Zvolené používateľské meno nie je povolené."))
-            }, status=500)
+            }, status = 500)
 
         # E-mail Address Already In Use
         elif Users.objects.filter(email_address=email_address).exists():
@@ -297,26 +297,26 @@ def register(request):
             return Response({
                 "success": False, 
                 "message": str(_("Tento e-mail už je zaregistrovaný."))
-            }, status=500)
+            }, status = 500)
 
         # Username Already In Use
         elif Users.objects.filter(username=username).exists():
             return Response({
                 "success": False, 
                 "message": str(_("Toto používateľské meno je už obsadené."))
-            }, status=500)
+            }, status = 500)
 
         elif password != password_check:
             return Response({
                 "success": False, 
                 "message": str(_("Heslá sa nezhodujú."))
-            }, status=500)
+            }, status = 500)
 
         elif len(password.strip()) < 8:
             return Response({
                 "success": False, 
                 "message": str(_("Heslo je príliš krátke."))
-            }, status=500)
+            }, status = 500)
 
         else:
             verification_code = generateCode() # Generates Random 6-Digit Code
@@ -351,7 +351,7 @@ def register(request):
             return Response({
                 "success": True, 
                 "message": str(_("Potvrdte vašu e-mailovú adresu\n%(email_address)s") % {"email_address": email_address})
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred during registration.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -359,7 +359,7 @@ def register(request):
         return Response({
             "success": False, 
             "message": str(_("Pri registrácii došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -371,22 +371,22 @@ def get_logged_in_user(request):
 
         # Gets The User
         user = Users.objects.filter(
-            id=logged_in_user_id
+            id = logged_in_user_id
         ).select_related(
             "subscription"
         ).prefetch_related(
             # Gets All Followers With All Related Data
             Prefetch(
                 "follower_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                to_attr="accepted_followers"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                to_attr = "accepted_followers"
             ),
 
             # Gets All Following Users With All Related Data
             Prefetch(
                 "following_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                to_attr="accepted_following"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                to_attr = "accepted_following"
             )
         ).first()
 
@@ -395,7 +395,7 @@ def get_logged_in_user(request):
             return Response({
                 "success": False, 
                 "message": str(_("Používateľ sa nenašiel."))
-            }, status=404)
+            }, status = 404)
 
         follow_requests_data = [] # Stores The Follow Requests Data
         existing_follow_request_ids = set() # Stores The Existing Follow Request IDs
@@ -404,8 +404,8 @@ def get_logged_in_user(request):
         if user.private_account:
             # Gets All Follow Requests With All Related Data
             follow_requests = FollowRelation.objects.filter(
-                to_user=user, 
-                status="pending"
+                to_user = user, 
+                status = "pending"
             ).select_related("from_user")
 
             # Creates Valid Format Of Follow Requests For JSON Response
@@ -471,7 +471,7 @@ def get_logged_in_user(request):
             "success": True, 
             "logged_in_user": user_data,
             "message": str(_("Prihlásený užívateľ bol úspešne nájdený."))
-        }, status=200)
+        }, status = 200)
         
     except Exception as error:
         captureError(f"An error occurred while loading the logged in user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -479,7 +479,7 @@ def get_logged_in_user(request):
         return Response({
             "success": False, 
             "message": str(_("Pri načítavaní prihláseného užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Community Page
 
@@ -495,46 +495,46 @@ def load_first_users(request):
 
         # Gets The Loaded Users From History
         loaded_users_from_history = Users.objects.filter(
-            username__in=searched_users_history,
-            account_status="OK"
+            username__in = searched_users_history,
+            account_status = "OK"
         ).select_related(
             "subscription"
         ).annotate(
             # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-            has_follow=Exists(
+            has_follow = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user,
-                    to_user=OuterRef("pk"),
-                    status="accepted"
+                    from_user = logged_in_user,
+                    to_user = OuterRef("pk"),
+                    status = "accepted"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
 
             # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-            has_pending_follow_request=Exists(
+            has_pending_follow_request = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user,
-                    to_user=OuterRef("pk"),
-                    status="pending"
+                    from_user = logged_in_user,
+                    to_user = OuterRef("pk"),
+                    status = "pending"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField())
+            ) if logged_in_user else Value(False, output_field = BooleanField())
         ).prefetch_related(
             # Gets All Followers With All Related Data
             Prefetch(
                 "follower_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                to_attr="accepted_followers"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                to_attr = "accepted_followers"
             ),
 
             # Gets All Following Users With All Related Data
             Prefetch(
                 "following_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                to_attr="accepted_following"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                to_attr = "accepted_following"
             )
         )
 
         loaded_users_from_history_list = list(loaded_users_from_history) # Converts The Loaded Users From History To List
-        loaded_users_from_history_list.sort(key=lambda user: searched_users_history.index(user.username) if user.username in searched_users_history else 0) # Sorts The Loaded Users From History List By The Original Order In The History
+        loaded_users_from_history_list.sort(key = lambda user: searched_users_history.index(user.username) if user.username in searched_users_history else 0) # Sorts The Loaded Users From History List By The Original Order In The History
 
         missing_users_amount = 3 - len(loaded_users_from_history_list) # Gets The Amount Of Missing Users To The Maximum Of 3
         missing_users_list = [] # Stores The List Of The Missing Users
@@ -544,43 +544,43 @@ def load_first_users(request):
 
             # Gets The Missing Users With OK Account Status, Excludes Logged In User And Orders Them From Newest
             missing_users = Users.objects.filter(
-                account_status="OK"
+                account_status = "OK"
             ).select_related(
                 "subscription"
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                has_follow=Exists(
+                has_follow = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user,
-                        to_user=OuterRef("pk"),
-                        status="accepted"
+                        from_user = logged_in_user,
+                        to_user = OuterRef("pk"),
+                        status = "accepted"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
 
                 # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-                has_pending_follow_request=Exists(
+                has_pending_follow_request = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user,
-                        to_user=OuterRef("pk"),
-                        status="pending"
+                        from_user = logged_in_user,
+                        to_user = OuterRef("pk"),
+                        status = "pending"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField())
+                ) if logged_in_user else Value(False, output_field = BooleanField())
             ).prefetch_related(
                 # Gets All Followers With All Related Data
                 Prefetch(
                     "follower_relations",
-                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                    to_attr="accepted_followers"
+                    queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                    to_attr = "accepted_followers"
                 ),
                 
                 # Gets All Following Users With All Related Data
                 Prefetch(
                     "following_relations",
-                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                    to_attr="accepted_following"
+                    queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                    to_attr = "accepted_following"
                 )
             ).exclude(
-                id__in=loaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
+                id__in = loaded_users_from_history_ids # Prevents Getting The Users Who Were Already Loaded From The History
             ).order_by(
                 "-creation_time"
             )
@@ -626,7 +626,7 @@ def load_first_users(request):
             "success": True, 
             "users": loaded_users, 
             "message": str(_("Užívatelia boli úspešne načítaný."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while loading the users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -634,7 +634,7 @@ def load_first_users(request):
         return Response({
             "success": False, 
             "message": str(_("Pri načítavaní užívateľov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -648,52 +648,52 @@ def search_users(request):
         
         # Filters Users By Searched Text (Case-Insensitive)
         users = Users.objects.filter(
-            Q(account_status="OK") & (
-                Q(first_name__icontains=searched_text) | 
-                Q(last_name__icontains=searched_text) | 
-                Q(username__icontains=searched_text) | 
-                Q(friend_code__contains=searched_text)
+            Q(account_status = "OK") & (
+                Q(first_name__icontains = searched_text) | 
+                Q(last_name__icontains = searched_text) | 
+                Q(username__icontains = searched_text) | 
+                Q(friend_code__contains = searched_text)
             )
         ).select_related(
             "subscription"
         ).annotate(
             # Creates Is Followed Column (True If The User Is Following The User)
-            is_followed=Case(
-                When(id__in=logged_in_user.following.values_list("id", flat=True), then=True),
-                default=False,
-                output_field=BooleanField()
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            is_followed = Case(
+                When(id__in = logged_in_user.following.values_list("id", flat = True), then = True),
+                default = False,
+                output_field = BooleanField()
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
 
             # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-            has_follow=Exists(
+            has_follow = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user=OuterRef("pk"),
-                    status="accepted"
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("pk"),
+                    status = "accepted"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
 
             # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-            has_pending_follow_request=Exists(
+            has_pending_follow_request = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user=OuterRef("pk"),
-                    status="pending"
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("pk"),
+                    status = "pending"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField())
+            ) if logged_in_user else Value(False, output_field = BooleanField())
         ).prefetch_related(
             # Gets All Followers With All Related Data
             Prefetch(
                 "follower_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                to_attr="accepted_followers"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                to_attr = "accepted_followers"
             ),
             
             # Gets All Following Users With All Related Data
             Prefetch(
                 "following_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                to_attr="accepted_following"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                to_attr = "accepted_following"
             )
         ).order_by(
             "-is_followed",
@@ -701,10 +701,7 @@ def search_users(request):
         )
 
         if logged_in_user:
-            # Removes The Logged In User From Users
-            users = users.exclude(
-                id=logged_in_user_id
-            )
+            users = users.exclude(id = logged_in_user_id) # Removes The Logged In User From Users
         
         # Creates Valid Format Of Users For JSON Response
         users = [
@@ -732,7 +729,7 @@ def search_users(request):
             "success": True, 
             "users": users, 
             "message": str(_("Užívatelia boli úspešné nájdený."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while searching for users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -740,7 +737,7 @@ def search_users(request):
         return Response({
             "success": False, 
             "message": str(_("Pri hľadaní užívateľov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -751,42 +748,38 @@ def toggle_post_like(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         post_id = request.data.get("post_id", None) # Gets The Post ID
-        
-        print(post_id)
 
         # If The Information Are Missing
         if not post_id:
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok sa nenašiel."))
-            }, status=400)
+            }, status = 400)
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
-        print("Post")
-        has_like = post.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
-        print("has Like")
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        has_like = post.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
 
         # Like
         if not has_like:
             post.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Post
-            Post.objects.filter(public_id=post_id).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
-            post.refresh_from_db(fields=["likes"]) # Reloads The Post
+            Post.objects.filter(public_id = post_id).update(likes = F("likes") + 1) # Increases And Updates The Likes Counter
+            post.refresh_from_db(fields = ["likes"]) # Reloads The Post
 
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne pridané."))
-            }, status=200)
+            }, status = 200)
 
         # Cancel Like
         else:
             post.likes_from_users.remove(logged_in_user) # Removes The User From Likes From Users In Post
-            Post.objects.filter(public_id=post_id).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
-            post.refresh_from_db(fields=["likes"]) # Reloads The Post
+            Post.objects.filter(public_id = post_id).update(likes = F("likes") - 1) # Decreases And Updates The Likes Counter
+            post.refresh_from_db(fields = ["likes"]) # Reloads The Post
 
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -794,7 +787,7 @@ def toggle_post_like(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -812,21 +805,21 @@ def report_post(request):
             return Response({
                 "success": False, 
                 "message": str(_("Chýbajúce dáta pre nahlásenie."))
-            }, status=400)
+            }, status = 400)
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
-        has_report = PostReport.objects.filter(post=post, user_id=logged_in_user.id).exists() # Checks If The User Has Already Reported The Post
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        has_report = PostReport.objects.filter(post = post, user_id = logged_in_user.id).exists() # Checks If The User Has Already Reported The Post
 
         # Stores The Reported Comment
         PostReport.objects.update_or_create(
-            post=post,
-            user_id=logged_in_user_id,
-            defaults={"reason": reason} # Reason Can Be Updated
+            post = post,
+            user_id = logged_in_user_id,
+            defaults = {"reason": reason} # Reason Can Be Updated
         )
 
         # Report
         if not has_report:
-            Post.objects.filter(id=post.id).update(reports=F("reports") + 1) # Increases The Reports Counter
+            Post.objects.filter(id = post.id).update(reports = F("reports") + 1) # Increases The Reports Counter
             post.refresh_from_db() # Reloads The Post
 
             if post.reports >= 5:
@@ -834,12 +827,12 @@ def report_post(request):
 
                 if report_percentage > 10:
                     post.status = "hidden" # Hides The Post If Has More Than 10% Of Reports
-                    post.save(update_fields=["status"]) # Saves The Updated Post
+                    post.save(update_fields = ["status"]) # Saves The Updated Post
 
         return Response({
             "success": True, 
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -847,7 +840,7 @@ def report_post(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -863,11 +856,11 @@ def toggle_post_save(request):
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok sa nenašiel."))
-            }, status=400)
+            }, status = 400)
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
-        has_save = logged_in_user.saved_posts.filter(public_id=post_id).exists() # Checks If The User Has Already Saved The Post
+        has_save = logged_in_user.saved_posts.filter(public_id = post_id).exists() # Checks If The User Has Already Saved The Post
 
         # Save
         if not has_save:
@@ -876,7 +869,7 @@ def toggle_post_save(request):
             return Response({
                 "success": True, 
                 "message": str(_("Príspevok bol úspešne uložený."))
-            }, status=200)
+            }, status = 200)
 
         # Unsave
         else:
@@ -885,7 +878,7 @@ def toggle_post_save(request):
             return Response({
                 "success": True, 
                 "message": str(_("Príspevok bol odstránený zo zoznamu uložených."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing a save.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -893,7 +886,7 @@ def toggle_post_save(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene uloženia príspevku došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -911,36 +904,36 @@ def report_post_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre nahlásenie komentáru chýbajú potrebné údaje."))
-            }, status=500)
+            }, status = 500)
 
-        comment = get_object_or_404(PostForum, id=int(comment_id)) # Gets The Comment
-        has_report = PostForumReport.objects.filter(postforum_id=comment.id, user_id=logged_in_user.id).exists() # Checks If The User Has Already Reported The Comment
+        comment = get_object_or_404(PostForum, id = int(comment_id)) # Gets The Comment
+        has_report = PostForumReport.objects.filter(postforum_id = comment.id, user_id = logged_in_user.id).exists() # Checks If The User Has Already Reported The Comment
 
         # Stores The Reported Comment
         PostForumReport.objects.update_or_create(
-            postforum_id=comment_id,
-            user_id=logged_in_user_id,
-            defaults={"reason": reason} # Reason Can Be Updated
+            postforum_id = comment_id,
+            user_id = logged_in_user_id,
+            defaults = {"reason": reason} # Reason Can Be Updated
         )
 
         # Report
         if not has_report:
-            PostForum.objects.filter(id=comment.id).update(reports=F("reports") + 1) # Increases The Reports Counter
+            PostForum.objects.filter(id = comment.id).update(reports = F("reports") + 1) # Increases The Reports Counter
             comment.refresh_from_db() # Reloads The Comment
 
             if comment.reports >= 5:
-                post = get_object_or_404(Post, id=comment.post_id) # Gets The Post
+                post = get_object_or_404(Post, id = comment.post_id) # Gets The Post
 
                 report_percentage = (comment.reports / comment.likes * 100) if post.likes > 0 else 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
 
                 if report_percentage > 10:
                     comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
-                    comment.save(update_fields=["status"]) # Saves The Comment
+                    comment.save(update_fields = ["status"]) # Saves The Comment
 
         return Response({
             "success": True, 
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -948,7 +941,7 @@ def report_post_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -966,9 +959,9 @@ def add_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre pridanie komentáru chýbajú potrebné údaje."))
-            }, status=500)
+            }, status = 500)
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
         # Creates The New Comment
         new_comment = PostForum.objects.create(
@@ -1000,13 +993,13 @@ def add_comment(request):
             "success": True, 
             "comment": comment, 
             "message": str(_("Komentár pre príspevok bol úspešne pridaný."))
-        }, status=201)
+        }, status = 201)
 
     except ValidationError as error:
         return Response({
             "success": False, 
             "message": str(error.message) # Returns The Error Message From Models
-        }, status=500)
+        }, status = 500)
 
     except Exception as error:
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1014,7 +1007,7 @@ def add_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pridávaní komentáru došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1031,11 +1024,11 @@ def toggle_post_comment_like(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre pridanie označenia páči sa mi to chýbajú potrebné údaje."))
-            }, status=500)
+            }, status = 500)
 
-        comment = PostForum.objects.get(id=int(comment_id)) # Gets The Comment
+        comment = PostForum.objects.get(id = int(comment_id)) # Gets The Comment
 
-        has_like = comment.likes_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
+        has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
 
         # Like
         if not has_like:
@@ -1046,7 +1039,7 @@ def toggle_post_comment_like(request):
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne pridané."))
-            }, status=200)
+            }, status = 200)
 
         # Cancel Like
         else:
@@ -1057,7 +1050,7 @@ def toggle_post_comment_like(request):
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1065,7 +1058,7 @@ def toggle_post_comment_like(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1076,30 +1069,30 @@ def get_processing_posts(request):
 
         # Gets The Processing Posts With All Related Data
         processing_posts = Post.objects.filter(
-            user__id=logged_in_user_id,
-            media__is_processed=False
+            user__id = logged_in_user_id,
+            media__is_processed = False
         ).select_related(
             "user"
         ).prefetch_related(
             # Gets All Followers With All Related Data
             Prefetch(
                 "user__follower_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                to_attr="accepted_followers"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                to_attr = "accepted_followers"
             ),
             
             # Gets All Following Users With All Related Data
             Prefetch(
                 "user__following_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                to_attr="accepted_following"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                to_attr = "accepted_following"
             ),
 
             "tagged_users",
 
             Prefetch(
                 "media",
-                queryset=PostMedia.objects.order_by("order")
+                queryset = PostMedia.objects.order_by("order")
             )
         ).order_by(
             "-created_at"
@@ -1108,7 +1101,7 @@ def get_processing_posts(request):
         # Gets The Tagged Users From Each Processing Post In JSON Format
         for one_post in processing_posts:
             one_post.tagged_users_json = json.dumps(
-                list(one_post.tagged_users.values_list("username", flat=True))
+                list(one_post.tagged_users.values_list("username", flat = True))
             )
 
         # Creates Valid Format Of Processing Posts For JSON Response
@@ -1174,7 +1167,7 @@ def get_processing_posts(request):
             "success": True, 
             "processing_posts": processing_posts_data, 
             "message": str(_("Spracovávané príspevky boli úspešné nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while loading the processing posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1182,7 +1175,7 @@ def get_processing_posts(request):
         return Response({
             "success": False, 
             "message": str(_("Pri načítaní spracovávaných príspevkov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1193,11 +1186,11 @@ def get_chats(request):
 
         # Gets The Unread Chats
         unread_chats = Chat.objects.filter(
-            receiver=logged_in_user,
-            is_read=False
+            receiver = logged_in_user,
+            is_read = False
         ).select_related("sender")
         
-        unread_sender_ids = unread_chats.values_list("sender_id", flat=True) # Gets The Sender IDs Of Unread Chats
+        unread_sender_ids = unread_chats.values_list("sender_id", flat = True) # Gets The Sender IDs Of Unread Chats
 
         # Creates Valid Format Of Unread Chats For JSON Response
         unread_chats_data = [
@@ -1220,10 +1213,10 @@ def get_chats(request):
 
         # Gets The Read Chats
         read_chats = Chat.objects.filter(
-            receiver=logged_in_user,
-            is_read=True
+            receiver = logged_in_user,
+            is_read = True
         ).exclude(
-            sender_id__in=unread_sender_ids
+            sender_id__in = unread_sender_ids
         ).select_related("sender")
 
         # Creates Valid Format Of Read Chats For JSON Response
@@ -1252,7 +1245,7 @@ def get_chats(request):
             "message": str(_("Správy boli nájdené.")),
             "unread_chats": unread_chats_data,
             "read_chats": read_chats_data,
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while loading the messages.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1260,7 +1253,7 @@ def get_chats(request):
         return Response({
             "success": False, 
             "message": str(_("Pri načítaní správ došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1273,7 +1266,7 @@ def get_posts(request):
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         searched_text = request.GET.get("searched_text", "") # Gets The Searched Text
 
-        thirty_days_ago = timezone.now() - timedelta(days=30) # Gets The Thirty Days Ago Time
+        thirty_days_ago = timezone.now() - timedelta(days = 30) # Gets The Thirty Days Ago Time
 
         # Gets The Posts With All Related Data
         posts = Post.objects.select_related(
@@ -1282,75 +1275,75 @@ def get_posts(request):
             # Gets All Followers With All Related Data
             Prefetch(
                 "user__follower_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                to_attr="accepted_followers"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                to_attr = "accepted_followers"
             ),
             
             # Gets All Following Users With All Related Data
             Prefetch(
                 "user__following_relations",
-                queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                to_attr="accepted_following"
+                queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                to_attr = "accepted_following"
             ),
 
             "tagged_users", 
 
             Prefetch(
                 "media",
-                queryset=PostMedia.objects.annotate(
-                    unique_video_views=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+                queryset = PostMedia.objects.annotate(
+                    unique_video_views = Count("video_views", distinct=True) # Gets The Unique Viewers Amount
                 ).annotate(
                     # Calculates The Average Watch Time Per 1 Viewer
-                    average_watch_time_per_viewer=Case(
-                        When(unique_video_views=0, then=Value(0.0)),
-                        default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
-                        output_field=FloatField()
+                    average_watch_time_per_viewer = Case(
+                        When(unique_video_views = 0, then = Value(0.0)),
+                        default = Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
+                        output_field = FloatField()
                     )
                 ).order_by("order")
             )
         ).exclude(
-            media__is_processed=False
+            media__is_processed = False
         ).annotate(
-            views=Count("seen_by_instances", distinct=True),
+            views = Count("seen_by_instances", distinct = True),
 
             # Creates Is Seen Column (True If The Logged In User Has Already Viewed The Post)
-            is_seen=Exists(
-                SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            is_seen = Exists(
+                SeenPost.objects.filter(post = OuterRef("pk"), user = logged_in_user)
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
 
             # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
-            is_followed=Case(
-                When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
-                default=False,
-                output_field=BooleanField()
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            is_followed = Case(
+                When(user_id__in = logged_in_user.following.values_list("id", flat = True), then = True),
+                default = False,
+                output_field = BooleanField()
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
 
-            comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True),
+            comments_amount = Count("comments", filter = ~Q(comments__status = "hidden"), distinct = True),
 
             # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-            has_follow=Exists(
+            has_follow = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user_id=OuterRef("user_id"),
-                    status="accepted"
+                    from_user = logged_in_user_id,
+                    to_user_id = OuterRef("user_id"),
+                    status = "accepted"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField()),
+            ) if logged_in_user else Value(False, output_field = BooleanField()),
             
             # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-            has_pending_follow_request=Exists(
+            has_pending_follow_request = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user_id=OuterRef("user_id"),
-                    status="pending"
+                    from_user = logged_in_user_id,
+                    to_user_id = OuterRef("user_id"),
+                    status = "pending"
                 )
-            ) if logged_in_user else Value(False, output_field=BooleanField())
+            ) if logged_in_user else Value(False, output_field = BooleanField())
         ).exclude(
             # Excludes Already Viewed Posts Which Were Viewed 30 Days Ago
             Exists(
                 SeenPost.objects.filter(
-                    post=OuterRef("pk"), 
-                    user=logged_in_user, 
-                    viewed_at__lt=thirty_days_ago
+                    post = OuterRef("pk"), 
+                    user = logged_in_user, 
+                    viewed_at__lt = thirty_days_ago
                 )
             )
         ).order_by(
@@ -1362,53 +1355,53 @@ def get_posts(request):
         if logged_in_user:
             # Gets All Logged In User's Accepted Following Users IDs
             accepted_following_ids = FollowRelation.objects.filter(
-                from_user_id=logged_in_user_id, 
-                status="accepted"
+                from_user_id = logged_in_user_id, 
+                status = "accepted"
             ).values("to_user_id")
 
             posts = posts.exclude(
                 # Hides Posts Which Aren't For Public And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
                 (
-                    Q(public_visibility=False) & 
-                    ~Q(user_id=logged_in_user_id) & 
-                    ~Q(user_id__in=accepted_following_ids)
+                    Q(public_visibility = False) & 
+                    ~Q(user_id = logged_in_user_id) & 
+                    ~Q(user_id__in = accepted_following_ids)
                 ) |
 
                 # Hides Posts From Authors Which Accounts Are Private And The Post Doesn't Belong To Logged In User And The Logged In User Doesn't Follow The Post's Author
                 (
-                    Q(user__private_account=True) & 
-                    ~Q(user_id=logged_in_user_id) & 
-                    ~Q(user_id__in=accepted_following_ids)
+                    Q(user__private_account = True) & 
+                    ~Q(user_id = logged_in_user_id) & 
+                    ~Q(user_id__in = accepted_following_ids)
                 )
             )
 
         else:
             posts = posts.exclude(
                 # Hides All Posts Which Aren't For Public Or From Authors Which Accounts Are Private When The Viewer Isn't Logged In
-                Q(public_visibility=False) | Q(user__private_account=True)
+                Q(public_visibility = False) | Q(user__private_account = True)
             )
 
         # Filters Posts By Searched Text
         if searched_text:
             posts = posts.filter(
-                (Q(user__first_name__icontains=searched_text) | 
-                Q(user__last_name__icontains=searched_text) | 
-                Q(user__username__icontains=searched_text) | 
-                Q(description__icontains=searched_text) | 
-                Q(tagged_users__username__icontains=searched_text) |
-                Q(added_hashtags__icontains=searched_text) | 
-                Q(location__icontains=searched_text) | 
-                Q(tagged_users__first_name__icontains=searched_text) |
-                Q(tagged_users__last_name__icontains=searched_text)) &
-                Q(media__isnull=False)
+                (Q(user__first_name__icontains = searched_text) | 
+                Q(user__last_name__icontains = searched_text) | 
+                Q(user__username__icontains = searched_text) | 
+                Q(description__icontains = searched_text) | 
+                Q(tagged_users__username__icontains = searched_text) |
+                Q(added_hashtags__icontains = searched_text) | 
+                Q(location__icontains = searched_text) | 
+                Q(tagged_users__first_name__icontains = searched_text) |
+                Q(tagged_users__last_name__icontains = searched_text)) &
+                Q(media__isnull = False)
             ).select_related(
                 "user"
             ).prefetch_related(
                 "tagged_users",
                 "media",
             ).exclude(
-                tagged_users__account_status="suspended",
-                media__is_processed=False
+                tagged_users__account_status = "suspended",
+                media__is_processed = False
             ).order_by(
                 "-created_at"
             ).distinct()
@@ -1425,7 +1418,7 @@ def get_posts(request):
                 "success": False, 
                 "has_next": False, 
                 "message": str(_("Pri hľadaní príspevkov došlo k chybe."))
-            }, status=404)
+            }, status = 404)
 
         # Creates Valid Format Of Posts For JSON Response
         posts_data = [
@@ -1504,7 +1497,7 @@ def get_posts(request):
             "has_next": page_posts.has_next(), 
             "posts": posts_data, 
             "message": str(_("Príspevky boli úspešné nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while loading the posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1512,7 +1505,7 @@ def get_posts(request):
         return Response({
             "success": False, 
             "message": str(_("Pri načítaní príspevkov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1523,7 +1516,7 @@ def get_post(request, post_id):
         logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         # Checks If The Profile With Searched Username Exists
-        if Post.objects.filter(public_id=post_id).exists():
+        if Post.objects.filter(public_id = post_id).exists():
             # Gets The Posts With All Related Data
             post = Post.objects.select_related(
                 "user__subscription"
@@ -1531,70 +1524,70 @@ def get_post(request, post_id):
                 # Gets All Followers With All Related Data
                 Prefetch(
                     "user__follower_relations",
-                    queryset=FollowRelation.objects.filter(status="accepted").select_related("from_user"),
-                    to_attr="accepted_followers"
+                    queryset = FollowRelation.objects.filter(status = "accepted").select_related("from_user"),
+                    to_attr = "accepted_followers"
                 ),
                 
                 # Gets All Following Users With All Related Data
                 Prefetch(
                     "user__following_relations",
-                    queryset=FollowRelation.objects.filter(status="accepted").select_related("to_user"),
-                    to_attr="accepted_following"
+                    queryset = FollowRelation.objects.filter(status = "accepted").select_related("to_user"),
+                    to_attr = "accepted_following"
                 ),
 
                 "tagged_users", 
 
                 Prefetch(
                     "media",
-                    queryset=PostMedia.objects.annotate(
-                        unique_video_views=Count("video_views", distinct=True) # Gets The Unique Viewers Amount
+                    queryset = PostMedia.objects.annotate(
+                        unique_video_views = Count("video_views", distinct = True) # Gets The Unique Viewers Amount
                     ).annotate(
                         # Calculates The Average Watch Time Per 1 Viewer
-                        average_watch_time_per_viewer=Case(
-                            When(unique_video_views=0, then=Value(0.0)),
-                            default=Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
-                            output_field=FloatField()
+                        average_watch_time_per_viewer = Case(
+                            When(unique_video_views = 0, then = Value(0.0)),
+                            default = Cast(F("total_watch_time"), FloatField()) / Cast(F("unique_video_views"), FloatField()),
+                            output_field = FloatField()
                         )
                     ).order_by("order")
                 )
             ).filter(
-                public_id=post_id
+                public_id = post_id
             ).exclude(
-                media__is_processed=False
+                media__is_processed = False
             ).annotate(
-                views=Count("seen_by_instances", distinct=True),
+                views = Count("seen_by_instances", distinct = True),
 
                 # Creates Is Seen Column (True If The Logged In User Has Already Viewed The Post)
-                is_seen=Exists(
-                    SeenPost.objects.filter(post=OuterRef("pk"), user=logged_in_user)
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                is_seen = Exists(
+                    SeenPost.objects.filter(post = OuterRef("pk"), user = logged_in_user)
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
 
                 # Creates Is Followed Column (True If The User Is Following The Author Of The Post)
-                is_followed=Case(
-                    When(user_id__in=logged_in_user.following.values_list("id", flat=True), then=True),
-                    default=False,
-                    output_field=BooleanField()
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                is_followed = Case(
+                    When(user_id__in = logged_in_user.following.values_list("id", flat = True), then = True),
+                    default = False,
+                    output_field = BooleanField()
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
 
-                comments_amount=Count("comments", filter=~Q(comments__status="hidden"), distinct=True),
+                comments_amount = Count("comments", filter = ~Q(comments__status = "hidden"), distinct = True),
 
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-                has_follow=Exists(
+                has_follow = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user_id=OuterRef("user_id"),
-                        status="accepted"
+                        from_user = logged_in_user_id,
+                        to_user_id = OuterRef("user_id"),
+                        status = "accepted"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
                 
                 # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-                has_pending_follow_request=Exists(
+                has_pending_follow_request = Exists(
                     FollowRelation.objects.filter(
-                        from_user=logged_in_user_id,
-                        to_user_id=OuterRef("user_id"),
-                        status="pending"
+                        from_user = logged_in_user_id,
+                        to_user_id = OuterRef("user_id"),
+                        status = "pending"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField())
+                ) if logged_in_user else Value(False, output_field = BooleanField())
             ).first()
 
             # Creates Valid Format Of Post For JSON Response
@@ -1669,7 +1662,7 @@ def get_post(request, post_id):
             "success": True, 
             "post": post_data, 
             "message": str(_("Príspevky boli úspešné nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while loading the posts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1677,7 +1670,7 @@ def get_post(request, post_id):
         return Response({
             "success": False, 
             "message": str(_("Pri načítaní príspevkov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1689,14 +1682,14 @@ def get_post_comments(request):
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
         post_id = request.GET.get("post_id") # Gets The Post ID
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
         # Gets The Post Root Comments With All Related Data
         post_root_comments = PostForum.objects.filter(
-            post=post,
-            parent__isnull=True
+            post = post,
+            parent__isnull = True
         ).exclude(
-            status="hidden"
+            status = "hidden"
         ).select_related(
             "user__subscription"
         ).prefetch_related(
@@ -1713,13 +1706,13 @@ def get_post_comments(request):
         
         # Gets The Post Replies Comments With All Related Data
         post_replies_comments = PostForum.objects.filter(
-            Q(parent_id__in=post_root_comments_ids) | # Level 2 (Reply On Root Comment)
-            Q(parent__parent_id__in=post_root_comments_ids) | # Level 3 (Reply On Level 2)
-            Q(parent__parent__parent_id__in=post_root_comments_ids) | # Level 4 (Reply On Level 3)
-            Q(parent__parent__parent__parent_id__in=post_root_comments_ids), # Level 5 (Reply On Level 4)
+            Q(parent_id__in = post_root_comments_ids) | # Level 2 (Reply On Root Comment)
+            Q(parent__parent_id__in = post_root_comments_ids) | # Level 3 (Reply On Level 2)
+            Q(parent__parent__parent_id__in = post_root_comments_ids) | # Level 4 (Reply On Level 3)
+            Q(parent__parent__parent__parent_id__in = post_root_comments_ids), # Level 5 (Reply On Level 4)
             post=post
         ).exclude(
-            status="hidden"
+            status = "hidden"
         ).select_related(
             "user__subscription"
         ).prefetch_related(
@@ -1730,7 +1723,7 @@ def get_post_comments(request):
         # Combines The Post Root Comments And Replies
         combined_post_comments = sorted(
             chain(page_post_root_comments, post_replies_comments),
-            key=lambda x: x.creation_time
+            key = lambda x: x.creation_time
         )
 
         # Creates Valid Format Of Post Comments For JSON Response
@@ -1752,10 +1745,10 @@ def get_post_comments(request):
 
                 "comment": one_comment.comment,
                 "likes": one_comment.likes,
-                "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat=True)),
+                "likes_from_users": list(one_comment.likes_from_users.values_list("id", flat = True)),
                 "creation_time": one_comment.creation_time.isoformat(),
                 "parent_id": one_comment.parent_id,
-                "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat=True)),
+                "reports_from_users": list(one_comment.reports_from_users.values_list("id", flat = True)),
                 "level": one_comment.level
             }
 
@@ -1767,7 +1760,7 @@ def get_post_comments(request):
             "has_next": page_post_root_comments.has_next(), 
             "visible_comments": post_comments_data, 
             "message": str(_("Komentáre boli úspešné nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1776,7 +1769,7 @@ def get_post_comments(request):
             "success": False, 
             "has_next": False, 
             "message": str(_("Pri hľadaní komentárov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1791,20 +1784,20 @@ def mark_post_as_seen(request):
             return Response({
                 "success": False, 
                 "message": str(_('Príspevok nie je možné označiť za "už videný" bez potrebných údajov.'))
-            }, status=500)
+            }, status = 500)
 
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
+        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
 
         # Marks The Post As Seen If Exists And Isn't Already Seen By The User
         SeenPost.objects.get_or_create(
-            user_id=logged_in_user_id,
-            post=post
+            user_id = logged_in_user_id,
+            public_id = post
         )
 
         return Response({
             "success": True, 
             "message": str(_('Príspevok bol úspešne označený za "už videný".'))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1812,7 +1805,7 @@ def mark_post_as_seen(request):
         return Response({
             "success": False, 
             "message": str(_('Pri označovaní príspevku za "už videný" došlo k chybe.'))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1828,14 +1821,14 @@ def toggle_follow(request):
             return Response({
                 "success": False, 
                 "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
-            }, status=500)
+            }, status = 500)
 
-        user_to_follow = Users.objects.get(id=user_to_follow_id) # Gets The User To Follow
+        user_to_follow = Users.objects.get(id = user_to_follow_id) # Gets The User To Follow
 
         # Gets The Follow Relation
         follow_relation = FollowRelation.objects.filter(
-            from_user=logged_in_user, 
-            to_user=user_to_follow
+            from_user = logged_in_user, 
+            to_user = user_to_follow
         ).first()
 
         # Follow (If Logged In User Isn't Following The User)
@@ -1854,7 +1847,7 @@ def toggle_follow(request):
             return Response({
                 "success": True, 
                 "message": message
-            }, status=200)
+            }, status = 200)
 
         # Unfollow (If Logged In User Is Already Following The User)
         else:
@@ -1865,7 +1858,7 @@ def toggle_follow(request):
             return Response({
                 "success": True, 
                 "message": message
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing the follow.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1873,7 +1866,7 @@ def toggle_follow(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene sledovania došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1891,9 +1884,9 @@ def edit_post_settings(request):
             return Response({
                 "success": False, 
                 "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
-            }, status=500)
+            }, status = 500)
 
-        post = Post.objects.filter(public_id=post_id, user_id=logged_in_user_id).first() # Gets The Post
+        post = Post.objects.filter(public_id = post_id, user_id = logged_in_user_id).first() # Gets The Post
 
         if post:
             setattr(post, setting, action) # Updates The Given Column's Value
@@ -1902,12 +1895,12 @@ def edit_post_settings(request):
             return Response({
                 "success": True, 
                 "message": str(_("Príspevok bol úspešne upravený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Príspevok sa nepodarilo upraviť."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while editing the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1915,7 +1908,7 @@ def edit_post_settings(request):
         return Response({
             "success": False, 
             "message": str(_("Pri úprave príspevku došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1932,27 +1925,27 @@ def delete_post(request):
             return Response({
                 "success": False, 
                 "message": str(_("Príspevok nie je možné odstrániť bez potrebných údajov."))
-            }, status=500)
+            }, status = 500)
 
         # Gets The Post
         post = Post.objects.prefetch_related(
             "media"
         ).get(
-            public_id=post_id
+            public_id = post_id
         ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else Post.objects.prefetch_related(
             "media"
         ).get(
-            public_id=post_id, 
-            user_id=logged_in_user_id
+            public_id = post_id, 
+            user_id = logged_in_user_id
         )
 
         if post:
-            unfinished_media = post.media.filter(is_processed=False) # Gets The Unfinished Media
+            unfinished_media = post.media.filter(is_processed = False) # Gets The Unfinished Media
 
             for one_media in unfinished_media:
                 # Stops The Celery Task For Compression Of Media Of The Post
                 if hasattr(one_media, "celery_task_id") and one_media.celery_task_id:
-                    current_app.control.revoke(one_media.celery_task_id, terminate=True)
+                    current_app.control.revoke(one_media.celery_task_id, terminate = True)
 
                 # Video
                 if one_media.is_video:
@@ -1975,12 +1968,12 @@ def delete_post(request):
             return Response({
                 "success": True, 
                 "message": str(_("Príspevok bol úspešne odstránený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Príspevok sa nepodarilo odstrániť."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1988,7 +1981,7 @@ def delete_post(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní príspevku došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2005,14 +1998,14 @@ def delete_post_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Komentár nie je možné odstrániť bez potrebných údajov."))
-            }, status=500)
+            }, status = 500)
 
         # Gets The Comment
         comment = PostForum.objects.get(
-            id=comment_id
+            id = comment_id
         ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(
-            id=comment_id, 
-            user_id=logged_in_user_id
+            id = comment_id, 
+            user_id = logged_in_user_id
         ) 
 
         if comment:
@@ -2021,12 +2014,12 @@ def delete_post_comment(request):
             return Response({
                 "success": True, 
                 "message": str(_("Komentár bol úspešne odstránený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Komentár sa nepodarilo odstrániť."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2034,7 +2027,7 @@ def delete_post_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní komentáru došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2049,14 +2042,14 @@ def tag_user(request):
             return Response({
                 "success": False, 
                 "message": str(_("Používateľa nie je možné označiť bez potrebných údajov."))
-            }, status=500)
+            }, status = 500)
         
         # Gets Users For Tag (All Relevant Users By Searched Tag)
         users_for_tag = Users.objects.filter(
-            account_status="OK", 
-            username__contains=searched_tag # Filters Users By Searched Tag (Case-Sensitive)
+            account_status = "OK", 
+            username__contains = searched_tag # Filters Users By Searched Tag (Case-Sensitive)
         ).exclude(
-            id=logged_in_user_id
+            id = logged_in_user_id
         ).order_by(
             "-creation_time"
         ) 
@@ -2078,7 +2071,7 @@ def tag_user(request):
             "success": True, 
             "users": users_for_tag, 
             "message": str(_("Užívatelia pre označenie boli úspešne nájdený."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while searching for users for the tag.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2087,7 +2080,7 @@ def tag_user(request):
             "success": False, 
             "users": users_for_tag, 
             "message": str(_("Pri hľadaní užívateľov pre označenie došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2209,7 +2202,7 @@ def upload_post(request):
                         try:
                             file_head = one_file.read(2048) # Reads Head Of File And Validates The Real Format
                             one_file.seek(0)
-                            mime_type = magic.from_buffer(file_head, mime=True) # Gets The Mime Type
+                            mime_type = magic.from_buffer(file_head, mime = True) # Gets The Mime Type
                             is_video = mime_type.startswith("video/") # Stores The Information If The File Is Video
                             
                             # Catches An Unsupported File
@@ -2319,13 +2312,13 @@ def upload_post(request):
                 return Response({
                     "success": False, 
                     "message": str(error)
-                }, status=400)
+                }, status = 400)
 
             return Response({
                 "success": True,
                 "compress_tasks": compress_tasks,
                 "message": str(_("Príspevok bol úspešne pridaný."))
-            }, status=200)
+            }, status = 200)
 
         # Wrong Form
         else:
@@ -2334,7 +2327,7 @@ def upload_post(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pridávanie príspevku zlyhalo."))
-            }, status=500)
+            }, status = 500)
     
     except Exception as error:
         captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2342,7 +2335,7 @@ def upload_post(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pridávaní príspevku došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2365,44 +2358,7 @@ def get_upload_progress(request, task_id):
         "success": True,
         "upload_progress": upload_progress,
         "message": str(_("Pokrok procesu nahrávania príspevku bol úspešne získaný."))
-    }, status=200)
-
-@api_view(["POST"])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
-def mark_post_as_seen(request):
-    try:
-        logged_in_user_id = request.user.id # Gets The Logged In User ID
-
-        post_id = request.data.get("post_id") # Gets The Post ID
-
-        # If The Information Are Missing
-        if not post_id:
-            return Response({
-                "success": False, 
-                "message": str(_("Príspevok sa nenašiel."))
-            }, status=400)
-
-        post = get_object_or_404(Post, public_id=post_id) # Gets The Post
-
-        # Marks The Post As Seen If Exists And Isn't Already Seen By The User
-        SeenPost.objects.get_or_create(
-            user_id=logged_in_user_id,
-            post=post
-        )
-
-        return Response({
-            "success": True, 
-            "message": str(_('Príspevok bol úspešne označený za "už videný".'))
-        }, status=200)
-
-    except Exception as error:
-        captureError(f"An error occurred while marking the post as seen.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
-
-        return Response({
-            "success": False, 
-            "message": str(_('Pri označovaní príspevku za "už videný" došlo k chybe.'))
-        }, status=500)
+    }, status = 200)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2420,14 +2376,14 @@ def update_video_watch_time(request):
             return Response({
                 "success": False, 
                 "message": str(_("Nepodarilo sa získať potrebné dáta pre zaznamenanie času pozerania videa."))
-            }, status=400)
+            }, status = 400)
 
         # Gets The Video Author's ID
         author_id = PostMedia.objects.filter(
             id = post_media_id
         ).values_list(
             "post__user_id", 
-            flat=True
+            flat = True
         ).first()
 
         # If The Video Doesn't Belong To The Logged In User
@@ -2446,13 +2402,13 @@ def update_video_watch_time(request):
             return Response({
                 "success": True, 
                 "message": str(_("Celkový čas pozerania videa bol úspešne zaznamenaný."))
-            }, status=200)
+            }, status = 200)
 
         else:
             return Response({
                 "success": True, 
                 "message": str(_("Celkový čas pozerania videa nie je možné navýšiť vlastnému príspevku."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while recording the video watch time.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2460,7 +2416,7 @@ def update_video_watch_time(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zaznamenávaní času pozerania videa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2479,20 +2435,20 @@ def stream_video(request, user_id, media_id, filename):
             return Response({
                 "success": False, 
                 "message": str(_("Video súbor %(safe_filename)s sa nenašiel.") % {"safe_filename": safe_filename})
-            }, status=404)
+            }, status = 404)
 
         # Checks If The File Is index.m3u8 Or .ts Video File Segment
         content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
         if not content_type: content_type = "application/octet-stream"
 
-        video_response = FileResponse(open(file_path, "rb"), content_type=content_type) # Gets The Video Response
+        video_response = FileResponse(open(file_path, "rb"), content_type = content_type) # Gets The Video Response
         video_response["Accept-Ranges"] = "bytes"
 
         return Response({
             "success": True, 
             "video": video_response,
             "message": str(_("Video bolo nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while streaming the video.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2500,7 +2456,7 @@ def stream_video(request, user_id, media_id, filename):
         return Response({
             "success": False, 
             "message": str(_("Pri pokuse o prehratie videa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Activity Page
 
@@ -2524,7 +2480,7 @@ def get_activity(request):
         average_activity_time = math.floor(average_activity_elapsed_time) if average_activity_elapsed_time is not None else 0 # Gets The Average Activity Time
 
         average_activity_time_formatted = f"{(math.floor(average_activity_time / 3600)) % 60}h {(math.floor(average_activity_time / 60)) % 60}m" if activities else "" # Formats Average Activity Time
-        activities_amount = Activity.objects.filter(Q(user_id=logged_in_user_id) & Q(end_time__gte=timezone.now() - timedelta(days=6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
+        activities_amount = Activity.objects.filter(Q(user_id = logged_in_user_id) & Q(end_time__gte = timezone.now() - timedelta(days = 6))).count() # Counts Amount Of Last 7 Days Logged In User's Activities
 
         latest_activity_data = None # Stores The Latest Activity
         longest_activity_data = None # Stores The Longest Activity
@@ -2564,7 +2520,7 @@ def get_activity(request):
             "success": True, 
             "activity": activity,
             "message": "Dáta o aktivite užívateľa boli úspešne získané."
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2572,7 +2528,7 @@ def get_activity(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní dát o aktivite užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2625,7 +2581,7 @@ def get_weekly_activity(request):
             "success": True, 
             "weekly_activity": json.dumps(weekly_activity_result),
             "message": str(_("Dáta o aktivite užívateľa boli úspešne získané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2633,7 +2589,7 @@ def get_weekly_activity(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní aktivity za posledný týždeň došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2678,7 +2634,7 @@ def get_training_plans(request):
             "success": True, 
             "training_plans": training_plans_data,
             "message": "Tréningové plány boli úspešne získané."
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2686,7 +2642,7 @@ def get_training_plans(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní tréningových plánov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2714,7 +2670,7 @@ def get_official_tasks(request):
         # Gets Assigned User's Official Tasks For Today If The User Has Less Than 3 Of Them Already Assigned
         if official_tasks_amount < 3:
             needed_tasks = 3 - official_tasks_amount # Gets The Amount Of Still Needed Tasks
-            existing_tasks_ids = official_tasks.values_list("id", flat=True) # Gets The Already Assigned User's Official Tasks For Today IDs
+            existing_tasks_ids = official_tasks.values_list("id", flat = True) # Gets The Already Assigned User's Official Tasks For Today IDs
         
             # Gets The Random New User's Official Tasks For Today Which Aren't Already Assigned For The User
             random_new_tasks = OfficialTasks.objects.exclude(
@@ -2733,8 +2689,8 @@ def get_official_tasks(request):
 
             # Updates The Official Tasks
             official_tasks = logged_in_user.daily_official_tasks.annotate(
-                progress_percentage=F("userdailyofficialtasks__progress_percentage"),
-                is_completed=F("userdailyofficialtasks__is_completed")
+                progress_percentage = F("userdailyofficialtasks__progress_percentage"),
+                is_completed = F("userdailyofficialtasks__is_completed")
             ).order_by("xp")
 
         current_time = timezone.localtime(timezone.now()) # Gets The Current Time
@@ -2760,7 +2716,7 @@ def get_official_tasks(request):
             "official_tasks": official_tasks_data,
             "official_tasks_remaining_hours": official_tasks_remaining_hours,
             "message": "Oficiálne úlohy pre tento deň boli úspešne získané."
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting user's official tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2768,7 +2724,7 @@ def get_official_tasks(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní oficiálnych úloh došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2800,7 +2756,7 @@ def get_custom_tasks(request):
             "success": True, 
             "custom_tasks": custom_tasks_data,
             "message": "Vlastné úlohy boli úspešne získané."
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting user's custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2808,7 +2764,7 @@ def get_custom_tasks(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní vlastných úloh došlo k chybe."))
-        }, status=500)
+        }, status = 500)
     
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2841,12 +2797,12 @@ def get_activity_history(request):
                 "success": True, 
                 "activity_history": activity_history_data,
                 "message": "História zaznamenaných aktivít bola úspešne získaná."
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": "Históriu zaznamenaných aktivít sa nepodarilo získať."
-        }, status=404)
+        }, status = 404)
     
     except Exception as error:
         captureError(f"An error occurred while getting activity history.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2854,7 +2810,7 @@ def get_activity_history(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní histórie zaznamenaných aktivít došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2901,7 +2857,7 @@ def get_xp_boost(request):
             "is_xp_boost_available": is_xp_boost_available,
             "is_xp_boost_active": is_xp_boost_active,
             "message": "Informácia o dostupnom navýšení XP bola úspešne získaná."
-        }, status=200)
+        }, status = 200)
     
     except Exception as error:
         captureError(f"An error occurred while getting information if the XP boost is available.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2909,7 +2865,7 @@ def get_xp_boost(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní informácie o dostupnom navýšení XP došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -2926,7 +2882,7 @@ def use_xp_boost(request):
             "success": True, 
             "xp_boost_expiration_time": xp_boost_expiration_time, 
             "message": str(_("Navýšenie XP bolo úspešne uplatnené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while using the available XP boost.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -2934,7 +2890,7 @@ def use_xp_boost(request):
         return Response({
             "success": False, 
             "message": str(_("Pri uplatňovaní navýšenia XP došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -2951,7 +2907,7 @@ def complete_official_task(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         task = OfficialTasks.objects.get(data = task_data) # Gets The Completed Task
 
@@ -2995,7 +2951,7 @@ def complete_official_task(request):
                     "success": True, 
                     "task": task_data, 
                     "message": str(_("Úloha bola úspešne dokončená."))
-                }, status=200)
+                }, status = 200)
 
             # Creates Valid Format Of Task For JSON Response
             task_data = {
@@ -3009,7 +2965,7 @@ def complete_official_task(request):
                 "success": True, 
                 "task": task_data, 
                 "message": str(_("Pokrok úlohy bol úspešne zaznamenaný."))
-            }, status=200)
+            }, status = 200)
 
         else:
             # Creates Valid Format Of Task For JSON Response
@@ -3024,7 +2980,7 @@ def complete_official_task(request):
                 "success": True, 
                 "task": task_data, 
                 "message": str(_("Úloha už bola dokončená."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while marking the official task as completed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3032,7 +2988,7 @@ def complete_official_task(request):
         return Response({
             "success": False, 
             "message": str(_("Pri označovaní úlohy za dokončenú došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3048,7 +3004,7 @@ def add_custom_task(request):
             return Response({
                 "success": False,
                 "message": "Názov úlohy nesmie byť prázdny."
-            }, status=400)
+            }, status = 400)
 
         with transaction.atomic():
             CustomTasks.objects.filter(user_id = logged_in_user_id).update(order = F("order") + 1) # Moves Every Previous Tasks Down
@@ -3073,7 +3029,7 @@ def add_custom_task(request):
             "success": True, 
             "custom_task": custom_task_data, 
             "message": str(_("Úloha bola úspešne pridaná."))
-        }, status=201)
+        }, status = 201)
 
     except Exception as error:
         captureError(f"An error occurred while adding the new custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3081,7 +3037,7 @@ def add_custom_task(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pridávaní úlohy došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3097,7 +3053,7 @@ def toggle_complete_custom_task(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
 
@@ -3107,7 +3063,7 @@ def toggle_complete_custom_task(request):
         return Response({
             "success": True, 
             "message": str(_("Stav úlohy bol úspešne zmenený."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing the completion of the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3115,7 +3071,7 @@ def toggle_complete_custom_task(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene stavu úlohy došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3131,7 +3087,7 @@ def delete_custom_task(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie úlohy chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
 
@@ -3140,7 +3096,7 @@ def delete_custom_task(request):
         return Response({
             "success": True, 
             "message": str(_("Úloha bola úspešne odstránená."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the custom task.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3148,7 +3104,7 @@ def delete_custom_task(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní úlohy došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3164,7 +3120,7 @@ def delete_completed_custom_tasks(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie úloh chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # Deletes The Completed Custom Tasks
         CustomTasks.objects.filter(
@@ -3175,7 +3131,7 @@ def delete_completed_custom_tasks(request):
         return Response({
             "success": True, 
             "message": str(_("Úlohy boli úspešne odstránené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the completed custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3183,7 +3139,7 @@ def delete_completed_custom_tasks(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní úloh došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3199,19 +3155,19 @@ def change_custom_tasks_order(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu poradia úloh chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # Updates The Order Of All The Logged In User's Custom Tasks
         for index, task_id in enumerate(tasks_ids):
             CustomTasks.objects.filter(
-                id=task_id, 
-                user_id=logged_in_user_id
-            ).update(order=index)
+                id = task_id, 
+                user_id = logged_in_user_id
+            ).update(order = index)
 
         return Response({
             "success": True, 
             "message": str(_("Poradie úloh bolo úspešne zmenené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing the order of custom tasks.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3219,7 +3175,7 @@ def change_custom_tasks_order(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pokuse o zmenu poradia úloh došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3236,15 +3192,15 @@ def new_activity(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zaznamenanie aktivity chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
 
-        Users.objects.filter(id=logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
-        Users.objects.filter(id=logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
+        Users.objects.filter(id = logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
+        Users.objects.filter(id = logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
 
         today = timezone.now().date() # Gets The Today's Date
-        yesterday = today - timedelta(days=1) # Gets The Yesterday's Date
+        yesterday = today - timedelta(days = 1) # Gets The Yesterday's Date
 
         # Gets The User's Last Activity Streak Increase Date
         last_activity_streak_increase_date = (
@@ -3255,15 +3211,15 @@ def new_activity(request):
         if last_activity_streak_increase_date is None or last_activity_streak_increase_date < today:
             # Increases The Activity Streak
             if last_activity_streak_increase_date == yesterday or logged_in_user.activity_streak == 0:
-                Users.objects.filter(id=logged_in_user_id).update(
-                    activity_streak=F("activity_streak") + 1,
-                    last_activity_streak_increase_time=today
+                Users.objects.filter(id = logged_in_user_id).update(
+                    activity_streak = F("activity_streak") + 1,
+                    last_activity_streak_increase_time = today
                 )
 
                 # Increases The Max Activity Streak
                 if logged_in_user.activity_streak > logged_in_user.max_activity_streak:
-                    Users.objects.filter(id=logged_in_user_id).update(
-                        max_activity_streak=F("activity_streak")
+                    Users.objects.filter(id = logged_in_user_id).update(
+                        max_activity_streak = F("activity_streak")
                     )
 
         # Creates The New Activity
@@ -3279,8 +3235,8 @@ def new_activity(request):
         new_activity.save() # Saves The New Activity
 
         # No Day Off Week Badge Completion
-        if not logged_in_user.badges.filter(data="no_day_off_week").exists():
-            seven_days_ago = today - timedelta(days=6) # Gets The Seven Days Ago Date
+        if not logged_in_user.badges.filter(data = "no_day_off_week").exists():
+            seven_days_ago = today - timedelta(days = 6) # Gets The Seven Days Ago Date
 
             # Gets The Number Of Consecutive Days With Some Recorded Activity
             unique_seven_days_of_activity = Activity.objects.filter(
@@ -3339,7 +3295,7 @@ def new_activity(request):
         return Response({
             "success": True, 
             "message": str(_("Aktivita bola úspešne zaznamenaná."))
-        }, status=201)
+        }, status = 201)
 
     except Exception as error:
         captureError(f"An error occurred while recording the activity.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3347,7 +3303,7 @@ def new_activity(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zaznamenávaní aktivity došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Manage Training Plans Page
 
@@ -3386,7 +3342,7 @@ def get_exercises(request):
             "success": True, 
             "exercises": exercises_data,
             "message": str(_("Cviky boli úspešne získané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the exercises.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3394,7 +3350,7 @@ def get_exercises(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní cvikov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3410,7 +3366,7 @@ def manage_training_plan(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre vykonanie zmien v tréningovom pláne chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
         
         deleted_training_plan_keys = set() # Gets The Deleted Training Plan Keys
         
@@ -3465,7 +3421,7 @@ def manage_training_plan(request):
         return Response({
             "success": True, 
             "message": str(_("Zmeny v tréningovom pláne boli úspešne vykonané."))
-        }, status=201)
+        }, status = 201)
 
     except Exception as error:
         captureError(f"An error occurred while making changes to the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3473,7 +3429,7 @@ def manage_training_plan(request):
         return Response({
             "success": False, 
             "message": str(_("Pri vykonávaní zmien v tréningovom pláne došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Profile Page
 
@@ -3496,7 +3452,7 @@ def get_profile(request, username):
                 "bio_links",
                 Prefetch("badges", queryset=SpecialBadges.objects.order_by("-obtained_in"))
             ).filter(
-                username=username
+                username = username
             ).annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                 has_follow = Exists(
@@ -3505,7 +3461,7 @@ def get_profile(request, username):
                         to_user = OuterRef("pk"),
                         status = "accepted"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField()),
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
 
                 # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
                 has_pending_follow_request=Exists(
@@ -3514,7 +3470,7 @@ def get_profile(request, username):
                         to_user = OuterRef("pk"),
                         status = "pending"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField())
+                ) if logged_in_user else Value(False, output_field = BooleanField())
             ).first()
 
             # Gets All Followers With All Related Data
@@ -3589,7 +3545,7 @@ def get_profile(request, username):
                         to_user = OuterRef("to_user_id"),
                         status = "pending"
                     )
-                ) if logged_in_user else Value(False, output_field=BooleanField())
+                ) if logged_in_user else Value(False, output_field = BooleanField())
             ).distinct("to_user_id")
 
             following_data = []
@@ -3794,7 +3750,7 @@ def get_profile(request, username):
                         "is_found": is_found,
                         "user": user_data,
                         "message": str(_("Profil užívateľa bol nájdený."))
-                    }, status=200)
+                    }, status = 200)
 
                 else:
                     user_data["has_follow"] = user.has_follow # Stores The Information If The Logged In User Follows The User
@@ -3814,20 +3770,20 @@ def get_profile(request, username):
                         "is_found": is_found,
                         "user": user_data,
                         "message": str(_("Profil užívateľa bol nájdený."))
-                    }, status=200)
+                    }, status = 200)
 
             return Response({
                 "success": True, 
                 "is_found": is_found,
                 "user": user_data,
                 "message": str(_("Profil užívateľa bol nájdený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": True, 
             "is_found": is_found,
             "message": str(_("Profil užívateľa sa nenašiel."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while getting the profile.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3835,7 +3791,7 @@ def get_profile(request, username):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní profilu užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3852,7 +3808,7 @@ def remove_follower(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie sledovateľa chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # Removes The Follower
         FollowRelation.objects.filter(
@@ -3863,7 +3819,7 @@ def remove_follower(request):
         return Response({
             "success": True, 
             "message": str(_("Sledovateľ bol odstránený."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while removing the follower.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3871,7 +3827,7 @@ def remove_follower(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní sledovateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3885,7 +3841,7 @@ def get_password_reset_code(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
         
         code = generateCode() # Generates Random 6-Digit Code
         
@@ -3915,7 +3871,7 @@ def get_password_reset_code(request):
         return Response({
             "success": True, 
             "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": user.email_address})
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while sending the password reset code.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -3923,7 +3879,7 @@ def get_password_reset_code(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní overovacieho kódu došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3940,7 +3896,7 @@ def password_reset(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # if password_reset_code == logged_in_user.password_reset_code:
         #     if len(new_password) < 8:
@@ -3969,7 +3925,7 @@ def password_reset(request):
         return Response({
             "success": False, 
             "message": str(_("Pri spracovaní žiadosti o zmenu hesla došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -3985,7 +3941,7 @@ def approve_follow_request(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre potvrdenie žiadosti o sledovanie chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # Gets The Follow Request
         follow_request = FollowRelation.objects.filter(
@@ -4001,7 +3957,7 @@ def approve_follow_request(request):
         return Response({
             "success": True, 
             "message": str(_("Žiadosť o sledovanie bola úspešne potvrdená."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while accepting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4009,7 +3965,7 @@ def approve_follow_request(request):
         return Response({
             "success": False, 
             "message": str(_("Pri potvrdení žiadosti o sledovanie došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4025,7 +3981,7 @@ def reject_follow_request(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zamietnutie žiadosti o sledovanie chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         # Gets The Follow Request
         follow_request = FollowRelation.objects.filter(
@@ -4039,7 +3995,7 @@ def reject_follow_request(request):
         return Response({
             "success": True, 
             "message": str(_("Žiadosť o sledovanie bola zamietnutá."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while rejecting the follow request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4047,7 +4003,7 @@ def reject_follow_request(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zamietnutí žiadosti o sledovanie došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4096,7 +4052,7 @@ def edit_account(request):
             return Response({
                 "success": True, 
                 "message": str(_("Účet %(username)s bol odstránený") % {"username": logged_in_user.username})
-            }, status=200)
+            }, status = 200)
 
         if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
             profile_picture_file = request.FILES.get("selected_profile_picture")
@@ -4201,18 +4157,18 @@ def edit_account(request):
                 return Response({
                     "success": False, 
                     "message": str(_("Pri spracovávaní vlastných odkazov došlo k chybe"))
-                }, status=500)
+                }, status = 500)
 
             return Response({
                 "success": True, 
                 "message": str(_("Zmeny boli uložené"))
-            }, status=200)
+            }, status = 200)
 
         else:
             return Response({
                 "success": True, 
                 "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days=30)).strftime('%d.%m. %Y')})
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4220,7 +4176,7 @@ def edit_account(request):
         return Response({
             "success": False, 
             "message": str(_("Pri vykonávaní zmien v účte došlo k chybe"))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4237,7 +4193,7 @@ def report_user(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre nahlásenie používateľa chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         reported_user = Users.objects.get(id = reported_user_id) # Gets The Reported User
         has_report = reported_user.reports_received.filter(reporting_user_id = logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
@@ -4279,7 +4235,7 @@ def report_user(request):
         return Response({
             "success": True, 
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4287,7 +4243,7 @@ def report_user(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4304,7 +4260,7 @@ def suspend_user(request):
                 return Response({
                     "success": False, 
                     "message": str(_("Pre obmedzenie používateľa chýbajú potrebné údaje."))
-                }, status=400)
+                }, status = 400)
 
             user = Users.objects.get(id = user_id) # Gets The User
 
@@ -4324,12 +4280,12 @@ def suspend_user(request):
             return Response({
                 "success": True, 
                 "message": str(_("Užívateľ bol obmedzený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Užívateľa môže obmedziť len správca."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while suspending the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4337,7 +4293,7 @@ def suspend_user(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pokuse o obmedzenie užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Chat Page
 
@@ -4422,7 +4378,7 @@ def get_chat(request, username):
                     "success": False, 
                     "has_next": False, 
                     "message": str(_("Pri hľadaní správ došlo k chybe."))
-                }, status=404)
+                }, status = 404)
 
             # Creates Valid Format Of Chats For JSON Response
             chats_data = [
@@ -4520,12 +4476,12 @@ def get_chat(request, username):
                 "receiver": receiver_data,
                 "chats": chats_data,
                 "message": str(_("Užívateľ sa našiel."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Užívateľ sa nenašiel."))
-        }, status=404)
+        }, status = 404)
 
     except Exception as error:
         captureError(f"An error occurred while finding the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4533,7 +4489,7 @@ def get_chat(request, username):
         return Response({
             "success": False, 
             "message": str(_("Pri hľadaní užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Blog Page
 
@@ -4710,7 +4666,7 @@ def get_articles(request):
             "no_articles": no_articles,
             "articles_amount": articles_amount,
             "message": str(_("Dáta článkov boli úspešne nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while finding the articles.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4718,7 +4674,7 @@ def get_articles(request):
         return Response({
             "success": False, 
             "message": str(_("Pri hľadaní článkov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 # Article Page
 
@@ -4734,15 +4690,15 @@ def add_article_rating(request):
 
         # Stores The Added Article Rating
         ArticleRating.objects.update_or_create(
-            article_id=article_id,
-            user_id=logged_in_user_id,
-            defaults={"rating": rating} # Rating Can Be Updated
+            article_id = article_id,
+            user_id = logged_in_user_id,
+            defaults = {"rating": rating} # Rating Can Be Updated
         )
 
         return Response({
             "success": True, 
             "message": str(_("Hodnotenie bolo úspešne odoslané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while adding the rating.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4750,7 +4706,7 @@ def add_article_rating(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pridávaní hodnotenia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4761,14 +4717,14 @@ def report_article_comment(request):
 
         comment_id = request.data.get("comment_id") # Gets The Article Forum ID
         reason = request.data.get("reason") # Gets The Reason
-        comment = ArticleForum.objects.get(id=comment_id) # Gets The Comment
-        has_report = comment.reports_from_users.filter(id=logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
+        comment = ArticleForum.objects.get(id = comment_id) # Gets The Comment
+        has_report = comment.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
 
         # Stores The Reported Comment
         ArticleForumReport.objects.update_or_create(
-            articleforum_id=comment_id,
-            user_id=logged_in_user_id,
-            defaults={"reason": reason} # Reason Can Be Updated
+            articleforum_id = comment_id,
+            user_id = logged_in_user_id,
+            defaults = {"reason": reason} # Reason Can Be Updated
         )
 
         # Report
@@ -4776,7 +4732,7 @@ def report_article_comment(request):
             comment.reports += 1 # Increases The Reports Counter
 
             if comment.reports >= 5:
-                article = Articles.objects.get(id=comment.article_id) # Gets The Article
+                article = Articles.objects.get(id = comment.article_id) # Gets The Article
 
                 if article.likes > 0:
                     report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
@@ -4792,7 +4748,7 @@ def report_article_comment(request):
         return Response({
             "success": True, 
             "message": str(_("Nahlásenie bolo úspešne odoslané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while submitting the report.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4800,7 +4756,7 @@ def report_article_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní nahlásenia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4818,7 +4774,7 @@ def add_article_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre pridanie komentára chýbajú potrebné údaje."))
-            }, status=400)
+            }, status  =  400)
 
         new_comment = ArticleForum(
             article_id = article_id,
@@ -4847,13 +4803,13 @@ def add_article_comment(request):
             "success": True, 
             "comment": comment, 
             "message": _("Komentár pre článok bol úspešne pridaný.")
-        }, status=201)
+        }, status = 201)
 
     except ValidationError as error:
         return Response({
             "success": False, 
             "message": str(error.message) # Returns The Error Message From Models
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while adding a comment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4861,7 +4817,7 @@ def add_article_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri pridávaní komentáru došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4878,7 +4834,7 @@ def toggle_article_comment_like(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu označenia páči sa mi to chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         comment = ArticleForum.objects.get(id = int(comment_id)) # Gets The Comment
         has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
@@ -4892,7 +4848,7 @@ def toggle_article_comment_like(request):
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne pridané."))
-            }, status=200)
+            }, status = 200)
 
         # Cancel Like
         else:
@@ -4903,7 +4859,7 @@ def toggle_article_comment_like(request):
             return Response({
                 "success": True, 
                 "message": str(_("Označenie páči sa mi to bolo úspešne odstránené."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while changing a like.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4911,7 +4867,7 @@ def toggle_article_comment_like(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -4928,7 +4884,7 @@ def delete_article_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie komentáru chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
         comment = ArticleForum.objects.get(id = comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id = comment_id, user_id = logged_in_user_id) # Gets The Comment
 
@@ -4938,12 +4894,12 @@ def delete_article_comment(request):
             return Response({
                 "success": True, 
                 "message": str(_("Komentár bol úspešne odstránený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Komentár sa nepodarilo odstrániť."))
-        }, status=400)
+        }, status = 400)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the comment from the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -4951,7 +4907,7 @@ def delete_article_comment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní komentáru došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -4976,7 +4932,7 @@ def get_article(request, theme):
                 ).values("rating")[:1]
             ),
 
-            comments_amount = Count("comments", filter=~Q(comments__status = "hidden"), distinct = True),
+            comments_amount = Count("comments", filter = ~Q(comments__status = "hidden"), distinct = True),
         ).prefetch_related(
             Prefetch(
                 "comments",
@@ -5048,7 +5004,7 @@ def get_article(request, theme):
             "article": articles_data,
             "not_found": not_found,
             "message": str(_("Článok bol nájdený."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the article.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5056,7 +5012,7 @@ def get_article(request, theme):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní článku došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -5070,10 +5026,10 @@ def get_article_comments(request):
 
         # Gets The Article Root Comments With All Related Data
         article_root_comments = ArticleForum.objects.filter(
-            article_id=article_id,
-            parent__isnull=True
+            article_id = article_id,
+            parent__isnull = True
         ).exclude(
-            status="hidden"
+            status = "hidden"
         ).select_related(
             "user__subscription"
         ).prefetch_related(
@@ -5090,13 +5046,13 @@ def get_article_comments(request):
         
         # Gets The Article Replies Comments With All Related Data
         article_replies_comments = ArticleForum.objects.filter(
-            Q(parent_id__in=article_root_comments_ids) | # Level 2 (Reply On Root Comment)
-            Q(parent__parent_id__in=article_root_comments_ids) | # Level 3 (Reply On Level 2)
-            Q(parent__parent__parent_id__in=article_root_comments_ids) | # Level 4 (Reply On Level 3)
-            Q(parent__parent__parent__parent_id__in=article_root_comments_ids), # Level 5 (Reply On Level 4)
+            Q(parent_id__in = article_root_comments_ids) | # Level 2 (Reply On Root Comment)
+            Q(parent__parent_id__in = article_root_comments_ids) | # Level 3 (Reply On Level 2)
+            Q(parent__parent__parent_id__in = article_root_comments_ids) | # Level 4 (Reply On Level 3)
+            Q(parent__parent__parent__parent_id__in = article_root_comments_ids), # Level 5 (Reply On Level 4)
             article_id=article_id
         ).exclude(
-            status="hidden"
+            status = "hidden"
         ).select_related(
             "user__subscription"
         ).prefetch_related(
@@ -5107,7 +5063,7 @@ def get_article_comments(request):
         # Combines The Article Root Comments And Replies
         combined_article_comments = sorted(
             chain(page_article_root_comments, article_replies_comments),
-            key=lambda x: x.creation_time
+            key = lambda x: x.creation_time
         )
 
         # Creates Valid Format Of Article Comments For JSON Response
@@ -5144,7 +5100,7 @@ def get_article_comments(request):
             "has_next": page_article_root_comments.has_next(), 
             "visible_comments": article_comments_data, 
             "message": str(_("Komentáre boli úspešné nájdené."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while searching for comments.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5153,7 +5109,7 @@ def get_article_comments(request):
             "success": False, 
             "has_next": False, 
             "message": str(_("Pri hľadaní komentárov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -5202,7 +5158,7 @@ def send_chat_attachment(request):
             return Response({
                 "success": False,
                 "message": str(_("Neboli vybrané žiadne súbory."))
-            }, status=400)
+            }, status = 400)
 
         sent_attachments = [] # Stores The Uploaded Results
 
@@ -5210,36 +5166,36 @@ def send_chat_attachment(request):
             try:
                 file_head = one_selected_file.read(2048) # Reads Head Of File And Validates The Real Format
                 one_selected_file.seek(0)
-                mime_type = magic.from_buffer(file_head, mime=True)
+                mime_type = magic.from_buffer(file_head, mime = True)
                 
                 # Catches An Unsupported File
                 if mime_type in DISALLOWED_MIME_TYPES:
                     return Response({
                         "success": False,
                         "message": str(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": one_selected_file.name})
-                    }, status=400)
+                    }, status = 400)
 
                 # Gets The Attachment Type By Mime Type
-                if mime_type.startswith("image/"): attachment_type = "image"
-                elif mime_type.startswith("video/"): attachment_type = "video"
-                elif mime_type.startswith("audio/"): attachment_type = "audio"
-                elif mime_type == "application/pdf": attachment_type = "pdf"
-                elif mime_type in WORD_MIME_TYPES: attachment_type = "doc"
-                elif mime_type in EXCEL_MIME_TYPES: attachment_type = "excel"
-                elif mime_type in POWERPOINT_MIME_TYPES: attachment_type = "powerpoint"
-                elif mime_type in ARCHIVE_MIME_TYPES: attachment_type = "archive"
-                elif mime_type == "text/plain": attachment_type = "text"
+                if mime_type.startswith("image/"): attachment_type = "image" # Sets The Image Attachment Type
+                elif mime_type.startswith("video/"): attachment_type = "video" # Sets The Video Attachment Type
+                elif mime_type.startswith("audio/"): attachment_type = "audio" # Sets The Audio Attachment Type
+                elif mime_type == "application/pdf": attachment_type = "pdf" # Sets The PDF Attachment Type
+                elif mime_type in WORD_MIME_TYPES: attachment_type = "doc" # Sets The DOC Attachment Type
+                elif mime_type in EXCEL_MIME_TYPES: attachment_type = "excel" # Sets The Excel Attachment Type
+                elif mime_type in POWERPOINT_MIME_TYPES: attachment_type = "powerpoint" # Sets The Powerpoint Attachment Type
+                elif mime_type in ARCHIVE_MIME_TYPES: attachment_type = "archive" # Sets The Archive Attachment Type
+                elif mime_type == "text/plain": attachment_type = "text" # Sets The Text Attachment Type
                 
                 # Gets The Attachment Type By Extension
                 else:
                     extension = os.path.splitext(one_selected_file.name)[1].lower().replace(".", "") # Gets The Extension
 
-                    if extension in ["doc", "docx"]: attachment_type = "doc"
-                    elif extension in ["xls", "xlsx", "csv"]: attachment_type = "excel"
-                    elif extension in ["ppt", "pptx"]: attachment_type = "powerpoint"
-                    elif extension in ["zip", "rar", "7z", "tar", "gz"]: attachment_type = "archive"
-                    elif extension in ["txt"]: attachment_type = "text"
-                    else: attachment_type = "file"
+                    if extension in ["doc", "docx"]: attachment_type = "doc" # Sets The DOC Attachment Type
+                    elif extension in ["xls", "xlsx", "csv"]: attachment_type = "excel" # Sets The Excel Attachment Type
+                    elif extension in ["ppt", "pptx"]: attachment_type = "powerpoint" # Sets The Powerpoint Attachment Type
+                    elif extension in ["zip", "rar", "7z", "tar", "gz"]: attachment_type = "archive" # Sets The Archive Attachment Type
+                    elif extension in ["txt"]: attachment_type = "text" # Sets The Text Attachment Type
+                    else: attachment_type = "file" # Sets The File Attachment Type
                 
                 # Image
                 if attachment_type == "image":
@@ -5251,17 +5207,18 @@ def send_chat_attachment(request):
                     try:
                         # Image Verification
                         one_selected_file.seek(0)
-                        image = Image.open(one_selected_file)
-                        image.verify()
+                        image = Image.open(one_selected_file) # Opens The Image
+                        image.verify() # Verifies The Image
                         one_selected_file.seek(0)
 
                         # Image Scale Verification
-                        image = Image.open(one_selected_file)
+                        image = Image.open(one_selected_file) # Opens The Image
                         width, height = image.size
 
                         MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
                         MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
 
+                        # Catches Too Large Image Size
                         if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
                             raise ValueError(_("Rozmery obrázka sú príliš veľké:\n%(file)s") % {"file": one_selected_file.name})
 
@@ -5279,27 +5236,28 @@ def send_chat_attachment(request):
                     if one_selected_file.size > MAX_VIDEO_SIZE:
                         raise ValueError(_("Video je príliš veľké:\n%(file)s") % {"file": one_selected_file.name})
 
-                    # Catches A Too Long Video
                     suffix = os.path.splitext(one_selected_file.name)[1] # Gets The File Suffix
 
                     # Creates A Temporary File For The moviepy Library
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temporary_file:
+                    with tempfile.NamedTemporaryFile(delete = False, suffix = suffix) as temporary_file:
                         for one_chunk in one_selected_file.chunks():
                             temporary_file.write(one_chunk)
                             
-                        temporary_path = temporary_file.name
+                        temporary_video_path = temporary_file.name # Gets The Temporary Video Path
                     
                     try:
-                        video = VideoFileClip(temporary_path)
-                        duration = video.duration
-                        video.close()
+                        video = VideoFileClip(temporary_video_path) # Gets The Video
+                        duration = video.duration # Gets The Video Duration
+                        video.close() # Closes The Video
 
-                        if os.path.exists(temporary_path): 
-                            os.remove(temporary_path) # Deletes The Temporary File
+                        if os.path.exists(temporary_video_path): 
+                            os.remove(temporary_video_path) # Deletes The Temporary Video File
 
+                        # Catches A Too Long Video
                         if duration > MAX_VIDEO_DURATION:
                             raise ValueError(_("Video je príliš dlhé:\n%(file)s") % {"file": one_selected_file.name})
 
+                        # Catches A Too Short Video
                         elif duration < MIN_VIDEO_DURATION:
                             raise ValueError(_("Video je príliš krátke:\n%(file)s") % {"file": one_selected_file.name})
 
@@ -5310,8 +5268,8 @@ def send_chat_attachment(request):
                         raise ValueError(_("Pri spracovávaní videa došlo k chybe:\n%(file)s") % {"file": one_selected_file.name})
 
                     finally:
-                        if os.path.exists(temporary_path): 
-                            os.remove(temporary_path)
+                        if os.path.exists(temporary_video_path): 
+                            os.remove(temporary_video_path) # Deletes The Temporary Video File
 
                 # Other Files
                 elif not attachment_type == "image" and not attachment_type == "video":
@@ -5323,13 +5281,13 @@ def send_chat_attachment(request):
                 return Response({
                     "success": False, 
                     "message": str(custom_error)
-                }, status=500)
+                }, status = 500)
 
             except Exception:
                 return Response({
                     "success": False, 
                     "message": str(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_selected_file.name})
-                }, status=500)
+                }, status = 500)
 
             one_selected_file.seek(0)
 
@@ -5343,14 +5301,16 @@ def send_chat_attachment(request):
                 compressed_size = one_selected_file.size
             )
 
+            # Image
             if attachment_type == "image":
                 transaction.on_commit(
-                    lambda att_id=new_attachment.id: compressImageAttachment.delay(att_id, logged_in_user_id)
+                    lambda att_id = new_attachment.id: compressImageAttachment.delay(att_id, logged_in_user_id) # Starts Compress Image Attachment Task
                 )
 
+            # Video
             elif attachment_type == "video":
                 transaction.on_commit(
-                    lambda att_id=new_attachment.id: compressVideoAttachment.delay(logged_in_user_id, chat_attachment_id=att_id)
+                    lambda att_id = new_attachment.id: compressVideoAttachment.delay(logged_in_user_id, chat_attachment_id = att_id) # Starts Compress Video Attachment Task
                 )
 
             # Appends The New Attachment To The Sent Attachments
@@ -5368,7 +5328,7 @@ def send_chat_attachment(request):
             "success": True, 
             "sent_attachments": sent_attachments, 
             "message": str(_("Prílohy boli úspešne odoslané."))
-        }, status=201)
+        }, status = 201)
 
     except Exception as error:
         captureError(f"An error occurred while sending the chat attachment.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5376,7 +5336,7 @@ def send_chat_attachment(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odosielaní prílohy došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -5388,28 +5348,28 @@ def get_friends(request):
 
         # Gets All Following Users With All Related Data
         following = FollowRelation.objects.filter(
-            from_user=logged_in_user, 
-            status="accepted"
+            from_user = logged_in_user, 
+            status = "accepted"
         ).select_related(
             "to_user"
         ).order_by(
             "to_user_id", "-created_at"
         ).annotate(
             # Creates The Has Follow Column (True If The Logged In User Is Following The User)
-            has_follow=Exists(
+            has_follow = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user=OuterRef("to_user_id"),
-                    status="accepted"
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("to_user_id"),
+                    status = "accepted"
                 )
             ) if logged_in_user else Value(False, output_field=BooleanField()),
 
             # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
-            has_pending_follow_request=Exists(
+            has_pending_follow_request = Exists(
                 FollowRelation.objects.filter(
-                    from_user=logged_in_user_id,
-                    to_user=OuterRef("to_user_id"),
-                    status="pending"
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("to_user_id"),
+                    status = "pending"
                 )
             ) if logged_in_user else Value(False, output_field=BooleanField())
         ).distinct("to_user_id")
@@ -5441,7 +5401,7 @@ def get_friends(request):
             "success": True, 
             "following": following_data,
             "message": str(_("Sledovaní užívatelia boli úspešne nájdení."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the following users.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5449,7 +5409,7 @@ def get_friends(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní sledovaných užívateľov došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -5465,22 +5425,22 @@ def toggle_mute_user(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu stlmenia užívateľa chýbajú potrebné údaje."))
-            }, status=400)
+            }, status = 400)
 
-        muted_user = MutedUser.objects.filter(user_id=logged_in_user_id, muted_user_id=int(receiver_id)).first() # Gets The Muted User
+        muted_user = MutedUser.objects.filter(user_id = logged_in_user_id, muted_user_id = int(receiver_id)).first() # Gets The Muted User
 
         # Mute
         if not muted_user:
             # Saves The New Muted User
             MutedUser.objects.create(
-                user_id=logged_in_user_id,
-                muted_user_id=int(receiver_id)
+                user_id = logged_in_user_id,
+                muted_user_id = int(receiver_id)
             )
 
             return Response({
                 "success": True, 
                 "message": str(_("Užívateľ bol úspešne stlmený."))
-            }, status=200)
+            }, status = 200)
 
         # Unmute
         else:
@@ -5489,7 +5449,7 @@ def toggle_mute_user(request):
             return Response({
                 "success": True, 
                 "message": str(_("Stlmenie užívateľa bolo úspešne odstránené."))
-            }, status=200)
+            }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while toggle mute of the user.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5497,7 +5457,7 @@ def toggle_mute_user(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene stlmenia užívateľa došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -5508,10 +5468,17 @@ def get_chat_settings(request):
 
         receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
 
+        # If The Information Are Missing
+        if not receiver_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre získanie nastavení chatu chýbajú potrebné údaje."))
+            }, status = 400)
+
         # Gets The Chat Settings
         chat_settings = ChatSettings.objects.filter(
-            user_id=logged_in_user_id,
-            chat_partner_id=receiver_id,
+            user_id = logged_in_user_id,
+            chat_partner_id = receiver_id,
         ).first()
 
         return Response({
@@ -5522,7 +5489,7 @@ def get_chat_settings(request):
             } if chat_settings else None,
 
             "message": str(_("Nastavenia chatu boli úspešne získané."))
-        }, status=200)
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while getting the chat settings.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5530,7 +5497,7 @@ def get_chat_settings(request):
         return Response({
             "success": False, 
             "message": str(_("Pri získavaní nastavení chatu došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -5542,6 +5509,13 @@ def change_chat_background_image(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
+
+        # If The Information Are Missing
+        if not receiver_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre zmenu obrázku pozadia chýbajú potrebné údaje."))
+            }, status = 400)
 
         subscription = None # Stores The Subscription Data
 
@@ -5563,22 +5537,22 @@ def change_chat_background_image(request):
             return Response({
                 "success": False,
                 "message": str(_("Nebol vybraný žiaden súbor."))
-            }, status=400)
+            }, status = 400)
 
         try:
             file_head = selected_chat_background_image.read(2048) # Reads Head Of File And Validates The Real Format
             selected_chat_background_image.seek(0)
-            mime_type = magic.from_buffer(file_head, mime=True)
+            mime_type = magic.from_buffer(file_head, mime = True) # Gets The Mime Type
             
             # Catches An Unsupported File
             if mime_type in DISALLOWED_MIME_TYPES:
                 return Response({
                     "success": False,
                     "message": str(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": selected_chat_background_image.name})
-                }, status=400)
+                }, status = 400)
 
             # Gets The Attachment Type By Mime Type
-            if mime_type.startswith("image/"): attachment_type = "image"
+            if mime_type.startswith("image/"): attachment_type = "image" # Sets The Image Attachment Type
             
             # Image
             if attachment_type == "image":
@@ -5590,17 +5564,18 @@ def change_chat_background_image(request):
                 try:
                     # Image Verification
                     selected_chat_background_image.seek(0)
-                    image = Image.open(selected_chat_background_image)
-                    image.verify()
+                    image = Image.open(selected_chat_background_image) # Opens The Image
+                    image.verify() # Verifies The Image
                     selected_chat_background_image.seek(0)
 
                     # Image Scale Verification
-                    image = Image.open(selected_chat_background_image)
+                    image = Image.open(selected_chat_background_image) # Opens The Image
                     width, height = image.size
 
                     MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
                     MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
 
+                    # Catches Too Large Image Size
                     if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
                         raise ValueError(_("Rozmery obrázka sú príliš veľké:\n%(file)s") % {"file": selected_chat_background_image.name})
 
@@ -5616,13 +5591,13 @@ def change_chat_background_image(request):
             return Response({
                 "success": False, 
                 "message": str(custom_error)
-            }, status=500)
+            }, status = 500)
 
         except Exception:
             return Response({
                 "success": False, 
                 "message": str(_("Chyba pri spracovaní súboru:\n%(file)s") % {"file": selected_chat_background_image.name})
-            }, status=500)
+            }, status = 500)
 
         selected_chat_background_image.seek(0)
 
@@ -5640,9 +5615,10 @@ def change_chat_background_image(request):
         
         chat_settings.save() # Saves The Updated Chat Settings
 
+        # Image
         if attachment_type == "image":
             transaction.on_commit(
-                lambda att_id=chat_settings.id: compressChatBackgroundImage.delay(att_id, logged_in_user_id)
+                lambda att_id = chat_settings.id: compressChatBackgroundImage.delay(att_id, logged_in_user_id) # Starts Compress Chat Background Image Task
             )
 
         return Response({
@@ -5653,7 +5629,7 @@ def change_chat_background_image(request):
             }, 
 
             "message": str(_("Prílohy boli úspešne odoslané."))
-        }, status=201)
+        }, status = 201)
 
     except Exception as error:
         captureError(f"An error occurred while changing the chat background.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5661,7 +5637,7 @@ def change_chat_background_image(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene obrázku pozadia došlo k chybe."))
-        }, status=500)
+        }, status = 500)
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -5673,11 +5649,18 @@ def delete_chat_background_image(request):
         receiver_id = request.data.get("receiver_id", None) # Gets The Receiver ID
         background_image = request.data.get("background_image", None) # Gets The Background Image
 
+        # If The Information Are Missing
+        if not receiver_id or not background_image:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre odstránenie obrázku pozadia chýbajú potrebné údaje."))
+            }, status = 400)
+
         # Gets The Chat Settings
         chat_settings = ChatSettings.objects.filter(
-            user_id=logged_in_user_id,
-            chat_partner_id=receiver_id,
-            background_image__icontains=background_image.split("/")[-1]
+            user_id = logged_in_user_id,
+            chat_partner_id = receiver_id,
+            background_image__icontains = background_image.split("/")[-1]
         ).first()
 
         if chat_settings:
@@ -5686,12 +5669,12 @@ def delete_chat_background_image(request):
             return Response({
                 "success": True, 
                 "message": str(_("Obrázok pozadia chatu bol úspešne odstránený."))
-            }, status=200)
+            }, status = 200)
 
         return Response({
             "success": False, 
             "message": str(_("Obrázok pozadia chatu sa nepodarilo nájsť."))
-        }, status=404)
+        }, status = 404)
 
     except Exception as error:
         captureError(f"An error occurred while deleting the chat image.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5699,4 +5682,4 @@ def delete_chat_background_image(request):
         return Response({
             "success": False, 
             "message": str(_("Pri odstraňovaní obrázku pozadia chatu došlo k chybe."))
-        }, status=500)
+        }, status = 500)
