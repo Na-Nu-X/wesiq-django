@@ -2601,8 +2601,8 @@ def get_weekly_activity(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        today = timezone.now().date() # Determines Today's Date
-        seven_days_ago = today - timedelta(days = 6) # Determines Seven Days Ago Date
+        today = timezone.now().date() # Gets The Today's Date
+        seven_days_ago = today - timedelta(days = 6) # Gets The Seven Days Ago Date
 
         # Gets The Weekly Activity
         weekly_activity = (
