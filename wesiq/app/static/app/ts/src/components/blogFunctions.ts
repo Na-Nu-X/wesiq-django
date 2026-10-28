@@ -47,7 +47,7 @@ export function renderArticles(search_bar:HTMLInputElement, all_articles:NodeLis
     })
 
     // Found Articles Counter
-    const num_articles:HTMLParagraphElement = document.querySelector(".num_articles p") as HTMLParagraphElement
+    const articles_amount:HTMLParagraphElement = document.querySelector(".articles_amount p") as HTMLParagraphElement
     let found_articles_count:number = all_articles.length - filtered_articles.length // Gets Amount Of Found Articles
 
     // No Articles Message
@@ -56,9 +56,9 @@ export function renderArticles(search_bar:HTMLInputElement, all_articles:NodeLis
     found_articles_count === 0 ? no_articles.classList.remove("hidden") : no_articles.classList.add("hidden") // Shows Or Hides The No Article Message
 
     // Found Articles Messages
-    if(found_articles_count == 1) num_articles.innerHTML = `Našiel sa <span>${found_articles_count}</span> článok.`
-    else if(found_articles_count > 1 && found_articles_count < 5) num_articles.innerHTML = `Našli sa <span>${found_articles_count}</span> články.`
-    else num_articles.innerHTML = `Našlo sa <span>${found_articles_count}</span> článkov.`
+    if(found_articles_count == 1) articles_amount.innerHTML = `Našiel sa <span>${found_articles_count}</span> článok.`
+    else if(found_articles_count > 1 && found_articles_count < 5) articles_amount.innerHTML = `Našli sa <span>${found_articles_count}</span> články.`
+    else articles_amount.innerHTML = `Našlo sa <span>${found_articles_count}</span> článkov.`
 
     // Shows All Articles When Searched Text Value is Empty
     if(searched_text.trim() === "") {

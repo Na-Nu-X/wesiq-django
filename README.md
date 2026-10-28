@@ -19,6 +19,7 @@ python -m venv venv
 .\venv\Scripts\activate
 pip install -r .\wesiq\requirements.txt
 ```
+- Na úspešnú inštaláciu niektorých závislostí musíte mať nainštalovaný Python verzie **3.12** (3.12.x).
 - Note for **Visual Studio Code** / **Cursor** users: Press **CTRL + SHIFT + P**, type **"Python: Select Interpreter"**, and select the newly created virtual environment to enable proper code autocompletion.
 
 #### 3. Configure Environment Variables

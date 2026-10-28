@@ -347,18 +347,18 @@ msgstr "添加文章"
 
 #: app/templates/app/blog.html:18
 #, python-format
-msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr "找到<span>%(num_articles)s</span>篇文章。"
+msgid "Našiel sa <span>%(articles_amount)s</span> článok."
+msgstr "找到<span>%(articles_amount)s</span>篇文章。"
 
 #: app/templates/app/blog.html:21
 #, python-format
-msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr "找到 <span>%(num_articles)s</span> 篇文章。"
+msgid "Našli sa <span>%(articles_amount)s</span> články."
+msgstr "找到 <span>%(articles_amount)s</span> 篇文章。"
 
 #: app/templates/app/blog.html:24
 #, python-format
-msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr "找到 <span>%(num_articles)s</span> 篇文章。"
+msgid "Našlo sa <span>%(articles_amount)s</span> článkov."
+msgstr "找到 <span>%(articles_amount)s</span> 篇文章。"
 
 #: app/templates/app/blog.html:33
 msgid "Nájsť článok"

@@ -2613,18 +2613,18 @@ msgstr "Přidat článek"
 
 #: app/templates/app/blog.html:18
 #, python-format
-msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr "Našel se %(num_articles)s článek."
+msgid "Našiel sa <span>%(articles_amount)s</span> článok."
+msgstr "Našel se %(articles_amount)s článek."
 
 #: app/templates/app/blog.html:21
 #, python-format
-msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr "Našli se %(num_articles)s články."
+msgid "Našli sa <span>%(articles_amount)s</span> články."
+msgstr "Našli se %(articles_amount)s články."
 
 #: app/templates/app/blog.html:24
 #, python-format
-msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr "Našlo se %(num_articles)s článků."
+msgid "Našlo sa <span>%(articles_amount)s</span> článkov."
+msgstr "Našlo se %(articles_amount)s článků."
 
 #: app/templates/app/blog.html:37
 msgid "Nájsť článok"

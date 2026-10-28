@@ -19,8 +19,9 @@ def save_google_user(sender, request, sociallogin, **kwargs):
         last_name = data.get("family_name")
 
         user_obj, created = Users.objects.get_or_create(
-            email_address=email,
-            defaults={
+            email_address = email,
+            
+            defaults = {
                 "first_name": first_name,
                 "last_name": last_name,
                 "password": "",
@@ -39,25 +40,25 @@ def updateCacheOnChange(sender, instance, **kwargs):
 models_for_warm_up = [Users, Activity, Reviews, Articles, ArticleForum, TrainingPlan, Exercises] # Gets All Models For Warm Up
 
 for one_model in models_for_warm_up:
-    post_save.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Save
-    post_delete.connect(updateCacheOnChange, sender=one_model) # Updates Cache On Delete
+    post_save.connect(updateCacheOnChange, sender = one_model) # Updates Cache On Save
+    post_delete.connect(updateCacheOnChange, sender = one_model) # Updates Cache On Delete
 
 # Update Latest Interaction Time In Posts
 
 def updatePostLatestInteraction(post):
-    limit_date = timezone.now() - timedelta(days=30)
+    limit_date = timezone.now() - timedelta(days = 30)
     
     if post.created_at > limit_date:
-        post.__class__.objects.filter(id=post.id).update(latest_interaction=timezone.now()) # Updates The Latest Interaction
+        post.__class__.objects.filter(id = post.id).update(latest_interaction = timezone.now()) # Updates The Latest Interaction
 
 # Checks For New Like On The Post
-@receiver(m2m_changed, sender=Post.likes_from_users.through)
+@receiver(m2m_changed, sender = Post.likes_from_users.through)
 def onAddedLike(sender, instance, action, **kwargs):
     if action in ["post_add", "pre_add"]:
         updatePostLatestInteraction(instance)
 
 # Checks For New Comment In The Post
-@receiver(post_save, sender=PostForum)
+@receiver(post_save, sender = PostForum)
 def onAddedComment(sender, instance, created, **kwargs):
     if created:
         updatePostLatestInteraction(instance.post)

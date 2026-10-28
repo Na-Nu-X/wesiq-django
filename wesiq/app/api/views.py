@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
@@ -14,7 +13,6 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_ratelimit.decorators import ratelimit
-from django_ratelimit.core import get_usage
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta, datetime
@@ -37,7 +35,7 @@ from django.core.mail import EmailMultiAlternatives
 import math
 from django.db.models import Sum, Avg
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
-import random, requests, os, secrets, mimetypes
+import random, os, secrets, mimetypes
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
 from django.core.cache import cache
@@ -103,7 +101,7 @@ def load_profanities():
         
         if file_path.is_file():
             try:
-                with open(file_path, "r", encoding="utf-8") as file:
+                with open(file_path, "r", encoding = "utf-8") as file:
                     for one_line in file:
                         cleaned_word = one_line.strip().lower() # Gets The Cleaned Word
 
@@ -120,7 +118,7 @@ PROFANITIES = load_profanities() # Gets The Profanities
 # Function For Load The Forbidden Usernames
 def load_forbidden_usernames():
     try:
-        with open(settings.BASE_DIR / "data" / "forbidden_usernames.txt", "r", encoding="utf-8") as file:
+        with open(settings.BASE_DIR / "data" / "forbidden_usernames.txt", "r", encoding = "utf-8") as file:
             return {one_line.strip().lower() for one_line in file if one_line.strip()}
 
     except FileNotFoundError:
@@ -230,8 +228,8 @@ def login(request):
 
             # Checks The Password Validity
             if check_password(password, user.password):
-                user.last_login = timezone.now() # Stores Last Login Time
-                user.account_status = "OK"
+                user.last_login = timezone.now() # Sets The Last Login Time
+                user.account_status = "OK" # Sets The Account Status
                 user.save(update_fields = ["last_login", "account_status"]) # Saves The Updated User
 
                 refresh = RefreshToken.for_user(user) # Gets The Refresh Token
@@ -436,7 +434,7 @@ def get_logged_in_user(request):
                 
                 # If The User Has Subscription
                 if hasattr(one_follow_request.from_user, "subscription") and one_follow_request.from_user.subscription:
-                    # Gets The Subscription Data If Are Available
+                    # Sets The Subscription
                     from_user_data["subscription"] = {
                         "plan": one_follow_request.from_user.subscription.plan,
                         "is_active": one_follow_request.from_user.subscription.is_active
@@ -765,7 +763,14 @@ def toggle_follow(request):
                 "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
             }, status = 500)
 
-        user_to_follow = Users.objects.get(id = user_to_follow_id) # Gets The User To Follow
+        try:
+            user_to_follow = Users.objects.get(id = int(user_to_follow_id)) # Gets The User To Follow
+
+        except Users.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Používateľ nebol nájdený."))
+            }, status=404)
 
         # Gets The Follow Relation
         follow_relation = FollowRelation.objects.filter(
@@ -784,22 +789,18 @@ def toggle_follow(request):
                 status = status
             )
 
-            message = str(_("Žiadosť o sledovanie bola odoslaná.")) if status == "pending" else str(_("Sledovanie bolo úspešne pridané."))
-
             return Response({
                 "success": True, 
-                "message": message
+                "message": str(_("Žiadosť o sledovanie bola odoslaná.")) if status == "pending" else str(_("Sledovanie bolo úspešne pridané."))
             }, status = 200)
 
         # Unfollow (If Logged In User Is Already Following The User)
         else:
-            message = _("Žiadosť o sledovanie bola zrušená.") if follow_relation.status == "pending" else _("Sledovanie bolo úspešne odstránené.")
-
             follow_relation.delete() # Removes The Follow Relation Between Two Users
 
             return Response({
                 "success": True, 
-                "message": message
+                "message": str(_("Žiadosť o sledovanie bola zrušená.")) if follow_relation.status == "pending" else str(_("Sledovanie bolo úspešne odstránené."))
             }, status = 200)
 
     except Exception as error:
@@ -908,7 +909,7 @@ def get_posts(request):
         ).distinct()
 
         if logged_in_user:
-            # Gets All Logged In User's Accepted Following Users IDs
+            # Gets Logged In User's Accepted Following Users IDs
             accepted_following_ids = FollowRelation.objects.filter(
                 from_user_id = logged_in_user_id, 
                 status = "accepted"
@@ -1068,6 +1069,7 @@ def get_posts(request):
 def mark_post_as_seen(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
+
         post_id = request.data.get("post_id", None) # Gets The Post ID
 
         # If The Information Are Missing
@@ -1077,7 +1079,14 @@ def mark_post_as_seen(request):
                 "message": str(_('Príspevok nie je možné označiť za "už videný" bez potrebných údajov.'))
             }, status = 500)
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
 
         # Marks The Post As Seen If Exists And Isn't Already Seen By The User
         SeenPost.objects.get_or_create(
@@ -1177,7 +1186,7 @@ def stream_video(request, user_id, media_id, filename):
 
         # Checks If The File Is index.m3u8 Or .ts Video File Segment
         content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
-        if not content_type: content_type = "application/octet-stream"
+        if not content_type: content_type = "application/octet-stream" # Sets The Content Type
 
         video_response = FileResponse(open(file_path, "rb"), content_type = content_type) # Gets The Video Response
         video_response["Accept-Ranges"] = "bytes"
@@ -1213,7 +1222,15 @@ def toggle_post_like(request):
                 "message": str(_("Príspevok sa nenašiel."))
             }, status = 400)
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
+
         has_like = post.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
 
         # Like
@@ -1262,7 +1279,14 @@ def toggle_post_save(request):
                 "message": str(_("Príspevok sa nenašiel."))
             }, status = 400)
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
 
         has_save = logged_in_user.saved_posts.filter(public_id = post_id).exists() # Checks If The User Has Already Saved The Post
 
@@ -1310,10 +1334,18 @@ def report_post(request):
                 "message": str(_("Chýbajúce dáta pre nahlásenie."))
             }, status = 400)
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
+
         has_report = PostReport.objects.filter(post = post, user_id = logged_in_user.id).exists() # Checks If The User Has Already Reported The Post
 
-        # Stores The Reported Comment
+        # Stores The Reported Post
         PostReport.objects.update_or_create(
             post = post,
             user_id = logged_in_user_id,
@@ -1367,7 +1399,7 @@ def edit_post_settings(request):
 
         if post:
             setattr(post, setting, action) # Updates The Given Column's Value
-            post.save() # Saves The Edited Post
+            post.save() # Saves The Updated Post
 
             return Response({
                 "success": True, 
@@ -1468,9 +1500,23 @@ def get_post_comments(request):
         logged_in_user = request.user if request.user.is_authenticated else None # Gets The Logged In User If Is Available
 
         page_number = request.GET.get("page", 1) # Gets The Current Page Number
-        post_id = request.GET.get("post_id") # Gets The Post ID
+        post_id = request.GET.get("post_id", None) # Gets The Post ID
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        # If The Information Are Missing
+        if not post_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre získanie komentárov chýbajú potrebné údaje."))
+            }, status = 400)
+
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
 
         # Gets The Post Root Comments With All Related Data
         post_root_comments = PostForum.objects.filter(
@@ -1577,7 +1623,14 @@ def add_comment(request):
                 "message": str(_("Pre pridanie komentáru chýbajú potrebné údaje."))
             }, status = 500)
 
-        post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+        try:
+            post = Post.objects.get(public_id = post_id) # Gets The Post
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status=404)
 
         # Creates The New Comment
         new_comment = PostForum.objects.create(
@@ -1642,7 +1695,14 @@ def toggle_post_comment_like(request):
                 "message": str(_("Pre pridanie označenia páči sa mi to chýbajú potrebné údaje."))
             }, status = 500)
 
-        comment = PostForum.objects.get(id = int(comment_id)) # Gets The Comment
+        try:
+            comment = PostForum.objects.get(id = int(comment_id)) # Gets The Comment
+
+        except PostForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
 
         has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
 
@@ -1650,7 +1710,7 @@ def toggle_post_comment_like(request):
         if not has_like:
             comment.likes_from_users.add(logged_in_user) # Adds The User To Likes From Users In Comment
             comment.likes = F("likes") + 1 # Increases The Likes Counter
-            comment.save() # Updates The Comment
+            comment.save() # Saves The Updated Comment
 
             return Response({
                 "success": True, 
@@ -1661,7 +1721,7 @@ def toggle_post_comment_like(request):
         else:
             comment.likes_from_users.remove(logged_in_user) # Removes The User To Likes From Users In Comment
             comment.likes = F("likes") - 1 # Decreases The Likes Counter
-            comment.save() # Updates The Comment
+            comment.save() # Saves The Updated Comment
 
             return Response({
                 "success": True, 
@@ -1694,7 +1754,15 @@ def report_post_comment(request):
                 "message": str(_("Pre nahlásenie komentáru chýbajú potrebné údaje."))
             }, status = 500)
 
-        comment = get_object_or_404(PostForum, id = int(comment_id)) # Gets The Comment
+        try:
+            comment = PostForum.objects.get(id = int(comment_id)) # Gets The Comment
+
+        except PostForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
+
         has_report = PostForumReport.objects.filter(postforum_id = comment.id, user_id = logged_in_user.id).exists() # Checks If The User Has Already Reported The Comment
 
         # Stores The Reported Comment
@@ -1710,7 +1778,14 @@ def report_post_comment(request):
             comment.refresh_from_db() # Reloads The Comment
 
             if comment.reports >= 5:
-                post = get_object_or_404(Post, id = comment.post_id) # Gets The Post
+                try:
+                    post = Post.objects.get(id = comment.post_id) # Gets The Post
+
+                except Post.DoesNotExist:
+                    return Response({
+                        "success": False,
+                        "message": str(_("Príspevok nebol nájdený."))
+                    }, status=404)
 
                 report_percentage = (comment.reports / comment.likes * 100) if post.likes > 0 else 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Post
 
@@ -1748,13 +1823,20 @@ def delete_post_comment(request):
                 "message": str(_("Komentár nie je možné odstrániť bez potrebných údajov."))
             }, status = 500)
 
-        # Gets The Comment
-        comment = PostForum.objects.get(
-            id = comment_id
-        ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(
-            id = comment_id, 
-            user_id = logged_in_user_id
-        ) 
+        try:
+            # Gets The Comment
+            comment = PostForum.objects.get(
+                id = int(comment_id)
+            ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else PostForum.objects.get(
+                id = int(comment_id), 
+                user_id = logged_in_user_id
+            ) 
+
+        except PostForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
 
         if comment:
             comment.delete() # Deletes The Comment
@@ -1805,14 +1887,14 @@ def upload_post(request):
         selected_posts = request.FILES.getlist("selected_posts") # Gets The Selected Posts
 
         selected_thumbnails = request.FILES.getlist("select_thumbnail") # Gets The Selected Thumbnails
-        selected_thumbnails_dict = {one_file.name: one_file for one_file in selected_thumbnails} # Converts The Selected Thumbnails To The Dictionary Format
+        selected_thumbnails_dictionary = {one_file.name: one_file for one_file in selected_thumbnails} # Converts The Selected Thumbnails To The Dictionary Format
 
         # Saves Only if The Form Includes at Least One Selected Post
         if selected_posts:
             media_data = json.loads(request.data.get("media_data", "[]")) # Gets The Media Data
 
             # Converts The Media Data To The Dictionary Format (For Example: {"photo1.jpg": {"order": 0, "is_muted": False}, "photo2.jpg": {"order": 1, "is_muted": False}})
-            media_data_dict = {
+            media_data_dictionary = {
                 one_item["filename"]: {
                     "order": int(one_item["order"]), 
                     "is_muted": bool(one_item["is_muted"]),
@@ -1852,7 +1934,7 @@ def upload_post(request):
                     if coordinates:
                         new_post.coordinates = coordinates
 
-                    new_post.save() # Saves The New Post
+                    new_post.save() # Saves The Updated Post
 
                     tagged_users_data = json.loads(request.data.get("tagged_users", "[]")) # For Example: ["@user1","@user2","@user3"]
 
@@ -1868,7 +1950,7 @@ def upload_post(request):
 
                     tagged_users = Users.objects.filter(id__in = tagged_users_ids) # Gets The Tagged Users
 
-                    new_post.tagged_users.set(tagged_users)
+                    new_post.tagged_users.set(tagged_users) # Sets The Tagged Users
 
                     subscription_plan = subscription.get("plan", "free") if subscription else "free" # Gets The Subscription Plan
 
@@ -1947,11 +2029,11 @@ def upload_post(request):
                                     if os.path.exists(temporary_video_path): 
                                         os.remove(temporary_video_path) # Deletes The Temporary Video File
 
-                            file_settings = media_data_dict.get(one_file.name, {"order": 0, "is_muted": False, "thumbnail_filename": ""}) # Gets The File Settings
-                            order = file_settings["order"] # Gets The Order Of The Current File
-                            is_muted = file_settings["is_muted"] # Gets The Value Of If The Current File Is Muted
+                            file_settings = media_data_dictionary.get(one_file.name, {"order": 0, "is_muted": False, "thumbnail_filename": ""}) # Gets The File Settings
+                            order = file_settings["order"] # Gets The Order
+                            is_muted = file_settings["is_muted"] # Gets The Information If The Current File Is Muted
                             thumbnail_filename = file_settings["thumbnail_filename"] # Gets The Video Thumbnail's Filename
-                            thumbnail_file = selected_thumbnails_dict.get(thumbnail_filename) # Gets The Thumbnail File
+                            thumbnail_file = selected_thumbnails_dictionary.get(thumbnail_filename) # Gets The Thumbnail File
                             
                             # Creates The New Post Media
                             new_post_media = PostMedia.objects.create(
@@ -2015,7 +2097,6 @@ def upload_post(request):
                 "message": str(_("Príspevok bol úspešne pridaný."))
             }, status = 200)
 
-        # Wrong Form
         else:
             captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
@@ -2038,6 +2119,7 @@ def upload_post(request):
 def tag_user(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
+        
         searched_tag = request.data.get("searched_tag", None) # Gets The Searched Tag
 
         # If The Information Are Missing
@@ -2480,7 +2562,7 @@ def get_training_plans(request):
         
         day_index = ((datetime.today().weekday()) + 1) % 7 # Gets Current Day Index (Sunday - 0, Monday - 1, Tuesday - 2, Wednesday - 3, Thursday - 4, Friday - 5, Saturday - 6)
 
-        # Gets Logged In User's Training Plans Sorted By Weekdays From Current Day
+        # Gets The Logged In User's Training Plans Sorted By Weekdays From Current Day
         training_plans = (
             TrainingPlan.objects.filter(
                 user_id = logged_in_user_id
@@ -2745,16 +2827,23 @@ def complete_official_task(request):
         logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        task_data = request.data.get("task_data", None) # Gets The Completed Task Data
+        task_data = request.data.get("task_data", None) # Gets The Task Data
 
         # If The Information Are Missing
-        if not identifier:
+        if not task_data:
             return Response({
                 "success": False, 
                 "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
             }, status = 400)
 
-        task = OfficialTasks.objects.get(data = task_data) # Gets The Completed Task
+        try:
+            task = OfficialTasks.objects.get(data = task_data) # Gets The Task
+
+        except OfficialTasks.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Úloha nebola nájdená."))
+            }, status=404)
 
         # Gets The Task From User's Daily Official Tasks
         users_daily_official_task = UserDailyOfficialTasks.objects.filter(
@@ -2891,7 +2980,14 @@ def toggle_complete_custom_task(request):
                 "message": str(_("Pre dokončenie úlohy chýbajú potrebné údaje."))
             }, status = 400)
 
-        task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
+        try:
+            task = CustomTasks.objects.get(id = int(task_id), user_id = logged_in_user_id) # Gets The Task
+
+        except CustomTasks.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Úloha nebola nájdená."))
+            }, status=404)
 
         task.is_completed = not task.is_completed # Inverts The Completion Status
         task.save(update_fields = ["is_completed"]) # Saves The Updated Task
@@ -2929,13 +3025,11 @@ def add_custom_task(request):
             CustomTasks.objects.filter(user_id = logged_in_user_id).update(order = F("order") + 1) # Moves Every Previous Tasks Down
 
             # Creates The New Custom Task
-            new_custom_task = CustomTasks(
+            new_custom_task = CustomTasks.objects.create(
                 user_id = logged_in_user_id,
                 title = custom_task_title,
                 order = 1
             )
-
-            new_custom_task.save() # Saves The New Custom Task
 
         # Creates Valid Format Of Custom Task For JSON Response
         custom_task_data = {
@@ -2974,9 +3068,16 @@ def delete_custom_task(request):
                 "message": str(_("Pre odstránenie úlohy chýbajú potrebné údaje."))
             }, status = 400)
 
-        task = CustomTasks.objects.get(id = task_id, user_id = logged_in_user_id) # Gets The User's Custom Task
+        try:
+            task = CustomTasks.objects.get(id = int(task_id), user_id = logged_in_user_id) # Gets The Task
 
-        task.delete() # Deletes The User's Custom Task
+        except CustomTasks.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Úloha nebola nájdená."))
+            }, status=404)
+
+        task.delete() # Deletes The Task
 
         return Response({
             "success": True, 
@@ -3033,7 +3134,7 @@ def change_custom_tasks_order(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        tasks_ids = request.data.get("tasks_ids", []) # Gets The Completed Custom Tasks IDs
+        tasks_ids = request.data.get("tasks_ids", []) # Gets The Tasks IDs
 
         # If The Information Are Missing
         if tasks_ids.len == 0:
@@ -3042,7 +3143,7 @@ def change_custom_tasks_order(request):
                 "message": str(_("Pre zmenu poradia úloh chýbajú potrebné údaje."))
             }, status = 400)
 
-        # Updates The Order Of All The Logged In User's Custom Tasks
+        # Updates The Order Of All The User's Custom Tasks
         for index, task_id in enumerate(tasks_ids):
             CustomTasks.objects.filter(
                 id = task_id, 
@@ -3115,7 +3216,6 @@ def get_xp_boost(request):
     try:
         logged_in_user = request.user # Gets The Logged In User
 
-        # XP Boost
         now = timezone.now() # Gets The Current Time
         today = timezone.localtime(now).date() # Gets The Today's Date
         yesterday = today - timedelta(days = 1) # Gets The Yesterday's Time
@@ -3170,9 +3270,9 @@ def use_xp_boost(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Creates The New XP Boost Expiration Time
+        xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Gets The XP Boost Expiration Time
 
-        Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores New XP Boost Expiration Time
+        Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores The New XP Boost Expiration Time
 
         return Response({
             "success": True, 
@@ -3205,7 +3305,7 @@ def new_activity(request):
                 "message": str(_("Pre zaznamenanie aktivity chýbajú potrebné údaje."))
             }, status = 400)
 
-        gained_xp = new_activity_data["gained_xp"] # Gets Gained XP From POST Data
+        gained_xp = new_activity_data["gained_xp"] # Gets The Gained XP
 
         Users.objects.filter(id = logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
         Users.objects.filter(id = logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
@@ -3234,7 +3334,7 @@ def new_activity(request):
                     )
 
         # Creates The New Activity
-        new_activity = Activity(
+        Activity.objects.create(
             user_id = logged_in_user_id,
             elapsed_time = int(new_activity_data["elapsed_time"]) / 1000,
             gained_xp = int(gained_xp),
@@ -3242,8 +3342,6 @@ def new_activity(request):
             training_plan_day = new_activity_data["day"],
             training_plan_summary = new_activity_data["training_plan_summary"]
         )
-
-        new_activity.save() # Saves The New Activity
 
         # No Day Off Week Badge Completion
         if not logged_in_user.badges.filter(data = "no_day_off_week").exists():
@@ -3259,13 +3357,11 @@ def new_activity(request):
 
             if unique_seven_days_of_activity == 7:
                 # Creates The New Badge
-                new_badge = SpecialBadges(
+                SpecialBadges.objects.create(
                     user_id = logged_in_user_id,
                     title = "No Day Off Week",
                     data = "no_day_off_week"
                 )
-
-                new_badge.save() # Saves The New Badge
 
         # X-Mas Activity Badge Completion
         if not logged_in_user.badges.filter(data = "xmas_activity").exists():
@@ -3277,13 +3373,11 @@ def new_activity(request):
 
             if has_xmas_activity:
                 # Creates The New Badge
-                new_badge = SpecialBadges(
+                SpecialBadges.objects.create(
                     user_id = logged_in_user_id,
                     title = "X-Mas Activity",
                     data = "xmas_activity"
                 )
-
-                new_badge.save() # Saves The New Badge
 
         # New Year, New Goals Badge Completion
         if not logged_in_user.badges.filter(data = "new_year_new_goals").exists():
@@ -3295,13 +3389,11 @@ def new_activity(request):
 
             if has_new_year_new_goals:
                 # Creates The New Badge
-                new_badge = SpecialBadges(
+                SpecialBadges.objects.create(
                     user_id = logged_in_user_id,
                     title = "New Year, New Goals",
                     data = "new_year_new_goals"
                 )
-
-                new_badge.save() # Saves The New Badge
 
         return Response({
             "success": True, 
@@ -3325,11 +3417,11 @@ def new_activity(request):
 @permission_classes([AllowAny])
 def get_exercises(request):
     try:
-        exercises = cache.get("cached_exercises") # Gets All Cached Exercises
+        exercises = cache.get("cached_exercises") # Gets Cached Exercises
 
         # Exercises Fallback (If Cache Is Clear)
         if exercises is None:
-            # Gets All Exercises
+            # Gets Exercises
             exercises = list(
                 Exercises.objects.all()
                 .order_by("exercise")
@@ -3372,7 +3464,7 @@ def manage_training_plan(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        training_plan_data = request.data # Gets Training Plan Data From Fetched JS POST
+        training_plan_data = request.data # Gets The Training Plan Data
 
         # If The Information Are Missing
         if not training_plan_data:
@@ -3416,7 +3508,7 @@ def manage_training_plan(request):
             # New Training Plan / Edited Training Plan
             if action in ["new_training_plan", "edited_training_plan"]:
                 # Creates The New Training Plan
-                new_training_plan = TrainingPlan(
+                TrainingPlan.objects.create(
                     user_id = logged_in_user_id,
                     training_plan_key = one_object["training_plan_key"],
                     day = one_object["day"],
@@ -3428,8 +3520,6 @@ def manage_training_plan(request):
                     is_warm_up = one_object["is_warm_up"],
                     is_custom_exercise = one_object["is_custom_exercise"]
                 )
-
-                new_training_plan.save() # Saves The New Training Plan
 
         return Response({
             "success": True, 
@@ -3488,7 +3578,7 @@ def get_profile(request, username):
                 ) if logged_in_user else Value(False, output_field = BooleanField())
             ).first()
 
-            # Gets All Followers With All Related Data
+            # Gets Followers With All Related Data
             followers = FollowRelation.objects.filter(
                 to_user = user, 
                 status = "accepted"
@@ -3609,7 +3699,7 @@ def get_profile(request, username):
             else:
                 user.has_already_increased_activity_streak = False
 
-            # Gets All User's Posts With All Related Data
+            # Gets User's Posts With All Related Data
             posts = Post.objects.filter(
                 user_id = user.id
             ).prefetch_related(
@@ -3719,6 +3809,7 @@ def get_profile(request, username):
                     user_data["phone_number"] = user.phone_number # Stores The Phone Number
                     user_data["data_saving_mode"] = user.data_saving_mode # Stores The Information If The Data Saving Mode Is Enabled
 
+                    # Gets The Saved Posts
                     saved_posts = logged_in_user.saved_posts.all().select_related(
                         "user"
                     ).prefetch_related(
@@ -3816,7 +3907,6 @@ def remove_follower(request):
         logged_in_user = request.user # Gets The Logged In User
 
         removed_follower_id = request.data.get("removed_follower_id", None) # Gets The Removed Follower ID
-        removed_follower = Users.objects.get(id = removed_follower_id) # Gets The Removed Follower
 
         # If The Information Are Missing
         if not removed_follower_id:
@@ -3824,6 +3914,15 @@ def remove_follower(request):
                 "success": False, 
                 "message": str(_("Pre odstránenie sledovateľa chýbajú potrebné údaje."))
             }, status = 400)
+
+        try:
+            removed_follower = Users.objects.get(id = int(removed_follower_id)) # Gets The Removed Follower
+
+        except Users.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Používateľ nebol nájdený."))
+            }, status=404)
 
         # Removes The Follower
         FollowRelation.objects.filter(
@@ -3860,16 +3959,18 @@ def approve_follow_request(request):
                 "message": str(_("Pre potvrdenie žiadosti o sledovanie chýbajú potrebné údaje."))
             }, status = 400)
 
-        # Gets The Follow Request
-        follow_request = FollowRelation.objects.filter(
+        # Gets The Updated Follow Requests Amount
+        updated_follow_requests_amount = FollowRelation.objects.filter(
             id = follow_request_id,
             to_user = logged_in_user, 
             status = "pending"
-        ).first()
+        ).update(status = "accepted") # Accepts The Follow Request
 
-        follow_request.status = "accepted" # Accepts The Follow Request
-
-        follow_request.save() # Saves The Updated Follow Request
+        if updated_follow_requests_amount == 0:
+            return Response({
+                "success": False, 
+                "message": str(_("Žiadosť neexistuje alebo už bola potvrdená."))
+            }, status = 404)
 
         return Response({
             "success": True, 
@@ -3900,14 +4001,18 @@ def reject_follow_request(request):
                 "message": str(_("Pre zamietnutie žiadosti o sledovanie chýbajú potrebné údaje."))
             }, status = 400)
 
-        # Gets The Follow Request
-        follow_request = FollowRelation.objects.filter(
+        # Gets The Deleted Follow Requests Amount
+        deleted_follow_requests_amount, _ = FollowRelation.objects.filter(
             id = follow_request_id,
             to_user = logged_in_user, 
             status = "pending"
-        ).first()
+        ).delete() # Removes The Follow Request
 
-        follow_request.delete() # Removes The Follow Request
+        if deleted_follow_requests_amount == 0:
+            return Response({
+                "success": False, 
+                "message": str(_("Žiadosť neexistuje alebo už bola odstránená."))
+            }, status = 404)
 
         return Response({
             "success": True, 
@@ -3932,7 +4037,7 @@ def edit_account(request):
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         delete_account = str(request.data.get("delete_account")).lower() == "true" # Gets The Delete Account Request If Is Available
-        delete_profile_picture = str(request.data.get("delete_profile_picture")).lower() == "true" # Gets The Delete Profile Picture If Is Available
+        delete_profile_picture = str(request.data.get("delete_profile_picture")).lower() == "true" # Gets The Delete Profile Picture Request If Is Available
         data_saving_mode = str(request.data.get("data_saving_mode")).lower() == "true" # Gets The Data Saving Mode
         private_account = str(request.data.get("private_account")).lower() == "true" # Gets The Private Account
         bio = request.data.get("bio", "") # Gets The Bio
@@ -3952,12 +4057,11 @@ def edit_account(request):
                 _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
             )
 
-            logged_in_user.account_status = "suspended" # Changes Account Status
-            logged_in_user.save()
+            Users.objects.filter(id = logged_in_user.id).update(account_status = "suspended") # Updates The Account Status
 
             captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-            # del request.session["logged_in_user_id"] # Deletes Previous User ID Session If Was Logged In
+            # del request.session["logged_in_user_id"] # Deletes The Previous Logged In User ID Session If The User Was Logged In
 
             # refresh = RefreshToken.for_user(logged_in_user)
             # refresh_token = str(refresh.access_token)
@@ -3972,9 +4076,9 @@ def edit_account(request):
             }, status = 200)
 
         if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
-            profile_picture_file = request.FILES.get("selected_profile_picture")
+            selected_profile_picture = request.FILES.get("selected_profile_picture") # Gets The Selected Profile Picture
 
-            if profile_picture_file:
+            if selected_profile_picture:
                 profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
 
                 if profile_picture_name != "" and profile_picture_name != None:
@@ -3983,10 +4087,10 @@ def edit_account(request):
                     if os.path.exists(profile_picture_path):
                         os.remove(profile_picture_path) # Removes The Profile Picture File
 
-                new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + Path(profile_picture_file.name).suffix}" # Creates The New Profile Picture Name
+                new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + Path(selected_profile_picture.name).suffix}" # Creates The New Profile Picture Name
 
                 profile_picture_location = FileSystemStorage(location = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")) # Gets The Profile Picture Location
-                profile_picture_location.save(new_profile_picture_name, profile_picture_file) # Saves The Profile Picture
+                profile_picture_location.save(new_profile_picture_name, selected_profile_picture) # Saves The Profile Picture
 
                 logged_in_user.profile_picture_name = new_profile_picture_name # Updates The Profile Picture Name
                 logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
@@ -4039,10 +4143,8 @@ def edit_account(request):
 
             logged_in_user.save() # Saves The Updated Logged In User
 
-            bio_links_json = bio_links # Gets The User's Bio Links In JSON Format
-
             try:
-                bio_links_list = json.loads(bio_links_json) if bio_links_json else [] # Converts The Bio Links To The Python List Format
+                bio_links_list = json.loads(bio_links) if bio_links else [] # Converts The Bio Links To The Python List Format
 
                 with transaction.atomic():
                     BioLinks.objects.filter(user = logged_in_user).delete() # Deletes All Previous User's Bio Links
@@ -4112,27 +4214,32 @@ def report_user(request):
                 "message": str(_("Pre nahlásenie používateľa chýbajú potrebné údaje."))
             }, status = 400)
 
-        reported_user = Users.objects.get(id = reported_user_id) # Gets The Reported User
+        try:
+            reported_user = Users.objects.get(id = int(reported_user_id)) # Gets The Reported User
+
+        except Users.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Používateľ nebol nájdený."))
+            }, status=404)
+
         has_report = reported_user.reports_received.filter(reporting_user_id = logged_in_user_id).exists() # Checks If The Logged In User Has Already Reported The User
 
-        # Stores The Reported Comment
+        # Stores The Reported User
         UsersReport.objects.update_or_create(
             reported_user_id = reported_user_id,
             reporting_user_id = logged_in_user_id,
             defaults = {"reason": reason} # Reason Can Be Updated
         )
 
+        # Report
         if not has_report:
             reported_user.reports += 1 # Increases The Reports Counter
 
             if reported_user.reports >= 5:
                 followers_amount = reported_user.followers.count() # Gets The Amount Of Followers Of The Reported User
 
-                if followers_amount > 0:
-                    report_percentage = (reported_user.reports / followers_amount) * 100
-
-                else:
-                    report_percentage = 100 
+                report_percentage = (reported_user.reports / followers_amount) * 100 if followers_amount > 0 else 100 # Gets The Percentage Of The User Reports Amount By Followers Amount
 
                 if report_percentage > 10:
                     reported_user.account_status = "suspended" # Suspends The User If Has More Than 10% Of Reports
@@ -4179,11 +4286,18 @@ def suspend_user(request):
                     "message": str(_("Pre obmedzenie používateľa chýbajú potrebné údaje."))
                 }, status = 400)
 
-            user = Users.objects.get(id = user_id) # Gets The User
+            try:
+                user = Users.objects.get(id = int(user_id)) # Gets The User
 
-            user.account_status = "suspended" # Updates The Account Status
-            user.suspension_time = timezone.now() # Updates The Suspension Time
-            user.save() # Saves The Updated User
+            except Users.DoesNotExist:
+                return Response({
+                    "success": False,
+                    "message": str(_("Používateľ nebol nájdený."))
+                }, status=404)
+
+            user.account_status = "suspended" # Sets The Account Status
+            user.suspension_time = timezone.now() # Sets The Last Login Time
+            user.save(update_fields = ["account_status", "suspension_time"]) # Saves The Updated User
 
             # Sends The Mail
             sendMail(
@@ -4305,6 +4419,7 @@ def get_chat(request, username):
 
         # Checks If The Profile With Searched Username Exists
         if Users.objects.filter(username = username).exists():
+            # Gets The User By Username (Receiver)
             receiver = Users.objects.filter(
                 username = username
             ).select_related(
@@ -4317,7 +4432,7 @@ def get_chat(request, username):
                         muted_user = OuterRef("pk")
                     )
                 )
-            ).first() # Gets The User By Username (Receiver)
+            ).first()
             
             subscription = None # Stores The Subscription Data
             
@@ -4338,7 +4453,7 @@ def get_chat(request, username):
                 "is_muted": receiver.is_muted
             }
 
-            # Gets All Sender's And Receiver's Chats
+            # Gets Sender's And Receiver's Chats
             chats = Chat.objects.filter(
                 Q(sender = logged_in_user) & Q(receiver = receiver) | 
                 Q(sender = receiver)
@@ -5186,7 +5301,7 @@ def get_article(request, theme):
     try:
         logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
-        not_found = True
+        not_found = True # Sets The Information That The Article Wasn't Found
 
         # Gets The Article By URL Address With All Related Data
         article = Articles.objects.filter(
@@ -5236,7 +5351,7 @@ def get_article(request, theme):
         articles_data = {}
 
         if article != None:
-            not_found = False
+            not_found = False # Sets The Information That The Article Was Found
 
             # Creates Valid Format Of Article For JSON Response
             articles_data = {
@@ -5429,14 +5544,13 @@ def add_article_comment(request):
                 "message": str(_("Pre pridanie komentára chýbajú potrebné údaje."))
             }, status  =  400)
 
-        new_comment = ArticleForum(
+        # Creates The New Comment
+        new_comment = ArticleForum.objects.create(
             article_id = article_id,
             user_id = logged_in_user_id,
             comment = comment,
             parent_id = parent_id
         )
-
-        new_comment.save() # Saves The New Comment
 
         # Creates Valid Format Of Comment For JSON Response
         comment = {
@@ -5487,9 +5601,17 @@ def toggle_article_comment_like(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu označenia páči sa mi to chýbajú potrebné údaje."))
-            }, status = 400)
+            }, status = 500)
 
-        comment = ArticleForum.objects.get(id = int(comment_id)) # Gets The Comment
+        try:
+            comment = ArticleForum.objects.get(id = int(comment_id)) # Gets The Comment
+
+        except ArticleForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
+
         has_like = comment.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Comment
 
         # Like
@@ -5531,7 +5653,23 @@ def report_article_comment(request):
 
         comment_id = request.data.get("comment_id") # Gets The Article Forum ID
         reason = request.data.get("reason") # Gets The Reason
-        comment = ArticleForum.objects.get(id = comment_id) # Gets The Comment
+
+        # If The Information Are Missing
+        if not comment_id or not reason:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre nahlásenie komentáru chýbajú potrebné údaje."))
+            }, status = 500)
+
+        try:
+            comment = ArticleForum.objects.get(id = int(comment_id)) # Gets The Comment
+
+        except ArticleForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
+
         has_report = comment.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Comment
 
         # Stores The Reported Comment
@@ -5546,13 +5684,16 @@ def report_article_comment(request):
             comment.reports += 1 # Increases The Reports Counter
 
             if comment.reports >= 5:
-                article = Articles.objects.get(id = comment.article_id) # Gets The Article
+                try:
+                    article = Articles.objects.get(id = int(comment.article_id)) # Gets The Article
 
-                if article.likes > 0:
-                    report_percentage = (comment.reports / article.likes) * 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
+                except Articles.DoesNotExist:
+                    return Response({
+                        "success": False,
+                        "message": str(_("Článok nebol nájdený."))
+                    }, status=404)
 
-                else:
-                    report_percentage = 100
+                report_percentage = (comment.reports / article.likes) * 100 if article.likes > 0 else 100 # Gets The Percentage Of The Comment Reports Amount By Likes On The Article
 
                 if report_percentage > 10:
                     comment.status = "hidden" # Hides The Comment If Has More Than 10% Of Reports
@@ -5589,7 +5730,20 @@ def delete_article_comment(request):
                 "message": str(_("Pre odstránenie komentáru chýbajú potrebné údaje."))
             }, status = 400)
 
-        comment = ArticleForum.objects.get(id = comment_id) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(id = comment_id, user_id = logged_in_user_id) # Gets The Comment
+        try:
+            # Gets The Comment
+            comment = ArticleForum.objects.get(
+                id = int(comment_id)
+            ) if logged_in_user.role == "developer" or logged_in_user.role == "admin" else ArticleForum.objects.get(
+                id = int(comment_id), 
+                user_id = logged_in_user_id
+            )
+
+        except ArticleForum.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nebol nájdený."))
+            }, status=404)
 
         if comment:
             comment.delete() # Deletes The Comment

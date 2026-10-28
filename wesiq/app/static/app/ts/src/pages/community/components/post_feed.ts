@@ -32,7 +32,7 @@ import {
     stepFurther,
     muteUnmuteVideo,
     changeVideoSpeed,
-    toogleVideoFullscreen,
+    togleVideoFullscreen,
     changeVideoVolume,
     changePost
 } from "../functions/customVideoPlayback.js"
@@ -352,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
             const toggle_fullscreen_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Toggle Fullscreen Icon
             const video_container:HTMLDivElement = (event.target as HTMLButtonElement).closest(".video_container") as HTMLDivElement // Gets The Video Container
 
-            toogleVideoFullscreen(toggle_fullscreen_icon, video_container) // Plays Or Pauses The Video
+            togleVideoFullscreen(toggle_fullscreen_icon, video_container) // Plays Or Pauses The Video
         }
 
         return

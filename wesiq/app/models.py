@@ -16,7 +16,21 @@ import stripe
 import string
 import random
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from hashid_field import HashidAutoField
+
+REPORT_REASON_CHOICES = [
+    ("spam", _("Spam")),
+    ("harassment", _("Harassment")),
+    ("hate_speech", _("Hate Speech")),
+    ("misinformation", _("Misinformation")),
+    ("explicit_content", _("Explicit Content")),
+    ("other", "other")
+]
+
+UNIT_CHOICES = [
+    ("reps", _("reps")),
+    ("seconds", _("seconds")),
+    ("steps", _("steps")),
+]
 
 class Users(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
@@ -34,256 +48,256 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     daily_official_tasks = models.ManyToManyField(
         "OfficialTasks", 
-        through="UserDailyOfficialTasks", 
-        verbose_name=_("Daily Official Tasks"), 
-        help_text=_("User's random generated daily official tasks."), 
-        blank=True
+        through = "UserDailyOfficialTasks", 
+        verbose_name = _("Daily Official Tasks"), 
+        help_text = _("User's random generated daily official tasks."), 
+        blank = True
     )
 
     following = models.ManyToManyField(
         "self", 
-        through="FollowRelation",
-        verbose_name=_("Following"), 
-        help_text=_("User's follow relations with other users."), 
-        related_name="followers",
-        symmetrical=False, 
-        blank=True
+        through = "FollowRelation",
+        verbose_name = _("Following"), 
+        help_text = _("User's follow relations with other users."), 
+        related_name = "followers",
+        symmetrical = False, 
+        blank = True
     )
 
     first_name = models.CharField(
-        verbose_name=_("First Name"), 
-        help_text=_("User's first name."),
-        max_length=20, 
-        null=True, blank=True
+        verbose_name = _("First Name"), 
+        help_text = _("User's first name."),
+        max_length = 20, 
+        null = True, blank = True
     )
 
     last_name = models.CharField(
-        verbose_name=_("Last Name"), 
-        help_text=_("User's last name."),
-        max_length=50, null=True, 
-        blank=True
+        verbose_name = _("Last Name"), 
+        help_text = _("User's last name."),
+        max_length = 50, null = True, 
+        blank = True
     )
 
     username = models.CharField(
-        verbose_name=_("Username"), 
-        help_text=_("User's username."),
-        max_length=20, 
-        null=False,
-        unique=True
+        verbose_name = _("Username"), 
+        help_text = _("User's username."),
+        max_length = 20, 
+        null = False,
+        unique = True
     )
 
     email_address = models.EmailField(
-        verbose_name=_("E-mail Address"), 
-        help_text=_("User's e-mail address."),
-        max_length=50
+        verbose_name = _("E-mail Address"), 
+        help_text = _("User's e-mail address."),
+        max_length = 50
     )
 
     phone_number = models.CharField(
-        verbose_name=_("Phone Number"), 
-        help_text=_("User's phone number."),
-        max_length=50, 
-        null=True
+        verbose_name = _("Phone Number"), 
+        help_text = _("User's phone number."),
+        max_length = 50, 
+        null = True
     )
 
     password = models.CharField(
-        verbose_name=_("Password"), 
-        help_text=_("User's hashed password."), 
-        max_length=255
+        verbose_name = _("Password"), 
+        help_text = _("User's hashed password."), 
+        max_length = 255
     )
 
     role = models.CharField(
-        verbose_name=_("Role"), 
-        help_text=_("User's role."),
-        choices=ROLE_CHOICES, 
-        default="user", 
-        max_length=20
+        verbose_name = _("Role"), 
+        help_text = _("User's role."),
+        choices = ROLE_CHOICES, 
+        default = "user", 
+        max_length = 20
     )
 
     profile_picture_name = models.CharField(
-        verbose_name=_("Profile Picture File"), 
-        help_text=_("User's profile picture filename."),
-        max_length=50, 
-        null=True, 
-        blank=True
+        verbose_name = _("Profile Picture File"), 
+        help_text = _("User's profile picture filename."),
+        max_length = 50, 
+        null = True, 
+        blank = True
     )
 
     language = models.CharField(
-        verbose_name=_("Language Code"), 
-        help_text=_("User's default preferred language."), 
-        max_length=10, 
-        default="en", 
-        null=False, 
-        blank=False
+        verbose_name = _("Language Code"), 
+        help_text = _("User's default preferred language."), 
+        max_length = 10, 
+        default = "en", 
+        null = False, 
+        blank = False
     )
 
     last_edit = models.DateTimeField(
-        verbose_name=_("Last Edit Time"), 
-        help_text=_("Time of the last account edition (only crucial changes)."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Last Edit Time"), 
+        help_text = _("Time of the last account edition (only crucial changes)."), 
+        null = True, 
+        blank = True
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("User's account creation time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("User's account creation time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     verification_code = models.CharField(
-        verbose_name=_("Verification Code"), 
-        help_text=_("User's verification code to activate account."), 
-        max_length=6, 
-        null=True, 
-        blank=True
+        verbose_name = _("Verification Code"), 
+        help_text = _("User's verification code to activate account."), 
+        max_length = 6, 
+        null = True, 
+        blank = True
     )
 
     password_reset_code = models.CharField(
-        verbose_name=_("Password Reset Code"), 
-        help_text=_("User's password reset code to change the password."), 
-        max_length=6, 
-        null=True, 
-        blank=True
+        verbose_name = _("Password Reset Code"), 
+        help_text = _("User's password reset code to change the password."), 
+        max_length = 6, 
+        null = True, 
+        blank = True
     )
 
     google_id = models.CharField(
-        verbose_name=_("Google ID"), 
-        help_text=_("ID of user registered with Google."), 
-        max_length=255, 
-        null=True, 
-        blank=True
+        verbose_name = _("Google ID"), 
+        help_text = _("ID of user registered with Google."), 
+        max_length = 255, 
+        null = True, 
+        blank = True
     )
 
     friend_code = models.CharField(
-        verbose_name=_("Friend Code"), 
-        help_text=_("User's random generated friend code."), 
-        max_length=6, 
-        unique=True, 
-        null=False,
-        editable=False
+        verbose_name = _("Friend Code"), 
+        help_text = _("User's random generated friend code."), 
+        max_length = 6, 
+        unique = True, 
+        null = False,
+        editable = False
     )
 
     saved_posts = models.ManyToManyField(
         "Post", 
-        verbose_name=_("Saved Posts"), 
-        help_text=_("User's saved posts of other users."), 
-        related_name="saved_posts", 
-        blank=True
+        verbose_name = _("Saved Posts"), 
+        help_text = _("User's saved posts of other users."), 
+        related_name = "saved_posts", 
+        blank = True
     )
 
     bio = models.TextField(
-        verbose_name=_("Bio"), 
-        help_text=_("User's bio."), 
-        max_length=100, 
-        null=True, 
-        blank=True
+        verbose_name = _("Bio"), 
+        help_text = _("User's bio."), 
+        max_length = 100, 
+        null = True, 
+        blank = True
     )
 
     xp = models.PositiveIntegerField(
-        verbose_name=_("Total XP"), 
-        help_text=_("User's total amount of obtained XP."), 
-        default=0, 
-        null=False
+        verbose_name = _("Total XP"), 
+        help_text = _("User's total amount of obtained XP."), 
+        default = 0, 
+        null = False
     )
 
     xp_boost_expiration_time = models.DateTimeField(
-        verbose_name=_("XP Boost Expiration Time"), 
-        help_text=_("Stores the last time of XP boost expiration."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("XP Boost Expiration Time"), 
+        help_text = _("Stores the last time of XP boost expiration."), 
+        auto_now_add = True, 
+        null = False
     )
 
     total_activities = models.PositiveIntegerField(
-        verbose_name=_("Total Activities"), 
-        help_text=_("User's total amount of recorded activities."), 
-        default=0, 
-        null=False
+        verbose_name = _("Total Activities"), 
+        help_text = _("User's total amount of recorded activities."), 
+        default = 0, 
+        null = False
     )
 
     activity_streak = models.PositiveIntegerField(
-        verbose_name=_("Activity Streak"), 
-        help_text=_("User's current activity streak."), 
-        default=0, 
-        null=False
+        verbose_name = _("Activity Streak"), 
+        help_text = _("User's current activity streak."), 
+        default = 0, 
+        null = False
     )
 
     max_activity_streak = models.PositiveIntegerField(
-        verbose_name=_("Max Activity Streak"), 
-        help_text=_("Stores the user's maximum activity streak."), 
-        default=0, 
-        null=False
+        verbose_name = _("Max Activity Streak"), 
+        help_text = _("Stores the user's maximum activity streak."), 
+        default = 0, 
+        null = False
     )
 
     last_activity_streak_increase_time = models.DateTimeField(
-        verbose_name=_("Last Activity Streak Increase time"), 
-        help_text=_("Stores the user's last activity streak increase time."), 
-        auto_now_add=False, 
-        null=True, 
-        blank=True
+        verbose_name = _("Last Activity Streak Increase time"), 
+        help_text = _("Stores the user's last activity streak increase time."), 
+        auto_now_add = False, 
+        null = True, 
+        blank = True
     )
 
     private_account = models.BooleanField(
-        verbose_name=_("Private Account"), 
-        help_text=_("Stores the information if the user's account is private."), 
-        default=False, 
-        null=False
+        verbose_name = _("Private Account"), 
+        help_text = _("Stores the information if the user's account is private."), 
+        default = False, 
+        null = False
     )
 
     account_status = models.CharField(
-        verbose_name=_("Account Status"), 
-        help_text=_("User's account Status."), 
-        max_length=20, 
-        choices=ACCOUNT_STATUS_CHOICES, 
-        default="unverified", 
-        null=False
+        verbose_name = _("Account Status"), 
+        help_text = _("User's account Status."), 
+        max_length = 20, 
+        choices = ACCOUNT_STATUS_CHOICES, 
+        default = "unverified", 
+        null = False
     )
 
     suspension_time = models.DateTimeField(
-        verbose_name=_("Suspension time"), 
-        help_text=_("Stores the user's suspension time if had any."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Suspension time"), 
+        help_text = _("Stores the user's suspension time if had any."), 
+        null = True, 
+        blank = True
     )
 
     last_login = models.DateTimeField(
-        verbose_name=_("Last Login"), 
-        help_text=_("Stores the time of the user's last login."), 
-        auto_now_add=False, 
-        null=True, 
-        blank=True
+        verbose_name = _("Last Login"), 
+        help_text = _("Stores the time of the user's last login."), 
+        auto_now_add = False, 
+        null = True, 
+        blank = True
     )
 
     reports = models.PositiveIntegerField(
-        verbose_name=_("Reports"), 
-        help_text=_("User's reports amount."), 
-        default=0, 
-        null=False
+        verbose_name = _("Reports"), 
+        help_text = _("User's reports amount."), 
+        default = 0, 
+        null = False
     )
 
     data_saving_mode = models.BooleanField(
-        verbose_name=_("Data Saving Mode"), 
-        help_text=_("Stores the information if the user has turned on the data saving mode."), 
-        default=False, 
-        null=False
+        verbose_name = _("Data Saving Mode"), 
+        help_text = _("Stores the information if the user has turned on the data saving mode."), 
+        default = False, 
+        null = False
     )
 
     is_registered_with_app = models.BooleanField(
-        verbose_name=_("Is Registered With APP"), 
-        help_text=_("Stores the information if the user is registered with mobile APP."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Registered With APP"), 
+        help_text = _("Stores the information if the user is registered with mobile APP."), 
+        default = False, 
+        null = False
     )
 
     is_staff = models.BooleanField(
-        verbose_name=_("Is Staff"),
-        default=False,
-        help_text=_("Designates whether the user can log into the admin site."),
+        verbose_name = _("Is Staff"),
+        default = False,
+        help_text = _("Designates whether the user can log into the admin site."),
     )
     
     is_active = models.BooleanField(
-        verbose_name=_("Is Active"),
-        default=True,
-        help_text=_("Designates whether this user should be treated as active."),
+        verbose_name = _("Is Active"),
+        default = True,
+        help_text = _("Designates whether this user should be treated as active."),
     )
 
     USERNAME_FIELD = "username"
@@ -295,9 +309,9 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
         # Gets The Total Amount Of User's Received Likes On Posts From Other Users
         total_received_likes = Post.objects.filter(
-            user=self
+            user = self
         ).aggregate(
-            total=Count("likes_from_users", filter=~Q(likes_from_users=self))
+            total = Count("likes_from_users", filter=~Q(likes_from_users = self))
         )["total"]
 
         return total_received_likes or 0 # Returns The User's Total Received Likes
@@ -354,7 +368,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
             new_friend_code = generate_friend_code()
             
             # Generates The Unique Friend Code
-            while Users.objects.filter(friend_code=new_friend_code).exists():
+            while Users.objects.filter(friend_code = new_friend_code).exists():
                 new_friend_code = generate_friend_code()
                 
             self.friend_code = new_friend_code
@@ -365,12 +379,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
         return f"{self.role}: {self.first_name} {self.last_name}"
 
     def get_absolute_url(self):
-        return reverse("profile_url", kwargs={"username": self.username})
+        return reverse("profile_url", kwargs = {"username": self.username})
 
 # Function For Generate The Friend Code
 def generate_friend_code():
     characters = string.ascii_uppercase + string.digits
-    return "".join(random.choices(characters, k=6))
+    return "".join(random.choices(characters, k = 6))
 
 class FollowRelation(models.Model):
     STATUS_CHOICES = [
@@ -380,36 +394,36 @@ class FollowRelation(models.Model):
 
     from_user = models.ForeignKey(
         "Users", 
-        related_name="following_relations", 
-        verbose_name=_("From User"),
-        help_text=_("Follow from the selected user."), 
-        on_delete=models.CASCADE,
-        null=False
+        related_name = "following_relations", 
+        verbose_name = _("From User"),
+        help_text = _("Follow from the selected user."), 
+        on_delete = models.CASCADE,
+        null = False
     )
 
     to_user = models.ForeignKey(
         "Users", 
-        related_name="follower_relations", 
-        verbose_name=_("To User"),
-        help_text=_("Follow to the selected user."), 
-        on_delete=models.CASCADE,
-        null=False
+        related_name = "follower_relations", 
+        verbose_name = _("To User"),
+        help_text = _("Follow to the selected user."), 
+        on_delete = models.CASCADE,
+        null = False
     )
     
     status = models.CharField(
-        verbose_name=_("Status"), 
-        help_text=_("Status of the follow relation."), 
-        max_length=10, 
-        choices=STATUS_CHOICES, 
-        default="accepted", 
-        null=False
+        verbose_name = _("Status"), 
+        help_text = _("Status of the follow relation."), 
+        max_length = 10, 
+        choices = STATUS_CHOICES, 
+        default = "accepted", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of the follow relation creation."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the follow relation creation."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -422,32 +436,32 @@ class FollowRelation(models.Model):
 class SpecialBadges(models.Model):
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("Stores the receiver Of the Badge."), 
-        on_delete=models.CASCADE,
-        related_name="badges", 
-        null=False
+        verbose_name = _("User"),
+        help_text = _("Stores the receiver Of the Badge."), 
+        on_delete = models.CASCADE,
+        related_name = "badges", 
+        null = False
     )
 
     title = models.CharField(
-        verbose_name=_("Title"), 
-        help_text=_("Full title of the badge."),
-        max_length=50, 
-        null=False
+        verbose_name = _("Title"), 
+        help_text = _("Full title of the badge."),
+        max_length = 50, 
+        null = False
     )
 
     data = models.CharField(
-        verbose_name=_("Data"), 
-        help_text=_("Spaceless title of the badge used in the programming logic."),
-        max_length=50, 
-        null=False
+        verbose_name = _("Data"), 
+        help_text = _("Spaceless title of the badge used in the programming logic."),
+        max_length = 50, 
+        null = False
     )
 
     obtained_in = models.DateTimeField(
-        verbose_name=_("Obtained In"), 
-        help_text=_("Time of receivation of the badge."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Obtained In"), 
+        help_text = _("Time of receivation of the badge."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -460,42 +474,42 @@ class SpecialBadges(models.Model):
 class UserDailyOfficialTasks(models.Model):
     task = models.ForeignKey(
         "OfficialTasks",
-        verbose_name=_("Official Task"),
-        help_text=_("Full title of the task."),
-        on_delete=models.CASCADE,
-        null=False
+        verbose_name = _("Official Task"),
+        help_text = _("Full title of the task."),
+        on_delete = models.CASCADE,
+        null = False
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user to whom the task belongs."),
-        on_delete=models.CASCADE,
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user to whom the task belongs."),
+        on_delete = models.CASCADE,
+        null = False
     )
 
     progress_percentage = models.DecimalField(
-        verbose_name=_("Progress Percentage"), 
-        help_text=_("Task's progress percentage of completion."),
-        max_digits=5, 
-        decimal_places=2, 
-        default=0.00, 
-        null=False, 
-        validators=[MinValueValidator(0.00), MaxValueValidator(100.00)]
+        verbose_name = _("Progress Percentage"), 
+        help_text = _("Task's progress percentage of completion."),
+        max_digits = 5, 
+        decimal_places = 2, 
+        default = 0.00, 
+        null = False, 
+        validators = [MinValueValidator(0.00), MaxValueValidator(100.00)]
     )
 
     is_completed = models.BooleanField(
-        verbose_name=_("Is Completed"), 
-        help_text=_("Stores the information if the task is completed."),
-        default=False, 
-        null=False
+        verbose_name = _("Is Completed"), 
+        help_text = _("Stores the information if the task is completed."),
+        default = False, 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of the generation of the task."),
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the generation of the task."),
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -511,47 +525,38 @@ class UserDailyOfficialTasks(models.Model):
             return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s" na %(progress_percentage)s%.') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title, "progress_percentage": self.progress_percentage}
 
 class UsersReport(models.Model):
-    REPORT_REASON_CHOICES = [
-        ("spam", _("Spam")),
-        ("harassment", _("Harassment")),
-        ("hate_speech", _("Hate Speech")),
-        ("misinformation", _("Misinformation")),
-        ("explicit_content", _("Explicit Content")),
-        ("other", "other")
-    ]
-
     reported_user = models.ForeignKey(
         Users,
-        verbose_name=_("Reported User"),
-        help_text=_("The user against whom the report was filed."),
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="reports_received"
+        verbose_name = _("Reported User"),
+        help_text = _("The user against whom the report was filed."),
+        on_delete = models.CASCADE,
+        null = False,
+        related_name = "reports_received"
     )
 
     reporting_user = models.ForeignKey(
         Users,
-        verbose_name=_("Reporting User"),
-        help_text=_("The user who submitted the report."),
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="reports_sent"
+        verbose_name = _("Reporting User"),
+        help_text = _("The user who submitted the report."),
+        on_delete = models.CASCADE,
+        null = False,
+        related_name = "reports_sent"
     )
 
     reason = models.CharField(
-        verbose_name=_("Reason"), 
-        help_text=_("Reason of the given report."),
-        max_length=50, 
-        choices=REPORT_REASON_CHOICES, 
-        default="other", 
-        null=False
+        verbose_name = _("Reason"), 
+        help_text = _("Reason of the given report."),
+        max_length = 50, 
+        choices = REPORT_REASON_CHOICES, 
+        default = "other", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time the report was submitted."),
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time the report was submitted."),
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -565,54 +570,54 @@ class UsersReport(models.Model):
 class Activity(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"), 
-        help_text=_("The user to whom the activity record belongs."), 
-        on_delete=models.DO_NOTHING, 
-        related_name="activities", 
-        null=True,
+        verbose_name = _("User"), 
+        help_text = _("The user to whom the activity record belongs."), 
+        on_delete = models.DO_NOTHING, 
+        related_name = "activities", 
+        null = True,
     )
 
     end_time = models.DateTimeField(
-        verbose_name=_("End Time"), 
-        help_text=_("Activity end time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("End Time"), 
+        help_text = _("Activity end time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     elapsed_time = models.PositiveIntegerField(
-        verbose_name=_("Elapsed Time (Seconds)"), 
-        help_text=_("Duration of the activity in seconds."), 
-        default=0, 
-        null=False
+        verbose_name = _("Elapsed Time (Seconds)"), 
+        help_text = _("Duration of the activity in seconds."), 
+        default = 0, 
+        null = False
     )
 
     gained_xp = models.PositiveIntegerField(
-        verbose_name=_("Gained XP"), 
-        help_text=_("Amount of XP received for activity."), 
-        default=0, 
-        null=False
+        verbose_name = _("Gained XP"), 
+        help_text = _("Amount of XP received for activity."), 
+        default = 0, 
+        null = False
     )
 
     type = models.CharField(
-        verbose_name=_("Type"), 
-        help_text=_("Selected activity name."), 
-        max_length=50, 
-        null=True
+        verbose_name = _("Type"), 
+        help_text = _("Selected activity name."), 
+        max_length = 50, 
+        null = True
     )
 
     training_plan_day = models.PositiveIntegerField(
-        verbose_name=_("Day"), 
-        help_text=_("Assigned activity day."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Day"), 
+        help_text = _("Assigned activity day."), 
+        null = True, 
+        blank = True
     )
 
     training_plan_summary = models.JSONField(
-        verbose_name=_("Training Plan Summary"), 
-        help_text=_("Data recorded for an activity completed according to the training plan."), 
-        default=list, 
-        null=True, 
-        blank=True
+        verbose_name = _("Training Plan Summary"), 
+        help_text = _("Data recorded for an activity completed according to the training plan."), 
+        default = list, 
+        null = True, 
+        blank = True
     )
 
     class Meta:
@@ -632,70 +637,70 @@ class Reviews(models.Model):
 
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"), 
-        help_text=_("The user who wrote the review."), 
-        on_delete=models.SET_NULL, 
-        related_name="review", 
-        null=True,
+        verbose_name = _("User"), 
+        help_text = _("The user who wrote the review."), 
+        on_delete = models.SET_NULL, 
+        related_name = "review", 
+        null = True,
     )
 
     reports_from_users = models.ManyToManyField(
         Users, 
-        through="ReviewReport", 
-        verbose_name=_("Reports From Users"), 
-        help_text=_("Users who submitted a report."), 
-        related_name="reported_reviews", 
-        blank=True
+        through = "ReviewReport", 
+        verbose_name = _("Reports From Users"), 
+        help_text = _("Users who submitted a report."), 
+        related_name = "reported_reviews", 
+        blank = True
     )
     
     rating = models.PositiveIntegerField(
-        verbose_name=_("Rating"), 
-        help_text=_("Rating from 1 to 5."), 
-        default=0, 
-        null=False
+        verbose_name = _("Rating"), 
+        help_text = _("Rating from 1 to 5."), 
+        default = 0, 
+        null = False
     )
 
     review = models.TextField(
-        verbose_name=_("Review"), 
-        help_text=_("Content of the written review."), 
-        max_length=200, 
-        null=True
+        verbose_name = _("Review"), 
+        help_text = _("Content of the written review."), 
+        max_length = 200, 
+        null = True
     )
 
     status = models.CharField(
-        verbose_name=_("Status"), 
-        help_text=_("Current status of the written review."), 
-        choices=STATUS_CHOICES, 
-        max_length=20, 
-        default="pending"
+        verbose_name = _("Status"), 
+        help_text = _("Current status of the written review."), 
+        choices = STATUS_CHOICES, 
+        max_length = 20, 
+        default = "pending"
     )
 
     rejection_time = models.DateTimeField(
-        verbose_name=_("Rejection Time"), 
-        help_text=_("Review rejection time."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Rejection Time"), 
+        help_text = _("Review rejection time."), 
+        null = True, 
+        blank = True
     )
 
     reports = models.PositiveIntegerField(
-        verbose_name=_("Reports"), 
-        help_text=_("Amount of total obtained reports."), 
-        default=0, 
-        null=False
+        verbose_name = _("Reports"), 
+        help_text = _("Amount of total obtained reports."), 
+        default = 0, 
+        null = False
     )
 
     last_edit = models.DateTimeField(
-        verbose_name=_("Last Edit Time"), 
-        help_text=_("Time of the last editing."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Last Edit Time"), 
+        help_text = _("Time of the last editing."), 
+        null = True, 
+        blank = True
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("Time of the review submission."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("Time of the review submission."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -710,45 +715,36 @@ class Reviews(models.Model):
             return _("Užívateľ %(first_name)s %(last_name)s pridal recenziu s %(rating)s hviezdičkou.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "rating": self.rating}
 
 class ReviewReport(models.Model):
-    REPORT_REASON_CHOICES = [
-        ("spam", _("Spam")),
-        ("harassment", _("Harassment")),
-        ("hate_speech", _("Hate Speech")),
-        ("misinformation", _("Misinformation")),
-        ("explicit_content", _("Explicit Content")),
-        ("other", "other")
-    ]
-
     review = models.ForeignKey(
         Reviews,
-        verbose_name=_("Review"),
-        help_text=_("A review that has been reported."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("Review"),
+        help_text = _("A review that has been reported."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who reported the review."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who reported the review."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     reason = models.CharField(
-        verbose_name=_("Reason"), 
-        help_text=_("Reason for reporting the review."), 
-        max_length=50, 
-        choices=REPORT_REASON_CHOICES, 
-        default="other", 
-        null=False
+        verbose_name = _("Reason"), 
+        help_text = _("Reason for reporting the review."), 
+        max_length = 50, 
+        choices = REPORT_REASON_CHOICES, 
+        default = "other", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of review report submission."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of review report submission."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -762,127 +758,127 @@ class ReviewReport(models.Model):
 class Articles(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user who owns the article."), 
-        on_delete=models.DO_NOTHING, 
-        related_name="article", 
-        null=True,
+        verbose_name = _("User"),
+        help_text = _("The user who owns the article."), 
+        on_delete = models.DO_NOTHING, 
+        related_name = "article", 
+        null = True,
     )
 
     rating_from_users = models.ManyToManyField(
         Users, 
-        through="ArticleRating",
-        verbose_name=_("Rating From Users"), 
-        help_text=_("User rating of the article."), 
-        blank=True
+        through = "ArticleRating",
+        verbose_name = _("Rating From Users"), 
+        help_text = _("User rating of the article."), 
+        blank = True
     )
 
     title = models.CharField(
-        verbose_name=_("Title"), 
-        help_text=_("Title of the article."), 
-        max_length=50, 
-        null=False
+        verbose_name = _("Title"), 
+        help_text = _("Title of the article."), 
+        max_length = 50, 
+        null = False
     )
 
     description = models.TextField(
-        verbose_name=_("Description"), 
-        help_text=_("Description of the article."), 
-        max_length=250, 
-        null=False
+        verbose_name = _("Description"), 
+        help_text = _("Description of the article."), 
+        max_length = 250, 
+        null = False
     )
 
     image_name = models.CharField(
-        verbose_name=_("Image File"), 
-        help_text=_("Filename of the banner image of the article."), 
-        max_length=50, 
-        null=False
+        verbose_name = _("Image File"), 
+        help_text = _("Filename of the banner image of the article."), 
+        max_length = 50, 
+        null = False
     )
 
     html_filename = models.CharField(
-        verbose_name=_("HTML Filename"), 
-        help_text=_("Filename of the HTML template of the article."), 
-        max_length=50, 
-        null=True, 
-        blank=True
+        verbose_name = _("HTML Filename"), 
+        help_text = _("Filename of the HTML template of the article."), 
+        max_length = 50, 
+        null = True, 
+        blank = True
     )
 
     link = models.CharField(
-        verbose_name=_("Link"), 
-        help_text=_("URL of the article."), 
-        max_length=50, 
-        null=False
+        verbose_name = _("Link"), 
+        help_text = _("URL of the article."), 
+        max_length = 50, 
+        null = False
     )
 
     categories = ArrayField(
         models.CharField(
-            verbose_name=_("Categories"), 
-            help_text=_("Categories corresponding to the article."), 
-            max_length=50
+            verbose_name = _("Categories"), 
+            help_text = _("Categories corresponding to the article."), 
+            max_length = 50
         ), 
         
-        default=list, 
-        null=False
+        default = list, 
+        null = False
     )
 
     visitors = models.PositiveIntegerField(
-        verbose_name=_("Visitors"), 
-        help_text=_("Amount of the article's visitors."), 
-        default=0, 
-        null=False
+        verbose_name = _("Visitors"), 
+        help_text = _("Amount of the article's visitors."), 
+        default = 0, 
+        null = False
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("Time of the article creation."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("Time of the article creation."), 
+        auto_now_add = True, 
+        null = False
     )
 
     difficulty = models.IntegerField(
-        verbose_name=_("Difficulty Percentage"), 
-        help_text=_("Exercise difficulty in percent."), 
-        default=0, 
-        null=False, 
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        verbose_name = _("Difficulty Percentage"), 
+        help_text = _("Exercise difficulty in percent."), 
+        default = 0, 
+        null = False, 
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
     )
 
     time_to_learn = models.IntegerField(
-        verbose_name=_("Time To Learn Percentage"), 
-        help_text=_("Exercise time to learn in percent."), 
-        default=0, 
-        null=False, 
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        verbose_name = _("Time To Learn Percentage"), 
+        help_text = _("Exercise time to learn in percent."), 
+        default = 0, 
+        null = False, 
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
     )
 
     time_to_learn_text = models.CharField(
-        verbose_name=_("Time To Learn Text"), 
-        help_text=_("Exercise time to learn labeled text."), 
-        max_length=20, 
-        null=False
+        verbose_name = _("Time To Learn Text"), 
+        help_text = _("Exercise time to learn labeled text."), 
+        max_length = 20, 
+        null = False
     )
 
     rarity = models.IntegerField(
-        verbose_name=_("Rarity Percentage"), 
-        help_text=_("Exercise rarity in percent."), 
-        default=0, 
-        null=False, 
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        verbose_name = _("Rarity Percentage"), 
+        help_text = _("Exercise rarity in percent."), 
+        default = 0, 
+        null = False, 
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
     )
 
     strength = models.IntegerField(
-        verbose_name=_("Strength Percentage"), 
-        help_text=_("Exercise required strength in percent."), 
-        default=0, 
-        null=False, 
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        verbose_name = _("Strength Percentage"), 
+        help_text = _("Exercise required strength in percent."), 
+        default = 0, 
+        null = False, 
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
     )
 
     technique = models.IntegerField(
-        verbose_name=_("Technique Percentage"), 
-        help_text=_("The technical difficulty value of the exercise, expressed as a percentage."), 
-        default=0, 
-        null=False, 
-        validators=[MinValueValidator(0), MaxValueValidator(100)]
+        verbose_name = _("Technique Percentage"), 
+        help_text = _("The technical difficulty value of the exercise, expressed as a percentage."), 
+        default = 0, 
+        null = False, 
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
     )
 
     class Meta:
@@ -895,32 +891,32 @@ class Articles(models.Model):
 class ArticleRating(models.Model):
     article = models.ForeignKey(
         Articles,
-        verbose_name=_("Article"),
-        help_text=_("The article to which the given rating applies."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("Article"),
+        help_text = _("The article to which the given rating applies."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who rated the article."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who rated the article."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     rating = models.PositiveIntegerField(
-        verbose_name=_("Rating"), 
-        help_text=_("Rating from 1 to 5."), 
-        default=0, 
-        null=False
+        verbose_name = _("Rating"), 
+        help_text = _("Rating from 1 to 5."), 
+        default = 0, 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time the article rating was submitted."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time the article rating was submitted."), 
+        auto_now_add = True, 
+        null = False
     ) 
 
     class Meta:
@@ -939,92 +935,92 @@ class ArticleForum(models.Model):
 
     article = models.ForeignKey(
         Articles, 
-        verbose_name=_("Article"), 
-        help_text=_("The article to which the comment belongs."), 
-        on_delete=models.DO_NOTHING, 
-        related_name="comments", 
-        null=False,
+        verbose_name = _("Article"), 
+        help_text = _("The article to which the comment belongs."), 
+        on_delete = models.DO_NOTHING, 
+        related_name = "comments", 
+        null = False,
     )
 
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"), 
-        help_text=_("The user who wrote the comment."), 
-        on_delete=models.CASCADE, 
-        related_name="article_comments",
-        null=True,
+        verbose_name = _("User"), 
+        help_text = _("The user who wrote the comment."), 
+        on_delete = models.CASCADE, 
+        related_name = "article_comments",
+        null = True,
     )
 
     reports_from_users = models.ManyToManyField(
         Users, 
-        through="ArticleForumReport", 
-        verbose_name=_("Reports From Users"), 
-        help_text=_("Users who reported the comment."), 
-        related_name="reported_article_forum_comments", 
-        blank=True
+        through = "ArticleForumReport", 
+        verbose_name = _("Reports From Users"), 
+        help_text = _("Users who reported the comment."), 
+        related_name = "reported_article_forum_comments", 
+        blank = True
     )
 
     comment = models.TextField(
-        verbose_name=_("Comment"), 
-        help_text=_("Comment content."), 
-        max_length=100, 
-        null=False
+        verbose_name = _("Comment"), 
+        help_text = _("Comment content."), 
+        max_length = 100, 
+        null = False
     )
 
-    # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
-    # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
+    # tagged_users = models.ManyToManyField(Users, verbose_name = "Tagged Users", blank = True)
+    # added_hashtags = ArrayField(models.CharField(verbose_name = "Added Hashtags", max_length = 30), default = list, null = False)
 
     likes = models.PositiveIntegerField(
-        verbose_name=_("Likes"), 
-        help_text=_("Number of likes on the comment."), 
-        default=0, 
-        null=False
+        verbose_name = _("Likes"), 
+        help_text = _("Number of likes on the comment."), 
+        default = 0, 
+        null = False
     )
 
     likes_from_users = models.ManyToManyField(
         Users, 
-        verbose_name=_("Likes From Users"), 
-        help_text=_("Users who liked the comment."), 
-        related_name="liked_article_forum_comments", 
-        blank=True
+        verbose_name = _("Likes From Users"), 
+        help_text = _("Users who liked the comment."), 
+        related_name = "liked_article_forum_comments", 
+        blank = True
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("Time the comment was written."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("Time the comment was written."), 
+        auto_now_add = True, 
+        null = False
     )
 
     parent = models.ForeignKey(
         "self",
-        verbose_name=_("Parent"),
-        help_text=_("Link to the parent comment in the case of a reply."), 
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="replies",
+        verbose_name = _("Parent"),
+        help_text = _("Link to the parent comment in the case of a reply."), 
+        null = True,
+        blank = True,
+        on_delete = models.CASCADE,
+        related_name = "replies",
     )
 
     status = models.CharField(
-        verbose_name=_("Status"), 
-        help_text=_("Current status of the comment."), 
-        choices=STATUS_CHOICES, 
-        max_length=20, 
-        default="OK"
+        verbose_name = _("Status"), 
+        help_text = _("Current status of the comment."), 
+        choices = STATUS_CHOICES, 
+        max_length = 20, 
+        default = "OK"
     )
 
     reports = models.PositiveIntegerField(
-        verbose_name=_("Reports"), 
-        help_text=_("Amount of received reports of the comment."), 
-        default=0, 
-        null=False
+        verbose_name = _("Reports"), 
+        help_text = _("Amount of received reports of the comment."), 
+        default = 0, 
+        null = False
     )
 
     level = models.PositiveIntegerField(
-        verbose_name=_("Level"), 
-        help_text=_("Comment nesting level (1 is a main comment; deeper levels are replies)"), 
-        default=1
+        verbose_name = _("Level"), 
+        help_text = _("Comment nesting level (1 is a main comment; deeper levels are replies)"), 
+        default = 1
     )
 
     def save(self, *args, **kwargs):
@@ -1049,45 +1045,36 @@ class ArticleForum(models.Model):
         return _("Užívateľ %(first_name)s %(last_name)s pridal komentár pre článok: %(article_title)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "article_title": self.article.title}
 
 class ArticleForumReport(models.Model):
-    REPORT_REASON_CHOICES = [
-        ("spam", _("Spam")),
-        ("harassment", _("Harassment")),
-        ("hate_speech", _("Hate Speech")),
-        ("misinformation", _("Misinformation")),
-        ("explicit_content", _("Explicit Content")),
-        ("other", _("Other"))
-    ]
-
     articleforum = models.ForeignKey(
         ArticleForum,
-        verbose_name=_("Article Forum Comment"),
-        help_text=_("The article comment that received a report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("Article Forum Comment"),
+        help_text = _("The article comment that received a report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who submitted the report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who submitted the report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     reason = models.CharField(
-        verbose_name=_("Reason"), 
-        help_text=_("Reason for reporting."), 
-        max_length=50, 
-        choices=REPORT_REASON_CHOICES, 
-        default="other", 
-        null=False
+        verbose_name = _("Reason"), 
+        help_text = _("Reason for reporting."), 
+        max_length = 50, 
+        choices = REPORT_REASON_CHOICES, 
+        default = "other", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Report submission time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Report submission time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -1102,111 +1089,105 @@ class ArticleForumReport(models.Model):
 class ArticleVisitor(models.Model):
     article = models.ForeignKey(
         Articles, 
-        verbose_name=_("Article"), 
-        help_text=_("The article to which the view belongs."), 
-        on_delete=models.CASCADE, 
-        related_name="visitor_records", 
-        null=False,
+        verbose_name = _("Article"), 
+        help_text = _("The article to which the view belongs."), 
+        on_delete = models.CASCADE, 
+        related_name = "visitor_records", 
+        null = False,
     )
 
     device_id = models.CharField(
-        verbose_name=_("Device ID"), 
-        help_text=_("Unique identification key for the device."), 
-        db_index=True,
-        max_length=255, 
-        null=False, 
-        blank=False
+        verbose_name = _("Device ID"), 
+        help_text = _("Unique identification key for the device."), 
+        db_index = True,
+        max_length = 255, 
+        null = False, 
+        blank = False
     )
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["article", "device_id"], name="unique_article_visitor")
+            models.UniqueConstraint(fields = ["article", "device_id"], name = "unique_article_visitor")
         ]
 
 class TrainingPlan(models.Model):
-    UNIT_CHOICES = [
-        ("reps", _("Reps")),
-        ("seconds", _("Seconds")),
-        ("steps", _("Steps")),
-    ]
-
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user to whom the training plan belongs."), 
-        on_delete=models.DO_NOTHING,
-        related_name="training_plans",
-        null=True,
+        verbose_name = _("User"),
+        help_text = _("The user to whom the training plan belongs."), 
+        on_delete = models.DO_NOTHING,
+        related_name = "training_plans",
+        null = True,
     )
 
     training_plan_key = models.CharField(
-        verbose_name=_("Training Plan Key"), 
-        help_text=_("Random identification key for the training plan."), 
-        max_length=50, 
-        default="None", 
-        null=False, 
-        blank=False
+        verbose_name = _("Training Plan Key"), 
+        help_text = _("Random identification key for the training plan."), 
+        max_length = 50, 
+        default = "None", 
+        null = False, 
+        blank = False
     )
 
     day = models.PositiveIntegerField(
-        verbose_name=_("Day"), 
-        help_text=_("Training plan day."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Day"), 
+        help_text = _("Training plan day."), 
+        null = True, 
+        blank = True
     )
 
     type = models.CharField(
-        verbose_name=_("Type"), 
-        help_text=_("Training plan name."), 
-        max_length=50, 
-        null=True
+        verbose_name = _("Type"), 
+        help_text = _("Training plan name."), 
+        max_length = 50, 
+        null = True
     )
 
     exercise = models.CharField(
-        verbose_name=_("Exercise"), 
-        help_text=_("Exercise name."), 
-        max_length=50, 
-        null=False
+        verbose_name = _("Exercise"), 
+        help_text = _("Exercise name."), 
+        max_length = 50, 
+        null = False
     )
 
     periods = ArrayField(
         models.PositiveIntegerField(
-            verbose_name=_("Reps")
+            verbose_name = _("Reps")
         ), 
 
-        help_text=_("Exercise periods (the length of the array represents sets and the amount of reps represents the values (0 = to failute / max. reps)."), 
-        default=list, 
-        null=False
+        help_text = _("Exercise periods (the length of the array represents sets and the amount of reps represents the values (0 = to failute / max. reps)."), 
+        default = list, 
+        null = False
     )
 
     unit = models.CharField(
-        verbose_name=_("Unit"), 
-        help_text=_("The unit in which the exercise is measured."), 
-        max_length=20, 
-        choices=UNIT_CHOICES, 
-        default="reps", 
-        null=False
+        verbose_name = _("Unit"), 
+        help_text = _("The unit in which the exercise is measured."), 
+        max_length = 20, 
+        choices = UNIT_CHOICES, 
+        default = "reps", 
+        null = False
     )
 
     order = models.PositiveIntegerField(
-        verbose_name=_("Order"), 
-        help_text=_("The order of the exercise in the training plan."), 
-        default=0, 
-        null=False
+        verbose_name = _("Order"), 
+        help_text = _("The order of the exercise in the training plan."), 
+        default = 0, 
+        null = False
     )
 
     is_warm_up = models.BooleanField(
-        verbose_name=_("Is Warm Up"), 
-        help_text=_("Stores the information if the exercise is warm up."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Warm Up"), 
+        help_text = _("Stores the information if the exercise is warm up."), 
+        default = False, 
+        null = False
     )
     
     is_custom_exercise = models.BooleanField(
-        verbose_name=_("Is Custom Exercise"), 
-        help_text=_("Stores the information if the exercise is custom."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Custom Exercise"), 
+        help_text = _("Stores the information if the exercise is custom."), 
+        default = False, 
+        null = False
     )
 
     class Meta:
@@ -1217,52 +1198,46 @@ class TrainingPlan(models.Model):
         return _("Tréningový plán užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
 class Exercises(models.Model):
-    UNIT_CHOICES = [
-        ("reps", _("reps")),
-        ("seconds", _("seconds")),
-        ("steps", _("steps")),
-    ]
-
     exercise = models.CharField(
-        verbose_name=_("Exercise"), 
-        help_text=_("Exercise name."), 
-        max_length=50, 
-        null=False
+        verbose_name = _("Exercise"), 
+        help_text = _("Exercise name."), 
+        max_length = 50, 
+        null = False
     )
 
     unit = models.CharField(
-        verbose_name=_("Unit"), 
-        help_text=_("The unit in which the exercise is measured."), 
-        max_length=20, 
-        choices=UNIT_CHOICES, 
-        default="reps", 
-        null=False
+        verbose_name = _("Unit"), 
+        help_text = _("The unit in which the exercise is measured."), 
+        max_length = 20, 
+        choices = UNIT_CHOICES, 
+        default = "reps", 
+        null = False
     )
 
     categories = ArrayField(
         models.CharField(
-            verbose_name=_("Categories"), 
-            max_length=50
+            verbose_name = _("Categories"), 
+            max_length = 50
         ), 
         
-        help_text=_("Categories the given exercise falls into."), 
-        default=list, 
-        null=False
+        help_text = _("Categories the given exercise falls into."), 
+        default = list, 
+        null = False
     )
 
     requires_weight = models.BooleanField(
-        verbose_name=_("Requires Weight"), 
-        help_text=_("Stores the information if the exercise requires the additional weight."), 
-        default=False, 
-        null=False
+        verbose_name = _("Requires Weight"), 
+        help_text = _("Stores the information if the exercise requires the additional weight."), 
+        default = False, 
+        null = False
     )
 
     image_filename = models.CharField(
-        verbose_name=_("Image Filename"), 
-        help_text=_("Stores the filename of the exercise image."), 
-        max_length=50, 
-        null=True, 
-        blank=True
+        verbose_name = _("Image Filename"), 
+        help_text = _("Stores the filename of the exercise image."), 
+        max_length = 50, 
+        null = True, 
+        blank = True
     )
 
     class Meta:
@@ -1274,24 +1249,24 @@ class Exercises(models.Model):
 
 class OfficialTasks(models.Model):
     title = models.CharField(
-        verbose_name=_("Title"), 
-        help_text=_("Title of the task."), 
-        max_length=100, 
-        null=False
+        verbose_name = _("Title"), 
+        help_text = _("Title of the task."), 
+        max_length = 100, 
+        null = False
     )
 
     data = models.CharField(
-        verbose_name=_("Data"), 
-        help_text=_("Spaceless title of the task used in the programming logic."),
-        max_length=100, 
-        null=False
+        verbose_name = _("Data"), 
+        help_text = _("Spaceless title of the task used in the programming logic."),
+        max_length = 100, 
+        null = False
     )
 
     xp = models.PositiveIntegerField(
-        verbose_name=_("XP"), 
-        help_text=_("Amount of XP upon completing the task."),
-        default=0, 
-        null=False
+        verbose_name = _("XP"), 
+        help_text = _("Amount of XP upon completing the task."),
+        default = 0, 
+        null = False
     )
 
     class Meta:
@@ -1304,38 +1279,38 @@ class OfficialTasks(models.Model):
 class CustomTasks(models.Model):
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who created a custom task."),
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who created a custom task."),
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     title = models.CharField(
-        verbose_name=_("Title"), 
-        help_text=_("Title of the custom task."),
-        max_length=100, 
-        null=False
+        verbose_name = _("Title"), 
+        help_text = _("Title of the custom task."),
+        max_length = 100, 
+        null = False
     )
 
     is_completed = models.BooleanField(
-        verbose_name=_("Is Completed"),
-        help_text=_("Stores the information if the task is completed."),
-        default=False, 
-        null=False
+        verbose_name = _("Is Completed"),
+        help_text = _("Stores the information if the task is completed."),
+        default = False, 
+        null = False
     )
 
     order = models.PositiveIntegerField(
-        verbose_name=_("Order"), 
-        help_text=_("Order of the task."),
-        default=0, 
-        null=False
+        verbose_name = _("Order"), 
+        help_text = _("Order of the task."),
+        default = 0, 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of creation of the task."),
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of creation of the task."),
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -1354,59 +1329,59 @@ class Transactions(models.Model):
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who created the transaction."),
-        on_delete=models.DO_NOTHING,
-        related_name="transactions",
-        null=True,
+        verbose_name = _("User"),
+        help_text = _("The user who created the transaction."),
+        on_delete = models.DO_NOTHING,
+        related_name = "transactions",
+        null = True,
     )
 
     stripe_intent_id = models.CharField(
-        verbose_name="Stripe ID", 
-        help_text=_("Transaction ID in the Stripe service."),
-        max_length=255, 
-        unique=True, 
-        null=False
+        verbose_name = "Stripe ID", 
+        help_text = _("Transaction ID in the Stripe service."),
+        max_length = 255, 
+        unique = True, 
+        null = False
     )
 
     cardholder_name = models.CharField(
-        verbose_name=_("Cardholder Name"), 
-        help_text=_("Cardholder's name."),
-        max_length=50, 
-        null=True
+        verbose_name = _("Cardholder Name"), 
+        help_text = _("Cardholder's name."),
+        max_length = 50, 
+        null = True
     )
 
     # In €
     amount = models.DecimalField(
-        verbose_name=_("Amount (€)"), 
-        help_text=_("Volume of processed funds in EUR."),
-        max_digits=10, 
-        decimal_places=2, 
-        default=0, 
-        null=False
+        verbose_name = _("Amount (€)"), 
+        help_text = _("Volume of processed funds in EUR."),
+        max_digits = 10, 
+        decimal_places = 2, 
+        default = 0, 
+        null = False
     )
 
     status = models.CharField(
-        verbose_name=_("Status"), 
-        help_text=_("Status of the added transaction."),
-        max_length=20, 
-        choices=STATUS_CHOICES, 
-        default="pending", 
-        null=False
+        verbose_name = _("Status"), 
+        help_text = _("Status of the added transaction."),
+        max_length = 20, 
+        choices = STATUS_CHOICES, 
+        default = "pending", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Transaction addition time."),
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Transaction addition time."),
+        auto_now_add = True, 
+        null = False
     )
 
     title = models.CharField(
-        verbose_name=_("Title"), 
-        help_text=_("Title of the payment."),
-        max_length=20, 
-        null=True
+        verbose_name = _("Title"), 
+        help_text = _("Title of the payment."),
+        max_length = 20, 
+        null = True
     )
 
     class Meta:
@@ -1425,57 +1400,57 @@ class Subscription(models.Model):
 
     user = models.OneToOneField(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user who activated the subscription."), 
-        on_delete=models.CASCADE, 
-        related_name="subscription",
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user who activated the subscription."), 
+        on_delete = models.CASCADE, 
+        related_name = "subscription",
+        null = False
     )
     
     stripe_subscription_id = models.CharField(
-        verbose_name=_("Stripe Subscription ID"),
-        help_text=_("ID of the Stripe subscription."), 
-        max_length=255, 
-        unique=True,
-        null=True, 
-        blank=True
+        verbose_name = _("Stripe Subscription ID"),
+        help_text = _("ID of the Stripe subscription."), 
+        max_length = 255, 
+        unique = True,
+        null = True, 
+        blank = True
     )
 
     plan = models.CharField(
-        verbose_name=_("Plan"),
-        help_text=_("Activated subscription plan."), 
-        max_length=20, 
-        choices=PLAN_CHOICES, 
-        default="free",
-        null=False
+        verbose_name = _("Plan"),
+        help_text = _("Activated subscription plan."), 
+        max_length = 20, 
+        choices = PLAN_CHOICES, 
+        default = "free",
+        null = False
     )
 
     is_active = models.BooleanField(
-        verbose_name=_("Is Active"), 
-        help_text=_("Stores the information if the subscription is still active."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Active"), 
+        help_text = _("Stores the information if the subscription is still active."), 
+        default = False, 
+        null = False
     )
 
     is_cancelled = models.BooleanField(
-        verbose_name=_("Is Cancelled"), 
-        help_text=_("Stores the information if the subscription is cancelled. The subscription will end at the end of the billing period."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Cancelled"), 
+        help_text = _("Stores the information if the subscription is cancelled. The subscription will end at the end of the billing period."), 
+        default = False, 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time the subscription was added."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time the subscription was added."), 
+        auto_now_add = True, 
+        null = False
     )
 
     updated_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time the subscription was updated."), 
-        auto_now=True,
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time the subscription was updated."), 
+        auto_now = True,
+        null = False
     )
 
     @property
@@ -1497,7 +1472,7 @@ class Subscription(models.Model):
             if not end_time:
                 return _("Nepodarilo sa načítať dáta.")
 
-            end_date = datetime.fromtimestamp(end_time, tz=datetime_timezone.utc) # Gets The End Date
+            end_date = datetime.fromtimestamp(end_time, tz = datetime_timezone.utc) # Gets The End Date
             now = datetime.now(datetime_timezone.utc) # Gets The Current Time
 
             remaining_time = end_date - now # Calculates The Remaining Time
@@ -1539,7 +1514,7 @@ def getPostUploadPath(instance, filename):
         return f"posts/{instance.post.user_id}/videos/{instance.id}/index.m3u8" # For Example: posts/5/videos/12/index.m3u8
 
     if not hasattr(instance, "_random_uuid"):
-        instance._random_uuid = secrets.token_hex(nbytes=10)
+        instance._random_uuid = secrets.token_hex(nbytes = 10)
 
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
     VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
@@ -1564,141 +1539,141 @@ def getPostUploadPath(instance, filename):
 
 class Post(models.Model):
     public_id = models.CharField(
-        verbose_name=_("Public ID"),
-        help_text=_("Public ID of the post."),
-        max_length=15, 
-        unique=True, 
-        editable=False, 
-        db_index=True
+        verbose_name = _("Public ID"),
+        help_text = _("Public ID of the post."),
+        max_length = 15, 
+        unique = True, 
+        editable = False, 
+        db_index = True
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who uploaded the post."),
-        on_delete=models.CASCADE,
-        related_name="posts",
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who uploaded the post."),
+        on_delete = models.CASCADE,
+        related_name = "posts",
+        null = False,
     )
 
     seen_by = models.ManyToManyField(
         Users, 
-        through="SeenPost",
-        verbose_name=_("Seen By"),
-        help_text=_("Users who have already seen the post."),
-        related_name="viewed_posts"
+        through = "SeenPost",
+        verbose_name = _("Seen By"),
+        help_text = _("Users who have already seen the post."),
+        related_name = "viewed_posts"
     )
 
     reports_from_users = models.ManyToManyField(
         Users, 
-        through="PostReport", 
-        verbose_name=_("Reports From Users"), 
-        help_text=_("Users who reported the post."),
-        related_name="reported_posts", 
-        blank=True
+        through = "PostReport", 
+        verbose_name = _("Reports From Users"), 
+        help_text = _("Users who reported the post."),
+        related_name = "reported_posts", 
+        blank = True
     )
 
     description = models.TextField(
-        verbose_name=_("Description"), 
-        help_text=_("Description of the post."),
-        max_length=500, 
-        null=True, 
-        blank=True
+        verbose_name = _("Description"), 
+        help_text = _("Description of the post."),
+        max_length = 500, 
+        null = True, 
+        blank = True
     )
 
     tagged_users = models.ManyToManyField(
         Users, 
-        verbose_name=_("Tagged Users"), 
-        help_text=_("Users tagged in the post."),
-        blank=True
+        verbose_name = _("Tagged Users"), 
+        help_text = _("Users tagged in the post."),
+        blank = True
     )
 
     added_hashtags = ArrayField(
         models.CharField(
-            verbose_name=_("Added Hashtags"), 
-            max_length=30
+            verbose_name = _("Added Hashtags"), 
+            max_length = 30
         ), 
         
-        help_text=_("Hashtags added to the post."),
-        default=list, 
-        null=False
+        help_text = _("Hashtags added to the post."),
+        default = list, 
+        null = False
     )
 
     location = models.CharField(
-        verbose_name=_("Location"), 
-        help_text=_("Location added to the post."),
-        max_length=255, 
-        null=True, 
-        blank=True
+        verbose_name = _("Location"), 
+        help_text = _("Location added to the post."),
+        max_length = 255, 
+        null = True, 
+        blank = True
     )
 
     coordinates = models.PointField(
-        verbose_name=_("Coordinates"), 
-        help_text=_("The exact coordinates of the location added to the post in WGS84 (Standardized, Geocentric Coordinate System Used Globally For Mapping, Navigation And GPS) format."),
-        null=True, 
-        blank=True, 
-        srid=4326
+        verbose_name = _("Coordinates"), 
+        help_text = _("The exact coordinates of the location added to the post in WGS84 (Standardized, Geocentric Coordinate System Used Globally For Mapping, Navigation And GPS) format."),
+        null = True, 
+        blank = True, 
+        srid = 4326
     )
 
     public_visibility = models.BooleanField(
-        verbose_name=_("Public Visibility"), 
-        help_text=_("Stores the information if the post is visible for public."),
-        default=True, 
-        null=False
+        verbose_name = _("Public Visibility"), 
+        help_text = _("Stores the information if the post is visible for public."),
+        default = True, 
+        null = False
     )
 
     allow_comments = models.BooleanField(
-        verbose_name=_("Allow Comments"), 
-        help_text=_("Stores the information if the comments are allowed for the post."),
-        default=True, 
-        null=False
+        verbose_name = _("Allow Comments"), 
+        help_text = _("Stores the information if the comments are allowed for the post."),
+        default = True, 
+        null = False
     )
 
     hide_likes = models.BooleanField(
-        verbose_name=_("Hide Likes"), 
-        help_text=_("Stores the information if the post's likes are hidden."),
-        default=False, 
-        null=False
+        verbose_name = _("Hide Likes"), 
+        help_text = _("Stores the information if the post's likes are hidden."),
+        default = False, 
+        null = False
     )
 
     likes = models.PositiveIntegerField(
-        verbose_name=_("Likes"), 
-        help_text=_("Total amount of obtained likes."),
-        default=0, 
-        null=False
+        verbose_name = _("Likes"), 
+        help_text = _("Total amount of obtained likes."),
+        default = 0, 
+        null = False
     )
 
     likes_from_users = models.ManyToManyField(
         Users, 
-        verbose_name=_("Likes From Users"), 
-        help_text=_("Users who liked the post."), 
-        related_name="liked_posts", 
-        blank=True
+        verbose_name = _("Likes From Users"), 
+        help_text = _("Users who liked the post."), 
+        related_name = "liked_posts", 
+        blank = True
     )
 
     latest_interaction = models.DateTimeField(
-        verbose_name=_("Latest Interaction"), 
-        help_text=_("Time of the last recorded interaction with the post (new comment, like)."), 
-        auto_now_add=True, 
-        db_index=True
+        verbose_name = _("Latest Interaction"), 
+        help_text = _("Time of the last recorded interaction with the post (new comment, like)."), 
+        auto_now_add = True, 
+        db_index = True
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of creation of the post."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of creation of the post."), 
+        auto_now_add = True, 
+        null = False
     )
 
     reports = models.PositiveIntegerField(
-        verbose_name=_("Reports"), 
-        help_text=_("Amount of received reports of the post."), 
-        default=0, 
-        null=False
+        verbose_name = _("Reports"), 
+        help_text = _("Amount of received reports of the post."), 
+        default = 0, 
+        null = False
     )
 
     def get_absolute_url(self):
-        return reverse("post_url", kwargs={"post_id": self.id})
+        return reverse("post_url", kwargs = {"post_id": self.id})
 
     def save(self, *args, **kwargs):
         if not self.public_id:
@@ -1714,45 +1689,36 @@ class Post(models.Model):
         return _("Príspevok užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
 class PostReport(models.Model):
-    REPORT_REASON_CHOICES = [
-        ("spam", _("Spam")),
-        ("harassment", _("Harassment")),
-        ("hate_speech", _("Hate Speech")),
-        ("misinformation", _("Misinformation")),
-        ("explicit_content", _("Explicit Content")),
-        ("other", _("Other"))
-    ]
-
     post = models.ForeignKey(
         Post,
-        verbose_name=_("Post"),
-        help_text=_("The post that received a report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("Post"),
+        help_text = _("The post that received a report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who submitted the report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who submitted the report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     reason = models.CharField(
-        verbose_name=_("Reason"), 
-        help_text=_("Reason for reporting."), 
-        max_length=50, 
-        choices=REPORT_REASON_CHOICES, 
-        default="other", 
-        null=False
+        verbose_name = _("Reason"), 
+        help_text = _("Reason for reporting."), 
+        max_length = 50, 
+        choices = REPORT_REASON_CHOICES, 
+        default = "other", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Report submission time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Report submission time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -1766,98 +1732,98 @@ class PostReport(models.Model):
 class PostMedia(models.Model):
     post = models.ForeignKey(
         Post,
-        verbose_name=_("Post"),
-        help_text=_("The post to which the given medium belongs."), 
-        on_delete=models.CASCADE,
-        related_name="media",
-        null=False,
+        verbose_name = _("Post"),
+        help_text = _("The post to which the given medium belongs."), 
+        on_delete = models.CASCADE,
+        related_name = "media",
+        null = False,
     )
 
     file = models.FileField(
-        upload_to=getPostUploadPath,
-        verbose_name=_("File"),
-        help_text=_("Path to the file."), 
+        upload_to = getPostUploadPath,
+        verbose_name = _("File"),
+        help_text = _("Path to the file."), 
     )
     
     thumbnail = models.ImageField(
-        upload_to=getPostUploadPath, 
-        verbose_name=_("Thumbnail"),
-        help_text=_("Path to the video thumbnail."), 
-        null=True, 
-        blank=True,
+        upload_to = getPostUploadPath, 
+        verbose_name = _("Thumbnail"),
+        help_text = _("Path to the video thumbnail."), 
+        null = True, 
+        blank = True,
     )
 
     is_video = models.BooleanField(
-        verbose_name=_("Is Video"), 
-        help_text=_("Stores the information if the uploaded file is a video."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Video"), 
+        help_text = _("Stores the information if the uploaded file is a video."), 
+        default = False, 
+        null = False
     )
 
     is_muted = models.BooleanField(
-        verbose_name=_("Is Muted Video"), 
-        help_text=_("Stores the information if the uploaded video is muted."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Muted Video"), 
+        help_text = _("Stores the information if the uploaded video is muted."), 
+        default = False, 
+        null = False
     )
 
     total_watch_time = models.FloatField(
-        verbose_name=_("Total Watch Time"), 
-        help_text=_("Total video watch time in seconds."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Total Watch Time"), 
+        help_text = _("Total video watch time in seconds."), 
+        null = True, 
+        blank = True
     )
 
     is_processed = models.BooleanField(
-        verbose_name=_("Is Processed"), 
-        help_text=_("Stores the information if the uploaded file is already processed."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Processed"), 
+        help_text = _("Stores the information if the uploaded file is already processed."), 
+        default = False, 
+        null = False
     )
 
     original_filename = models.CharField(
-        verbose_name=_("Original Filename"), 
-        help_text=_("Original filename of the uploaded file."), 
-        max_length=255, 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Filename"), 
+        help_text = _("Original filename of the uploaded file."), 
+        max_length = 255, 
+        null = True, 
+        blank = True
     )
 
     original_size = models.BigIntegerField(
-        verbose_name=_("Original Size"), 
-        help_text=_("Original size of the uploaded file."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Size"), 
+        help_text = _("Original size of the uploaded file."), 
+        null = True, 
+        blank = True
     )
 
     compressed_size = models.BigIntegerField(
-        verbose_name=_("Compressed Size"), 
-        help_text=_("Compressed size of the uploaded file."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Compressed Size"), 
+        help_text = _("Compressed size of the uploaded file."), 
+        null = True, 
+        blank = True
     )
 
     order = models.PositiveIntegerField(
-        verbose_name=_("Order"), 
-        help_text=_("Order of the uploaded file in post."), 
-        default=0, 
-        null=False
+        verbose_name = _("Order"), 
+        help_text = _("Order of the uploaded file in post."), 
+        default = 0, 
+        null = False
     )
 
     sprite_sheet = models.ImageField(
-        verbose_name=_("Sprite Sheet"),
-        help_text=_("Video image sprite sheet for scrubbar preview."), 
-        upload_to=getPostUploadPath,
-        null=True,
-        blank=True
+        verbose_name = _("Sprite Sheet"),
+        help_text = _("Video image sprite sheet for scrubbar preview."), 
+        upload_to = getPostUploadPath,
+        null = True,
+        blank = True
     )
     
     vtt_file = models.FileField(
-        verbose_name=_("VTT File Map"),
-        help_text=_("VTT file map of the video sprite sheet."), 
-        upload_to=getPostUploadPath,
-        null=True,
-        blank=True
+        verbose_name = _("VTT File Map"),
+        help_text = _("VTT file map of the video sprite sheet."), 
+        upload_to = getPostUploadPath,
+        null = True,
+        blank = True
     )
 
     @property
@@ -1874,28 +1840,28 @@ class PostMedia(models.Model):
 class SeenPost(models.Model):
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("User who viewed the post."), 
-        on_delete=models.CASCADE,
-        related_name="seen_instances",
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("User who viewed the post."), 
+        on_delete = models.CASCADE,
+        related_name = "seen_instances",
+        null = False,
     )
 
     post = models.ForeignKey(
         Post,
-        verbose_name=_("Post"),
-        help_text=_("A post that has been viewed."), 
-        on_delete=models.CASCADE,
-        related_name="seen_by_instances",
-        null=False,
+        verbose_name = _("Post"),
+        help_text = _("A post that has been viewed."), 
+        on_delete = models.CASCADE,
+        related_name = "seen_by_instances",
+        null = False,
     )
 
     viewed_at = models.DateTimeField(
-        verbose_name=_("Viewed At"), 
-        help_text=_("Post view time."), 
-        auto_now_add=True, 
-        null=False, 
-        db_index=True
+        verbose_name = _("Viewed At"), 
+        help_text = _("Post view time."), 
+        auto_now_add = True, 
+        null = False, 
+        db_index = True
     )
 
     class Meta:
@@ -1909,26 +1875,26 @@ class SeenPost(models.Model):
 class VideoView(models.Model):
     post_media = models.ForeignKey(
         PostMedia, 
-        verbose_name=_("Post Media"),
-        help_text=_("The exact video from the post that was marked as seen."), 
-        on_delete=models.CASCADE, 
-        related_name="video_views",
-        null=False
+        verbose_name = _("Post Media"),
+        help_text = _("The exact video from the post that was marked as seen."), 
+        on_delete = models.CASCADE, 
+        related_name = "video_views",
+        null = False
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("A user who watched the video."), 
-        on_delete=models.CASCADE,
-        null=False
+        verbose_name = _("User"),
+        help_text = _("A user who watched the video."), 
+        on_delete = models.CASCADE,
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"),
-        help_text=_("The time when the user viewed the video."), 
-        auto_now_add=True,
-        null=False
+        verbose_name = _("Created At"),
+        help_text = _("The time when the user viewed the video."), 
+        auto_now_add = True,
+        null = False
     )
 
     class Meta:
@@ -1947,92 +1913,92 @@ class PostForum(models.Model):
 
     post = models.ForeignKey(
         Post,
-        verbose_name=_("Post"),
-        help_text=_("The post to which the comment belongs."), 
-        on_delete=models.CASCADE,
-        related_name="comments",
-        null=False,
+        verbose_name = _("Post"),
+        help_text = _("The post to which the comment belongs."), 
+        on_delete = models.CASCADE,
+        related_name = "comments",
+        null = False,
     )
 
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"), 
-        help_text=_("The user who added the comment."), 
-        on_delete=models.CASCADE, 
-        related_name="post_comments",
-        null=True,
+        verbose_name = _("User"), 
+        help_text = _("The user who added the comment."), 
+        on_delete = models.CASCADE, 
+        related_name = "post_comments",
+        null = True,
     )
 
     reports_from_users = models.ManyToManyField(
         Users, 
-        through="PostForumReport", 
-        verbose_name=_("Reports From Users"), 
-        help_text=_("Users who reported the comment."), 
-        related_name="reported_post_forum_comments", 
-        blank=True
+        through = "PostForumReport", 
+        verbose_name = _("Reports From Users"), 
+        help_text = _("Users who reported the comment."), 
+        related_name = "reported_post_forum_comments", 
+        blank = True
     )
 
     comment = models.TextField(
-        verbose_name=_("Comment"), 
-        help_text=_("Comment content."), 
-        max_length=100, 
-        null=False
+        verbose_name = _("Comment"), 
+        help_text = _("Comment content."), 
+        max_length = 100, 
+        null = False
     )
 
-    # tagged_users = models.ManyToManyField(Users, verbose_name="Tagged Users", blank=True)
-    # added_hashtags = ArrayField(models.CharField(verbose_name="Added Hashtags", max_length=30), default=list, null=False)
+    # tagged_users = models.ManyToManyField(Users, verbose_name = "Tagged Users", blank = True)
+    # added_hashtags = ArrayField(models.CharField(verbose_name = "Added Hashtags", max_length = 30), default = list, null = False)
 
     likes = models.PositiveIntegerField(
-        verbose_name=_("Likes"), 
-        help_text=_("Amount of obtained likes on the comment."), 
-        default=0, 
-        null=False
+        verbose_name = _("Likes"), 
+        help_text = _("Amount of obtained likes on the comment."), 
+        default = 0, 
+        null = False
     )
 
     likes_from_users = models.ManyToManyField(
         Users, 
-        verbose_name=_("Likes From Users"), 
-        help_text=_("Users who liked the comment."), 
-        related_name="liked_post_forum_comments", 
-        blank=True
+        verbose_name = _("Likes From Users"), 
+        help_text = _("Users who liked the comment."), 
+        related_name = "liked_post_forum_comments", 
+        blank = True
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("Time the comment was added."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("Time the comment was added."), 
+        auto_now_add = True, 
+        null = False
     )
 
     parent = models.ForeignKey(
         "self",
-        verbose_name=_("Parent"),
-        help_text=_("Link to the parent comment in the case of a reply."), 
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="replies",
+        verbose_name = _("Parent"),
+        help_text = _("Link to the parent comment in the case of a reply."), 
+        null = True,
+        blank = True,
+        on_delete = models.CASCADE,
+        related_name = "replies",
     )
 
     status = models.CharField(
-        verbose_name=_("Status"), 
-        help_text=_("Current status of the comment."), 
-        choices=STATUS_CHOICES, 
-        max_length=20, 
-        default="OK"
+        verbose_name = _("Status"), 
+        help_text = _("Current status of the comment."), 
+        choices = STATUS_CHOICES, 
+        max_length = 20, 
+        default = "OK"
     )
 
     reports = models.PositiveIntegerField(
-        verbose_name=_("Reports"), 
-        help_text=_("Amount of received reports of the comment."), 
-        default=0, 
-        null=False
+        verbose_name = _("Reports"), 
+        help_text = _("Amount of received reports of the comment."), 
+        default = 0, 
+        null = False
     )
 
     level = models.PositiveIntegerField(
-        verbose_name=_("Level"), 
-        help_text=_("Comment nesting level (1 is a main comment; deeper levels are replies)"), 
-        default=1
+        verbose_name = _("Level"), 
+        help_text = _("Comment nesting level (1 is a main comment; deeper levels are replies)"), 
+        default = 1
     )
 
     def save(self, *args, **kwargs):
@@ -2057,45 +2023,36 @@ class PostForum(models.Model):
         return _("Užívateľ %(first_name)s %(last_name)s pridal komentár k príspevku od %(post_user_first_name)s %(post_user_last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name, "post_user_first_name": self.post.user.first_name, "post_user_last_name": self.post.user.last_name}
 
 class PostForumReport(models.Model):
-    REPORT_REASON_CHOICES = [
-        ("spam", _("Spam")),
-        ("harassment", _("Harassment")),
-        ("hate_speech", _("Hate Speech")),
-        ("misinformation", _("Misinformation")),
-        ("explicit_content", _("Explicit Content")),
-        ("other", _("Other"))
-    ]
-
     postforum = models.ForeignKey(
         PostForum,
-        verbose_name=_("Post Forum Comment"),
-        help_text=_("The post comment that received a report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("Post Forum Comment"),
+        help_text = _("The post comment that received a report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who submitted the report."), 
-        on_delete=models.CASCADE,
-        null=False,
+        verbose_name = _("User"),
+        help_text = _("The user who submitted the report."), 
+        on_delete = models.CASCADE,
+        null = False,
     )
 
     reason = models.CharField(
-        verbose_name=_("Reason"), 
-        help_text=_("Reason for reporting."), 
-        max_length=50, 
-        choices=REPORT_REASON_CHOICES, 
-        default="other", 
-        null=False
+        verbose_name = _("Reason"), 
+        help_text = _("Reason for reporting."), 
+        max_length = 50, 
+        choices = REPORT_REASON_CHOICES, 
+        default = "other", 
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Report submission time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Report submission time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -2109,20 +2066,20 @@ class PostForumReport(models.Model):
 class BioLinks(models.Model):
     user = models.ForeignKey(
         Users,
-        verbose_name=_("User"),
-        help_text=_("The user who added the link to their bio."), 
-        on_delete=models.CASCADE,
-        related_name="bio_links",
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user who added the link to their bio."), 
+        on_delete = models.CASCADE,
+        related_name = "bio_links",
+        null = False
     )
 
-    # title = models.CharField(verbose_name="Title", max_length=20, null=False)
+    # title = models.CharField(verbose_name = "Title", max_length = 20, null = False)
     
     url = models.URLField(
-        verbose_name=_("URL Address"), 
-        help_text=_("URL of the added link."), 
-        max_length=200, 
-        null=False
+        verbose_name = _("URL Address"), 
+        help_text = _("URL of the added link."), 
+        max_length = 200, 
+        null = False
     )
 
     @property
@@ -2141,76 +2098,76 @@ class BioLinks(models.Model):
 class Chat(models.Model):
     sender = models.ForeignKey(
         Users,
-        verbose_name=_("Sender"),
-        help_text=_("Message sender."), 
-        on_delete=models.SET_NULL,
-        related_name="sent_messages",
-        null=True,
-        blank=True
+        verbose_name = _("Sender"),
+        help_text = _("Message sender."), 
+        on_delete = models.SET_NULL,
+        related_name = "sent_messages",
+        null = True,
+        blank = True
     )
 
     receiver = models.ForeignKey(
         Users,
-        verbose_name=_("Receiver"),
-        help_text=_("Message receiver."), 
-        on_delete=models.SET_NULL, 
-        related_name="received_messages",
-        null=True,
-        blank=True
+        verbose_name = _("Receiver"),
+        help_text = _("Message receiver."), 
+        on_delete = models.SET_NULL, 
+        related_name = "received_messages",
+        null = True,
+        blank = True
     )
 
     content = models.TextField(
-        verbose_name=_("Content"), 
-        help_text=_("Message content."), 
-        max_length=250, 
-        null=True
+        verbose_name = _("Content"), 
+        help_text = _("Message content."), 
+        max_length = 250, 
+        null = True
     )
 
     post = models.ForeignKey(
         Post,
-        verbose_name=_("Post"),
-        help_text=_("The shared post."), 
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
+        verbose_name = _("Post"),
+        help_text = _("The shared post."), 
+        on_delete = models.SET_NULL,
+        null = True,
+        blank = True
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Message sending time."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Message sending time."), 
+        auto_now_add = True, 
+        null = False
     )
 
     is_read = models.BooleanField(
-        verbose_name=_("Is Read"), 
-        help_text=_("Stores the information if the message is read."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Read"), 
+        help_text = _("Stores the information if the message is read."), 
+        default = False, 
+        null = False
     )
 
     is_edited = models.BooleanField(
-        verbose_name=_("Is Edited"), 
-        help_text=_("Stores the information if the message was edited."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Edited"), 
+        help_text = _("Stores the information if the message was edited."), 
+        default = False, 
+        null = False
     )
 
     reacted_users = models.ManyToManyField(
         "Users",
-        through="MessageReaction",
-        verbose_name=_("Reactions"), 
-        help_text=_("Users who reacted to the message."), 
-        related_name="reacted_messages",
-        null=True,
-        blank=True
+        through = "MessageReaction",
+        verbose_name = _("Reactions"), 
+        help_text = _("Users who reacted to the message."), 
+        related_name = "reacted_messages",
+        null = True,
+        blank = True
     )
 
     @property
     def is_older_than_15_minutes(self):
         now = timezone.now() # Gets The Current Time
         created_ago = now - self.created_at # Gets The Created Ago Time
-        _15_minutes = timedelta(minutes=15) # Determines 15 Minutes
+        _15_minutes = timedelta(minutes = 15) # Determines 15 Minutes
 
         return created_ago > _15_minutes # Returns True If The Message Is Older Than 15 Minutes
 
@@ -2218,7 +2175,7 @@ class Chat(models.Model):
     def is_older_than_1_day(self):
         now = timezone.now() # Gets The Current Time
         created_ago = now - self.created_at # Gets The Created Ago Time
-        _1_day = timedelta(days=1) # Determines 1 Day
+        _1_day = timedelta(days = 1) # Determines 1 Day
 
         return created_ago > _1_day # Returns True If The Message Is Older Than 1 Day
 
@@ -2272,34 +2229,34 @@ class Chat(models.Model):
 class MessageReaction(models.Model):
     chat = models.ForeignKey(
         Chat, 
-        verbose_name=_("Chat"),
-        help_text=_("The message to which the reaction belongs."), 
-        on_delete=models.CASCADE, 
-        related_name="message_reactions",
-        null=False
+        verbose_name = _("Chat"),
+        help_text = _("The message to which the reaction belongs."), 
+        on_delete = models.CASCADE, 
+        related_name = "message_reactions",
+        null = False
     )
 
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user who added a reaction to the message."), 
-        on_delete=models.CASCADE, 
-        related_name="user_reactions",
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user who added a reaction to the message."), 
+        on_delete = models.CASCADE, 
+        related_name = "user_reactions",
+        null = False
     )
     
     emoji = models.CharField(
-        verbose_name=_("Emoji"),
-        help_text=_("Emoji added as a reaction."), 
-        max_length=10,
-        null=False
+        verbose_name = _("Emoji"),
+        help_text = _("Emoji added as a reaction."), 
+        max_length = 10,
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time the reaction was added."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time the reaction was added."), 
+        auto_now_add = True, 
+        null = False
     )
 
     def __str__(self):
@@ -2314,7 +2271,7 @@ class MessageReaction(models.Model):
 
 def getChatAttachmentUploadPath(instance, filename):
     if not hasattr(instance, "_random_uuid"):
-        instance._random_uuid = secrets.token_hex(nbytes=10)
+        instance._random_uuid = secrets.token_hex(nbytes = 10)
 
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic"] # Sets List of Supported Image Extensions
     VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"] # Sets List of Supported Video Extensions
@@ -2336,79 +2293,79 @@ def getChatAttachmentUploadPath(instance, filename):
 class ChatAttachment(models.Model):
     chat = models.ForeignKey(
         "Chat", 
-        verbose_name=_("Chat"),
-        help_text=_("The message to which the attachment belongs."), 
-        on_delete=models.CASCADE,
-        related_name="attachments",
-        null=True, 
-        blank=True
+        verbose_name = _("Chat"),
+        help_text = _("The message to which the attachment belongs."), 
+        on_delete = models.CASCADE,
+        related_name = "attachments",
+        null = True, 
+        blank = True
     )
 
     sent_by = models.ForeignKey(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user who sent the attachment."), 
-        on_delete=models.CASCADE, 
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user who sent the attachment."), 
+        on_delete = models.CASCADE, 
+        null = False
     )
     
     file = models.FileField(
-        upload_to=getChatAttachmentUploadPath,
-        verbose_name=_("File"),
-        help_text=_("Path to the file."), 
+        upload_to = getChatAttachmentUploadPath,
+        verbose_name = _("File"),
+        help_text = _("Path to the file."), 
     )
 
     thumbnail = models.ImageField(
-        upload_to=getChatAttachmentUploadPath, 
-        verbose_name=_("Thumbnail"),
-        help_text=_("Path to the video thumbnail."), 
-        null=True, 
-        blank=True,
+        upload_to = getChatAttachmentUploadPath, 
+        verbose_name = _("Thumbnail"),
+        help_text = _("Path to the video thumbnail."), 
+        null = True, 
+        blank = True,
     )
 
     type = models.CharField(
-        verbose_name=_("Type"), 
-        help_text=_("Type of the media (e.g. Image, Video)."), 
-        max_length=10, 
-        default="image", 
-        null=False, 
-        blank=False
+        verbose_name = _("Type"), 
+        help_text = _("Type of the media (e.g. Image, Video)."), 
+        max_length = 10, 
+        default = "image", 
+        null = False, 
+        blank = False
     )
 
     is_processed = models.BooleanField(
-        verbose_name=_("Is Processed"), 
-        help_text=_("Stores the information if the uploaded file is already processed."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Processed"), 
+        help_text = _("Stores the information if the uploaded file is already processed."), 
+        default = False, 
+        null = False
     )
 
     original_filename = models.CharField(
-        verbose_name=_("Original Filename"), 
-        help_text=_("Original filename of the uploaded file."), 
-        max_length=255, 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Filename"), 
+        help_text = _("Original filename of the uploaded file."), 
+        max_length = 255, 
+        null = True, 
+        blank = True
     )
 
     original_size = models.BigIntegerField(
-        verbose_name=_("Original Size"), 
-        help_text=_("Original size of the uploaded file."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Size"), 
+        help_text = _("Original size of the uploaded file."), 
+        null = True, 
+        blank = True
     )
 
     compressed_size = models.BigIntegerField(
-        verbose_name=_("Compressed Size"), 
-        help_text=_("Compressed size of the uploaded file."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Compressed Size"), 
+        help_text = _("Compressed size of the uploaded file."), 
+        null = True, 
+        blank = True
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of the attachment creation."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the attachment creation."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -2421,27 +2378,27 @@ class ChatAttachment(models.Model):
 class MutedUser(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user who mutes the other user."), 
-        on_delete=models.CASCADE, 
-        related_name="muting_users",
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user who mutes the other user."), 
+        on_delete = models.CASCADE, 
+        related_name = "muting_users",
+        null = False
     )
 
     muted_user = models.ForeignKey(
         Users, 
-        verbose_name=_("Muted User"),
-        help_text=_("The user who got muted by the other user."), 
-        on_delete=models.CASCADE, 
-        related_name="muted_by",
-        null=False
+        verbose_name = _("Muted User"),
+        help_text = _("The user who got muted by the other user."), 
+        on_delete = models.CASCADE, 
+        related_name = "muted_by",
+        null = False
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of the user muting."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the user muting."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -2454,7 +2411,7 @@ class MutedUser(models.Model):
 
 def getBackgroundImageUploadPath(instance, filename):
     if not hasattr(instance, "_random_uuid"):
-        instance._random_uuid = secrets.token_hex(nbytes=10)
+        instance._random_uuid = secrets.token_hex(nbytes = 10)
         
     extension = Path(filename).suffix.lower() # Gets The File Extension
     new_filename = f"IMG-{instance._random_uuid}{extension}" # Creates The New Filename
@@ -2464,64 +2421,64 @@ def getBackgroundImageUploadPath(instance, filename):
 class ChatSettings(models.Model):
     user = models.ForeignKey(
         Users, 
-        verbose_name=_("User"),
-        help_text=_("The user to whom the settings belong."), 
-        on_delete=models.CASCADE, 
-        related_name="my_chat_settings",
-        null=False
+        verbose_name = _("User"),
+        help_text = _("The user to whom the settings belong."), 
+        on_delete = models.CASCADE, 
+        related_name = "my_chat_settings",
+        null = False
     )
 
     chat_partner = models.ForeignKey(
         Users, 
-        verbose_name=_("Chat Partner"),
-        help_text=_("The user who is a chat partner of a main user."), 
-        on_delete=models.CASCADE, 
-        related_name="partner_chat_settings",
-        null=False
+        verbose_name = _("Chat Partner"),
+        help_text = _("The user who is a chat partner of a main user."), 
+        on_delete = models.CASCADE, 
+        related_name = "partner_chat_settings",
+        null = False
     )
 
     background_image = models.ImageField(
-        upload_to=getBackgroundImageUploadPath, 
-        verbose_name=_("Background Image"),
-        help_text=_("Path to the chat background image."), 
-        null=True, 
-        blank=True,
+        upload_to = getBackgroundImageUploadPath, 
+        verbose_name = _("Background Image"),
+        help_text = _("Path to the chat background image."), 
+        null = True, 
+        blank = True,
     )
 
     is_processed = models.BooleanField(
-        verbose_name=_("Is Processed"), 
-        help_text=_("Stores the information if the uploaded image is already processed."), 
-        default=False, 
-        null=False
+        verbose_name = _("Is Processed"), 
+        help_text = _("Stores the information if the uploaded image is already processed."), 
+        default = False, 
+        null = False
     )
 
     original_filename = models.CharField(
-        verbose_name=_("Original Filename"), 
-        help_text=_("Original filename of the uploaded image."), 
-        max_length=255, 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Filename"), 
+        help_text = _("Original filename of the uploaded image."), 
+        max_length = 255, 
+        null = True, 
+        blank = True
     )
 
     original_size = models.BigIntegerField(
-        verbose_name=_("Original Size"), 
-        help_text=_("Original size of the uploaded image."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Original Size"), 
+        help_text = _("Original size of the uploaded image."), 
+        null = True, 
+        blank = True
     )
 
     compressed_size = models.BigIntegerField(
-        verbose_name=_("Compressed Size"), 
-        help_text=_("Compressed size of the uploaded image."), 
-        null=True, 
-        blank=True
+        verbose_name = _("Compressed Size"), 
+        help_text = _("Compressed size of the uploaded image."), 
+        null = True, 
+        blank = True
     )
 
     created_at = models.DateTimeField(
-        verbose_name=_("Created At"), 
-        help_text=_("Time of the chat settings creation."), 
-        auto_now_add=True, 
-        null=False
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the chat settings creation."), 
+        auto_now_add = True, 
+        null = False
     )
 
     class Meta:
@@ -2541,55 +2498,55 @@ class ContactMessage(models.Model):
     ]
 
     first_name = models.CharField(
-        verbose_name=_("First Name"), 
-        help_text=_("Sender's first name."),
-        max_length=20,
-        null=False
+        verbose_name = _("First Name"), 
+        help_text = _("Sender's first name."),
+        max_length = 20,
+        null = False
     )
 
     last_name = models.CharField(
-        verbose_name=_("Last Name"), 
-        help_text=_("Sender's last name."),
-        max_length=50, 
-        null=False
+        verbose_name = _("Last Name"), 
+        help_text = _("Sender's last name."),
+        max_length = 50, 
+        null = False
     )
 
     email_address = models.EmailField(
-        verbose_name=_("E-mail Address"), 
-        help_text=_("Sender's e-mail address."),
-        max_length=50,
-        null=False
+        verbose_name = _("E-mail Address"), 
+        help_text = _("Sender's e-mail address."),
+        max_length = 50,
+        null = False
     )
 
     subject = models.CharField(
-        verbose_name=_("Subject"), 
-        help_text=_("Subject of the message."),
-        choices=SUBJECT_CHOICES, 
-        default="question", 
-        max_length=20
+        verbose_name = _("Subject"), 
+        help_text = _("Subject of the message."),
+        choices = SUBJECT_CHOICES, 
+        default = "question", 
+        max_length = 20
     )
 
     message = models.TextField(
-        verbose_name="Message", 
-        help_text="Message content.",
-        max_length=200, 
-        null=True, 
-        blank=True
+        verbose_name = "Message", 
+        help_text = "Message content.",
+        max_length = 200, 
+        null = True, 
+        blank = True
     )
 
     attachment = models.CharField(
-        verbose_name=_("Attachment Filename"), 
-        help_text=_("Selected attachment filename."),
-        max_length=250, 
-        null=True, 
-        blank=True
+        verbose_name = _("Attachment Filename"), 
+        help_text = _("Selected attachment filename."),
+        max_length = 250, 
+        null = True, 
+        blank = True
     )
 
     creation_time = models.DateTimeField(
-        verbose_name=_("Creation Time"), 
-        help_text=_("Message sending time."), 
-        auto_now_add=True,
-        null=False
+        verbose_name = _("Creation Time"), 
+        help_text = _("Message sending time."), 
+        auto_now_add = True,
+        null = False
     )
 
     class Meta:

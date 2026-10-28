@@ -2648,18 +2648,18 @@ msgstr "Write Article"
 
 #: app/templates/app/blog.html:18
 #, python-format
-msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr "<span>%(num_articles)s</span> Article was Found."
+msgid "Našiel sa <span>%(articles_amount)s</span> článok."
+msgstr "<span>%(articles_amount)s</span> Article was Found."
 
 #: app/templates/app/blog.html:21
 #, python-format
-msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr "<span>%(num_articles)s</span> Articles were Found."
+msgid "Našli sa <span>%(articles_amount)s</span> články."
+msgstr "<span>%(articles_amount)s</span> Articles were Found."
 
 #: app/templates/app/blog.html:24
 #, python-format
-msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr "<span>%(num_articles)s</span> Article were Found."
+msgid "Našlo sa <span>%(articles_amount)s</span> článkov."
+msgstr "<span>%(articles_amount)s</span> Article were Found."
 
 #: app/templates/app/blog.html:37
 msgid "Nájsť článok"

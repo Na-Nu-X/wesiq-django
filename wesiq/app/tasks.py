@@ -23,11 +23,11 @@ from django.db.models import F
 
 # Function For Capture The Message to The Logs
 def captureMessage(message):
-    with open(f"{settings.LOGS_DIR}/celery_tasks.log", mode="a", encoding="utf-8") as file:
+    with open(f"{settings.LOGS_DIR}/celery_tasks.log", mode = "a", encoding = "utf-8") as file:
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 # Function For Send Mail
-def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle=""):
+def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle = ""):
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
@@ -99,7 +99,7 @@ def sendWeeklyReportMail(user, activity_data):
         # Mail With Activity Info
         else:
             # Send Mail
-            text_content = _("Ahoj %(username)s") % {"username": user.username} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], user.language, styled=False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
+            text_content = _("Ahoj %(username)s") % {"username": user.username} + ",\n" + _("Pozri sa na svoj prehľad aktivít za posledný týždeň.") + "\n" + _("Tvoj najviac aktívny deň bol %(most_active_day)s s celkovým časom aktivity %(most_active_day_time)s") % {"most_active_day": activity_data["most_active_day"], "most_active_day_time": getMinimalistFormattedTime(activity_data["most_active_day_time"])} + "\n" + _("Priemerná aktivita trvala %(average_activity_time)s") % {"average_activity_time": getMinimalistFormattedTime(activity_data["average_activity_time"])} + "\n" + _("Celkovo si dosiahol aktívneho času %(total_activity_time)s - %(activity_percentage_improvement)s") % {"total_activity_time": getMinimalistFormattedTime(activity_data["total_activity_time"]), "activity_percentage_improvement": getAverageActivityTimeImprovementText(activity_data["activity_percentage_improvement"], False)} + "\n" + _("Celkovo si zaznamenal %(total_activity_amount)s aktivity") % {"total_activity_amount": activity_data["total_activity_amount"]} + "\n" + getFavoriteExerciseText(activity_data["favorite_exercise"], user.language, styled = False) + "\n" + _("Začni týždeň s prvou aktivitou kliknutím na odkaz nižšie.") + "\n" + _("%(domain)s%(language)s/trening/" % {"domain": settings.DOMAIN_URL, "language": user.language} + "\n\n" + _("Tím") + "Wesiq.")
 
             html_content = f"""
                 <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
@@ -142,7 +142,7 @@ def sendWeeklyReportMail(user, activity_data):
             image.add_header(
                 "Content-Disposition",
                 "inline",
-                filename=f"Wesiq - Weekly Report {timezone.now().date()}.png"
+                filename = f"Wesiq - Weekly Report {timezone.now().date()}.png"
             )
 
             mail_message.attach(image)
@@ -154,7 +154,7 @@ def sendWeeklyReportMail(user, activity_data):
             image.add_header(
                 "Content-Disposition", 
                 "inline", 
-                filename=f"Wesiq - Weekly Report {timezone.now().date()}.png"
+                filename = f"Wesiq - Weekly Report {timezone.now().date()}.png"
             )
 
             mail_message.attach(image)
@@ -162,7 +162,7 @@ def sendWeeklyReportMail(user, activity_data):
         mail_message.send()
 
 # Function For Formatting Time
-def getFormattedTime(unit="seconds", elapsed_seconds=0, leading_zero=False):
+def getFormattedTime(unit = "seconds", elapsed_seconds = 0, leading_zero = False):
     # Formats Seconds
     if(unit == "seconds"):
         result = math.floor(elapsed_seconds % 60) # Number Value Of Elapsed Seconds
@@ -192,21 +192,21 @@ def getMinimalistFormattedTime(elapsed_time):
     return result
 
 # Function For Get User's Weekly Activity Data
-def getWeeklyActivityData(user, weeks_before=0):
+def getWeeklyActivityData(user, weeks_before = 0):
     today = timezone.now().date() # Gets Today's Date
-    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = end_date - timedelta(days=6) # Start Date
+    end_date = today - timedelta(days = (weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days = 6) # Start Date
 
     # Gets Weekly Activity From Today's Date To Previous 7th Day And Counts Activity Elapsed Times For Each Date
     weekly_activity = (
         Activity.objects
         .filter(
-            user_id=user.id,
-            end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+            user_id = user.id,
+            end_time__date__range = [start_date, end_date] # Every Date Between Those (Total of 7 Days)
         )
-        .annotate(day=TruncDate("end_time"))
+        .annotate(day = TruncDate("end_time"))
         .values("day")
-        .annotate(total_elapsed_time=Sum("elapsed_time"))
+        .annotate(total_elapsed_time = Sum("elapsed_time"))
     )
 
     # Creates Dictionary From Weekly Activity
@@ -222,7 +222,7 @@ def getWeeklyActivityData(user, weeks_before=0):
 
     # Fills And Sorts Result From The Oldest Date To Today's Date
     for i in range(6, -1, -1):
-        day = end_date - timedelta(days=i)
+        day = end_date - timedelta(days = i)
         label = weekday_labels[day.weekday()]
 
         weekly_activity_data.append({
@@ -233,16 +233,16 @@ def getWeeklyActivityData(user, weeks_before=0):
     return weekly_activity_data
 
 # Function For Get Weekly Training Plan Summary
-def getWeeklyTrainingPlanSummaryData(user_id, weeks_before=0, amount=5):
+def getWeeklyTrainingPlanSummaryData(user_id, weeks_before = 0, amount = 5):
     today = timezone.now().date() # Gets Today's Date
-    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = end_date - timedelta(days=6) # Start Date
+    end_date = today - timedelta(days = (weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days = 6) # Start Date
 
     # Gets Weekly Training Plan Summary Values
     weekly_training_plan_summary_data = Activity.objects.filter(
-        user_id=user_id,
-        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
-    ).exclude(training_plan_summary__isnull=True).values("training_plan_summary")
+        user_id = user_id,
+        end_time__date__range = [start_date, end_date] # Every Date Between Those (Total of 7 Days)
+    ).exclude(training_plan_summary__isnull = True).values("training_plan_summary")
 
     result_dict = {}
 
@@ -261,26 +261,26 @@ def getWeeklyTrainingPlanSummaryData(user_id, weeks_before=0, amount=5):
         for exercise, elapsed_time in result_dict.items()
     ]
 
-    result.sort(key=lambda x: x["elapsed_time"], reverse=True) # Sorts The Exercises by The Longest Elapsed Time
+    result.sort(key = lambda x: x["elapsed_time"], reverse = True) # Sorts The Exercises by The Longest Elapsed Time
 
     return result[:amount] # Gets Only The Amount of Exercises by Entered Value
 
 # Function For Get Total Amount of Recorded Activity of the User
-def getTotalActivityAmount(user_id, weeks_before=0):
+def getTotalActivityAmount(user_id, weeks_before = 0):
     today = timezone.now().date() # Gets Today's Date
-    end_date = today - timedelta(days=(weeks_before * 7) + 1) # End Date
-    start_date = end_date - timedelta(days=6) # Start Date
+    end_date = today - timedelta(days = (weeks_before * 7) + 1) # End Date
+    start_date = end_date - timedelta(days = 6) # Start Date
 
     # Counts Amount Of User's Activity
     total_activity_amount = Activity.objects.filter(
-        user_id=user_id,
-        end_time__date__range=[start_date, end_date] # Every Date Between Those (Total of 7 Days)
+        user_id = user_id,
+        end_time__date__range = [start_date, end_date] # Every Date Between Those (Total of 7 Days)
     ).count()
 
     return total_activity_amount
 
 # Function For Getting Average Activity Time Improvement Text
-def getAverageActivityTimeImprovementText(activity_percentage_improvement, styled=True):
+def getAverageActivityTimeImprovementText(activity_percentage_improvement, styled = True):
     if activity_percentage_improvement > 0:
         if styled:
             return _("to je o <span style='color: #52cf20'>%(value)s%%</span> lepšie oproti predchádzajúcemu týždňu") % {"value": round(activity_percentage_improvement)}
@@ -296,7 +296,7 @@ def getAverageActivityTimeImprovementText(activity_percentage_improvement, style
             return _("to je o %(value)s%% horšie oproti predchádzajúcemu týždňu") % {"value": abs(round(activity_percentage_improvement))}
 
 # Function For Getting Favorite Exercise Text Text
-def getFavoriteExerciseText(favorite_exercise, language, styled=True):
+def getFavoriteExerciseText(favorite_exercise, language, styled = True):
     if favorite_exercise:
         if styled:
             favorite_exercise_text = _('Tvoj obľúbený cvik týždňa bol <span style="color: %(color)s">%(exercise)s</span>') % {"color": favorite_exercise["color"],"exercise": favorite_exercise["exercise"]}
@@ -337,48 +337,48 @@ def setBarTheme(data):
     return bar_theme
 
 # Function For Generate Random Color In The Specific Range
-def randomColor(from_=0, to=255):
+def randomColor(from_ = 0, to = 255):
     return f"rgb({random.randint(from_, to)},{random.randint(from_, to)},{random.randint(from_, to)})"
 
 @shared_task
 def modelsWarmUp():
-    reviews = list(Reviews.objects.filter(status="approved").order_by("-creation_time")) # Gets All Approved Reviews
+    reviews = list(Reviews.objects.filter(status = "approved").order_by("-creation_time")) # Gets All Approved Reviews
 
     # Gets All Articles
     articles = list(
         Articles.objects.all().annotate(
-            average_rating=Avg("articlerating__rating"),
+            average_rating = Avg("articlerating__rating"),
         ).order_by(
-            F("html_filename").desc(nulls_last=True), 
+            F("html_filename").desc(nulls_last = True), 
             "-creation_time"
         )
     )
 
     exercises = list(Exercises.objects.all().order_by("exercise")) # Gets All Exercises
     
-    cache.set("cached_reviews", reviews, timeout=settings.CACHE_TTL) # Caches Reviews
-    cache.set("cached_articles", articles, timeout=settings.CACHE_TTL) # Caches Articles
-    cache.set("cached_exercises", exercises, timeout=settings.CACHE_TTL) # Caches Exercises
+    cache.set("cached_reviews", reviews, timeout = settings.CACHE_TTL) # Caches Reviews
+    cache.set("cached_articles", articles, timeout = settings.CACHE_TTL) # Caches Articles
+    cache.set("cached_exercises", exercises, timeout = settings.CACHE_TTL) # Caches Exercises
 
     # Sets Message
     message = "Redis Cache With Models Has Been Updated"
     captureMessage(message)
     return message
 
-@shared_task(name="app.tasks.cleanupSuspendedUsers")
+@shared_task(name = "app.tasks.cleanupSuspendedUsers")
 def cleanupSuspendedUsers():
     # Gets Users From Database Which Are Suspended And Their Last Login Is Older Than 30 Days Or Suspension Time Is Older Than 7 Days
     users_for_deletion = Users.objects.filter(
-        account_status="suspended"
+        account_status = "suspended"
     ).filter(
-        Q(last_login__lt=timezone.now() - timedelta(days=30)) |
-        Q(suspension_time__lt=timezone.now() - timedelta(days=7))
+        Q(last_login__lt = timezone.now() - timedelta(days = 30)) |
+        Q(suspension_time__lt = timezone.now() - timedelta(days = 7))
     )
     
     users_for_deletion_count = users_for_deletion.count() # Gets Amount Of Users For Deletion
     
     if users_for_deletion_count > 0:
-        users_with_profile_picture = users_for_deletion.exclude(profile_picture_name__in=["", None]) # Gets Users With Profile Picture
+        users_with_profile_picture = users_for_deletion.exclude(profile_picture_name__in = ["", None]) # Gets Users With Profile Picture
 
         # Deletes Profile Picture Files
         for user in users_with_profile_picture:
@@ -411,12 +411,12 @@ def cleanupSuspendedUsers():
     captureMessage(message)
     return message
 
-@shared_task(name="app.tasks.cleanupUnverifiedUsers")
+@shared_task(name = "app.tasks.cleanupUnverifiedUsers")
 def cleanupUnverifiedUsers():
     # Gets Users From Database Which Are Unverified And Their Creation Time Is Older Than 1 Days
     users_for_deletion = Users.objects.filter(
-        account_status="unverified",
-        creation_time__lt=timezone.now() - timedelta(days=1)
+        account_status = "unverified",
+        creation_time__lt = timezone.now() - timedelta(days = 1)
     )
     
     users_for_deletion_count = users_for_deletion.count() # Gets Amount Of Users For Deletion
@@ -434,14 +434,14 @@ def cleanupUnverifiedUsers():
     captureMessage(message)
     return message
 
-@shared_task(name="app.tasks.cleanupRejectedReviews")
+@shared_task(name = "app.tasks.cleanupRejectedReviews")
 def cleanupRejectedReviews():
-    one_week_ago = timezone.now() - timedelta(days=7) # Gets The 1 Week Ago Time
+    one_week_ago = timezone.now() - timedelta(days = 7) # Gets The 1 Week Ago Time
 
     # Gets And Deletes The Denied Reviews Which Are Older Than 1 Week
     rejected_reviews = Reviews.objects.filter(
-        status="denied",
-        rejection_time__lt=one_week_ago
+        status = "denied",
+        rejection_time__lt = one_week_ago
     ).delete()
 
     rejected_reviews_count = rejected_reviews[0]
@@ -451,10 +451,10 @@ def cleanupRejectedReviews():
     captureMessage(message)
     return message
 
-@shared_task(name="app.tasks.weeklyReport")
+@shared_task(name = "app.tasks.weeklyReport")
 def weeklyReport():
-    users = Users.objects.filter(account_status="OK", id=16) # Gets All Users With Valid Account Status
-    # users = Users.objects.filter(account_status="OK") # Gets All Users With Valid Account Status
+    users = Users.objects.filter(account_status = "OK", id = 16) # Gets All Users With Valid Account Status
+    # users = Users.objects.filter(account_status = "OK") # Gets All Users With Valid Account Status
 
     for user in users:
         # Weekly Activity Chart
@@ -556,7 +556,7 @@ def weeklyReport():
         weekly_training_plan_summary_data = getWeeklyTrainingPlanSummaryData(user.id) # Gets The Weekly Activity Data
 
         if len(weekly_training_plan_summary_data) > 0:
-            favorite_exercise = max(weekly_training_plan_summary_data, key=lambda x: x["elapsed_time"]) # Gets the Exercise From The Weekly Training Plan Summary With Longest Elapsed Time
+            favorite_exercise = max(weekly_training_plan_summary_data, key = lambda x: x["elapsed_time"]) # Gets the Exercise From The Weekly Training Plan Summary With Longest Elapsed Time
 
             # Extracts Data From Weekly Training Plan Summary Data
             doughnut_chart_colors = [one_item["color"] for one_item in weekly_training_plan_summary_data] # Gets Color For Each Exercise
@@ -615,8 +615,8 @@ def weeklyReport():
             weekly_training_plan_summary_chart_data = doughnut_chart.get_bytes() # Gets The Chart Data
 
         # Weekly Activity Data
-        most_active_day = (max(weekly_activity_data, key=lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
-        most_active_day_time = (max(weekly_activity_data, key=lambda x: x["total_elapsed_time"])).get("total_elapsed_time") # Gets The Value Of The Most Active Day Of Week
+        most_active_day = (max(weekly_activity_data, key = lambda x: x["total_elapsed_time"])).get("day") # Gets The Most Active Day Of Week
+        most_active_day_time = (max(weekly_activity_data, key = lambda x: x["total_elapsed_time"])).get("total_elapsed_time") # Gets The Value Of The Most Active Day Of Week
         average_activity_time = sum(bar_chart_data) / len(bar_chart_data) # Gets The Weekly Average Activity Time
         total_activity_time = sum(bar_chart_data) # Gets The Total Activity Time
 
@@ -648,10 +648,10 @@ def weeklyReport():
     captureMessage(message)
     return message
 
-@shared_task(name="app.tasks.cleanupOldActivities")
+@shared_task(name = "app.tasks.cleanupOldActivities")
 def cleanupOldActivities():
-    two_weeks_ago = timezone.now() - timedelta(days=14) # Gets The 2 Weeks Ago Time
-    old_activities = Activity.objects.filter(end_time__lt=two_weeks_ago).delete() # Gets And Deletes The Activities Which Are Older Than 2 Weeks
+    two_weeks_ago = timezone.now() - timedelta(days = 14) # Gets The 2 Weeks Ago Time
+    old_activities = Activity.objects.filter(end_time__lt = two_weeks_ago).delete() # Gets And Deletes The Activities Which Are Older Than 2 Weeks
     old_activities_count = old_activities[0]
     
     # Sets Message
@@ -661,31 +661,31 @@ def cleanupOldActivities():
 
 @shared_task
 def resetActivityStreak():
-    two_days_ago = timezone.now() - timedelta(days=2) # Gets The 2 Days Ago Time
+    two_days_ago = timezone.now() - timedelta(days = 2) # Gets The 2 Days Ago Time
 
     # Gets The Users With Expired Streaks (2 Days Without Activity)
     users_with_expired_streaks = Users.objects.filter(
-        activity_streak__gt=0,
-        last_activity_streak_increase_time__lt=two_days_ago
+        activity_streak__gt = 0,
+        last_activity_streak_increase_time__lt = two_days_ago
     )
 
     users_with_expired_streaks_count = users_with_expired_streaks.count() # Gets The Number Of Users With Expired Streaks
 
     # Resets The Activity Streak For Every User With Expired Streak
     if users_with_expired_streaks_count > 0:
-        users_with_expired_streaks.update(activity_streak=0)
+        users_with_expired_streaks.update(activity_streak = 0)
 
     # Sets Message
     message = f"{users_with_expired_streaks_count} User Activity Streak Has Been Reset" if users_with_expired_streaks_count == 1 else f"{users_with_expired_streaks_count} Users Activity Streaks Has Been Reset"
     captureMessage(message)
     return message
 
-@shared_task(bind=True)
+@shared_task(bind = True)
 def compressImage(self, post_media_id, logged_in_user_id):
     try:
-        self.update_state(state="PROGRESS", meta={"percentage": 10}) # 10%
+        self.update_state(state = "PROGRESS", meta = {"percentage": 10}) # 10%
 
-        media_object = PostMedia.objects.get(id=post_media_id)
+        media_object = PostMedia.objects.get(id = post_media_id)
         
         # If The File Was Not Found
         if not media_object.file:
@@ -695,7 +695,7 @@ def compressImage(self, post_media_id, logged_in_user_id):
         old_file_path = media_object.file.path # Stores The File Path Of The Original File
         original_size = media_object.file.size # Gets The Original Size
 
-        self.update_state(state="PROGRESS", meta={"percentage": 50}) # 50%
+        self.update_state(state = "PROGRESS", meta = {"percentage": 50}) # 50%
 
         with Image.open(media_object.file) as image:
             # Resizes The Image
@@ -711,11 +711,11 @@ def compressImage(self, post_media_id, logged_in_user_id):
                 image = image.convert("RGB")
 
             # Image Quality
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
             subscription = None
 
             if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-                # Gets The Subscription Data If Are Available
+                # Sets The Subscription
                 subscription = {
                     "plan": logged_in_user.subscription.plan
                 }
@@ -732,14 +732,14 @@ def compressImage(self, post_media_id, logged_in_user_id):
             
             # Stores To Memory
             buffer = io.BytesIO()
-            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
+            image.save(buffer, format = "JPEG", quality = quality, optimize = True, progressive = True) # Compresses The Image
 
             compressed_size = buffer.tell() # Gets The Compressed Size
             
             new_file_name = f"IMG-{post_media_id}.jpg"
 
             # Saves The Data To The Database
-            media_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            media_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save = False)
             media_object.is_processed = True
             media_object.original_size = original_size # Saves The Original Size
             media_object.compressed_size = compressed_size # Saves The Compressed Size
@@ -762,10 +762,10 @@ def compressImage(self, post_media_id, logged_in_user_id):
         message = "An Error Occurred During Image Compression."
         raise Exception(message)
 
-@shared_task(bind=True)
-def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=None):
+@shared_task(bind = True)
+def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path = None):
     try:
-        media_object = PostMedia.objects.get(id=post_media_id)
+        media_object = PostMedia.objects.get(id = post_media_id)
         
         # If The File Was Not Found
         if not media_object.file:
@@ -781,19 +781,19 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
         if custom_thumbnail_path and default_storage.exists(custom_thumbnail_path):
             try:
                 with default_storage.open(custom_thumbnail_path, "rb") as f:
-                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=False)
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save = False)
 
-                PostMedia.objects.filter(id=post_media_id).update(thumbnail=media_object.thumbnail.name)
+                PostMedia.objects.filter(id = post_media_id).update(thumbnail = media_object.thumbnail.name)
                 
                 default_storage.delete(custom_thumbnail_path) # Deletes Temporary Thumbnail Path From The Default Storage
                 
-            except Exception as e:
+            except Exception as error:
                 custom_thumbnail_path = None # Fallback For Default Auto-Generated Thumbnail
 
         # Auto-Generated Thumbnail
         if not custom_thumbnail_path:
             thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{post_media_id}.jpg")
-            os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
+            os.makedirs(os.path.dirname(thumb_temp_path), exist_ok = True)
 
             # Gets The Frame From The First Second Of The Video
             thumb_command = [
@@ -802,12 +802,12 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
             ]
 
             try:
-                subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                subprocess.run(thumb_command, check = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
                 with open(thumb_temp_path, "rb") as f:
-                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save=False)
+                    media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save = False)
 
-                PostMedia.objects.filter(id=post_media_id).update(thumbnail=media_object.thumbnail.name)
+                PostMedia.objects.filter(id = post_media_id).update(thumbnail = media_object.thumbnail.name)
 
             except subprocess.CalledProcessError:
                 message = "Video Is Shorter Than 1 Second."
@@ -821,7 +821,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
         # Progress Calculation
 
         duration_cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path]
-        duration_result = subprocess.run(duration_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        duration_result = subprocess.run(duration_cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
         total_duration = float(duration_result.stdout.decode().strip())
 
         # Video Scrubber Preview Images Generation
@@ -839,21 +839,21 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
         sprite_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", sprite_filename) # Sets The Sprite Temporary Path
         vtt_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", vtt_filename) # Sets The VTT Temporary Path
 
-        os.makedirs(os.path.dirname(sprite_temp_path), exist_ok=True)
+        os.makedirs(os.path.dirname(sprite_temp_path), exist_ok = True)
 
         # Gets The Sprite Grid Of Video Scrubber Preview Images
         sprite_command = [
             "ffmpeg", "-y", "-i", input_path,
-            "-vf", f"fps=1/{interval},scale={scrubber_preview_width}:{scrubber_preview_height},tile={columns}x{rows}",
+            "-vf", f"fps=1/{interval},scale = {scrubber_preview_width}:{scrubber_preview_height},tile = {columns}x{rows}",
             sprite_temp_path
         ]
 
         try:
-            subprocess.run(sprite_command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(sprite_command, check = True, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
 
             # Generates The Web VTT Map (Time On X, Y Coordinates)
             def format_vtt_time(seconds):
-                delta = datetime.timedelta(seconds=seconds)
+                delta = datetime.timedelta(seconds = seconds)
                 hours, remainder = divmod(delta.seconds, 3600)
                 minutes, secs = divmod(remainder, 60)
                 milliseconds = delta.microseconds // 1000
@@ -874,18 +874,18 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
                     y = row * scrubber_preview_height
                     
                     vtt.write(f"{format_vtt_time(start_time)} --> {format_vtt_time(end_time)}\n")
-                    vtt.write(f"{sprite_filename}#xywh={x},{y},{scrubber_preview_width},{scrubber_preview_height}\n\n")
+                    vtt.write(f"{sprite_filename}#xywh = {x},{y},{scrubber_preview_width},{scrubber_preview_height}\n\n")
 
             with open(sprite_temp_path, "rb") as f:
-                media_object.sprite_sheet.save(sprite_filename, ContentFile(f.read()), save=False)
+                media_object.sprite_sheet.save(sprite_filename, ContentFile(f.read()), save = False)
 
             with open(vtt_temp_path, "rb") as f:
-                media_object.vtt_file.save(vtt_filename, ContentFile(f.read()), save=False)
+                media_object.vtt_file.save(vtt_filename, ContentFile(f.read()), save = False)
 
         # except subprocess.CalledProcessError as e:
         #     pass
 
-        except Exception as e:
+        except Exception as error:
             print(f"Scrubber generation failed for post {post_media_id}: {e}")
 
         finally:
@@ -900,17 +900,17 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
         # Video Compression And HLS Video Format Conversion
 
         temp_hls_path = os.path.join(settings.MEDIA_ROOT, "temp", f"hls_{post_media_id}")
-        os.makedirs(temp_hls_path, exist_ok=True)
+        os.makedirs(temp_hls_path, exist_ok = True)
         playlist_path = os.path.join(temp_hls_path, "index.m3u8")
         segment_pattern = os.path.join(temp_hls_path, "v%v_segment_%03d.ts")
         variant_playlist_pattern = os.path.join(temp_hls_path, "v%v_index.m3u8")
 
         # Video Quality
-        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+        logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
         subscription = None
 
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-            # Gets The Subscription Data If Are Available
+            # Sets The Subscription
             subscription = {
                 "plan": logged_in_user.subscription.plan
             }
@@ -995,7 +995,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
                 "-master_pl_name", "index.m3u8", # Main Map File For Segments
             ] + hls_settings
 
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+        process = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, universal_newlines = True)
 
         for line in process.stdout:
             if "out_time_ms" in line:
@@ -1003,7 +1003,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
                     time_ms = int(line.split("=")[1].strip())
                     current_time = time_ms / 1000000.0
                     percentage = min(99, int((current_time / total_duration) * 100))
-                    self.update_state(state="PROGRESS", meta={"percentage": percentage})
+                    self.update_state(state = "PROGRESS", meta = {"percentage": percentage})
 
                 except:
                     pass
@@ -1021,10 +1021,10 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
 
         # Copies The Master Playlist File
         with open(playlist_path, "rb") as f:
-            media_object.file.save("index.m3u8", File(f), save=False)
+            media_object.file.save("index.m3u8", File(f), save = False)
         
         final_hls_path = os.path.dirname(media_object.file.path)
-        os.makedirs(final_hls_path, exist_ok=True)
+        os.makedirs(final_hls_path, exist_ok = True)
 
         # Copies All Temp HLS Files (Exept The Master Playlist File)
         for filename in os.listdir(temp_hls_path):
@@ -1046,29 +1046,29 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path=
 
         # Removes Temporary Video Files From Disk
         if os.path.exists(temp_hls_path):
-            shutil.rmtree(temp_hls_path, ignore_errors=True)
+            shutil.rmtree(temp_hls_path, ignore_errors = True)
 
         message = "Video Was Successfully Compressed To HLS."
         return message
 
     except PostMedia.DoesNotExist as e:
         message = "Video Does Not Exist."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
     except subprocess.CalledProcessError as e:
         message = "FFmpeg Error Occurred During Video Compression."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
-    except Exception as e:
+    except Exception as error:
         message = "An Error Occurred During Video Compression."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
-@shared_task(bind=True)
+@shared_task(bind = True)
 def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
     try:
-        self.update_state(state="PROGRESS", meta={"percentage": 10}) # 10%
+        self.update_state(state = "PROGRESS", meta = {"percentage": 10}) # 10%
 
-        chat_attachment_object = ChatAttachment.objects.get(id=chat_attachment_id) # Gets The Chat Attachment
+        chat_attachment_object = ChatAttachment.objects.get(id = chat_attachment_id) # Gets The Chat Attachment
         
         # If The File Was Not Found
         if not chat_attachment_object.file:
@@ -1092,11 +1092,11 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
                 image = image.convert("RGB")
 
             # Image Quality
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
             subscription = None
 
             if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-                # Gets The Subscription Data If Are Available
+                # Sets The Subscription
                 subscription = {
                     "plan": logged_in_user.subscription.plan
                 }
@@ -1113,20 +1113,20 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
             
             # Stores To Memory
             buffer = io.BytesIO()
-            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
+            image.save(buffer, format = "JPEG", quality = quality, optimize = True, progressive = True) # Compresses The Image
 
             compressed_size = buffer.tell() # Gets The Compressed Size
             
             new_file_name = f"IMG-{chat_attachment_id}.jpg"
 
-            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save = False)
 
             # Saves The Data To The Database
-            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            chat_attachment_object.file.save(new_file_name, ContentFile(buffer.getvalue()), save = False)
             chat_attachment_object.is_processed = True
             chat_attachment_object.original_size = original_size # Saves The Original Size
             chat_attachment_object.compressed_size = compressed_size # Saves The Compressed Size
-            chat_attachment_object.save(update_fields=["file", "is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
+            chat_attachment_object.save(update_fields = ["file", "is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
 
         chat_attachment_object.file.close()
         
@@ -1145,10 +1145,10 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
         message = "An Error Occurred During Image Compression."
         raise Exception(message)
 
-@shared_task(bind=True)
+@shared_task(bind = True)
 def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
     try:
-        chat_attachment_object = ChatAttachment.objects.get(id=chat_attachment_id) # Gets The Chat Attachment
+        chat_attachment_object = ChatAttachment.objects.get(id = chat_attachment_id) # Gets The Chat Attachment
         
         # If The File Was Not Found
         if not chat_attachment_object.file:
@@ -1162,7 +1162,7 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
 
         # Auto-Generated Thumbnail
         thumb_temp_path = os.path.join(settings.MEDIA_ROOT, "temp", f"thumb_{chat_attachment_id}.jpg")
-        os.makedirs(os.path.dirname(thumb_temp_path), exist_ok=True)
+        os.makedirs(os.path.dirname(thumb_temp_path), exist_ok = True)
         
         # Gets The Frame From The First Second Of The Video
         thumb_command = [
@@ -1171,12 +1171,12 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
         ]
 
         try:
-            subprocess.run(thumb_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(thumb_command, check = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
             with open(thumb_temp_path, "rb") as f:
-                chat_attachment_object.thumbnail.save(f"THUMB-{chat_attachment_id}.jpg", ContentFile(f.read()), save=False)
+                chat_attachment_object.thumbnail.save(f"THUMB-{chat_attachment_id}.jpg", ContentFile(f.read()), save = False)
 
-            ChatAttachment.objects.filter(id=chat_attachment_id).update(thumbnail=chat_attachment_object.thumbnail.name)
+            ChatAttachment.objects.filter(id = chat_attachment_id).update(thumbnail = chat_attachment_object.thumbnail.name)
 
         except subprocess.CalledProcessError:
             message = "Video Is Shorter Than 1 Second."
@@ -1191,11 +1191,11 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
         # Video Compression
 
         # Video Quality
-        logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+        logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
         subscription = None
 
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-            # Gets The Subscription Data If Are Available
+            # Sets The Subscription
             subscription = {
                 "plan": logged_in_user.subscription.plan
             }
@@ -1227,7 +1227,7 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
             video_temp_path
         ]
 
-        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(command, check = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
         original_size = os.path.getsize(input_path) # Gets The Original Size
         compressed_size = os.path.getsize(video_temp_path) # Gets The Compressed Size
@@ -1240,13 +1240,13 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
             new_filename = new_filename.replace(original_extension, ".mp4")
 
         with open(video_temp_path, "rb") as f:
-            chat_attachment_object.file.save(new_filename, ContentFile(f.read()), save=False)
+            chat_attachment_object.file.save(new_filename, ContentFile(f.read()), save = False)
 
         # Saves The Data To The Database
         chat_attachment_object.is_processed = True
         chat_attachment_object.original_size = original_size
         chat_attachment_object.compressed_size = compressed_size
-        chat_attachment_object.save(update_fields=["is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
+        chat_attachment_object.save(update_fields = ["is_processed", "original_size", "compressed_size"]) # Saves The Updated Chat Attachment Object
 
         # Removes Original Video File From Disk
         if os.path.exists(old_file_path) and old_file_path != chat_attachment_object.file.path:
@@ -1261,20 +1261,20 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
 
     except ChatAttachment.DoesNotExist as e:
         message = "Video Does Not Exist."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
     except subprocess.CalledProcessError as e:
         message = "FFmpeg Error Occurred During Video Compression."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
-    except Exception as e:
+    except Exception as error:
         message = "An Error Occurred During Video Compression."
-        raise Exception(message) from e
+        raise Exception(message) from error
 
-@shared_task(bind=True)
+@shared_task(bind = True)
 def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
     try:
-        background_image_object = ChatSettings.objects.get(id=chat_settings_id)
+        background_image_object = ChatSettings.objects.get(id = chat_settings_id)
         
         # If The File Was Not Found
         if not background_image_object.background_image:
@@ -1284,7 +1284,7 @@ def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
         old_file_path = background_image_object.background_image.path # Stores The File Path Of The Original File
         original_size = background_image_object.background_image.size # Gets The Original Size
 
-        self.update_state(state="PROGRESS", meta={"percentage": 50}) # 50%
+        self.update_state(state = "PROGRESS", meta = {"percentage": 50}) # 50%
 
         with Image.open(background_image_object.background_image) as image:
             # Resizes The Image
@@ -1300,11 +1300,11 @@ def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
                 image = image.convert("RGB")
 
             # Image Quality
-            logged_in_user = Users.objects.get(id=logged_in_user_id) # Gets Logged In User
+            logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
             subscription = None
 
             if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
-                # Gets The Subscription Data If Are Available
+                # Sets The Subscription
                 subscription = {
                     "plan": logged_in_user.subscription.plan
                 }
@@ -1321,14 +1321,14 @@ def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
             
             # Stores To Memory
             buffer = io.BytesIO()
-            image.save(buffer, format="JPEG", quality=quality, optimize=True, progressive=True) # Compresses The Image
+            image.save(buffer, format = "JPEG", quality = quality, optimize = True, progressive = True) # Compresses The Image
 
             compressed_size = buffer.tell() # Gets The Compressed Size
             
             new_file_name = f"IMG-{chat_settings_id}.jpg"
 
             # Saves The Data To The Database
-            background_image_object.background_image.save(new_file_name, ContentFile(buffer.getvalue()), save=False)
+            background_image_object.background_image.save(new_file_name, ContentFile(buffer.getvalue()), save = False)
             background_image_object.is_processed = True
             background_image_object.original_size = original_size # Saves The Original Size
             background_image_object.compressed_size = compressed_size # Saves The Compressed Size
