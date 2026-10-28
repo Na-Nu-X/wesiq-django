@@ -2652,18 +2652,18 @@ msgstr "Додати статтю"
 
 #: app/templates/app/blog.html:18
 #, python-format
-msgid "Našiel sa <span>%(num_articles)s</span> článok."
-msgstr "Знайдено <span>%(num_articles)s</span> статтю."
+msgid "Našiel sa <span>%(articles_amount)s</span> článok."
+msgstr "Знайдено <span>%(articles_amount)s</span> статтю."
 
 #: app/templates/app/blog.html:21
 #, python-format
-msgid "Našli sa <span>%(num_articles)s</span> články."
-msgstr "Знайдено <span>%(num_articles)s</span> статті."
+msgid "Našli sa <span>%(articles_amount)s</span> články."
+msgstr "Знайдено <span>%(articles_amount)s</span> статті."
 
 #: app/templates/app/blog.html:24
 #, python-format
-msgid "Našlo sa <span>%(num_articles)s</span> článkov."
-msgstr "Знайдено <span>%(num_articles)s</span> статей."
+msgid "Našlo sa <span>%(articles_amount)s</span> článkov."
+msgstr "Знайдено <span>%(articles_amount)s</span> статей."
 
 #: app/templates/app/blog.html:37
 msgid "Nájsť článok"

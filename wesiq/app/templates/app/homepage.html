@@ -40,10 +40,10 @@
 
         aria-label="{% if total_reviews == 0 %}{% translate 'Zatiaľ žiadne recenzie' %}{% else %}{% blocktranslate count amount=total_reviews %}Na základe {{ amount }} recenzie{% plural %}Na základe {{ amount }} recenzií{% endblocktranslate %}{% endif %}"
     >
-        <p>{{ avg_rating.rating__avg|floatformat:2 }}</p>
+        <p>{{ average_rating.rating__avg|floatformat:2 }}</p>
 
         {% for _ in "12345" %}
-            {% if forloop.counter <= avg_rating.rating__avg|floatformat:0|add:0 %}
+            {% if forloop.counter <= average_rating.rating__avg|floatformat:0|add:0 %}
                 <i class="full fa-solid fa-star"></i> <!-- https://fontawesome.com/icons/star -->
 
             {% else %} 
@@ -302,7 +302,7 @@
                             {% endif %}
                         "
                     >
-                        <p class="average_rating_number">{{ avg_rating_integer }}<span>{{ avg_rating_rest }}</span></p>
+                        <p class="average_rating_number">{{ average_rating_integer }}<span>{{ average_rating_rest }}</span></p>
                     </div>
 
                     <div class="stars">

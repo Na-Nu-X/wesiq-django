@@ -15,7 +15,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             validated_token = AccessToken(token_key)
             user_id = validated_token["user_id"]
-            return Users.objects.get(id=user_id)
+            return Users.objects.get(id = user_id)
 
         except Exception:
             return None
@@ -83,7 +83,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
 
-            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
+            is_muted = await self.is_user_muted(user = self.receiver, muted_user = self.sender) # Gets The Information If The User Is Muted
 
             if not is_muted:
                 # Sends Data To The Notification Channel
@@ -202,7 +202,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
 
-            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
+            is_muted = await self.is_user_muted(user = self.receiver, muted_user = self.sender) # Gets The Information If The User Is Muted
 
             if not is_muted:
                 # Sends Data To The Notification Channel
@@ -247,7 +247,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             
             notification_message = str(_("Zdielaný príspevok od %(post_creator_username)s") % {"post_creator_username": new_chat["post"]["user"]["username"]})
 
-            is_muted = await self.is_user_muted(user=self.receiver, muted_user=self.sender) # Gets The Information If The User Is Muted
+            is_muted = await self.is_user_muted(user = self.receiver, muted_user = self.sender) # Gets The Information If The User Is Muted
 
             if not is_muted:
                 # Sends Data To The Notification Channel
@@ -298,7 +298,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The New Message To The Front-End
     async def new(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "new",
             "chat_id": event["chat_id"],
             "message": event["message"],
@@ -311,7 +311,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The Edited Message To The Front-End
     async def edit(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "edit",
             "chat_id": event["chat_id"],
             "message": event["message"]
@@ -319,14 +319,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The Deleted Message To The Front-End
     async def delete(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "delete",
             "chat_id": event["chat_id"]
         }))
 
     # Function For Send Data Of The Added Message Reaction To The Front-End
     async def add_reaction(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "add_reaction",
             "chat_id": event["chat_id"],
             "emoji": event["emoji"],
@@ -335,7 +335,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The Removed Message Reaction To The Front-End
     async def remove_reaction(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "remove_reaction",
             "chat_id": event["chat_id"],
             "emoji": event["emoji"]
@@ -349,7 +349,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             logged_in_user_id = session.get("logged_in_user_id") # Gets The Logged In User ID
 
             if logged_in_user_id:
-                return Users.objects.get(id=logged_in_user_id) # Gets The Logged In User
+                return Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
 
         except:
             return None
@@ -360,11 +360,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user_by_username(self, username):
         try:
-            return Users.objects.get(username=username) # Gets The User
+            return Users.objects.get(username = username) # Gets The User
 
         except Users.DoesNotExist:
             try:
-                return Users.objects.get(username=f"@{username.lstrip('@')}") # Gets The User (Fallback)
+                return Users.objects.get(username = f"@{username.lstrip('@')}") # Gets The User (Fallback)
 
             except Users.DoesNotExist:
                 return None
@@ -374,9 +374,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_message(self, content):
         # Saves The New Message
         new_chat = Chat.objects.create(
-            sender=self.sender,
-            receiver=self.receiver,
-            content=content
+            sender = self.sender,
+            receiver = self.receiver,
+            content = content
         )
 
         return new_chat # Returns The New Chat
@@ -384,22 +384,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Edit The Message
     @database_sync_to_async
     def edit_message(self, id, content):
-        message_for_edit = Chat.objects.filter(id=id, sender=self.sender).first() # Gets The Message For Edit
+        message_for_edit = Chat.objects.filter(id = id, sender = self.sender).first() # Gets The Message For Edit
 
         if not message_for_edit.is_older_than_15_minutes:
             # Edits The Message
             Chat.objects.filter(
-                id=id,
-                sender=self.sender
+                id = id,
+                sender = self.sender
             ).update(
-                content=content,
-                is_edited=True
+                content = content,
+                is_edited = True
             )
 
     # Function For Delete The Message
     @database_sync_to_async
     def delete_message(self, id):
-        message_for_deletion = Chat.objects.filter(id=id, sender=self.sender).first() # Gets The Message For Deletion
+        message_for_deletion = Chat.objects.filter(id = id, sender = self.sender).first() # Gets The Message For Deletion
 
         if not message_for_deletion.is_older_than_1_day:
             message_for_deletion.delete() # Deletes The Message
@@ -410,8 +410,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         with transaction.atomic():
             # Gets All Of The Logged In User's Reactions To The Message
             user_reactions = MessageReaction.objects.filter(
-                chat_id=chat_id,
-                user=self.sender
+                chat_id = chat_id,
+                user = self.sender
             ).order_by(
                 "created_at"
             )
@@ -422,9 +422,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             # Creates The New Reaction
             new_reaction = MessageReaction.objects.create(
-                chat_id=chat_id,
-                user=self.sender,
-                emoji=emoji
+                chat_id = chat_id,
+                user = self.sender,
+                emoji = emoji
             )
 
             return new_reaction # Returns The New Reaction
@@ -434,9 +434,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def remove_reaction_from_message(self, chat_id, emoji):
         # Removes The Reaction
         MessageReaction.objects.filter(
-            chat_id=chat_id,
-            user=self.sender,
-            emoji=emoji
+            chat_id = chat_id,
+            user = self.sender,
+            emoji = emoji
         ).delete()
 
     # Function For Mark Messages As Read
@@ -444,24 +444,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def mark_messages_as_read(self):
         # Marks Every Unread Message As Read
         Chat.objects.filter(
-            sender=self.receiver,
-            receiver=self.sender,
-            is_read=False
-        ).update(is_read=True)
+            sender = self.receiver,
+            receiver = self.sender,
+            is_read = False
+        ).update(is_read = True)
 
     # Function For Save The Attachments
     @database_sync_to_async
     def save_attachments(self, content, attachment_ids):
         # Saves The New Message
         new_chat_with_attachments = Chat.objects.create(
-            sender=self.sender,
-            receiver=self.receiver,
-            content=content
+            sender = self.sender,
+            receiver = self.receiver,
+            content = content
         )
 
         if attachment_ids:
-            chat_attachments = ChatAttachment.objects.filter(id__in=attachment_ids) # Gets The Chat Attachments
-            chat_attachments.update(chat=new_chat_with_attachments) # Saves The Updated Chat Attachments
+            chat_attachments = ChatAttachment.objects.filter(id__in = attachment_ids) # Gets The Chat Attachments
+            chat_attachments.update(chat = new_chat_with_attachments) # Saves The Updated Chat Attachments
             
         return new_chat_with_attachments # Returns The New Chat With Attachments
 
@@ -470,9 +470,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def share_post(self, post_id):
         # Saves The New Message
         new_chat = Chat.objects.create(
-            sender=self.sender,
-            receiver=self.receiver,
-            post_id=post_id
+            sender = self.sender,
+            receiver = self.receiver,
+            post_id = post_id
         )
 
         # Gets The New Chat With Shared Post
@@ -483,9 +483,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         ).prefetch_related(
             "post__media"
         ).annotate(
-            post_comments_amount=Count("post__comments", filter=~Q(post__comments__status="hidden"), distinct=True),
-            post_likes_amount=Count("post__likes", distinct=True)
-        ).get(id=new_chat.id)
+            post_comments_amount = Count("post__comments", filter=~Q(post__comments__status = "hidden"), distinct = True),
+            post_likes_amount = Count("post__likes", distinct = True)
+        ).get(id = new_chat.id)
 
         post_media_list = list(new_chat_with_shared_post.post.media.all()) if new_chat_with_shared_post.post else [] # Gets The Post Media List
         first_post_media = post_media_list[0] if post_media_list else None # Gets The First Post Media
@@ -530,7 +530,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Get The Information If The User Is Muted
     @database_sync_to_async
     def is_user_muted(self, user, muted_user):
-        return MutedUser.objects.filter(user=user, muted_user=muted_user).exists() # Checks If The Muted User Exists
+        return MutedUser.objects.filter(user = user, muted_user = muted_user).exists() # Checks If The Muted User Exists
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     # Function For Get The User From The JWT Token (Native App)
@@ -539,7 +539,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         try:
             validated_token = AccessToken(token_key)
             user_id = validated_token["user_id"]
-            return Users.objects.get(id=user_id)
+            return Users.objects.get(id = user_id)
 
         except Exception:
             return None
@@ -584,7 +584,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     # Function For Send Data Of The New Message Notification To The Front-End
     async def new_message_notification(self, event):
-        await self.send(text_data=json.dumps({
+        await self.send(text_data = json.dumps({
             "action": "new_message_notification",
             "chat_id": event["chat_id"],
             "message": event["message"],

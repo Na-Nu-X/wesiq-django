@@ -9,15 +9,15 @@
 {% endblock style %}
 
 {% block content %}
-    <div class="num_articles">
-        {% if num_articles == 1 %}
-            <p>{% blocktranslate %}Našiel sa <span>{{ num_articles }}</span> článok.{% endblocktranslate %}</p>
+    <div class="articles_amount">
+        {% if articles_amount == 1 %}
+            <p>{% blocktranslate %}Našiel sa <span>{{ articles_amount }}</span> článok.{% endblocktranslate %}</p>
 
-        {% elif num_articles > 1 and num_articles < 5 %}
-            <p>{% blocktranslate %}Našli sa <span>{{ num_articles }}</span> články.{% endblocktranslate %}</p>
+        {% elif articles_amount > 1 and articles_amount < 5 %}
+            <p>{% blocktranslate %}Našli sa <span>{{ articles_amount }}</span> články.{% endblocktranslate %}</p>
 
         {% else %}
-            <p>{% blocktranslate %}Našlo sa <span>{{ num_articles }}</span> článkov.{% endblocktranslate %}</p>
+            <p>{% blocktranslate %}Našlo sa <span>{{ articles_amount }}</span> článkov.{% endblocktranslate %}</p>
         
         {% endif %}
     </div>

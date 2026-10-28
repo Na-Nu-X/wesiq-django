@@ -23,7 +23,7 @@ class ProfileSitemap(Sitemap):
     alternates = True
 
     def items(self):
-        return Users.objects.filter(private_account=False, account_status="OK")
+        return Users.objects.filter(private_account = False, account_status = "OK")
 
 # Map For All Post Pages + Translated Versions
 class PostSitemap(Sitemap):
@@ -33,7 +33,7 @@ class PostSitemap(Sitemap):
     alternates = True
 
     def items(self):
-        return Post.objects.filter(public_visibility=True, user__private_account=False)
+        return Post.objects.filter(public_visibility = True, user__private_account = False)
 
     def lastmod(self, obj):
         return obj.created_at

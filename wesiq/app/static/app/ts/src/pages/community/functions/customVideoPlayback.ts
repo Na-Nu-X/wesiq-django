@@ -183,7 +183,7 @@ export function changeVideoSpeed(speed:number, video:HTMLVideoElement, button:HT
 }
 
 // Function For Toggle The Video Fullscreen
-export function toogleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video_container:HTMLDivElement):void {
+export function togleVideoFullscreen(toggle_fullscreen_icon:HTMLElement, video_container:HTMLDivElement):void {
     // Fullscreen Mode
     if(toggle_fullscreen_icon.classList.contains("fa-expand")) {
         if(!document.fullscreenElement) {

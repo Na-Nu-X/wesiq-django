@@ -68,9 +68,9 @@ export function reviewsInfoAnimation():void {
         // Starts The Animation After Delay Set In Start Time Expires
         if(progress >= 0) {
             // Average Rating Number Rendering
-            const avg_rating_splitted:string[] = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
+            const average_rating_splitted:string[] = ((eased * average_rating_number_target) / 100).toFixed(2).split(".") // Calculates New Values For Average Rating Number For Every Frame Of The Animation In Array Format (For Example ["4", "25"])
             // Splits Array
-            average_rating_number_tag.innerHTML = `${avg_rating_splitted[0]}<span>${avg_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
+            average_rating_number_tag.innerHTML = `${average_rating_splitted[0]}<span>${average_rating_splitted[1]}</span>` // Splits Values From Array And Renders Them To HTML
 
             // Stars Rendering
             const average_rating_number:number = parseFloat((document.querySelector(".reviews_info_container .average_rating .average_rating_number") as HTMLParagraphElement).textContent) / 100 // Gets Average Rating And Stores It As A Float Number (For Example Converts "425" To 4.25)
