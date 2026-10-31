@@ -187,6 +187,8 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGIN_METHODS = { "email" }
+ACCOUNT_USER_MODEL_EMAIL_FIELD = "email_address"
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 
 ACCOUNT_USERNAME_BLACKLIST = [
     "admin", 

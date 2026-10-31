@@ -4413,6 +4413,7 @@ def postView(request, post_id):
 
         Prefetch(
             "user",
+            
             queryset = Users.objects.annotate(
                 # Creates The Has Follow Column (True If The Logged In User Is Following The User)
                 has_follow = Exists(
@@ -4450,6 +4451,7 @@ def postView(request, post_id):
         
         Prefetch(
             "media",
+
             queryset = PostMedia.objects.annotate(
                 unique_video_views = Count("video_views", distinct = True) # Gets The Unique Viewers Amount
             ).annotate(
@@ -4464,6 +4466,7 @@ def postView(request, post_id):
 
         Prefetch(
             "comments",
+
             queryset = PostForum.objects.exclude(
                 status = "hidden"
             ).annotate(

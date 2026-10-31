@@ -6,6 +6,7 @@ from django.views.i18n import JavaScriptCatalog
 from app import views
 from django.contrib.sitemaps.views import sitemap
 from app.sitemaps import StaticSitemap, ProfileSitemap, PostSitemap
+from app.api import views as native_views
 
 sitemaps = {
     "static": StaticSitemap,
@@ -27,7 +28,9 @@ urlpatterns = [
     path("api/update-video-watch-time/", views.updateVideoWatchTime, name="update_video_watch_time_url"),
 
     # API (Native App)
-    path("native-api/", include("app.api.urls"))
+    path("native-api/", include("app.api.urls")),
+    path(".well-known/assetlinks.json", native_views.android_assetlinks),
+    path(".well-known/apple-app-site-association", native_views.apple_app_site_association)
 ]
 
 urlpatterns += i18n_patterns(
