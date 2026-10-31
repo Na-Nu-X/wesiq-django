@@ -43,6 +43,7 @@ from django.http import FileResponse
 from collections import defaultdict
 from rest_framework.parsers import MultiPartParser, FormParser
 from PIL import Image, UnidentifiedImageError
+from django.http import JsonResponse
 
 # Defines The Disallowed Mime Types
 DISALLOWED_MIME_TYPES = [
@@ -185,6 +186,33 @@ def sendMail(
         mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send() # Sends The Mail
+
+# Function For Get The Android Asset Links
+def android_assetlinks(request):
+    return JsonResponse([{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+
+        "target": {
+            "namespace": "android_app",
+            "package_name": "",
+            "sha256_cert_fingerprints": ["TEST"]
+        }
+    }], safe = False)
+
+# Function For Get The Apple App Site Association
+def apple_app_site_association(request):
+    return JsonResponse({
+        "applinks": {
+            "apps": [],
+
+            "details": [
+                {
+                    "appID": "",
+                    "paths": ["/password-reset"]
+                }
+            ]
+        }
+    })
 
 ###############
 # General API #
@@ -2065,7 +2093,7 @@ def upload_post(request):
                                 compress_tasks.append({
                                     "task_id": compress_video_task.id,
                                     "post_media_id": new_post_media.id,
-                                    "post_id": new_post_media.post.id
+                                    "post_id": new_post_media.post.public_id
                                 })
                             
                             # Image
@@ -2076,7 +2104,7 @@ def upload_post(request):
                                 compress_tasks.append({
                                     "task_id": compress_image_task.id,
                                     "post_media_id": new_post_media.id,
-                                    "post_id": new_post_media.post.id
+                                    "post_id": new_post_media.post.public_id
                                 })
 
                         except ValueError as custom_error:
@@ -2300,6 +2328,8 @@ def get_upload_progress(request, task_id):
     if result.state == "PROGRESS": upload_progress["progress"] = result.info.get("percentage", 0) # Sets The Progress
     elif result.state == "SUCCESS": upload_progress["progress"] = 100 # Sets The Progress
     elif result.state == "FAILURE": upload_progress["progress"] = 0 # Sets The Progress
+    
+    print(f"API ODPOSIELA: {upload_progress}")
 
     return Response({
         "success": True,
@@ -2752,39 +2782,31 @@ def get_official_tasks(request):
             created_at__date__lt = today
         ).delete()
 
-        # Gets The All Assigned User's Official Tasks For Today
-        official_tasks = logged_in_user.daily_official_tasks.annotate(
-            progress_percentage = F("userdailyofficialtasks__progress_percentage"),
-            is_completed = F("userdailyofficialtasks__is_completed")
-        )
-
-        official_tasks_amount = official_tasks.count() # Gets The Amount Of All Assigned User's Official Tasks For Today
+        existing_tasks_ids = list(logged_in_user.daily_official_tasks.values_list("id", flat = True)) # Gets The Already Assigned User's Official Tasks For Today IDs
+        official_tasks_amount = len(existing_tasks_ids) # Gets The Amount Of All Assigned User's Official Tasks For Today
 
         # Gets Assigned User's Official Tasks For Today If The User Has Less Than 3 Of Them Already Assigned
         if official_tasks_amount < 3:
             needed_tasks = 3 - official_tasks_amount # Gets The Amount Of Still Needed Tasks
-            existing_tasks_ids = official_tasks.values_list("id", flat = True) # Gets The Already Assigned User's Official Tasks For Today IDs
-        
+            
             # Gets The Random New User's Official Tasks For Today Which Aren't Already Assigned For The User
             random_new_tasks = OfficialTasks.objects.exclude(
                 id__in = existing_tasks_ids
-            ).order_by(
-                "?"
-            )[:needed_tasks]
+            ).order_by("?")[:needed_tasks]
             
-            # Bulk Creation Of Multiple New User's Official Tasks For Today
+            # Gets The New Official Tasks
             new_official_tasks = [
                 UserDailyOfficialTasks(user = logged_in_user, task = one_task)
                 for one_task in random_new_tasks
             ]
+            
+            if new_official_tasks: UserDailyOfficialTasks.objects.bulk_create(new_official_tasks) # Bulk Creation Of Multiple New User's Official Tasks For Today
 
-            UserDailyOfficialTasks.objects.bulk_create(new_official_tasks)
-
-            # Updates The Official Tasks
-            official_tasks = logged_in_user.daily_official_tasks.annotate(
-                progress_percentage = F("userdailyofficialtasks__progress_percentage"),
-                is_completed = F("userdailyofficialtasks__is_completed")
-            ).order_by("xp")
+        # Gets The Official Tasks
+        official_tasks = logged_in_user.daily_official_tasks.annotate(
+            progress_percentage = F("userdailyofficialtasks__progress_percentage"),
+            is_completed = F("userdailyofficialtasks__is_completed")
+        ).order_by("xp")
 
         current_time = timezone.localtime(timezone.now()) # Gets The Current Time
         next_midnight = (current_time + timedelta(days = 1)).replace(hour = 0, minute = 0, second = 0, microsecond = 0) # Gets The Next Midnight
@@ -4425,6 +4447,15 @@ def get_chat(request, username):
             ).select_related(
                 "subscription"
             ).annotate(
+                # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+                has_follow = Exists(
+                    FollowRelation.objects.filter(
+                        from_user = logged_in_user,
+                        to_user = OuterRef("pk"),
+                        status = "accepted"
+                    )
+                ) if logged_in_user else Value(False, output_field = BooleanField()),
+                
                 # Creates The Is Muted Column
                 is_muted = Exists(
                     MutedUser.objects.filter(
@@ -4449,8 +4480,10 @@ def get_chat(request, username):
                 "last_name": receiver.last_name, 
                 "username": receiver.username, 
                 "profile_picture_name": receiver.profile_picture_name,
+                "private_account": receiver.private_account,
                 "subscription": subscription,
-                "is_muted": receiver.is_muted
+                "is_muted": receiver.is_muted,
+                "has_follow": receiver.has_follow
             }
 
             # Gets Sender's And Receiver's Chats
@@ -5795,15 +5828,15 @@ def get_password_reset_code(request):
             Q(email_address__iexact = identifier)
         )
 
-        # # Sends The Mail
-        # sendMail(
-        #     user,
-        #     _("Obnova hesla"), # Subject
-        #     _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # Text Content
-        #     _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # HTML Content
-        #     _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-        #     code
-        # )
+        # Sends The Mail
+        sendMail(
+            user,
+            _("Obnova hesla"), # Subject
+            _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s/password-reset?code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "code": code}, # Text Content
+            _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím kliknite na <a href="%(domain)s/password-reset?code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "code": code}, # HTML Content
+            _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+            code # Middle Of HTML Content
+        )
 
         # Saves Password Reset Code To Database
         user.password_reset_code = code

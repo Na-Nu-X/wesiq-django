@@ -37,3 +37,6 @@ class PostSitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.created_at
+
+    def location(self, obj):
+        return reverse("post_url", kwargs={"post_id": obj.public_id})

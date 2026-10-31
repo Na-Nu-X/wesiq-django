@@ -765,14 +765,14 @@ def compressImage(self, post_media_id, logged_in_user_id):
 @shared_task(bind = True)
 def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path = None):
     try:
-        media_object = PostMedia.objects.get(id = post_media_id)
+        media_object = PostMedia.objects.get(id = post_media_id) # Gets The Media Object
         
         # If The File Was Not Found
         if not media_object.file:
             message = "The Video To Compress Was Not Found."
             raise Exception(message)
 
-        input_path = media_object.file.path
+        input_path = media_object.file.path # Gets The Input Path
         old_file_path = input_path # Stores The File Path Of The Original File
 
         # Thumbnail Generation
@@ -784,10 +784,10 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
                     media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save = False)
 
                 PostMedia.objects.filter(id = post_media_id).update(thumbnail = media_object.thumbnail.name)
-                
+
                 default_storage.delete(custom_thumbnail_path) # Deletes Temporary Thumbnail Path From The Default Storage
-                
-            except Exception as error:
+
+            except Exception:
                 custom_thumbnail_path = None # Fallback For Default Auto-Generated Thumbnail
 
         # Auto-Generated Thumbnail
@@ -802,7 +802,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
             ]
 
             try:
-                subprocess.run(thumb_command, check = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+                subprocess.run(thumb_command, check = True, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
 
                 with open(thumb_temp_path, "rb") as f:
                     media_object.thumbnail.save(f"THUMB-{post_media_id}.jpg", ContentFile(f.read()), save = False)
@@ -844,7 +844,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
         # Gets The Sprite Grid Of Video Scrubber Preview Images
         sprite_command = [
             "ffmpeg", "-y", "-i", input_path,
-            "-vf", f"fps=1/{interval},scale = {scrubber_preview_width}:{scrubber_preview_height},tile = {columns}x{rows}",
+            "-vf", f"fps=1/{interval},scale={scrubber_preview_width}:{scrubber_preview_height},tile={columns}x{rows}",
             sprite_temp_path
         ]
 
@@ -866,15 +866,15 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
                 for i in range(total_frames):
                     start_time = i * interval
                     end_time = min((i + 1) * interval, total_duration)
-                    
+
                     # Calculates Coordinates In Grid
                     col = i % columns
                     row = i // columns
                     x = col * scrubber_preview_width
                     y = row * scrubber_preview_height
-                    
+
                     vtt.write(f"{format_vtt_time(start_time)} --> {format_vtt_time(end_time)}\n")
-                    vtt.write(f"{sprite_filename}#xywh = {x},{y},{scrubber_preview_width},{scrubber_preview_height}\n\n")
+                    vtt.write(f"{sprite_filename}#xywh={x},{y},{scrubber_preview_width},{scrubber_preview_height}\n\n")
 
             with open(sprite_temp_path, "rb") as f:
                 media_object.sprite_sheet.save(sprite_filename, ContentFile(f.read()), save = False)
@@ -882,11 +882,8 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
             with open(vtt_temp_path, "rb") as f:
                 media_object.vtt_file.save(vtt_filename, ContentFile(f.read()), save = False)
 
-        # except subprocess.CalledProcessError as e:
-        #     pass
-
         except Exception as error:
-            print(f"Scrubber generation failed for post {post_media_id}: {e}")
+            print(f"Scrubber generation failed for post {post_media_id}: {error}")
 
         finally:
             # Removes Sprite File From Disk
@@ -898,8 +895,9 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
                 os.remove(vtt_temp_path)
 
         # Video Compression And HLS Video Format Conversion
-
+        
         temp_hls_path = os.path.join(settings.MEDIA_ROOT, "temp", f"hls_{post_media_id}")
+
         os.makedirs(temp_hls_path, exist_ok = True)
         playlist_path = os.path.join(temp_hls_path, "index.m3u8")
         segment_pattern = os.path.join(temp_hls_path, "v%v_segment_%03d.ts")
@@ -907,7 +905,8 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
 
         # Video Quality
         logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
-        subscription = None
+        
+        subscription = None # Stores The Subscription
 
         if hasattr(logged_in_user, "subscription") and logged_in_user.subscription and logged_in_user.subscription.is_active:
             # Sets The Subscription
@@ -995,20 +994,36 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
                 "-master_pl_name", "index.m3u8", # Main Map File For Segments
             ] + hls_settings
 
-        process = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, universal_newlines = True)
+        process = subprocess.Popen(
+            command, 
+            stdout = subprocess.PIPE, 
+            stderr = subprocess.DEVNULL, 
+            universal_newlines = True,
+            bufsize = 1
+        )
 
-        for line in process.stdout:
-            if "out_time_ms" in line:
-                try:
-                    time_ms = int(line.split("=")[1].strip())
-                    current_time = time_ms / 1000000.0
-                    percentage = min(99, int((current_time / total_duration) * 100))
-                    self.update_state(state = "PROGRESS", meta = {"percentage": percentage})
+        with process.stdout:
+            for one_line in iter(process.stdout.readline, ""):
+                one_line = one_line.strip()
 
-                except:
-                    pass
+                if one_line.startswith("out_time_ms="):
+                    try:
+                        time_ms_string = one_line.split("=")[1].strip() # Gets The Time In MS In String Format
 
-        process.wait()
+                        if time_ms_string.isdigit():
+                            time_ms = int(time_ms_string) # Gets The Time In MS
+                            current_time = time_ms / 1000000.0 # Gets The Current Time
+                            percentage = min(99, int((current_time / total_duration) * 100)) # Gets The Percentage
+
+                            self.update_state(state = "PROGRESS", meta={"percentage": percentage})
+
+                    except Exception:
+                        pass
+
+        return_code = process.wait()
+
+        if return_code != 0:
+            raise subprocess.CalledProcessError(return_code, command)
 
         original_size = os.path.getsize(input_path) # Gets The Original Size
 
@@ -1048,14 +1063,13 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
         if os.path.exists(temp_hls_path):
             shutil.rmtree(temp_hls_path, ignore_errors = True)
 
-        message = "Video Was Successfully Compressed To HLS."
-        return message
+        return "Video Was Successfully Compressed To HLS."
 
-    except PostMedia.DoesNotExist as e:
+    except PostMedia.DoesNotExist as error:
         message = "Video Does Not Exist."
         raise Exception(message) from error
 
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as error:
         message = "FFmpeg Error Occurred During Video Compression."
         raise Exception(message) from error
 
@@ -1259,11 +1273,11 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
         message = "Video Was Successfully Compressed."
         return message
 
-    except ChatAttachment.DoesNotExist as e:
+    except ChatAttachment.DoesNotExist as error:
         message = "Video Does Not Exist."
         raise Exception(message) from error
 
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as error:
         message = "FFmpeg Error Occurred During Video Compression."
         raise Exception(message) from error
 
