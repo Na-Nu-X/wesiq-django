@@ -1222,7 +1222,7 @@
                                                     </div>
 
                                                 {% else %}
-                                                    <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                                    <a href="{% url 'post_url' one_post.public_id %}" title="Zobraziť príspevok" target="_self">
                                                         {% if one_post.media.first.is_video == True %}
                                                             <img 
                                                                 class="thumbnail"
@@ -1243,7 +1243,7 @@
                                                                         Príspevok užívateľa {{ username }}
                                                                     {% endblocktranslate %}
                                                                 "
-                                                                data-post_id="{{ one_post.id }}"
+                                                                data-post_id="{{ one_post.public_id }}"
                                                             >
                                                         
                                                         {% endif %}
@@ -1302,7 +1302,7 @@
                                     {% if saved_posts|length > 0 and request.session.logged_in_user_id and logged_in_user and user and logged_in_user.id == user.id %}
                                         <div class="saved_posts">
                                             {% for one_post in saved_posts %}
-                                                <a href="{% url 'post_url' one_post.id %}" title="Zobraziť príspevok" target="_self">
+                                                <a href="{% url 'post_url' one_post.public_id %}" title="Zobraziť príspevok" target="_self">
                                                     {% if one_post.media.first.is_video == True %}
                                                         <img 
                                                             class="thumbnail"
@@ -1323,7 +1323,7 @@
                                                                     Príspevok užívateľa {{ username }}
                                                                 {% endblocktranslate %}
                                                             "
-                                                            data-post_id="{{ one_post.id }}"
+                                                            data-post_id="{{ one_post.public_id }}"
                                                         >
                                                     
                                                     {% endif %}

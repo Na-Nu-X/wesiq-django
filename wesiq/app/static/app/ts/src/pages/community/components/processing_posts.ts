@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function():void {
         const post_bars:HTMLDivElement = one_post_container.querySelector(".post_bars") as HTMLDivElement // Gets The Post Bars Container
 
         const processing_post_report:HTMLParagraphElement = one_post_container.querySelector(".processing_post_report") as HTMLParagraphElement // Gets The Processing Post Report
-        const post_id:number|undefined = Number(one_post_container.dataset["post_id"]) // Gets The Post ID Of The Post Container
+        const post_id:string|undefined = one_post_container.dataset["post_id"] // Gets The Post ID (Public ID) Of The Post Container
 
         // Events
 

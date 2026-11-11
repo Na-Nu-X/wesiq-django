@@ -12,7 +12,7 @@ interface loadedPostCommentsResponse {
 
 // Function For Load Comments
 export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivElement, all_comments:HTMLDivElement, logged_in_user_id:number|null, logged_in_user_role:"developer"|"admin"|"user"|"unauthorized"):Promise<void> {
-    const post_id:number = Number(post_container.dataset["post_id"]) // Gets The Post ID
+    const post_id:string = post_container.dataset["post_id"] || "" // Gets The Post ID (Public ID)
     const page:number = Number(all_comments.dataset["page"]) || 1 // Gets The Current Page Number
     const show_more:HTMLButtonElement = all_comments.querySelector(".show_more") as HTMLButtonElement // Gets The Show More Button
 
@@ -22,7 +22,7 @@ export async function loadComments(feed:HTMLDivElement, post_container:HTMLDivEl
         })
 
         // Gets Full Loaded Posts Response
-        const full_loaded_post_comments_response:Response = await fetch(`/api/load-post-comments/${post_id}?${params.toString()}`, {
+        const full_loaded_post_comments_response:Response = await fetch(`/api/load-post-comments/${encodeURIComponent(post_id)}/?${params.toString()}`, {
             method: "GET",
 
             headers: {

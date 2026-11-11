@@ -720,7 +720,7 @@
 
         {% if processing_posts|length > 0 %}
             {% for one_post in processing_posts %}
-                <div class="processing_post_container" tabindex="-1" data-post_id="{{ one_post.id }}">
+                <div class="processing_post_container" tabindex="-1" data-post_id="{{ one_post.public_id }}">
                     <p class="processing_post_report">{% translate "Čakajte! Príspevok sa spracováva." %}</p>
 
                     <div class="processing_media_info_container">

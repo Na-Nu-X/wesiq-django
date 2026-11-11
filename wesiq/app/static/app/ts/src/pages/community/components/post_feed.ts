@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
 
-                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
+                if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
             }
 
             // Share Post
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
                 const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+                if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(post_container.dataset["post_id"], share.dataset["author"]) // Shares The Post
             }
 
             // Show Video Metrics
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const save_icon:HTMLElement = event.target as HTMLElement // Gets The Save Icon
                 const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Saves Or Unsaves The Post
             }
 
             // Report Post
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const post_container:HTMLDivElement = report_button.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const report_reason:string|null = report_button.dataset["reason"] || null // Gets The Report Reason
 
-                if(post_container.dataset["post_id"] && report_reason) reportPost(Number(post_container.dataset["post_id"]), report_reason) // Reports The Post
+                if(post_container.dataset["post_id"] && report_reason) reportPost(post_container.dataset["post_id"], report_reason) // Reports The Post
             }
 
             // Edit Post Settings
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const post_container:HTMLDivElement = toggle_button.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const icon:HTMLElement = (toggle_button.parentElement as HTMLDivElement).querySelector("i") as HTMLElement // Gets The Icon
 
-                if(post_container.dataset["post_id"]) editPostSettings(Number(post_container.dataset["post_id"]), toggle_button, icon) // Edits The Post Settings
+                if(post_container.dataset["post_id"]) editPostSettings(post_container.dataset["post_id"], toggle_button, icon) // Edits The Post Settings
             }
 
             // Delete Post
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const post_container:HTMLDivElement = option.closest(".post_container") as HTMLDivElement // Gets The Post Container
                 const action:string|null = option.dataset["action"] || null // Gets The Action Of The Clicked Option
 
-                if(post_container.dataset["post_id"] && action && action === "delete") deletePost(Number(post_container.dataset["post_id"]), post_container) // Deletes The Post
+                if(post_container.dataset["post_id"] && action && action === "delete") deletePost(post_container.dataset["post_id"], post_container) // Deletes The Post
             }
 
             // Comment Forum
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                 const parent_id:number|null = Number(write_comment_form.dataset["parent_id"]) || null // Gets The Parent ID If Is Available
                 const logged_in_user_role:"developer"|"admin"|"user"|"unauthorized" = (post_container.dataset["logged_in_user_role"] as "developer" | "admin" | "user") ?? "unauthorized" // Gets The Logged In User's Role
 
-                if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(Number(post_container.dataset["post_id"]), write_comment_form, all_comments, feed, parent_id, comments_counter, logged_in_user_role) // Adds Comment To The Post
+                if(post_container.dataset["post_id"] && comment.innerText.length > 0) addComment(post_container.dataset["post_id"], write_comment_form, all_comments, feed, parent_id, comments_counter, logged_in_user_role) // Adds Comment To The Post
             }
 
             // Toggle Reply On Comment
@@ -531,7 +531,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const post_container:HTMLDivElement = toggle_like.closest(".post_container") as HTMLDivElement // Gets The Post Container
                     const particles:HTMLDivElement = post_container.querySelector(".media .particles") as HTMLDivElement // Gets The Particles Container
 
-                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, Number(post_container.dataset["post_id"]), particles) // Adds Or Removes Like From The Post
+                    if(post_container.dataset["post_id"]) togglePostLike(toggle_like, likes_counter, post_container.dataset["post_id"], particles) // Adds Or Removes Like From The Post
                 }
 
                 // Share Post
@@ -540,7 +540,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const share:HTMLDivElement = share_icon.closest(".share") as HTMLDivElement // Gets The Share Container
                     const post_container:HTMLDivElement = share_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(Number(post_container.dataset["post_id"]), share.dataset["author"]) // Shares The Post
+                    if(post_container.dataset["post_id"] && share.dataset["author"]) sharePost(post_container.dataset["post_id"], share.dataset["author"]) // Shares The Post
                 }
 
                 // Save Post
@@ -548,7 +548,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const save_icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Save Icon
                     const post_container:HTMLDivElement = save_icon.closest(".post_container") as HTMLDivElement // Gets The Post Container
 
-                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, Number(post_container.dataset["post_id"])) // Saves Or Unsaves The Post
+                    if(post_container.dataset["post_id"]) togglePostSave(save_icon, post_container.dataset["post_id"]) // Saves Or Unsaves The Post
                 }
 
                 // Edit Post Settings
@@ -562,7 +562,7 @@ document.addEventListener("DOMContentLoaded", async function():Promise<void> {
                     const icon:HTMLElement = (toggle_button.parentElement as HTMLDivElement).querySelector("i") as HTMLElement // Gets The Icon
 
                     toggle_button.checked = !toggle_button.checked // Checks / Unchecks The Toggle Button
-                    if(post_container.dataset["post_id"]) editPostSettings(Number(post_container.dataset["post_id"]), toggle_button, icon) // Edits The Post Settings
+                    if(post_container.dataset["post_id"]) editPostSettings(post_container.dataset["post_id"], toggle_button, icon) // Edits The Post Settings
                 }
 
                 // Comment Forum
