@@ -57,6 +57,8 @@ urlpatterns = [
 
     path("get-exercises/", views.get_exercises, name = "get_exercises_url"),
     path("manage-training-plan/", views.manage_training_plan, name = "manage_training_plan_url"),
+    path("get-official-training-plans/", views.get_official_training_plans, name = "get_official_training_plans_url"),
+    path("copy-training-plan/", views.copy_training_plan, name = "copy_training_plan_url"),
 
     path("get-profile/<str:username>/", views.get_profile, name = "get_profile_url"),
     path("remove-follower/", views.remove_follower, name = "remove_follower_url"),

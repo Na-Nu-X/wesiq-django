@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Chat, MessageReaction, ChatAttachment, MutedUser
+from .models import Users, Post, Chat, MessageReaction, ChatAttachment, MutedUser
 from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
@@ -468,11 +468,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Save The New Message With The Shared Post
     @database_sync_to_async
     def share_post(self, post_id):
+        post = Post.objects.get(public_id = post_id) # Gets The Post
+    
         # Saves The New Message
         new_chat = Chat.objects.create(
             sender = self.sender,
             receiver = self.receiver,
-            post_id = post_id
+            post = post
         )
 
         # Gets The New Chat With Shared Post

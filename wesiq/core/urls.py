@@ -15,6 +15,8 @@ sitemaps = {
 }
 
 urlpatterns = [
+    path("privacy-policy/", views.privacyPolicyView),
+    
     path("accounts/", include("allauth.urls")), # Google OAuth 2.0
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     path("i18n/", include("django.conf.urls.i18n")), # Translation

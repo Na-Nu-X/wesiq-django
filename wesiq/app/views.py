@@ -421,14 +421,17 @@ def stripeWebhook(request):
 
         try:
             subscription = Subscription.objects.get(stripe_subscription_id = stripe_subscription_id) # Gets The Subscription
-            subscription.is_active = False
             subscription.plan = "free"
+            subscription.is_active = False
             subscription.save() # Saves The Updated Subscription
 
         except Subscription.DoesNotExist:
             pass
 
     return HttpResponse(status = 200)
+
+def privacyPolicyView(request):
+    return render(request, "app/privacy_policy.html")
 
 @require_POST
 def reportReview(request):
@@ -1947,6 +1950,22 @@ def logoutView(request):
         messages.add_message(request, messages.ERROR, _("Boli ste odhlásený")) # Sets The Message
 
         return HttpResponseRedirect(reverse("homepage_url")) # Redirects To The Homepage
+
+def deleteAccountView(request):
+    logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID
+
+    if logged_in_user_id:
+        logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
+
+        return render(request, "app/delete_account.html", {
+            "logged_in_user": {
+                "id": logged_in_user_id,
+                "username": logged_in_user.username,
+                "profile_picture_name": logged_in_user.profile_picture_name
+            }
+        })
+
+    return render(request, "app/delete_account.html")
 
 def registrationView(request):
     logged_in_user_id = request.session.get("logged_in_user_id") # Gets The Logged In User ID

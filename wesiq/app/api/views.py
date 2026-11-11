@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
 from django.utils import translation
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, MutedUser, ChatSettings, ContactMessage
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, OfficialTrainingPlan, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, MutedUser, ChatSettings, ContactMessage
 from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment, compressChatBackgroundImage
 from django.conf import settings
 from django.utils import timezone
@@ -44,6 +44,7 @@ from collections import defaultdict
 from rest_framework.parsers import MultiPartParser, FormParser
 from PIL import Image, UnidentifiedImageError
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Defines The Disallowed Mime Types
 DISALLOWED_MIME_TYPES = [
@@ -213,6 +214,86 @@ def apple_app_site_association(request):
             ]
         }
     })
+
+############
+# Webhooks #
+############
+
+@csrf_exempt
+def revenuecat_webhook(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body) # Gets The Data
+            event = data.get("event", {}) # Gets The Event
+            event_type = event.get("type") # Gets The Event Type
+            app_user_id = event.get("app_user_id") # Gets The App User ID
+            entitlement_ids = event.get("entitlement_ids", []) # Gets The Entitlement ID
+            transaction_id = event.get("transaction_id", "") # Gets The Transaction ID (From Apple / Google)
+            amount = event.get("price_in_purchased_currency", 0) # Gets The Amount (Price)
+
+            try:
+                user = Users.objects.get(id = int(app_user_id)) # Gets The User
+
+            except (Users.DoesNotExist, ValueError, TypeError):
+                return Response({
+                    "success": False, 
+                    "message": str(_("Používateľ sa nenašiel."))
+                }, status = 200)
+
+            plan = "free" # Stores The Subscription Plan
+            if "basic_access" in entitlement_ids: plan = "basic" # Sets The Subscription Plan To Basic
+            elif "premium_access" in entitlement_ids: plan = "premium" # Sets The Subscription Plan To Premium
+
+            # Subscription Purchase Or Renewal
+            if event_type in ["INITIAL_PURCHASE", "RENEWAL"]:
+                # Aktualizácia alebo vytvorenie Subscription záznamu
+                subscription, created = Subscription.objects.get_or_create(user=user)
+                subscription.stripe_subscription_id = transaction_id # Stores The Apple / Google ID
+                subscription.plan = plan
+                subscription.is_active = True
+                subscription.is_cancelled = False
+                subscription.save() # Saves The Subscription
+
+                # Creates The Transaction
+                Transactions.objects.create(
+                    user_id = user.id,
+                    stripe_intent_id = transaction_id, # Stores The Apple / Google ID
+                    amount = amount,
+                    status = "succeeded",
+                    title = f"In-App Subscription ({plan.capitalize()})"
+                )
+
+            # Subscription Cancellation Or Expiration
+            elif event_type in ["CANCELLATION", "EXPIRATION"]:
+                try:
+                    subscription = Subscription.objects.get(user = user) # Gets The Subscription
+                    subscription.plan = "free"
+                    subscription.is_active = False
+                    subscription.is_cancelled = True if event_type == "CANCELLATION" else False
+                    subscription.save() # Saves The Updated Subscription
+
+                except Subscription.DoesNotExist:
+                    pass
+
+            return Response({
+                "success": True, 
+                "message": str(_("Predplatné bolo úspešne aktualizované."))
+            }, status = 200)
+
+        except Exception as error:
+            captureError(f"An error occurred while activating the mobile subscription.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+            return Response({
+                "success": False, 
+                "message": str(_("Pri aktivácii predplatného došlo k chybe."))
+            }, status = 500)
+
+    captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+
+    return Response({
+        "success": False, 
+        "message": str(_("Platba sa dá uskutočniť len pomocou POST metódy."))
+    }, status = 405)
 
 ###############
 # General API #
@@ -493,7 +574,7 @@ def get_logged_in_user(request):
             "role": user.role,
             "profile_picture_name": user.profile_picture_name,
             "friend_code": user.friend_code,
-            "saved_posts": list(user.saved_posts.values_list("id", flat = True)),
+            "saved_posts": list(user.saved_posts.values_list("public_id", flat = True)),
             "private_account": user.private_account,
             "follow_requests": follow_requests_data if user.private_account else None,
             "followers_amount": len(user.accepted_followers),
@@ -2629,7 +2710,7 @@ def get_training_plans(request):
         }, status = 200)
 
     except Exception as error:
-        captureError(f"An error occurred while getting the weekly activity data.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+        captureError(f"An error occurred while getting the training plans.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
         return Response({
             "success": False, 
@@ -3554,6 +3635,93 @@ def manage_training_plan(request):
         return Response({
             "success": False, 
             "message": str(_("Pri vykonávaní zmien v tréningovom pláne došlo k chybe."))
+        }, status = 500)
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_official_training_plans(request):
+    try:
+        official_training_plans = OfficialTrainingPlan.objects.all() # Gets Official Training Plans
+
+        # Creates Valid Format Of Official Training Plans For JSON Response
+        official_training_plans_data = [
+            {
+                "id": one_training_plan.id,
+                "training_plan_key": one_training_plan.training_plan_key,
+                "type": one_training_plan.type,
+                "exercise": one_training_plan.exercise,
+                "periods": one_training_plan.periods,
+                "unit": one_training_plan.unit,
+                "order": one_training_plan.order,
+                "is_warm_up": one_training_plan.is_warm_up
+            }
+
+            for one_training_plan in official_training_plans
+        ]
+
+        return Response({
+            "success": True, 
+            "official_training_plans": official_training_plans_data,
+            "message": "Oficiálne tréningové plány boli úspešne získané."
+        }, status = 200)
+
+    except Exception as error:
+        captureError(f"An error occurred while getting the official training plans.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri získavaní oficiálnych tréningových plánov došlo k chybe."))
+        }, status = 500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def copy_training_plan(request):
+    try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        training_plan_data = request.data # Gets The Training Plan Data
+
+        # If The Information Are Missing
+        if not training_plan_data:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre skopírovanie tréningového plánu chýbajú potrebné údaje."))
+            }, status = 400)
+
+        if training_plan_data and len(training_plan_data) > 0:
+            # Deletes Exercises With Similar Training Plan Key
+            TrainingPlan.objects.filter(
+                user = logged_in_user, 
+                training_plan_key = training_plan_data[0].get("training_plan_key")
+            ).delete()
+
+            for one_object in training_plan_data:
+                # Creates The New Training Plan
+                TrainingPlan.objects.create(
+                    user = logged_in_user,
+                    training_plan_key = one_object["training_plan_key"],
+                    type = one_object["type"],
+                    exercise = one_object["exercise"],
+                    periods = one_object["periods"],
+                    unit = one_object["unit"],
+                    order = one_object["order"],
+                    is_warm_up = one_object["is_warm_up"],
+                    is_custom_exercise = False
+                )
+
+        return Response({
+            "success": True, 
+            "message": str(_("Tréningového plán bol úspešne skopírovaný."))
+        }, status = 200)
+
+    except Exception as error:
+        captureError(f"An error occurred while copying the training plan.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri kopírovaní tréningového plánu došlo k chybe."))
         }, status = 500)
 
 ################

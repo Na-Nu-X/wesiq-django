@@ -1197,6 +1197,70 @@ class TrainingPlan(models.Model):
     def __str__(self):
         return _("Tréningový plán užívateľa %(first_name)s %(last_name)s.") % {"first_name": self.user.first_name, "last_name": self.user.last_name}
 
+class OfficialTrainingPlan(models.Model):
+    training_plan_key = models.CharField(
+        verbose_name = _("Training Plan Key"), 
+        help_text = _("Random identification key for the training plan."), 
+        max_length = 50, 
+        default = "None", 
+        null = False, 
+        blank = False
+    )
+
+    type = models.CharField(
+        verbose_name = _("Type"), 
+        help_text = _("Training plan name."), 
+        max_length = 50, 
+        null = True
+    )
+
+    exercise = models.CharField(
+        verbose_name = _("Exercise"), 
+        help_text = _("Exercise name."), 
+        max_length = 50, 
+        null = False
+    )
+
+    periods = ArrayField(
+        models.PositiveIntegerField(
+            verbose_name = _("Reps")
+        ), 
+
+        help_text = _("Exercise periods (the length of the array represents sets and the amount of reps represents the values (0 = to failute / max. reps)."), 
+        default = list, 
+        null = False
+    )
+
+    unit = models.CharField(
+        verbose_name = _("Unit"), 
+        help_text = _("The unit in which the exercise is measured."), 
+        max_length = 20, 
+        choices = UNIT_CHOICES, 
+        default = "reps", 
+        null = False
+    )
+
+    order = models.PositiveIntegerField(
+        verbose_name = _("Order"), 
+        help_text = _("The order of the exercise in the training plan."), 
+        default = 0, 
+        null = False
+    )
+
+    is_warm_up = models.BooleanField(
+        verbose_name = _("Is Warm Up"), 
+        help_text = _("Stores the information if the exercise is warm up."), 
+        default = False, 
+        null = False
+    )
+
+    class Meta:
+        verbose_name = _("Oficiálny Tréningový plán")
+        verbose_name_plural = _("Oficiálne Tréningové plány")
+
+    def __str__(self):
+        return _("Oficiálny tréningový plán %(type)s.") % {"type": self.user.type}
+
 class Exercises(models.Model):
     exercise = models.CharField(
         verbose_name = _("Exercise"), 

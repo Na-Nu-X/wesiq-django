@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ContactMessage
+from .models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, TrainingPlan, OfficialTrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ContactMessage
 
 @admin.register(Users)
 class UsersAdmin(ModelAdmin):
@@ -373,6 +373,37 @@ class TrainingPlanAdmin(ModelAdmin):
     ]
 
     list_editable = []
+
+@admin.register(OfficialTrainingPlan)
+class OfficialTrainingPlanAdmin(ModelAdmin):
+    list_display = [
+        "id",
+        "training_plan_key", 
+        "type",
+        "exercise",
+        "periods",
+        "unit",
+        "order"
+    ]
+
+    list_filter = [
+        "training_plan_key", 
+        "exercise",
+        "order"
+    ]
+
+    search_fields = [
+        "exercise"
+    ]
+
+    list_editable = [
+        "training_plan_key", 
+        "type",
+        "exercise",
+        "periods",
+        "unit",
+        "order"
+    ]
 
 @admin.register(Exercises)
 class ExercisesAdmin(ModelAdmin):

@@ -11,6 +11,7 @@ urlpatterns = [
     path(_("prihlasenie/"), views.loginView, name="login_url"),
     path(_("registracia/"), views.registrationView, name="registration_url"),
     path(_("odhlasenie/"), views.logoutView, name="logout_url"),
+    path(_("delete-account/"), views.deleteAccountView),
     path(_("komunita/"), views.communityView, name="community_url"),
     path(_("prispevok/<str:post_id>"), views.postView, name="post_url"),
     path(_("trening/"), views.trainingSessionView, name="training_session_url"),

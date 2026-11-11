@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", function():void {
     const background_canvas:HTMLCanvasElement = document.querySelector(".background_canvas") as HTMLCanvasElement // Gets The Background Canvas
     const ctx:CanvasRenderingContext2D = background_canvas.getContext("2d") as CanvasRenderingContext2D // Gets The Canvas Context
 
-    const CIRCLES_AMOUNT:number = 20 // Sets The Amount Of Circles
-    const COLORS:string[] = ["#011C6B33", "#01114233", "#01258F33", "#023BE633", "#0231BD33"] // Stores The Colors
+    const CIRCLES_AMOUNT:number = 20 // Defines The Amount Of Circles
+    const COLORS:string[] = ["#011C6B33", "#01114233", "#01258F33", "#023BE633", "#0231BD33"] // Defines The Colors
     let circles:circle[] = [] // Stores All Circles
 
     background_canvas.width = window.innerWidth // Sets The Width Of The Background Canvas

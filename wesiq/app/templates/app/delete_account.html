@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% translate "Odstrániť účet" %}{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'app/css/articles.css' %}">
+{% endblock style %}
+
+{% block content %}
+    {% if logged_in_user %}
+        <p>{% translate "Pre odstránenie účtu navštív stránku s tvojim profilom a v nastaveniach odstrán svoj účet." %}</p>
+        <p>{% translate "Tvoj účet bude automaticky odstránený, ak sa nebude zaznamenaná žiadna aktivita za posledných 30 dní." %}</p>
+        
+        <a href="{% url 'profile_url' logged_in_user.username %}" title="{% translate 'Zobraziť užívateľa' %}" aria-label="{% translate 'Zobraziť užívateľa' %}">
+            <img 
+                class="profile_picture skeleton_loading" 
+                src="
+                    {% if logged_in_user.profile_picture_name %}
+                        /../media/images/{{ logged_in_user.id }}/{{ logged_in_user.profile_picture_name }}
+
+                    {% else %}
+                        {% static 'images/profile_picture.png' %} {% comment %} https://www.flaticon.com/free-icon/user_3177440 {% endcomment %}
+                    
+                    {% endif %}
+                "
+                alt=""
+            >
+        </a>
+
+    {% else %}
+        <p class="no_logged_in">
+            {% translate "Pre odstránenie sa musíš najprv" %}
+            <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "prihlásiť." %}</a>
+        </p>
+
+    {% endif %}
+{% endblock content %}
