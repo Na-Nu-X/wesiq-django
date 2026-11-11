@@ -1737,7 +1737,7 @@ class Post(models.Model):
     )
 
     def get_absolute_url(self):
-        return reverse("post_url", kwargs = {"post_id": self.id})
+        return reverse("post_url", kwargs = {"post_id": self.public_id}) # The URL Uses The Public ID, Never The Database ID
 
     def save(self, *args, **kwargs):
         if not self.public_id:

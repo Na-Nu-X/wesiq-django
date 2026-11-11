@@ -40,6 +40,13 @@ from django.core.paginator import Paginator
 from .tasks import compressImage, compressVideo
 from celery.result import AsyncResult
 from django.http import Http404
+from django.contrib.auth.password_validation import validate_password
+from .security import (
+    issue_password_reset_code, verify_password_reset_code, clear_password_reset_code, revoke_user_refresh_tokens,
+    visible_posts_q, EDITABLE_POST_SETTINGS, parse_bool, record_activity, ActivityValidationError,
+    is_xp_boost_available, validate_uploaded_image, clean_bio_link, generate_numeric_code,
+    clean_post_comment, CommentValidationError
+)
 from ranged_response import RangedFileResponse
 from django.core.exceptions import ValidationError
 from collections import defaultdict
@@ -112,12 +119,17 @@ def captureLogin(message):
 
 # Function For Get The Client IP
 def getClientIp(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    # Forwarded Headers Are Only Trusted Behind A Proxy That Overwrites Them (Otherwise Any Client Could Fake Its IP)
+    if getattr(settings, "RATELIMIT_IP_META_KEY", None):
+        ip = request.META.get(settings.RATELIMIT_IP_META_KEY)
 
-    if x_forwarded_for: ip = x_forwarded_for.split(",")[0].strip()
-    else: ip = request.META.get("REMOTE_ADDR")
+    elif getattr(settings, "BEHIND_PROXY", False) and request.META.get("HTTP_X_FORWARDED_FOR"):
+        ip = request.META["HTTP_X_FORWARDED_FOR"].split(",")[-1].strip() # The Entry Appended By Our Own Proxy
 
-    return ip
+    else:
+        ip = None
+
+    return (ip or request.META.get("REMOTE_ADDR", "")).strip()
 
 # Function For Get The Client Location
 def getClientLocation(ip):
@@ -147,7 +159,7 @@ def generateCode(length = 6, letters = False):
     if letters: characters += string.ascii_letters # Gets The Characters (Digits And Letters)
 
     for one_character in range(length):
-        one_character = random.choice(characters) # Gets The Random Character
+        one_character = secrets.choice(characters) # Gets The Random Character (Cryptographically Secure)
         code += str(one_character) # Adds The Character To The Code
 
     return code # Returns The Code
@@ -537,7 +549,7 @@ def markPostAsSeen(request):
 
         if logged_in_user_id:
             post_id = json.loads(request.body) # Gets The Post ID
-            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+            post = get_object_or_404(Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct(), public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
             # Marks The Post As Seen If Exists And Isn't Already Seen By The User
             SeenPost.objects.get_or_create(
@@ -627,7 +639,7 @@ def togglePostLike(request):
             logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+            post = get_object_or_404(Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct(), public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
             has_like = post.likes_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Liked The Post
 
@@ -673,7 +685,7 @@ def reportPost(request):
             report_post_data = json.loads(request.body) # Gets The Report Post Data
             post_id = report_post_data["post_id"] # Gets The Post ID
             reason = report_post_data["reason"] # Gets The Reason
-            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+            post = get_object_or_404(Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct(), public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
             has_report = post.reports_from_users.filter(id = logged_in_user_id).exists() # Checks If The User Has Already Reported The Post
 
             # Stores The Reported Post
@@ -723,11 +735,20 @@ def editPostSettings(request):
             post_id = edit_post_settings_data["post_id"] # Gets The Post ID
             setting = edit_post_settings_data["setting"] # Gets The Setting
             action = edit_post_settings_data["action"] # Gets The Action
-            post = get_object_or_404(Post, public_id = post_id, user_id = logged_in_user_id) # Gets The Post
+            value = parse_bool(action) # Gets The New Value (Strict Boolean)
+
+            # Only The Toggleable Settings Can Be Changed (Never user, public_id, likes, reports, ...)
+            if setting not in EDITABLE_POST_SETTINGS or value is None:
+                return JsonResponse({
+                    "success": False,
+                    "message": _("Neplatné nastavenie príspevku.")
+                }, status = 400)
+
+            post = Post.objects.filter(public_id = post_id, user_id = logged_in_user_id).first() # Gets The Post
 
             if post:
-                setattr(post, setting, action) # Updates The Given Column's Value
-                post.save() # Saves The Updated Post
+                setattr(post, setting, value) # Updates The Given Setting
+                post.save(update_fields = [setting]) # Saves Only The Updated Setting
 
                 return JsonResponse({
                     "success": True, 
@@ -832,7 +853,7 @@ def togglePostSave(request):
             logged_in_user = Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
 
             post_id = json.loads(request.body) # Gets The Post ID
-            post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+            post = get_object_or_404(Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct(), public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
             has_save = logged_in_user.saved_posts.filter(public_id = post_id).exists() # Checks If The User Has Already Saved The Post
 
@@ -971,13 +992,29 @@ def addComment(request):
 
         if logged_in_user_id:
             comment_data = json.loads(request.body) # Gets The Comment Data
-            post_id = comment_data["post_id"] # Gets The Post ID
-            comment = comment_data["comment"] # Gets The Comment
-            parent_id = comment_data["parent_id"] # Gets The Parent ID
+            post_id = comment_data["post_id"] # Gets The Post ID (Public ID)
+
+            # Gets The Post By Its Public ID (Only If The Viewer Is Allowed To See It)
+            post = Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct().filter(public_id = post_id).first()
+
+            if not post:
+                return JsonResponse({
+                    "success": False,
+                    "message": _("Príspevok nebol nájdený.")
+                }, status = 404)
+
+            try:
+                comment, parent_id = clean_post_comment(post, comment_data.get("comment"), comment_data.get("parent_id")) # Validates The Comment And Its Parent
+
+            except CommentValidationError:
+                return JsonResponse({
+                    "success": False,
+                    "message": _("Komentár nie je možné pridať.")
+                }, status = 400)
 
             # Creates The New Comment
             new_comment = PostForum.objects.create(
-                post_id = post_id,
+                post = post,
                 user_id = logged_in_user_id,
                 comment = comment,
                 parent_id = parent_id
@@ -1845,27 +1882,34 @@ def passwordResetView(request):
                 new_password = password_reset_form.cleaned_data["new_password"] # Gets The New Password
                 
                 try:
-                    user = Users.objects.get(email_address = request.COOKIES.get("email_address")) # Gets The User
+                    user = Users.objects.filter(email_address__iexact = request.COOKIES.get("email_address")).order_by("id").first() # Gets The User
 
-                    if password_reset_code == user.password_reset_code:
-                        # Too Short Password
-                        if len(new_password) < 8:
-                            messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke")) # Sets The Message
+                    # The Code Must Exist, Match, Be Unexpired And Within The Attempt Limit (A Missing Code Never Matches)
+                    verification = verify_password_reset_code(user, password_reset_code) if user else "invalid"
+
+                    if verification == "ok":
+                        try:
+                            validate_password(new_password, user = user) # Runs AUTH_PASSWORD_VALIDATORS
+
+                        except ValidationError as validation_error:
+                            for one_message in validation_error.messages:
+                                messages.add_message(request, messages.ERROR, one_message) # Sets The Message
 
                         else:
                             user.password = make_password(new_password) # Sets The Password
-                            user.password_reset_code = None # Sets The Password Reset Code
-                            user.save(update_fields = ["password", "password_reset_code"]) # Saves The Updated User
+                            user.save(update_fields = ["password"]) # Saves The Updated User
+                            clear_password_reset_code(user) # The Code Can Only Be Used Once
+                            revoke_user_refresh_tokens(user) # Logs Out The Native App Sessions
 
                             messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené")) # Sets The Message
 
                             response = HttpResponseRedirect(reverse("login_url")) # Redirects To The Login Page
                             response.delete_cookie("email_address") # Deletes Cookie With Email Address
                             return response # Returns The Response
-                    
+
                     else:
                         messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje")) # Sets The Message
-                        captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+                        captureError(f"Password reset code verification failed ({verification}).\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id if user else None},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
 
                 except Exception as error:
                     messages.add_message(request, messages.ERROR, _("Pri spracovaní žiadosti o zmenu hesla došlo k chybe")) # Sets The Message
@@ -1878,9 +1922,10 @@ def passwordResetView(request):
         if request.GET.get("password-reset"):
             email_address = request.COOKIES.get("email_address") # Gets The E-mail Address
             
-            if Users.objects.filter(email_address = email_address).exists():
-                user = Users.objects.get(email_address = email_address) # Gets The User
-                code = generateCode() # Generates Random 6-Digit Code
+            user = Users.objects.filter(email_address__iexact = email_address).order_by("id").first() if email_address else None # Gets The User
+            code = issue_password_reset_code(user) if user else None # Generates A Secure 6-Digit Code (None While The Cooldown Is Active)
+
+            if code:
 
                 # Sends The Mail
                 sendMail(
@@ -1891,8 +1936,6 @@ def passwordResetView(request):
                     _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
                     code
                 )
-
-                Users.objects.filter(id = user.id).update(password_reset_code = code) # Updates The Password Reset Code
 
                 messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
 
@@ -2838,9 +2881,19 @@ def trainingSessionView(request):
             # Use XP Boost
             if request.headers.get("X-Requested-Action") == "use-xp-boost":
                 try:
-                    xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Gets The XP Boost Expiration Time
+                    with transaction.atomic():
+                        locked_user = Users.objects.select_for_update().get(id = logged_in_user_id) # Locks The User Row So The Boost Can't Be Claimed Twice In Parallel
 
-                    Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores The New XP Boost Expiration Time
+                        # The Boost Is Only Available Once Per Day After An Activity Yesterday
+                        if not is_xp_boost_available(locked_user):
+                            return JsonResponse({
+                                "success": False,
+                                "message": _("Navýšenie XP nie je dostupné.")
+                            }, status = 400)
+
+                        xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Gets The XP Boost Expiration Time
+
+                        Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores The New XP Boost Expiration Time
 
                     return JsonResponse({
                         "success": True, 
@@ -2880,15 +2933,21 @@ def trainingSessionView(request):
                             users_daily_official_task.save() # Saves The Updated Task
 
                         if users_daily_official_task.progress_percentage == 100.00:
+                            # Conditional Update: Only The Request That Actually Flips is_completed Awards The XP (No Double XP From Parallel Requests)
+                            newly_completed = UserDailyOfficialTasks.objects.filter(
+                                id = users_daily_official_task.id,
+                                is_completed = False
+                            ).update(is_completed = True)
+
                             users_daily_official_task.is_completed = True # Marks The Task As Completed
-                            users_daily_official_task.save() # Saves The Updated Task
 
                             # Increases And Updates The Amount Of User's Obtained XP
-                            Users.objects.filter(
-                                id = logged_in_user_id
-                            ).update(
-                                xp = F("xp") + task.xp
-                            )
+                            if newly_completed:
+                                Users.objects.filter(
+                                    id = logged_in_user_id
+                                ).update(
+                                    xp = F("xp") + task.xp
+                                )
 
                             return JsonResponse({
                                 "success": True, 
@@ -3053,97 +3112,27 @@ def trainingSessionView(request):
             if request.headers.get("X-Requested-Action") == "new-activity":
                 try:
                     new_activity_data = json.loads(request.body) # Gets The New Activity Data
-                    gained_xp = new_activity_data["gained_xp"] # Gets The Gained XP
 
-                    Users.objects.filter(id = logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
-                    Users.objects.filter(id = logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
+                    try:
+                        # The Web Client Sends The Elapsed Time In Seconds; XP Is Capped Server-Side By record_activity
+                        gained_xp = record_activity(
+                            user_id = logged_in_user_id,
+                            elapsed_seconds = new_activity_data.get("elapsed_time", 0),
+                            claimed_xp = new_activity_data.get("gained_xp", 0),
+                            activity_type = new_activity_data.get("type"),
+                            day = new_activity_data.get("day"),
+                            training_plan_summary = new_activity_data.get("training_plan_summary")
+                        )
 
-                    yesterday = today - timedelta(days = 1) # Gets The Yesterday's Date
-
-                    # Gets The User's Last Activity Streak Increase Date
-                    last_activity_streak_increase_date = (
-                        logged_in_user.last_activity_streak_increase_time.date() if logged_in_user.last_activity_streak_increase_time else None
-                    )
-
-                    # Checks If The Activity Streak Hasn't Been Already Increased Today Or If It Has Never Increased Before
-                    if last_activity_streak_increase_date is None or last_activity_streak_increase_date < today:
-                        # Increases The Activity Streak
-                        if last_activity_streak_increase_date == yesterday or logged_in_user.activity_streak == 0:
-                            Users.objects.filter(id = logged_in_user_id).update(
-                                activity_streak = F("activity_streak") + 1,
-                                last_activity_streak_increase_time = today
-                            )
-
-                            # Increases The Max Activity Streak
-                            if logged_in_user.activity_streak > logged_in_user.max_activity_streak:
-                                Users.objects.filter(id = logged_in_user_id).update(
-                                    max_activity_streak = F("activity_streak")
-                                )
-
-                    # Creates The New Activity
-                    Activity.objects.create(
-                        user_id = logged_in_user_id,
-                        elapsed_time = int(new_activity_data["elapsed_time"]),
-                        gained_xp = int(gained_xp),
-                        type = new_activity_data["type"],
-                        training_plan_day = new_activity_data["day"],
-                        training_plan_summary = new_activity_data["training_plan_summary"]
-                    )
-
-                    # No Day Off Week Badge Completion
-                    if not logged_in_user.badges.filter(data = "no_day_off_week").exists():
-                        seven_days_ago = today - timedelta(days = 6) # Gets The Seven Days Ago Date
-
-                        # Gets The Number Of Consecutive Days With Some Recorded Activity
-                        unique_seven_days_of_activity = Activity.objects.filter(
-                            user = logged_in_user,
-                            end_time__date__range = [seven_days_ago, today]
-                        ).values(
-                            "end_time__date"
-                        ).distinct().count()
-
-                        if unique_seven_days_of_activity == 7:
-                            # Creates The New Badge
-                            SpecialBadges.objects.create(
-                                user_id = logged_in_user_id,
-                                title = "No Day Off Week",
-                                data = "no_day_off_week"
-                            )
-
-                    # X-Mas Activity Badge Completion
-                    if not logged_in_user.badges.filter(data = "xmas_activity").exists():
-                        has_xmas_activity = Activity.objects.filter(
-                            user = logged_in_user,
-                            end_time__month = 12,
-                            end_time__day = 24
-                        ).exists()
-
-                        if has_xmas_activity:
-                            # Creates The New Badge
-                            SpecialBadges.objects.create(
-                                user_id = logged_in_user_id,
-                                title = "X-Mas Activity",
-                                data = "xmas_activity"
-                            )
-
-                    # New Year, New Goals Badge Completion
-                    if not logged_in_user.badges.filter(data = "new_year_new_goals").exists():
-                        has_new_year_new_goals = Activity.objects.filter(
-                            user = logged_in_user,
-                            end_time__month = 1,
-                            end_time__day = 1
-                        ).exists()
-
-                        if has_new_year_new_goals:
-                            # Creates The New Badge
-                            SpecialBadges.objects.create(
-                                user_id = logged_in_user_id,
-                                title = "New Year, New Goals",
-                                data = "new_year_new_goals"
-                            )
+                    except (ActivityValidationError, TypeError, ValueError, AttributeError):
+                        return JsonResponse({
+                            "success": False,
+                            "message": _("Údaje o aktivite sú neplatné.")
+                        }, status = 400)
 
                     return JsonResponse({
                         "success": True, 
+                        "gained_xp": gained_xp,
                         "message": _("Aktivita bola úspešne zaznamenaná.")
                     }, status = 201)
 
@@ -3868,7 +3857,7 @@ def communityView(request):
                                         compress_tasks.append({
                                             "task_id": compress_video_task.id,
                                             "post_media_id": new_post_media.id,
-                                            "post_id": str(new_post_media.post.id)
+                                            "post_id": new_post_media.post.public_id
                                         })
                                     
                                     # Image
@@ -3879,7 +3868,7 @@ def communityView(request):
                                         compress_tasks.append({
                                             "task_id": compress_image_task.id,
                                             "post_media_id": new_post_media.id,
-                                            "post_id": str(new_post_media.post.id)
+                                            "post_id": new_post_media.post.public_id
                                         })
 
                                 except Exception:
@@ -4201,7 +4190,7 @@ def loadPostsView(request):
             "id": logged_in_user_id, 
             "role": logged_in_user.role,
             "profile_picture_name": logged_in_user.profile_picture_name,
-            "saved_posts": list(logged_in_user.saved_posts.values_list("id", flat = True))
+            "saved_posts": list(logged_in_user.saved_posts.values_list("public_id", flat = True)) # Public IDs, Matching The "id" Of Each Post In This Response
         }
 
         return JsonResponse({
@@ -4225,7 +4214,7 @@ def loadPostCommentsView(request, post_id):
 
     page_number = request.GET.get("page", 1) # Gets The Current Page Number
 
-    post = get_object_or_404(Post, public_id = post_id) # Gets The Post
+    post = get_object_or_404(Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct(), public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
     try:
         # Gets The Post Root Comments With All Related Data
@@ -4320,15 +4309,22 @@ def streamVideo(request, user_id, media_id, filename):
     mimetypes.add_type("application/x-mpegURL", ".m3u8")
     mimetypes.add_type("video/MP2T", ".ts")
 
+    # The Media Must Belong To The Given User And Its Post Must Be Visible To The Viewer
+    is_visible = PostMedia.objects.filter(
+        id = media_id,
+        post__user_id = user_id,
+        post__in = Post.objects.filter(visible_posts_q(request.session.get("logged_in_user_id")))
+    ).exists()
+
     # Gets The Save Video File Path (Path Traversal Protection) From Traveling Between Paths
     safe_filename = os.path.basename(filename) # Gets The Safe Filename
     file_path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename) # Gets The File Path
 
-    if not os.path.exists(file_path):
+    if not is_visible or not os.path.isfile(file_path):
         raise Http404(f"File {safe_filename} was not found.")
 
     # Checks If The File Is index.m3u8 Or .ts Video File Segment
-    content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
+    content_type, _encoding = mimetypes.guess_type(file_path) # Gets The Content Type
     if not content_type: content_type = "application/octet-stream" # Sets The Content Type
 
     video_response = FileResponse(open(file_path, "rb"), content_type = content_type) # Gets The Video Response
@@ -4732,7 +4728,7 @@ def profileView(request, username):
                                 follow_request_id = json.loads(request.body) # Gets The Follow Request ID
 
                                 # Gets The Deleted Follow Requests Amount
-                                deleted_follow_requests_amount, _ = FollowRelation.objects.filter(
+                                deleted_follow_requests_amount, _deleted_per_model = FollowRelation.objects.filter(
                                     id = follow_request_id,
                                     to_user = logged_in_user, 
                                     status = "pending"
@@ -4797,6 +4793,22 @@ def profileView(request, username):
                                 if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
                                     selected_profile_picture = request.FILES.get("select_profile_picture") # Gets The Selected Profile Picture
                                     
+                                    # Validates Before Anything Is Changed, So A Rejected Request Has No Side Effects
+                                    # E-mail Addresses Aren't Unique At The Database Level, So Uniqueness Is Checked Here
+                                    if email_address and email_address != logged_in_user.email_address and Users.objects.filter(email_address__iexact = email_address).exclude(id = logged_in_user_id).exists():
+                                        messages.add_message(request, messages.ERROR, _("Používateľ s týmto e-mailom už existuje")) # Sets The Message
+                                        return redirect(request.path) # Redirects To The Current Page
+
+                                    profile_picture_extension = None # Stores The Safe Extension Detected From The Image Content
+
+                                    if selected_profile_picture:
+                                        try:
+                                            profile_picture_extension = validate_uploaded_image(selected_profile_picture) # Checks The File Really Is An Image
+
+                                        except ValidationError:
+                                            messages.add_message(request, messages.ERROR, _("Súbor nemá podporovaný formát")) # Sets The Message
+                                            return redirect(request.path) # Redirects To The Current Page
+
                                     if selected_profile_picture:
                                         profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
 
@@ -4806,7 +4818,7 @@ def profileView(request, username):
                                             if os.path.exists(profile_picture_path):
                                                 os.remove(profile_picture_path) # Removes The Profile Picture File
 
-                                        new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + Path(selected_profile_picture.name).suffix}" # Creates The New Profile Picture Name
+                                        new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + profile_picture_extension}" # Creates The New Profile Picture Name (Extension From The Content, Not The Upload Name)
 
                                         profile_picture_location = FileSystemStorage(location = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")) # Gets The Profile Picture Location
                                         profile_picture_location.save(new_profile_picture_name, selected_profile_picture) # Saves The Profile Picture
@@ -4871,9 +4883,15 @@ def profileView(request, username):
                                             new_bio_links = [] # Stores The New Bio Links
                                             
                                             # Removes White Spaces From Every URL
-                                            for one_url in bio_links_list:
-                                                one_url = one_url.strip()
+                                            for one_url in bio_links_list[:10]:
+                                                one_url = str(one_url).strip()
                                                 if not one_url:
+                                                    continue
+
+                                                try:
+                                                    one_url = clean_bio_link(one_url) # Only http(s) URLs (Blocks javascript: / data: Links)
+
+                                                except ValidationError:
                                                     continue
 
                                                 # Appends The New Bio Link To The New Bio Links

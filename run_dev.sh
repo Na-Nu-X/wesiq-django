@@ -12,7 +12,10 @@ gnome-terminal --title="NPM Watch" -- bash -c "npm run watch; exec bash"
 gnome-terminal --title="SASS Watch" -- bash -c "npx sass --watch .:.; exec bash"
 
 # Ngrok
-# gnome-terminal --title="Ngrok" -- bash -c "ngrok config add-authtoken 3BiRHm4nENPy49HZVOtJprxcpwj_bG3tnyuBv8sE8PmRNQN5 && ngrok http --domain=delinquently-overdistraught-glynis.ngrok-free.dev 8000; exec bash"
+# NGROK_AUTHTOKEN And NGROK_DOMAIN Are Read From The Root .env (Never Commit The Token)
+# export NGROK_AUTHTOKEN="$(grep -E '^NGROK_AUTHTOKEN=' ../.env | cut -d= -f2- | tr -d '"')"
+# NGROK_DOMAIN="$(grep -E '^NGROK_DOMAIN=' ../.env | cut -d= -f2- | tr -d '"')"
+# gnome-terminal --title="Ngrok" -- bash -c "ngrok http --domain=$NGROK_DOMAIN 8000; exec bash"
 
 # # Django Translations
 # gnome-terminal --title="Django Translations" -- bash -c "
