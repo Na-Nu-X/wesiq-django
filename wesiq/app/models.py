@@ -522,7 +522,7 @@ class UserDailyOfficialTasks(models.Model):
             return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s".') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title}
 
         else:
-            return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s" na %(progress_percentage)s%.') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title, "progress_percentage": self.progress_percentage}
+            return _('%(first_name)s %(last_name)s splnil úlohu "%(title)s" na %(progress_percentage)s%%.') % {"first_name": self.user.first_name, "last_name": self.user.last_name, "title": self.task.title, "progress_percentage": self.progress_percentage}
 
 class UsersReport(models.Model):
     reported_user = models.ForeignKey(
@@ -2288,7 +2288,7 @@ class Chat(models.Model):
         verbose_name_plural = _("Správy")
 
     def __str__(self):
-        return _("Správa od %(sender_first_name)s %(sender_first_name)s pre %(receiver_first_name)s %(receiver_last_name)s.") % {"sender_first_name": self.sender.first_name, "sender_last_name": self.sender.last_name, "receiver_first_name": self.receiver.first_name, "receiver_last_name": self.receiver.last_name}
+        return _("Správa od %(sender_first_name)s %(sender_last_name)s pre %(receiver_first_name)s %(receiver_last_name)s.") % {"sender_first_name": self.sender.first_name, "sender_last_name": self.sender.last_name, "receiver_first_name": self.receiver.first_name, "receiver_last_name": self.receiver.last_name}
 
 class MessageReaction(models.Model):
     chat = models.ForeignKey(

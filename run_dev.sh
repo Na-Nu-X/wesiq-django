@@ -31,4 +31,4 @@ gnome-terminal --title="SASS Watch" -- bash -c "npx sass --watch .:.; exec bash"
 # docker compose restart
 # docker compose down web
 # docker compose up web
-# npx i18next-conv -l sk -s locale/sk/LC_MESSAGES/django.po -t locale/sk/sk.json
+# docker compose exec web python locale/tools/build_json.py   # Mobile App JSON Catalogs From The .po Files

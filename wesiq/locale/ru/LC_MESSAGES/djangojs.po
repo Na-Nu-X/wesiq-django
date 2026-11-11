@@ -6,17 +6,19 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Wesiq\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-20 20:06+0000\n"
+"POT-Creation-Date: 2026-11-11 17:36+0000\n"
 "PO-Revision-Date: 2026-08-06 20:26+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: ru\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
@@ -33,19 +35,19 @@ msgstr "Главная страница"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "/prihlasenie"
-msgstr "/avtorizovatsya"
+msgstr "/vkhod"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Prihlásenie"
-msgstr "Авторизоваться"
+msgstr "Вход"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Prihlásiť sa"
-msgstr "Авторизоваться"
+msgstr "Войти"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Autorizovať sa"
-msgstr "Авторизовать"
+msgstr "Подтвердить личность"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/obnova-hesla"
@@ -53,7 +55,7 @@ msgstr "/vosstanovleniye-parolya"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Obnova hesla"
-msgstr "Восстановление пароля"
+msgstr "Сброс пароля"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "Obnoviť heslo"
@@ -73,11 +75,11 @@ msgstr "Регистрация"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Zaregistrovať sa"
-msgstr "Регистрация"
+msgstr "Зарегистрироваться"
 
 #: app/static/app/ts/src/components/searchBar.ts:29
 msgid "Vytvoriť účet"
-msgstr "Завести аккаунт"
+msgstr "Создать аккаунт"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "/profil"
@@ -89,7 +91,7 @@ msgstr "Профиль"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Môj účet"
-msgstr "Мой счет"
+msgstr "Мой аккаунт"
 
 #: app/static/app/ts/src/components/searchBar.ts:30
 msgid "Upraviť účet"
@@ -105,7 +107,7 @@ msgstr "/moy-reyting"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moje hodnotenie"
-msgstr "Мой рейтинг"
+msgstr "Мой отзыв"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moja recenzia"
@@ -113,7 +115,7 @@ msgstr "Мой отзыв"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Upraviť hodnotenie"
-msgstr "Редактировать рейтинг"
+msgstr "Изменить отзыв"
 
 #: app/static/app/ts/src/components/searchBar.ts:32
 msgid "/blog"
@@ -129,11 +131,11 @@ msgstr "Статьи"
 
 #: app/static/app/ts/src/components/searchBar.ts:33
 msgid "/trening"
-msgstr "/obucheniye"
+msgstr "/trenirovka"
 
 #: app/static/app/ts/src/components/searchBar.ts:33
 msgid "Tréning"
-msgstr "Обучение"
+msgstr "Тренировка"
 
 #: app/static/app/ts/src/components/searchBar.ts:33
 msgid "Aktivita"
@@ -153,15 +155,15 @@ msgstr "Мои планы тренировок"
 
 #: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Vytvoriť tréningový plán"
-msgstr "Составьте план обучения"
+msgstr "Создать план тренировок"
 
 #: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Upraviť tréningový plán"
-msgstr "Редактировать план обучения"
+msgstr "Изменить план тренировок"
 
 #: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Odstrániť tréningový plán"
-msgstr "Удалить план обучения"
+msgstr "Удалить план тренировок"
 
 #: app/static/app/ts/src/components/searchBar.ts:35
 msgid "/komunita"
@@ -178,7 +180,7 @@ msgstr "Поделиться публикацией"
 #: app/static/app/ts/src/components/searchBar.ts:35
 #: app/static/app/ts/src/pages/community/functions/uploadPost.ts:86
 msgid "Uverejniť príspevok"
-msgstr "Опубликовать сообщение"
+msgstr "Создать публикацию"
 
 #: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Nájsť užívateľa"
@@ -186,7 +188,7 @@ msgstr "Найти пользователя"
 
 #: app/static/app/ts/src/pages/articles/components/rating.ts:56
 msgid "Pri pridávaní hodnotenia došlo k chybe."
-msgstr "Произошла ошибка при добавлении отзыва."
+msgstr "Произошла ошибка при отправке отзыва."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:43
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:24
@@ -213,7 +215,7 @@ msgid "Zobraziť užívateľa"
 msgstr "Показать пользователя"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:81
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:184
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:182
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:93
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:196
 msgid "Napísať komentár"
@@ -226,7 +228,7 @@ msgstr "Написать комментарий"
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:123
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:124
 msgid "Odpovedať..."
-msgstr "Отвечать..."
+msgstr "Ответить..."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:133
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:134
@@ -237,32 +239,32 @@ msgstr "Отвечать..."
 msgid "Zobraziť odpovede..."
 msgstr "Показать ответы..."
 
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:144
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:142
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:156
 msgid "Pri odosielaní komentáru došlo k chybe."
 msgstr "Произошла ошибка при отправке вашего комментария."
 
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:173
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:171
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:185
 #, javascript-format
 msgid "Odpoveď užívateľovi %s"
-msgstr "Ответ пользователю %s"
+msgstr "Ответ для %s"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:31
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:31
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:34
 msgid "Pri zmene označenia páči sa mi to došlo k chybe."
-msgstr "Произошла ошибка при изменении метки лайка."
+msgstr "Произошла ошибка при изменении лайка."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:58
-#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:82
+#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:80
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:58
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:82
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:119
 #: app/static/app/ts/src/pages/homepage/functions/reviews.ts:112
 #: app/static/app/ts/src/pages/profile/components/profile.ts:43
 msgid "Pri odosielaní nahlásenia došlo k chybe."
-msgstr "Произошла ошибка при отправке отчета."
+msgstr "Произошла ошибка при отправке жалобы."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:117
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:639
@@ -279,15 +281,14 @@ msgstr "Удалить"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid "(upravené)"
-msgstr "(отредактировано)"
+msgstr "(изменено)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid " (upravené)"
-msgstr "(отредактировано)"
+msgstr " (изменено)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:155
 #: app/static/app/ts/src/pages/chat/components/chat.ts:471
-#| msgid "Napísať komentár"
 msgid "Napísať správu"
 msgstr "Написать сообщение"
 
@@ -295,14 +296,13 @@ msgstr "Написать сообщение"
 #: app/static/app/ts/src/pages/chat/components/chat.ts:193
 #, javascript-format
 msgid "Reakciu pridal: %s"
-msgstr "Реакцию добавил: %s"
+msgstr "Реакцию добавил(а): %s"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:223
 msgid "Spojenie sa neočakávane prerušilo."
 msgstr "Соединение неожиданно прервалось."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:291
-#| msgid "Upraviť"
 msgid "Upraviť správu"
 msgstr "Редактировать сообщение"
 
@@ -320,14 +320,14 @@ msgstr "Загрузка..."
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:446
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:447
 msgid "Vypnúť viditeľnosť len pre sledovateľov"
-msgstr "Отключить видимость только для подписчиков"
+msgstr "Показывать всем"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:433
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:434
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:453
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:454
 msgid "Zapnúť viditeľnosť len pre sledovateľov"
-msgstr "Включить видимость только для подписчиков"
+msgstr "Показывать только подписчикам"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:467
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:468
@@ -348,7 +348,7 @@ msgstr "Отключить комментарии"
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:527
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:528
 msgid "Zobraziť počet označení páči sa mi to"
-msgstr "Показать лайки"
+msgstr "Показать количество лайков"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:514
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:515
@@ -365,7 +365,7 @@ msgstr "Автору поста комментарий понравился."
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:43
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:617
 msgid "Nahlásiť"
-msgstr "Отчет"
+msgstr "Пожаловаться"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:79
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:737
@@ -382,7 +382,7 @@ msgstr "Отмена"
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:184
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:196
 msgid "Začať sledovať"
-msgstr "Подписывайтесь"
+msgstr "Подписаться"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:140
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:101
@@ -392,13 +392,13 @@ msgstr "Отписаться"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:156
 msgid "Otvoriť mapy"
-msgstr "Открыть карты"
+msgstr "Открыть на карте"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:194
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:315
 #, javascript-format
 msgid "Príspevok užívateľa %s"
-msgstr "Вклад пользователя %s"
+msgstr "Публикация %s"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:222
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:223
@@ -407,21 +407,21 @@ msgstr "В видео нет звука"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:345
 msgid "Skryté"
-msgstr "Скрытый"
+msgstr "Скрыто"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:372
 msgid "Vypnuté"
-msgstr "Выключенный"
+msgstr "Выключено"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:379
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:380
 msgid "Zdielať..."
-msgstr "Делиться..."
+msgstr "Поделиться..."
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:384
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:385
 msgid "Počet videní..."
-msgstr "Количество просмотров..."
+msgstr "Просмотры..."
 
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:16
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:17
@@ -440,7 +440,7 @@ msgstr "Произошла ошибка при получении местопо
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:71
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:72
 msgid "Odstrániť..."
-msgstr "Удалять..."
+msgstr "Удалить..."
 
 #: app/static/app/ts/src/pages/community/functions/postPreview.ts:106
 msgid "Obrázok je príliš veľký"
@@ -475,11 +475,11 @@ msgstr "/ru/post/%s"
 
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:92
 msgid "Pri zmene uloženia príspevku došlo k chybe."
-msgstr "Произошла ошибка при изменении сохранения поста."
+msgstr "Произошла ошибка при изменении сохранённых публикаций."
 
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:174
 msgid "Pri úprave príspevku došlo k chybe."
-msgstr "При редактировании поста произошла ошибка."
+msgstr "Произошла ошибка при редактировании публикации."
 
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:222
 msgid "Pri odstraňovaní príspevku došlo k chybe."
@@ -488,25 +488,25 @@ msgstr "При удалении публикации произошла ошиб
 #: app/static/app/ts/src/pages/community/functions/posts.ts:55
 #: app/static/app/ts/src/pages/community/functions/posts.ts:84
 msgid "Pri hľadaní príspevkov došlo k chybe."
-msgstr "Произошла ошибка при поиске сообщений."
+msgstr "Произошла ошибка при поиске публикаций."
 
 #: app/static/app/ts/src/pages/community/functions/posts.ts:80
 msgid "Videli ste všetky príspevky."
-msgstr "Вы видели все сообщения."
+msgstr "Вы всё посмотрели!"
 
 #: app/static/app/ts/src/pages/community/functions/posts.ts:94
 msgid "Nenašli sa žiadne príspevky."
-msgstr "Посты не найдены."
+msgstr "Публикации не найдены."
 
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:32
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:56
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:61
 msgid "Pri spracovávaní príspevku došlo k chybe!"
-msgstr "При обработке сообщения произошла ошибка!"
+msgstr "При обработке публикации произошла ошибка!"
 
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:71
 msgid "Príspevok bol úspešne pridaný."
-msgstr "Пост успешно добавлен."
+msgstr "Публикация добавлена."
 
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:56
 msgid "Pri načítavaní užívateľov došlo k chybe."
@@ -515,7 +515,7 @@ msgstr "Произошла ошибка при загрузке пользова
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:100
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:185
 msgid "Zrušiť žiadosť"
-msgstr "Отменить подписку на запрос"
+msgstr "Отменить запрос"
 
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:131
 #: app/static/app/ts/src/pages/community/functions/tagUsers.ts:57
@@ -525,20 +525,20 @@ msgstr "Произошла ошибка при поиске пользовате
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:175
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:176
 msgid "Počet sledovateľov..."
-msgstr "Количество подписчиков..."
+msgstr "Подписчики..."
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:258
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:259
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:264
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:265
 msgid "Označiť"
-msgstr "Отметка"
+msgstr "Отметить"
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:411
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:417
 msgid "Odstrániť zmienku"
 msgstr "Удалить упоминание"
 
 #: app/static/app/ts/src/pages/community/functions/toggleFollow.ts:57
 msgid "Pri zmene sledovania došlo k chybe."
-msgstr "Произошла ошибка при изменении следующего."
+msgstr "Произошла ошибка при изменении подписки."
 
 #: app/static/app/ts/src/pages/community/functions/uploadPost.ts:15
 msgid "Overuje sa..."
@@ -618,30 +618,30 @@ msgstr "Количество шагов"
 #: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:195
 #, javascript-format
 msgid "Tréningový plán %s bol odstránený."
-msgstr "Тренировочный план %s удален."
+msgstr "План тренировок %s удалён."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:200
 msgid "Pri odstraňovaní tréningového plánu došlo k chybe."
-msgstr "Произошла ошибка при удалении плана обучения."
+msgstr "Произошла ошибка при удалении плана тренировок."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:100
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne pridaný."
-msgstr "Тренировочный план %s успешно добавлен."
+msgstr "План тренировок %s добавлен."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:101
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne upravený."
-msgstr "Тренировочный план %s успешно скорректирован."
+msgstr "План тренировок %s обновлён."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:107
 msgid "Pri ukladaní tréningového plánu došlo k chybe."
-msgstr "Произошла ошибка при сохранении плана тренировки."
+msgstr "Произошла ошибка при сохранении плана тренировок."
 
 #: app/static/app/ts/src/pages/password_reset/components/timer.ts:23
 #: app/static/app/ts/src/pages/password_reset/components/timer.ts:47
 msgid "Platnosť vypršala!"
-msgstr "Истекший!"
+msgstr "Срок истёк!"
 
 #: app/static/app/ts/src/pages/profile/components/edit_account.ts:84
 #: app/static/app/ts/src/pages/profile/components/edit_account.ts:85
@@ -656,42 +656,30 @@ msgstr "Удалить ссылку"
 msgid "Váš úcet bude odstránený"
 msgstr "Ваш аккаунт будет удалён"
 
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:67
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:89
-#: app/static/app/ts/src/pages/profile/components/followers.ts:56
-msgid "Žiadne žiadosti o sledovanie"
-msgstr "Нет запросов на подписку"
-
-#: app/static/app/ts/src/pages/profile/components/followers.ts:64
-#| msgid "Žiadne žiadosti o sledovanie"
-msgid "Žiadny sledovatelia"
-msgstr "Нет подписчиков"
-
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
 msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
-msgstr "Произошла ошибка при попытке ограничить пользователя."
+msgstr "Произошла ошибка при блокировке пользователя."
 
 #: app/static/app/ts/src/pages/profile/functions/followRequests.ts:19
 msgid "Pri potvrdení žiadosti o sledovanie došlo k chybe."
-msgstr "Произошла ошибка при принятии запроса на отслеживание."
+msgstr "Произошла ошибка при принятии запроса на подписку."
 
 #: app/static/app/ts/src/pages/profile/functions/followRequests.ts:36
 msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
-msgstr "Произошла ошибка при отклонении запроса на отслеживание."
+msgstr "Произошла ошибка при отклонении запроса на подписку."
 
 #: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
-#| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "При удалении трекера произошла ошибка."
+msgstr "Произошла ошибка при удалении подписчика."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
 msgid "<span>Žiadne aktívne navýšenie XP</span>"
-msgstr "<span>Нет активного повышения опыта</span>"
+msgstr "<span>Нет активного бонуса XP</span>"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
 msgid "Nezískali ste žiadne XP"
-msgstr "Вы не получили ни одного очка опыта."
+msgstr "Вы не получили XP"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:54
 msgid "Získali ste"
@@ -699,63 +687,57 @@ msgstr "Вы получили"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:56
 msgid "<br>Aktuálna aktivita trvala: "
-msgstr "Текущая активность продолжалась:"
+msgstr "<br>Эта тренировка длилась: "
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
 msgstr ""
-"Продолжительность текущей активности на 100%% превысила средний показатель "
-"за последние 7 дней"
+"Эта тренировка была на 100 %% длиннее вашей средней за последние 7 дней"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
-msgstr ""
-"Продолжительность текущей активности была на %s%% больше, чем в среднем за "
-"последние 7 дней"
+msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgstr "Эта тренировка была на %s %% длиннее вашей средней за последние 7 дней"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
-msgstr ""
-"Продолжительность текущей активности была на %s%% меньше, чем в среднем за "
-"последние 7 дней"
+msgstr "Эта тренировка была на %s %% короче вашей средней за последние 7 дней"
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40
 msgid "Pri pridávaní úlohy došlo k chybe."
-msgstr "При добавлении задачи произошла ошибка."
+msgstr "Произошла ошибка при добавлении задания."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:95
 msgid "Pri zmene stavu úlohy došlo k chybe."
-msgstr "Произошла ошибка при изменении статуса задачи."
+msgstr "Произошла ошибка при изменении статуса задания."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:112
 msgid "Pri odstraňovaní úlohy došlo k chybe."
-msgstr "При удалении задачи произошла ошибка."
+msgstr "Произошла ошибка при удалении задания."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:156
 msgid "Pri odstraňovaní úloh došlo k chybe."
-msgstr "Произошла ошибка при удалении задач."
+msgstr "Произошла ошибка при удалении заданий."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:203
 msgid "Pri pokuse o zmenu poradia úloh došlo k chybe."
-msgstr "Произошла ошибка при попытке изменить порядок задач."
+msgstr "Произошла ошибка при изменении порядка заданий."
 
 #: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:221
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
-msgstr "Произошла ошибка при пометке задачи как выполненной."
+msgstr "Произошла ошибка при отметке задания как выполненного."
 
 #: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
-msgstr "Произошла ошибка при записи активности."
+msgstr "Произошла ошибка при записи тренировки."
 
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:45
 msgid "Pri uplatňovaní navýšenia XP došlo k chybe."
-msgstr "Произошла ошибка при применении повышения опыта."
+msgstr "Произошла ошибка при активации бонуса XP."
 
 #: app/static/app/ts/src/utils/password.ts:4
 msgid "Heslá sa zhodujú"
@@ -778,25 +760,3 @@ msgstr "Показать пароль"
 #: app/static/app/ts/src/utils/password.ts:59
 msgid "Zadajte váš e-mail"
 msgstr "Введите адрес электронной почты"
-
-#, javascript-format
-#~ msgid "/api/stream-video/%s/%s/%s"
-#~ msgstr "/api/stream-video/%s/%s/%s"
-
-#~ msgid "Pri pridávaní označenia páči sa mi to došlo k chybe."
-#~ msgstr "Произошла ошибка при добавлении лайка."
-
-#~ msgid "Pri rušení označenia páči sa mi to došlo k chybe."
-#~ msgstr "Произошла ошибка при отмене лайка."
-
-#~ msgid "Profilový obrázok bude odstránený"
-#~ msgstr "Фотография профиля будет удалена"
-
-#~ msgid "/moj-ucet"
-#~ msgstr "/moy-schet"
-
-#~ msgid "An Error Occurred While Searching for Users."
-#~ msgstr "Произошла ошибка при поиске пользователей."
-
-#~ msgid "Vaše hodnotenie bude odstránené"
-#~ msgstr "Ваш отзыв будет удалён"

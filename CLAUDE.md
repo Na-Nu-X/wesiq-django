@@ -38,6 +38,15 @@ docker compose exec web python manage.py makemessages -d djangojs -l sk -l cs -l
 docker compose exec web python manage.py compilemessages
 ```
 
+After editing translations (run inside `docker compose exec web …`):
+```bash
+python locale/tools/lint_po.py      # placeholders, HTML tags, line breaks, leading/trailing spaces, leftover Slovak, mixed Latin/Cyrillic
+python locale/tools/url_check.py    # e-mail links and JS paths must match each language's translated routes (--fix rewrites them)
+python manage.py compilemessages -l sk -l cs -l en -l es -l fr -l uk -l ru -l pt_BR -l de
+python locale/tools/build_json.py   # regenerates locale/<lang>/<lang>.json for the mobile app (replaces i18next-conv)
+```
+Translation conventions: msgids are Slovak, and fixes to Slovak wording go into `locale/sk` msgstrs rather than the source. Address forms: sk/cs/de/fr/ru/uk use the formal form (vy/Sie/vous/вы/ви), es uses tú (Spain), pt_BR uses você. In English, use sentence case and "Log in / Sign up / email". Keep the msgid's leading and trailing spaces, because some strings are concatenated in templates. Route slugs (`app/urls.py`) must be lowercase ASCII and unique per language.
+
 Local stripe webhook testing (from `.env.example`): `docker run --rm -it stripe/stripe-cli listen --forward-to host.docker.internal:8000/stripe/webhook/`
 
 Note: `wesiq/requirements.txt` is UTF-16 encoded. Keep that encoding when you edit it, or convert it on purpose.
