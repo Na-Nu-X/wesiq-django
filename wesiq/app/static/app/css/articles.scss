@@ -7,17 +7,26 @@
     text-align: justify;
     overflow: hidden;
 
+    // Article Header (Like The Native Article Screen: Image Card, Title, Description, Rating)
+
     .article_banner {
         display: flex;
         flex-direction: row;
         align-items: stretch;
-        gap: 20px;
-        background-color: transparentize($secondary-color, 0.1);
+        gap: $space-xl;
+        margin-bottom: $space-lg;
 
         .banner_image {
+            flex-shrink: 0;
+
             img {
                 display: block;
+                width: 100%;
                 max-width: 400px;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
+                background-color: $color-surface-raised;
+                border-radius: $radius-lg;
             }
         }
 
@@ -25,48 +34,49 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 10px;
-            padding: 10px 20px 10px 0px;
-            color: $main-color;
+            gap: $space-md;
+            padding: $space-xs 0px;
+            color: $color-text;
 
             .article_opening {
-                padding-left: 10px;
-                border-left: 3px solid $main-color;
+                display: flex;
+                flex-direction: column;
+                gap: $space-sm;
                 animation: fadeIn 0.3s ease-in forwards;
 
                 h2 {
+                    @include typography(title);
                     text-align: left;
-                    font-family: $article-heading-font;
-                    font-size: 3em;
                 }
 
                 p {
+                    @include typography(body);
                     display: -webkit-box;
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 5;
                     line-clamp: 5;
                     overflow: hidden;
                     text-align: left;
+                    color: $color-text-secondary;
                 }
             }
 
             .article_info {
                 .rating {
                     justify-content: left;
+                    gap: $space-xs + 2px;
                     margin: 0px;
 
                     .fa-star {
-                        font-size: 1.5em;
+                        font-size: 22px;
                         cursor: pointer;
-            
+
                         &.full {
-                            color: $yellow-color;
-                            opacity: 1;
+                            color: $color-premium;
                         }
 
                         &.empty {
-                            color: $dark-blue-color;
-                            opacity: 0.5;
+                            color: $color-surface-strong;
                         }
                     }
                 }
@@ -81,7 +91,7 @@
         max-width: $secondary-width;
         margin: 20px auto;
         padding: 20px;
-        border: 1px solid transparentize($blue-color, 0.8);
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
 
         .bar {
@@ -95,7 +105,7 @@
             background-color: hsl(var(--hue), 80%, 50%);
             border-radius: $small-border-radius;
             transition: width 0.3s ease, background-color 0.3s ease;
-            
+
             &:hover {
                 background-color: hsl(var(--hue), 80%, 60%);
                 cursor: pointer;
@@ -113,7 +123,7 @@
                 font-size: 12px;
                 opacity: 0.5;
                 white-space: nowrap;
-                color: $light-blue-color;
+                color: $color-text-secondary;
                 pointer-events: none;
             }
         }
@@ -124,9 +134,8 @@
         max-width: $main-width;
         margin: 0px auto 50px;
         padding: 50px 30px;
-        border: 1px solid transparentize($blue-color, 0.5);
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
-        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
         overflow: hidden;
 
         &::before {
@@ -192,12 +201,6 @@
         a {
             margin-right: 5px;
 
-            &:hover {
-                .profile_picture {
-                    transform: scale(1.05);
-                }
-            }
-
             .profile_picture {
                 @include profile_picture;
                 display: block;
@@ -218,14 +221,10 @@
                     color: $yellow-color;
                     opacity: 1;
                 }
-                
-                &.empty {
-                    color: $light-blue-color;
-                    opacity: 0.5;
-                }
 
-                &:hover {
-                    transform: scale(1.1);
+                &.empty {
+                    color: $color-text-secondary;
+                    opacity: 0.5;
                 }
             }
         }
@@ -240,7 +239,7 @@
         width: 100%;
         margin: 0px auto;
         padding: 10px 20px 20px;
-        border: 1px solid transparentize($blue-color, 0.8);
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
 
         &.hidden {
@@ -256,7 +255,7 @@
             .one_comment {
                 position: relative;
                 margin-bottom: 10px;
-                
+
                 &::before {
                     content: "";
                     position: absolute;
@@ -264,7 +263,7 @@
                     left: calc(6px + 38px / 2);
                     width: 1px;
                     height: calc(100% - 38px);
-                    background-color: lighten($main-color, 20%);
+                    background-color: $color-surface-raised;
                 }
 
                 &:last-child {
@@ -278,16 +277,12 @@
                         display: flex;
                         align-items: center;
                         gap: 10px;
-    
+
                         a {
                             .profile_picture {
                                 @include profile_picture($width: 38px, $height: 38px);
                                 display: block;
                                 transition: transform 0.3s ease;
-        
-                                &:hover {
-                                    transform: scale(1.05);
-                                }
                             }
                         }
 
@@ -334,22 +329,22 @@
                             align-items: center;
                             gap: 5px;
                             height: 20px;
-        
+
                             .fa-heart {
                                 display: block;
                                 color: $blue-color;
-        
+
                                 &:hover {
                                     color: $red-color !important;
                                     cursor: pointer;
                                     transition: color 0.3s ease;
                                 }
                             }
-        
+
                             .fa-solid {
                                 color: $red-color;
                             }
-        
+
                             .likes_counter {
                                 display: inline-block;
                                 color: $blue-color;
@@ -380,22 +375,22 @@
                         align-items: center;
                         gap: 5px;
                         height: 20px;
-    
+
                         .fa-heart {
                             display: block;
                             color: $blue-color;
-    
+
                             &:hover {
                                 color: $red-color !important;
                                 cursor: pointer;
                                 transition: color 0.3s ease;
                             }
                         }
-    
+
                         .fa-solid {
                             color: $red-color;
                         }
-    
+
                         .likes_counter {
                             display: inline-block;
                             color: $blue-color;
@@ -408,7 +403,7 @@
                         p {
                             font-size: 0.8em;
                             font-style: italic;
-                            color: $light-blue-color;
+                            color: $color-text-secondary;
                         }
                     }
 
@@ -436,7 +431,7 @@
                         bottom: 82px;
                         left: calc(6px + 32px / 2);
                         width: 1px;
-                        background-color: lighten($main-color, 20%);
+                        background-color: $color-surface-raised;
                     }
 
                     &.hidden {
@@ -481,7 +476,7 @@
                                 left: -18px;
                                 width: 18px;
                                 height: 1px;
-                                background-color: lighten($main-color, 20%);
+                                background-color: $color-surface-raised;
                             }
 
                             &::after {
@@ -491,8 +486,8 @@
                                 left: -32px;
                                 width: calc(28px / 2);
                                 height: calc(28px / 2);
-                                border-bottom: 1px solid lighten($main-color, 20%);
-                                border-left: 1px solid lighten($main-color, 20%);
+                                border-bottom: $hairline solid $color-divider;
+                                border-left: $hairline solid $color-divider;
                                 border-bottom-left-radius: $medium-border-radius;
                             }
                         }
@@ -520,25 +515,22 @@
                 padding-bottom: 12px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background: transparent;
-                color: $secondary-color;
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $big-border-radius;
+                background-color: $color-surface-raised;                color: $color-text;                border: $hairline solid $color-border;                border-radius: $radius-xl;                caret-color: $color-primary;
                 outline: none;
                 resize: none;
                 transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
                 &:empty::before {
                     content: attr(data-placeholder);
-                    color: $light-blue-color;
+                    color: $color-text-muted;
                     cursor: text;
                 }
 
                 &:hover,
                 &:focus {
-                    border-color: $blue-color;
+                    border-color: $color-primary;
                 }
-                
+
                 .tag,
                 .hashtag {
                     display: inline-block;
@@ -550,12 +542,12 @@
                 }
 
                 .tag {
-                    background-color: transparentize($blue-color, 0.8);
+                    background-color: $color-primary-soft;
                     color: $blue-color;
                 }
 
                 .hashtag {
-                    background-color: transparentize($green-color, 0.9);
+                    background-color: $color-success-soft;
                     color: $green-color;
                 }
             }
@@ -566,9 +558,7 @@
                 left: 6px;
                 width: 38px;
                 height: 38px;
-                padding: 2px;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
+                padding: 0px;                object-fit: cover;                background-color: $color-surface-pressed;                border: none;                border-radius: 50%;
             }
 
             .add_emoji {
@@ -580,9 +570,9 @@
 
                 &:hover {
                     cursor: pointer;
-                    
+
                     .fa-face-surprise {
-                        color: $dark-blue-color;
+                        color: $color-primary-text;
                         transition: color 0.3s ease;
                     }
                 }
@@ -611,7 +601,7 @@
 
                 &:hover {
                     transform: translateY(-50%) scale(1.1);
-                    color: $dark-blue-color;
+                    color: $color-primary-text;
                     cursor: pointer;
                 }
 
@@ -631,18 +621,18 @@
     .content {
         .article_banner {
             flex-direction: column;
-    
+
             .banner_image {
                 img {
                     max-width: 100%;
                 }
             }
-    
+
             .banner_info {
                 padding: 0px 20px 10px;
             }
         }
-    
+
         .exercise_statistics {
             max-width: 100%;
         }
@@ -675,13 +665,13 @@
         .article_banner {
             .banner_info {
                 padding: 0px 10px 10px;
-    
+
                 .article_opening {
                     h2 {
                         font-size: 2em;
                     }
                 }
-    
+
                 .article_info {
                     .rating {
                         .fa-star {

@@ -5,166 +5,145 @@
  Main Styles
 ************/
 
-// Edit Review Form
+// Edit Review Form (Laid Out Like A Native Sheet Form)
 
 .edit_review_form {
-    position: relative;
-    max-width: $secondary-width;
-    width: 100%;
-    margin: 0px auto;
-    padding: 30px 50px 50px;
-    text-align: center;
-    border: 1px solid transparentize($blue-color, 0.5);
-    border-radius: $medium-border-radius;
-    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-    overflow: hidden;
-
-    &::before {
-        @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
-    }
-
-    &::after {
-        @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
-    }
-
-    h2 {
-        margin-bottom: 30px;
-        color: $secondary-color;
-        animation: fadeInScale 0.3s ease-out;
-
-        a {
-            color: $secondary-color;
-            text-decoration: none;
-            font-size: 1em;
-        }
-    }
-
-    .back {
-        @include form_back;
-    }
+    @include native_form;
 
     .top {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        width: 90%;
-        margin: 0px auto;
-        text-align: left;
+        gap: $space-md;
+        width: 100%;
+
+        // Reviewer ("UserRow")
 
         .reviewer {
             display: flex;
             align-items: center;
-            gap: 10px;
-            
+            gap: $space-md;
+
             .profile_picture {
-                @include profile_picture($width: 38px, $height: 38px);
+                @include profile_picture(44px, 44px);
                 display: block;
-                transition: transform 0.3s ease;
-    
-                &:hover {
-                    transform: scale(1.05);
-                }
             }
-    
+
             .username {
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+
                 a {
+                    @include typography(body_strong);
+                    color: $color-text;
                     text-decoration: none;
-                    color: $secondary-color;
-    
+
                     &:hover,
                     &:active {
                         text-decoration: underline;
                     }
                 }
-    
+
                 .date {
-                    font-style: italic;
-                    color: $light-blue-color;
+                    @include typography(caption);
+                    color: $color-text-muted;
                 }
             }
         }
-    
+
+        // Rating Stars
+
         .rating {
+            display: flex;
+            gap: $space-xs;
+
             button {
                 all: unset;
-    
+                @include flex_center;
+                width: 36px;
+                height: 36px;
+                border-radius: $radius-pill;
+                cursor: pointer;
+
+                &:focus-visible {
+                    outline: 2px solid $color-primary;
+                }
+
                 .fa-star {
                     display: block;
-                    font-size: 1.5em;
-                    cursor: pointer;
-                    transition: color 0.1s ease, transform 0.1s ease;
-    
+                    font-size: 24px;
+                    transition: color $duration-fast ease;
+
                     &.full {
-                        color: $yellow-color;
-                        opacity: 1;
+                        color: $color-premium;
                     }
-                    
+
                     &.empty {
-                        color: $light-blue-color;
-                        opacity: 0.5;
-                    }
-    
-                    &:hover {
-                        transform: scale(1.1);
+                        color: $color-surface-strong;
                     }
                 }
             }
-    
+
             input {
                 display: none;
             }
         }
     }
 
+    // Review Text (Multiline "TextField" With An Emoji Button)
+
     .review_container {
-        position: relative;
         display: flex;
         flex-direction: column;
-        width: 90%;
-        margin: 10px auto 0px;
-        border: 1px solid transparentize($blue-color, 0.5);
-        border-radius: $small-border-radius;
-        transition: border-color 0.3s ease;
-
-        &:has(textarea:focus) {
-            border-color: $blue-color;
-        }
+        background-color: $color-surface-raised;
+        border: $hairline solid $color-border;
+        border-radius: $radius-md;
+        transition: border-color $duration-fast ease, background-color $duration-fast ease;
 
         &:hover {
-            border-color: $blue-color;
+            border-color: $color-border-strong;
+        }
+
+        &:focus-within {
+            border-color: $color-primary;
+            background-color: $color-surface;
         }
 
         textarea {
+            @include typography(body);
             width: 100%;
-            min-height: 100px;
+            min-height: 96px;
             field-sizing: content;
-            padding: 5px 10px;
+            padding: $space-sm $space-md;
+            font-family: $font-system;
+            color: $color-text;
             background: transparent;
-            color: $secondary-color;
             border: none;
             outline: none;
             resize: none;
 
             &::placeholder {
-                color: $light-blue-color;
+                color: $color-text-muted;
+            }
+
+            &:focus-visible {
+                outline: none !important;
             }
         }
 
         .icons {
             display: flex;
             align-items: center;
-            justify-content: right;
-            height: 25px;
-            padding: 0px 10px;
-            background-color: transparentize($blue-color, 0.9);
-            border-radius: 0px 0px $small-border-radius $small-border-radius;
+            justify-content: flex-end;
+            padding: 0px $space-xs $space-xs;
 
             .add_emoji {
-                all: unset;
+                @include icon_button(plain, 36px);
+                color: $color-text-muted;
 
                 .fa-face-surprise {
-                    @include icon;
-                    display: block;
+                    font-size: 16px;
+                    color: inherit;
                 }
             }
         }
@@ -173,52 +152,23 @@
             @include emoji_picker_container;
         }
     }
-
-    .form_report {
-        @include form_report;
-    }
-
-    input[type="submit"] {
-        @include blue_button($border-radius: $big-border-radius);
-        margin-top: 50px;
-    }
 }
 
+// Not Logged In
+
 .no_logged_in p {
+    @include typography(callout);
     text-align: center;
+    color: $color-text-secondary;
 
     a {
+        font-weight: 600;
+        color: $color-primary-text;
         text-decoration: none;
-        font-style: italic;
-        color: $secondary-color;
 
         &:hover,
         &:active {
             text-decoration: underline;
-        }
-    }
-}
-
-/**************
- Media Queries
-**************/
-
-@media (width <= 400px) {
-    .edit_review_form {
-        padding: 10px 30px 30px;
-
-        .back {
-            top: 22.5px;
-            left: 30px;
-        }
-
-        .top {
-            margin: 0px;
-        }
-
-        .review_container,
-        input[type="submit"] {
-            width: 100% !important;
         }
     }
 }

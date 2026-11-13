@@ -12,16 +12,15 @@ $profile-glow: rgba(75, 75, 250, 0.35);
  Main Styles
 ************/
 
+// Chat (Laid Out Like The Native Chat Screen: Header, Messages, Composer Footer)
+
 .chat {
+    @include card(default, 0px, $radius-xl);
     position: relative;
-    max-width: $secondary-width;
+    max-width: $max-content-width;
     width: 100%;
     margin: 0px auto;
-    padding: 30px 50px 50px;
-    text-align: center;
-    border: 1px solid transparentize($blue-color, 0.5);
-    border-radius: $medium-border-radius;
-    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    text-align: left;
     overflow: hidden;
 
     &::before {
@@ -32,85 +31,77 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
     }
 
+    // Header ("UserRow")
+
     .top {
-        margin-bottom: 30px - 12px - 5px;
+        padding: $space-md $space-lg;
+        border-bottom: $hairline solid $color-divider;
 
         .receiver {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: $space-md;
             text-align: left;
 
             a {
                 &:has(.profile_picture) {
                     display: inline-block;
-                    width: 38px;
-                    height: 38px;
+                    width: 44px;
+                    height: 44px;
                 }
 
                 .profile_picture {
-                    @include profile_picture;
-                    transition: transform 0.3s ease;
-
-                    &:hover {
-                        transform: scale(1.05);
-                    }
+                    @include profile_picture(44px, 44px);
                 }
             }
 
             .username {
-                font-size: 1.2em;
-                font-weight: semibold;
-                color: $secondary-color;
+                @include typography(body_strong);
+                color: $color-text;
+            }
+
+            .full_name {
+                @include typography(caption);
+                color: $color-text-muted;
             }
         }
     }
 
-    .middle {
-        margin-bottom: 30px;
+    // Messages
 
+    .middle {
         .all_messages {
             @include scrollbar;
             display: flex;
             flex-direction: column-reverse;
-            gap: 50px;
-            max-height: 400px;
-            padding-top: 12px + 5px;
-            padding-bottom: 12px + 5px;
+            gap: $space-xxl + $space-xs;
+            height: min(60vh, 560px);
+            padding: $space-lg $space-lg $space-xxl;
 
             .one_message {
                 position: relative;
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                max-width: 80%;
+                gap: $space-sm;
+                max-width: 82%;
                 width: fit-content;
-                padding: 10px;
-                background-color: transparentize($dark-blue-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.5);
-                backdrop-filter: blur(5px);
-                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    transform: translateY(-2px);
-                    background: transparent;
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-                }
+                padding: $space-sm $space-md;
+                color: $color-text;
+                background-color: $color-surface-raised;
+                border: $hairline solid $color-border;
+                transition: background-color $duration-fast ease, border-color $duration-fast ease;
 
                 &::before {
+                    @include typography(caption);
                     content: attr(data-time);
                     position: absolute;
-                    bottom: -12px - 5px;
-                    line-height: 1;
-                    color: $light-blue-color;
-                    font-size: 0.8em;
+                    bottom: -$space-xl;
+                    color: $color-text-muted;
                     white-space: nowrap;
                 }
 
                 &.edit {
-                    border-color: $blue-color;
+                    border-color: $color-primary;
                     animation: scale 1s ease-in-out infinite alternate;
                 }
 
@@ -120,45 +111,61 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                     opacity: 0;
                 }
 
+                // Other Person's Message (Left, Raised Surface Like The Native Bubble)
+
                 &.receiver {
-                    flex-direction: row-reverse;
-                    justify-content: flex-start;
-                    margin: 0px 20px 0px auto;
-                    text-align: right;
-                    border-radius: $big-border-radius $big-border-radius $small-border-radius $big-border-radius;
+                    margin: 0px auto 0px 0px;
+                    border-radius: $radius-lg $radius-lg $radius-lg $radius-xs;
 
                     &::before {
-                        right: 0px;
+                        left: $space-xs;
                     }
 
                     .reactions {
-                        left: -10px;
-                        transform: translate(-100%, -50%);
-                    }
-                }
-
-                &.sender {
-                    margin: 0px auto 0px 20px;
-                    border-radius: $big-border-radius $big-border-radius $big-border-radius $small-border-radius;
-
-                    &::before {
-                        left: 0px;
-                    }
-
-                    .fa-check-double {
-                        margin-left: auto;
-                        color: transparentize($blue-color, 0.5);
-                    }
-
-                    .reactions {
-                        right: -10px;
+                        right: -$space-sm;
                         transform: translate(100%, -50%);
                         flex-direction: row-reverse;
                     }
                 }
- 
+
+                // Own Message (Right, Filled Primary Like The Native Bubble)
+
+                &.sender {
+                    flex-direction: row-reverse;
+                    margin: 0px 0px 0px auto;
+                    color: $color-on-primary;
+                    background-color: $color-primary-solid;
+                    border-color: transparent;
+                    border-radius: $radius-lg $radius-lg $radius-xs $radius-lg;
+
+                    &::before {
+                        right: $space-xs;
+                    }
+
+                    .fa-check-double {
+                        margin-right: auto;
+                        color: rgba(255, 255, 255, 0.7);
+                    }
+
+                    .show_message_properties_button,
+                    .add_reaction {
+                        i {
+                            color: rgba(255, 255, 255, 0.8);
+                        }
+                    }
+
+                    a {
+                        color: $color-on-primary;
+                    }
+
+                    .reactions {
+                        left: -$space-sm;
+                        transform: translate(-100%, -50%);
+                    }
+                }
+
                 .profile_picture {
-                    @include profile_picture;
+                    @include profile_picture(28px, 28px);
 
                     &:hover {
                         cursor: default;
@@ -214,38 +221,51 @@ $profile-glow: rgba(75, 75, 250, 0.35);
         }
     }
 
+    // Composer (Footer Like The Native Chat Screen)
+
     .bottom {
+        padding: $space-md $space-lg;
+        background-color: $color-background-deep;
+        border-top: $hairline solid $color-divider;
+
         .write_message {
             position: relative;
-            margin-top: 8px;
 
             .new_message {
+                @include typography(body);
                 width: 100%;
-                min-height: 50px;
+                min-height: $min-touch-target + 6px;
                 field-sizing: content;
-                padding-top: 12px;
+                padding-top: 13px;
                 padding-right: 30px + 10px + 10px;
-                padding-bottom: 12px;
+                padding-bottom: 13px;
                 padding-left: 38px + 6px + 10px + 15px + 10px;
                 text-align: left;
-                background: transparent;
-                color: $secondary-color;
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $big-border-radius;
+                background-color: $color-surface-raised;
+                color: $color-text;
+                border: $hairline solid $color-border;
+                border-radius: $radius-xl;
                 outline: none;
-                transition: padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                caret-color: $color-primary;
+                transition: padding 0.3s ease, border-color $duration-fast ease, background-color $duration-fast ease;
 
                 &:empty::before {
                     content: attr(data-placeholder);
-                    color: $light-blue-color;
+                    color: $color-text-muted;
                     cursor: text;
                 }
 
-                &:hover,
-                &:focus {
-                    border-color: $blue-color;
+                &:hover {
+                    border-color: $color-border-strong;
                 }
-                
+
+                &:focus,
+                &:focus-visible {
+                    border-color: $color-primary;
+                    background-color: $color-surface;
+                    outline: none !important;
+                }
+
                 .tag,
                 .hashtag {
                     display: inline-block;
@@ -257,12 +277,12 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 }
 
                 .tag {
-                    background-color: transparentize($blue-color, 0.8);
+                    background-color: $color-primary-soft;
                     color: $blue-color;
                 }
 
                 .hashtag {
-                    background-color: transparentize($green-color, 0.9);
+                    background-color: $color-success-soft;
                     color: $green-color;
                 }
             }
@@ -273,9 +293,7 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 left: 6px;
                 width: 38px;
                 height: 38px;
-                padding: 2px;
-                border: 1px solid $secondary-color;
-                border-radius: 50%;
+                padding: 0px;                object-fit: cover;                background-color: $color-surface-pressed;                border: none;                border-radius: 50%;
             }
 
             .add_emoji {
@@ -287,9 +305,9 @@ $profile-glow: rgba(75, 75, 250, 0.35);
 
                 &:hover {
                     cursor: pointer;
-                    
+
                     .fa-face-surprise {
-                        color: $dark-blue-color;
+                        color: $color-primary-text;
                         transition: color 0.3s ease;
                     }
                 }
@@ -313,12 +331,11 @@ $profile-glow: rgba(75, 75, 250, 0.35);
                 transform: translateY(-50%) scale(1);
                 width: 30px;
                 height: 30px;
-                color: $blue-color;
-                transition: transform 0.2s ease, color 0.3s ease;
+                color: $color-primary;
+                transition: color $duration-fast ease;
 
                 &:hover {
-                    transform: translateY(-50%) scale(1.1);
-                    color: $dark-blue-color;
+                    color: $color-primary-text;
                     cursor: pointer;
                 }
 
@@ -328,7 +345,6 @@ $profile-glow: rgba(75, 75, 250, 0.35);
             }
         }
     }
-
 }
 
 /***********
@@ -339,19 +355,11 @@ $profile-glow: rgba(75, 75, 250, 0.35);
     0% {
         transform: scale(1);
     }
-
-    100% {
-        transform: scale(1.05);
-    }
 }
 
 @keyframes idle {
     0% {
         transform: translateY(1px);
-    }
-
-    100% {
-        transform: translateY(-1px);
     }
 }
 
@@ -361,6 +369,12 @@ $profile-glow: rgba(75, 75, 250, 0.35);
 
 @media (width <= 400px) {
     .chat {
-        padding: 10px 30px 30px;
+        .middle .all_messages {
+            padding: $space-md $space-md $space-xxl;
+        }
+
+        .bottom {
+            padding: $space-sm $space-md;
+        }
     }
 }

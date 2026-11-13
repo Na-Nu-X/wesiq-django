@@ -1,30 +1,56 @@
 @import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
 
 /************
  Main Styles
 ************/
 
+// Write Article Form (Native Form Layout)
+
 .write_article_form {
-    max-width: $main-width;
-    padding: 10px 20px;
-    background-color: transparentize($main-color, 0.9);
-    border: 1px solid darken($secondary-color, 40%);
-    border-radius: $small-border-radius;
-    text-align: center;
+    @include native_form($max-content-width);
+
+    textarea {
+        min-height: 220px;
+        max-height: none;
+    }
+
+    // Category Selects
 
     .categories {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        gap: $space-md;
 
         select {
-            max-width: 300px !important;
-            border-bottom: 0px solid $secondary-color !important;
+            cursor: pointer;
+        }
+    }
 
-            &:hover,
-            &:focus-visible {
-                width: 100%;
-                cursor: pointer;
-            }
+    // Link Field (Suggest Button On The Left, Info Icon On The Right)
+
+    .link_container {
+        position: relative;
+
+        > i:last-of-type {
+            left: auto;
+            right: $space-md + 4px;
+            pointer-events: auto;
+            cursor: help;
+        }
+
+        > input {
+            padding-right: 42px;
+        }
+    }
+
+    input[type="file"] {
+        @include typography(callout);
+        color: $color-text-secondary;
+
+        &::file-selector-button {
+            @include button(secondary, sm);
+            margin-right: $space-md;
         }
     }
 }

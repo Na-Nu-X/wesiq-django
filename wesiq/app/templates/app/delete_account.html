@@ -5,10 +5,11 @@
 {% block title %}{% translate "Odstrániť účet" %}{% endblock title %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'app/css/articles.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/delete_account.css' %}">
 {% endblock style %}
 
 {% block content %}
+    <div class="delete_account_info">
     {% if logged_in_user %}
         <p>{% translate "Pre odstránenie účtu navštív stránku s tvojim profilom a v nastaveniach odstrán svoj účet." %}</p>
         <p>{% translate "Tvoj účet bude automaticky odstránený, ak sa nebude zaznamenaná žiadna aktivita za posledných 30 dní." %}</p>
@@ -36,4 +37,5 @@
         </p>
 
     {% endif %}
+    </div>
 {% endblock content %}
