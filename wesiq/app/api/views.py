@@ -3255,7 +3255,7 @@ def delete_completed_custom_tasks(request):
         completed_custom_tasks_ids = request.data.get("completed_custom_tasks_ids", []) # Gets The Completed Custom Tasks IDs
 
         # If The Information Are Missing
-        if completed_custom_tasks_ids.len == 0:
+        if not isinstance(completed_custom_tasks_ids, list) or not completed_custom_tasks_ids:
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie úloh chýbajú potrebné údaje."))
@@ -3290,7 +3290,7 @@ def change_custom_tasks_order(request):
         tasks_ids = request.data.get("tasks_ids", []) # Gets The Tasks IDs
 
         # If The Information Are Missing
-        if tasks_ids.len == 0:
+        if not isinstance(tasks_ids, list) or not tasks_ids:
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu poradia úloh chýbajú potrebné údaje."))
