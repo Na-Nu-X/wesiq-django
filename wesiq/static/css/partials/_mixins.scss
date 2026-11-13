@@ -1,3 +1,6 @@
+@use "sass:map";
+@use "sass:list";
+@use "sass:math";
 @import "./variables";
 
 /***************
@@ -20,14 +23,36 @@
     justify-content: center;
 }
 
+// Typography (Text Variants Of The Native "Text" Component)
+
+@mixin typography($variant: body) {
+    $style: map.get($typography, $variant);
+
+    font-size: list.nth($style, 1);
+    line-height: list.nth($style, 2);
+    font-weight: list.nth($style, 3);
+    letter-spacing: list.nth($style, 4);
+
+    @if $variant == overline {
+        text-transform: uppercase;
+    }
+
+    @if $variant == timer or $variant == timer_small {
+        font-family: $font-timer;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+// Loading Spinner (Activity Indicator)
+
 @mixin loading($size: 10px) {
-    width: $size;
-    height: $size;
-    font-size: $size;
-    color: $text-muted;
+    width: $size * 3;
+    height: $size * 3;
+    border: 3px solid $color-surface-strong;
+    border-top-color: $color-primary;
     border-radius: 50%;
-    transition: opacity 1s ease, visibility 1s ease;
-    animation: preloaderSpin 1s infinite linear;
+    transition: opacity $duration-slow ease, visibility $duration-slow ease;
+    animation: preloaderSpin 0.8s infinite linear;
     z-index: 3000;
 
     &.hidden {
@@ -40,207 +65,555 @@
     ***********/
 
     @keyframes preloaderSpin {
-        0%,
+        0% {
+            rotate: 0deg;
+        }
+
         100% {
-            box-shadow: 0 -3em 0 0.2em, 
-            2em -2em 0 0em, 3em 0 0 -1em, 
-            2em 2em 0 -1em, 0 3em 0 -1em, 
-            -2em 2em 0 -1em, -3em 0 0 -1em, 
-            -2em -2em 0 0;
-        }
-    
-        12.5% {
-            box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
-            3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
-            -2em 2em 0 -1em, -3em 0 0 -1em, 
-            -2em -2em 0 -1em;
-        }
-    
-        25% {
-            box-shadow: 0 -3em 0 -0.5em, 
-            2em -2em 0 0, 3em 0 0 0.2em, 
-            2em 2em 0 0, 0 3em 0 -1em, 
-            -2em 2em 0 -1em, -3em 0 0 -1em, 
-            -2em -2em 0 -1em;
-        }
-    
-        37.5% {
-            box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-            3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
-            -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
-        }
-    
-        50% {
-            box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-            3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
-            -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
-        }
-    
-        62.5% {
-            box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-            3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
-            -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
-        }
-    
-        75% {
-            box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
-            3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-            -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
-        }
-        
-        87.5% {
-            box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
-            3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-            -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+            rotate: 360deg;
         }
     }
 }
 
-// Glass Panel
+/************************
+ Native Component Mixins
+************************/
 
-@mixin glass_panel($padding: 20px, $radius: $medium-border-radius, $blur: 12px) {
+// Card ("Card" Component: default | raised | outlined | highlighted)
+
+@mixin card($variant: default, $padding: $space-lg, $radius: $radius-lg) {
     padding: $padding;
-    background: $surface;
-    border: 1px solid $surface-border;
+    border: $hairline solid $color-border;
     border-radius: $radius;
-    backdrop-filter: blur($blur);
-    box-shadow:
-        0 12px 36px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(91, 140, 255, 0.06) inset;
+
+    @if $variant == default {
+        background-color: $color-surface;
+    }
+
+    @else if $variant == raised {
+        background-color: $color-surface-raised;
+        box-shadow: $shadow-md;
+    }
+
+    @else if $variant == outlined {
+        background-color: transparent;
+        border-color: $color-border-strong;
+    }
+
+    @else if $variant == highlighted {
+        background-color: $color-primary-soft;
+        border-color: $color-border-strong;
+    }
 }
 
-@mixin glass_accent_bar($width: 80px, $height: 2px) {
-    content: "";
-    position: absolute;
-    top: 0px;
-    left: 50%;
-    transform: translateX(-50%);
+// Pressable Card (Whole Card Is A Link Or Button)
+
+@mixin card_pressable {
+    transition: background-color $duration-fast ease, border-color $duration-fast ease;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        background-color: $color-surface-pressed;
+    }
+}
+
+// Button ("Button" Component: primary | secondary | outline | ghost | danger, sm | md | lg)
+
+@mixin button($variant: primary, $size: md, $width: auto) {
+    @include crop_text;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-sm;
     width: $width;
-    height: $height;
-    background: linear-gradient(90deg, transparent, transparentize($blue-color, 0.5), $blue-color, transparentize($blue-color, 0.5), transparent);;
-    border-radius: $small-border-radius;
-    pointer-events: none;
-    z-index: 10;
+    border: $hairline solid transparent;
+    border-radius: $radius-pill;
+    outline: none;
+    text-align: center;
+    text-decoration: none;
+    font-family: $font-system;
+    cursor: pointer;
+    transition: background-color $duration-fast ease, border-color $duration-fast ease, color $duration-fast ease, transform $duration-fast ease, opacity $duration-fast ease;
+
+    @if $size == sm {
+        @include typography(label);
+        min-height: 36px;
+        height: 36px;
+        padding: 0px $space-md;
+    }
+
+    @else if $size == lg {
+        @include typography(body_strong);
+        min-height: 56px;
+        height: 56px;
+        padding: 0px $space-xxl;
+    }
+
+    @else {
+        @include typography(body_strong);
+        min-height: $min-touch-target + 4px;
+        height: $min-touch-target + 4px;
+        padding: 0px $space-xl;
+    }
+
+    i {
+        font-size: 15px;
+        color: inherit;
+    }
+
+    @if $size == sm {
+        i {
+            font-size: 13px;
+        }
+    }
+
+    @else if $size == lg {
+        i {
+            font-size: 17px;
+        }
+    }
+
+    @if $variant == primary {
+        background-color: $color-primary-solid;
+        color: $color-on-primary;
+        box-shadow: $shadow-glow;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-primary-solid-pressed;
+        }
+    }
+
+    @else if $variant == secondary {
+        background-color: $color-surface-raised;
+        color: $color-text;
+        border-color: $color-border;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-surface-pressed;
+        }
+    }
+
+    @else if $variant == outline {
+        background-color: transparent;
+        color: $color-primary-text;
+        border-color: $color-border-strong;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-primary-soft;
+        }
+    }
+
+    @else if $variant == ghost {
+        background-color: transparent;
+        color: $color-primary-text;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-primary-soft;
+        }
+    }
+
+    @else if $variant == danger {
+        background-color: $color-danger-soft;
+        color: $color-danger;
+        border-color: $color-danger-border;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-danger-soft-pressed;
+        }
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:disabled,
+    &.disabled {
+        opacity: $disabled-opacity;
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
+    }
 }
 
-@mixin glass_icon_button($size: 40px) {
-    display: flex;
+// Icon Button ("IconButton" Component: plain | soft | solid | danger)
+
+@mixin icon_button($variant: plain, $size: 40px) {
+    all: unset;
+    box-sizing: border-box;
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: $size;
     height: $size;
-    background: $surface-hover;
-    border: 1px solid $surface-border;
-    border-radius: 50%;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
+    border-radius: $radius-pill;
+    cursor: pointer;
+    transition: background-color $duration-fast ease, color $duration-fast ease;
 
-    &:hover,
-    &:focus-visible {
-        background: rgba(91, 140, 255, 0.28);
-        border-color: transparentize($blue-color, 0.25);
-        box-shadow: 0 6px 18px $surface-glow;
+    i {
+        font-size: math.round($size * 0.45);
+        color: inherit;
+    }
+
+    @if $variant == plain {
+        background-color: transparent;
+        color: $color-text;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-primary-soft;
+        }
+    }
+
+    @else if $variant == soft {
+        background-color: $color-surface-raised;
+        color: $color-text;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-surface-pressed;
+        }
+    }
+
+    @else if $variant == solid {
+        background-color: $color-primary-solid;
+        color: $color-on-primary;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-primary-solid-pressed;
+        }
+    }
+
+    @else if $variant == danger {
+        background-color: $color-danger-soft;
+        color: $color-danger;
+
+        &:hover,
+        &:focus-visible {
+            background-color: $color-danger-soft-pressed;
+        }
+    }
+
+    &:disabled {
+        opacity: $disabled-opacity;
+        cursor: not-allowed;
     }
 }
 
-// Blue Button
+// Badge (Counter On Icon Buttons)
 
-@mixin blue_button($width: 90%, $border-radius: $big-border-radius) {
-    @include crop_text;
-    width: $width;
-    height: 50px;
-    padding: 0px 10px;
+@mixin badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0px 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    line-height: 11px;
+    font-weight: 700;
+    color: $color-on-primary;
+    background-color: $color-danger;
+    border: 2px solid $color-background;
+    border-radius: $radius-pill;
+}
+
+// Chip ("Chip" Component: primary | success | warning | danger)
+
+@mixin chip($tone: primary) {
+    @include typography(label);
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs + 2px;
+    min-height: 34px;
+    padding: 0px $space-md;
+    color: $color-text-secondary;
+    background-color: $color-surface-raised;
+    border: $hairline solid $color-border;
+    border-radius: $radius-pill;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color $duration-fast ease, border-color $duration-fast ease, color $duration-fast ease;
+
+    i {
+        font-size: 12px;
+        color: inherit;
+    }
+
+    &:hover {
+        background-color: $color-surface-pressed;
+    }
+
+    &.selected,
+    &.active,
+    &[aria-selected="true"] {
+        @include chip_selected($tone);
+    }
+}
+
+@mixin chip_selected($tone: primary) {
+    @if $tone == success {
+        color: $color-success;
+        background-color: $color-success-soft;
+        border-color: $color-success-border;
+    }
+
+    @else if $tone == warning {
+        color: $color-warning;
+        background-color: $color-warning-soft;
+        border-color: $color-warning-border;
+    }
+
+    @else if $tone == danger {
+        color: $color-danger;
+        background-color: $color-danger-soft;
+        border-color: $color-danger-border;
+    }
+
+    @else {
+        color: $color-primary-text;
+        background-color: $color-primary-soft;
+        border-color: $color-border-strong;
+    }
+}
+
+// Segmented Control ("SegmentedControl" Component, Container)
+
+@mixin segmented_control {
+    display: flex;
+    gap: $space-xs;
+    padding: $space-xs;
+    background-color: $color-background-deep;
+    border: $hairline solid $color-border;
+    border-radius: $radius-pill;
+}
+
+// Segmented Control (One Segment)
+
+@mixin segment {
+    all: unset;
+    @include typography(label);
+    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs + 2px;
+    min-height: 38px;
+    padding: 0px $space-sm;
+    color: $color-text-muted;
+    border-radius: $radius-pill;
     text-align: center;
-    background-color: transparent;
-    color: $secondary-color;
-    border: 1px solid transparentize($blue-color, 0.5);
-    border-radius: $border-radius;
-    outline: none;
-    transition: border-color 0.3s ease, transform 0.3s ease, letter-spacing 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+    transition: background-color $duration-fast ease, color $duration-fast ease;
+
+    &:hover {
+        color: $color-text-secondary;
+    }
+
+    &.selected,
+    &.active,
+    &[aria-selected="true"] {
+        color: $color-text;
+        background-color: $color-surface-pressed;
+    }
+}
+
+// Sheet Panel ("Sheet" Component, Centered Dialog At 700px And Wider, Bottom Sheet Below)
+
+@mixin sheet_panel($max-width: $max-dialog-width) {
+    width: 100%;
+    max-width: $max-width;
+    max-height: calc(100dvh - #{$space-xxl * 2});
+    padding: $space-xl;
+    color: $color-text;
+    background-color: $color-surface;
+    border: $hairline solid $color-border;
+    border-radius: $radius-xl;
+    box-shadow: $shadow-lg;
+    overflow-y: auto;
+
+    @media (width < $sheet-breakpoint) {
+        max-width: 100%;
+        max-height: 92dvh;
+        padding-bottom: calc(#{$space-xl} + env(safe-area-inset-bottom));
+        border-bottom-width: 0px;
+        border-radius: $radius-xl $radius-xl 0px 0px;
+    }
+}
+
+// Sheet Dialog (Native <dialog> Element Shown As A Sheet)
+
+@mixin sheet_dialog($max-width: $max-dialog-width) {
+    @include sheet_panel($max-width);
+    margin: auto;
+
+    &::backdrop {
+        background-color: $color-overlay;
+    }
+
+    @media (width < $sheet-breakpoint) {
+        margin: auto 0px 0px;
+    }
+}
+
+// Dialog Sheet Content (The Inner Panel Of A <dialog> Rendered As A Sheet, Use With "sheet_dialog" On The Dialog)
+
+@mixin dialog_sheet_content {
+    position: static;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    padding: $space-xxl $space-xl;
+    text-align: left;
+    color: $color-text;
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+    overflow: visible;
+
+    &::before,
+    &::after {
+        content: none;
+        display: none;
+    }
+
+    > h2 {
+        @include typography(title);
+        min-height: 38px;
+        margin: 0px 0px $space-sm;
+        padding-left: 38px + $space-md;
+        text-align: left;
+        color: $color-text;
+        animation: none;
+    }
+
+    .back {
+        @include form_back;
+        top: $space-xxl - 2px;
+        left: $space-xl;
+    }
+}
+
+// Sheet Handle (Grabber At The Top Of Bottom Sheets)
+
+@mixin sheet_handle {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 5px;
+    margin: 0px auto $space-sm;
+    background-color: $color-surface-strong;
+    border-radius: $radius-pill;
+}
+
+// List Row (Pressable Row Inside Cards And Sheets)
+
+@mixin list_row {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    min-height: $min-touch-target;
+    padding: $space-sm $space-md;
+    color: $color-text;
+    border-radius: $radius-md;
+    text-decoration: none;
+    transition: background-color $duration-fast ease;
 
     &:hover,
     &:focus-visible {
-        border-color: $blue-color;
-        box-shadow: 0 6px 20px transparentize($blue-color, 0.65);
-        transform: scale(1.05);
-        letter-spacing: 0.5px;
-        cursor: pointer;
+        background-color: $color-surface-pressed;
     }
 }
 
-// Animated Border
+// Divider
 
-@mixin animated_border($colors: conic-gradient(
-        from var(--angle), 
-        $blue-color,
-        transparent,
-        $blue-soft,
-        transparent,
-        $blue-color
-    ),
-    $thickness: 2px) {
-    position: relative;
-    
-    &::before,
-    &::after {
-        @include position_center;
-        content: '';
-        width: calc(100% + 0px);
-        height: calc(100% + 0px);
-        padding: $thickness;
-        border-radius: inherit;
-        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: destination-out;
-        mask-composite: exclude;
-        background-image: $colors;
-        animation: 5s spin linear infinite;
-        pointer-events: none;
-    }
+@mixin divider {
+    height: $hairline;
+    border: none;
+    background-color: $color-divider;
+}
 
-    &::before {
-        filter: blur(5px);
-        opacity: 0.5;
+// Empty State Icon (Circle Behind The Icon Of Empty States)
+
+@mixin empty_state_icon($size: 56px) {
+    @include flex_center;
+    width: $size;
+    height: $size;
+    color: $color-primary;
+    background-color: $color-primary-soft;
+    border-radius: $radius-pill;
+
+    i {
+        font-size: math.round($size * 0.43);
+        color: inherit;
     }
 }
 
-// Glow Animated Border
+// Skeleton (Pulsing Placeholder)
 
-@mixin glow_animated_border(
-    $colors: conic-gradient(
-        from var(--angle), 
-        $blue-color,
-        transparent,
-        $blue-soft,
-        transparent,
-        $blue-color
-    ),
-    
-    $thickness: 2px
-    ) {
+@mixin skeleton($radius: $radius-sm) {
+    background-color: $color-surface-strong;
+    border-radius: $radius;
+    animation: skeletonPulse 0.8s ease-in-out infinite alternate;
+}
+
+/*******************************************
+ Legacy Mixins (Now Render Native Components)
+*******************************************/
+
+// Glass Panel (Card)
+
+@mixin glass_panel($padding: 20px, $radius: $radius-lg, $blur: 0px) {
+    @include card(default, $padding, $radius);
+}
+
+// Accent Bar (Not Used In The Native Design)
+
+@mixin glass_accent_bar($width: 80px, $height: 2px) {
+    content: none;
+    display: none;
+}
+
+// Glass Icon Button (Soft Icon Button)
+
+@mixin glass_icon_button($size: 40px) {
+    @include icon_button(soft, $size);
+}
+
+// Blue Button (Primary Button, Pass $variant For The Other Native Variants)
+
+@mixin blue_button($width: 100%, $border-radius: $radius-pill, $variant: primary, $size: md) {
+    @include button($variant, $size, $width); // Native Buttons Are Always Pill Shaped, So $border-radius Is Ignored
+}
+
+// Animated Border (Hairline Border Of Cards In The Native Design)
+
+@mixin animated_border($colors: null, $thickness: 1px) {
     position: relative;
+    border: $hairline solid $color-border;
+}
 
-    &::before,
-    &::after {
-        @include position_center;
-        content: '';
-        width: calc(100% + $thickness);
-        height: calc(100% + $thickness);
-        padding: $thickness;
-        border-radius: inherit;
-        background-image: $colors;
-        animation: 5s spin linear infinite;
-        z-index: -1;
-    }
-    
-    &::before {
-        filter: blur(10px);
-        opacity: 0.5;
-    }
+// Glow Animated Border (Glow Shadow Of Primary Actions)
 
-    &::after {
-        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: destination-out;
-        mask-composite: exclude;
-    }
+@mixin glow_animated_border($colors: null, $thickness: 1px) {
+    position: relative;
+    box-shadow: $shadow-glow;
 }
 
 // Tooltip
@@ -255,30 +628,33 @@
         left: 50%;
         transform: translateX(-50%) translateY(var(--translate-y, 0)) scale(var(--scale));
         transform-origin: bottom center;
-        transition: 0.3s transform 0s;
+        transition: $duration-fast transform 0s;
+        pointer-events: none;
+        z-index: 100;
     }
 
     &::before {
-        --translate-y: calc(-100% - 10px);
+        --translate-y: calc(-100% - 8px);
 
+        @include typography(caption);
         content: attr(data-tooltip);
-        width: fit-content;
-        max-width: 100%;
-        padding: 5px;
+        width: max-content;
+        max-width: 220px;
+        padding: $space-xs + 2px $space-sm;
         text-align: center;
-        border-radius: $small-border-radius;
-        font-size: 0.8em;
-        background-color: transparentize($secondary-color, 0.8);
-        color: $secondary-color;
-        text-shadow: 0px 0px 5px $main-color;
+        color: $color-text;
+        background-color: $color-surface-raised;
+        border: $hairline solid $color-border;
+        border-radius: $radius-xs;
+        box-shadow: $shadow-md;
     }
 
     &::after {
-        --translate-y: calc(-1 * 10px);
-        
+        --translate-y: calc(-1 * 8px);
+
         content: "";
-        border: 10px solid transparent;
-        border-top-color: transparentize($secondary-color, 0.8);
+        border: 6px solid transparent;
+        border-top-color: $color-surface-raised;
         transform-origin: top center;
     }
 
@@ -286,14 +662,14 @@
         &::before,
         &::after {
             --scale: 1;
-            transition: 0.3s transform 1s;
+            transition: $duration-fast transform 0.6s;
         }
     }
 }
 
-// Custom Select Menu
+// Custom Select Menu (Field Look Of "TextField" With A Raised Options Panel)
 
-@mixin custom_select_menu($options_list_height: 150px, $scrollbar: hidden) {
+@mixin custom_select_menu($options_list_height: 200px, $scrollbar: auto) {
     position: relative;
     cursor: pointer;
 
@@ -301,36 +677,48 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 5px;
+        gap: $space-sm;
         width: 100%;
-        height: 40px;
-        padding: 0px 8.5px;
-        color: $light-blue-color;
-        border: 1px solid transparentize($blue-color, 0.5);
-        border-radius: $small-border-radius;
-        transition: border 0.3s ease, box-shadow 0.3s ease;
+        min-height: $min-touch-target + 6px;
+        padding: 0px $space-md;
+        color: $color-text;
+        background-color: $color-surface-raised;
+        border: $hairline solid $color-border;
+        border-radius: $radius-md;
+        transition: border-color $duration-fast ease, background-color $duration-fast ease;
 
         &:hover,
         &:focus-visible,
         &:has(.fa-angle-down:hover),
         &:has(.fa-angle-up:hover) {
-            border-color: $blue-color !important;
+            border-color: $color-primary !important;
         }
 
         span {
             @include crop_text;
-            margin-left: 15px + 8.5px - 2px;
-            
+            @include typography(body);
+
             i {
-                color: $light-blue-color;
-                margin-right: 8.5px;
+                width: 24px;
+                margin-right: $space-xs;
+                text-align: center;
+                color: $color-text-muted;
             }
         }
 
         .fa-angle-down,
         .fa-angle-up {
-            @include icon;
+            color: $color-text-muted;
         }
+    }
+
+    // Leaves Room For The Leading Refresh Button
+    &:has(.refresh) .select span {
+        margin-left: $space-xl;
+    }
+
+    .refresh {
+        color: $color-text-muted;
     }
 
     .options_list {
@@ -339,32 +727,36 @@
         position: absolute;
         width: 100%;
         height: 0px;
-        margin-top: 10px;
-        color: $secondary-color;
-        background-color: transparentize($main-color, 0.2);
-        border-radius: $small-border-radius;
+        margin-top: $space-xs;
+        color: $color-text;
+        background-color: $color-surface-raised;
+        border: 0px solid $color-border;
+        border-radius: $radius-md;
+        box-shadow: $shadow-md;
         overflow-y: $scrollbar;
-        transition: height 0.3s ease;
+        transition: height $duration-normal ease;
         z-index: 500;
-
-        &::-webkit-scrollbar {
-            width: 3px;
-        }
 
         &.active {
             height: $options_list_height;
+            border-width: $hairline;
         }
 
         .option {
             @include crop_text;
-            padding: 5px 8.5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            @include typography(callout);
+            height: 33px; // Page Stylesheets Size The Options List In Multiples Of 33px
+            padding: 6.5px $space-md;
+            transition: background-color $duration-fast ease, color $duration-fast ease;
 
             &:hover,
-            &:focus-visible,
+            &:focus-visible {
+                background-color: $color-surface-pressed;
+            }
+
             &.selected {
-                background-color: transparentize($blue-color, 0.9);
-                color: $light-blue-color;
+                background-color: $color-primary-soft;
+                color: $color-primary-text;
             }
 
             &:focus-visible {
@@ -372,139 +764,431 @@
             }
 
             i {
-                color: $light-blue-color;
-                margin-right: 8.5px;
+                width: 24px;
+                margin-right: $space-xs;
+                text-align: center;
+                color: $color-text-muted;
             }
         }
     }
 }
 
-// Profile Picture
+// Profile Picture ("Avatar" Component, Premium Ring For Subscribers)
 
-@mixin profile_picture($width: 38px, $height: 38px) {
+@mixin profile_picture($width: 40px, $height: 40px) {
     width: $width;
     height: $height;
-    padding: 2px;
-    border: 1px solid $light-blue-color;
-    border-radius: 50%;
+    padding: 0px;
+    object-fit: cover;
+    background-color: $color-surface-pressed;
+    border: none;
+    border-radius: $radius-pill;
     cursor: pointer;
 
     &.subscriber {
-        background-color: transparentize($article-color, 0.85);
-        border-color: transparentize($article-color, 0.5);
-        box-shadow: 0 0 8px transparentize($article-color, 0.5);
+        padding: 1px;
+        background-color: transparent;
+        border: 2px solid $color-premium;
+        box-shadow: none;
     }
 }
 
-// Form Input
+// Form Input ("TextField" Component)
 
-@mixin form_input($color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin form_input($color: $color-border, $hover_color: $color-primary) {
+    @include typography(body);
     position: relative;
-    width: 90%;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 0px 10px;
-    background: transparent;
-    color: $secondary-color;
-    border: none;
-    border-bottom: 1px solid $color;
+    width: 100%;
+    min-height: $min-touch-target + 6px;
+    height: $min-touch-target + 6px;
+    margin-bottom: $space-sm;
+    padding: 0px $space-md;
+    font-family: $font-system;
+    color: $color-text;
+    background-color: $color-surface-raised;
+    border: $hairline solid $color;
+    border-radius: $radius-md;
     outline: none;
-    transition: border-color 0.2s ease;
+    caret-color: $color-primary;
+    transition: border-color $duration-fast ease, background-color $duration-fast ease;
 
-    &:hover,
-    &:focus {
+    &:hover {
+        border-color: $color-border-strong;
+    }
+
+    &:focus,
+    &:focus-visible {
         border-color: $hover_color;
+        background-color: $color-surface;
+        outline: none !important;
     }
 
     &::placeholder {
-        color: $light-blue-color;
+        color: $color-text-muted;
+    }
+
+    &:disabled {
+        opacity: 0.6;
     }
 
     &:-webkit-autofill {
-        -webkit-text-fill-color: $secondary-color;
-        transition: width 0.3s ease, background-color 9999s ease;
+        -webkit-text-fill-color: $color-text;
+        -webkit-box-shadow: 0 0 0px 1000px $color-surface-raised inset;
+        transition: background-color 9999s ease;
 
         &:hover,
         &:focus {
-            -webkit-text-fill-color: $secondary-color;
-            transition: width 0.3s ease, background-color 9999s ease;
+            -webkit-text-fill-color: $color-text;
+            -webkit-box-shadow: 0 0 0px 1000px $color-surface inset;
         }
     }
 }
 
-// Form Textarea
+// Form Textarea (Multiline "TextField")
 
-@mixin form_textarea($width: 90%, $color: transparentize($blue-color, 0.5), $hover_color: $blue-color) {
+@mixin form_textarea($width: 100%, $color: $color-border, $hover_color: $color-primary) {
+    @include typography(body);
     width: $width;
-    min-height: 100px;
+    min-height: 96px;
+    max-height: 220px;
     field-sizing: content;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background: transparent;
-    color: $secondary-color;
-    border: 1px solid $color;
-    border-radius: $small-border-radius;
+    padding: $space-sm $space-md;
+    font-family: $font-system;
+    color: $color-text;
+    background-color: $color-surface-raised;
+    border: $hairline solid $color;
+    border-radius: $radius-md;
     outline: none;
     resize: none;
-    transition: width 0.3s ease, border-color 0.3s ease;
+    caret-color: $color-primary;
+    transition: border-color $duration-fast ease, background-color $duration-fast ease;
 
-    &:hover,
+    &:hover {
+        border-color: $color-border-strong;
+    }
+
+    &:focus,
     &:focus-visible {
-        width: 100%;
         border-color: $hover_color;
+        background-color: $color-surface;
+        outline: none !important;
     }
 
     &::placeholder {
-        color: $text-subtle;
+        color: $color-text-muted;
     }
 }
 
-// Form Report Message
+// Form Report Message (Error / Success Card Like The Native Auth Sheet, Flows Above The Submit Button)
 
 @mixin form_report($bottom: 100px) {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.9em;
+    @include typography(callout);
+    position: static;
+    transform: none;
+    width: 100%;
+    margin: $space-sm 0px 0px;
+    padding: $space-md;
+    text-align: left;
+    color: $color-text-secondary;
+    background-color: $color-surface-raised;
+    border: $hairline solid $color-border;
+    border-radius: $radius-lg;
+
+    &:empty {
+        display: none;
+    }
 
     &.success {
-        color: $green-color;
+        color: $color-success;
+        background-color: $color-success-soft;
+        border-color: $color-success-border;
     }
 
     &.error {
-        color: $red-color;
+        color: $color-danger;
+        background-color: $color-danger-soft;
+        border-color: $color-danger;
     }
 }
 
-// Form Back
+// Native Form (Login, Registration, Password Reset, ... Laid Out Like The Native Auth Sheet)
 
-@mixin form_back($color: $blue-color, $hover_color: $dark-blue-color) {
+@mixin native_form($max-width: $max-dialog-width) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+    width: 100%;
+    max-width: $max-width;
+    margin: 0px auto;
+    padding: $space-xxl $space-xl;
+    text-align: left;
+    color: $color-text;
+    background-color: $color-surface;
+    border: $hairline solid $color-border;
+    border-radius: $radius-xl;
+
+    &::before,
+    &::after {
+        content: none;
+        display: none;
+    }
+
+    // Title (Next To The Back Button)
+
+    h2 {
+        @include typography(title);
+        min-height: 38px;
+        margin: 0px 0px $space-sm;
+        padding-left: 38px + $space-md;
+        text-align: left;
+        color: $color-text;
+        animation: none;
+
+        a {
+            font: inherit;
+            color: inherit;
+            text-decoration: none;
+        }
+    }
+
+    > p:not(.form_report) {
+        @include typography(callout);
+        color: $color-text-secondary;
+    }
+
+    .back {
+        @include form_back;
+        top: $space-xxl - 2px;
+        left: $space-xl;
+    }
+
+    .form_report {
+        @include form_report;
+    }
+
+    // Text Fields
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="number"],
+    select {
+        @include form_input;
+        display: block;
+        width: 100% !important;
+        margin: 0px;
+    }
+
+    textarea {
+        @include form_textarea;
+    }
+
+    // Field Containers (Leading Icon, Trailing Icon Buttons)
+
+    [class$="_container"] {
+        position: relative;
+        width: 100%;
+        margin: 0px;
+
+        > i {
+            position: absolute;
+            top: ($min-touch-target + 6px) * 0.5;
+            bottom: auto;
+            left: $space-md + 4px;
+            transform: translateY(-50%);
+            padding: 0px;
+            font-size: 15px;
+            color: $color-text-muted;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        &:focus-within > i {
+            color: $color-primary;
+        }
+
+        > input {
+            padding-left: 42px;
+        }
+
+        > button {
+            @include icon_button(plain, 36px);
+            position: absolute;
+            top: ($min-touch-target + 6px) * 0.5;
+            bottom: auto;
+            right: $space-xs + 2px;
+            left: auto;
+            transform: translateY(-50%);
+            padding: 0px;
+            color: $color-text-muted;
+            z-index: 2;
+
+            i {
+                font-size: 15px;
+                color: inherit;
+            }
+
+            &:hover,
+            &:focus-visible {
+                color: $color-text;
+            }
+        }
+
+        // Leading Button Instead Of An Icon (Generate Password)
+        > button:first-child {
+            left: $space-xs + 2px;
+            right: auto;
+        }
+
+        // Two Trailing Buttons (Show / Hide And Copy Password)
+        > button:not(:first-child):has(~ button) {
+            right: $space-xs + 2px + 36px;
+        }
+
+        &:has(> button:not(:first-child)) > input {
+            padding-right: 44px !important;
+        }
+
+        &:has(> button:not(:first-child) ~ button) > input {
+            padding-right: 80px !important;
+        }
+
+        .flag {
+            position: absolute;
+            top: ($min-touch-target + 6px) * 0.5;
+            bottom: auto;
+            right: $space-md;
+            transform: translateY(-50%);
+            width: 22px;
+            opacity: 1;
+        }
+    }
+
+    // Two Fields In A Row (First And Last Name, E-mail And Phone)
+
+    .name_container,
+    .contact_container {
+        display: flex;
+        gap: $space-sm;
+
+        > div {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    // Submit
+
+    input[type="submit"] {
+        @include button(primary, md, 100%);
+        margin: $space-sm 0px 0px;
+    }
+
+    // Other Login Methods ("Or" Divider And Social Buttons)
+
+    .login_methods {
+        display: flex;
+        flex-direction: column;
+        gap: $space-sm;
+
+        p {
+            @include typography(caption);
+            display: flex;
+            align-items: center;
+            gap: $space-md;
+            color: $color-text-muted;
+
+            span {
+                flex: 1;
+                height: $hairline;
+                background-color: $color-divider;
+            }
+        }
+
+        div {
+            width: 100%;
+            height: auto;
+            margin: 0px;
+            line-height: normal;
+            background: none;
+            box-shadow: none;
+            animation: none;
+
+            &::before,
+            &::after {
+                content: none;
+                display: none;
+            }
+
+            a {
+                @include button(secondary, md, 100%);
+                position: relative;
+
+                i {
+                    position: static;
+                    transform: none;
+                    font-size: 16px;
+                    color: inherit;
+                }
+            }
+        }
+    }
+
+    // Links Under The Form
+
+    .form_questions {
+        @include typography(callout);
+        margin-top: $space-xs;
+        text-align: center;
+        color: $color-text-secondary;
+
+        p {
+            font-size: inherit;
+        }
+
+        a {
+            font-size: inherit;
+            font-weight: 600;
+            font-style: normal;
+            color: $color-primary-text;
+            text-decoration: none;
+
+            &:hover,
+            &:active {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+// Form Back (Soft Icon Button With A Chevron, Like The Native Header Back Button)
+
+@mixin form_back($color: $color-text, $hover_color: $color-text) {
+    @include icon_button(soft, 38px);
     position: absolute;
-    top: 42.5px;
-    left: 50px;
+    top: $space-lg;
+    left: $space-lg;
+    color: $color;
+    text-decoration: none;
     z-index: 100;
 
     .fa-chevron-left {
-        font-size: 2em;
-        color: $color;
-        transition: color 0.3s ease, transform 0.3s ease;
-
-        &:hover {
-            color: $hover_color;
-            transform: scale(1.1);
-        }
+        font-size: 16px;
+        color: inherit;
     }
 }
 
 // Icons
 
-@mixin icon($color: $blue-color, $hover_color: $dark-blue-color) {
+@mixin icon($color: $color-primary, $hover_color: $color-primary-text) {
     color: $color;
+    transition: color $duration-fast ease;
 
     &:hover {
         color: $hover_color;
         cursor: pointer;
-        transition: color 0.2s ease;
     }
 }
 
@@ -535,17 +1219,16 @@
 
         .progress_background {
             fill: none;
-            stroke: $blue-color;
-            stroke-width: 3;
-            stroke-dasharray: 2 4;
+            stroke: $color-surface-strong;
+            stroke-width: 5;
         }
     }
 
     p {
         @include position_center;
-        color: $secondary-color;
-        font-family: $timer-font;
-        font-size: 1.2em;
+        @include typography(timer_small);
+        color: $color-text;
+        font-size: 18px;
 
         span {
             font-family: inherit;
@@ -554,41 +1237,35 @@
     }
 }
 
-// Circle Decoration
+// Circle Decoration (Not Used In The Native Design)
 
-@mixin circle_decoration($top: auto, $right: auto, $bottom: auto, $left: auto, $width: 100px, $height: 100px, $color: transparentize($blue-color, 0.95)) {
-    content: "";
-    position: absolute;
-    top: $top;
-    right: $right;
-    bottom: $bottom;
-    left: $left;
-    width: $width;
-    height: $height;
-    border-radius: 100%;
-    background-color: $color;
-    z-index: -1;
+@mixin circle_decoration($top: auto, $right: auto, $bottom: auto, $left: auto, $width: 100px, $height: 100px, $color: transparent) {
+    content: none;
+    display: none;
 }
 
-// Search Bar
+// Search Bar ("TextField" With A Magnifying Glass Icon)
 
 @mixin search_bar {
     position: relative;
-    max-width: $secondary-width;
+    max-width: $max-content-width;
     width: 100%;
-    backdrop-filter: blur(5px);
     z-index: 50;
 
     .fa-magnifying-glass {
-        @include icon;
         pointer-events: none;
         position: absolute;
-        color: $blue-color;
         top: 50%;
-        left: 8.5px;
+        left: $space-md + 4px;
         transform: translateY(-50%);
-        font-size: 20px;
-        transition: color 0.3s ease
+        font-size: 15px;
+        color: $color-text-muted;
+        z-index: 250; // Above The Filled Input (Pages Raise The Input To 200)
+        transition: color $duration-fast ease;
+    }
+
+    &:focus-within .fa-magnifying-glass {
+        color: $color-primary;
     }
 
     .delete_search_bar {
@@ -596,18 +1273,20 @@
         @include flex_center;
         position: absolute;
         top: 50%;
-        right: 0px;
+        right: $space-xs;
         transform: translateY(-50%);
-        height: 100%;
-        width: 40px;
+        width: 36px;
+        height: 36px;
+        color: $color-text-muted;
+        border-radius: $radius-pill;
         cursor: pointer;
         z-index: 200;
+        transition: background-color $duration-fast ease, color $duration-fast ease;
 
-        &:hover {
-            .fa-xmark {
-                color: $dark-blue-color;
-                transition: color 0.2s ease;
-            }
+        &:hover,
+        &:focus-visible {
+            color: $color-text;
+            background-color: $color-primary-soft;
         }
 
         &:focus-visible {
@@ -615,64 +1294,53 @@
         }
 
         .fa-xmark {
-            font-size: 20px;
-            color: $blue-color;
+            font-size: 15px;
+            color: inherit;
         }
     }
 
     .search_bar {
-        width: 100%;
-        height: 40px;
-        padding: 0px 40px;
-        background-color: transparent;
-        color: $secondary-color;
-        border: 1px solid $dark-blue-color;
-        border-radius: $small-border-radius;
-        text-align: center;
-        outline: none;
-        transition: border 0.2s ease, box-shadow 0.2s ease;
+        @include form_input;
+        height: $min-touch-target;
+        min-height: $min-touch-target;
+        padding: 0px $space-huge 0px 40px;
+        text-align: left;
+        border-radius: $radius-pill;
         z-index: 50;
-
-        &:hover,
-        &:focus-visible {
-            border-color: $blue-color !important;
-        }
-
-        &::placeholder {
-            color: $light-blue-color;
-        }
     }
 }
 
-// Popover Menu
+// Popover Menu Trigger (Plain Icon Button)
 
 @mixin show_properties_button {
-    all: unset;
+    @include icon_button(plain, 36px);
+    color: $color-text-secondary;
 
     i {
-        @include icon;
         display: block;
-        font-size: 1.2em;
+        font-size: 16px;
     }
 }
+
+// Popover Menu (Panel With Rows Like The Native Menu Sheets)
 
 @mixin properties_menu {
     position: fixed;
     inset: auto;
     margin: 0;
     flex-direction: column;
+    gap: $space-xxs;
     top: anchor(bottom);
     right: anchor(right);
-    min-width: 150px;
-    margin-top: 10px;
-    margin-right: 10px;
-    text-align: center;
-    color: $secondary-color;
-    background: transparentize($blue-color, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid transparentize($blue-color, 0.8);
-    border-radius: $small-border-radius;
-    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+    min-width: 200px;
+    margin-top: $space-xs;
+    padding: $space-xs;
+    text-align: left;
+    color: $color-text;
+    background-color: $color-surface-raised;
+    border: $hairline solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
 
     &:popover-open {
         display: flex;
@@ -683,33 +1351,38 @@
     }
 
     p {
-        padding: 5px 10px 0px;
+        @include typography(overline);
+        padding: $space-sm $space-md $space-xs;
+        color: $color-text-muted;
     }
 
     button,
     a {
         all: unset;
+        @include typography(callout);
+        box-sizing: border-box;
         position: relative;
-        padding: 5px 10px;
-        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: $space-md;
+        min-height: $min-touch-target;
+        padding: 0px $space-md;
+        color: $color-text;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        transition: background-color $duration-fast ease;
 
         &.red {
-            color: $red-color;
+            color: $color-danger;
+
+            i {
+                color: $color-danger;
+            }
         }
 
         &:hover,
         &:focus-visible {
-            background-color: transparentize($blue-color, 0.9);
-            cursor: pointer;
-
-            i {
-                visibility: visible;
-                opacity: 1;
-            }
-
-            span {
-                letter-spacing: 0.5px;
-            }
+            background-color: $color-surface-pressed;
         }
 
         &:focus-visible {
@@ -717,27 +1390,24 @@
         }
 
         &[popovertargetaction="hide"] {
-            background-color: transparentize($blue-color, 0.9);
+            justify-content: center;
+            margin-top: $space-xxs;
+            color: $color-text-secondary;
+            border-top: $hairline solid $color-divider;
+            border-radius: 0px 0px $radius-sm $radius-sm;
         }
 
         i {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            top: 50%;
-            left: 0px;
-            transform: translateY(-50%);
-            height: 100%;
-            line-height: 33px;
-            padding-left: 10px;
+            order: -1;
+            width: 18px;
+            text-align: center;
+            font-size: 15px;
+            color: $color-text-secondary;
             pointer-events: none;
-            cursor: pointer;
-            transition: visibility 0.3s ease, opacity 0.3s ease;
         }
 
         span {
             pointer-events: none;
-            transition: letter-spacing 0.3s ease;
         }
     }
 }
@@ -745,13 +1415,16 @@
 // Scrollbar
 
 @mixin scrollbar($direction: "vertical") {
+    scrollbar-width: thin;
+    scrollbar-color: $color-surface-strong transparent;
+
     // Vertical Scrollbar
     @if $direction == "vertical" {
         overflow-x: hidden;
         overflow-y: auto;
 
         &::-webkit-scrollbar {
-            width: 5px;
+            width: 6px;
         }
     }
 
@@ -761,73 +1434,70 @@
         overflow-y: hidden;
 
         &::-webkit-scrollbar {
-            height: 5px;
+            height: 6px;
         }
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: transparentize($dark-blue-color, 0.5);
-        border-radius: 2.5px;
+        background-color: $color-surface-strong;
+        border-radius: $radius-pill;
 
         &:hover {
-            background-color: $dark-blue-color;
+            background-color: $color-primary-solid;
             cursor: pointer;
         }
     }
 
     &::-webkit-scrollbar-track {
-        background-color: transparentize($dark-blue-color, 0.8);
-        border-radius: 2.5px;
+        background-color: transparent;
     }
 }
 
-// Custom Checkbox
+// Custom Checkbox (Switch Of The Native "ToggleRow")
 
 @mixin custom_checkbox {
     input[type="checkbox"] {
         display: none;
-    
+
         &:checked + label {
-            background-color: transparentize($green-color, 0.8);
-    
+            background-color: $color-primary-solid;
+
             &::before {
-                left: 22px;
-                background-color: $green-color;
+                left: 20px;
+                background-color: $color-on-primary;
             }
         }
     }
-    
+
     label {
         position: relative;
+        flex-shrink: 0;
         width: 40px;
-        height: 20px;
+        height: 22px;
         margin-left: auto;
-        padding: 2px;
-        background-color: transparentize($red-color, 0.8);
-        border-radius: 10px;
+        background-color: $color-surface-strong;
+        border-radius: $radius-pill;
         cursor: pointer;
-    
+        transition: background-color $duration-normal ease;
+
         &::before {
             content: "";
             position: absolute;
             top: 50%;
             left: 2px;
             transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            background-color: $red-color;
+            width: 18px;
+            height: 18px;
+            background-color: $color-text-secondary;
             border-radius: 50%;
-            transition: left 0.3s ease, background-color 0.3s ease;
+            box-shadow: $shadow-sm;
+            transition: left $duration-normal ease, background-color $duration-normal ease;
         }
     }
 
     input[type="checkbox"]:disabled + label {
-        background-color: transparentize($main-color, 0.8);
+        opacity: 0.5;
         cursor: not-allowed;
-
-        &::before {
-            background-color: lighten($main-color, 20%);
-        }
     }
 }
 
@@ -841,12 +1511,24 @@
     left: 50%;
     transform: translateX(-50%);
     height: $height;
-    box-shadow: 5px 5px 10px transparentize($blue-color, 0.8);
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    overflow: hidden;
     z-index: 4000;
-    transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+    transition: display $duration-normal ease allow-discrete, opacity $duration-normal ease;
 
     emoji-picker {
         height: inherit;
+        --background: #{$color-surface-raised};
+        --border-color: #{$color-border};
+        --indicator-color: #{$color-primary};
+        --input-border-color: #{$color-border};
+        --input-font-color: #{$color-text};
+        --input-placeholder-color: #{$color-text-muted};
+        --outline-color: #{$color-primary};
+        --category-font-color: #{$color-text-secondary};
+        --button-hover-background: #{$color-surface-pressed};
+        --button-active-background: #{$color-primary-soft};
     }
 
     &.hidden {
@@ -867,7 +1549,7 @@
 
 @mixin focus {
     &:focus-visible {
-        outline: 2px solid $red-color !important;
+        outline: 2px solid $color-primary !important;
         outline-offset: 2px !important;
     }
 }

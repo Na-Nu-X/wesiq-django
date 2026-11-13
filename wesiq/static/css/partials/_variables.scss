@@ -1,52 +1,197 @@
-// Colors
+// Design Tokens (Mirror Of "theme/tokens.ts" And "theme/typography.ts" In The Native App, Dark Theme Only)
 
-$main-color: #060b18;
-$secondary-color: #f2f5ff;
+/********
+ Palette
+********/
 
-$blue-color: #5b8cff;
-$dark-blue-color: #3d6ef5;
-$light-blue-color: #c2e0fa;
+$ink-950: #03060e;
+$ink-900: #060b18;
+$ink-850: #0a1121;
+$ink-800: #0e1528;
+$ink-750: #141d36;
+$ink-700: #1a2544;
+$ink-600: #26345c;
 
-$yellow-color: #f0c14a;
+$blue-300: #c2e0fa;
+$blue-400: #7ea4ff;
+$blue-500: #5b8cff;
+$blue-600: #2f5fe8;
+$blue-700: #2753d4;
 
-$blue-color: #5b8cff;
-$blue-strong: #3d6ef5;
-$blue-soft: #9bb8ff;
+$slate-200: #f2f5ff;
+$slate-400: #a9b6d6;
+$slate-500: #8190b5;
 
-$green-color: #3dd68c;
-$red-color: #ff5c6a;
-$article-color: #f0c14a;
+$green-500: #3dd68c;
+$red-500: #ff5c6a;
+$yellow-500: #f0c14a;
 
-$text-primary: #f8fafc;
-$text-muted: rgba(241, 245, 249, 0.75);
-$text-subtle: rgba(203, 213, 225, 0.50);
-$text-faint: rgba(148, 163, 184, 0.35);
+/****************
+ Semantic Colors
+****************/
 
-$surface: #0b0f19;
-$surface-elevated: #161f33;
-$surface-inset: #05070c;
+$color-background: $ink-900; // Page Background
+$color-background-deep: $ink-950; // Behind Sheets, Tab Bar, Footer
+$color-surface: $ink-800; // Cards, List Rows
+$color-surface-raised: $ink-750; // Inputs, Nested Cards, Sheets
+$color-surface-pressed: $ink-700; // Pressed / Hovered Surfaces
+$color-surface-strong: $ink-600; // Skeletons, Disabled Fills
 
-$surface-border: rgba(99, 102, 241, 0.16);
-$surface-hover: rgba(99, 102, 241, 0.08);
-$surface-glow: rgba(99, 102, 241, 0.20);
+$color-border: rgba(91, 140, 255, 0.14); // Hairline Borders Of Cards And Inputs
+$color-border-strong: rgba(91, 140, 255, 0.32); // Focused Inputs, Outlined Buttons
+$color-divider: rgba(169, 182, 214, 0.10); // Separators Inside Lists
 
-// Dimensions
+$color-primary: $blue-500; // Icons, Links, Active Tab
+$color-primary-text: $blue-400; // Small Accent Text
+$color-primary-solid: $blue-600; // Filled Buttons Behind White Text
+$color-primary-solid-pressed: $blue-700; // Pressed Filled Buttons
+$color-primary-soft: rgba(91, 140, 255, 0.14); // Tinted Chips, Selected Rows
+$color-on-primary: #ffffff; // Text On Filled Buttons
 
-$main-width: 1580px;
-$secondary-width: 580px;
+$color-text: $slate-200; // Main Text
+$color-text-secondary: $slate-400; // Supporting Text
+$color-text-muted: $slate-500; // Placeholders, Timestamps
+$color-text-accent: $blue-300; // Soft Light Blue Highlights
 
-// Fonts
+$color-success: $green-500;
+$color-success-soft: rgba(61, 214, 140, 0.14);
+$color-success-border: rgba(61, 214, 140, 0.32);
+$color-danger: $red-500;
+$color-danger-soft: rgba(255, 92, 106, 0.14);
+$color-danger-soft-pressed: rgba(255, 92, 106, 0.24);
+$color-danger-border: rgba(255, 92, 106, 0.32);
+$color-warning: $yellow-500;
+$color-warning-soft: rgba(240, 193, 74, 0.14);
+$color-warning-border: rgba(240, 193, 74, 0.32);
+$color-premium: $yellow-500; // Subscriber Highlights
+$color-premium-soft: rgba(240, 193, 74, 0.16);
 
-$heading-font: "Bungee", sans-serif;
-$main-font: Poppins, Arial, sans-serif;
-$copywrite-font: 'Courier New', Courier, monospace;
-$article-heading-font: "Balsamiq Sans", sans-serif;
-$timer-font: "Orbitron", sans-serif;
+$color-overlay: rgba(3, 6, 14, 0.72); // Backdrop Behind Dialogs And Sheets
+
+/********
+ Spacing (4 Point Grid)
+********/
+
+$space-xxs: 2px;
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 12px;
+$space-lg: 16px;
+$space-xl: 20px;
+$space-xxl: 24px;
+$space-xxxl: 32px;
+$space-huge: 48px;
+
+/******
+ Radii
+******/
+
+$radius-xs: 6px;
+$radius-sm: 10px;
+$radius-md: 14px;
+$radius-lg: 20px;
+$radius-xl: 28px;
+$radius-pill: 999px;
+
+/*******
+ Layout
+*******/
+
+$screen-padding: $space-lg; // Horizontal Padding Of Screens
+$max-content-width: 580px; // Max Width Of Content Columns
+$max-dialog-width: 480px; // Max Width Of Centered Dialogs
+$min-touch-target: 44px;
+$header-height: 52px;
+$hairline: 1px;
+$sheet-breakpoint: 700px; // Bottom Sheet Below, Centered Dialog At And Above
+$tab-bar-breakpoint: 800px; // Bottom Tab Bar Below, Top Navigation Above
+
+/********
+ Shadows
+********/
+
+$shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.25);
+$shadow-md: 0px 6px 24px rgba(0, 0, 0, 0.35);
+$shadow-lg: 0px 12px 48px rgba(0, 0, 0, 0.45);
+$shadow-glow: 0px 4px 32px rgba(91, 140, 255, 0.35); // Highlight Of Primary Actions
+
+/*******
+ Motion
+*******/
+
+$duration-fast: 150ms;
+$duration-normal: 250ms;
+$duration-slow: 400ms;
+
+$disabled-opacity: 0.45;
+
+/***********
+ Typography (System Fonts For UI Text, Brand Fonts Only For The Logo And Timers)
+***********/
+
+$font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+$font-brand: "Bungee", $font-system; // Wordmark Only
+$font-timer: "Orbitron", $font-system; // Timers And Counters Only
+$font-mono: Menlo, Consolas, "Liberation Mono", monospace;
+
+// Text Variants (Font Size, Line Height, Font Weight, Letter Spacing)
+$typography: (
+    display: (32px, 38px, 800, -0.5px),
+    title: (24px, 30px, 700, -0.3px),
+    heading: (19px, 25px, 700, -0.2px),
+    subheading: (16px, 22px, 600, 0px),
+    body: (15px, 22px, 400, 0px),
+    body_strong: (15px, 22px, 600, 0px),
+    callout: (14px, 20px, 400, 0px),
+    label: (13px, 18px, 600, 0.1px),
+    caption: (12px, 16px, 400, 0px),
+    overline: (11px, 14px, 700, 0.8px),
+    timer: (44px, 52px, 400, 0px),
+    timer_small: (22px, 28px, 400, 0px),
+);
+
+/**************************
+ Legacy Aliases (Kept So Page Stylesheets Resolve To The Tokens Above, Prefer The Tokens In New Code)
+**************************/
+
+$main-color: $color-background;
+$secondary-color: $color-text;
+
+$blue-color: $color-primary;
+$dark-blue-color: $color-primary-solid;
+$light-blue-color: $color-text-accent;
+$blue-strong: $color-primary-solid;
+$blue-soft: $color-primary-text;
+
+$yellow-color: $color-warning;
+$green-color: $color-success;
+$red-color: $color-danger;
+$article-color: $color-premium;
+
+$text-primary: $color-text;
+$text-muted: $color-text-secondary;
+$text-subtle: $color-text-muted;
+$text-faint: $color-text-muted;
+
+$surface: $color-surface;
+$surface-elevated: $color-surface-raised;
+$surface-inset: $color-background-deep;
+
+$surface-border: $color-border;
+$surface-hover: $color-primary-soft;
+$surface-glow: rgba(91, 140, 255, 0.20);
+
+$main-width: 1200px;
+$secondary-width: $max-content-width;
+
+$heading-font: $font-system;
+$main-font: $font-system;
+$copywrite-font: $font-system;
+$article-heading-font: $font-system;
+$timer-font: $font-timer;
 
 $default-font-size: 15px;
 
-// Borders
-
-$big-border-radius: 25px;
-$medium-border-radius: 10px;
-$small-border-radius: 5px;
+$big-border-radius: $radius-lg;
+$medium-border-radius: $radius-md;
+$small-border-radius: $radius-sm;

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     move_down.addEventListener("click", function():void {
         window.scrollTo({
-            top: window.innerHeight - navigation_bar.offsetHeight,
+            top: window.innerHeight - (navigation_bar.getBoundingClientRect().top <= 0 ? navigation_bar.offsetHeight : 0), // The Bottom Tab Bar Doesn't Cover The Top
             behavior: "smooth"
         })
     })

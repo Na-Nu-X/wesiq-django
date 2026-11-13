@@ -10,7 +10,7 @@
 
 {% block navigation_bar_items %}
     <li>
-        <a href="{% url 'registration_url' %}" target="_self">{% translate "REGISTRÁCIA" %}</a>
+        <a href="{% url 'registration_url' %}" target="_self"><i class="fa-solid fa-user-plus"></i><span>{% translate "Registrácia" %}</span></a> <!-- https://fontawesome.com/icons/user-plus -->
     </li>
 {% endblock navigation_bar_items %}
 
