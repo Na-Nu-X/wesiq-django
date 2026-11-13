@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     // No Logged In Button Click Functionality
     if(no_logged_in_button) {
-        no_logged_in_button.addEventListener("click", function():void {
+        no_logged_in_button.addEventListener("click", function(event:PointerEvent):void {
+            event.preventDefault() // Stays On The Homepage (The Link Opens The Login Page Only On Other Pages)
             login_form_dialog.showModal() // Shows The Login Form Dialog
         })
     }

@@ -294,6 +294,7 @@ $blog-glow: $surface-glow;
             .article_info {
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 flex-wrap: wrap;
                 gap: $space-xs $space-md;
 
@@ -340,8 +341,6 @@ $blog-glow: $surface-glow;
                 }
 
                 .date {
-                    margin-left: auto;
-
                     p {
                         color: $color-text-muted;
                     }

@@ -46,14 +46,26 @@
 // Loading Spinner (Activity Indicator)
 
 @mixin loading($size: 10px) {
+    position: relative; // Page Stylesheets May Replace It (E.g. With "position_center")
     width: $size * 3;
     height: $size * 3;
-    border: 3px solid $color-surface-strong;
-    border-top-color: $color-primary;
-    border-radius: 50%;
     transition: opacity $duration-slow ease, visibility $duration-slow ease;
-    animation: preloaderSpin 0.8s infinite linear;
     z-index: 3000;
+
+    // The Ring Spins On A Pseudo Element, Rotating The Element Itself Would Combine With Its Centering Transform And Make It Orbit
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: $size * 3;
+        height: $size * 3;
+        margin: -$size * 1.5 0px 0px (-$size * 1.5);
+        border: 3px solid $color-surface-strong;
+        border-top-color: $color-primary;
+        border-radius: 50%;
+        animation: preloaderSpin 0.8s infinite linear;
+    }
 
     &.hidden {
         opacity: 0;
@@ -1303,8 +1315,9 @@
         @include form_input;
         height: $min-touch-target;
         min-height: $min-touch-target;
-        padding: 0px $space-huge 0px 40px;
-        text-align: left;
+        margin-bottom: 0px; // Keeps The Wrapper As Tall As The Field, So The Icons Are Vertically Centered
+        padding: 0px 44px;
+        text-align: center;
         border-radius: $radius-pill;
         z-index: 50;
     }
