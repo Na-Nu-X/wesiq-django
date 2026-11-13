@@ -371,22 +371,29 @@ header {
                 }
             }
 
+            // Description (Full Width Multiline "TextField" With The Tool Row)
+
             .post_info_container {
                 position: relative;
                 display: flex;
                 flex-direction: column;
-                margin: 10px auto 0px;
-                background: transparent;
+                width: 100%;
+                margin: 0px;
+                background-color: $color-surface-raised;
                 border: $hairline solid $color-border;
-                border-radius: $small-border-radius;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                border-radius: $radius-md;
+                transition: border-color $duration-fast ease, background-color $duration-fast ease;
 
-                &:hover,
+                &:hover {
+                    border-color: $color-border-strong;
+                }
+
                 &:has(.description:focus) {
-                    border-color: $blue-color;
+                    border-color: $color-primary;
+                    background-color: $color-surface;
 
                     .users_for_tag_container_wrapper {
-                        border-color: $blue-color;
+                        border-color: $color-primary;
                     }
                 }
 
@@ -394,14 +401,17 @@ header {
                 }
 
                 .description {
+                    @include typography(body);
                     width: 100%;
-                    min-height: 100px;
+                    min-height: 96px;
                     field-sizing: content;
-                    padding: 5px 10px;
+                    padding: $space-sm $space-md;
                     text-align: left;
                     background: transparent;
-                    color: $secondary-color;
+                    color: $color-text;
+                    caret-color: $color-primary;
                     outline: none;
+                    overflow-wrap: anywhere;
 
                     &:empty::before {
                         content: attr(data-placeholder);
@@ -631,26 +641,35 @@ header {
                 }
             }
 
+            // Location ("TextField" With A Leading Icon)
+
             .location_container {
                 position: relative;
-                padding: 5px;
+                width: 100%;
 
                 .location_input_container {
                     position: relative;
 
                     .fa-location-arrow {
-                        @include icon;
-                        display: block;
                         position: absolute;
-                        bottom: 0px;
-                        left: -16px;
-                        padding: 19px 0px 16px;
+                        top: ($min-touch-target + 6px) * 0.5;
+                        left: $space-md + 4px;
+                        transform: translateY(-50%);
+                        font-size: 14px;
+                        color: $color-text-muted;
+                        pointer-events: none;
+                        z-index: 1;
+                    }
+
+                    &:focus-within .fa-location-arrow {
+                        color: $color-primary;
                     }
 
                     .location {
                         @include form_input;
                         width: 100%;
                         margin-bottom: 0px;
+                        padding-left: 42px;
                     }
                 }
 

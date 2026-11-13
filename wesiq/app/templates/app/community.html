@@ -28,15 +28,19 @@
         <script src="{% static 'app/ts/dist/pages/community/components/notifications.js' %}" type="module"></script>
 
         <button class="notifications" title="{% translate 'Notifikácie' %}" aria-label="{% translate 'Notifikácie' %}">
-            <span class="label">
-                {% if logged_in_user.unread_messages_amount <= 9 %}
-                    {{ logged_in_user.unread_messages_amount|default:0 }}
+            <!-- Badge Only When There Are Unread Messages (Like The Native App) -->
+            {% if logged_in_user.unread_messages_amount %}
+                <span class="label">
+                    {% if logged_in_user.unread_messages_amount <= 9 %}
+                        {{ logged_in_user.unread_messages_amount }}
 
-                {% else %}
-                    9+
-                
-                {% endif %}
-            </span>
+                    {% else %}
+                        9+
+
+                    {% endif %}
+                </span>
+
+            {% endif %}
 
             <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
         </button>

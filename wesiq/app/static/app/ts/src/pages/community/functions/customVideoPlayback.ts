@@ -3,7 +3,6 @@ declare const Hls: any
 import { getFormattedTime } from "../../../utils/timer.js"
 
 import type { vtt } from "../components/custom_video_playback.js"
-import { posts_preview_state } from "../state.js"
 
 // Function For Play Or Pause The Video
 export function playPauseVideo(play_pause_icon:HTMLElement, play_pause_indicator:HTMLDivElement, video:HTMLVideoElement):void {

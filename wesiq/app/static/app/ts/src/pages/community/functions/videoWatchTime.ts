@@ -99,7 +99,7 @@ export function initializeShowVideoMetrics(post_container:HTMLDivElement):void {
             hls.attachMedia(video)
             
             // Preloads The Video Duration Value And Shows The Video Metrics Container
-            const onLevelLoaded = function(event:any, data:any):void {
+            const onLevelLoaded = function(_event:any, data:any):void { // The Event Name Is Unused, HLS Passes The Data Second
                 if(data.details && data.details.totalduration) {
                     video_duration = data.details.totalduration // Updates Stored Video Duration Value
                     if(average_watch_time !== null && video_views !== null) showVideoMetrics(post_container, average_watch_time, video_views, video_duration) // Shows The Video Metrics Container
