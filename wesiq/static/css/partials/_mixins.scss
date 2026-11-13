@@ -1323,6 +1323,51 @@
     }
 }
 
+// Search Dropdown (Results / History Attached Under A "search_bar", Use On The Element Containing Both)
+// The Open State Comes From The "active" Class The Scripts Toggle On The Dropdown
+
+@mixin search_dropdown($dropdown, $max-height: calc(40px * 3)) {
+    position: relative;
+
+    // Open: The Field And The Dropdown Form One Panel (Rounded Top, Divider, Rounded Bottom)
+    &:has(> #{$dropdown}.active:not(:empty)) .search_bar {
+        border-color: $color-primary;
+        border-bottom-color: $color-divider;
+        background-color: $color-surface;
+        border-radius: ($min-touch-target * 0.5) ($min-touch-target * 0.5) 0px 0px;
+    }
+
+    > #{$dropdown} {
+        @include scrollbar;
+        position: absolute;
+        top: $min-touch-target;
+        left: 0px;
+        width: 100%;
+        max-height: $max-height;
+        padding: 0px $space-xs;
+        background-color: $color-surface;
+        border: $hairline solid $color-primary;
+        border-top: none;
+        border-radius: 0px 0px $radius-lg $radius-lg;
+        box-shadow: $shadow-lg;
+        opacity: 0;
+        pointer-events: none;
+        overflow-y: auto;
+        transition: opacity $duration-fast ease;
+        z-index: 50;
+
+        &:empty {
+            display: none;
+        }
+
+        &.active {
+            padding: $space-xs;
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+}
+
 // Popover Menu Trigger (Plain Icon Button)
 
 @mixin show_properties_button {

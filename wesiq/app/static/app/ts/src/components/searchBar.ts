@@ -41,27 +41,11 @@ document.addEventListener("DOMContentLoaded", function():void {
     function showSearchResult():void {
         search_bar.focus() // Focuses To Search Bar
 
-        // Sets Search Bar Styles
-        search_bar.style.borderRadius = "5px 5px 0px 0px"
-        search_bar.style.borderBottom = "none"
-
-        // Sets Search Result Container Styles
-        search_result_container.style.borderBottom = "1px solid #5b8cff"
-        search_result_container.style.borderLeft = "1px solid #5b8cff"
-        search_result_container.style.borderRight = "1px solid #5b8cff"
-
-        search_result_container.classList.add("active") // Adds Active Class To Search Result
+        search_result_container.classList.add("active") // Adds Active Class To Search Result (The Stylesheet Joins The Search Bar And The Results Into One Panel)
     }
 
     // Function For Hide Search Results
     function hideSearchResult():void {
-        // Sets Search Bar Styles
-        search_bar.style.border = "1px solid #3d6ef5"
-        search_bar.style.borderRadius = "5px"
-
-        // Sets Search Result Container Styles
-        search_result_container.style.border = "none"
-
         search_result_container.classList.remove("active") // Removes Active Class From Search Result
     }
 

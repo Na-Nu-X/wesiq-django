@@ -65,27 +65,11 @@ export function renderSearchedPostsHistory(history_container:HTMLDivElement, sea
 function showHistoryContainer(search_bar:HTMLInputElement, history_container:HTMLDivElement):void {
     search_bar.focus() // Focuses To Search Bar
 
-    // Sets Search Bar Styles
-    search_bar.style.borderRadius = "5px 5px 0px 0px"
-    search_bar.style.borderBottom = "none"
-
-    // Sets History Container Container Styles
-    history_container.style.borderBottom = "1px solid #5b8cff"
-    history_container.style.borderLeft = "1px solid #5b8cff"
-    history_container.style.borderRight = "1px solid #5b8cff"
-
-    history_container.classList.add("active") // Adds Active Class To Search Result
+    history_container.classList.add("active") // Adds Active Class To Search Result (The Stylesheet Joins The Search Bar And The History Into One Panel)
 }
 
 // Function For Hide The History Container
-export function hideHistoryContainer(search_bar:HTMLInputElement, history_container:HTMLDivElement):void {
-    // Sets Search Bar Styles
-    search_bar.style.border = "1px solid #3d6ef5"
-    search_bar.style.borderRadius = "5px"
-
-    // Sets History Container Container Styles
-    history_container.style.border = "none"
-
+export function hideHistoryContainer(_search_bar:HTMLInputElement, history_container:HTMLDivElement):void {
     history_container.classList.remove("active") // Removes Active Class From Search Result
 }
 

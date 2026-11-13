@@ -391,14 +391,20 @@ header {
                 &:has(.description:focus) {
                     border-color: $color-primary;
                     background-color: $color-surface;
+                }
 
-                    .users_for_tag_container_wrapper {
-                        border-color: $color-primary;
+                // Open Tag List: The Description And The Users Form One Panel
+                &:has(.users_for_tag_container.active) {
+                    border-color: $color-primary;
+                    border-bottom-color: $color-divider;
+                    background-color: $color-surface;
+                    border-radius: $radius-md $radius-md 0px 0px;
+
+                    .icons {
+                        border-radius: 0px;
                     }
                 }
 
-                &:not(:has(.users_for_tag_container.active)) {
-                }
 
                 .description {
                     @include typography(body);
@@ -451,8 +457,7 @@ header {
                     height: 25px;
                     padding: 0px 10px;
                     background-color: $color-primary-soft;
-                    border-bottom-right-radius: $small-border-radius;
-                    border-bottom-left-radius: $small-border-radius;
+                    border-radius: 0px 0px ($radius-md - $hairline) ($radius-md - $hairline);
 
                     .settings {
                         display: flex;
@@ -513,12 +518,12 @@ header {
                     opacity: 0;
                     max-width: calc(100% + 2px);
                     width: calc(100% + 2px);
-                    padding: 5px;
-                    background-color: $color-primary-soft;
-                    border-right: $hairline solid $color-divider;
-                    border-left: $hairline solid $color-divider;
-                    border-bottom: $hairline solid $color-divider;
-                    border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    padding: $space-xs;
+                    background-color: $color-surface;
+                    border: $hairline solid $color-primary;
+                    border-top: none;
+                    border-radius: 0px 0px $radius-lg $radius-lg;
+                    box-shadow: $shadow-lg;
                     z-index: 50;
                     transition: border-color 0.3s ease, display 0.5s ease allow-discrete, top 0.3s ease, opacity 0.5s ease;
 
@@ -537,28 +542,27 @@ header {
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
-                        gap: 10px;
+                        gap: $space-xxs;
                         width: 100%;
-                        max-height: calc(3 * 48px + 30px + 5px);
-                        padding: 5px;
+                        max-height: calc(3 * 48px + #{$space-xxs * 2});
+
+                        // User Row ("UserRow")
 
                         .one_user {
                             position: relative;
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: $space-md;
                             flex-shrink: 0;
-                            height: 50px;
-                            padding: 0px 10px;
-                            background-color: $color-surface;
-                            color: $secondary-color;
-                            border: $hairline solid $color-border;
-                            border-radius: $medium-border-radius;
-                            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                            height: 48px;
+                            padding: 0px $space-sm;
+                            background-color: transparent;
+                            color: $color-text;
+                            border-radius: $radius-sm;
+                            transition: background-color $duration-fast ease;
 
                             &:hover {
-                                background: transparent;
-                                border-color: $color-border-strong;
+                                background-color: $color-surface-pressed;
                                 cursor: pointer;
                             }
 
@@ -572,13 +576,14 @@ header {
                             }
 
                             .profile_picture {
-                                @include profile_picture;
+                                @include profile_picture(32px, 32px);
                                 pointer-events: none;
                             }
 
                             .username {
+                                @include typography(body_strong);
                                 pointer-events: none;
-                                color: $secondary-color;
+                                color: $color-text;
                             }
 
                             .delete_from_history {
@@ -673,15 +678,30 @@ header {
                     }
                 }
 
+                // Open Results: The Location Field And The Places Form One Panel
+
+                &:has(.location_results:not(.hidden)) .location {
+                    border-color: $color-primary;
+                    border-bottom-color: $color-divider;
+                    background-color: $color-surface;
+                    border-radius: $radius-md $radius-md 0px 0px;
+                }
+
                 .location_results_container {
                     position: relative;
-                    max-height: calc((50px * 2) + 20px + 20px + 5px);
-                    padding: 10px;
+                    max-height: calc((44px * 3) + #{$space-xs * 2});
 
-                    &:not(:has(.location_results.hidden)) {
-                        background-color: $color-primary-soft;
-                        border: $hairline solid $color-border;
-                        border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    // Room For The Spinner While Places Load
+                    &:has(.loading:not(.hidden)) {
+                        min-height: 50px;
+                    }
+
+                    &:has(.location_results:not(.hidden)) {
+                        padding: $space-xs;
+                        background-color: $color-surface;
+                        border: $hairline solid $color-primary;
+                        border-top: none;
+                        border-radius: 0px 0px $radius-lg $radius-lg;
                     }
 
                     .loading {
@@ -693,42 +713,38 @@ header {
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
-                        gap: 10px;
-                        max-height: calc((50px * 2) + 20px);
-                        margin-bottom: 50px;
-                        padding: 5px 10px;
-                        border-bottom-right-radius: $small-border-radius;
-                        border-bottom-left-radius: $small-border-radius;
+                        gap: $space-xxs;
+                        max-height: calc(44px * 3);
                         opacity: 1;
-                        transition: visibility 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+                        transition: opacity $duration-fast ease;
 
                         &.hidden {
                             visibility: hidden;
                             opacity: 0;
-                            height: 50px;
-                            margin-bottom: 0px;
+                            height: 0px;
 
                             .place {
                                 pointer-events: none;
                             }
                         }
 
+                        // Place Row (List Row)
+
                         .place {
+                            @include typography(callout);
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: $space-md;
                             flex-shrink: 0;
-                            height: 50px;
-                            padding: 0px 10px;
-                            background-color: $color-surface;
-                            color: $secondary-color;
-                            border: $hairline solid $color-border;
-                            border-radius: $medium-border-radius;
-                            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                            height: 44px;
+                            padding: 0px $space-md;
+                            background-color: transparent;
+                            color: $color-text;
+                            border-radius: $radius-sm;
+                            transition: background-color $duration-fast ease;
 
                             &:hover {
-                                background: transparent;
-                                border-color: $color-border-strong;
+                                background-color: $color-surface-pressed;
                                 cursor: pointer;
                             }
 
@@ -750,8 +766,8 @@ header {
             }
 
             .upload_post_form_submit {
-                @include blue_button($border-radius: $big-border-radius);
-                margin-top: 40px;
+                @include blue_button;
+                margin-top: $space-sm;
             }
         }
     }
@@ -885,6 +901,7 @@ header {
 
         .search_posts_container {
             @include search_bar;
+            @include search_dropdown(".history_container", calc(40px * 3 + #{$space-sm}));
             z-index: 200;
 
             .search_bar_container {
@@ -899,30 +916,7 @@ header {
             }
 
             .history_container {
-                @include scrollbar;
-                position: absolute;
-                top: $min-touch-target;
-                width: 100%;
-                max-height: calc(40px * 3 + #{$space-sm});
-                padding: $space-xs;
-                background-color: $color-surface-raised;
-                border: $hairline solid $color-border;
-                border-radius: $radius-md;
-                box-shadow: $shadow-lg;
-                opacity: 0;
-                pointer-events: none;
-                overflow-y: auto;
-                transition: top $duration-normal ease, opacity $duration-normal ease;
-                z-index: 50;
-
-                &:empty {
-                    display: none;
-                }
-
                 &.active {
-                    top: $min-touch-target + $space-xs;
-                    opacity: 1;
-                    pointer-events: auto;
 
                     .searched_post {
                         p {
@@ -931,6 +925,8 @@ header {
                     }
                 }
 
+                // History Row (Same As The Homepage Search Results)
+
                 .searched_post {
                     position: relative;
                     height: 40px;
@@ -938,14 +934,12 @@ header {
                     i {
                         position: absolute;
                         top: 50%;
-                        left: 0px;
+                        left: $space-md;
                         transform: translateY(-50%);
-                        width: 15px + 10px;
-                        height: 100%;
-                        line-height: 40px;
-                        padding-left: 10px;
+                        width: 20px;
+                        text-align: center;
                         pointer-events: all;
-                        color: $color-text-secondary;
+                        color: $color-text-muted;
                         cursor: pointer;
                         transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
                         z-index: 100;
@@ -956,29 +950,30 @@ header {
                         }
 
                         &.fa-xmark {
-                            font-size: 20px;
+                            font-size: 15px;
                         }
                     }
 
                     p {
+                        @include typography(callout);
+                        @include crop_text;
                         pointer-events: none;
                         position: relative;
                         display: block;
                         height: inherit;
                         line-height: 40px;
+                        padding: 0px $space-xxxl + $space-sm;
                         text-align: center;
-                        transition: background-color 0.2s ease;
+                        color: $color-text;
+                        border-radius: $radius-sm;
+                        transition: background-color $duration-fast ease;
 
                         &:hover,
                         &:focus-visible {
-                            background-color: $color-surface;
+                            background-color: $color-surface-pressed;
                         }
                     }
                 }
-            }
-
-            &:has(.search_bar:hover) .history_container, &:has(.search_bar:focus) .history_container {
-                border-color: $blue-color !important;
             }
         }
 
