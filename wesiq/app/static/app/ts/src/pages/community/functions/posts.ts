@@ -17,7 +17,7 @@ export interface loggedInUser {
     id:number,
     role:string,
     profile_picture_name:string,
-    saved_posts:number[]
+    saved_posts:string[]
 }
 
 interface searchedPostsResponse {
@@ -70,7 +70,7 @@ export async function loadPosts(feed:HTMLDivElement, feed_report:HTMLParagraphEl
         const no_already_rendered_posts_data:searchedPost[] = loaded_posts_response.posts.filter(function(one_searched_post:searchedPost):boolean {
             return (
                 ![...all_post_containers].some(function(one_post_container:HTMLDivElement):boolean {
-                    return one_searched_post.id === Number(one_post_container.dataset["post_id"]) // If The Post ID Is Equal To Data In The Rendered Post In The DOM
+                    return one_searched_post.id === one_post_container.dataset["post_id"] // If The Post ID Is Equal To Data In The Rendered Post In The DOM
                 })
             )
         })
@@ -111,7 +111,7 @@ export function seenPostObserver(feed:HTMLDivElement):void {
 
     const seen_post_observer:IntersectionObserver = new IntersectionObserver(function(entries:IntersectionObserverEntry[]):void {
         entries.forEach(function(one_entry:IntersectionObserverEntry):void {
-            const post_id:number|null = Number(one_entry.target.getAttribute("data-post_id")) || null // Gets The Post ID If Is Available
+            const post_id:string|null = one_entry.target.getAttribute("data-post_id") || null // Gets The Post ID If Is Available
             
             if(!post_id) return
 
@@ -146,7 +146,7 @@ export function seenPostObserver(feed:HTMLDivElement):void {
 }
 
 // Function For Mark The Post As Already Seen
-async function markPostAsSeen(id:number):Promise<void> {
+async function markPostAsSeen(id:string):Promise<void> {
     try {
         const mark_post_as_seen_response:response = await sendPOST(window.location.pathname, id, "mark-post-as-seen") // Sends Post ID As A POST Data
 

@@ -16,90 +16,58 @@
 **************/
 
 header {
-    min-height: 100vh;
     position: relative;
-    overflow: hidden;
 
     // Banner
 
     .banner {
-        // Reviews Informations
+        // Reviews Informations (Chip)
 
         .reviews_info {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: max-content;
-            padding: 5px 10px;
-            background-color: transparent;
-            backdrop-filter: blur(5px);
-            border: 1px solid $dark-blue-color;
-            border-radius: $big-border-radius;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-
-            &:hover {
-                transform: translateY(-1px);
-            }
+            @include chip(warning);
+            color: $color-text;
 
             p {
+                @include typography(label);
                 display: inline-block;
-                color: $light-blue-color;
-                font-weight: semibold;
+                margin-right: $space-xxs;
+                color: $color-text;
             }
 
             .fa-star {
-                font-size: 0.8em;
-                cursor: pointer;
+                font-size: 11px;
 
                 &.full {
-                    color: $yellow-color;
-                    opacity: 1;
+                    color: $color-premium;
                 }
 
                 &.empty {
-                    color: $light-blue-color;
-                    opacity: 0.5;
+                    color: $color-surface-strong;
                 }
             }
         }
     }
 
-    // Header Container
+    // Header Container (Hero)
 
     .header_container {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        min-height: 100vh;
-        padding: 125px + 20px 20px 0px;
-
-        background:
-            radial-gradient(ellipse 90% 60% at 50% -10%, transparentize($blue-color, 0.55) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 40% at 100% 30%, transparentize($light-blue-color, 0.8) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 35% at 0% 70%, transparentize($dark-blue-color, 0.9) 0%, transparent 55%);
-
-        &::before {
-            @include circle_decoration($top: -150px, $left: -150px, $width: 500px, $height: 500px);
-        }
-
-        &::after {
-            @include circle_decoration($top: 100px, $right: -200px, $width: 450px, $height: 450px);
-            overflow: hidden;
-        }
+        gap: $space-xl;
+        min-height: 100svh;
+        padding: calc(var(--header-offset) + #{$space-lg}) $screen-padding $space-xxxl;
 
         .center {
             @include flex_center($direction: column);
-            gap: 25px;
+            flex: 1;
             position: relative;
-            min-height: calc(100vh - 125px - 20px - 40px);
         }
 
         .hero {
             @include flex_center($direction: column);
-            gap: 25px;
+            gap: $space-lg;
             width: 100%;
-            max-width: 800px;
+            max-width: $max-content-width;
             margin: 0px auto;
         }
 
@@ -107,52 +75,58 @@ header {
 
         .search_container {
             position: relative;
-            max-width: $secondary-width;
+            max-width: $max-content-width;
             width: 100%;
             margin: 0px auto;
-            animation: fadeIn 1s ease-out;
 
             .search_bar_container {
                 @include search_bar;
+                max-width: none;
                 z-index: 100;
             }
+
+            // Search Results (Raised Panel Of "UserRow"-Like Rows)
 
             .search_result_container {
                 @include scrollbar;
                 position: absolute;
-                top: 40px - 40px;
+                top: $min-touch-target;
                 width: 100%;
-                max-height: calc(40px * 3);
-                border-bottom-right-radius: $small-border-radius;
-                border-bottom-left-radius: $small-border-radius;
-                backdrop-filter: blur(5px);
+                max-height: calc(#{$min-touch-target} * 5 + #{$space-sm});
+                padding: 0px $space-xs;
+                background-color: $color-surface-raised;
+                border: 0px solid $color-border;
+                border-radius: $radius-md;
+                box-shadow: $shadow-lg;
                 opacity: 0;
                 overflow-y: auto;
-                transition: top 0.3s ease, border 0.3s ease, width 0.3s ease, opacity 0.5s ease;
+                pointer-events: none;
+                transition: top $duration-normal ease, opacity $duration-normal ease;
                 z-index: 50;
 
                 &.active {
-                    top: 40px;
+                    top: $min-touch-target + $space-xs;
+                    padding: $space-xs;
+                    border-width: $hairline;
                     opacity: 1;
+                    pointer-events: auto;
                 }
 
                 .search_result {
                     position: relative;
-                    height: 40px;
+                    height: $min-touch-target;
 
                     i {
                         position: absolute;
                         top: 50%;
-                        left: 0px;
+                        left: $space-md;
                         transform: translateY(-50%);
-                        width: 15px + 10px;
-                        height: 100%;
-                        line-height: 40px;
-                        padding-left: 10px;
+                        width: 20px;
+                        text-align: center;
                         pointer-events: all;
-                        color: $light-blue-color;
+                        color: $color-text-muted;
                         cursor: pointer;
-                        transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
+                        transition: display $duration-normal ease allow-discrete, opacity $duration-normal ease;
                         z-index: 100;
 
                         &.hidden {
@@ -161,23 +135,28 @@ header {
                         }
 
                         &.fa-xmark {
-                            font-size: 20px;
+                            left: auto;
+                            right: $space-md;
+                            font-size: 15px;
                         }
                     }
 
                     a {
+                        @include typography(callout);
                         position: relative;
                         display: block;
                         height: inherit;
-                        line-height: 40px;
-                        color: $secondary-color;
-                        text-align: center;
+                        line-height: $min-touch-target;
+                        padding: 0px $space-xxxl + $space-sm;
+                        color: $color-text;
+                        text-align: left;
                         text-decoration: none;
-                        transition: background-color 0.2s ease;
+                        border-radius: $radius-sm;
+                        transition: background-color $duration-fast ease;
 
                         &:hover,
                         &:focus-visible {
-                            background-color: transparentize($dark-blue-color, 0.95);
+                            background-color: $color-surface-pressed;
                         }
 
                         &:focus-visible {
@@ -186,141 +165,86 @@ header {
                     }
                 }
             }
-
-            &:has(.search_bar:hover) .search_result_container, &:has(.search_bar:focus) .search_result_container {
-                border-color: $blue-color !important;
-            }
         }
 
-        // Heading
+        // Heading (Wordmark)
 
         .heading {
             position: relative;
             text-align: center;
-    
+
             a {
-                line-height: 1;
+                font-family: $font-brand;
+                font-size: clamp(44px, 9vw, 64px);
+                line-height: 1.15;
+                font-weight: 400;
+                color: $color-text;
                 text-decoration: none;
-                background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                filter: drop-shadow(0 0 40px transparentize($blue-color, 0.5));
-                transition: letter-spacing 0.2s ease, filter 0.2s ease;
-                animation: fadeIn 2s ease-out;
-    
-                font: {
-                    family: $heading-font;
-                    size: clamp(2.8em, 8vw, 4.5em);
-                }
-    
-                &:hover,
-                &:active {
-                    letter-spacing: 0.5px;
-                    filter: drop-shadow(0 0 60px transparentize($blue-color, 0.25));
-                }
             }
         }
 
         .subheading {
-            max-width: $secondary-width;
+            @include typography(subheading);
+            max-width: $max-content-width;
             margin: 0px;
             text-align: center;
-            color: $light-blue-color;
-            animation: fadeIn 1.5s ease-out 0.2s both;
-
-            font: {
-                size: clamp(0.95em, 2.5vw, 1.15em);
-                weight: 300;
-            }
+            font-weight: 400;
+            color: $color-text-secondary;
         }
 
         // Buttons
 
         .buttons {
             display: flex;
-            gap: 20px;
-            max-width: 500px;
+            gap: $space-sm;
+            max-width: $max-dialog-width;
             width: 100%;
-            margin-top: 10px;
-            animation: fadeInScale 1s ease-out 0.5s both;
-            
-            .login_button,
-            .registration_button {
-                @include blue_button;
-                width: 90%;
-                color: $light-blue-color;
-            }
+            margin-top: $space-sm;
 
             .login_button {
-                backdrop-filter: blur(5px);
-
-                &:hover,
-                &:focus-visible {
-                    background-color: transparentize($dark-blue-color, 0.8);
-                }
+                @include button(secondary, md);
+                flex: 1;
             }
 
             .registration_button {
-                @include glow_animated_border;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
-                border-color: $blue-color;
-
-                &:hover,
-                &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
-                }
+                @include button(primary, md);
+                flex: 1;
             }
         }
+
+        // Feature Cards
 
         .features {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: $space-sm;
             width: 100%;
-            max-width: $secondary-width;
-            animation: fadeInScale 1s ease-out 0.5s both;
+            max-width: $max-content-width;
+            margin-top: $space-lg;
 
             .hero_feature_card {
-                @include flex_center($direction: column);
-                gap: 5px;
-                padding: 20px 10px;
+                @include card(default, $space-lg $space-md);
+                @include card_pressable;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: $space-xs;
                 text-decoration: none;
-                background-color: transparentize($dark-blue-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $medium-border-radius;
-                backdrop-filter: blur(5px);
-                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-
-                &:hover,
-                &:focus-visible {
-                    transform: translateY(-2px);
-                    background: transparent;
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-                }
 
                 i {
-                    font-size: 1.5em;
-                    color: $blue-color;
-                    transition: transform 0.3s ease;
-                }
-
-                &:hover {
-                    i {
-                        transform: scale(1.1);
-                    }
+                    @include empty_state_icon(44px);
+                    margin-bottom: $space-xs;
+                    font-size: 18px;
                 }
 
                 .feature_title {
-                    color: $light-blue-color;
-                    font-weight: semibold;
-                    font-size: 0.9em;
+                    @include typography(body_strong);
+                    color: $color-text;
                 }
 
                 .feature_desc {
-                    color: $dark-blue-color;
-                    font-size: 0.8em;
+                    @include typography(caption);
+                    color: $color-text-secondary;
                     text-align: center;
                 }
             }
@@ -334,407 +258,56 @@ header {
 
 .content {
     max-width: $main-width;
-    margin: 0px auto 20px;
-    padding-top: 0px;
-    text-align: justify;
+    margin: 0px auto;
+    padding-top: $space-lg;
 
-    // Section panels
+    // Section Panels (Cards)
 
     .homepage_section {
+        @include card(default, $space-xxxl $space-xxl, $radius-xl);
         position: relative;
         max-width: $main-width;
-        margin: 0px auto 50px;
-        padding: 50px 30px;
-        border: 1px solid transparentize($blue-color, 0.5);
-        border-radius: $medium-border-radius;
-        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-
-        &::before {
-            @include glass_accent_bar;
-        }
+        margin: 0px auto $space-xxl;
 
         &.support_section {
-            max-width: calc($main-width - 400px);
+            max-width: 800px;
         }
 
         &.contact_section {
-            max-width: $secondary-width;
-            margin-bottom: 30px;
-            padding: 50px;
+            max-width: $max-content-width;
         }
     }
 
     .section_title {
-        margin-bottom: 20px;
+        @include typography(title);
+        margin-bottom: $space-lg;
         text-align: center;
-        background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 0 40px transparentize($blue-color, 0.5));
-        transition: filter 0.2s ease;
-        animation: fadeIn 2s ease-out;
-
-        font: {
-            family: $heading-font;
-            size: clamp(1.8em, 4vw, 2.5em);
-        }
-
-        &:hover,
-        &:active {
-            filter: drop-shadow(0 0 60px transparentize($blue-color, 0.25));
-        }
+        color: $color-text;
     }
 
-    // Login Form Dialog & Registration Form Dialog
+    // Login Form Dialog & Registration Form Dialog (Sheets)
 
     .login_form_dialog,
     .registration_form_dialog {
-        &::backdrop {
-            background-color: transparentize($main-color, 0.5);
-            backdrop-filter: blur(5px);
-        }
+        @include sheet_dialog;
+        padding: 0px;
 
         .login_form,
         .registration_form {
-            @include position_center($position: fixed);
-            max-width: $secondary-width;
-            width: calc(100% - 40px);
-            padding: 30px 50px 50px;
-            text-align: center;
-            border: 1px solid transparentize($blue-color, 0.5);
-            border-radius: $medium-border-radius;
-            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-            overflow: hidden;
-
-            &::before {
-                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
-            }
-
-            &::after {
-                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
-            }
-
-            h2 {
-                margin-bottom: 30px;
-                color: $secondary-color;
-                animation: fadeInScale 0.3s ease-out;
-            }
-
-            .back {
-                @include form_back;
-            }
-
-            .form_report {
-                @include form_report;
-            }
-
-            input[type="submit"] {
-                @include blue_button($border-radius: $big-border-radius);
-                margin-top: 40px;
-                margin-bottom: 10px;
-            }
-
-            .login_methods {
-                p {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    color: $light-blue-color;
-                
-                    span {
-                        flex: 1;
-                        height: 1px;
-                        background-color: $light-blue-color;
-                    }
-                }
-
-                div {
-                    position: relative;
-                    display: block;
-                    width: 90%;
-                    height: 50px;
-                    line-height: 50px;
-                    margin: 10px auto;
-                    background-color: transparentize($main-color, 0.1);
-                    border-radius: $big-border-radius;
-                    transition: transform 0.3s ease, letter-spacing 0.3s ease;
-
-                    &:hover {
-                        letter-spacing: 0.5px;
-                        cursor: pointer;
-                    }
-
-                    a {
-                        display: block;
-                        color: $light-blue-color;
-                        text-decoration: none;
-                        width: 100%;
-                        height: 100%;
-
-                        i {
-                            font-size: 20px;
-                            position: absolute;
-                            top: 50%;
-                            left: 14px;
-                            transform: translateY(-50%);
-                            color: $light-blue-color;
-                            transition: color 0.3s ease;
-                        }
-                    }
-                }
-
-                .google {
-                    @include glow_animated_border($colors: conic-gradient(
-                        from var(--angle), 
-                        red,
-                        yellow,
-                        green,
-                        blue,
-                        red
-                    ), 
-                    
-                    $thickness: 3px)
-                }
-
-                .apple {
-                    @include glow_animated_border($colors: conic-gradient(
-                        from var(--angle), 
-                        chartreuse,
-                        transparent,
-                        chartreuse
-                    ), 
-
-                    $thickness: 3px)
-                }
-
-                .facebook {
-                    @include glow_animated_border($colors: conic-gradient(
-                        from var(--angle), 
-                        dodgerblue,
-                        transparent,
-                        dodgerblue
-                    ), 
-
-                    $thickness: 3px)
-                }
-            }
-
-            .form_questions {
-                margin-top: 10px;
-                color: $secondary-color;
-
-                a {
-                    color: $secondary-color;
-                    text-decoration: none;
-                    font-style: italic;
-
-                    &:hover,
-                    &:active {
-                        text-decoration: underline;
-                    }
-                }
-            }
-        }
-    }
-
-    .login_form_dialog {
-        .login_form {
-            .identifier_container {
-                position: relative;
-
-                i {
-                    @include icon;
-                    display: block;
-                    position: absolute;
-                    bottom: 10px;
-                    left: 3px;
-                    padding: 19px 0px 16px;
-                }
-            }
-
-            input[type="text"] {
-                @include form_input;
-            }
-
-            .password_container {
-                position: relative;
-
-                .fa-lock {
-                    @include icon;
-                    display: block;
-                    position: absolute;
-                    bottom: 10px;
-                    left: 3px;
-                    padding: 19px 0px 15px;
-                }
-
-                .password {
-                    padding-right: 28px !important;
-                    -webkit-text-security: disc;
-                }
-
-                .show_hide_password {
-                    all: unset;
-                    position: absolute;
-                    bottom: 10px;
-                    right: 20px;
-                    padding: 19px 0px 15px;
-
-                    .fa-eye, 
-                    .fa-eye-slash {
-                        @include icon;
-                        display: block;
-                    }
-                }
-            }
+            @include native_form(none);
+            border: none;
+            border-radius: 0px;
+            background: transparent;
         }
     }
 
     .registration_form_dialog {
         .registration_form {
-            input[type="text"],
-            input[type="email"],
-            input[type="tel"],
-            input[type="password"] {
-                @include form_input;
-            }
-
-            i {
-                @include icon;
-            }
-
-            .name_container,
-            .contact_container {
-                display: flex;
-                gap: 30px;
-                width: 90%;
-                margin: 0px auto;
-
-                i {
-                    display: block;
-                    position: absolute;
-                    bottom: 10px;
-                    left: -20px;
-                    padding: 19px 0px 15px;
+            @media (width <= 500px) {
+                .contact_container {
+                    flex-direction: column;
+                    gap: $space-md;
                 }
-
-                input {
-                    display: block;
-                    width: 100%;
-                }
-            }
-
-            .first_name_container,
-            .last_name_container,
-            .email_address_container {
-                position: relative;
-            }
-
-            .phone_number_container {
-                position: relative;
-
-                .fa-phone {
-                    position: absolute;
-                }
-                
-                .flag {
-                    position: absolute;
-                    bottom: 21px;
-                    right: -30px;
-                    width: 24px;
-                    opacity: 0.8;
-                    transition: right 0.3s ease;
-                }
-            }
-
-            .username_container {
-                position: relative;
-
-                .fa-at {
-                    @include icon;
-                    display: block;
-                    position: absolute;
-                    bottom: 10px;
-                    left: 3px;
-                    padding: 19px 0px 15px;
-                }
-            }
-
-            .password_container {
-                position: relative;
-
-                .password {
-                    padding-right: 28px !important;
-                    -webkit-text-security: disc;
-                }
-
-                .generate_password {
-                    all: unset;
-                    position: absolute;
-                    bottom: 10px;
-                    left: 3px;
-                    padding: 19px 0px 15px;
-
-                    .fa-key {
-                        @include icon;
-                        display: block;
-                    }
-                }
-
-                .show_hide_password,
-                .copy_password {
-                    all: unset;
-                    position: absolute;
-                    bottom: 10px;
-                    right: 20px;
-                    padding: 19px 0px 15px;
-
-                    .fa-eye, 
-                    .fa-eye-slash,
-                    .fa-copy {
-                        @include icon;
-                        display: block;
-                    }
-                }
-
-                .copy_password {
-                    right: 1px;
-                }
-            }
-
-            .password_check_container {
-                position: relative;
-
-                .fa-lock {
-                    @include icon;
-                    display: block;
-                    position: absolute;
-                    bottom: 10px;
-                    left: 3px;
-                    padding: 19px 0px 15px;
-                }
-
-                .password_check {
-                    padding-right: 28px !important;
-                }
-
-                .paste_password {
-                    all: unset;
-                    position: absolute;
-                    bottom: 10px;
-                    right: 1px;
-                    padding: 19px 0px 15px;
-
-                    .fa-copy {
-                        @include icon;
-                        display: block;
-                    }
-                }
-            }
-
-            input[type="submit"] {
-                margin-bottom: 0px;
             }
         }
     }
@@ -748,7 +321,7 @@ header {
             max-width: $main-width;
             margin-bottom: 20px;
             padding: 20px;
-            border: 1px solid transparentize($blue-color, 0.8);
+            border: $hairline solid $color-border;
             border-radius: $medium-border-radius;
 
             .graph {
@@ -766,7 +339,7 @@ header {
                         text-align: center;
                         gap: 5px;
                         width: 40px;
-                        color: $light-blue-color;
+                        color: $color-text-secondary;
 
                         span {
                             width: 10px;
@@ -791,8 +364,8 @@ header {
                             position: relative;
                             width: 100%;
                             height: 6px;
-                            background-color: $light-blue-color;
-                            border-radius: calc(6px / 2);
+                            background-color: $color-surface-strong;
+                            border-radius: $radius-pill;
                             transition: background-color 0.3s ease;
 
                             &::before {
@@ -809,7 +382,7 @@ header {
                             }
 
                             &:hover {
-                                background-color: darken($light-blue-color, 5%);
+                                background-color: $color-surface-pressed;
                                 cursor: pointer;
 
                                 &::before {
@@ -822,7 +395,7 @@ header {
                     .counter {
                         width: 2em;
                         text-align: center;
-                        color: $light-blue-color;
+                        color: $color-text-secondary;
                     }
                 }
             }
@@ -845,12 +418,12 @@ header {
 
                     .average_rating_number {
                         line-height: 1;
-                        color: $light-blue-color;
+                        color: $color-text-secondary;
 
                         &:hover {
                             cursor: pointer;
                         }
-                    
+
                         span {
                             font-size: 0.6em;
                             vertical-align: super;
@@ -865,9 +438,9 @@ header {
                     gap: 20px;
                     width: 100%;
                     height: 32px;
-                    
+
                     // Stars Tooltip
-                    
+
                     .tooltip {
                         @include tooltip($top: 6px);
 
@@ -882,7 +455,6 @@ header {
                                 height: 100%;
 
                                 &:hover {
-                                    transform: scale(1.1);
                                     cursor: pointer;
                                     transition: transform 0.3s ease;
                                 }
@@ -898,7 +470,7 @@ header {
             margin: 0px auto 5px;
 
             p {
-                color: $light-blue-color;
+                color: $color-text-secondary;
                 font-size: 0.9em;
 
                 span {
@@ -977,10 +549,9 @@ header {
                 opacity: 0;
                 max-width: 100%;
                 padding: 15px;
-                background-color: transparentize($dark-blue-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.5);
+                background-color: $color-surface;
+                border: $hairline solid $color-border;
                 border-radius: $medium-border-radius;
-                backdrop-filter: blur(5px);
                 overflow: hidden;
                 transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
@@ -989,10 +560,8 @@ header {
                 }
 
                 &:hover {
-                    transform: translateY(-2px);
                     background: transparent;
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                    border-color: $color-border-strong;
                     cursor: pointer;
                 }
 
@@ -1004,22 +573,18 @@ header {
                     display: flex;
                     align-items: center;
                     gap: 10px;
-                    
+
                     .profile_picture {
                         @include profile_picture($width: 38px, $height: 38px);
                         display: block;
                         transition: transform 0.3s ease;
-    
-                        &:hover {
-                            transform: scale(1.05);
-                        }
                     }
-    
+
                     .username {
                         a {
                             text-decoration: none;
                             color: $secondary-color;
-    
+
                             &:hover,
                             &:active {
                                 text-decoration: underline;
@@ -1028,23 +593,23 @@ header {
 
                         .date {
                             font-style: italic;
-                            color: $light-blue-color;
+                            color: $color-text-secondary;
                         }
                     }
-    
+
                     // Review Properties
-    
+
                     .show_review_properties_button {
                         @include show_properties_button;
                         margin-left: auto;
                     }
-    
+
                     .review_properties,
                     .report_review,
                     .delete_review {
                         @include properties_menu;
                     }
-    
+
                     .report_review {
                         min-width: 200px;
                     }
@@ -1064,27 +629,27 @@ header {
                         margin-left: auto;
                     }
                 }
-    
+
                 .review {
                     .rating {
                         margin-top: 10px;
-    
+
                         .fa-star {
                             font-size: 1.5em;
                             cursor: pointer;
-    
+
                             &.full {
                                 color: $article-color;
                                 opacity: 1;
                             }
-    
+
                             &.empty {
-                                color: $light-blue-color;
+                                color: $color-text-secondary;
                                 opacity: 0.5;
                             }
                         }
                     }
-    
+
                     .review_content {
                         width: $secondary-width;
                         border-radius: $small-border-radius;
@@ -1122,7 +687,7 @@ header {
             .load_more_reviews,
             .hide_loaded_reviews {
                 all: unset;
-                color: $light-blue-color;
+                color: $color-text-secondary;
 
                 &:hover,
                 &:active {
@@ -1136,7 +701,7 @@ header {
             max-width: $main-width;
             margin: 20px 0px;
             padding: 20px;
-            border: 1px solid transparentize($blue-color, 0.8);
+            border: $hairline solid $color-border;
             border-radius: $medium-border-radius;
 
             .write_review_form {
@@ -1144,7 +709,7 @@ header {
                 position: relative;
                 text-align: center;
                 margin: 0px auto;
-                
+
                 .rating {
                     button {
                         all: unset;
@@ -1154,19 +719,15 @@ header {
                             font-size: 1.5em;
                             cursor: pointer;
                             transition: color 0.1s ease, transform 0.1s ease;
-    
+
                             &.full {
                                 color: $yellow-color;
                                 opacity: 1;
                             }
-                            
+
                             &.empty {
-                                color: $light-blue-color;
+                                color: $color-text-secondary;
                                 opacity: 0.5;
-                            }
-    
-                            &:hover {
-                                transform: scale(1.1);
                             }
                         }
                     }
@@ -1181,7 +742,7 @@ header {
                     display: flex;
                     flex-direction: column;
                     margin: 10px auto 0px;
-                    border: 1px solid transparentize($blue-color, 0.5);
+                    border: $hairline solid $color-border;
                     border-radius: $small-border-radius;
                     transition: border-color 0.3s ease;
 
@@ -1205,7 +766,7 @@ header {
                         resize: none;
 
                         &::placeholder {
-                            color: $light-blue-color;
+                            color: $color-text-secondary;
                         }
                     }
 
@@ -1215,19 +776,19 @@ header {
                         justify-content: right;
                         height: 25px;
                         padding: 0px 10px;
-                        background-color: transparentize($blue-color, 0.9);
+                        background-color: $color-primary-soft;
                         border-radius: 0px 0px $small-border-radius $small-border-radius;
-    
+
                         .add_emoji {
                             all: unset;
-            
+
                             .fa-face-surprise {
                                 @include icon;
                                 display: block;
                             }
                         }
                     }
-    
+
                     .emoji_picker_container {
                         @include emoji_picker_container;
                     }
@@ -1249,7 +810,7 @@ header {
         margin: 0px auto;
         text-align: center;
         overflow: hidden;
-    
+
         .credit_card {
             position: relative;
             display: flex;
@@ -1258,7 +819,7 @@ header {
             margin-bottom: 15px;
             color: $secondary-color;
             font-family: Arial;
-    
+
             .front,
             .back {
                 position: relative;
@@ -1266,8 +827,8 @@ header {
                 max-width: 100%;
                 aspect-ratio: 1.586 / 1; // ISO / IEC 7810
                 padding: 10px 15px;
-                background: linear-gradient(135deg, lighten($main-color, 10%) 0%, lighten($main-color, 5%) 50%, transparentize($blue-color, 0.90) 100%);
-                border: 1px solid transparentize($blue-color, 0.5);
+                background: $color-surface-raised;
+                border: $hairline solid $color-border;
                 border-radius: $medium-border-radius;
                 box-sizing: border-box;
                 overflow: hidden;
@@ -1275,21 +836,21 @@ header {
                 &::before {
                     @include circle_decoration($top: -250px, $left: -150px, $width: 400px, $height: 400px, $color: transparentize($blue-color, 0.9));
                 }
-    
+
                 &::after {
                     @include circle_decoration($bottom: -475px, $left: -150px, $width: 600px, $height: 600px, $color: transparentize($blue-color, 0.9));
                 }
-    
+
                 .group {
                     display: flex;
                     flex-direction: column;
-    
+
                     label {
                         font-size: 0.8em;
                         text-transform: uppercase;
                         color: $blue-color;
                     }
-    
+
                     .card_number,
                     .cardholder_name,
                     .card_expiry,
@@ -1299,13 +860,13 @@ header {
                         padding: 0px 5px;
                         color: $secondary-color;
                         background-color: transparent;
-                        border: 1px solid transparentize($blue-color, 0.5);
+                        border: $hairline solid $color-border;
                         border-radius: $small-border-radius;
                         font-family: monospace;
                         outline: none;
                         appearance: none;
                         transition: border-color 0.2s ease;
-    
+
                         &:hover,
                         &:focus-visible {
                             border-color: $blue-color !important;
@@ -1313,54 +874,54 @@ header {
                     }
                 }
             }
-    
+
             .front {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 padding-top: 5px;
                 z-index: 2;
-    
+
                 .top {
                     display: flex;
-    
+
                     .title {
                         flex-grow: 1;
                         font-size: 1.5em;
                         font-weight: bold;
                     }
-    
+
                     .logo {
                         width: 50px;
                         flex-grow: 0;
                     }
                 }
-    
+
                 .error_report {
                     font-size: 0.9em;
                     color: $red-color;
                 }
-    
+
                 .bottom {
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
-    
+
                     .group {
                         .card_number {
                             width: 170px;
                         }
                     }
-    
+
                     .row {
                         display: flex;
                         gap: 15px;
-    
+
                         .cardholder_name_group {
                             flex-grow: 1;
                             min-width: 0;
                         }
-                        
+
                         .group {
                             .card_expiry {
                                 width: 70px;
@@ -1369,7 +930,7 @@ header {
                     }
                 }
             }
-    
+
             .back {
                 position: absolute;
                 top: 15px;
@@ -1380,12 +941,12 @@ header {
                 p {
                     filter: blur(3px);
                 }
-    
+
                 .group {
                     position: absolute;
                     bottom: 10px;
                     right: 15px;
-    
+
                     .card_cvc {
                         width: 40px;
                     }
@@ -1398,21 +959,18 @@ header {
             gap: 20px;
             width: 85.6mm;
             margin: 0px auto;
-            
+
             .donate_button {
                 @include blue_button($border-radius: $medium-border-radius);
                 margin-top: 20px;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                background: $color-primary-solid;
+                color: $color-on-primary;
                 border-color: $blue-color;
-                color: $light-blue-color;
+                color: $color-text-secondary;
                 font-size: 1.2em;
                 font-weight: bold;
                 line-height: 1;
 
-                &:hover {
-                    transform: translateY(-2px);
-                }
-                
                 span {
                     font-size: 0.6em;
                     vertical-align: super;
@@ -1452,11 +1010,8 @@ header {
                 font-size: 2.5em;
                 font-weight: bold;
                 text-align: center;
-                background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            
+                color: $color-text;
+
                 span {
                     margin-left: 2px;
                     font-family: inherit;
@@ -1481,9 +1036,9 @@ header {
                     text-align: left;
 
                     &:has(.checkbox.checked) {
-                        border-color: transparentize($green-color, 0.8);
+                        border-color: $color-success-border;
                     }
-    
+
                     .checkbox {
                         position: relative;
                         display: block;
@@ -1491,9 +1046,9 @@ header {
                         width: 15px;
                         height: 15px;
                         border-radius: 2px;
-                        outline: 1px solid darken($secondary-color, 40%);
+                        outline: $hairline solid $color-border;
                         background: transparentize($main-color, 0.5);
-    
+
                         &::before {
                             content: "";
                             position: absolute;
@@ -1505,10 +1060,10 @@ header {
                             opacity: 0;
                             transition: transform 0.2s ease, opacity 0.2s ease;
                         }
-    
+
                         &.checked {
                             outline: 1px solid darken($green-color, 10%);
-    
+
                             &::before {
                                 transform: scale(1.5);
                                 opacity: 1;
@@ -1528,10 +1083,6 @@ header {
             .subscribe {
                 @include blue_button($width: 100%, $border-radius: $medium-border-radius);
 
-                &:hover {
-                    transform: translateY(-2px);
-                }
-
                 &.disabled {
                     cursor: not-allowed;
                 }
@@ -1540,38 +1091,29 @@ header {
 
         .basic {
             transition: transform 0.3s ease;
-        
-            &:hover {
-                transform: translateY(-2px);
-            }
 
             .subscribe {
                 &:hover,
                 &:focus-visible {
-                    background-color: transparentize($dark-blue-color, 0.8);
+                    background-color: $color-surface-pressed;
                 }
             }
         }
-        
+
         .premium {
             @include animated_border;
-            transform: scale(1.02);
-            background-color: transparentize($dark-blue-color, 0.95);
-            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+            background-color: $color-surface;
             transition: transform 0.3s ease;
-        
-            &:hover {
-                transform: scale(1.05) translateY(-2px);
-            }
 
             .subscribe {
                 @include glow_animated_border;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                background: $color-primary-solid;
+                color: $color-on-primary;
                 border-color: $blue-color;
 
                 &:hover,
                 &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+                    background: $color-primary-solid-pressed;
                 }
             }
         }
@@ -1584,10 +1126,7 @@ header {
         h2 {
             margin-bottom: 10px;
             font-size: 2em;
-            background: linear-gradient(135deg, $secondary-color 20%, lighten($blue-color, 15%) 60%, $blue-color 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: $color-text;
         }
 
         .cancel_subscription {
@@ -1595,27 +1134,16 @@ header {
             margin-top: 40px;
 
             &:hover {
-                transform: translateY(-2px);
-                background-color: transparentize($dark-blue-color, 0.8);
+                background-color: $color-surface-pressed;
             }
         }
 
         .cancel_subscription_dialog {
-            &::backdrop {
-                background-color: transparentize($main-color, 0.5);
-                backdrop-filter: blur(5px);
-            }
-    
+            @include sheet_dialog;
+            padding: 0px;
+
             .cancel_subscription_form {
-                @include position_center($position: fixed);
-                max-width: $secondary-width;
-                width: 100%;
-                padding: 30px 50px 50px;
-                text-align: center;
-                border: 1px solid transparentize($blue-color, 0.5);
-                border-radius: $medium-border-radius;
-                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
-                overflow: hidden;
+                @include dialog_sheet_content;
 
                 &::before {
                     @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
@@ -1652,31 +1180,30 @@ header {
                     gap: 25px;
                     width: 100%;
                     animation: fadeInScale 1s ease-out 0.5s both;
-                    
+
                     .no,
                     .yes {
                         @include blue_button;
                         width: 90%;
-                        color: $light-blue-color;
+                        color: $color-text-secondary;
                     }
 
                     .no {
-                        backdrop-filter: blur(5px);
-
                         &:hover,
                         &:focus-visible {
-                            background-color: transparentize($dark-blue-color, 0.8);
+                            background-color: $color-surface-pressed;
                         }
                     }
 
                     .yes {
                         @include glow_animated_border;
-                        background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                        background: $color-primary-solid;
+                        color: $color-on-primary;
                         border-color: $blue-color;
 
                         &:hover,
                         &:focus-visible {
-                            background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+                            background: $color-primary-solid-pressed;
                         }
                     }
                 }
@@ -1690,33 +1217,29 @@ header {
 
     // Contact Form
 
-    .contact_form { 
+    .contact_form {
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
         max-width: 100%;
         margin: 0px auto;
         padding: 0px;
-        text-align: center;
-        border-radius: $medium-border-radius;
+        text-align: left;
         background: transparent;
         border: none;
-        
+
         input[type="text"], input[type="email"] {
             @include form_input;
+            margin: 0px;
         }
 
         // Custom Select Menu
 
         .subject_select_menu {
             @include custom_select_menu($options_list_height: calc(33px * 4));
-            max-width: 90%;
-            margin: 0px auto;
+            width: 100%;
 
             .select {
-                height: 50px;
-                border-top: none;
-                border-right: none;
-                border-left: none;
-                border-radius: 0px;
-
                 span {
                     margin-left: 0px;
                 }
@@ -1735,42 +1258,54 @@ header {
                 }
             }
         }
-        
+
+        // Message (Multiline "TextField" With An Attachment Row)
+
         .message_container {
             display: flex;
             flex-direction: column;
-            width: 90%;
-            margin: 20px auto 0px;
-            border: 1px solid transparentize($blue-color, 0.5);
-            border-radius: $small-border-radius;
-            transition: border-color 0.3s ease;
-            
+            width: 100%;
+            background-color: $color-surface-raised;
+            border: $hairline solid $color-border;
+            border-radius: $radius-md;
+            overflow: hidden;
+            transition: border-color $duration-fast ease, background-color $duration-fast ease;
+
             &.drag_active {
                 background-color: transparentize($main-color, 0.8);
-                border: 2px dashed transparentize($blue-color, 0.5);
+                border: 2px dashed $color-border-strong;
                 transition: background-color 0.3s ease;
                 animation: dropZone 1s infinite alternate;
             }
 
-            &:hover,
-            &:has(textarea:hover), 
-            &:has(textarea:focus) {
-                border-color: $blue-color;
+            &:hover {
+                border-color: $color-border-strong;
+            }
+
+            &:focus-within {
+                border-color: $color-primary;
+                background-color: $color-surface;
             }
 
             textarea {
+                @include typography(body);
                 width: 100%;
-                min-height: 100px;
+                min-height: 96px;
                 field-sizing: content;
-                padding: 5px 10px;
+                padding: $space-sm $space-md;
+                font-family: $font-system;
                 background: transparent;
-                color: $secondary-color;
+                color: $color-text;
                 border: none;
                 outline: none;
                 resize: none;
 
                 &::placeholder {
-                    color: $light-blue-color;
+                    color: $color-text-muted;
+                }
+
+                &:focus-visible {
+                    outline: none !important;
                 }
             }
 
@@ -1779,15 +1314,14 @@ header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                height: 25px;
-                padding: 0px 10px;
-                background-color: transparentize($blue-color, 0.9);
-                border-radius: 0px 0px $small-border-radius $small-border-radius;
+                min-height: 36px;
+                padding: 0px $space-md;
+                border-top: $hairline solid $color-divider;
 
                 p {
                     @include crop_text;
-                    font-size: 0.8em;
-                    color: $light-blue-color;
+                    @include typography(caption);
+                    color: $color-text-muted;
                 }
 
                 // Attachment Tooltip
@@ -1822,17 +1356,6 @@ header {
 **************/
 
 @media (width <= 800px) {
-    header {
-        .header_container {
-            min-height: calc(100vh - 109px);
-            padding: 109px + 20px 20px 0px !important;
-    
-            .center {
-                min-height: calc(100vh - 109px - 20px - 40px) !important;
-            }
-        }
-    }
-
     .content {
         .subscription_plans {
             flex-direction: column;
@@ -1845,8 +1368,6 @@ header {
         .header_container {
             .features {
                 grid-template-columns: 1fr;
-                gap: 20px;
-                max-width: 500px;
             }
         }
     }
@@ -1872,25 +1393,10 @@ header {
 
 @media (width <= 500px) {
     header {
-        // Banner
-
-        .banner {
-            gap: 10px;
-        }
-
         .header_container {
-            min-height: calc(100vh - 134px) !important;
-            padding: 134px + 20px + 20px 20px 0px !important;
-    
-            .center {
-                min-height: calc(100vh - 134px - 20px - 40px) !important;
-            }
-
             .buttons {
                 flex-direction: column;
-                align-items: center;
-                margin-bottom: 30px;
-                
+
                 .login_button,
                 .registration_button {
                     width: 100%;
@@ -1901,7 +1407,7 @@ header {
 
     .content {
         .homepage_section {
-            padding: 20px !important;
+            padding: $space-xxl $space-lg !important;
         }
 
         .reviews {
@@ -1917,13 +1423,13 @@ header {
                         width: 50px;
                         font-size: 2em;
                     }
-    
+
                     .stars {
                         gap: 10px;
                         height: 24px;
-                        
+
                         // Stars Tooltip
-                        
+
                         .tooltip {
                             .star {
                                 display: block;
@@ -1969,84 +1475,6 @@ header {
 
 @media (width <= 400px) {
     .content {
-        // Login Form Dialog & Registration Form Dialog
-
-        .login_form_dialog,
-        .registration_form_dialog {
-            .login_form,
-            .registration_form {
-                padding: 10px 30px 30px;
-
-                .back {
-                    top: 22.5px;
-                    left: 30px;
-                }
-
-                input[type="text"], 
-                input[type="email"],
-                input[type="tel"],
-                input[type="password"],
-                input[type="submit"] {
-                    width: 100% !important;
-                }
-            }
-
-            .login_form {
-                .identifier_container,
-                .password_container {
-                    .fa-envelope,
-                    .fa-lock {
-                        left: -15px;
-                    }
-                }
-
-                .password_container {
-                    .show_hide_password {
-                        right: 0px;
-                    }
-                }
-
-                .login_methods {
-                    div {
-                        width: 100%;
-                    }
-                }
-            }
-
-            .registration_form {
-                .name_container,
-                .contact_container {
-                    width: 100%;
-                }
-
-                .username_container,
-                .password_container,
-                .password_check_container {
-                    .fa-at,
-                    .generate_password,
-                    .fa-lock {
-                        left: -15px;
-                    }
-                }
-
-                .password_container {
-                    .show_hide_password {
-                        right: 1px;
-                    }
-
-                    .copy_password {
-                        right: -18px;
-                    }
-                }
-
-                .password_check_container {
-                    .paste_password {
-                        right: -18px;
-                    }
-                }
-            }
-        }
-
         .reviews {
             // Custom Select Menu
 
@@ -2056,8 +1484,8 @@ header {
         }
     }
 
-    .contact_form { 
-        input[type="text"], 
+    .contact_form {
+        input[type="text"],
         input[type="email"],
         .message_container,
         input[type="submit"] {

@@ -13,9 +13,8 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block style %}{% endblock style %}
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins"> <!-- Poppins Font -->
+    <!-- UI Text Uses The System Font Like The Native App, Bungee Is Only For The Wordmark And Orbitron Only For Timers -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap"> <!-- Bungee Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"> <!-- Balsamiq Sans Font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet"> <!-- Orbitron Font -->
 
     <script src="https://kit.fontawesome.com/069c0938a1.js" crossorigin="anonymous"></script> <!-- Font Awesome Icons -->
@@ -24,7 +23,8 @@
 
     <link rel="apple-touch-icon" href="{% static 'icon-192.png' %}"> <!-- https://www.flaticon.com/free-icon/weight_8881792 -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#060b18">
+    <meta name="color-scheme" content="dark">
 
     <script>
         if("serviceWorker" in navigator) {
@@ -54,7 +54,6 @@
 </head>
 
 <body>
-    <canvas class="background_canvas"></canvas>
     <span class="preloader"></span> <!-- https://cssloaders.github.io/ -->
 
     <div class="privacy_policy {% if request.COOKIES.privacy_policy == "all_cookies" or request.COOKIES.privacy_policy == "essential_cookies" %}hide{% endif %}">
@@ -70,8 +69,8 @@
 
     <a class="skip_link" href="#">{% translate "PRESKOČIŤ" %}</a>
     
-    <div class="move_down" title="{% translate 'Posunúť nadol' %}" aria-label="{% translate 'Posunúť nadol' %}"><img src="{% static 'images/arrow.png' %}" alt="{% translate 'Posunúť nadol' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
-    <div class="move_up" title="{% translate 'Posunúť nahor' %}" aria-label="{% translate 'Posunúť nahor' %}"><img src="{% static 'images/arrow.png' %}" alt="{% translate 'Posunúť nahor' %}"></div> <!-- https://www.flaticon.com/free-icon/up-arrow_17727194 -->
+    <div class="move_down" title="{% translate 'Posunúť nadol' %}" aria-label="{% translate 'Posunúť nadol' %}"><i class="fa-solid fa-chevron-down"></i></div> <!-- https://fontawesome.com/icons/chevron-down -->
+    <div class="move_up" title="{% translate 'Posunúť nahor' %}" aria-label="{% translate 'Posunúť nahor' %}"><i class="fa-solid fa-chevron-up"></i></div> <!-- https://fontawesome.com/icons/chevron-up -->
 
     {% if messages %}
         {% for one_message in messages %}
@@ -81,19 +80,39 @@
     {% endif %}
 
     <header>
-        <nav class="navigation_bar">
-            <ul>
-                <li><a href="{% url 'homepage_url' %}" target="_self">{% translate "DOMOV" %}</a></li>
-                <li><a href="{% url 'training_session_url' %}" target="_self">{% translate "AKTIVITA" %}</a></li>
-                <li><a href="{% url 'blog_url' %}" target="_self">{% translate "BLOG" %}</a></li>
-                <li><a href="{% url 'community_url' %}" target="_self">{% translate "KOMUNITA" %}</a></li>
-                
-                {% block navigation_bar_items %}{% endblock navigation_bar_items %}
+        <!-- Top Navigation On Wide Screens, Bottom Tab Bar (Like The Native App) On Narrow Screens -->
+        {% with url_name=request.resolver_match.url_name %}
+            <nav class="navigation_bar">
+                <a class="wordmark" href="{% url 'homepage_url' %}" target="_self">Wesiq</a>
 
-                <i class="hamburger fa-solid fa-bars"></i> <!-- https://fontawesome.com/icons/bars -->
-                <!-- <i class="fa-solid fa-xmark"></i> --> <!-- https://fontawesome.com/icons/xmark -->
-            </ul>
-        </nav>
+                <ul>
+                    <li><a class="{% if url_name == 'homepage_url' %}active{% endif %}" href="{% url 'homepage_url' %}" target="_self" {% if url_name == 'homepage_url' %}aria-current="page"{% endif %}><i class="fa-solid fa-house"></i><span>{% translate "Domov" %}</span></a></li> <!-- https://fontawesome.com/icons/house -->
+                    <li><a class="{% if url_name == 'training_session_url' or url_name == 'manage_training_plans_url' %}active{% endif %}" href="{% url 'training_session_url' %}" target="_self" {% if url_name == 'training_session_url' %}aria-current="page"{% endif %}><i class="fa-solid fa-dumbbell"></i><span>{% translate "Aktivita" %}</span></a></li> <!-- https://fontawesome.com/icons/dumbbell -->
+                    <li><a class="{% if url_name == 'blog_url' or url_name == 'blog_theme_url' or url_name == 'write_article_url' %}active{% endif %}" href="{% url 'blog_url' %}" target="_self" {% if url_name == 'blog_url' %}aria-current="page"{% endif %}><i class="fa-solid fa-book-open"></i><span>{% translate "Blog" %}</span></a></li> <!-- https://fontawesome.com/icons/book-open -->
+                    <li><a class="{% if url_name == 'community_url' or url_name == 'post_url' or url_name == 'chat_url' %}active{% endif %}" href="{% url 'community_url' %}" target="_self" {% if url_name == 'community_url' %}aria-current="page"{% endif %}><i class="fa-solid fa-users"></i><span>{% translate "Komunita" %}</span></a></li> <!-- https://fontawesome.com/icons/users -->
+
+                    {% block navigation_bar_items %}{% endblock navigation_bar_items %}
+
+                    <!-- Profile Tab (Only In The Bottom Tab Bar, Wide Screens Show The Account In The Banner) -->
+                    <li class="profile_tab">
+                        {% if request.session.logged_in_user_id and logged_in_user.username %}
+                            <a class="{% if url_name == 'profile_url' or url_name == 'edit_review_url' %}active{% endif %}" href="{% url 'profile_url' logged_in_user.username %}" target="_self">
+                                <img
+                                    class="profile_picture {% if logged_in_user.subscription and logged_in_user.subscription.is_active %}subscriber{% endif %}"
+                                    src="{% if logged_in_user.profile_picture_name %}/../media/images/{{ request.session.logged_in_user_id }}/{{ logged_in_user.profile_picture_name }}{% else %}{% static 'images/profile_picture.png' %}{% endif %}"
+                                    alt=""
+                                >
+                                <span>{% translate "Môj účet" %}</span>
+                            </a>
+
+                        {% else %}
+                            <a class="{% if url_name == 'login_url' %}active{% endif %}" href="{% url 'login_url' %}" target="_self"><i class="fa-solid fa-user"></i><span>{% translate "Prihlásenie" %}</span></a> <!-- https://fontawesome.com/icons/user -->
+
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        {% endwith %}
 
         <div class="banner">
             <div class="left">{% block banner %}{% endblock banner %}</div>
@@ -291,7 +310,6 @@
         })
     </script>
 
-    <script src="{% static 'ts/dist/components/background_canvas.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/preloader.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/navigation.js' %}" type="module"></script>
     <script src="{% static 'ts/dist/components/move_down.js' %}" type="module"></script>

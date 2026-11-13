@@ -4,27 +4,62 @@ import dj_database_url
 from celery.schedules import crontab
 from datetime import timedelta
 from corsheaders.defaults import default_headers
+from django.core.exceptions import ImproperlyConfigured
+
+# Environment Helpers (os.environ Values Are Strings, And The String "False" Is Truthy, So Flags Must Be Parsed)
+def env_bool(name, default = False):
+    value = os.environ.get(name)
+
+    if value is None or value.strip() == "":
+        return default
+
+    return value.strip().lower() in ("1", "true", "yes", "on")
+
+def env_int(name, default = 0):
+    value = os.environ.get(name, "").strip()
+    return int(value) if value else default
+
+def env_list(name, default = ""):
+    return [one_item.strip() for one_item in os.environ.get(name, default).split(",") if one_item.strip()]
 
 # General
 DOMAIN_URL = os.environ.get("DOMAIN_URL") # Stores The Domain URL
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = env_bool("DEBUG", False)
 SECRET_KEY = os.environ.get("SECRET_KEY")
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT")
 
-# Other Production Settings
-SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE")
-CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE")
-SECURE_HSTS_SECONDS = os.environ.get("SECURE_HSTS_SECONDS")
-SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get("SECURE_HSTS_INCLUDE_SUBDOMAINS")
-SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD")
+# Fails Fast Instead Of Running Production With A Missing Or Placeholder Key
+if not DEBUG and (not SECRET_KEY or SECRET_KEY == "SECRET_KEY" or len(SECRET_KEY) < 32):
+    raise ImproperlyConfigured("SECRET_KEY must be set to a long random value when DEBUG is False.")
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
+# HTTPS / Production Settings (All Off By Default, Enabled From .env In Production)
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
+SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", False)
+CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", False)
+SECURE_HSTS_SECONDS = env_int("SECURE_HSTS_SECONDS", 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
+SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", False)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+X_FRAME_OPTIONS = "DENY"
+
+# CORS (Only Matters For Browsers; The Native App Isn't Restricted By CORS)
+# Comma-Separated Origins, e.g. "https://wesiq.com,http://localhost:8081". Everything Is Allowed Only In DEBUG When Unset.
+CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
+CORS_ALLOW_ALL_ORIGINS = DEBUG and not CORS_ALLOWED_ORIGINS
+CORS_ALLOW_CREDENTIALS = False # Cookies Are Never Sent Cross-Origin; The Native App Uses Bearer Tokens
+CORS_URLS_REGEX = r"^/native-api/.*$" # CORS Headers Only On The Native API
 CORS_ALLOW_HEADERS = list(default_headers) + ["x-device-id"]
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") # ALLOWED_HOSTS
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS") # ALLOWED_HOSTS
+
+# Extra Trusted Origins For CSRF (e.g. "https://wesiq.com,https://your-domain.ngrok-free.dev")
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
 # Apps
 INSTALLED_APPS = [
@@ -73,7 +108,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    # 'django.middleware.security.SecurityMiddleware',
+    "django.middleware.security.SecurityMiddleware", # HTTPS Redirect, HSTS, nosniff, Referrer-Policy (Was Disabled)
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -279,14 +314,24 @@ LOGS_DIR = BASE_DIR / "logs" # Logs Directory
 if not LOGS_DIR.exists():
     LOGS_DIR.mkdir(parents = True, exist_ok = True)
 
-# Get IP Address
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# Reverse Proxy
+# Only Trust X-Forwarded-* Headers When A Proxy That Overwrites Them Sits In Front Of Django (Otherwise Clients Can Spoof Them)
+BEHIND_PROXY = env_bool("BEHIND_PROXY", False)
+USE_X_FORWARDED_HOST = BEHIND_PROXY
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if BEHIND_PROXY else None
+
+# Rate Limiting (django-ratelimit)
+# Behind A Proxy REMOTE_ADDR Is The Proxy's IP, So Every User Would Share One Bucket. Set This To The Header Your Proxy
+# Overwrites With The Real Client IP (e.g. "HTTP_X_REAL_IP"). Defaults To REMOTE_ADDR.
+RATELIMIT_IP_META_KEY = os.environ.get("RATELIMIT_IP_META_KEY") or None
 
 # Stripe
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+
+# RevenueCat (Native App In-App Purchases) - Shared Secret Sent In The Webhook's Authorization Header
+REVENUECAT_WEBHOOK_AUTH = os.environ.get("REVENUECAT_WEBHOOK_AUTH")
 
 # GeoDjango
 possible_gdal_paths = [
@@ -332,7 +377,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days = 90),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes = 15), # Short-Lived, So Revoked / Blacklisted Sessions Stop Working Quickly (Was 90 Days)
     "REFRESH_TOKEN_LIFETIME": timedelta(days = 30),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True

@@ -6,7 +6,7 @@ import type { response } from "../../../services/sendPOST.js"
 import type { compressTask } from "./processingPosts.js"
 
 // Function For Toggle Post Like
-export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:number, particles:HTMLDivElement):Promise<void> {
+export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElement|null, id:string, particles:HTMLDivElement):Promise<void> {
     try {
         const toggle_post_like_response:response = await sendPOST(window.location.pathname, id, "toggle-post-like") // Sends Liked Post ID As A POST Data
 
@@ -36,7 +36,7 @@ export async function togglePostLike(icon:HTMLElement, counter:HTMLParagraphElem
 }
 
 // Function For Share The Post
-export async function sharePost(id:number, author:string):Promise<void> {
+export async function sharePost(id:string, author:string):Promise<void> {
     const link:string = interpolate(gettext("/sk/prispevok/%s"), [id]) // Sets The Link To The Post
 
     // Creates And Fill Object With Data Values
@@ -65,7 +65,7 @@ export async function sharePost(id:number, author:string):Promise<void> {
 }
 
 // Function For Save Or Unsave The Post
-export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> {
+export async function togglePostSave(icon:HTMLElement, id:string):Promise<void> {
     try {
         const toggle_post_save_response:response = await sendPOST(window.location.pathname, id, "toggle-post-save") // Sends Saved Post ID As A POST Data
 
@@ -94,10 +94,10 @@ export async function togglePostSave(icon:HTMLElement, id:number):Promise<void> 
 }
 
 // Function For Report The Post
-export async function reportPost(id:number, reason:string):Promise<void> {
+export async function reportPost(id:string, reason:string):Promise<void> {
     try {
         const report_post_data:{
-            post_id:number,
+            post_id:string,
             reason:string
         } = {
             post_id: id,
@@ -142,7 +142,7 @@ function generateHeartParticles(particles:HTMLDivElement):void {
 }
 
 // Function For Edit The Post Settings
-export async function editPostSettings(id:number, toggle_button:HTMLInputElement, icon:HTMLElement):Promise<void> {
+export async function editPostSettings(id:string, toggle_button:HTMLInputElement, icon:HTMLElement):Promise<void> {
     if(
         toggle_button.classList.contains("public_visibility") ||
         toggle_button.classList.contains("allow_comments") ||
@@ -150,7 +150,7 @@ export async function editPostSettings(id:number, toggle_button:HTMLInputElement
     ) {
         try {
             const edit_post_settings_data:{
-                post_id:number,
+                post_id:string,
                 setting:string,
                 action:boolean
             } = {
@@ -194,7 +194,7 @@ export async function editPostSettings(id:number, toggle_button:HTMLInputElement
 }
 
 // Function For Delete The Post
-export async function deletePost(id:number, post_container:HTMLDivElement):Promise<void> {
+export async function deletePost(id:string, post_container:HTMLDivElement):Promise<void> {
     try {
         const delete_post_response:response = await sendPOST(window.location.pathname, id, "delete-post") // Sends Post ID As A POST Data
 

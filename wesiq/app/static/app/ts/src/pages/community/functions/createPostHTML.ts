@@ -29,7 +29,7 @@ import type { vtt } from "../components/custom_video_playback.js"
 export interface searchedPost {
     user:User,
 
-    id:number,
+    id:string, // Public ID
     description:string|null,
 
     tagged_users:{

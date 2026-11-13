@@ -380,24 +380,33 @@ def cleanupSuspendedUsers():
     if users_for_deletion_count > 0:
         users_with_profile_picture = users_for_deletion.exclude(profile_picture_name__in = ["", None]) # Gets Users With Profile Picture
 
-        # Deletes Profile Picture Files
+        # Deletes Profile Picture Files (A Missing File Must Not Abort The Whole Cleanup, Otherwise It Would Fail Forever)
         for user in users_with_profile_picture:
             path = os.path.join(settings.MEDIA_ROOT, f"images/{str(user.id)}")
-            os.remove(f"{path}/{user.profile_picture_name}")
 
-            # Deletes The Whole Folder If There Are No Files
-            if len(os.listdir(path)) == 0:
-                shutil.rmtree(path)
+            try:
+                os.remove(os.path.join(path, os.path.basename(user.profile_picture_name)))
+
+                # Deletes The Whole Folder If There Are No Files
+                if os.path.isdir(path) and len(os.listdir(path)) == 0:
+                    shutil.rmtree(path)
+
+            except OSError as error:
+                captureMessage(f"Could Not Delete Profile Picture Of User {user.id}: {error}")
 
         # Send Mail
         for user in users_for_deletion:
-            sendMail(
-                user,
-                _("Odstránenie účtu"), # Subject
-                _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\n%(domain)s%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language}, # Text Content
-                _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
-                _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="%(domain)s%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language} # End Of HTML Content
-            )
+            try:
+                sendMail(
+                    user,
+                    _("Odstránenie účtu"), # Subject
+                    _("oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.\n\n%(domain)s%(language)s/registracia/\n\nAk by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si vytvoríte nový.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language}, # Text Content
+                    _('oznamujeme vám, že váš používateľský účet bol trvalo odstránený. Opätovné prihlásenie do pôvodného účtu už nie je možné.'), # HTML Content
+                    _('Ak by ste sa chceli v budúcnosti vrátiť, budeme radi, ak si <a href="%(domain)s%(language)s/registracia/" title="Vytvoriť účet" target="_blank">vytvoríte nový</a>.') % {"domain": settings.DOMAIN_URL, "language": user.language} # End Of HTML Content
+                )
+
+            except Exception as error:
+                captureMessage(f"Could Not Send Account Deletion Mail To User {user.id}: {error}")
 
         users_for_deletion.delete() # Deletes Users
 
@@ -453,8 +462,7 @@ def cleanupRejectedReviews():
 
 @shared_task(name = "app.tasks.weeklyReport")
 def weeklyReport():
-    users = Users.objects.filter(account_status = "OK", id = 16) # Gets All Users With Valid Account Status
-    # users = Users.objects.filter(account_status = "OK") # Gets All Users With Valid Account Status
+    users = Users.objects.filter(account_status = "OK") # Gets All Users With Valid Account Status (Was Hard-Coded To A Single Test User)
 
     for user in users:
         # Weekly Activity Chart
@@ -641,7 +649,12 @@ def weeklyReport():
             "favorite_exercise": favorite_exercise # Stores The Favorite Exercise
         }
 
-        sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
+        # One Failing Mailbox Must Not Stop The Report For Everyone Else
+        try:
+            sendWeeklyReportMail(user, activity_data) # Sends Weekly Report Mail
+
+        except Exception as error:
+            captureMessage(f"Could Not Send Weekly Report To User {user.id}: {error}")
 
     # Sets Message
     message = f"Weekly Report Has Been Sent To {len(users)} User" if len(users) == 1 else f"Weekly Report Has Been Sent To {len(users)} Users"
@@ -686,6 +699,10 @@ def compressImage(self, post_media_id, logged_in_user_id):
         self.update_state(state = "PROGRESS", meta = {"percentage": 10}) # 10%
 
         media_object = PostMedia.objects.get(id = post_media_id)
+
+        # Idempotency: A Retried / Duplicated Task Must Not Re-Compress (And Delete) An Already Processed File
+        if media_object.is_processed:
+            return "Image Was Already Processed."
         
         # If The File Was Not Found
         if not media_object.file:
@@ -766,6 +783,10 @@ def compressImage(self, post_media_id, logged_in_user_id):
 def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path = None):
     try:
         media_object = PostMedia.objects.get(id = post_media_id) # Gets The Media Object
+
+        # Idempotency: A Retried / Duplicated Task Must Not Re-Compress (And Delete) An Already Processed File
+        if media_object.is_processed:
+            return "Video Was Already Processed."
         
         # If The File Was Not Found
         if not media_object.file:
@@ -1083,6 +1104,10 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
         self.update_state(state = "PROGRESS", meta = {"percentage": 10}) # 10%
 
         chat_attachment_object = ChatAttachment.objects.get(id = chat_attachment_id) # Gets The Chat Attachment
+
+        # Idempotency: A Retried / Duplicated Task Must Not Re-Compress (And Delete) An Already Processed File
+        if chat_attachment_object.is_processed:
+            return "Image Attachment Was Already Processed."
         
         # If The File Was Not Found
         if not chat_attachment_object.file:
@@ -1163,6 +1188,10 @@ def compressImageAttachment(self, chat_attachment_id, logged_in_user_id):
 def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
     try:
         chat_attachment_object = ChatAttachment.objects.get(id = chat_attachment_id) # Gets The Chat Attachment
+
+        # Idempotency: A Retried / Duplicated Task Must Not Re-Compress (And Delete) An Already Processed File
+        if chat_attachment_object.is_processed:
+            return "Video Attachment Was Already Processed."
         
         # If The File Was Not Found
         if not chat_attachment_object.file:
@@ -1289,6 +1318,10 @@ def compressVideoAttachment(self, logged_in_user_id, chat_attachment_id):
 def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
     try:
         background_image_object = ChatSettings.objects.get(id = chat_settings_id)
+
+        # Idempotency: A Retried / Duplicated Task Must Not Re-Compress (And Delete) An Already Processed File
+        if background_image_object.is_processed:
+            return "Chat Background Image Was Already Processed."
         
         # If The File Was Not Found
         if not background_image_object.background_image:
@@ -1357,7 +1390,7 @@ def compressChatBackgroundImage(self, chat_settings_id, logged_in_user_id):
         message = "Image Was Successfully Compressed."
         return message
         
-    except PostMedia.DoesNotExist:
+    except ChatSettings.DoesNotExist:
         message = "Image Does Not Exist."
         raise Exception(message)
 

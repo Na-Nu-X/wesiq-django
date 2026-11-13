@@ -6,17 +6,18 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Wesiq\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-20 20:06+0000\n"
+"POT-Creation-Date: 2026-11-11 17:36+0000\n"
 "PO-Revision-Date: 2026-07-23 18:52+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: cs\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
 #: app/static/app/ts/src/components/searchBar.ts:26
@@ -45,7 +46,7 @@ msgstr "Přihlásit se"
 
 #: app/static/app/ts/src/components/searchBar.ts:27
 msgid "Autorizovať sa"
-msgstr "Autorizovat se"
+msgstr "Ověřit totožnost"
 
 #: app/static/app/ts/src/components/searchBar.ts:28
 msgid "/obnova-hesla"
@@ -105,7 +106,7 @@ msgstr "/moje-hodnoceni"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moje hodnotenie"
-msgstr "/moje-hodnoceni"
+msgstr "Moje hodnocení"
 
 #: app/static/app/ts/src/components/searchBar.ts:31
 msgid "Moja recenzia"
@@ -145,7 +146,7 @@ msgstr "Spustit aktivitu"
 
 #: app/static/app/ts/src/components/searchBar.ts:34
 msgid "/moje-treningove-plany"
-msgstr "/me-treninkove-plany"
+msgstr "/moje-treninkove-plany"
 
 #: app/static/app/ts/src/components/searchBar.ts:34
 msgid "Moje tréningové plány"
@@ -178,7 +179,7 @@ msgstr "Sdílet příspěvek"
 #: app/static/app/ts/src/components/searchBar.ts:35
 #: app/static/app/ts/src/pages/community/functions/uploadPost.ts:86
 msgid "Uverejniť príspevok"
-msgstr "Zveřejnit příspěvek"
+msgstr "Přidat příspěvek"
 
 #: app/static/app/ts/src/components/searchBar.ts:35
 msgid "Nájsť užívateľa"
@@ -213,7 +214,7 @@ msgid "Zobraziť užívateľa"
 msgstr "Zobrazit uživatele"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForum.ts:81
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:184
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:182
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:93
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:196
 msgid "Napísať komentár"
@@ -237,25 +238,25 @@ msgstr "Odpovědět..."
 msgid "Zobraziť odpovede..."
 msgstr "Zobrazit odpovědi..."
 
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:144
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:142
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:156
 msgid "Pri odosielaní komentáru došlo k chybe."
 msgstr "Při odesílání komentáře došlo k chybě."
 
-#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:173
+#: app/static/app/ts/src/pages/articles/functions/articleForum.ts:171
 #: app/static/app/ts/src/pages/community/functions/postForum.ts:185
 #, javascript-format
 msgid "Odpoveď užívateľovi %s"
-msgstr "Odpověď uživateli %s"
+msgstr "Odpověď pro %s"
 
 #: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:31
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:31
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:34
 msgid "Pri zmene označenia páči sa mi to došlo k chybe."
-msgstr "Při změně označení líbí se mi to došlo k chybě."
+msgstr "Při změně označení „To se mi líbí“ došlo k chybě."
 
 #: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:58
-#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:82
+#: app/static/app/ts/src/pages/articles/functions/articleForumSocialInteractions.ts:80
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:58
 #: app/static/app/ts/src/pages/community/functions/postForumSocialInteractions.ts:82
 #: app/static/app/ts/src/pages/community/functions/postSocialInteractions.ts:119
@@ -275,7 +276,7 @@ msgstr "Upravit"
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:724
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:744
 msgid "Vymazať"
-msgstr "Vymazat"
+msgstr "Smazat"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid "(upravené)"
@@ -283,11 +284,10 @@ msgstr "(upraveno)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:152
 msgid " (upravené)"
-msgstr "(upraveno)"
+msgstr " (upraveno)"
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:155
 #: app/static/app/ts/src/pages/chat/components/chat.ts:471
-#| msgid "Napísať komentár"
 msgid "Napísať správu"
 msgstr "Napsat zprávu"
 
@@ -302,7 +302,6 @@ msgid "Spojenie sa neočakávane prerušilo."
 msgstr "Spojení se neočekávaně přerušilo."
 
 #: app/static/app/ts/src/pages/chat/components/chat.ts:291
-#| msgid "Upraviť"
 msgid "Upraviť správu"
 msgstr "Upravit zprávu"
 
@@ -320,14 +319,14 @@ msgstr "Načítám..."
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:446
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:447
 msgid "Vypnúť viditeľnosť len pre sledovateľov"
-msgstr "Vypnout viditelnost pouze pro sledovatele"
+msgstr "Zobrazit všem"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:433
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:434
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:453
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:454
 msgid "Zapnúť viditeľnosť len pre sledovateľov"
-msgstr "Zapnout viditelnost pouze pro sledovatele"
+msgstr "Zobrazit pouze sledujícím"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:467
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:468
@@ -348,14 +347,14 @@ msgstr "Vypnout komentáře"
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:527
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:528
 msgid "Zobraziť počet označení páči sa mi to"
-msgstr "Zobrazit počet označení líbí se mi to"
+msgstr "Zobrazit počet lajků"
 
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:514
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:515
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:534
 #: app/static/app/ts/src/pages/community/components/upload_post_form.ts:535
 msgid "Skryť počet označení páči sa mi to"
-msgstr "Skrýt počet označení líbí se mi to"
+msgstr "Skrýt počet lajků"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:57
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:58
@@ -370,7 +369,7 @@ msgstr "Nahlásit"
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:79
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:737
 msgid "Naozaj chcete vymazať Váš komentár?"
-msgstr "Opravdu chcete vymazat Váš komentář?"
+msgstr "Opravdu chcete smazat svůj komentář?"
 
 #: app/static/app/ts/src/pages/community/functions/createCommentPropertiesHTML.ts:94
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:752
@@ -392,7 +391,7 @@ msgstr "Přestat sledovat"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:156
 msgid "Otvoriť mapy"
-msgstr "Otevřít mapy"
+msgstr "Otevřít v mapách"
 
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:194
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:315
@@ -421,7 +420,7 @@ msgstr "Sdílet..."
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:384
 #: app/static/app/ts/src/pages/community/functions/createPostHTML.ts:385
 msgid "Počet videní..."
-msgstr "Počet vidění..."
+msgstr "Zhlédnutí..."
 
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:16
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:17
@@ -492,7 +491,7 @@ msgstr "Při hledání příspěvků došlo k chybě."
 
 #: app/static/app/ts/src/pages/community/functions/posts.ts:80
 msgid "Videli ste všetky príspevky."
-msgstr "Viděli jste všechny příspěvky."
+msgstr "Už jste viděli všechny příspěvky!"
 
 #: app/static/app/ts/src/pages/community/functions/posts.ts:94
 msgid "Nenašli sa žiadne príspevky."
@@ -506,7 +505,7 @@ msgstr "Při zpracovávání příspěvku došlo k chybě!"
 
 #: app/static/app/ts/src/pages/community/functions/processingPosts.ts:71
 msgid "Príspevok bol úspešne pridaný."
-msgstr "Příspěvek byl úspěšně přidán."
+msgstr "Příspěvek byl přidán."
 
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:56
 msgid "Pri načítavaní užívateľov došlo k chybe."
@@ -525,14 +524,14 @@ msgstr "Při hledání uživatelů došlo k chybě."
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:175
 #: app/static/app/ts/src/pages/community/functions/searchUsers.ts:176
 msgid "Počet sledovateľov..."
-msgstr "Počet sledovatelů..."
+msgstr "Sledující..."
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:258
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:259
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:264
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:265
 msgid "Označiť"
 msgstr "Označit"
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:411
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:417
 msgid "Odstrániť zmienku"
 msgstr "Odstranit zmínku"
 
@@ -608,7 +607,7 @@ msgstr "Počet opakování"
 #: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:112
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:81
 msgid "Počet sekúnd"
-msgstr "Počet vteřin"
+msgstr "Počet sekund"
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:113
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:82
@@ -627,12 +626,12 @@ msgstr "Při odstraňování tréninkového plánu došlo k chybě."
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:100
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne pridaný."
-msgstr "Tréninkový plán %s byl úspěšně přidán."
+msgstr "Tréninkový plán %s byl přidán."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:101
 #, javascript-format
 msgid "Tréningový plán %s bol úspešne upravený."
-msgstr "Tréninkový plán %s byl úspěšně upraven."
+msgstr "Tréninkový plán %s byl upraven."
 
 #: app/static/app/ts/src/pages/manage_training_plans/functions/saveTrainingPlan.ts:107
 msgid "Pri ukladaní tréningového plánu došlo k chybe."
@@ -654,22 +653,11 @@ msgstr "Odstranit odkaz"
 
 #: app/static/app/ts/src/pages/profile/components/edit_account.ts:295
 msgid "Váš úcet bude odstránený"
-msgstr "Váš úcet bude odstraněn"
-
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:67
-#: app/static/app/ts/src/pages/profile/components/follow_requests.ts:89
-#: app/static/app/ts/src/pages/profile/components/followers.ts:56
-msgid "Žiadne žiadosti o sledovanie"
-msgstr "Žádné žádosti o sledování"
-
-#: app/static/app/ts/src/pages/profile/components/followers.ts:64
-#| msgid "Žiadne žiadosti o sledovanie"
-msgid "Žiadny sledovatelia"
-msgstr "Žádní sledovatelé"
+msgstr "Váš účet bude odstraněn"
 
 #: app/static/app/ts/src/pages/profile/components/profile.ts:62
 msgid "Pri pokuse o obmedzenie užívateľa došlo k chybe."
-msgstr "Při pokusu o omezení uživatele došlo k chybě."
+msgstr "Při pozastavování uživatele došlo k chybě."
 
 #: app/static/app/ts/src/pages/profile/functions/followRequests.ts:19
 msgid "Pri potvrdení žiadosti o sledovanie došlo k chybe."
@@ -680,9 +668,8 @@ msgid "Pri zamietnutí žiadosti o sledovanie došlo k chybe."
 msgstr "Při zamítnutí žádosti o sledování došlo k chybě."
 
 #: app/static/app/ts/src/pages/profile/functions/removeFollower.ts:19
-#| msgid "Pri odstraňovaní úloh došlo k chybe."
 msgid "Pri odstraňovaní sledovateľa došlo k chybe."
-msgstr "Při odstraňování sledovatele došlo k chybě."
+msgstr "Při odebírání sledujícího došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/components/training_session.ts:191
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:39
@@ -699,51 +686,48 @@ msgstr "Získali jste"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:56
 msgid "<br>Aktuálna aktivita trvala: "
-msgstr "<br>Aktuální aktivita trvala:"
+msgstr "<br>Tato aktivita trvala: "
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:65
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o 100%% dlhší ako priemer za posledných 7 dní"
-msgstr ""
-"Čas aktuální aktivity byl o 100%% delší než průměr za posledních 7 dní"
+msgstr "Tato aktivita byla o 100%% delší než váš průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:77
 #, javascript-format
-msgid ""
-"Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
-msgstr "Čas aktuální aktivity byl o %s%% delší než průměr za posledních 7 dní"
+msgid "Čas aktuálnej aktivity bol o %s%% dlhší ako priemer za posledných 7 dní"
+msgstr "Tato aktivita byla o %s%% delší než váš průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/activitySummary.ts:91
 #, javascript-format
 msgid ""
 "Čas aktuálnej aktivity bol o %s%% kratší ako priemer za posledných 7 dní"
-msgstr ""
-"Čas aktuální aktivity byl o %s%% kratší než průměr za posledních 7 dní"
+msgstr "Tato aktivita byla o %s%% kratší než váš průměr za posledních 7 dní"
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:40
 msgid "Pri pridávaní úlohy došlo k chybe."
-msgstr "Při přidávání úlohy došlo k chybě."
+msgstr "Při přidávání úkolu došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:95
 msgid "Pri zmene stavu úlohy došlo k chybe."
-msgstr "Při změně stavu úlohy došlo k chybě."
+msgstr "Při změně stavu úkolu došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:112
 msgid "Pri odstraňovaní úlohy došlo k chybe."
-msgstr "Při odstraňování úlohy došlo k chybě."
+msgstr "Při odstraňování úkolu došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:156
 msgid "Pri odstraňovaní úloh došlo k chybe."
-msgstr "Při odstraňování úloh došlo k chybě."
+msgstr "Při odstraňování úkolů došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/customTasksCompletion.ts:203
 msgid "Pri pokuse o zmenu poradia úloh došlo k chybe."
-msgstr "Při pokusu o změnu pořadí úloh došlo k chybě."
+msgstr "Při změně pořadí úkolů došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:221
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
-msgstr "Při označování úlohy za dokončenou došlo k chybě."
+msgstr "Při označování úkolu jako splněného došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
@@ -751,7 +735,7 @@ msgstr "Při zaznamenávání aktivity došlo k chybě."
 
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:45
 msgid "Pri uplatňovaní navýšenia XP došlo k chybe."
-msgstr "Při uplatňování navýšení XP došlo k chybě."
+msgstr "Při aktivaci navýšení XP došlo k chybě."
 
 #: app/static/app/ts/src/utils/password.ts:4
 msgid "Heslá sa zhodujú"
@@ -773,26 +757,4 @@ msgstr "Zobrazit heslo"
 
 #: app/static/app/ts/src/utils/password.ts:59
 msgid "Zadajte váš e-mail"
-msgstr "Zadejte váš e-mail"
-
-#, javascript-format
-#~ msgid "/api/stream-video/%s/%s/%s"
-#~ msgstr "/api/stream-video/%s/%s/%s"
-
-#~ msgid "Pri pridávaní označenia páči sa mi to došlo k chybe."
-#~ msgstr "Při přidávání označení líbí se mi to došlo k chybě."
-
-#~ msgid "Pri rušení označenia páči sa mi to došlo k chybe."
-#~ msgstr "Při rušení označení líbí se mi to došlo k chybě."
-
-#~ msgid "Profilový obrázok bude odstránený"
-#~ msgstr "Profilový obrázek bude odstraněn"
-
-#~ msgid "/moj-ucet"
-#~ msgstr "/muj-ucet"
-
-#~ msgid "An Error Occurred While Searching for Users."
-#~ msgstr "Při vyhledávání uživatelů došlo k chybě."
-
-#~ msgid "Vaše hodnotenie bude odstránené"
-#~ msgstr "Vaše hodnocení bude odstraněno"
+msgstr "Zadejte svůj e-mail"

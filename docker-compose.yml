@@ -12,7 +12,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432" # Only Reachable From This Machine (pgAdmin Still Works)
 
   # Redis
   redis:
@@ -71,7 +71,7 @@ services:
     volumes:
       - ./wesiq:/app
     ports:
-      - "5557:5555"
+      - "127.0.0.1:5557:5555" # Flower Shows Task Arguments; Never Expose It Publicly (Set FLOWER_BASIC_AUTH In .env)
     env_file:
       - .env
     depends_on:

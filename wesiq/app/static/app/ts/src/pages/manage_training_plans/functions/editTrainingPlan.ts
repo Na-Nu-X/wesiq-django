@@ -27,8 +27,6 @@ export function generateTrainingPlan(edit_training_plan:HTMLDivElement):void {
     const day_options_list:HTMLDivElement = day_select_menu.querySelector(".options_list") as HTMLDivElement // Gets Day Options List
     const day_options:NodeListOf<HTMLDivElement> = day_options_list.querySelectorAll<HTMLDivElement>(".option") // Gets All Day Options
 
-    const buttons_container:HTMLDivElement = edit_training_plan.querySelector(".buttons") as HTMLDivElement // Gets Buttons Container
-
     // Gets Current Order Of Training Plans By Day Value
     const training_plan_days_order:(string|null)[] = [
         ...new Set([...exercises_data].map(function(one_exercise_data:HTMLDivElement):string|null {
@@ -68,8 +66,6 @@ export function generateTrainingPlan(edit_training_plan:HTMLDivElement):void {
     if(training_plan_days_order.length > 1) {
         const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length, edit_training_plan_state)
         renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
-
-        // buttons_container.style.marginTop = "0px" // Changes The Top Margin For The Buttons Container
     }
 
     // Orders Exercises By Order Value In Exercises Data

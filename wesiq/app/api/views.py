@@ -45,6 +45,14 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from PIL import Image, UnidentifiedImageError
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.password_validation import validate_password
+from app.forms import editAccountForm
+from app.security import (
+    issue_password_reset_code, verify_password_reset_code, clear_password_reset_code, revoke_user_refresh_tokens,
+    visible_posts_q, EDITABLE_POST_SETTINGS, parse_bool, record_activity, ActivityValidationError,
+    is_xp_boost_available, validate_uploaded_image, clean_bio_link,
+    clean_post_comment, CommentValidationError
+)
 
 # Defines The Disallowed Mime Types
 DISALLOWED_MIME_TYPES = [
@@ -140,12 +148,17 @@ def captureLogin(message):
 
 # Function For Get The Client IP
 def getClientIp(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    # Forwarded Headers Are Only Trusted Behind A Proxy That Overwrites Them (Otherwise Any Client Could Fake Its IP)
+    if getattr(settings, "RATELIMIT_IP_META_KEY", None):
+        ip = request.META.get(settings.RATELIMIT_IP_META_KEY)
 
-    if x_forwarded_for: ip = x_forwarded_for.split(",")[0].strip()
-    else: ip = request.META.get("REMOTE_ADDR")
+    elif getattr(settings, "BEHIND_PROXY", False) and request.META.get("HTTP_X_FORWARDED_FOR"):
+        ip = request.META["HTTP_X_FORWARDED_FOR"].split(",")[-1].strip() # The Entry Appended By Our Own Proxy
 
-    return ip
+    else:
+        ip = None
+
+    return (ip or request.META.get("REMOTE_ADDR", "")).strip()
 
 # Generates Random 6-Digit Code
 def generateCode(length = 6, letters = False):
@@ -155,7 +168,7 @@ def generateCode(length = 6, letters = False):
     if letters: characters += string.ascii_letters # Gets The Characters (Digits And Letters)
 
     for one_character in range(length):
-        one_character = random.choice(characters) # Gets The Random Character
+        one_character = secrets.choice(characters) # Gets The Random Character (Cryptographically Secure)
         code += str(one_character) # Adds The Character To The Code
 
     return code # Returns The Code
@@ -219,81 +232,87 @@ def apple_app_site_association(request):
 # Webhooks #
 ############
 
+# NOTE: Not Routed Yet. Before Adding It To app/api/urls.py, Set REVENUECAT_WEBHOOK_AUTH In .env To The Same
+# Value As The "Authorization" Header Configured In The RevenueCat Dashboard.
 @csrf_exempt
 def revenuecat_webhook(request):
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False, 
+            "message": str(_("Platba sa dá uskutočniť len pomocou POST metódy."))
+        }, status = 405)
+
+    # Authenticates RevenueCat (Without This Anyone Could Grant Themselves A Subscription)
+    expected_authorization = getattr(settings, "REVENUECAT_WEBHOOK_AUTH", None)
+    received_authorization = request.META.get("HTTP_AUTHORIZATION", "")
+
+    if not expected_authorization or not secrets.compare_digest(received_authorization.encode(), expected_authorization.encode()):
+        captureError(f"Unauthorized RevenueCat webhook call.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+        return JsonResponse({"success": False}, status = 401)
+
+    try:
+        data = json.loads(request.body) # Gets The Data
+        event = data.get("event", {}) # Gets The Event
+        event_type = event.get("type") # Gets The Event Type
+        app_user_id = event.get("app_user_id") # Gets The App User ID
+        entitlement_ids = event.get("entitlement_ids") or [] # Gets The Entitlement IDs
+        transaction_id = event.get("transaction_id") or "" # Gets The Transaction ID (From Apple / Google)
+        amount = event.get("price_in_purchased_currency") or 0 # Gets The Amount (Price)
+
         try:
-            data = json.loads(request.body) # Gets The Data
-            event = data.get("event", {}) # Gets The Event
-            event_type = event.get("type") # Gets The Event Type
-            app_user_id = event.get("app_user_id") # Gets The App User ID
-            entitlement_ids = event.get("entitlement_ids", []) # Gets The Entitlement ID
-            transaction_id = event.get("transaction_id", "") # Gets The Transaction ID (From Apple / Google)
-            amount = event.get("price_in_purchased_currency", 0) # Gets The Amount (Price)
+            user = Users.objects.get(id = int(app_user_id)) # Gets The User
 
-            try:
-                user = Users.objects.get(id = int(app_user_id)) # Gets The User
+        except (Users.DoesNotExist, ValueError, TypeError):
+            # 200 So RevenueCat Doesn't Retry An Event That Can Never Succeed
+            return JsonResponse({
+                "success": False, 
+                "message": str(_("Používateľ sa nenašiel."))
+            }, status = 200)
 
-            except (Users.DoesNotExist, ValueError, TypeError):
-                return Response({
-                    "success": False, 
-                    "message": str(_("Používateľ sa nenašiel."))
-                }, status = 200)
+        plan = "free" # Stores The Subscription Plan
+        if "premium_access" in entitlement_ids: plan = "premium" # Sets The Subscription Plan To Premium
+        elif "basic_access" in entitlement_ids: plan = "basic" # Sets The Subscription Plan To Basic
 
-            plan = "free" # Stores The Subscription Plan
-            if "basic_access" in entitlement_ids: plan = "basic" # Sets The Subscription Plan To Basic
-            elif "premium_access" in entitlement_ids: plan = "premium" # Sets The Subscription Plan To Premium
-
+        with transaction.atomic():
             # Subscription Purchase Or Renewal
             if event_type in ["INITIAL_PURCHASE", "RENEWAL"]:
-                # Aktualizácia alebo vytvorenie Subscription záznamu
-                subscription, created = Subscription.objects.get_or_create(user=user)
+                subscription, created = Subscription.objects.select_for_update().get_or_create(user = user)
                 subscription.stripe_subscription_id = transaction_id # Stores The Apple / Google ID
                 subscription.plan = plan
                 subscription.is_active = True
                 subscription.is_cancelled = False
                 subscription.save() # Saves The Subscription
 
-                # Creates The Transaction
-                Transactions.objects.create(
-                    user_id = user.id,
-                    stripe_intent_id = transaction_id, # Stores The Apple / Google ID
-                    amount = amount,
-                    status = "succeeded",
-                    title = f"In-App Subscription ({plan.capitalize()})"
-                )
+                # RevenueCat Retries Deliveries, So The Same Transaction Is Recorded Only Once (Idempotency)
+                if not transaction_id or not Transactions.objects.filter(stripe_intent_id = transaction_id).exists():
+                    Transactions.objects.create(
+                        user_id = user.id,
+                        stripe_intent_id = transaction_id, # Stores The Apple / Google ID
+                        amount = amount,
+                        status = "succeeded",
+                        title = f"In-App Subscription ({plan.capitalize()})"
+                    )
 
             # Subscription Cancellation Or Expiration
             elif event_type in ["CANCELLATION", "EXPIRATION"]:
-                try:
-                    subscription = Subscription.objects.get(user = user) # Gets The Subscription
-                    subscription.plan = "free"
-                    subscription.is_active = False
-                    subscription.is_cancelled = True if event_type == "CANCELLATION" else False
-                    subscription.save() # Saves The Updated Subscription
+                Subscription.objects.filter(user = user).update(
+                    plan = "free",
+                    is_active = False,
+                    is_cancelled = event_type == "CANCELLATION"
+                )
 
-                except Subscription.DoesNotExist:
-                    pass
+        return JsonResponse({
+            "success": True, 
+            "message": str(_("Predplatné bolo úspešne aktualizované."))
+        }, status = 200)
 
-            return Response({
-                "success": True, 
-                "message": str(_("Predplatné bolo úspešne aktualizované."))
-            }, status = 200)
+    except Exception as error:
+        captureError(f"An error occurred while activating the mobile subscription.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
 
-        except Exception as error:
-            captureError(f"An error occurred while activating the mobile subscription.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
-
-            return Response({
-                "success": False, 
-                "message": str(_("Pri aktivácii predplatného došlo k chybe."))
-            }, status = 500)
-
-    captureError(f"Payment can only be made using the POST method.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
-
-    return Response({
-        "success": False, 
-        "message": str(_("Platba sa dá uskutočniť len pomocou POST metódy."))
-    }, status = 405)
+        return JsonResponse({
+            "success": False, 
+            "message": str(_("Pri aktivácii predplatného došlo k chybe."))
+        }, status = 500)
 
 ###############
 # General API #
@@ -1189,7 +1208,7 @@ def mark_post_as_seen(request):
             }, status = 500)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
@@ -1283,28 +1302,34 @@ def stream_video(request, user_id, media_id, filename):
         mimetypes.add_type("application/x-mpegURL", ".m3u8")
         mimetypes.add_type("video/MP2T", ".ts")
 
+        viewer_id = request.user.id if request.user.is_authenticated else None # Gets The Viewer ID If Is Available
+
+        # The Media Must Belong To The Given User And Its Post Must Be Visible To The Viewer
+        is_visible = PostMedia.objects.filter(
+            id = media_id,
+            post__user_id = user_id,
+            post__in = Post.objects.filter(visible_posts_q(viewer_id))
+        ).exists()
+
         # Gets The Safe Video File Path (Path Traversal Protection) From Traveling Between Paths
         safe_filename = os.path.basename(filename) # Gets The Safe Filename
         file_path = os.path.join(settings.MEDIA_ROOT, "posts", str(user_id), "videos", str(media_id), safe_filename) # Gets The File Path
 
-        if not os.path.exists(file_path):
+        if not is_visible or not os.path.isfile(file_path):
             return Response({
                 "success": False, 
                 "message": str(_("Video súbor %(safe_filename)s sa nenašiel.") % {"safe_filename": safe_filename})
             }, status = 404)
 
         # Checks If The File Is index.m3u8 Or .ts Video File Segment
-        content_type, _ = mimetypes.guess_type(file_path) # Gets The Content Type
+        content_type, _encoding = mimetypes.guess_type(file_path) # Gets The Content Type (Not Named "_", Which Would Shadow gettext)
         if not content_type: content_type = "application/octet-stream" # Sets The Content Type
 
+        # A FileResponse Must Be Returned Directly (Wrapping It In A DRF Response Can't Be Serialised)
         video_response = FileResponse(open(file_path, "rb"), content_type = content_type) # Gets The Video Response
         video_response["Accept-Ranges"] = "bytes"
 
-        return Response({
-            "success": True, 
-            "video": video_response,
-            "message": str(_("Video bolo nájdené."))
-        }, status = 200)
+        return video_response
 
     except Exception as error:
         captureError(f"An error occurred while streaming the video.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -1332,7 +1357,7 @@ def toggle_post_like(request):
             }, status = 400)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
@@ -1389,7 +1414,7 @@ def toggle_post_save(request):
             }, status = 400)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
@@ -1444,7 +1469,7 @@ def report_post(request):
             }, status = 400)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
@@ -1501,14 +1526,23 @@ def edit_post_settings(request):
         if not post_id or not setting:
             return Response({
                 "success": False, 
-                "message": str(_("Sledovanie nie je možné zmeniť bez potrebných údajov."))
-            }, status = 500)
+                "message": str(_("Nastavenia príspevku nie je možné zmeniť bez potrebných údajov."))
+            }, status = 400)
+
+        value = parse_bool(action) # Gets The New Value (Strict Boolean)
+
+        # Only The Toggleable Settings Can Be Changed (Never user, public_id, likes, reports, ...)
+        if setting not in EDITABLE_POST_SETTINGS or value is None:
+            return Response({
+                "success": False,
+                "message": str(_("Neplatné nastavenie príspevku."))
+            }, status = 400)
 
         post = Post.objects.filter(public_id = post_id, user_id = logged_in_user_id).first() # Gets The Post
 
         if post:
-            setattr(post, setting, action) # Updates The Given Column's Value
-            post.save() # Saves The Updated Post
+            setattr(post, setting, value) # Updates The Given Setting
+            post.save(update_fields = [setting]) # Saves Only The Updated Setting
 
             return Response({
                 "success": True, 
@@ -1619,7 +1653,7 @@ def get_post_comments(request):
             }, status = 400)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
@@ -1730,16 +1764,25 @@ def add_comment(request):
             return Response({
                 "success": False, 
                 "message": str(_("Pre pridanie komentáru chýbajú potrebné údaje."))
-            }, status = 500)
+            }, status = 400)
 
         try:
-            post = Post.objects.get(public_id = post_id) # Gets The Post
+            post = Post.objects.filter(visible_posts_q(request.user.id if request.user.is_authenticated else None)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
 
         except Post.DoesNotExist:
             return Response({
                 "success": False,
                 "message": str(_("Príspevok nebol nájdený."))
             }, status=404)
+
+        try:
+            comment, parent_id = clean_post_comment(post, comment, parent_id) # Validates The Comment, Allow Comments And The Parent
+
+        except CommentValidationError:
+            return Response({
+                "success": False,
+                "message": str(_("Komentár nie je možné pridať."))
+            }, status = 400)
 
         # Creates The New Comment
         new_comment = PostForum.objects.create(
@@ -2504,7 +2547,8 @@ def get_post(request, post_id):
         logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
 
         # Checks If The Profile With Searched Username Exists
-        if Post.objects.filter(public_id = post_id).exists():
+        # Only If The Viewer Is Allowed To See It (Followers-Only Posts / Private Accounts)
+        if Post.objects.filter(visible_posts_q(logged_in_user_id), public_id = post_id).exists():
             # Gets The Posts With All Related Data
             post = Post.objects.select_related(
                 "user__subscription"
@@ -2966,15 +3010,21 @@ def complete_official_task(request):
                 users_daily_official_task.save() # Saves The Updated Task
 
             if users_daily_official_task.progress_percentage == 100.00:
+                # Conditional Update: Only The Request That Actually Flips is_completed Awards The XP (No Double XP From Parallel Requests)
+                newly_completed = UserDailyOfficialTasks.objects.filter(
+                    id = users_daily_official_task.id,
+                    is_completed = False
+                ).update(is_completed = True)
+
                 users_daily_official_task.is_completed = True # Marks The Task As Completed
-                users_daily_official_task.save() # Saves The Updated Task
 
                 # Increases And Updates The Amount Of User's Obtained XP
-                Users.objects.filter(
-                    id = logged_in_user_id
-                ).update(
-                    xp = F("xp") + task.xp
-                )
+                if newly_completed:
+                    Users.objects.filter(
+                        id = logged_in_user_id
+                    ).update(
+                        xp = F("xp") + task.xp
+                    )
 
                 # Creates Valid Format Of Task For JSON Response
                 task_data = {
@@ -3205,7 +3255,7 @@ def delete_completed_custom_tasks(request):
         completed_custom_tasks_ids = request.data.get("completed_custom_tasks_ids", []) # Gets The Completed Custom Tasks IDs
 
         # If The Information Are Missing
-        if completed_custom_tasks_ids.len == 0:
+        if not isinstance(completed_custom_tasks_ids, list) or not completed_custom_tasks_ids:
             return Response({
                 "success": False, 
                 "message": str(_("Pre odstránenie úloh chýbajú potrebné údaje."))
@@ -3240,7 +3290,7 @@ def change_custom_tasks_order(request):
         tasks_ids = request.data.get("tasks_ids", []) # Gets The Tasks IDs
 
         # If The Information Are Missing
-        if tasks_ids.len == 0:
+        if not isinstance(tasks_ids, list) or not tasks_ids:
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu poradia úloh chýbajú potrebné údaje."))
@@ -3373,9 +3423,19 @@ def use_xp_boost(request):
     try:
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
-        xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Gets The XP Boost Expiration Time
+        with transaction.atomic():
+            logged_in_user = Users.objects.select_for_update().get(id = logged_in_user_id) # Locks The User Row So The Boost Can't Be Claimed Twice In Parallel
 
-        Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores The New XP Boost Expiration Time
+            # The Boost Is Only Available Once Per Day After An Activity Yesterday (Same Rule As get_xp_boost)
+            if not is_xp_boost_available(logged_in_user):
+                return Response({
+                    "success": False,
+                    "message": str(_("Navýšenie XP nie je dostupné."))
+                }, status = 400)
+
+            xp_boost_expiration_time = timezone.now() + timedelta(minutes = 30) # Gets The XP Boost Expiration Time
+
+            Users.objects.filter(id = logged_in_user_id).update(xp_boost_expiration_time = xp_boost_expiration_time) # Stores The New XP Boost Expiration Time
 
         return Response({
             "success": True, 
@@ -3408,98 +3468,32 @@ def new_activity(request):
                 "message": str(_("Pre zaznamenanie aktivity chýbajú potrebné údaje."))
             }, status = 400)
 
-        gained_xp = new_activity_data["gained_xp"] # Gets The Gained XP
+        if not isinstance(new_activity_data, dict):
+            return Response({
+                "success": False,
+                "message": str(_("Pre zaznamenanie aktivity chýbajú potrebné údaje."))
+            }, status = 400)
 
-        Users.objects.filter(id = logged_in_user_id).update(xp = F("xp") + gained_xp) # Increases And Updates The User's Gained XP
-        Users.objects.filter(id = logged_in_user_id).update(total_activities = F("total_activities") + 1) # Increases And Updates The User's Total Activities Amount
+        try:
+            # The Native App Sends The Elapsed Time In Milliseconds; XP Is Capped Server-Side By record_activity
+            gained_xp = record_activity(
+                user_id = logged_in_user_id,
+                elapsed_seconds = int(float(new_activity_data.get("elapsed_time", 0))) // 1000,
+                claimed_xp = new_activity_data.get("gained_xp", 0),
+                activity_type = new_activity_data.get("type"),
+                day = new_activity_data.get("day"),
+                training_plan_summary = new_activity_data.get("training_plan_summary")
+            )
 
-        today = timezone.now().date() # Gets The Today's Date
-        yesterday = today - timedelta(days = 1) # Gets The Yesterday's Date
-
-        # Gets The User's Last Activity Streak Increase Date
-        last_activity_streak_increase_date = (
-            logged_in_user.last_activity_streak_increase_time.date() if logged_in_user.last_activity_streak_increase_time else None
-        )
-
-        # Checks If The Activity Streak Hasn't Been Already Increased Today Or If It Has Never Increased Before
-        if last_activity_streak_increase_date is None or last_activity_streak_increase_date < today:
-            # Increases The Activity Streak
-            if last_activity_streak_increase_date == yesterday or logged_in_user.activity_streak == 0:
-                Users.objects.filter(id = logged_in_user_id).update(
-                    activity_streak = F("activity_streak") + 1,
-                    last_activity_streak_increase_time = today
-                )
-
-                # Increases The Max Activity Streak
-                if logged_in_user.activity_streak > logged_in_user.max_activity_streak:
-                    Users.objects.filter(id = logged_in_user_id).update(
-                        max_activity_streak = F("activity_streak")
-                    )
-
-        # Creates The New Activity
-        Activity.objects.create(
-            user_id = logged_in_user_id,
-            elapsed_time = int(new_activity_data["elapsed_time"]) / 1000,
-            gained_xp = int(gained_xp),
-            type = new_activity_data["type"],
-            training_plan_day = new_activity_data["day"],
-            training_plan_summary = new_activity_data["training_plan_summary"]
-        )
-
-        # No Day Off Week Badge Completion
-        if not logged_in_user.badges.filter(data = "no_day_off_week").exists():
-            seven_days_ago = today - timedelta(days = 6) # Gets The Seven Days Ago Date
-
-            # Gets The Number Of Consecutive Days With Some Recorded Activity
-            unique_seven_days_of_activity = Activity.objects.filter(
-                user = logged_in_user,
-                end_time__date__range = [seven_days_ago, today]
-            ).values(
-                "end_time__date"
-            ).distinct().count()
-
-            if unique_seven_days_of_activity == 7:
-                # Creates The New Badge
-                SpecialBadges.objects.create(
-                    user_id = logged_in_user_id,
-                    title = "No Day Off Week",
-                    data = "no_day_off_week"
-                )
-
-        # X-Mas Activity Badge Completion
-        if not logged_in_user.badges.filter(data = "xmas_activity").exists():
-            has_xmas_activity = Activity.objects.filter(
-                user = logged_in_user,
-                end_time__month = 12,
-                end_time__day = 24
-            ).exists()
-
-            if has_xmas_activity:
-                # Creates The New Badge
-                SpecialBadges.objects.create(
-                    user_id = logged_in_user_id,
-                    title = "X-Mas Activity",
-                    data = "xmas_activity"
-                )
-
-        # New Year, New Goals Badge Completion
-        if not logged_in_user.badges.filter(data = "new_year_new_goals").exists():
-            has_new_year_new_goals = Activity.objects.filter(
-                user = logged_in_user,
-                end_time__month = 1,
-                end_time__day = 1
-            ).exists()
-
-            if has_new_year_new_goals:
-                # Creates The New Badge
-                SpecialBadges.objects.create(
-                    user_id = logged_in_user_id,
-                    title = "New Year, New Goals",
-                    data = "new_year_new_goals"
-                )
+        except (ActivityValidationError, TypeError, ValueError):
+            return Response({
+                "success": False,
+                "message": str(_("Údaje o aktivite sú neplatné."))
+            }, status = 400)
 
         return Response({
             "success": True, 
+            "gained_xp": gained_xp,
             "message": str(_("Aktivita bola úspešne zaznamenaná."))
         }, status = 201)
 
@@ -3576,53 +3570,54 @@ def manage_training_plan(request):
                 "message": str(_("Pre vykonanie zmien v tréningovom pláne chýbajú potrebné údaje."))
             }, status = 400)
         
-        deleted_training_plan_keys = set() # Gets The Deleted Training Plan Keys
+        with transaction.atomic(): # All-Or-Nothing: A Bad Item Must Not Leave The Plan Half-Deleted
+            deleted_training_plan_keys = set() # Gets The Deleted Training Plan Keys
         
-        for one_object in training_plan_data:
-            # Edit Training Plan
-            if one_object.get("action") == "edited_training_plan":
-                previous_training_plan_key = one_object.get("previous_training_plan_key") # Gets The Previous Training Plan Key
+            for one_object in training_plan_data:
+                # Edit Training Plan
+                if one_object.get("action") == "edited_training_plan":
+                    previous_training_plan_key = one_object.get("previous_training_plan_key") # Gets The Previous Training Plan Key
                 
-                if previous_training_plan_key and previous_training_plan_key not in deleted_training_plan_keys:
-                    # Deletes Exercises With Similar Training Plan Key
-                    TrainingPlan.objects.filter(
-                        user_id = logged_in_user_id, 
-                        training_plan_key = previous_training_plan_key
-                    ).delete()
+                    if previous_training_plan_key and previous_training_plan_key not in deleted_training_plan_keys:
+                        # Deletes Exercises With Similar Training Plan Key
+                        TrainingPlan.objects.filter(
+                            user_id = logged_in_user_id, 
+                            training_plan_key = previous_training_plan_key
+                        ).delete()
 
-                    deleted_training_plan_keys.add(previous_training_plan_key) # Adds The Deleted Training Plan Keys
+                        deleted_training_plan_keys.add(previous_training_plan_key) # Adds The Deleted Training Plan Keys
             
-            # Delete Training Plan
-            elif one_object.get("action") == "delete_training_plan":
-                training_plan_key = one_object.get("training_plan_key") # Gets The Training Plan Key
+                # Delete Training Plan
+                elif one_object.get("action") == "delete_training_plan":
+                    training_plan_key = one_object.get("training_plan_key") # Gets The Training Plan Key
 
-                if training_plan_key and training_plan_key not in deleted_training_plan_keys:
-                    # Deletes Exercises With Similar Training Plan Key
-                    TrainingPlan.objects.filter(
-                        user_id = logged_in_user_id, 
-                        training_plan_key = training_plan_key
-                    ).delete()
+                    if training_plan_key and training_plan_key not in deleted_training_plan_keys:
+                        # Deletes Exercises With Similar Training Plan Key
+                        TrainingPlan.objects.filter(
+                            user_id = logged_in_user_id, 
+                            training_plan_key = training_plan_key
+                        ).delete()
 
-                    deleted_training_plan_keys.add(training_plan_key) # Adds The Deleted Training Plan Keys
+                        deleted_training_plan_keys.add(training_plan_key) # Adds The Deleted Training Plan Keys
 
-        for one_object in training_plan_data:
-            action = one_object.get("action") # Gets The Action
+            for one_object in training_plan_data:
+                action = one_object.get("action") # Gets The Action
             
-            # New Training Plan / Edited Training Plan
-            if action in ["new_training_plan", "edited_training_plan"]:
-                # Creates The New Training Plan
-                TrainingPlan.objects.create(
-                    user_id = logged_in_user_id,
-                    training_plan_key = one_object["training_plan_key"],
-                    day = one_object["day"],
-                    type = one_object["type"],
-                    exercise = one_object["exercise"],
-                    periods = one_object["periods"],
-                    unit = one_object["unit"],
-                    order = one_object["order"],
-                    is_warm_up = one_object["is_warm_up"],
-                    is_custom_exercise = one_object["is_custom_exercise"]
-                )
+                # New Training Plan / Edited Training Plan
+                if action in ["new_training_plan", "edited_training_plan"]:
+                    # Creates The New Training Plan
+                    TrainingPlan.objects.create(
+                        user_id = logged_in_user_id,
+                        training_plan_key = one_object["training_plan_key"],
+                        day = one_object["day"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                        is_warm_up = one_object["is_warm_up"],
+                        is_custom_exercise = one_object["is_custom_exercise"]
+                    )
 
         return Response({
             "success": True, 
@@ -3690,26 +3685,27 @@ def copy_training_plan(request):
                 "message": str(_("Pre skopírovanie tréningového plánu chýbajú potrebné údaje."))
             }, status = 400)
 
-        if training_plan_data and len(training_plan_data) > 0:
-            # Deletes Exercises With Similar Training Plan Key
-            TrainingPlan.objects.filter(
-                user = logged_in_user, 
-                training_plan_key = training_plan_data[0].get("training_plan_key")
-            ).delete()
+        with transaction.atomic(): # All-Or-Nothing: A Bad Item Must Not Leave The Plan Half-Deleted
+            if training_plan_data and len(training_plan_data) > 0:
+                # Deletes Exercises With Similar Training Plan Key
+                TrainingPlan.objects.filter(
+                    user = logged_in_user, 
+                    training_plan_key = training_plan_data[0].get("training_plan_key")
+                ).delete()
 
-            for one_object in training_plan_data:
-                # Creates The New Training Plan
-                TrainingPlan.objects.create(
-                    user = logged_in_user,
-                    training_plan_key = one_object["training_plan_key"],
-                    type = one_object["type"],
-                    exercise = one_object["exercise"],
-                    periods = one_object["periods"],
-                    unit = one_object["unit"],
-                    order = one_object["order"],
-                    is_warm_up = one_object["is_warm_up"],
-                    is_custom_exercise = False
-                )
+                for one_object in training_plan_data:
+                    # Creates The New Training Plan
+                    TrainingPlan.objects.create(
+                        user = logged_in_user,
+                        training_plan_key = one_object["training_plan_key"],
+                        type = one_object["type"],
+                        exercise = one_object["exercise"],
+                        periods = one_object["periods"],
+                        unit = one_object["unit"],
+                        order = one_object["order"],
+                        is_warm_up = one_object["is_warm_up"],
+                        is_custom_exercise = False
+                    )
 
         return Response({
             "success": True, 
@@ -4192,7 +4188,7 @@ def reject_follow_request(request):
             }, status = 400)
 
         # Gets The Deleted Follow Requests Amount
-        deleted_follow_requests_amount, _ = FollowRelation.objects.filter(
+        deleted_follow_requests_amount, _deleted_per_model = FollowRelation.objects.filter(
             id = follow_request_id,
             to_user = logged_in_user, 
             status = "pending"
@@ -4228,8 +4224,12 @@ def edit_account(request):
 
         delete_account = str(request.data.get("delete_account")).lower() == "true" # Gets The Delete Account Request If Is Available
         delete_profile_picture = str(request.data.get("delete_profile_picture")).lower() == "true" # Gets The Delete Profile Picture Request If Is Available
-        data_saving_mode = str(request.data.get("data_saving_mode")).lower() == "true" # Gets The Data Saving Mode
-        private_account = str(request.data.get("private_account")).lower() == "true" # Gets The Private Account
+        # Missing Flags Keep Their Current Value (Previously A Missing Flag Silently Turned Private Account / Data Saving Off)
+        data_saving_mode = parse_bool(request.data.get("data_saving_mode")) if "data_saving_mode" in request.data else logged_in_user.data_saving_mode # Gets The Data Saving Mode
+        private_account = parse_bool(request.data.get("private_account")) if "private_account" in request.data else logged_in_user.private_account # Gets The Private Account
+
+        if data_saving_mode is None: data_saving_mode = logged_in_user.data_saving_mode
+        if private_account is None: private_account = logged_in_user.private_account
         bio = request.data.get("bio", "") # Gets The Bio
         bio_links = request.data.get("bio_links", []) # Gets The Bio Links
         first_name = request.data.get("first_name", "") # Gets The First Name
@@ -4251,52 +4251,104 @@ def edit_account(request):
 
             captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
-            # del request.session["logged_in_user_id"] # Deletes The Previous Logged In User ID Session If The User Was Logged In
-
-            # refresh = RefreshToken.for_user(logged_in_user)
-            # refresh_token = str(refresh.access_token)
-
-            # if refresh_token:
-            #     token = RefreshToken(refresh_token)
-            #     token.blacklist()
+            revoke_user_refresh_tokens(logged_in_user) # Logs Out Every Device (Refresh Tokens Can't Be Used Anymore)
 
             return Response({
                 "success": True, 
                 "message": str(_("Účet %(username)s bol odstránený") % {"username": logged_in_user.username})
             }, status = 200)
 
-        if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
-            selected_profile_picture = request.FILES.get("selected_profile_picture") # Gets The Selected Profile Picture
+        edit_window = timedelta(days = 7) # Profile Details Can Be Changed Once Per 7 Days
 
+        if logged_in_user.last_edit is not None and timezone.now() - logged_in_user.last_edit < edit_window:
+            return Response({
+                "success": False, 
+                "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + edit_window).strftime('%d.%m. %Y')})
+            }, status = 429)
+
+        # 1) Validates Everything First, So An Invalid Field Can't Leave The Account Half-Updated
+        errors = {} # Stores The Validation Errors Per Field
+        cleaned = {} # Stores The Cleaned Values Of Changed Fields
+
+        for field_name, value in (("bio", bio), ("first_name", first_name), ("last_name", last_name), ("email_address", email_address), ("phone_number", phone_number)):
+            value = str(value or "").strip()
+
+            if value == "" or value == (getattr(logged_in_user, field_name) or ""):
+                continue # Empty Means "Keep The Current Value"
+
+            try:
+                cleaned[field_name] = editAccountForm.base_fields[field_name].clean(value) # Reuses The Web Form's Length / Pattern / E-mail Validators
+
+            except ValidationError as validation_error:
+                errors[field_name] = [str(one_message) for one_message in validation_error.messages]
+
+        # E-mail Addresses Aren't Unique At The Database Level, So Uniqueness Is Checked Here
+        if "email_address" in cleaned and Users.objects.filter(email_address__iexact = cleaned["email_address"]).exclude(id = logged_in_user_id).exists():
+            errors["email_address"] = [str(_("Používateľ s týmto e-mailom už existuje"))]
+
+        selected_profile_picture = request.FILES.get("selected_profile_picture") # Gets The Selected Profile Picture
+        profile_picture_extension = None # Stores The Safe Extension Detected From The Image Content
+
+        if selected_profile_picture:
+            try:
+                profile_picture_extension = validate_uploaded_image(selected_profile_picture) # Checks The File Really Is An Image
+
+            except ValidationError:
+                errors["selected_profile_picture"] = [str(_("Súbor nemá podporovaný formát"))]
+
+        new_bio_links = None # Stores The Cleaned Bio Links (None = Unchanged)
+
+        if bio_links:
+            try:
+                bio_links_list = json.loads(bio_links) if isinstance(bio_links, str) else bio_links # Converts The Bio Links To The Python List Format
+
+                if not isinstance(bio_links_list, list) or len(bio_links_list) > 10:
+                    raise ValidationError("Invalid bio links.")
+
+                new_bio_links = [clean_bio_link(one_url) for one_url in bio_links_list if str(one_url).strip()] # Only http(s) URLs
+
+            except (json.JSONDecodeError, ValidationError):
+                errors["bio_links"] = [str(_("Zadaný odkaz je neplatný"))]
+
+        if errors:
+            return Response({
+                "success": False,
+                "errors": errors,
+                "message": str(_("Niektoré údaje sú neplatné"))
+            }, status = 400)
+
+        # 2) Applies The Changes
+        now = timezone.now()
+        changed_details = False # Stores The Information If Any Rate-Limited Detail Was Changed
+
+        with transaction.atomic():
             if selected_profile_picture:
-                profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
+                old_profile_picture_name = logged_in_user.profile_picture_name # Gets The Old Profile Picture Name
 
-                if profile_picture_name != "" and profile_picture_name != None:
-                    profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{logged_in_user.profile_picture_name}") # Gets The Profile Picture Path
-
-                    if os.path.exists(profile_picture_path):
-                        os.remove(profile_picture_path) # Removes The Profile Picture File
-
-                new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10) + Path(selected_profile_picture.name).suffix}" # Creates The New Profile Picture Name
+                new_profile_picture_name = f"IMG-{secrets.token_hex(nbytes = 10)}{profile_picture_extension}" # Creates The New Profile Picture Name (Extension From The Content, Not The Upload Name)
 
                 profile_picture_location = FileSystemStorage(location = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}")) # Gets The Profile Picture Location
                 profile_picture_location.save(new_profile_picture_name, selected_profile_picture) # Saves The Profile Picture
 
-                logged_in_user.profile_picture_name = new_profile_picture_name # Updates The Profile Picture Name
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
+                if old_profile_picture_name:
+                    old_profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{os.path.basename(old_profile_picture_name)}") # Gets The Old Profile Picture Path
 
-            if delete_profile_picture:
-                profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
-                profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{logged_in_user.profile_picture_name}") # Gets The Profile Picture Path
+                    if os.path.exists(old_profile_picture_path):
+                        os.remove(old_profile_picture_path) # Removes The Old Profile Picture File
+
+                logged_in_user.profile_picture_name = new_profile_picture_name # Updates The Profile Picture Name
+                changed_details = True
+
+            elif delete_profile_picture and logged_in_user.profile_picture_name:
+                profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{os.path.basename(logged_in_user.profile_picture_name)}") # Gets The Profile Picture Path
 
                 if os.path.exists(profile_picture_path): 
                     os.remove(profile_picture_path) # Removes The Profile Picture File
 
                 logged_in_user.profile_picture_name = "" # Updates The Profile Picture Name
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
+                changed_details = True
 
-            if logged_in_user.data_saving_mode != data_saving_mode:
-                logged_in_user.data_saving_mode = data_saving_mode # Updates The Data Saving Mode
+            logged_in_user.data_saving_mode = data_saving_mode # Updates The Data Saving Mode
 
             if logged_in_user.private_account != private_account:
                 was_private = logged_in_user.private_account # Checks If The Account Was Private Before The Change
@@ -4311,73 +4363,23 @@ def edit_account(request):
                         status = "pending"
                     ).update(status = "accepted")
 
-            if logged_in_user.bio != bio and bio != "":
-                logged_in_user.bio = bio # Updates The Bio
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
+            for field_name, value in cleaned.items():
+                setattr(logged_in_user, field_name, value) # Updates The Changed Detail
+                changed_details = True
 
-            if logged_in_user.first_name != first_name and first_name != "":
-                logged_in_user.first_name = first_name # Updates The First Name
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
+            if new_bio_links is not None:
+                BioLinks.objects.filter(user = logged_in_user).delete() # Deletes All Previous User's Bio Links
+                BioLinks.objects.bulk_create([BioLinks(user = logged_in_user, url = one_url) for one_url in new_bio_links]) # Creates The New Bio Links
 
-            if logged_in_user.last_name != last_name and last_name != "":
-                logged_in_user.last_name = last_name # Updates The Last Name
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
-
-            if logged_in_user.email_address != email_address and email_address != "":
-                logged_in_user.email_address = email_address # Updates The E-mail Address
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
-
-            if logged_in_user.phone_number != phone_number and phone_number != "":
-                logged_in_user.phone_number = phone_number # Updates The Phone Number
-                logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
+            if changed_details:
+                logged_in_user.last_edit = now # Updates The Last Edit Time
 
             logged_in_user.save() # Saves The Updated Logged In User
 
-            try:
-                bio_links_list = json.loads(bio_links) if bio_links else [] # Converts The Bio Links To The Python List Format
-
-                with transaction.atomic():
-                    BioLinks.objects.filter(user = logged_in_user).delete() # Deletes All Previous User's Bio Links
-
-                    new_bio_links = [] # Stores The New Bio Links
-                    
-                    # Removes White Spaces From Every URL
-                    for one_url in bio_links_list:
-                        one_url = one_url.strip()
-                        if not one_url:
-                            continue
-                        
-                        # Appends The New Bio Link To The New Bio Links
-                        new_bio_links.append(
-                            BioLinks(
-                                user = logged_in_user,
-                                url = one_url
-                            )
-                        )
-
-                    # Bulk Creation Of Multiple User's Bio Links
-                    if new_bio_links:
-                        BioLinks.objects.bulk_create(new_bio_links)
-
-            # Invalid Bio Links JSON Format
-            except json.JSONDecodeError:
-                captureError(f"An error occurred while loading bio links from the JSON format.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
-
-                return Response({
-                    "success": False, 
-                    "message": str(_("Pri spracovávaní vlastných odkazov došlo k chybe"))
-                }, status = 500)
-
-            return Response({
-                "success": True, 
-                "message": str(_("Zmeny boli uložené"))
-            }, status = 200)
-
-        else:
-            return Response({
-                "success": True, 
-                "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days = 30)).strftime('%d.%m. %Y')})
-            }, status = 200)
+        return Response({
+            "success": True, 
+            "message": str(_("Zmeny boli uložené"))
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while making changes to your account.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -5971,49 +5973,69 @@ def delete_article_comment(request):
 # Password Reset Page #
 #######################
 
+# Function For Find The User By Username (With Or Without "@") Or E-mail Address
+def find_user_by_identifier(identifier):
+    identifier = str(identifier or "").strip()
+
+    if not identifier:
+        return None
+
+    clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
+
+    # .first() Instead Of .get(): E-mail Addresses Aren't Unique In The Database, So .get() Could Raise MultipleObjectsReturned
+    return Users.objects.filter(
+        Q(username__iexact = identifier) |
+        Q(username__iexact = clean_username) |
+        Q(username__iexact = f"@{clean_username}") |
+        Q(email_address__iexact = identifier)
+    ).order_by("id").first()
+
 @api_view(["POST"])
-@authentication_classes([JWTAuthentication])
+@authentication_classes([])
 @permission_classes([AllowAny])
+@ratelimit(key = "ip", rate = "5/m", method = "POST", block = False)
 def get_password_reset_code(request):
+    # Same Response Whether Or Not The Account Exists, So The Endpoint Can't Be Used To Discover Registered Users
+    generic_response = Response({
+        "success": True,
+        "message": str(_("Ak účet existuje, overovací kód bol odoslaný na jeho e-mailovú adresu."))
+    }, status = 200)
+
     try:
+        if getattr(request, "limited", False):
+            return Response({
+                "success": False,
+                "message": str(_("Príliš veľa pokusov. Skúste to prosím neskôr."))
+            }, status = 429)
+
         identifier = request.data.get("identifier") # Gets The Identifier
-        
+
         # If The Information Are Missing
         if not identifier:
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
             }, status = 400)
-        
-        code = generateCode() # Generates Random 6-Digit Code
-        
-        clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
 
-        # Gets The User
-        user = Users.objects.get(
-            Q(username__iexact = identifier) | 
-            Q(username__iexact = clean_username) | 
-            Q(email_address__iexact = identifier)
-        )
+        user = find_user_by_identifier(identifier) # Gets The User
 
-        # Sends The Mail
-        sendMail(
-            user,
-            _("Obnova hesla"), # Subject
-            _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s/password-reset?code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "code": code}, # Text Content
-            _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím kliknite na <a href="%(domain)s/password-reset?code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "code": code}, # HTML Content
-            _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-            code # Middle Of HTML Content
-        )
+        if not user or user.account_status == "unverified":
+            return generic_response
 
-        # Saves Password Reset Code To Database
-        user.password_reset_code = code
-        user.save()
+        code = issue_password_reset_code(user) # Generates And Stores A Secure 6-Digit Code (None While The Cooldown Is Active)
 
-        return Response({
-            "success": True, 
-            "message": str(_("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": user.email_address})
-        }, status = 200)
+        if code:
+            # Sends The Mail
+            sendMail(
+                user,
+                _("Obnova hesla"), # Subject
+                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s/password-reset?code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "code": code}, # Text Content
+                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím kliknite na <a href="%(domain)s/password-reset?code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "code": code}, # HTML Content
+                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                code # Middle Of HTML Content
+            )
+
+        return generic_response
 
     except Exception as error:
         captureError(f"An error occurred while sending the password reset code.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
@@ -6023,43 +6045,75 @@ def get_password_reset_code(request):
             "message": str(_("Pri odosielaní overovacieho kódu došlo k chybe."))
         }, status = 500)
 
+# Works For Logged Out Users: The Account Is Identified By The Identifier + The E-mailed Code, Never By request.user
 @api_view(["POST"])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
+@permission_classes([AllowAny])
+@ratelimit(key = "ip", rate = "10/m", method = "POST", block = False)
 def password_reset(request):
-    try:
-        logged_in_user = request.user # Gets The Logged In User
+    invalid_code_response = Response({
+        "success": False,
+        "message": str(_("Overovací kód je neplatný alebo vypršal."))
+    }, status = 400)
 
+    try:
+        if getattr(request, "limited", False):
+            return Response({
+                "success": False,
+                "message": str(_("Príliš veľa pokusov. Skúste to prosím neskôr."))
+            }, status = 429)
+
+        identifier = request.data.get("identifier", None) # Gets The Identifier (Username Or E-mail Address)
         password_reset_code = request.data.get("password_reset_code", None) # Gets The Password Reset Code
         new_password = request.data.get("new_password", None) # Gets The New Password
 
         # If The Information Are Missing
-        if not password_reset_code or not new_password:
+        if not identifier or not password_reset_code or not new_password:
             return Response({
                 "success": False, 
                 "message": str(_("Pre zmenu hesla chýbajú potrebné údaje."))
             }, status = 400)
 
-        # if password_reset_code == logged_in_user.password_reset_code:
-        #     if len(new_password) < 8:
-        #         messages.add_message(request, messages.ERROR, _("Heslo je príliš krátke"))
+        user = find_user_by_identifier(identifier) # Gets The User
 
-        #     else:
-        #         # Saves New Password To Database And Deletes Password Reset Code From Database
-        #         logged_in_user.password = make_password(new_password)
-        #         logged_in_user.password_reset_code = None
-        #         logged_in_user.save()
+        if not user:
+            return invalid_code_response
 
-        #         messages.add_message(request, messages.SUCCESS, _("Heslo bolo úspešne zmenené"))
+        verification = verify_password_reset_code(user, password_reset_code) # Checks The Code (Expiry + Attempt Limit)
 
-        #         # Redirect After Changing Password
-        #         response = HttpResponseRedirect(reverse("login_url"))
-        #         response.delete_cookie("email_address") # Deletes Cookie With Email Address
-        #         return response
-        
-        # else:
-        #     messages.add_message(request, messages.ERROR, _("Overovací kód sa nezhoduje"))
-        #     captureError(f"Verification code does not match.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user.id},\n\t- IP Address: {getClientIp(request)}\n")
+        if verification != "ok":
+            captureError(f"Password reset code verification failed ({verification}).\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+            return invalid_code_response
+
+        new_password = str(new_password)
+
+        if len(new_password) > 50:
+            return Response({
+                "success": False,
+                "message": str(_("Zadané heslo je príliš dlhé"))
+            }, status = 400)
+
+        try:
+            validate_password(new_password, user = user) # Runs AUTH_PASSWORD_VALIDATORS
+
+        except ValidationError as validation_error:
+            return Response({
+                "success": False,
+                "message": " ".join(str(one_message) for one_message in validation_error.messages)
+            }, status = 400)
+
+        user.password = make_password(new_password) # Sets The Password
+        user.save(update_fields = ["password"]) # Saves The Updated User
+
+        clear_password_reset_code(user) # The Code Can Only Be Used Once
+        revoke_user_refresh_tokens(user) # Logs Out Every Other Device
+
+        captureLogin(f"Password has been reset.\n\t- User ID: {user.id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Login
+
+        return Response({
+            "success": True,
+            "message": str(_("Heslo bolo úspešne zmenené"))
+        }, status = 200)
 
     except Exception as error:
         captureError(f"An error occurred while processing the password reset request.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error

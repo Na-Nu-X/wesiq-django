@@ -24,15 +24,10 @@ $training-glow: $surface-glow;
                 width: max-content;
                 padding: 5px 10px;
                 background-color: transparent;
-                backdrop-filter: blur(5px);
                 border: 1px solid $dark-blue-color;
                 border-radius: $big-border-radius;
                 cursor: pointer;
                 transition: transform 0.1s ease;
-    
-                &:hover {
-                    transform: translateY(-1px);
-                }
             }
 
             &.not_allowed {
@@ -98,20 +93,15 @@ $training-glow: $surface-glow;
         width: 100%;
         margin-bottom: 20px;
         padding: 20px 50px 30px;
-        border: 1px solid transparentize($blue-color, 0.5);
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
-        box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
         border-radius: $medium-border-radius;
 
         .timer {
             margin-bottom: 20px;
-            font-family: $timer-font;
-            font-size: 3em;
-            font-weight: lighter;
-            color: $secondary-color;
+            @include typography(timer);
+            color: $color-text;
             white-space: nowrap;
-            text-shadow: 0 0 40px transparentize($secondary-color, 0.8);
-            letter-spacing: 2px;
 
             span {
                 font-variant-numeric: tabular-nums;
@@ -130,13 +120,13 @@ $training-glow: $surface-glow;
             .play,
             .stop {
                 @include blue_button;
+                position: relative;
                 width: 90%;
-                color: $light-blue-color;
 
                 .fa-play, .fa-pause, .fa-stop {
                     @include position_center;
-                    font-size: 2em;
-                    color: $secondary-color;
+                    font-size: 20px;
+                    color: $color-on-primary;
                 }
 
                 .fa-play {
@@ -144,27 +134,31 @@ $training-glow: $surface-glow;
                 }
 
                 .fa-stop {
-                    color: $blue-color;
+                    color: $color-danger;
                 }
             }
 
             .stop {
-                backdrop-filter: blur(5px);
+                color: $color-text;
+                background-color: $color-surface-raised;
+                border-color: $color-border;
+                box-shadow: none;
 
                 &:hover,
                 &:focus-visible {
-                    background-color: transparentize($dark-blue-color, 0.8);
+                    background-color: $color-surface-pressed;
                 }
             }
 
             .play {
                 @include glow_animated_border;
-                background: linear-gradient(135deg, transparentize($blue-color, 0.35), transparentize($dark-blue-color, 0.55));
+                background: $color-primary-solid;
+                color: $color-on-primary;
                 border-color: $blue-color;
 
                 &:hover,
                 &:focus-visible {
-                    background: linear-gradient(135deg, transparentize($blue-color, 0.15), transparentize($dark-blue-color, 0.45));
+                    background: $color-primary-solid-pressed;
                 }
             }
         }
@@ -177,16 +171,14 @@ $training-glow: $surface-glow;
         margin-bottom: 40px;
         padding: 20px 10px;
         text-align: center;
-        background-color: transparentize($dark-blue-color, 0.95);
-        border: 1px solid transparentize($blue-color, 0.5);
+        background-color: $color-surface;
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
         transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
         &:hover {
-            transform: translateY(-2px);
             background: transparent;
-            border-color: transparentize($blue-color, 0.25);
-            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+            border-color: $color-border-strong;
             cursor: pointer;
         }
 
@@ -217,7 +209,6 @@ $training-glow: $surface-glow;
             height: 250px;
             border-radius: $medium-border-radius;
             overflow: hidden;
-            box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
 
             &.blur {
                 animation: blur 0.3s ease-out;
@@ -252,7 +243,7 @@ $training-glow: $surface-glow;
                     transition: opacity 0.5s ease;
 
                     p {
-                        color: transparentize($secondary-color, 0.5);
+                        color: $color-text-muted;
                         font-size: 0.85em;
                         text-transform: uppercase;
                         letter-spacing: 1px;
@@ -275,7 +266,7 @@ $training-glow: $surface-glow;
                 .add_time,
                 .skip_break_button,
                 .skip_warm_up_button {
-                    @include blue_button(50px);
+                    @include icon_button(solid, 50px);
                     position: relative;
 
                     .fa-play,
@@ -283,8 +274,8 @@ $training-glow: $surface-glow;
                     .fa-plus,
                     .fa-stop {
                         @include position_center;
-                        font-size: 2em;
-                        color: $blue-color;
+                        font-size: 20px;
+                        color: inherit;
                     }
 
                     .fa-play {
@@ -303,7 +294,7 @@ $training-glow: $surface-glow;
                     .sets {
                         font-family: $article-heading-font;
                         font-size: 1.2em;
-    
+
                         .current,
                         .total {
                             font-family: inherit;
@@ -369,7 +360,7 @@ $training-glow: $surface-glow;
                     position: relative;
                     width: 100%;
                     height: 10px;
-                    border: 1px solid transparentize($secondary-color, 0.8);
+                    border: $hairline solid $color-divider;
                     border-radius: calc(10px / 2);
 
                     // Progress
@@ -405,7 +396,7 @@ $training-glow: $surface-glow;
                         text-align: center;
                         font-size: 0.8em;
                         line-height: 0.8em;
-                        color: transparentize($secondary-color, 0.5);
+                        color: $color-text-muted;
                         text-overflow: ellipsis;
                         overflow: hidden;
                         transition: opacity 0.3s ease, transform 0.3s ease;
@@ -445,13 +436,12 @@ $training-glow: $surface-glow;
 
                 span {
                     font-family: $article-heading-font;
-                    color: transparentize($secondary-color, 0.5);
+                    color: $color-text-muted;
                     opacity: 0.5;
                 }
 
                 .fa-bolt {
                     color: $blue-color;
-                    text-shadow: 0px 0px 5px $blue-color;
                 }
             }
         }
@@ -467,7 +457,7 @@ $training-glow: $surface-glow;
             .bar {
                 width: 100%;
                 height: 10px;
-                border: 1px solid transparentize($blue-color, 0.5);
+                border: $hairline solid $color-border;
                 border-radius: calc(10px / 2);
                 transition: background-color 0.3s ease;
 
@@ -499,16 +489,14 @@ $training-glow: $surface-glow;
                 width: 100%;
                 padding: 20px 10px;
                 text-align: center;
-                background-color: transparentize($dark-blue-color, 0.95);
-                border: 1px solid transparentize($blue-color, 0.5);
+                background-color: $color-surface;
+                border: $hairline solid $color-border;
                 border-radius: $medium-border-radius;
                 transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
                 &:hover {
-                    transform: translateY(-2px);
                     background: transparent;
-                    border-color: transparentize($blue-color, 0.25);
-                    box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                    border-color: $color-border-strong;
                     cursor: pointer;
                 }
 
@@ -518,7 +506,7 @@ $training-glow: $surface-glow;
                         gap: 5px;
                         font-size: 0.8em;
                         text-align: center;
-                        color: transparentize($secondary-color, 0.5);
+                        color: $color-text-muted;
 
                         i {
                             color: $blue-color;
@@ -541,16 +529,14 @@ $training-glow: $surface-glow;
 
         .bottom {
             padding: 15px;
-            background-color: transparentize($dark-blue-color, 0.95);
-            border: 1px solid transparentize($blue-color, 0.5);
+            background-color: $color-surface;
+            border: $hairline solid $color-border;
             border-radius: $medium-border-radius;
             transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
             &:hover {
-                transform: translateY(-2px);
                 background: transparent;
-                border-color: transparentize($blue-color, 0.25);
-                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                border-color: $color-border-strong;
                 cursor: pointer;
             }
 
@@ -567,12 +553,12 @@ $training-glow: $surface-glow;
                     span {
                         text-align: center;
                         white-space: nowrap;
-                        color: transparentize($secondary-color, 0.5);
+                        color: $color-text-muted;
 
                         &.no_latest_activity,
                         &.no_longest_activity {
                             white-space: normal;
-                            color: transparentize($secondary-color, 0.5);
+                            color: $color-text-muted;
                         }
                     }
 
@@ -600,7 +586,6 @@ $training-glow: $surface-glow;
     padding: 125px + 20px 20px 40px;
     text-align: center;
     background: transparentize($main-color, 0.85);
-    backdrop-filter: blur(10px);
     overflow-y: auto;
     z-index: 2500;
 
@@ -679,13 +664,13 @@ $training-glow: $surface-glow;
     gap: 20px;
     width: 100%;
     margin: 0px auto;
-    
+
     .official_tasks,
     .custom_tasks {
         max-width: $secondary-width;
         width: 100%;
         padding: 20px;
-        border: 1px solid transparentize($blue-color, 0.8);
+        border: $hairline solid $color-border;
         border-radius: $medium-border-radius;
 
         h3.section_title {
@@ -702,7 +687,7 @@ $training-glow: $surface-glow;
             .delete_completed {
                 all: unset;
                 font-size: 0.9em;
-                color: $light-blue-color;
+                color: $color-text-secondary;
 
                 &:hover,
                 &:active {
@@ -713,7 +698,7 @@ $training-glow: $surface-glow;
 
             .tasks_amount {
                 font-size: 0.9em;
-                color: $light-blue-color;
+                color: $color-text-secondary;
             }
         }
 
@@ -722,7 +707,7 @@ $training-glow: $surface-glow;
             flex-direction: column;
             gap: 10px;
             margin-top: 10px;
-    
+
             .task {
                 --progress: 0;
                 --progress-color: rgba(75, 75, 250, 0.1);
@@ -734,12 +719,11 @@ $training-glow: $surface-glow;
                 gap: 10px;
                 background: transparentize($main-color, 0.5);
                 padding: 0px 15px;
-                border: 1px solid transparentize($blue-color, 0.8);
+                border: $hairline solid $color-border;
                 border-radius: $small-border-radius;
                 transition: transform 0.2s ease;
 
                 &:hover {
-                    transform: translateY(-2px);
                     cursor: pointer;
                 }
 
@@ -770,7 +754,7 @@ $training-glow: $surface-glow;
         .remaining_hours {
             text-align: center;
             font-size: 0.9em;
-            color: $light-blue-color;
+            color: $color-text-secondary;
             margin-bottom: 10px;
         }
 
@@ -779,7 +763,7 @@ $training-glow: $surface-glow;
                 &:has(.checkbox.checked) {
                     --progress: 100;
                     --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: transparentize($green-color, 0.8);
+                    border-color: $color-success-border;
                 }
 
                 .checkbox {
@@ -789,7 +773,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid transparentize($blue-color, 0.8);
+                    outline: $hairline solid $color-border;
                     background: transparentize($main-color, 0.5);
 
                     &::before {
@@ -822,7 +806,7 @@ $training-glow: $surface-glow;
                     padding-left: 15px;
                     color: $green-color;
                     border-left: 1px solid $training-surface-border;
-                    
+
                     span {
                         font-variant-numeric: tabular-nums;
                         white-space: nowrap;
@@ -869,7 +853,7 @@ $training-glow: $surface-glow;
                 flex-shrink: 0;
                 height: 50px;
                 background: transparentize($main-color, 0.5);
-                border: 1px solid transparentize($blue-color, 0.5);
+                border: $hairline solid $color-border;
                 border-radius: $small-border-radius;
                 overflow: hidden;
                 transition: border-color 0.3s ease;
@@ -877,7 +861,7 @@ $training-glow: $surface-glow;
                 &:focus-within {
                     border-color: $blue-color;
                 }
-                
+
                 .new_task {
                     flex: 1;
                     min-width: 0;
@@ -889,7 +873,7 @@ $training-glow: $surface-glow;
                     outline: none;
 
                     &::placeholder {
-                        color: $light-blue-color;
+                        color: $color-text-secondary;
                     }
                 }
 
@@ -899,13 +883,12 @@ $training-glow: $surface-glow;
                     text-align: center;
                     color: $blue-color;
                     transition: transform 0.2s ease, color 0.3s ease;
-                    
+
                     &:hover {
-                        transform: scale(1.1);
-                        color: $dark-blue-color;
+                        color: $color-primary-text;
                         cursor: pointer;
                     }
-    
+
                     .fa-plus {
                         display: block;
                         font-size: 1.5em;
@@ -921,14 +904,13 @@ $training-glow: $surface-glow;
                 }
 
                 &:hover {
-                    transform: translateY(-2px);
                     cursor: pointer;
                 }
 
                 &:has(input[type="checkbox"]:checked) {
                     --progress: 100;
                     --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: transparentize($green-color, 0.8);
+                    border-color: $color-success-border;
 
                     .checkbox {
                         outline: 1px solid darken($green-color, 10%);
@@ -953,7 +935,7 @@ $training-glow: $surface-glow;
                     width: 15px;
                     height: 15px;
                     border-radius: 2px;
-                    outline: 1px solid transparentize($blue-color, 0.8);
+                    outline: $hairline solid $color-border;
                     background: transparentize($main-color, 0.5);
 
                     &::before {
@@ -978,8 +960,8 @@ $training-glow: $surface-glow;
                     width: 7ch;
                     padding-left: 10px;
                     text-align: center;
-                    color: $light-blue-color;
-                    border-left: 1px solid transparentize($blue-color, 0.8);
+                    color: $color-text-secondary;
+                    border-left: $hairline solid $color-divider;
                     font-size: 0.8em;
                     font-variant-numeric: tabular-nums;
                     white-space: nowrap;
@@ -1009,8 +991,8 @@ $training-glow: $surface-glow;
 .activity_history_container {
     margin: 0px auto;
     padding: 5px;
-    background: linear-gradient(145deg, transparentize($blue-color, 0.95) 0%, transparentize($main-color, 0.95) 100%);
-    border: 1px solid transparentize($blue-color, 0.8);
+    background: $color-surface;
+    border: $hairline solid $color-border;
     border-radius: $medium-border-radius;
 
     .activity_history {
@@ -1022,7 +1004,7 @@ $training-glow: $surface-glow;
         width: 100%;
         max-height: calc(50px * 5 + 10px);
         padding: 15px;
-    
+
         .one_activity {
             display: flex;
             align-items: center;
@@ -1031,42 +1013,40 @@ $training-glow: $surface-glow;
             flex-shrink: 0;
             height: 50px;
             padding: 0px 15px;
-            background-color: transparentize($dark-blue-color, 0.95);
-            border: 1px solid transparentize($blue-color, 0.5);
+            background-color: $color-surface;
+            border: $hairline solid $color-border;
             border-radius: $medium-border-radius;
             transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    
+
             &:hover {
-                transform: translateY(-2px);
                 background: transparent;
-                border-color: transparentize($blue-color, 0.25);
-                box-shadow: 0 10px 30px transparentize($blue-color, 0.8);
+                border-color: $color-border-strong;
                 cursor: pointer;
             }
-    
+
             p {
                 font-size: 0.9em;
             }
-    
+
             .training_plan_title,
             .gained_xp {
                 color: $blue-color;
                 // text-shadow: 0 0 10px $blue-color;
             }
-    
+
             .training_plan_title {
                 @include crop_text;
                 width: 180px;
             }
-    
+
             .elapsed_time {
                 width: 60px;
             }
-    
+
             .gained_xp {
                 width: 50px;
             }
-    
+
             .date {
                 width: 40px;
             }
@@ -1209,7 +1189,7 @@ $training-glow: $surface-glow;
                 flex-direction: row;
                 border-radius: $big-border-radius;
                 padding: 10px 0px;
-    
+
                 .latest_activity_container,
                 .longest_activity_container {
                     width: 50%;
@@ -1217,7 +1197,7 @@ $training-glow: $surface-glow;
                     p {
                         flex-direction: column;
                         gap: 0px;
-    
+
                         i {
                             margin-bottom: 5px;
                         }
@@ -1246,9 +1226,9 @@ $training-glow: $surface-glow;
             .top {
                 gap: 0px;
                 padding: 10px;
-                border: 1px solid transparentize($blue-color, 0.5);
+                border: $hairline solid $color-border;
                 border-radius: $big-border-radius;
-        
+
                 .average_activity_time_container,
                 .activities_amount_container {
                     display: block;
@@ -1256,7 +1236,7 @@ $training-glow: $surface-glow;
                     padding: 0px;
                     text-align: center;
                     border: none;
-        
+
                     p {
                         @include flex_center($direction: column);
                     }

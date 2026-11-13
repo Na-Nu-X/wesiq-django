@@ -1,0 +1,46 @@
+@import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
+
+/************
+ Main Styles
+************/
+
+// Delete Account Info (Empty State Like In The Native App)
+
+.delete_account_info {
+    @include card(default, $space-xxl $space-xl, $radius-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-md;
+    max-width: $max-dialog-width;
+    margin: 0px auto;
+    text-align: center;
+
+    p {
+        @include typography(callout);
+        color: $color-text-secondary;
+
+        &:first-child {
+            @include typography(body_strong);
+            color: $color-text;
+        }
+
+        a {
+            font-size: inherit;
+            font-weight: 600;
+            color: $color-primary-text;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .profile_picture {
+        @include profile_picture(72px, 72px);
+        display: block;
+        margin-top: $space-sm;
+    }
+}

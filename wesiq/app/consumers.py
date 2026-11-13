@@ -7,34 +7,71 @@ from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
 from django.utils.translation import gettext as _
 from django.db.models import Count, Q
+from django.conf import settings
+from django.http.request import validate_host
+from urllib.parse import urlparse
+from .security import visible_posts_q
+
+MAX_MESSAGE_LENGTH = 250 # Mirrors Chat.content max_length
+MAX_EMOJI_LENGTH = 10 # Mirrors MessageReaction.emoji max_length
+MAX_ATTACHMENTS_PER_MESSAGE = 10
+
+# Function For Check The Origin Of A Cookie-Authenticated WebSocket (Cross-Site WebSocket Hijacking Protection)
+def is_same_site_origin(scope):
+    headers = dict(scope.get("headers", []))
+    origin = headers.get(b"origin")
+
+    if not origin:
+        return False
+
+    host = urlparse(origin.decode("latin1")).hostname or ""
+    return validate_host(host, settings.ALLOWED_HOSTS)
+
+# Function For Get The JWT Token From The Query String (Native App)
+def get_query_token(scope):
+    query_params = parse_qs(scope.get("query_string", b"").decode("utf-8"))
+    token_list = query_params.get("token")
+    return token_list[0] if token_list else None
+
+# Function For Get An Active User From The JWT Access Token (Native App)
+@database_sync_to_async
+def get_user_from_token(token_key):
+    try:
+        validated_token = AccessToken(token_key) # Validates Signature And Expiration
+        return Users.objects.get(id = validated_token["user_id"], account_status = "OK")
+
+    except Exception:
+        return None
+
+def clean_text(value):
+    if not isinstance(value, str):
+        return None
+
+    value = value.strip()
+
+    if not value or len(value) > MAX_MESSAGE_LENGTH:
+        return None
+
+    return value
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    # Function For Get The User From The JWT Token (Native App)
-    @database_sync_to_async
-    def get_user_from_token(self, token_key):
-        try:
-            validated_token = AccessToken(token_key)
-            user_id = validated_token["user_id"]
-            return Users.objects.get(id = user_id)
-
-        except Exception:
-            return None
 
     # Function For Connect
     async def connect(self):
         self.receiver_username = self.scope["url_route"]["kwargs"]["username"] # Gets The Receiver's Username
 
-        self.sender = await self.get_logged_in_user() # Gets The Sender (Logged In User) From The Session (Only On Web)
+        self.sender = None
+
+        # Cookie (Session) Auth Is Only Accepted From Our Own Origin, Otherwise Any Website Could Open The Socket With The Victim's Cookies
+        if is_same_site_origin(self.scope):
+            self.sender = await self.get_logged_in_user() # Gets The Sender (Logged In User) From The Session (Only On Web)
 
         # Gets The Sender (Logged In User) From The JWT Token (Native App)
         if not self.sender:
-            # Gets The JWT Token (Native App)
-            query_string = self.scope.get("query_string", b"").decode("utf-8")
-            query_params = parse_qs(query_string)
-            token_list = query_params.get("token")
+            token = get_query_token(self.scope) # Gets The JWT Token (Native App)
 
-            if token_list:
-                self.sender = await self.get_user_from_token(token_list[0]) # Gets The Sender (Logged In User) From The JWT Token (Native App)
+            if token:
+                self.sender = await get_user_from_token(token) # Gets The Sender (Logged In User) From The JWT Token (Native App)
 
         # Closes The Connection
         if not self.sender:
@@ -69,14 +106,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     # Function For Receive The Events
-    async def receive(self, text_data):
-        json_data = json.loads(text_data) # Gets The Received JSON Data
+    async def receive(self, text_data = None, bytes_data = None):
+        # Malformed Input Must Not Crash The Consumer (An Unhandled Exception Closes The Socket)
+        try:
+            json_data = json.loads(text_data or "") # Gets The Received JSON Data
 
+            if not isinstance(json_data, dict):
+                return
+
+            await self.handle_action(json_data)
+
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            await self.send_error("invalid_payload")
+
+        except (Post.DoesNotExist, Chat.DoesNotExist, PermissionError):
+            await self.send_error("not_allowed")
+
+    async def send_error(self, code):
+        await self.send(text_data = json.dumps({"action": "error", "error": code}))
+
+    async def handle_action(self, json_data):
         action = json_data.get("action", "new") # Gets The Action (New By Default)
 
         # New Message Action
         if action == "new":
-            message = json_data["message"] # Gets The Message
+            message = clean_text(json_data.get("message")) # Gets The Message (Non-Empty, Max 250 Characters)
+
+            if message is None:
+                return await self.send_error("invalid_message")
 
             new_chat = await self.save_message(message) # Saves The Message
 
@@ -119,10 +176,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Edit Message Action
         elif action == "edit":
-            chat_id = json_data["chat_id"] # Gets The Chat ID
-            message = json_data["message"] # Gets The Message
+            chat_id = int(json_data["chat_id"]) # Gets The Chat ID
+            message = clean_text(json_data.get("message")) # Gets The Message
 
-            await self.edit_message(chat_id, message) # Edits The Message
+            if message is None:
+                return await self.send_error("invalid_message")
+
+            # Only Broadcasts When The Sender Really Edited Their Own Message (Otherwise Anyone Could Spoof An Edit Event)
+            if not await self.edit_message(chat_id, message):
+                return await self.send_error("not_allowed")
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -137,9 +199,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Delete Message Action
         elif action == "delete":
-            chat_id = json_data["chat_id"] # Gets The Chat ID
+            chat_id = int(json_data["chat_id"]) # Gets The Chat ID
 
-            await self.delete_message(chat_id) # Deletes The Message
+            if not await self.delete_message(chat_id):
+                return await self.send_error("not_allowed")
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -153,10 +216,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Adds The Message Reaction Action
         elif action == "add_reaction":
-            chat_id = json_data["chat_id"] # Gets The Chat ID
-            emoji = json_data["emoji"] # Gets The Emoji
+            chat_id = int(json_data["chat_id"]) # Gets The Chat ID
+            emoji = json_data.get("emoji") # Gets The Emoji
+
+            if not isinstance(emoji, str) or not emoji.strip() or len(emoji) > MAX_EMOJI_LENGTH:
+                return await self.send_error("invalid_emoji")
 
             new_reaction = await self.add_reaction_to_message(chat_id, emoji) # Adds The Reaction To Message
+
+            if not new_reaction:
+                return await self.send_error("not_allowed")
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -166,16 +235,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "add_reaction", # Calls The Function "Add Reaction"
                     "chat_id": chat_id, # Stores The Chat ID To The Event
                     "emoji": emoji, # Stores The Emoji To The Event
-                    "emoji_sender_username": new_reaction.user.username # Stores The Emoji Sender's Username To The Event
+                    "emoji_sender_username": self.sender.username # Stores The Emoji Sender's Username To The Event
                 }
             )
 
         # Removes The Message Reaction Action
         elif action == "remove_reaction":
-            chat_id = json_data["chat_id"] # Gets The Chat ID
-            emoji = json_data["emoji"] # Gets The Emoji
+            chat_id = int(json_data["chat_id"]) # Gets The Chat ID
+            emoji = json_data.get("emoji") # Gets The Emoji
 
-            await self.remove_reaction_from_message(chat_id, emoji) # Removes The Reaction From Message
+            if not isinstance(emoji, str):
+                return await self.send_error("invalid_emoji")
+
+            if not await self.remove_reaction_from_message(chat_id, emoji): # Removes The Reaction From Message
+                return
 
             # Sends Data Back To The Front-End
             await self.channel_layer.group_send(
@@ -194,10 +267,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
             
         # Send Attachment Action
         elif action == "send_attachment":
-            attachment_ids = json_data["attachment_ids"] # Gets The Attachment IDs
-            message = json_data["message"] or None # Gets The Message
+            attachment_ids = json_data.get("attachment_ids") # Gets The Attachment IDs
+
+            if not isinstance(attachment_ids, list) or not attachment_ids or len(attachment_ids) > MAX_ATTACHMENTS_PER_MESSAGE:
+                return await self.send_error("invalid_attachments")
+
+            attachment_ids = [int(one_id) for one_id in attachment_ids]
+
+            raw_message = json_data.get("message") # Gets The Message
+            message = clean_text(raw_message) if raw_message else None
+
+            if raw_message and message is None:
+                return await self.send_error("invalid_message")
 
             new_chat = await self.save_attachments(message, attachment_ids)
+
+            if not new_chat:
+                return await self.send_error("not_allowed")
 
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
@@ -237,10 +323,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         # Share Post Action
-        if action == "share_post":
-            post_id = json_data["post_id"] # Gets The Post ID
+        elif action == "share_post":
+            post_id = str(json_data["post_id"]) # Gets The Post ID (Public ID)
 
-            new_chat = await self.share_post(post_id) # Shares The Post
+            new_chat = await self.share_post(post_id) # Shares The Post (Raises Post.DoesNotExist If The Sender Can't See It)
 
             receiver_id = self.receiver.id # Gets The Receiver ID
             receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
@@ -349,9 +435,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             logged_in_user_id = session.get("logged_in_user_id") # Gets The Logged In User ID
 
             if logged_in_user_id:
-                return Users.objects.get(id = logged_in_user_id) # Gets The Logged In User
+                return Users.objects.get(id = logged_in_user_id, account_status = "OK") # Gets The Logged In User
 
-        except:
+        except Exception:
             return None
 
         return None
@@ -384,29 +470,47 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Edit The Message
     @database_sync_to_async
     def edit_message(self, id, content):
-        message_for_edit = Chat.objects.filter(id = id, sender = self.sender).first() # Gets The Message For Edit
+        message_for_edit = self.conversation_messages().filter(id = id, sender = self.sender, post__isnull = True).first() # Gets The Message For Edit (Own Text Message In This Conversation)
 
-        if not message_for_edit.is_older_than_15_minutes:
-            # Edits The Message
-            Chat.objects.filter(
-                id = id,
-                sender = self.sender
-            ).update(
-                content = content,
-                is_edited = True
-            )
+        if not message_for_edit or message_for_edit.is_older_than_15_minutes:
+            return False
+
+        # Edits The Message
+        Chat.objects.filter(
+            id = id,
+            sender = self.sender
+        ).update(
+            content = content,
+            is_edited = True
+        )
+
+        return True
 
     # Function For Delete The Message
     @database_sync_to_async
     def delete_message(self, id):
-        message_for_deletion = Chat.objects.filter(id = id, sender = self.sender).first() # Gets The Message For Deletion
+        message_for_deletion = self.conversation_messages().filter(id = id, sender = self.sender).first() # Gets The Message For Deletion
 
-        if not message_for_deletion.is_older_than_1_day:
-            message_for_deletion.delete() # Deletes The Message
+        if not message_for_deletion or message_for_deletion.is_older_than_1_day:
+            return False
+
+        message_for_deletion.delete() # Deletes The Message
+        return True
+
+    # Function For Get The Messages Of This Conversation Only (Both Directions)
+    def conversation_messages(self):
+        return Chat.objects.filter(
+            Q(sender = self.sender, receiver = self.receiver) |
+            Q(sender = self.receiver, receiver = self.sender)
+        )
 
     # Function For Add The Reaction To Message
     @database_sync_to_async
     def add_reaction_to_message(self, chat_id, emoji):
+        # Reactions Are Only Allowed On Messages Of This Conversation
+        if not self.conversation_messages().filter(id = chat_id).exists():
+            return None
+
         with transaction.atomic():
             # Gets All Of The Logged In User's Reactions To The Message
             user_reactions = MessageReaction.objects.filter(
@@ -432,12 +536,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Remove The Reaction From Message
     @database_sync_to_async
     def remove_reaction_from_message(self, chat_id, emoji):
+        if not self.conversation_messages().filter(id = chat_id).exists():
+            return False
+
         # Removes The Reaction
-        MessageReaction.objects.filter(
+        deleted, _deleted_per_model = MessageReaction.objects.filter(
             chat_id = chat_id,
             user = self.sender,
             emoji = emoji
         ).delete()
+
+        return deleted > 0
 
     # Function For Mark Messages As Read
     @database_sync_to_async
@@ -452,15 +561,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Save The Attachments
     @database_sync_to_async
     def save_attachments(self, content, attachment_ids):
-        # Saves The New Message
-        new_chat_with_attachments = Chat.objects.create(
-            sender = self.sender,
-            receiver = self.receiver,
-            content = content
-        )
+        with transaction.atomic():
+            # Only The Sender's Own, Not Yet Sent Attachments (Previously Any Attachment ID Could Be Pulled Into Any Chat)
+            chat_attachments = ChatAttachment.objects.select_for_update().filter(
+                id__in = attachment_ids,
+                sent_by = self.sender,
+                chat__isnull = True
+            )
 
-        if attachment_ids:
-            chat_attachments = ChatAttachment.objects.filter(id__in = attachment_ids) # Gets The Chat Attachments
+            if chat_attachments.count() != len(set(attachment_ids)):
+                return None
+
+            # Saves The New Message
+            new_chat_with_attachments = Chat.objects.create(
+                sender = self.sender,
+                receiver = self.receiver,
+                content = content
+            )
+
             chat_attachments.update(chat = new_chat_with_attachments) # Saves The Updated Chat Attachments
             
         return new_chat_with_attachments # Returns The New Chat With Attachments
@@ -468,7 +586,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Function For Save The New Message With The Shared Post
     @database_sync_to_async
     def share_post(self, post_id):
-        post = Post.objects.get(public_id = post_id) # Gets The Post
+        # The Sender Can Only Share Posts They Are Allowed To See (Followers-Only / Private Accounts)
+        post = Post.objects.filter(visible_posts_q(self.sender.id)).distinct().get(public_id = post_id) # Gets The Post
     
         # Saves The New Message
         new_chat = Chat.objects.create(
@@ -498,7 +617,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "formatted_time": new_chat_with_shared_post.formatted_time,
 
             "post": {
-                "id": new_chat_with_shared_post.post.id,
+                "id": new_chat_with_shared_post.post.public_id, # Public ID (Same As The REST API), Never The Internal Database ID
                 
                 "user": {
                     "id": new_chat_with_shared_post.post.user.id,
@@ -535,30 +654,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return MutedUser.objects.filter(user = user, muted_user = muted_user).exists() # Checks If The Muted User Exists
 
 class NotificationConsumer(AsyncWebsocketConsumer):
-    # Function For Get The User From The JWT Token (Native App)
-    @database_sync_to_async
-    def get_user_from_token(self, token_key):
-        try:
-            validated_token = AccessToken(token_key)
-            user_id = validated_token["user_id"]
-            return Users.objects.get(id = user_id)
-
-        except Exception:
-            return None
-
     # Function For Connect
     async def connect(self):
-        self.user = self.scope.get("user") # Gets The User
+        self.user = None
+
+        # Cookie (Session) Auth Is Only Accepted From Our Own Origin (Cross-Site WebSocket Hijacking Protection)
+        if is_same_site_origin(self.scope):
+            self.user = self.scope.get("user") # Gets The User
 
         # Gets The User (Logged In User) From The JWT Token (Native App)
         if not self.user or not self.user.is_authenticated:
-            # Gets The JWT Token (Native App)
-            query_string = self.scope.get("query_string", b"").decode("utf-8")
-            query_params = parse_qs(query_string)
-            token_list = query_params.get("token")
+            token = get_query_token(self.scope) # Gets The JWT Token (Native App)
 
-            if token_list:
-                self.user = await self.get_user_from_token(token_list[0]) # Gets The User (Logged In User) From The JWT Token (Native App)
+            if token:
+                self.user = await get_user_from_token(token) # Gets The User (Logged In User) From The JWT Token (Native App)
 
         # Closes The Connection
         if not self.user or not self.user.is_authenticated:

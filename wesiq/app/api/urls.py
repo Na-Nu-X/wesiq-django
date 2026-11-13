@@ -19,8 +19,8 @@ urlpatterns = [
     path("toggle-follow/", views.toggle_follow, name = "toggle_follow_url"),
     path("get-posts/", views.get_posts, name = "get_posts_url"),
     path("mark-post-as-seen/", views.mark_post_as_seen, name = "mark_post_as_seen_url"),
-    path("update-video-watch-time/", views.update_video_watch_time, name = "update_video_watch_time_url"),
-    path("stream-video/", views.stream_video, name = "stream_video_url"),
+    path("update-video-watch-time/", views.update_video_watch_time, name = "native_update_video_watch_time_url"),
+    path("stream-video/<int:user_id>/<int:media_id>/<path:filename>", views.stream_video, name = "native_stream_video_url"),
     path("toggle-post-like/", views.toggle_post_like, name = "toggle_post_like_url"),
     path("toggle-post-save/", views.toggle_post_save, name = "toggle_post_save_url"),
     path("report-post/", views.report_post, name = "report_post_url"),
@@ -87,5 +87,5 @@ urlpatterns = [
     path("delete-article-comment/", views.delete_article_comment, name = "delete_article_comment_url"),
 
     path("get-password-reset-code/", views.get_password_reset_code, name = "get_password_reset_code_url"),
-    path("password-reset/", views.password_reset, name = "password_reset_url"),
+    path("password-reset/", views.password_reset, name = "native_password_reset_url"),
 ]

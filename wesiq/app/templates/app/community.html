@@ -15,7 +15,7 @@
 
 {% block navigation_bar_items %}
     <li>
-        <a class="scroll_feed" href="#" target="_self">{% translate "PRÍSPEVKY" %}</a>
+        <a class="scroll_feed" href="#" target="_self"><i class="fa-solid fa-table-cells-large"></i><span>{% translate "Príspevky" %}</span></a> <!-- https://fontawesome.com/icons/table-cells-large -->
     </li>
 {% endblock navigation_bar_items %}
 
@@ -28,15 +28,19 @@
         <script src="{% static 'app/ts/dist/pages/community/components/notifications.js' %}" type="module"></script>
 
         <button class="notifications" title="{% translate 'Notifikácie' %}" aria-label="{% translate 'Notifikácie' %}">
-            <span class="label">
-                {% if logged_in_user.unread_messages_amount <= 9 %}
-                    {{ logged_in_user.unread_messages_amount|default:0 }}
+            <!-- Badge Only When There Are Unread Messages (Like The Native App) -->
+            {% if logged_in_user.unread_messages_amount %}
+                <span class="label">
+                    {% if logged_in_user.unread_messages_amount <= 9 %}
+                        {{ logged_in_user.unread_messages_amount }}
 
-                {% else %}
-                    9+
-                
-                {% endif %}
-            </span>
+                    {% else %}
+                        9+
+
+                    {% endif %}
+                </span>
+
+            {% endif %}
 
             <i class="fa-regular fa-bell"></i> <!-- https://fontawesome.com/icons/bell -->
         </button>
@@ -720,7 +724,7 @@
 
         {% if processing_posts|length > 0 %}
             {% for one_post in processing_posts %}
-                <div class="processing_post_container" tabindex="-1" data-post_id="{{ one_post.id }}">
+                <div class="processing_post_container" tabindex="-1" data-post_id="{{ one_post.public_id }}">
                     <p class="processing_post_report">{% translate "Čakajte! Príspevok sa spracováva." %}</p>
 
                     <div class="processing_media_info_container">

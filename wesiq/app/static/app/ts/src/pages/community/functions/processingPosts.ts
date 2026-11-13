@@ -1,7 +1,7 @@
 export interface compressTask {
     task_id:string,
     post_media_id:number,
-    post_id:number
+    post_id:string
 }
 
 export interface uploadPostResponse {
@@ -17,7 +17,7 @@ export interface uploadProgressResponse {
 }
 
 // Function For Get The Upload Progress
-export function getUploadProgress(task_id:string, post_id:number, upload_progress:HTMLDivElement, processing_post_report:HTMLParagraphElement):void {
+export function getUploadProgress(task_id:string, post_id:string, upload_progress:HTMLDivElement, processing_post_report:HTMLParagraphElement):void {
     const MAX_RED:number = 255
     const MIN_RED:number = 82
 
@@ -64,9 +64,9 @@ export function getUploadProgress(task_id:string, post_id:number, upload_progres
 }
 
 // Function For Check If There Is Any Other Media From Selected Post In The Processing Posts
-export function checkProcessingPosts(post_id:number, processing_post_report:HTMLParagraphElement):void {
+export function checkProcessingPosts(post_id:string, processing_post_report:HTMLParagraphElement):void {
     const processing_posts:compressTask[] = JSON.parse(localStorage.getItem("processing_posts") || "[]") // Gets The Processing Posts From The Local Storage
-    const processing_posts_post_ids:number[] = processing_posts.map((one_task:compressTask) => one_task.post_id) // Gets All Current Post IDs From The Local Storage
+    const processing_posts_post_ids:string[] = processing_posts.map((one_task:compressTask) => one_task.post_id) // Gets All Current Post IDs From The Local Storage
 
     if(!processing_posts_post_ids.includes(post_id)) processing_post_report.textContent = gettext("Príspevok bol úspešne pridaný.") // Shows The Success Message
 }

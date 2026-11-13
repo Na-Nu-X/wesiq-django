@@ -103,17 +103,15 @@
             <article 
                 class="{{ one_article.link }}"
                 data-title="{{ one_article.title }}"
-                style="
-                    {% if one_article.image_name %}
-                        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
-                        url('{% static './images/articles' %}/{{ one_article.image_name }}');
-
-                    {% else %}
-                        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
-                    
-                    {% endif %}
-                "
             >
+                <!-- Cover Image (16:9 Like The Native Blog Card) -->
+                <div
+                    class="article_image"
+                    {% if one_article.image_name %}
+                        style="background-image: url('{% static './images/articles' %}/{{ one_article.image_name }}');"
+                    {% endif %}
+                ></div>
+
                 <div class="top">
                     <div class="info">
                         <div class="tooltip" data-tooltip="{% translate 'Tento článok pridal' %} {{ one_article.user.username }}" aria-label="{% translate 'Tento článok pridal' %} {{ one_article.user.username }}">
